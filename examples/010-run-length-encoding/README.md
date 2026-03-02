@@ -1,21 +1,35 @@
-# Example 010: Run-length Encoding
+# Example 010: Run-Length Encoding
 
-**Difficulty:** ⭐ Beginner  
-**Category:** Lists & HOF  
-**OCaml Source:** 99 Problems #10  
+**Difficulty:** ⭐⭐
+**Category:** Lists & Data Compression
+**OCaml Source:** OCaml 99 Problems #10
 
-## Problem
+## Problem Statement
 
-Run-length encoding of a list.
+Use the result of Problem 9 (pack consecutive duplicates) to implement run-length encoding: replace consecutive duplicate elements with `(count, element)` pairs.
 
 ## Learning Outcomes
 
-- Combining transformations (pack + map)
-- Run-length encoding algorithm
-- Data compression concepts
+- Compose solutions by building on previous problems (pack → encode)
+- Use tuple types `(usize, T)` as lightweight data containers
+- Practice the fold pattern for single-pass encoding
+- Compare OCaml's tuple-based encoding with Rust's strongly-typed tuples
+- Understand function composition: `pack().map()` vs direct iteration
+
+## OCaml Approach
+
+First packs consecutive elements (reusing Problem 9's `pack`), then maps each group to a `(count, element)` tuple. The direct version counts in a single pass with a recursive helper.
+
+## Rust Approach
+
+1. **Compose with pack**: Pack first, then `map` groups to `(len, first)` — mirrors OCaml
+2. **Fold**: Single-pass fold, matching on `last_mut()` to increment count or start new run
+3. **Direct**: Imperative single-pass with counter — most efficient, no intermediate structures
 
 ## Key Differences
 
-- **OCaml:** Pack + map
-- **Rust:** Iterator chain with flat_map()
-- Both use Option/Result for safety
+1. **Tuple types**: Rust's `(usize, T)` is structurally typed like OCaml's `int * 'a`, but Rust tuples own their data
+2. **Composition**: `pack().into_iter().map()` chains naturally — Rust's iterator adaptors mirror OCaml's `List.map`
+3. **Single-pass efficiency**: The fold and direct versions avoid creating intermediate packed groups
+4. **`usize` vs `int`**: Rust uses `usize` for counts (unsigned, pointer-sized); OCaml uses `int` (signed, word-sized)
+5. **No intermediate allocation**: The direct version builds the result in one pass — important for large inputs

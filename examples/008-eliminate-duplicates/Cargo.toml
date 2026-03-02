@@ -1,0 +1,4 @@
+[package]
+name = "example-008-eliminate-duplicates"
+version = "0.1.0"
+edition = "2021"

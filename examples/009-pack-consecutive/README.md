@@ -1,21 +1,35 @@
-# Example 009: Pack Consecutive
+# Example 009: Pack Consecutive Duplicates
 
-**Difficulty:** ⭐ Beginner  
-**Category:** Lists & HOF  
-**OCaml Source:** 99 Problems #9  
+**Difficulty:** ⭐⭐
+**Category:** Lists & Grouping
+**OCaml Source:** OCaml 99 Problems #9
 
-## Problem
+## Problem Statement
 
-Pack consecutive duplicates of list elements into sublists.
+Pack consecutive duplicate elements into sublists.
 
 ## Learning Outcomes
 
-- Grouping consecutive elements
-- State machines in functional style
-- List building with accumulators
+- Build nested data structures (`Vec<Vec<T>>`) from flat input
+- Use `fold` for stateful accumulation — the functional alternative to loops
+- Understand zero-copy grouping with slice references (`&[T]`)
+- Compare OCaml's accumulator-based recursion with Rust's imperative and fold styles
+- See how borrowing enables efficient grouping without cloning
+
+## OCaml Approach
+
+Uses a tail-recursive helper with two accumulators: `current` (current group) and `acc` (completed groups). Compares consecutive elements and either extends the current group or starts a new one. Returns reversed result.
+
+## Rust Approach
+
+1. **Imperative**: Iterate with a mutable `current` group and `result` vector
+2. **Fold**: `fold()` with `last_mut()` to extend or create groups — closest to OCaml's accumulator
+3. **Slice-based**: Returns `Vec<&[T]>` — borrows into the original slice, zero copying
 
 ## Key Differences
 
-- **OCaml:** State fold
-- **Rust:** .group_by() or stateful fold
-- Both use Option/Result for safety
+1. **Slice references**: `pack_slices` returns `&[T]` views — no data copied, impossible in OCaml's GC model
+2. **`last_mut()`**: Rust can mutate the last element of a Vec through a mutable reference — efficient for the fold pattern
+3. **Ownership spectrum**: Three levels offered — owned + cloned, owned + fold, borrowed slices
+4. **No `List.rev` needed**: Rust's `Vec::push` appends to the end (O(1) amortized); OCaml prepends to lists and reverses
+5. **Memory layout**: Rust's `Vec<Vec<T>>` is contiguous blocks; OCaml's `'a list list` is chains of cons cells

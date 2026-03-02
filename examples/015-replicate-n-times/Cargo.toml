@@ -1,0 +1,4 @@
+[package]
+name = "example-015-replicate-n-times"
+version = "0.1.0"
+edition = "2021"

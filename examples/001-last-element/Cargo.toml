@@ -1,4 +1,3 @@
-[workspace]
 
 [package]
 name = "example-001-last-element"

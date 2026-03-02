@@ -1,0 +1,4 @@
+[package]
+name = "example-009-pack-consecutive"
+version = "0.1.0"
+edition = "2021"

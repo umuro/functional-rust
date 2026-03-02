@@ -1,0 +1,4 @@
+[package]
+name = "example-022-range"
+version = "0.1.0"
+edition = "2021"
