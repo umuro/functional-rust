@@ -1,4 +1,4 @@
 [workspace]
 resolver = "2"
-# Claude Code adds each example here after passing cargo fmt + clippy + test
-members = []
+# Auto-discovers any example dir that has a Cargo.toml (created by Claude Code after quality checks)
+members = ["examples/[0-9]*"]
