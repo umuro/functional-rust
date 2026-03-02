@@ -1,6 +1,6 @@
-# Smelt — The functional-rust Content Pipeline
+# Functional Smelt — The functional-rust Content Pipeline
 
-> Smelt: to extract metal from ore by heating. Here: OCaml source → idiomatic Rust.
+> Functional Smelt: to extract metal from ore by heating. Here: OCaml source → idiomatic Rust.
 
 ## The Four Steps
 
@@ -55,7 +55,7 @@ scp -P 65002 -i ~/.ssh/id_ed25519 /tmp/rust-site/rust/*.html \
 
 ```
 functional-rust/
-├── SMELT.md        ← this file (pipeline docs)
+├── FUNCTIONAL_SMELT.md        ← this file (pipeline docs)
 ├── QUEUE.md        ← ore queue (OCaml snippets pending conversion)
 ├── CLAUDE.md       ← instructions for Claude Code workers
 ├── Cargo.toml      ← workspace root
@@ -74,7 +74,7 @@ functional-rust/
 
 ## Cron Schedule
 
-Three Smelt cycles per day (Amsterdam time):
+Three Functional Smelt cycles per day (Amsterdam time):
 - 02:00 — Batch A (5 examples)
 - 12:00 — Batch B (5 examples)
 - 18:00 — Batch C (5 examples)
