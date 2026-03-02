@@ -1,0 +1,4 @@
+[workspace]
+resolver = "2"
+# Any example dir with a Cargo.toml is auto-included
+members = ["examples/[0-9]*"]
