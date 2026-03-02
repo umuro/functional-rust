@@ -225,3 +225,23 @@ version = "0.1.0"
 [[package]]
 name = "example-050-custom-error-types"
 version = "0.1.0"
+
+[[package]]
+name = "example-051-applying-function-twice"
+version = "0.1.0"
+
+[[package]]
+name = "example-052-function-composition"
+version = "0.1.0"
+
+[[package]]
+name = "example-053-pipeline-operator"
+version = "0.1.0"
+
+[[package]]
+name = "example-054-list-map-from-scratch"
+version = "0.1.0"
+
+[[package]]
+name = "example-055-list-filter-from-scratch"
+version = "0.1.0"

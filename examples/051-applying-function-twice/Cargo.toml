@@ -1,0 +1,4 @@
+[package]
+name = "example-051-applying-function-twice"
+version = "0.1.0"
+edition = "2021"

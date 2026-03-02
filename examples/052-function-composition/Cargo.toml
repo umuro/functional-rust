@@ -1,0 +1,4 @@
+[package]
+name = "example-052-function-composition"
+version = "0.1.0"
+edition = "2021"
