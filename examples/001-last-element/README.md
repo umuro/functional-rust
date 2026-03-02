@@ -1,38 +1,67 @@
-# Example 001: Last Element of a List
+# 001 — Last Element of a List
 
-**Difficulty:** ⭐ Beginner  
-**Category:** Lists & Higher-Order Functions  
-**OCaml Source:** 99 Problems #1  
+**Difficulty**: ⭐
+**Category**: Lists & Pattern Matching
+**Source**: [OCaml.org 99 Problems #1](https://ocaml.org/problems#1)
+
+---
 
 ## Problem Statement
 
-Find the last element of a list.
+Find the last element of a list. Return `None` if the list is empty.
+
+```
+last([1, 2, 3, 4])  →  Some(4)
+last([])             →  None
+```
+
+---
 
 ## Learning Outcomes
 
-- Pattern matching on lists
-- Recursive thinking
-- Handling edge cases (empty list)
-- Multiple solution approaches
+- How Rust slice patterns (`[x]`, `[_, rest @ ..]`) mirror OCaml list patterns
+- The difference between borrowing (`&[T]` / `Option<&T>`) and ownership
+- Why Rust prefers iteration over recursion for list traversal
+- Three idiomatic ways to reach the same result
+
+---
 
 ## OCaml Approach
 
-OCaml uses pattern matching to destructure lists. The standard library provides `List.rev` + `List.hd`, but the idiomatic solution is recursive pattern matching.
+OCaml uses linked lists and recursive pattern matching as a first-class idiom:
+
+```ocaml
+let rec last = function
+  | []  -> None
+  | [x] -> Some x
+  | _ :: t -> last t
+```
+
+The compiler optimises tail calls, so deep recursion is safe. The standard
+library's `List.rev` + head-match is also common.
 
 ## Rust Approach
 
-Rust provides `.last()` method on slices for O(1) access. For functional approach, we can use pattern matching with slice patterns or recursion.
+Rust represents sequences as slices (`&[T]`), which are contiguous in memory.
+This enables O(1) random access, so `slice::last()` is the natural first
+choice. Recursive slice-pattern matching is supported but not tail-call
+optimised, making it educational rather than production-grade.
+
+```rust
+// O(1) — preferred
+pub fn last<T>(list: &[T]) -> Option<&T> {
+    list.last()
+}
+```
+
+---
 
 ## Key Differences
 
-1. **Ownership:** Rust returns `Option<&T>` (reference), OCaml returns `'a option` (value)
-2. **Performance:** Rust O(1) with `.last()`, OCaml O(n) with recursive solution
-3. **Safety:** Both handle empty list safely via Option type
-4. **Ergonomics:** Rust's slice indexing is simpler for this case
-
-## Related Concepts
-
-- Pattern matching
-- Option/Maybe type
-- List traversal
-- Tail recursion (see example.ml)
+| Aspect | OCaml | Rust |
+|--------|-------|------|
+| Primary sequence type | Linked list | Slice / Vec |
+| Recursive style | Idiomatic, TCO guaranteed | Supported, no TCO |
+| Null safety | `option` type | `Option<T>` |
+| Memory model | GC-managed | Borrow checker enforces lifetimes |
+| Stdlib call | `List.rev lst \| List.hd_opt` | `slice.last()` |

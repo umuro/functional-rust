@@ -1,222 +1,126 @@
-# OCaml vs Rust: Last Element
+# OCaml vs Rust: Last Element of a List
 
-## Side-by-Side Comparison
+## Side-by-Side Code
 
-### OCaml (Functional)
+### OCaml — idiomatic recursive
 ```ocaml
 let rec last = function
-  | [] -> None
+  | []  -> None
   | [x] -> Some x
   | _ :: t -> last t
 ```
 
-### Rust (Idiomatic)
-```rust
-fn last<T>(list: &[T]) -> Option<&T> {
-    list.last()
-}
-```
-
-### Rust (Functional Style)
-```rust
-fn last<T>(list: &[T]) -> Option<&T> {
-    match list {
-        [] => None,
-        [.., last] => Some(last),
-    }
-}
-```
-
----
-
-## Key Differences
-
-### 1. **Data Structure**
-
-| OCaml | Rust |
-|-------|------|
-| `'a list` - Linked list (cons cells) | `&[T]` - Slice (contiguous memory) |
-| Head access O(1), tail access O(1) | Index access O(1), any position |
-| Recursive structure | Array view |
-
-**Impact:** OCaml naturally uses recursion, Rust naturally uses indexing.
-
-### 2. **Ownership & Borrowing**
-
-| OCaml | Rust |
-|-------|------|
-| `Some x` - Returns owned value | `Some(&x)` - Returns borrowed reference |
-| Garbage collected | Borrow checker enforced |
-| No lifetime concerns | Lifetime must be valid |
-
-**OCaml:**
+### OCaml — stdlib (`List.rev`)
 ```ocaml
-let x = last [1; 2; 3]  (* x owns the value *)
+let last_stdlib lst =
+  match List.rev lst with
+  | []    -> None
+  | h :: _ -> Some h
 ```
 
-**Rust:**
-```rust
-let list = vec![1, 2, 3];
-let x = last(&list);  // x borrows from list
-// list must stay alive while x exists
-```
-
-### 3. **Pattern Matching Syntax**
-
-| Feature | OCaml | Rust |
-|---------|-------|------|
-| Empty list | `[]` | `[]` |
-| Single element | `[x]` | `[x]` |
-| Head + tail | `h :: t` | `[h, rest @ ..]` |
-| All but last | N/A | `[init @ .., _]` |
-| **Last element** | Manual recursion | `[.., last]` ✨ |
-
-**Rust advantage:** Slice patterns can match from the end!
-
-```rust
-match list {
-    [.., last] => Some(last),  // Direct last element match
-}
-```
-
-### 4. **Performance**
-
-| Approach | OCaml | Rust |
-|----------|-------|------|
-| Recursive | O(n) - Must traverse | O(n) - Stack overhead |
-| Built-in | O(n) - `List.rev` then head | O(1) - Direct slice access ✨ |
-| Memory | Stack frames | No recursion needed |
-
-**Rust wins:** `.last()` is instant because slices know their length.
-
-### 5. **Tail Recursion**
-
-**OCaml (optimized):**
+### OCaml — tail-recursive
 ```ocaml
 let last_tail lst =
   let rec aux acc = function
-    | [] -> acc
+    | []     -> acc
     | h :: t -> aux (Some h) t
   in
   aux None lst
 ```
 
-**Rust equivalent (but not idiomatic):**
-```rust
-fn last_tail<T>(list: &[T]) -> Option<&T> {
-    list.iter().fold(None, |_, x| Some(x))
-}
-```
-
-**Why tail recursion matters less in Rust:**
-- Slices have O(1) access - no need for recursion
-- Iterators compile to tight loops - no stack overhead
-- `.last()` is already optimal
-
 ---
 
-## When to Use Each Style
-
-### Use `.last()` (Rust idiomatic)
+### Rust — idiomatic (`slice::last`)
 ```rust
-let result = list.last();
-```
-✅ Simple, fast, clear  
-✅ Most common case  
-✅ Communicates intent
-
-### Use pattern matching (learning FP)
-```rust
-match list {
-    [] => None,
-    [.., last] => Some(last),
+pub fn last<T>(list: &[T]) -> Option<&T> {
+    list.last()   // O(1): reads the final index directly
 }
 ```
-✅ Educational value  
-✅ Explicit logic  
-✅ Translating OCaml
 
-### Use recursion (avoid in production)
+### Rust — stdlib via iterator
 ```rust
-fn last_recursive<T>(list: &[T]) -> Option<&T> {
+pub fn last_stdlib<T>(list: &[T]) -> Option<&T> {
+    list.iter().last()   // O(n): visits every element
+}
+```
+
+### Rust — recursive slice patterns
+```rust
+pub fn last_recursive<T>(list: &[T]) -> Option<&T> {
     match list {
-        [] => None,
-        [x] => Some(x),
+        []             => None,
+        [x]            => Some(x),
         [_, rest @ ..] => last_recursive(rest),
     }
 }
 ```
-❌ Stack overflow risk  
-❌ Slower than iteration  
-❌ Not idiomatic Rust  
-✅ OK for learning/comparison
 
 ---
 
-## Type Signatures Explained
+## Comparison Table
 
-### OCaml
+| Aspect | OCaml | Rust |
+|--------|-------|------|
+| Sequence type | `'a list` (linked list, cons cells) | `&[T]` (slice — contiguous memory) |
+| Recursive style | Idiomatic; TCO guaranteed by the compiler | Supported via slice patterns; **no TCO** |
+| Stdlib one-liner | `List.rev lst \| List.hd_opt` — O(n) | `slice.last()` — O(1) |
+| Null safety | `'a option` | `Option<T>` |
+| Memory management | GC | Borrow checker / lifetimes |
+| Return type | Owned value (`'a option`) | Borrowed reference (`Option<&T>`) |
+
+---
+
+## Type Signatures
+
 ```ocaml
+(* OCaml — polymorphic, returns owned value *)
 val last : 'a list -> 'a option
 ```
-- `'a` = type parameter (any type)
-- `'a list` = list of any type
-- `'a option` = Some value or None
-- **Returns owned value**
 
-### Rust
 ```rust
+// Rust — generic, returns borrowed reference
 fn last<T>(list: &[T]) -> Option<&T>
+//          ^^^^  borrows     ^ borrows back from input
 ```
-- `<T>` = generic type parameter
-- `&[T]` = borrowed slice of T
-- `Option<&T>` = Some reference or None
-- **Returns borrowed reference** (note the `&`)
 
-**Ownership difference:**
-```rust
-let list = vec![1, 2, 3];
-let x = last(&list);  // x is Option<&i32>
-// list still owns the data, x just borrows
-```
+The key difference: OCaml's `Some x` copies (or shares via GC) the value.
+Rust's `Some(&x)` is a reference into the original slice — the caller must keep
+`list` alive for as long as the returned `Option<&T>` is used.
 
 ---
 
-## Compilation & Testing
+## Slice Patterns vs Cons Patterns
 
-### OCaml
-```bash
-ocaml example.ml
-# ✓ All tests passed
-```
+| Feature | OCaml | Rust |
+|---------|-------|------|
+| Empty | `[]` | `[]` |
+| Single element | `[x]` | `[x]` |
+| Head + tail | `h :: t` | `[h, rest @ ..]` |
+| Last element direct | *(requires recursion)* | `[.., last]` |
 
-### Rust
-```bash
-rustc example.rs && ./example
-# last([1,2,3,4]) = Some(4)
-# last([]) = None
-# ✓ All tests passed
-
-cargo test
-# running 4 tests
-# test tests::test_all_implementations ... ok
-# test tests::test_empty ... ok
-# test tests::test_multiple ... ok
-# test tests::test_single ... ok
-```
+Rust slice patterns can match from **either end**, which OCaml cons patterns
+cannot — `[.., last]` directly binds the final element with no recursion.
 
 ---
 
-## Takeaways
+## 5 Takeaways
 
-1. **Rust's `.last()` is more efficient** - O(1) vs O(n)
-2. **Pattern matching works similarly** - syntax slightly different
-3. **Ownership matters** - Rust returns references, OCaml returns values
-4. **Slice patterns are powerful** - `[.., last]` is elegant
-5. **Recursion less important in Rust** - iterators + indexing preferred
+1. **`slice::last()` is O(1) in Rust; the recursive OCaml version is O(n).**
+   Slices know their length, so the stdlib call is a single pointer addition.
 
-**Philosophy:**
-- OCaml: Recursion is natural (linked lists)
-- Rust: Iteration is natural (contiguous arrays)
+2. **Rust has no guaranteed tail-call optimisation.**
+   The idiomatic answer to "tail-recursive traversal" in Rust is an iterator,
+   not explicit recursion.
 
-Both are functional, but Rust optimizes for the metal. 🦀
+3. **Rust returns a borrow, OCaml returns a value.**
+   `Option<&T>` ties the returned reference's lifetime to the slice. This is
+   the borrow checker at work — memory safety without GC.
+
+4. **Slice patterns mirror cons patterns almost 1-to-1.**
+   Translating `_ :: t -> last t` to `[_, rest @ ..] => last_recursive(rest)`
+   is mechanical, making OCaml → Rust migration of pattern-heavy code readable.
+
+5. **Prefer iteration over recursion in Rust.**
+   `list.iter().last()` and `list.last()` compile to tight loops or single
+   instructions with no stack growth — the idiomatic preference in a language
+   without TCO.
