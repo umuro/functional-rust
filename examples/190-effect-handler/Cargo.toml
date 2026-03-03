@@ -1,0 +1,4 @@
+[package]
+name = "example-190-effect-handler"
+version = "0.1.0"
+edition = "2021"

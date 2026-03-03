@@ -1,12 +1,43 @@
-# Natural Transformations — Structure-Preserving Maps Between Functors
+# Example 228: Natural Transformations
 
+**Difficulty:** ⭐⭐⭐
 **Category:** Category Theory
-**Difficulty:** Expert
+**OCaml Source:** Bartosz Milewski — *Category Theory for Programmers*, Chapter 10
 
-## What This Teaches
+## Problem Statement
 
-Compose, combine, and verify natural transformations
+Implement and verify natural transformations between functors — structure-preserving
+maps that commute with `fmap`. Demonstrate the naturality condition, horizontal
+composition, and the relationship between List and Option functors.
 
-## The Core Idea
+## Learning Outcomes
 
-See `example.ml` for the OCaml source and `example.rs` for the Rust translation.
+- What a natural transformation is in programming terms: a polymorphic function `F<A> → G<A>`
+- How to verify the naturality square: `nat(fmap f xs) == fmap f (nat xs)`
+- How natural transformations compose to form the functor category
+- How Rust's generic functions encode parametric naturality by construction
+
+## OCaml Approach
+
+OCaml expresses natural transformations as polymorphic functions. The naturality
+condition is verified with `List.map` and `Option.map`. Higher-order functions accept
+both the morphism `f` and the nat transformation `nat`, checking both sides of the
+commutative square. The structural equality `=` makes the check concise.
+
+## Rust Approach
+
+Rust uses generic functions bounded by `Clone` and `PartialEq` to implement nat
+transformations. Because Rust lacks polymorphic function values (no rank-2 types),
+`verify_naturality` takes two monomorphized copies of the nat transformation — one
+for each type — which the compiler instantiates automatically from the same generic
+function. Composition is a simple function call chain.
+
+## Key Differences
+
+1. **Polymorphism:** OCaml's `'a list -> 'a option` is intrinsically polymorphic; Rust
+   monomorphizes each use, so `verify_naturality` needs `nat_t` and `nat_u` separately.
+2. **Ownership:** Rust returns owned `T` (via `.cloned()`) rather than references, keeping
+   the API simple at the cost of requiring `T: Clone`.
+3. **Naturality by construction:** Rust's parametric generics guarantee naturality for free
+   — any `fn<T>(Vec<T>) -> Option<T>` that doesn't inspect `T` is automatically natural.
+4. **Composition:** OCaml uses function application; Rust is identical — `option_to_vec(safe_head(list))` chains two nat transformations directly.

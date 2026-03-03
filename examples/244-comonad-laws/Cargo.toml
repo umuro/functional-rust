@@ -1,0 +1,4 @@
+[package]
+name = "example-244-comonad-laws"
+version = "0.1.0"
+edition = "2021"

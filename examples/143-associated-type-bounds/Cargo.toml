@@ -1,0 +1,4 @@
+[package]
+name = "example-143-associated-type-bounds"
+version = "0.1.0"
+edition = "2021"

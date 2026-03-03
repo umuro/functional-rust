@@ -1,0 +1,4 @@
+[package]
+name = "example-186-free-monad-interp"
+version = "0.1.0"
+edition = "2021"

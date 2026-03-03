@@ -1,0 +1,4 @@
+[package]
+name = "example-198-church-encoding"
+version = "0.1.0"
+edition = "2021"
