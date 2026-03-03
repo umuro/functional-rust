@@ -745,3 +745,23 @@ version = "0.1.0"
 [[package]]
 name = "example-255-lazy-fibonacci"
 version = "0.1.0"
+
+[[package]]
+name = "example-256-memoization-fibonacci"
+version = "0.1.0"
+
+[[package]]
+name = "example-257-state-machine-turnstile"
+version = "0.1.0"
+
+[[package]]
+name = "example-258-monadic-option-chaining"
+version = "0.1.0"
+
+[[package]]
+name = "example-259-result-monad-error-chaining"
+version = "0.1.0"
+
+[[package]]
+name = "example-260-functor-comparable-set"
+version = "0.1.0"

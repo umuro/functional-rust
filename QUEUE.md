@@ -1082,7 +1082,7 @@ let fib =
 
 let () = Printf.printf "fib(35) = %d\n" (fib 35)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 032: State Machine — Turnstile
 **Source:** https://dev.realworldocaml.org/
@@ -1111,7 +1111,7 @@ let () =
   ) Locked events in
   Printf.printf "Final: %s\n" (state_name final)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 033: Monadic Option Chaining
 **Source:** https://cs3110.github.io/textbook/chapters/ds/monads.html
@@ -1142,7 +1142,7 @@ let () =
   Printf.printf "%s\n" (show (compute [0; 1]));
   Printf.printf "%s\n" (show (compute []))
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 034: Result Monad — Error Chaining
 **Source:** https://dev.realworldocaml.org/error-handling.html
@@ -1176,7 +1176,7 @@ let () =
     | Error e -> Printf.printf "%s -> Error: %s\n" s e
   ) ["42"; "-3"; "abc"; "7"]
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 035: Functor — Comparable Set
 **Source:** https://dev.realworldocaml.org/functors.html
@@ -1206,7 +1206,7 @@ let () =
   List.iter (Printf.printf "%d ") (IntSet.to_list s);
   print_newline ()
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 036: Binary Search Tree — Insert and Search
 **Source:** https://cs3110.github.io/textbook/chapters/ds/bst.html
@@ -3441,7 +3441,7 @@ let has_dave = List.mem_assoc "Dave" phonebook
 let without_bob = List.remove_assoc "Bob" phonebook
 let () = Printf.printf "Bob: %s, Dave exists: %b\n" bobs_number has_dave
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 032: List.fold_right — Right-to-Left Accumulation
 **Source:** OCaml Standard Library
@@ -3462,7 +3462,7 @@ let () = List.iter (fun x -> Printf.printf "%d " x) result
 let rev_dup lst =
   List.fold_left (fun acc x -> x :: x :: acc) [] lst
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 033: Array.init and Array.map — Array Creation and Transform
 **Source:** OCaml Standard Library
@@ -3477,7 +3477,7 @@ let () = Array.iter (fun x -> Printf.printf "%d " x) squares
 let () = print_newline ()
 let () = Array.iter (fun x -> Printf.printf "%d " x) doubled
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 034: Array.fold_left — Reduce an Array
 **Source:** OCaml Standard Library
@@ -3492,7 +3492,7 @@ let avg = sum /. float_of_int (Array.length values)
 let min_v = Array.fold_left min infinity values
 let () = Printf.printf "Sum: %.2f, Avg: %.2f, Min: %.2f\n" sum avg min_v
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 035: Array.sort — In-Place Sorting
 **Source:** OCaml Standard Library
@@ -3510,7 +3510,7 @@ let () = Array.iter (fun x -> Printf.printf "%d " x) arr
 let desc = Array.copy arr
 let () = Array.sort (fun a b -> compare b a) desc
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 036: Array.blit — Copy Subarray
 **Source:** OCaml Standard Library
@@ -4145,7 +4145,7 @@ let egg_count number =
   in
   do_count number 0
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 032: Sum of Multiples
 **Source:** https://exercism.org/tracks/ocaml/exercises/sum-of-multiples
@@ -4159,7 +4159,7 @@ let sum factors limit =
   |> List.filter (fun i -> List.exists (fun f -> f <> 0 && i mod f = 0) factors)
   |> List.fold_left ( + ) 0
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 033: Triangle Classification
 **Source:** https://exercism.org/tracks/ocaml/exercises/triangle
@@ -4181,7 +4181,7 @@ let is_isosceles a b c =
 let is_scalene a b c =
   is_triangle a b c && (a <> b && b <> c && a <> c)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 034: Difference of Squares
 **Source:** https://exercism.org/tracks/ocaml/exercises/difference-of-squares
@@ -4204,7 +4204,7 @@ let sum_of_squares n =
 let difference_of_squares n =
   square_of_sum n - sum_of_squares n
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 035: Space Age
 **Source:** https://exercism.org/tracks/ocaml/exercises/space-age
@@ -4232,7 +4232,7 @@ let age_on planet seconds =
   let seconds' = Float.of_int seconds in
   earth_years seconds' /. rel_years planet
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 036: Isogram
 **Source:** https://exercism.org/tracks/ocaml/exercises/isogram
@@ -5799,7 +5799,7 @@ let rec bogosort li =
   else
     bogosort (shuffle li)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 032: Sorting algorithms/Cocktail sort
 **Source:** https://rosettacode.org/wiki/Sorting_algorithms/Cocktail_sort
@@ -5846,7 +5846,7 @@ let () =
   print_newline();
 ;;
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 033: Sorting algorithms/Gnome sort
 **Source:** https://rosettacode.org/wiki/Sorting_algorithms/Gnome_sort
@@ -5884,7 +5884,7 @@ val a : int array = [|7; 9; 4; 2; 1; 3; 6; 5; 0; 8|]
 # a ;;
 - : int array = [|0; 1; 2; 3; 4; 5; 6; 7; 8; 9|]
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 034: Sorting algorithms/Stooge sort
 **Source:** https://rosettacode.org/wiki/Sorting_algorithms/Stooge_sort
@@ -5911,7 +5911,7 @@ let stoogesort ar =
   in
   aux 0 (Array.length ar - 1)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 035: Sorting algorithms/Strand sort
 **Source:** https://rosettacode.org/wiki/Sorting_algorithms/Strand_sort
@@ -5933,7 +5933,7 @@ let rec strand_sort (cmp : 'a -> 'a -> int) : 'a list -> 'a list = function
    let strand, rest = extract_strand x xs in
    List.merge cmp strand (strand_sort cmp rest)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 036: Sorting algorithms/Permutation sort
 **Source:** https://rosettacode.org/wiki/Sorting_algorithms/Permutation_sort
