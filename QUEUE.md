@@ -1388,7 +1388,7 @@ let () =
   Printf.printf "%b\n" (is_pangram "The quick brown fox jumps over the lazy dog");
   Printf.printf "%b\n" (is_pangram "Hello world")
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 042: Isogram Check
 **Source:** https://exercism.org/tracks/ocaml/exercises/isogram
@@ -1409,7 +1409,7 @@ let () =
     Printf.printf "%s: %b\n" s (is_isogram s)
   ) ["lumberjacks"; "background"; "eleven"; "subdermatoglyphic"]
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 043: Run-Length Encoding — String Compression
 **Source:** https://exercism.org/tracks/ocaml/exercises/run-length-encoding
@@ -1439,7 +1439,7 @@ let encode s =
 let () =
   Printf.printf "%s\n" (encode "AABCCCDEEEE")
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 044: Balanced Parentheses
 **Source:** https://exercism.org/tracks/ocaml/exercises/matching-brackets
@@ -1467,7 +1467,7 @@ let () =
     Printf.printf "%s: %b\n" s (is_balanced s)
   ) ["([]{})";"([)]";"((()))";"[{()}]";"("]
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 045: Simple Recursive Descent Parser
 **Source:** https://cs3110.github.io/textbook/chapters/interp/parsing.html
@@ -1563,7 +1563,7 @@ let () =
     (to_int zero) (to_int one) (to_int two)
     (to_int three) (to_int six) (to_int nine)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 048: CPS — Continuation-Passing Style
 **Source:** https://cs3110.github.io/textbook/chapters/hop/cps.html
@@ -1627,7 +1627,7 @@ let () =
   let doubled = scale 2.0 (seconds 3.0) in
   Printf.printf "Time: %.1f s\n" (value doubled)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 050: Seq Module — Lazy Sequences in OCaml 4.14+
 **Source:** https://ocaml.org/docs/
@@ -1658,7 +1658,7 @@ let () =
   Seq.take 10 primes |> Seq.iter (Printf.printf "%d ");
   print_newline ()
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 051: Map Module — Frequency Counter
 **Source:** https://ocaml.org/docs/
@@ -1681,7 +1681,7 @@ let () =
   let freq = word_freq "the cat sat on the mat the cat" in
   SMap.iter (Printf.printf "%s: %d\n") freq
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 052: Unfold — Generating Sequences from Seeds
 **Source:** https://cs3110.github.io/textbook/chapters/ds/streams.html
@@ -1713,7 +1713,7 @@ let () =
   List.iter (Printf.printf "%d ") (collatz 6);
   print_newline ()
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 053: Scan Left — Running Accumulation
 **Source:** https://ocaml.org/docs/
@@ -1737,7 +1737,7 @@ let () =
   print_newline ();
   List.iter (Printf.printf "%d ") (running_max [3;1;4;1;5;9;2;6])
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 054: Trie — Prefix Tree for Strings
 **Source:** https://rosettacode.org/wiki/Trie#OCaml
@@ -2239,7 +2239,7 @@ let () =
     Printf.printf "%d: %s\n" n (convert n)
   ) [1; 3; 5; 7; 15; 21; 35; 105; 11]
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 071: Protein Translation — State Machine
 **Source:** https://exercism.org/tracks/ocaml/exercises/protein-translation
@@ -2273,7 +2273,7 @@ let () =
   translate "AUGUUUUCUUAAAUG"
   |> List.iter (Printf.printf "%s ")
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 072: ETL — Extract-Transform-Load
 **Source:** https://exercism.org/tracks/ocaml/exercises/etl
@@ -2297,7 +2297,7 @@ let () =
   let new_data = transform old in
   SMap.iter (Printf.printf "%s: %d\n") new_data
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 073: Luhn Algorithm — Credit Card Validation
 **Source:** https://exercism.org/tracks/ocaml/exercises/luhn
@@ -2327,7 +2327,7 @@ let () =
     Printf.printf "%s: %b\n" s (luhn s)
   ) ["4539 3195 0343 6467"; "8273 1232 7352 0569"; "0000"; "1234"]
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 074: Roman Numerals — Greedy Algorithm
 **Source:** https://exercism.org/tracks/ocaml/exercises/roman-numerals
@@ -2356,7 +2356,7 @@ let () =
   [1; 4; 9; 14; 42; 99; 1994; 2024]
   |> List.iter (fun n -> Printf.printf "%d = %s\n" n (to_roman n))
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 075: Flatten Array — Recursive Nested Structure
 **Source:** https://exercism.org/tracks/ocaml/exercises/flatten-array
