@@ -1,21 +1,6 @@
-# Example 015: Replicate N Times
+# Example 015: Replicate Elements N Times
 
-**Difficulty:** ⭐ Beginner  
-**Category:** Lists & HOF  
-**OCaml Source:** 99 Problems #15  
-
-## Problem
-
-Problem statement for example 15.
-
-## Learning Outcomes
-
-- Pattern matching
-- List traversal
-- Functional transformation
-
-## Key Differences
-
-- **OCaml:** Nested map
-- **Rust:** Iterator-based solution
-- Both use Option/Result for safety
+**Difficulty:** ⭐
+**Category:** Lists, Iteration
+**Concept:** Generalization of duplicate: replicate each element n times. Shows the power of `repeat`/`take` combinators and how a simple recursive helper in OCaml becomes an iterator chain in Rust.
+**OCaml → Rust key insight:** OCaml's `List.init n (fun _ -> x)` becomes Rust's `std::iter::repeat(x).take(n)` — both create n copies of a value lazily.

@@ -1,21 +1,6 @@
-# Example 012: Decode RLE
+# Example 012: Decode Run-Length Encoding
 
-**Difficulty:** ⭐ Beginner  
-**Category:** Lists & HOF  
-**OCaml Source:** 99 Problems #12  
-
-## Problem
-
-Problem statement for example 12.
-
-## Learning Outcomes
-
-- Pattern matching
-- List traversal
-- Functional transformation
-
-## Key Differences
-
-- **OCaml:** Unfold
-- **Rust:** Iterator-based solution
-- Both use Option/Result for safety
+**Difficulty:** ⭐⭐
+**Category:** Lists, Pattern Matching
+**Concept:** The inverse of RLE encoding: expand a compressed representation back into the original list. Demonstrates flat_map/concat_map as the natural tool for one-to-many transformations.
+**OCaml → Rust key insight:** OCaml's `List.concat_map` is Rust's `.flat_map()` — both expand each element into zero or more elements and flatten the result.

@@ -1,21 +1,6 @@
-# Example 013: Direct RLE
+# Example 013: Direct Run-Length Encoding
 
-**Difficulty:** ⭐ Beginner  
-**Category:** Lists & HOF  
-**OCaml Source:** 99 Problems #13  
-
-## Problem
-
-Problem statement for example 13.
-
-## Learning Outcomes
-
-- Pattern matching
-- List traversal
-- Functional transformation
-
-## Key Differences
-
-- **OCaml:** Single pass
-- **Rust:** Iterator-based solution
-- Both use Option/Result for safety
+**Difficulty:** ⭐⭐
+**Category:** Lists, Stateful Recursion
+**Concept:** Unlike the two-step RLE (pack then count), direct RLE counts consecutive duplicates in a single pass. This tests your ability to carry state through recursion or folds.
+**OCaml → Rust key insight:** OCaml's recursive accumulator pattern (`aux count acc = function ...`) translates to Rust's `fold` with mutable accumulator state, or imperative `while` loops — both are idiomatic.
