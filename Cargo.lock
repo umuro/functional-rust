@@ -245,3 +245,23 @@ version = "0.1.0"
 [[package]]
 name = "example-055-list-filter-from-scratch"
 version = "0.1.0"
+
+[[package]]
+name = "example-056-fold-right"
+version = "0.1.0"
+
+[[package]]
+name = "example-057-fold-left"
+version = "0.1.0"
+
+[[package]]
+name = "example-058-variants-days"
+version = "0.1.0"
+
+[[package]]
+name = "example-059-expression-tree"
+version = "0.1.0"
+
+[[package]]
+name = "example-060-option-safe-max"
+version = "0.1.0"

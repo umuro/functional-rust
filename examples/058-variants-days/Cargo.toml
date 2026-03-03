@@ -1,0 +1,4 @@
+[package]
+name = "example-058-variants-days"
+version = "0.1.0"
+edition = "2021"

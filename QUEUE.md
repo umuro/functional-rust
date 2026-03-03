@@ -192,7 +192,7 @@ let () =
   Printf.printf "prod [1;2;3;4;5] = %d\n" (prod [1;2;3;4;5]);
   Printf.printf "cat  [\"a\";\"b\";\"c\"] = %s\n" (cat ["a";"b";"c"])
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
@@ -221,7 +221,7 @@ let () =
   let rev = reverse nums in
   List.iter (Printf.printf "%d ") rev; print_newline ()
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
@@ -253,7 +253,7 @@ let () =
   Printf.printf "Is weekend? %b\n" (is_weekend today);
   Printf.printf "Tomorrow is %s\n" (day_name (next_day today))
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
@@ -291,7 +291,7 @@ let expr = Mul (Add (Num 1., Num 2.), Sub (Num 10., Num 4.))
 let () =
   Printf.printf "%s = %.1f\n" (to_string expr) (eval expr)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
@@ -335,7 +335,7 @@ let () =
   | None   -> ()
   | Some v -> Printf.printf "doubled max = %d\n" v
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
