@@ -1,0 +1,4 @@
+[package]
+name = "example-068-tail-recursive-accumulator"
+version = "0.1.0"
+edition = "2021"

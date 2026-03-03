@@ -1,0 +1,4 @@
+[package]
+name = "example-088-allergies"
+version = "0.1.0"
+edition = "2021"

@@ -1,0 +1,4 @@
+[package]
+name = "example-101-lazy-sequences"
+version = "0.1.0"
+edition = "2021"

@@ -1796,7 +1796,7 @@ let () =
   Printf.printf "lcm(12,18) = %d\n" (lcm 12 18);
   Printf.printf "gcd_list = %d\n" (gcd_list [48; 36; 60; 12])
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 056: Matrix Operations — Functional 2D
 **Source:** https://rosettacode.org/wiki/Matrix_transposition#OCaml
@@ -1828,7 +1828,7 @@ let () =
   let b = [[7;8];[9;10];[11;12]] in
   print_matrix (multiply a b)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 057: Topological Sort — DAG Ordering
 **Source:** https://rosettacode.org/wiki/Topological_sort#OCaml
@@ -1858,7 +1858,7 @@ let () =
   let edges = [("a","b");("a","c");("b","d");("c","d");("d","e")] in
   List.iter (Printf.printf "%s ") (topo_sort edges)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 058: Interpreter — Simple Lambda Calculus
 **Source:** https://cs3110.github.io/textbook/chapters/interp/substitution.html
@@ -1895,7 +1895,7 @@ let () =
   let e = App (Lam ("x", Add (Var "x", Int 1)), Int 41) in
   match eval [] e with VInt n -> Printf.printf "%d\n" n | _ -> ()
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 059: Catamorphism — Generalized Fold on ADTs
 **Source:** https://cs3110.github.io/textbook/chapters/ds/algebraic.html
@@ -1922,7 +1922,7 @@ let () =
   Printf.printf "size=%d sum=%d height=%d\n" (size t) (sum t) (height t);
   List.iter (Printf.printf "%d ") (to_list (mirror t))
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 060: Difference List — O(1) Append
 **Source:** https://cs3110.github.io/textbook/chapters/ds/sequences.html
@@ -1947,7 +1947,7 @@ let () =
   let result = append (append a b) c |> to_list in
   List.iter (Printf.printf "%d ") result
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 061: Nucleotide Count — Bioinformatics
 **Source:** https://exercism.org/tracks/ocaml/exercises/nucleotide-count
@@ -1971,7 +1971,7 @@ let () =
   let counts = nucleotide_count "GATTACA" in
   CMap.iter (Printf.printf "%c: %d\n") counts
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 062: Robot Simulator — State with Immutable Records
 **Source:** https://exercism.org/tracks/ocaml/exercises/robot-simulator
@@ -2008,7 +2008,7 @@ let () =
   let r = run r [Advance; TurnRight; Advance; Advance; TurnLeft; Advance] in
   Printf.printf "(%d, %d)\n" r.x r.y
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 063: Phone Number Parser — Validation Pipeline
 **Source:** https://exercism.org/tracks/ocaml/exercises/phone-number
@@ -2040,7 +2040,7 @@ let () =
     | Error e -> Printf.printf "%s -> Error: %s\n" s e
   ) ["(223) 456-7890"; "1-223-456-7890"; "(023) 456-7890"]
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 064: Accumulate — Custom Map
 **Source:** https://exercism.org/tracks/ocaml/exercises/accumulate
@@ -2067,7 +2067,7 @@ let () =
   accumulate String.uppercase_ascii ["hello";"world"]
   |> List.iter (Printf.printf "%s ")
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 065: Space Age — Float Computation
 **Source:** https://exercism.org/tracks/ocaml/exercises/space-age
@@ -2095,7 +2095,7 @@ let () =
     Printf.printf "%.2f years on planet\n" (age_on p seconds)
   ) planets
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 066: Difference of Squares
 **Source:** https://exercism.org/tracks/ocaml/exercises/difference-of-squares
@@ -2120,7 +2120,7 @@ let () =
       n (square_of_sum n) (sum_of_squares n) (difference n)
   done
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 067: Allergies — Bitflag Decoding
 **Source:** https://exercism.org/tracks/ocaml/exercises/allergies
@@ -2154,7 +2154,7 @@ let () =
   Printf.printf "Score %d: " score;
   allergies score |> List.iter (fun a -> Printf.printf "%s " (name a))
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 068: Bob — String Pattern Matching
 **Source:** https://exercism.org/tracks/ocaml/exercises/bob
@@ -2186,7 +2186,7 @@ let () =
     Printf.printf "%s -> %s\n" s (response_for s)
   ) ["WATCH OUT!"; "Does this work?"; "WHAT?!"; "   "; "Hi"]
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 069: Perfect Numbers — Classification
 **Source:** https://exercism.org/tracks/ocaml/exercises/perfect-numbers
@@ -2218,7 +2218,7 @@ let () =
   [6; 28; 12; 7; -1] |> List.iter (fun n ->
     Printf.printf "%d: %s\n" n (name (classify n)))
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 070: Raindrops — FizzBuzz Variant
 **Source:** https://exercism.org/tracks/ocaml/exercises/raindrops
@@ -9336,3 +9336,2838 @@ val str : string = "some text"
 **Status:** [ ]
 Generated 27 more entries
 
+
+### 061: Pattern Matching Basics
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/data/pattern_matching.html
+**Topic:** Match expressions for structured data decomposition
+**Difficulty:** Beginner
+**Category:** pattern-matching
+**OCaml:**
+```ocaml
+let describe_list = function
+  | [] -> "empty"
+  | [x] -> Printf.sprintf "singleton: %d" x
+  | [x; y] -> Printf.sprintf "pair: %d, %d" x y
+  | x :: _ -> Printf.sprintf "starts with %d" x
+
+let () =
+  List.iter (fun lst ->
+    Printf.printf "%s\n" (describe_list lst)
+  ) [[]; [1]; [2;3]; [4;5;6]]
+```
+**Status:** [ ]
+
+### 062: Recursive List Functions
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/data/lists.html
+**Topic:** Write recursive functions over lists
+**Difficulty:** Beginner
+**Category:** recursion
+**OCaml:**
+```ocaml
+let rec length = function
+  | [] -> 0
+  | _ :: tl -> 1 + length tl
+
+let rec append l1 l2 = match l1 with
+  | [] -> l2
+  | hd :: tl -> hd :: append tl l2
+
+let rec rev_acc acc = function
+  | [] -> acc
+  | hd :: tl -> rev_acc (hd :: acc) tl
+let rev = rev_acc []
+
+let () = Printf.printf "length: %d\n" (length [1;2;3;4;5])
+let () = List.iter (fun x -> Printf.printf "%d " x) (rev [1;2;3])
+```
+**Status:** [ ]
+
+### 063: Algebraic Data Types — Binary Tree
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/data/algebraic_data_types.html
+**Topic:** Define and traverse a binary tree with variants
+**Difficulty:** Intermediate
+**Category:** algebraic-types
+**OCaml:**
+```ocaml
+type 'a tree =
+  | Leaf
+  | Node of 'a tree * 'a * 'a tree
+
+let rec insert x = function
+  | Leaf -> Node (Leaf, x, Leaf)
+  | Node (l, v, r) ->
+    if x < v then Node (insert x l, v, r)
+    else if x > v then Node (l, v, insert x r)
+    else Node (l, v, r)
+
+let rec inorder = function
+  | Leaf -> []
+  | Node (l, v, r) -> inorder l @ [v] @ inorder r
+
+let tree = List.fold_left (fun t x -> insert x t) Leaf [5;3;7;1;4;6;8]
+let () = List.iter (fun x -> Printf.printf "%d " x) (inorder tree)
+```
+**Status:** [ ]
+
+### 064: Higher-Order Functions — Map and Filter from Scratch
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/hop/higher_order.html
+**Topic:** Implement map and filter as higher-order functions
+**Difficulty:** Beginner
+**Category:** higher-order
+**OCaml:**
+```ocaml
+let rec my_map f = function
+  | [] -> []
+  | x :: xs -> f x :: my_map f xs
+
+let rec my_filter pred = function
+  | [] -> []
+  | x :: xs ->
+    if pred x then x :: my_filter pred xs
+    else my_filter pred xs
+
+let squares = my_map (fun x -> x * x) [1;2;3;4;5]
+let big = my_filter (fun x -> x > 10) squares
+let () = List.iter (fun x -> Printf.printf "%d " x) big
+```
+**Status:** [ ]
+
+### 065: Tail Recursion
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/data/lists.html
+**Topic:** Convert recursive functions to tail-recursive form
+**Difficulty:** Intermediate
+**Category:** recursion
+**OCaml:**
+```ocaml
+(* Non-tail-recursive: stack overflow on large lists *)
+let rec sum_naive = function
+  | [] -> 0
+  | x :: xs -> x + sum_naive xs
+
+(* Tail-recursive with accumulator *)
+let sum lst =
+  let rec aux acc = function
+    | [] -> acc
+    | x :: xs -> aux (acc + x) xs
+  in aux 0 lst
+
+(* Tail-recursive map using rev *)
+let map f lst =
+  let rec aux acc = function
+    | [] -> List.rev acc
+    | x :: xs -> aux (f x :: acc) xs
+  in aux [] lst
+
+let () = Printf.printf "Sum: %d\n" (sum (List.init 1000000 Fun.id))
+```
+**Status:** [ ]
+
+### 066: Records and Named Fields
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/data/records.html
+**Topic:** Define and use record types
+**Difficulty:** Beginner
+**Category:** records
+**OCaml:**
+```ocaml
+type student = {
+  name : string;
+  id : int;
+  gpa : float;
+  year : int;
+}
+
+let alice = { name = "Alice"; id = 1001; gpa = 3.8; year = 3 }
+let bob = { name = "Bob"; id = 1002; gpa = 3.5; year = 2 }
+
+let promote s = { s with year = s.year + 1 }
+let alice_next = promote alice
+
+let honor_roll students =
+  List.filter (fun s -> s.gpa >= 3.7) students
+
+let () = Printf.printf "%s (year %d, GPA %.1f)\n"
+  alice_next.name alice_next.year alice_next.gpa
+```
+**Status:** [ ]
+
+### 067: Modules and Signatures
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/modules/modules.html
+**Topic:** Define modules with signatures for encapsulation
+**Difficulty:** Intermediate
+**Category:** modules
+**OCaml:**
+```ocaml
+module type STACK = sig
+  type 'a t
+  val empty : 'a t
+  val push : 'a -> 'a t -> 'a t
+  val pop : 'a t -> ('a * 'a t) option
+  val is_empty : 'a t -> bool
+end
+
+module ListStack : STACK = struct
+  type 'a t = 'a list
+  let empty = []
+  let push x s = x :: s
+  let pop = function
+    | [] -> None
+    | x :: xs -> Some (x, xs)
+  let is_empty = function [] -> true | _ -> false
+end
+
+let s = ListStack.(empty |> push 1 |> push 2 |> push 3)
+let () = match ListStack.pop s with
+  | Some (x, _) -> Printf.printf "Top: %d\n" x
+  | None -> print_endline "Empty"
+```
+**Status:** [ ]
+
+### 068: Functors — Parameterized Modules
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/modules/functors.html
+**Topic:** Create modules parameterized by other modules
+**Difficulty:** Advanced
+**Category:** functors
+**OCaml:**
+```ocaml
+module type COMPARABLE = sig
+  type t
+  val compare : t -> t -> int
+end
+
+module MakeSortedList (C : COMPARABLE) = struct
+  type t = C.t list
+  let empty = []
+  let rec insert x = function
+    | [] -> [x]
+    | hd :: tl ->
+      if C.compare x hd <= 0 then x :: hd :: tl
+      else hd :: insert x tl
+  let to_list t = t
+end
+
+module IntSorted = MakeSortedList(Int)
+let s = List.fold_left (fun acc x -> IntSorted.insert x acc) IntSorted.empty [5;3;7;1;4]
+let () = List.iter (fun x -> Printf.printf "%d " x) (IntSorted.to_list s)
+```
+**Status:** [ ]
+
+### 069: Mutable State — Refs and Loops
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/mut/refs.html
+**Topic:** Use references for mutable state
+**Difficulty:** Beginner
+**Category:** mutability
+**OCaml:**
+```ocaml
+let counter = ref 0
+
+let next () =
+  let v = !counter in
+  counter := v + 1;
+  v
+
+let () =
+  for _ = 1 to 5 do
+    Printf.printf "%d " (next ())
+  done;
+  print_newline ()
+
+(* Imperative factorial *)
+let factorial n =
+  let result = ref 1 in
+  for i = 2 to n do
+    result := !result * i
+  done;
+  !result
+
+let () = Printf.printf "10! = %d\n" (factorial 10)
+```
+**Status:** [ ]
+
+### 070: Mutable Records and Arrays
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/mut/mutable_fields.html
+**Topic:** Mutable record fields for stateful objects
+**Difficulty:** Intermediate
+**Category:** mutability
+**OCaml:**
+```ocaml
+type counter = {
+  mutable count : int;
+  name : string;
+}
+
+let make_counter name = { count = 0; name }
+
+let increment c = c.count <- c.count + 1
+let reset c = c.count <- 0
+let value c = c.count
+
+let c = make_counter "clicks"
+let () =
+  for _ = 1 to 10 do increment c done;
+  Printf.printf "%s: %d\n" c.name (value c);
+  reset c;
+  Printf.printf "After reset: %d\n" (value c)
+```
+**Status:** [ ]
+
+### 071: Exceptions — Define, Raise, Handle
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/data/exceptions.html
+**Topic:** Custom exceptions and exception handling
+**Difficulty:** Intermediate
+**Category:** exceptions
+**OCaml:**
+```ocaml
+exception Invalid_input of string
+exception Out_of_range of { value: int; min: int; max: int }
+
+let safe_sqrt x =
+  if x < 0.0 then raise (Invalid_input "negative number")
+  else sqrt x
+
+let clamp ~min ~max x =
+  if x < min || x > max then
+    raise (Out_of_range { value = x; min; max })
+  else x
+
+let () =
+  (try Printf.printf "sqrt(4) = %.1f\n" (safe_sqrt 4.0) with _ -> ());
+  (try ignore (safe_sqrt (-1.0)) with
+   | Invalid_input msg -> Printf.printf "Error: %s\n" msg);
+  (try ignore (clamp ~min:0 ~max:100 150) with
+   | Out_of_range r -> Printf.printf "Out of range: %d not in [%d,%d]\n" r.value r.min r.max)
+```
+**Status:** [ ]
+
+### 072: Variant Types — Shape Calculator
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/data/algebraic_data_types.html
+**Topic:** Use variants to model different cases
+**Difficulty:** Beginner
+**Category:** algebraic-types
+**OCaml:**
+```ocaml
+type shape =
+  | Circle of float
+  | Rectangle of float * float
+  | Triangle of float * float * float
+
+let area = function
+  | Circle r -> Float.pi *. r *. r
+  | Rectangle (w, h) -> w *. h
+  | Triangle (a, b, c) ->
+    let s = (a +. b +. c) /. 2.0 in
+    sqrt (s *. (s -. a) *. (s -. b) *. (s -. c))
+
+let perimeter = function
+  | Circle r -> 2.0 *. Float.pi *. r
+  | Rectangle (w, h) -> 2.0 *. (w +. h)
+  | Triangle (a, b, c) -> a +. b +. c
+
+let shapes = [Circle 5.0; Rectangle (3.0, 4.0); Triangle (3.0, 4.0, 5.0)]
+let () = List.iter (fun s ->
+  Printf.printf "Area: %.2f, Perimeter: %.2f\n" (area s) (perimeter s)
+) shapes
+```
+**Status:** [ ]
+
+### 073: Polymorphic Variants
+**Source:** Real World OCaml — https://dev.realworldocaml.org/variants.html
+**Topic:** Open variant types with backtick syntax
+**Difficulty:** Advanced
+**Category:** variants
+**OCaml:**
+```ocaml
+let describe_color = function
+  | `Red -> "red"
+  | `Green -> "green"
+  | `Blue -> "blue"
+  | `Custom (r, g, b) -> Printf.sprintf "rgb(%d,%d,%d)" r g b
+
+let is_primary = function
+  | `Red | `Green | `Blue -> true
+  | `Custom _ -> false
+
+let colors = [`Red; `Blue; `Custom (128, 0, 255)]
+let () = List.iter (fun c ->
+  Printf.printf "%s (primary: %b)\n" (describe_color c) (is_primary c)
+) colors
+```
+**Status:** [ ]
+
+### 074: GADTs — Type-Safe Expression Evaluator
+**Source:** Real World OCaml — https://dev.realworldocaml.org/gadts.html
+**Topic:** Generalized algebraic data types for type safety
+**Difficulty:** Advanced
+**Category:** gadts
+**OCaml:**
+```ocaml
+type _ expr =
+  | Int : int -> int expr
+  | Bool : bool -> bool expr
+  | Add : int expr * int expr -> int expr
+  | If : bool expr * 'a expr * 'a expr -> 'a expr
+  | Eq : int expr * int expr -> bool expr
+
+let rec eval : type a. a expr -> a = function
+  | Int n -> n
+  | Bool b -> b
+  | Add (a, b) -> eval a + eval b
+  | If (cond, t, f) -> if eval cond then eval t else eval f
+  | Eq (a, b) -> eval a = eval b
+
+let result = eval (If (Eq (Add (Int 2, Int 3), Int 5), Int 1, Int 0))
+let () = Printf.printf "Result: %d\n" result
+```
+**Status:** [ ]
+
+### 075: First-Class Modules
+**Source:** Real World OCaml — https://dev.realworldocaml.org/first-class-modules.html
+**Topic:** Pack and unpack modules as values
+**Difficulty:** Advanced
+**Category:** modules
+**OCaml:**
+```ocaml
+module type SHOWABLE = sig
+  type t
+  val to_string : t -> string
+end
+
+let show (type a) (module S : SHOWABLE with type t = a) (x : a) =
+  S.to_string x
+
+let int_show = (module struct
+  type t = int
+  let to_string = string_of_int
+end : SHOWABLE with type t = int)
+
+let float_show = (module struct
+  type t = float
+  let to_string = Printf.sprintf "%.2f"
+end : SHOWABLE with type t = float)
+
+let () =
+  Printf.printf "%s\n" (show int_show 42);
+  Printf.printf "%s\n" (show float_show 3.14)
+```
+**Status:** [ ]
+
+### 076: Objects in OCaml
+**Source:** Real World OCaml — https://dev.realworldocaml.org/objects.html
+**Topic:** Object-oriented features in OCaml
+**Difficulty:** Advanced
+**Category:** objects
+**OCaml:**
+```ocaml
+class point x_init y_init = object (self)
+  val mutable x = x_init
+  val mutable y = y_init
+  method get_x = x
+  method get_y = y
+  method move dx dy = x <- x + dx; y <- y + dy
+  method distance_to (other : point) =
+    let dx = float_of_int (x - other#get_x) in
+    let dy = float_of_int (y - other#get_y) in
+    sqrt (dx *. dx +. dy *. dy)
+  method to_string = Printf.sprintf "(%d, %d)" x y
+end
+
+let p1 = new point 0 0
+let p2 = new point 3 4
+let () =
+  Printf.printf "Distance: %.1f\n" (p1#distance_to p2);
+  p1#move 1 1;
+  Printf.printf "p1 moved to %s\n" p1#to_string
+```
+**Status:** [ ]
+
+### 077: Lazy Evaluation
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/ds/streams.html
+**Topic:** Delay computation with lazy values
+**Difficulty:** Intermediate
+**Category:** lazy-evaluation
+**OCaml:**
+```ocaml
+let expensive_computation () =
+  Printf.printf "Computing...\n";
+  List.init 1000 Fun.id |> List.fold_left ( + ) 0
+
+let lazy_val = lazy (expensive_computation ())
+
+let () =
+  Printf.printf "Before force\n";
+  let v1 = Lazy.force lazy_val in
+  Printf.printf "First: %d\n" v1;
+  let v2 = Lazy.force lazy_val in  (* cached, no recomputation *)
+  Printf.printf "Second: %d\n" v2
+```
+**Status:** [ ]
+
+### 078: Mutual Recursion
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/data/algebraic_data_types.html
+**Topic:** Define mutually recursive functions with 'and'
+**Difficulty:** Intermediate
+**Category:** recursion
+**OCaml:**
+```ocaml
+let rec is_even n =
+  if n = 0 then true
+  else is_odd (n - 1)
+and is_odd n =
+  if n = 0 then false
+  else is_even (n - 1)
+
+(* Mutually recursive types *)
+type 'a tree = Node of 'a * 'a forest
+and 'a forest = 'a tree list
+
+let rec tree_size (Node (_, children)) = 1 + forest_size children
+and forest_size = function
+  | [] -> 0
+  | t :: ts -> tree_size t + forest_size ts
+
+let t = Node (1, [Node (2, []); Node (3, [Node (4, [])])])
+let () = Printf.printf "Tree size: %d\n" (tree_size t)
+```
+**Status:** [ ]
+
+### 079: Pipe Operator and Function Composition
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/hop/pipelining.html
+**Topic:** Chain operations with |> and compose functions
+**Difficulty:** Beginner
+**Category:** higher-order
+**OCaml:**
+```ocaml
+let ( >> ) f g x = g (f x)
+
+let process =
+  String.split_on_char ' '
+  >> List.filter (fun s -> s <> "")
+  >> List.map String.uppercase_ascii
+  >> List.sort String.compare
+  >> String.concat ", "
+
+let result = process "  the quick  brown fox  "
+let () = Printf.printf "Result: %s\n" result
+
+(* With pipe operator *)
+let result2 =
+  [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
+  |> List.filter (fun x -> x mod 2 = 0)
+  |> List.map (fun x -> x * x)
+  |> List.fold_left ( + ) 0
+let () = Printf.printf "Sum of even squares: %d\n" result2
+```
+**Status:** [ ]
+
+### 080: Recursive Descent Parser
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/interp/parsing.html
+**Topic:** Build a simple arithmetic expression parser
+**Difficulty:** Advanced
+**Category:** parsing
+**OCaml:**
+```ocaml
+type expr = Num of int | Add of expr * expr | Mul of expr * expr
+
+let rec parse_expr tokens =
+  let (left, rest) = parse_term tokens in
+  match rest with
+  | "+" :: rest2 ->
+    let (right, rest3) = parse_expr rest2 in
+    (Add (left, right), rest3)
+  | _ -> (left, rest)
+and parse_term tokens =
+  let (left, rest) = parse_atom tokens in
+  match rest with
+  | "*" :: rest2 ->
+    let (right, rest3) = parse_term rest2 in
+    (Mul (left, right), rest3)
+  | _ -> (left, rest)
+and parse_atom = function
+  | n :: rest -> (Num (int_of_string n), rest)
+  | [] -> failwith "unexpected end"
+
+let rec eval = function
+  | Num n -> n | Add (a,b) -> eval a + eval b | Mul (a,b) -> eval a * eval b
+
+let tokens = String.split_on_char ' ' "2 + 3 * 4"
+let (ast, _) = parse_expr tokens
+let () = Printf.printf "2 + 3 * 4 = %d\n" (eval ast)
+```
+**Status:** [ ]
+
+### 081: Queue Implemented with Two Stacks
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/ds/amortized.html
+**Topic:** Amortized O(1) queue using two lists
+**Difficulty:** Intermediate
+**Category:** data-structures
+**OCaml:**
+```ocaml
+type 'a queue = { front: 'a list; back: 'a list }
+
+let empty = { front = []; back = [] }
+
+let enqueue x q = { q with back = x :: q.back }
+
+let dequeue q = match q.front with
+  | x :: front -> Some (x, { q with front })
+  | [] -> match List.rev q.back with
+    | [] -> None
+    | x :: front -> Some (x, { front; back = [] })
+
+let of_list lst = { front = lst; back = [] }
+
+let q = empty |> enqueue 1 |> enqueue 2 |> enqueue 3
+let () = match dequeue q with
+  | Some (x, _) -> Printf.printf "Front: %d\n" x
+  | None -> print_endline "Empty"
+```
+**Status:** [ ]
+
+### 082: Association List to Map Conversion
+**Source:** Real World OCaml — https://dev.realworldocaml.org/maps-and-hashtables.html
+**Topic:** Convert between association lists and maps
+**Difficulty:** Intermediate
+**Category:** data-structures
+**OCaml:**
+```ocaml
+module SMap = Map.Make(String)
+
+let alist_to_map lst =
+  List.fold_left (fun m (k, v) -> SMap.add k v m) SMap.empty lst
+
+let map_to_alist m = SMap.bindings m
+
+let data = [("name", "Alice"); ("city", "Amsterdam"); ("lang", "OCaml")]
+let m = alist_to_map data
+let () = SMap.iter (fun k v -> Printf.printf "%s: %s\n" k v) m
+
+(* Update and convert back *)
+let m2 = SMap.add "year" "2024" m |> SMap.remove "city"
+let pairs = map_to_alist m2
+let () = List.iter (fun (k,v) -> Printf.printf "%s=%s " k v) pairs
+```
+**Status:** [ ]
+
+### 083: Phantom Types for Unit Safety
+**Source:** Real World OCaml — https://dev.realworldocaml.org/gadts.html
+**Topic:** Use phantom types to prevent unit confusion
+**Difficulty:** Advanced
+**Category:** type-safety
+**OCaml:**
+```ocaml
+type meters
+type seconds
+type _ quantity = Q of float
+
+let meters (x : float) : meters quantity = Q x
+let seconds (x : float) : seconds quantity = Q x
+
+let add (Q a : 'a quantity) (Q b : 'a quantity) : 'a quantity = Q (a +. b)
+let scale (Q a : 'a quantity) (f : float) : 'a quantity = Q (a *. f)
+let value (Q x : _ quantity) = x
+
+let d1 = meters 100.0
+let d2 = meters 50.0
+let total = add d1 d2  (* OK: same units *)
+let () = Printf.printf "Total: %.1f meters\n" (value total)
+
+(* let bad = add d1 (seconds 5.0)  (* Type error! *) *)
+```
+**Status:** [ ]
+
+### 084: Continuation Passing Style (CPS)
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/hop/higher_order.html
+**Topic:** Transform functions to continuation-passing style
+**Difficulty:** Advanced
+**Category:** higher-order
+**OCaml:**
+```ocaml
+(* Direct style *)
+let rec factorial n =
+  if n <= 1 then 1 else n * factorial (n - 1)
+
+(* CPS style — always tail-recursive *)
+let factorial_cps n =
+  let rec aux n k =
+    if n <= 1 then k 1
+    else aux (n - 1) (fun result -> k (n * result))
+  in aux n Fun.id
+
+(* CPS tree traversal *)
+type 'a tree = Leaf | Node of 'a tree * 'a * 'a tree
+
+let rec sum_cps t k = match t with
+  | Leaf -> k 0
+  | Node (l, v, r) ->
+    sum_cps l (fun sl -> sum_cps r (fun sr -> k (sl + v + sr)))
+
+let () = Printf.printf "5! = %d\n" (factorial_cps 5)
+```
+**Status:** [ ]
+
+### 085: Currying and Partial Application
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/hop/currying.html
+**Topic:** Curried functions and partial application patterns
+**Difficulty:** Beginner
+**Category:** higher-order
+**OCaml:**
+```ocaml
+let add x y = x + y
+let add5 = add 5
+let () = Printf.printf "add5 3 = %d\n" (add5 3)
+
+let multiply x y = x * y
+let double = multiply 2
+let triple = multiply 3
+
+let clamp ~min ~max x =
+  if x < min then min else if x > max then max else x
+
+let clamp_percent = clamp ~min:0 ~max:100
+
+let results = List.map clamp_percent [-5; 42; 150; 99]
+let () = List.iter (fun x -> Printf.printf "%d " x) results
+```
+**Status:** [ ]
+
+### 086: Let Bindings and Scope
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/basics/expressions.html
+**Topic:** Understanding let expressions and lexical scope
+**Difficulty:** Beginner
+**Category:** basics
+**OCaml:**
+```ocaml
+(* let..in creates a local scope *)
+let area_of_ring ~inner ~outer =
+  let pi = Float.pi in
+  let sq r = r *. r in
+  pi *. (sq outer -. sq inner)
+
+(* Shadowing, not mutation *)
+let x = 5
+let x = x + 1  (* new binding, old x is shadowed *)
+let () = Printf.printf "x = %d\n" x  (* 6 *)
+
+(* Nested let..in *)
+let hypotenuse a b =
+  let a2 = a *. a in
+  let b2 = b *. b in
+  sqrt (a2 +. b2)
+
+let () = Printf.printf "Ring area: %.2f\n" (area_of_ring ~inner:3.0 ~outer:5.0)
+let () = Printf.printf "Hypotenuse: %.2f\n" (hypotenuse 3.0 4.0)
+```
+**Status:** [ ]
+
+### 087: Labeled and Optional Arguments
+**Source:** Real World OCaml — https://dev.realworldocaml.org/variables-and-functions.html
+**Topic:** Named parameters and default values
+**Difficulty:** Intermediate
+**Category:** functions
+**OCaml:**
+```ocaml
+let create_greeting ?(title="Mr.") ?(greeting="Hello") ~name () =
+  Printf.sprintf "%s, %s %s!" greeting title name
+
+let () =
+  print_endline (create_greeting ~name:"Smith" ());
+  print_endline (create_greeting ~title:"Dr." ~name:"Jones" ());
+  print_endline (create_greeting ~greeting:"Dear" ~title:"Prof." ~name:"Lee" ())
+
+(* Optional with default *)
+let pad ?(char=' ') ?(width=20) s =
+  let len = String.length s in
+  if len >= width then s
+  else s ^ String.make (width - len) char
+
+let () = Printf.printf "[%s]\n" (pad "hello")
+let () = Printf.printf "[%s]\n" (pad ~char:'.' ~width:15 "hello")
+```
+**Status:** [ ]
+
+### 088: Type Annotations and Constraints
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/basics/functions.html
+**Topic:** Explicit type annotations in OCaml
+**Difficulty:** Beginner
+**Category:** basics
+**OCaml:**
+```ocaml
+(* Parameter annotations *)
+let add (x : int) (y : int) : int = x + y
+
+(* Return type annotation *)
+let divide (x : float) (y : float) : float option =
+  if y = 0.0 then None else Some (x /. y)
+
+(* Polymorphic annotation *)
+let first (pair : 'a * 'b) : 'a = fst pair
+let swap (x : 'a) (y : 'b) : 'b * 'a = (y, x)
+
+(* Type alias *)
+type point = float * float
+type vector = float * float
+
+let translate ((px, py) : point) ((vx, vy) : vector) : point =
+  (px +. vx, py +. vy)
+
+let () =
+  let p = translate (1.0, 2.0) (3.0, 4.0) in
+  Printf.printf "(%.1f, %.1f)\n" (fst p) (snd p)
+```
+**Status:** [ ]
+
+### 089: Imperative Programming — While Loops and Refs
+**Source:** Real World OCaml — https://dev.realworldocaml.org/imperative-programming.html
+**Topic:** Imperative constructs: while, for, refs
+**Difficulty:** Intermediate
+**Category:** imperative
+**OCaml:**
+```ocaml
+(* GCD using while loop *)
+let gcd a b =
+  let a = ref (abs a) and b = ref (abs b) in
+  while !b <> 0 do
+    let t = !b in
+    b := !a mod !b;
+    a := t
+  done;
+  !a
+
+(* Collatz sequence length *)
+let collatz_length n =
+  let n = ref n and steps = ref 0 in
+  while !n <> 1 do
+    if !n mod 2 = 0 then n := !n / 2
+    else n := 3 * !n + 1;
+    incr steps
+  done;
+  !steps
+
+let () =
+  Printf.printf "gcd(48, 36) = %d\n" (gcd 48 36);
+  Printf.printf "collatz(27) = %d steps\n" (collatz_length 27)
+```
+**Status:** [ ]
+
+### 090: Recursive Types — Expression Tree
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/interp/substitution.html
+**Topic:** Define and evaluate a recursive expression type
+**Difficulty:** Intermediate
+**Category:** algebraic-types
+**OCaml:**
+```ocaml
+type expr =
+  | Lit of float
+  | Var of string
+  | Add of expr * expr
+  | Mul of expr * expr
+  | Neg of expr
+
+let rec eval env = function
+  | Lit n -> n
+  | Var x -> List.assoc x env
+  | Add (a, b) -> eval env a +. eval env b
+  | Mul (a, b) -> eval env a *. eval env b
+  | Neg e -> -.(eval env e)
+
+let rec to_string = function
+  | Lit n -> Printf.sprintf "%.0f" n
+  | Var x -> x
+  | Add (a, b) -> Printf.sprintf "(%s + %s)" (to_string a) (to_string b)
+  | Mul (a, b) -> Printf.sprintf "(%s * %s)" (to_string a) (to_string b)
+  | Neg e -> Printf.sprintf "(-%s)" (to_string e)
+
+let e = Add (Mul (Var "x", Lit 2.0), Lit 3.0)
+let () = Printf.printf "%s = %.0f\n" (to_string e) (eval [("x", 5.0)] e)
+```
+**Status:** [ ]
+
+### 091: Tuple Patterns and Destructuring
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/data/pattern_matching.html
+**Topic:** Pattern match on tuples and nested structures
+**Difficulty:** Beginner
+**Category:** pattern-matching
+**OCaml:**
+```ocaml
+let distance (x1, y1) (x2, y2) =
+  let dx = x2 -. x1 and dy = y2 -. y1 in
+  sqrt (dx *. dx +. dy *. dy)
+
+let classify_point = function
+  | (0.0, 0.0) -> "origin"
+  | (x, 0.0) -> Printf.sprintf "x-axis at %.1f" x
+  | (0.0, y) -> Printf.sprintf "y-axis at %.1f" y
+  | (x, y) -> Printf.sprintf "(%.1f, %.1f)" x y
+
+let min_max (a, b) = if a <= b then (a, b) else (b, a)
+
+let () =
+  Printf.printf "Distance: %.2f\n" (distance (0.0, 0.0) (3.0, 4.0));
+  Printf.printf "%s\n" (classify_point (3.0, 0.0));
+  let (lo, hi) = min_max (42, 17) in
+  Printf.printf "min=%d max=%d\n" lo hi
+```
+**Status:** [ ]
+
+### 092: Nested Pattern Matching
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/data/pattern_matching.html
+**Topic:** Complex nested patterns with guards
+**Difficulty:** Intermediate
+**Category:** pattern-matching
+**OCaml:**
+```ocaml
+type card = { suit: string; rank: int }
+
+let card_name c = match c.rank with
+  | 1 -> "Ace of " ^ c.suit
+  | 11 -> "Jack of " ^ c.suit
+  | 12 -> "Queen of " ^ c.suit
+  | 13 -> "King of " ^ c.suit
+  | n -> string_of_int n ^ " of " ^ c.suit
+
+let compare_hands h1 h2 = match (h1, h2) with
+  | ([], []) -> 0
+  | ([], _) -> -1
+  | (_, []) -> 1
+  | (c1 :: _, c2 :: _) when c1.rank <> c2.rank -> compare c2.rank c1.rank
+  | (_ :: rest1, _ :: rest2) -> compare_hands rest1 rest2
+
+let hand = [{ suit="Hearts"; rank=13 }; { suit="Spades"; rank=1 }]
+let () = List.iter (fun c -> Printf.printf "%s\n" (card_name c)) hand
+```
+**Status:** [ ]
+
+### 093: Sequence — Custom Generators
+**Source:** OCaml Standard Library
+**Topic:** Build custom sequence generators
+**Difficulty:** Intermediate
+**Category:** stdlib-seq
+**OCaml:**
+```ocaml
+(* Primes via sieve *)
+let primes =
+  let rec sieve s () = match s () with
+    | Seq.Nil -> Seq.Nil
+    | Seq.Cons (p, rest) ->
+      Seq.Cons (p, sieve (Seq.filter (fun n -> n mod p <> 0) rest))
+  in
+  sieve (Seq.unfold (fun n -> Some (n, n+1)) 2)
+
+let first_20_primes = primes |> Seq.take 20 |> List.of_seq
+let () =
+  List.iter (fun p -> Printf.printf "%d " p) first_20_primes;
+  print_newline ()
+```
+**Status:** [ ]
+
+### 094: Custom Iterators with Sequences
+**Source:** OCaml Standard Library
+**Topic:** Range and step iterators using Seq
+**Difficulty:** Intermediate
+**Category:** stdlib-seq
+**OCaml:**
+```ocaml
+let range ?(step=1) start stop =
+  Seq.unfold (fun i ->
+    if (step > 0 && i < stop) || (step < 0 && i > stop)
+    then Some (i, i + step)
+    else None
+  ) start
+
+let () =
+  range 0 10 |> Seq.iter (fun x -> Printf.printf "%d " x);
+  print_newline ();
+  range ~step:2 0 20 |> Seq.iter (fun x -> Printf.printf "%d " x);
+  print_newline ();
+  range ~step:(-3) 30 0 |> Seq.iter (fun x -> Printf.printf "%d " x);
+  print_newline ()
+```
+**Status:** [ ]
+
+### 095: Map.Make — Group By Key
+**Source:** OCaml Standard Library
+**Topic:** Group list elements by a key function using Map
+**Difficulty:** Intermediate
+**Category:** stdlib-map
+**OCaml:**
+```ocaml
+module SMap = Map.Make(String)
+
+let group_by key_fn lst =
+  List.fold_left (fun m x ->
+    let k = key_fn x in
+    let existing = try SMap.find k m with Not_found -> [] in
+    SMap.add k (x :: existing) m
+  ) SMap.empty lst
+
+let words = ["apple"; "banana"; "avocado"; "blueberry"; "cherry"; "apricot"]
+let grouped = group_by (fun s -> String.make 1 s.[0]) words
+let () = SMap.iter (fun k vs ->
+  Printf.printf "%s: %s\n" k (String.concat ", " vs)
+) grouped
+```
+**Status:** [ ]
+
+### 096: Hashtbl — LRU Cache Pattern
+**Source:** OCaml Standard Library
+**Topic:** Simple memoization with Hashtbl
+**Difficulty:** Intermediate
+**Category:** stdlib-hashtbl
+**OCaml:**
+```ocaml
+let memoize f =
+  let cache = Hashtbl.create 16 in
+  fun x ->
+    match Hashtbl.find_opt cache x with
+    | Some v -> v
+    | None ->
+      let v = f x in
+      Hashtbl.add cache x v;
+      v
+
+let rec fib_slow n =
+  if n <= 1 then n else fib_slow (n-1) + fib_slow (n-2)
+
+(* Need explicit rec + memo for recursive memoization *)
+let fib =
+  let cache = Hashtbl.create 64 in
+  let rec f n =
+    match Hashtbl.find_opt cache n with
+    | Some v -> v
+    | None ->
+      let v = if n <= 1 then n else f (n-1) + f (n-2) in
+      Hashtbl.add cache n v; v
+  in f
+
+let () = Printf.printf "fib(40) = %d\n" (fib 40)
+```
+**Status:** [ ]
+
+### 097: List — Zip and Unzip
+**Source:** OCaml Standard Library
+**Topic:** Combine and split parallel lists
+**Difficulty:** Beginner
+**Category:** stdlib-list
+**OCaml:**
+```ocaml
+let rec zip l1 l2 = match (l1, l2) with
+  | ([], _) | (_, []) -> []
+  | (x :: xs, y :: ys) -> (x, y) :: zip xs ys
+
+let unzip lst =
+  List.fold_right (fun (a, b) (la, lb) -> (a :: la, b :: lb)) lst ([], [])
+
+let names = ["Alice"; "Bob"; "Carol"]
+let scores = [95; 87; 92]
+let paired = zip names scores
+let () = List.iter (fun (n, s) -> Printf.printf "%s: %d\n" n s) paired
+
+let (ns, ss) = unzip paired
+let () = Printf.printf "Names: %s\n" (String.concat ", " ns)
+```
+**Status:** [ ]
+
+### 098: List — Scan (Running Accumulation)
+**Source:** OCaml Standard Library
+**Topic:** Compute running totals with scan
+**Difficulty:** Intermediate
+**Category:** stdlib-list
+**OCaml:**
+```ocaml
+(* scan_left: like fold but keeps all intermediate results *)
+let scan_left f init lst =
+  let rec aux acc last = function
+    | [] -> List.rev acc
+    | x :: xs ->
+      let next = f last x in
+      aux (next :: acc) next xs
+  in List.rev (init :: List.rev (aux [] init lst))
+
+let running_sum = scan_left ( + ) 0 [1; 2; 3; 4; 5]
+let running_max = scan_left max min_int [3; 1; 4; 1; 5; 9; 2; 6]
+
+let () =
+  Printf.printf "Running sum: %s\n"
+    (String.concat " " (List.map string_of_int running_sum));
+  Printf.printf "Running max: %s\n"
+    (String.concat " " (List.map string_of_int running_max))
+```
+**Status:** [ ]
+
+### 099: Recursive Descent — JSON-like Parser
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/interp/parsing.html
+**Topic:** Parse a simplified JSON structure
+**Difficulty:** Advanced
+**Category:** parsing
+**OCaml:**
+```ocaml
+type json =
+  | JNull | JBool of bool | JNum of float
+  | JStr of string | JList of json list
+
+let rec json_to_string = function
+  | JNull -> "null"
+  | JBool b -> string_of_bool b
+  | JNum n -> Printf.sprintf "%.0f" n
+  | JStr s -> "\"" ^ s ^ "\""
+  | JList lst ->
+    "[" ^ String.concat ", " (List.map json_to_string lst) ^ "]"
+
+let example = JList [JNum 1.0; JStr "hello"; JBool true; JNull;
+                     JList [JNum 2.0; JNum 3.0]]
+let () = Printf.printf "%s\n" (json_to_string example)
+```
+**Status:** [ ]
+
+### 100: Applicative Functor Pattern
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/ds/monads.html
+**Topic:** Applicative style for combining optional computations
+**Difficulty:** Advanced
+**Category:** functional-patterns
+**OCaml:**
+```ocaml
+(* Option as applicative *)
+let ( <$> ) f x = Option.map f x
+let ( <*> ) f x = match f with
+  | None -> None
+  | Some g -> Option.map g x
+
+let safe_div x y = if y = 0 then None else Some (x / y)
+
+let result =
+  (fun a b c -> a + b + c)
+  <$> Some 10
+  <*> Some 20
+  <*> Some 30
+
+let () = match result with
+  | Some n -> Printf.printf "Sum: %d\n" n
+  | None -> print_endline "Failed"
+
+(* Validate multiple fields *)
+let parse name age =
+  (fun n a -> (n, a))
+  <$> (if name <> "" then Some name else None)
+  <*> (if age > 0 && age < 150 then Some age else None)
+
+let () = match parse "Alice" 30 with
+  | Some (n, a) -> Printf.printf "%s is %d\n" n a
+  | None -> print_endline "Invalid"
+```
+**Status:** [ ]
+
+### 101: Monad Pattern — Option and Result
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/ds/monads.html
+**Topic:** Monadic bind for chaining fallible computations
+**Difficulty:** Advanced
+**Category:** functional-patterns
+**OCaml:**
+```ocaml
+(* Option monad *)
+let ( >>= ) = Option.bind
+let return x = Some x
+
+let lookup_user id =
+  if id = 1 then Some "Alice" else None
+
+let lookup_email name =
+  if name = "Alice" then Some "alice@example.com" else None
+
+let get_email id =
+  lookup_user id >>= lookup_email
+
+let () = match get_email 1 with
+  | Some e -> Printf.printf "Email: %s\n" e
+  | None -> print_endline "Not found"
+
+(* Result monad *)
+let ( let* ) = Result.bind
+let validate_age age =
+  let* a = if age > 0 then Ok age else Error "non-positive" in
+  let* _ = if a < 150 then Ok () else Error "too old" in
+  Ok a
+
+let () = match validate_age 25 with
+  | Ok a -> Printf.printf "Valid age: %d\n" a
+  | Error e -> Printf.printf "Error: %s\n" e
+```
+**Status:** [ ]
+
+### 102: Binding Operators (let* syntax)
+**Source:** Real World OCaml — https://dev.realworldocaml.org/error-handling.html
+**Topic:** Modern OCaml binding operators for monadic code
+**Difficulty:** Intermediate
+**Category:** functional-patterns
+**OCaml:**
+```ocaml
+(* Define binding operators for Option *)
+let ( let* ) = Option.bind
+let ( let+ ) x f = Option.map f x
+let ( and+ ) a b = match (a, b) with
+  | (Some x, Some y) -> Some (x, y)
+  | _ -> None
+
+let parse_pair s1 s2 =
+  let+ (a, b) = int_of_string_opt s1 and+ int_of_string_opt s2 in
+  a + b
+
+(* Result binding operators *)
+module ResultSyntax = struct
+  let ( let* ) = Result.bind
+  let ( let+ ) x f = Result.map f x
+end
+
+let () =
+  let open ResultSyntax in
+  let result =
+    let* x = Ok 10 in
+    let* y = Ok 20 in
+    let+ z = Ok 30 in
+    x + y + z
+  in
+  match result with Ok n -> Printf.printf "%d\n" n | Error _ -> ()
+```
+**Status:** [ ]
+
+### 103: Functor — Custom Collection with Map
+**Source:** Real World OCaml — https://dev.realworldocaml.org/functors.html
+**Topic:** Build a generic interval module using functors
+**Difficulty:** Advanced
+**Category:** functors
+**OCaml:**
+```ocaml
+module type BOUNDED = sig
+  type t
+  val compare : t -> t -> int
+  val to_string : t -> string
+end
+
+module MakeInterval (B : BOUNDED) = struct
+  type t = Empty | Range of B.t * B.t
+
+  let create lo hi =
+    if B.compare lo hi > 0 then Empty else Range (lo, hi)
+
+  let contains iv x = match iv with
+    | Empty -> false
+    | Range (lo, hi) -> B.compare x lo >= 0 && B.compare x hi <= 0
+
+  let to_string = function
+    | Empty -> "empty"
+    | Range (lo, hi) -> Printf.sprintf "[%s, %s]" (B.to_string lo) (B.to_string hi)
+end
+
+module IntInterval = MakeInterval(struct
+  type t = int
+  let compare = compare
+  let to_string = string_of_int
+end)
+
+let iv = IntInterval.create 1 10
+let () = Printf.printf "%s contains 5: %b\n"
+  (IntInterval.to_string iv) (IntInterval.contains iv 5)
+```
+**Status:** [ ]
+
+### 104: Imperative — Ring Buffer
+**Source:** Real World OCaml — https://dev.realworldocaml.org/imperative-programming.html
+**Topic:** Circular buffer with mutable arrays
+**Difficulty:** Intermediate
+**Category:** data-structures
+**OCaml:**
+```ocaml
+type 'a ring_buffer = {
+  mutable data : 'a array;
+  mutable head : int;
+  mutable size : int;
+  capacity : int;
+}
+
+let create capacity default = {
+  data = Array.make capacity default;
+  head = 0; size = 0; capacity
+}
+
+let push rb x =
+  let idx = (rb.head + rb.size) mod rb.capacity in
+  rb.data.(idx) <- x;
+  if rb.size < rb.capacity then rb.size <- rb.size + 1
+  else rb.head <- (rb.head + 1) mod rb.capacity
+
+let to_list rb =
+  List.init rb.size (fun i -> rb.data.((rb.head + i) mod rb.capacity))
+
+let rb = create 5 0
+let () = List.iter (push rb) [1;2;3;4;5;6;7]
+let () = List.iter (fun x -> Printf.printf "%d " x) (to_list rb)
+(* Output: 3 4 5 6 7 *)
+```
+**Status:** [ ]
+
+### 105: String Processing — Simple Lexer
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/interp/parsing.html
+**Topic:** Tokenize a string into a list of tokens
+**Difficulty:** Intermediate
+**Category:** parsing
+**OCaml:**
+```ocaml
+type token = TInt of int | TOp of char | TLParen | TRParen
+
+let is_digit c = c >= '0' && c <= '9'
+let is_op c = c = '+' || c = '-' || c = '*' || c = '/'
+
+let tokenize s =
+  let n = String.length s in
+  let rec aux i acc =
+    if i >= n then List.rev acc
+    else if s.[i] = ' ' then aux (i+1) acc
+    else if s.[i] = '(' then aux (i+1) (TLParen :: acc)
+    else if s.[i] = ')' then aux (i+1) (TRParen :: acc)
+    else if is_op s.[i] then aux (i+1) (TOp s.[i] :: acc)
+    else if is_digit s.[i] then
+      let j = ref i in
+      while !j < n && is_digit s.[!j] do incr j done;
+      aux !j (TInt (int_of_string (String.sub s i (!j - i))) :: acc)
+    else failwith (Printf.sprintf "unexpected: %c" s.[i])
+  in aux 0 []
+
+let tokens = tokenize "(42 + 3) * 7"
+let () = Printf.printf "%d tokens\n" (List.length tokens)
+```
+**Status:** [ ]
+
+### 106: Recursive Types — Symbolic Differentiation
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/data/algebraic_data_types.html
+**Topic:** Symbolic math with algebraic data types
+**Difficulty:** Advanced
+**Category:** algebraic-types
+**OCaml:**
+```ocaml
+type expr = X | Const of float | Add of expr * expr
+          | Mul of expr * expr | Pow of expr * float
+
+let rec deriv = function
+  | X -> Const 1.0
+  | Const _ -> Const 0.0
+  | Add (a, b) -> Add (deriv a, deriv b)
+  | Mul (a, b) -> Add (Mul (deriv a, b), Mul (a, deriv b))
+  | Pow (e, n) -> Mul (Mul (Const n, Pow (e, n -. 1.0)), deriv e)
+
+let rec simplify = function
+  | Add (Const 0.0, e) | Add (e, Const 0.0) -> simplify e
+  | Mul (Const 0.0, _) | Mul (_, Const 0.0) -> Const 0.0
+  | Mul (Const 1.0, e) | Mul (e, Const 1.0) -> simplify e
+  | Add (a, b) -> Add (simplify a, simplify b)
+  | Mul (a, b) -> Mul (simplify a, simplify b)
+  | e -> e
+
+let rec to_s = function
+  | X -> "x" | Const n -> Printf.sprintf "%.0f" n
+  | Add (a,b) -> Printf.sprintf "(%s + %s)" (to_s a) (to_s b)
+  | Mul (a,b) -> Printf.sprintf "(%s * %s)" (to_s a) (to_s b)
+  | Pow (e,n) -> Printf.sprintf "%s^%.0f" (to_s e) n
+
+(* d/dx (x^2 + 3x) *)
+let expr = Add (Pow (X, 2.0), Mul (Const 3.0, X))
+let d = deriv expr |> simplify
+let () = Printf.printf "d/dx %s = %s\n" (to_s expr) (to_s d)
+```
+**Status:** [ ]
+
+### 107: Unit Type and Side Effects
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/basics/printing.html
+**Topic:** Understanding unit type and sequencing side effects
+**Difficulty:** Beginner
+**Category:** basics
+**OCaml:**
+```ocaml
+(* Unit is the type of side effects *)
+let greet name =
+  Printf.printf "Hello, %s!\n" name;
+  Printf.printf "Welcome to OCaml.\n"
+  (* returns unit *)
+
+let () = greet "World"
+
+(* Semicolons sequence unit expressions *)
+let count_down n =
+  for i = n downto 1 do
+    Printf.printf "%d... " i
+  done;
+  print_endline "Go!"
+
+let () = count_down 5
+
+(* ignore discards non-unit values *)
+let () = ignore (1 + 2)
+```
+**Status:** [ ]
+
+### 108: Map with Accumulator — Numbering Elements
+**Source:** OCaml Standard Library
+**Topic:** Stateful mapping patterns
+**Difficulty:** Intermediate
+**Category:** stdlib-list
+**OCaml:**
+```ocaml
+let number_list lst =
+  let rec aux n = function
+    | [] -> []
+    | x :: xs -> (n, x) :: aux (n + 1) xs
+  in aux 1 lst
+
+let indexed = number_list ["alpha"; "beta"; "gamma"; "delta"]
+let () = List.iter (fun (i, s) -> Printf.printf "%d. %s\n" i s) indexed
+
+(* Using fold for running stats *)
+let running_avg lst =
+  let (_, avgs) = List.fold_left (fun (sum, acc) x ->
+    let sum' = sum +. x in
+    let n = float_of_int (List.length acc + 1) in
+    (sum', acc @ [sum' /. n])
+  ) (0.0, []) lst
+  in avgs
+
+let avgs = running_avg [10.0; 20.0; 30.0; 40.0]
+let () = List.iter (fun x -> Printf.printf "%.1f " x) avgs
+```
+**Status:** [ ]
+
+### 109: Functors — Make Comparable Set with Pretty Printing
+**Source:** Real World OCaml — https://dev.realworldocaml.org/functors.html
+**Topic:** Combine functors with custom printing
+**Difficulty:** Advanced
+**Category:** functors
+**OCaml:**
+```ocaml
+module type PRINTABLE_COMPARABLE = sig
+  type t
+  val compare : t -> t -> int
+  val to_string : t -> string
+end
+
+module MakePrintableSet (E : PRINTABLE_COMPARABLE) = struct
+  include Set.Make(E)
+  let to_string s =
+    "{" ^ String.concat ", " (List.map E.to_string (elements s)) ^ "}"
+end
+
+module PIntSet = MakePrintableSet(struct
+  type t = int
+  let compare = compare
+  let to_string = string_of_int
+end)
+
+let s = PIntSet.of_list [3; 1; 4; 1; 5; 9]
+let () = Printf.printf "Set: %s (size: %d)\n"
+  (PIntSet.to_string s) (PIntSet.cardinal s)
+```
+**Status:** [ ]
+
+### 110: Church Numerals
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/hop/higher_order.html
+**Topic:** Encode natural numbers as higher-order functions
+**Difficulty:** Advanced
+**Category:** lambda-calculus
+**OCaml:**
+```ocaml
+(* Church encoding of naturals *)
+let zero _f x = x
+let succ n f x = f (n f x)
+let one = succ zero
+let two = succ one
+let three = succ two
+
+let add m n f x = m f (n f x)
+let mul m n f = m (n f)
+
+let to_int n = n (fun x -> x + 1) 0
+
+let five = add two three
+let six = mul two three
+
+let () =
+  Printf.printf "2 + 3 = %d\n" (to_int five);
+  Printf.printf "2 * 3 = %d\n" (to_int six);
+  Printf.printf "3 + 3 = %d\n" (to_int (add three three))
+```
+**Status:** [ ]
+
+### 111: List Comprehension via Bind
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/ds/monads.html
+**Topic:** Simulate list comprehensions with monadic bind
+**Difficulty:** Intermediate
+**Category:** functional-patterns
+**OCaml:**
+```ocaml
+let ( >>= ) lst f = List.concat_map f lst
+let return x = [x]
+let guard b = if b then [()] else []
+
+(* Pythagorean triples *)
+let triples n =
+  List.init n (fun i -> i + 1) >>= fun a ->
+  List.init n (fun i -> i + 1) >>= fun b ->
+  List.init n (fun i -> i + 1) >>= fun c ->
+  guard (a*a + b*b = c*c && a <= b) >>= fun () ->
+  return (a, b, c)
+
+let () = List.iter (fun (a,b,c) ->
+  Printf.printf "(%d, %d, %d)\n" a b c
+) (triples 20)
+```
+**Status:** [ ]
+
+### 112: Error Handling — try/with and Option
+**Source:** Real World OCaml — https://dev.realworldocaml.org/error-handling.html
+**Topic:** Exception handling and conversion to Option/Result
+**Difficulty:** Intermediate
+**Category:** error-handling
+**OCaml:**
+```ocaml
+(* Convert exception-throwing functions to Option *)
+let try_with f x = try Some (f x) with _ -> None
+
+let safe_int_of_string = try_with int_of_string
+let safe_hd = try_with List.hd
+let safe_find k = try_with (List.assoc k)
+
+let () =
+  (match safe_int_of_string "42" with
+   | Some n -> Printf.printf "Parsed: %d\n" n
+   | None -> print_endline "Failed");
+  (match safe_find "x" [("x", 1); ("y", 2)] with
+   | Some v -> Printf.printf "Found: %d\n" v
+   | None -> print_endline "Not found")
+```
+**Status:** [ ]
+
+### 113: Abstract Data Types — Rational Numbers
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/modules/encapsulation.html
+**Topic:** Encapsulate representation with abstract types
+**Difficulty:** Intermediate
+**Category:** modules
+**OCaml:**
+```ocaml
+module Rational : sig
+  type t
+  val make : int -> int -> t
+  val add : t -> t -> t
+  val mul : t -> t -> t
+  val to_string : t -> string
+end = struct
+  type t = { num: int; den: int }
+
+  let gcd a b =
+    let rec aux a b = if b = 0 then a else aux b (a mod b) in
+    aux (abs a) (abs b)
+
+  let make n d =
+    if d = 0 then failwith "zero denominator";
+    let g = gcd n d in
+    let sign = if d < 0 then -1 else 1 in
+    { num = sign * n / g; den = sign * d / g }
+
+  let add a b = make (a.num * b.den + b.num * a.den) (a.den * b.den)
+  let mul a b = make (a.num * b.num) (a.den * b.den)
+  let to_string r = Printf.sprintf "%d/%d" r.num r.den
+end
+
+let a = Rational.make 1 3
+let b = Rational.make 1 6
+let () = Printf.printf "%s + %s = %s\n"
+  (Rational.to_string a) (Rational.to_string b)
+  (Rational.to_string (Rational.add a b))
+```
+**Status:** [ ]
+
+### 114: Sequence — Windowed Operations
+**Source:** OCaml Standard Library
+**Topic:** Sliding window over sequences
+**Difficulty:** Intermediate
+**Category:** stdlib-seq
+**OCaml:**
+```ocaml
+let windows n seq =
+  let buf = Array.make n 0 in
+  let i = ref 0 in
+  seq |> Seq.filter_map (fun x ->
+    buf.(!i mod n) <- x;
+    incr i;
+    if !i >= n then
+      Some (Array.to_list (Array.init n (fun j -> buf.((!i - n + j) mod n))))
+    else None
+  )
+
+let data = List.to_seq [1; 2; 3; 4; 5; 6; 7]
+let wins = windows 3 data |> List.of_seq
+let () = List.iter (fun w ->
+  Printf.printf "[%s] " (String.concat "," (List.map string_of_int w))
+) wins
+```
+**Status:** [ ]
+
+### 115: Polymorphic Functions — Generic Utilities
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/basics/functions.html
+**Topic:** Write functions that work for any type
+**Difficulty:** Beginner
+**Category:** polymorphism
+**OCaml:**
+```ocaml
+let compose f g x = f (g x)
+let flip f x y = f y x
+let const x _y = x
+let tap f x = f x; x
+
+let twice f x = f (f x)
+let thrice f x = f (f (f x))
+
+let () =
+  let inc = ( + ) 1 in
+  Printf.printf "twice inc 5 = %d\n" (twice inc 5);
+  Printf.printf "thrice double 3 = %d\n" (thrice (( * ) 2) 3);
+
+  let exclaim = (fun s -> s ^ "!") in
+  Printf.printf "%s\n" (thrice exclaim "wow")
+```
+**Status:** [ ]
+
+### 116: Recursive Data — Natural Numbers (Peano)
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/data/algebraic_data_types.html
+**Topic:** Peano natural numbers as a recursive type
+**Difficulty:** Intermediate
+**Category:** algebraic-types
+**OCaml:**
+```ocaml
+type nat = Zero | Succ of nat
+
+let rec to_int = function
+  | Zero -> 0
+  | Succ n -> 1 + to_int n
+
+let rec of_int = function
+  | 0 -> Zero
+  | n -> Succ (of_int (n - 1))
+
+let rec add a b = match a with
+  | Zero -> b
+  | Succ a' -> Succ (add a' b)
+
+let rec mul a b = match a with
+  | Zero -> Zero
+  | Succ a' -> add b (mul a' b)
+
+let three = of_int 3
+let four = of_int 4
+let () = Printf.printf "3 + 4 = %d\n" (to_int (add three four))
+let () = Printf.printf "3 * 4 = %d\n" (to_int (mul three four))
+```
+**Status:** [ ]
+
+### 117: Higher-Order — Function as Return Value
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/hop/higher_order.html
+**Topic:** Functions that return functions
+**Difficulty:** Intermediate
+**Category:** higher-order
+**OCaml:**
+```ocaml
+let make_adder n = fun x -> x + n
+let make_multiplier n = fun x -> x * n
+
+let make_validator ~min ~max =
+  fun x -> x >= min && x <= max
+
+let is_valid_age = make_validator ~min:0 ~max:150
+let is_valid_score = make_validator ~min:0 ~max:100
+
+(* Function factory *)
+let make_counter () =
+  let n = ref 0 in
+  fun () -> incr n; !n
+
+let c1 = make_counter ()
+let c2 = make_counter ()
+let () =
+  Printf.printf "c1: %d %d %d\n" (c1 ()) (c1 ()) (c1 ());
+  Printf.printf "c2: %d %d\n" (c2 ()) (c2 ())
+```
+**Status:** [ ]
+
+### 118: Records — Functional Update
+**Source:** Real World OCaml — https://dev.realworldocaml.org/records.html
+**Topic:** Non-destructive record updates with 'with'
+**Difficulty:** Beginner
+**Category:** records
+**OCaml:**
+```ocaml
+type config = {
+  host : string;
+  port : int;
+  debug : bool;
+  max_connections : int;
+  timeout_ms : int;
+}
+
+let default_config = {
+  host = "localhost"; port = 8080;
+  debug = false; max_connections = 100; timeout_ms = 5000
+}
+
+let dev_config = { default_config with debug = true; port = 3000 }
+let prod_config = { default_config with
+  host = "0.0.0.0"; max_connections = 10000; timeout_ms = 30000
+}
+
+let () = Printf.printf "Dev: %s:%d (debug=%b)\n"
+  dev_config.host dev_config.port dev_config.debug
+let () = Printf.printf "Prod: %s:%d (max=%d)\n"
+  prod_config.host prod_config.port prod_config.max_connections
+```
+**Status:** [ ]
+
+### 119: Recursive Descent — S-Expression Parser
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/interp/parsing.html
+**Topic:** Parse S-expressions from a token stream
+**Difficulty:** Advanced
+**Category:** parsing
+**OCaml:**
+```ocaml
+type sexp = Atom of string | List of sexp list
+
+let tokenize s =
+  let s = String.concat " ( " (String.split_on_char '(' s) in
+  let s = String.concat " ) " (String.split_on_char ')' s) in
+  String.split_on_char ' ' s |> List.filter (fun t -> t <> "")
+
+let rec parse_sexp = function
+  | [] -> failwith "unexpected end"
+  | "(" :: rest ->
+    let (items, rest) = parse_list rest in
+    (List items, rest)
+  | ")" :: _ -> failwith "unexpected )"
+  | atom :: rest -> (Atom atom, rest)
+and parse_list = function
+  | ")" :: rest -> ([], rest)
+  | tokens ->
+    let (item, rest) = parse_sexp tokens in
+    let (items, rest) = parse_list rest in
+    (item :: items, rest)
+
+let rec to_string = function
+  | Atom s -> s
+  | List l -> "(" ^ String.concat " " (List.map to_string l) ^ ")"
+
+let (ast, _) = parse_sexp (tokenize "(define (square x) (* x x))")
+let () = Printf.printf "%s\n" (to_string ast)
+```
+**Status:** [ ]
+
+### 120: Map.Make — Frequency Count
+**Source:** OCaml Standard Library
+**Topic:** Count occurrences using Map
+**Difficulty:** Intermediate
+**Category:** stdlib-map
+**OCaml:**
+```ocaml
+module CharMap = Map.Make(Char)
+
+let char_freq s =
+  String.fold_left (fun m c ->
+    let n = match CharMap.find_opt c m with Some n -> n | None -> 0 in
+    CharMap.add c (n + 1) m
+  ) CharMap.empty s
+
+let freq = char_freq "mississippi"
+let sorted = CharMap.bindings freq
+  |> List.sort (fun (_,a) (_,b) -> compare b a)
+
+let () = List.iter (fun (c, n) ->
+  Printf.printf "'%c': %d\n" c n
+) sorted
+```
+**Status:** [ ]
+
+### 121: Closures and Environments
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/hop/higher_order.html
+**Topic:** Understanding closures and captured variables
+**Difficulty:** Intermediate
+**Category:** higher-order
+**OCaml:**
+```ocaml
+(* A closure captures its environment *)
+let make_greeting prefix suffix =
+  fun name -> prefix ^ name ^ suffix
+
+let hello = make_greeting "Hello, " "!"
+let bye = make_greeting "Goodbye, " "."
+
+let () =
+  Printf.printf "%s\n" (hello "Alice");
+  Printf.printf "%s\n" (bye "Bob")
+
+(* Accumulator closure *)
+let make_accumulator init =
+  let total = ref init in
+  fun amount ->
+    total := !total + amount;
+    !total
+
+let acc = make_accumulator 100
+let () = Printf.printf "Balance: %d %d %d\n" (acc 50) (acc (-30)) (acc 20)
+```
+**Status:** [ ]
+
+### 122: Module Include and Open
+**Source:** Real World OCaml — https://dev.realworldocaml.org/files-modules-and-programs.html
+**Topic:** Extend modules with include and local open
+**Difficulty:** Intermediate
+**Category:** modules
+**OCaml:**
+```ocaml
+module ExtList = struct
+  include List
+
+  let sum = fold_left ( + ) 0
+  let product = fold_left ( * ) 1
+
+  let take n lst =
+    let rec aux n acc = function
+      | [] -> List.rev acc
+      | _ when n <= 0 -> List.rev acc
+      | x :: xs -> aux (n-1) (x :: acc) xs
+    in aux n [] lst
+
+  let drop n lst =
+    let rec aux n = function
+      | [] -> []
+      | _ :: xs as l -> if n <= 0 then l else aux (n-1) xs
+    in aux n lst
+end
+
+let () =
+  let data = [1;2;3;4;5;6;7;8;9;10] in
+  Printf.printf "Sum: %d\n" (ExtList.sum data);
+  Printf.printf "First 3: %s\n"
+    (String.concat " " (List.map string_of_int (ExtList.take 3 data)))
+```
+**Status:** [ ]
+
+### 123: Recursive Data — Red-Black Tree (simplified)
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/ds/rb.html
+**Topic:** Balanced binary search tree with colors
+**Difficulty:** Advanced
+**Category:** data-structures
+**OCaml:**
+```ocaml
+type color = Red | Black
+type 'a rbtree = E | T of color * 'a rbtree * 'a * 'a rbtree
+
+let balance = function
+  | (Black, T (Red, T (Red, a, x, b), y, c), z, d)
+  | (Black, T (Red, a, x, T (Red, b, y, c)), z, d)
+  | (Black, a, x, T (Red, T (Red, b, y, c), z, d))
+  | (Black, a, x, T (Red, b, y, T (Red, c, z, d))) ->
+    T (Red, T (Black, a, x, b), y, T (Black, c, z, d))
+  | (c, l, v, r) -> T (c, l, v, r)
+
+let insert x t =
+  let rec ins = function
+    | E -> T (Red, E, x, E)
+    | T (c, l, v, r) ->
+      if x < v then balance (c, ins l, v, r)
+      else if x > v then balance (c, l, v, ins r)
+      else T (c, l, v, r)
+  in match ins t with T (_, l, v, r) -> T (Black, l, v, r) | E -> E
+
+let tree = List.fold_left (fun t x -> insert x t) E [5;3;7;1;4;6;8;2]
+let rec size = function E -> 0 | T(_,l,_,r) -> 1 + size l + size r
+let () = Printf.printf "RB tree size: %d\n" (size tree)
+```
+**Status:** [ ]
+
+### 124: Tail-Recursive Tree Traversal with CPS
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/ds/bst.html
+**Topic:** Avoid stack overflow on deep trees with CPS
+**Difficulty:** Advanced
+**Category:** data-structures
+**OCaml:**
+```ocaml
+type 'a tree = Leaf | Node of 'a tree * 'a * 'a tree
+
+let rec insert x = function
+  | Leaf -> Node (Leaf, x, Leaf)
+  | Node (l, v, r) ->
+    if x < v then Node (insert x l, v, r)
+    else Node (l, v, insert x r)
+
+(* CPS inorder - tail recursive *)
+let inorder t =
+  let rec aux t k = match t with
+    | Leaf -> k []
+    | Node (l, v, r) ->
+      aux r (fun right ->
+        aux l (fun left ->
+          k (left @ [v] @ right)))
+  in aux t Fun.id
+
+let t = List.fold_left (fun t x -> insert x t) Leaf [5;2;8;1;3;7;9]
+let () = List.iter (fun x -> Printf.printf "%d " x) (inorder t)
+```
+**Status:** [ ]
+
+### 125: Local Exceptions
+**Source:** Real World OCaml — https://dev.realworldocaml.org/error-handling.html
+**Topic:** Use local exceptions for control flow
+**Difficulty:** Intermediate
+**Category:** exceptions
+**OCaml:**
+```ocaml
+(* Local exception for early return *)
+let find_first pred lst =
+  let exception Found of int in
+  try
+    List.iteri (fun i x -> if pred x then raise (Found i)) lst;
+    None
+  with Found i -> Some i
+
+let idx = find_first (fun x -> x > 10) [3; 7; 12; 5; 20]
+let () = match idx with
+  | Some i -> Printf.printf "First > 10 at index %d\n" i
+  | None -> print_endline "Not found"
+
+(* Local exception for loop break *)
+let sum_until_negative lst =
+  let exception Stop in
+  let total = ref 0 in
+  (try List.iter (fun x ->
+    if x < 0 then raise Stop;
+    total := !total + x
+  ) lst with Stop -> ());
+  !total
+
+let () = Printf.printf "Sum: %d\n" (sum_until_negative [1; 2; 3; -1; 5])
+```
+**Status:** [ ]
+
+### 126: Recursive Types — Rose Tree
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/data/trees.html
+**Topic:** Multi-way tree (rose tree) structure
+**Difficulty:** Intermediate
+**Category:** algebraic-types
+**OCaml:**
+```ocaml
+type 'a rose = Rose of 'a * 'a rose list
+
+let leaf x = Rose (x, [])
+
+let rec depth (Rose (_, children)) =
+  1 + List.fold_left (fun acc c -> max acc (depth c)) 0 children
+
+let rec size (Rose (_, children)) =
+  1 + List.fold_left (fun acc c -> acc + size c) 0 children
+
+let rec map f (Rose (x, children)) =
+  Rose (f x, List.map (map f) children)
+
+let tree = Rose ("root", [
+  Rose ("a", [leaf "a1"; leaf "a2"]);
+  Rose ("b", [leaf "b1"]);
+  leaf "c"
+])
+
+let () = Printf.printf "Depth: %d, Size: %d\n" (depth tree) (size tree)
+```
+**Status:** [ ]
+
+### 127: Set Operations — Powerset
+**Source:** OCaml Standard Library
+**Topic:** Compute the powerset of a set
+**Difficulty:** Advanced
+**Category:** stdlib-set
+**OCaml:**
+```ocaml
+module IntSet = Set.Make(Int)
+
+let powerset s =
+  IntSet.fold (fun x acc ->
+    List.fold_left (fun acc2 subset ->
+      IntSet.add x subset :: acc2
+    ) acc acc
+  ) s [IntSet.empty]
+
+let s = IntSet.of_list [1; 2; 3]
+let ps = powerset s
+let () = List.iter (fun sub ->
+  Printf.printf "{%s} "
+    (IntSet.elements sub |> List.map string_of_int |> String.concat ",")
+) ps
+```
+**Status:** [ ]
+
+### 128: Hashtbl — Two-way Map (Bidirectional)
+**Source:** OCaml Standard Library
+**Topic:** Maintain a bidirectional mapping with two hash tables
+**Difficulty:** Intermediate
+**Category:** stdlib-hashtbl
+**OCaml:**
+```ocaml
+type ('a, 'b) bimap = {
+  forward : ('a, 'b) Hashtbl.t;
+  backward : ('b, 'a) Hashtbl.t;
+}
+
+let create n = { forward = Hashtbl.create n; backward = Hashtbl.create n }
+
+let add bm k v =
+  Hashtbl.replace bm.forward k v;
+  Hashtbl.replace bm.backward v k
+
+let find_forward bm k = Hashtbl.find bm.forward k
+let find_backward bm v = Hashtbl.find bm.backward v
+
+let bm = create 8
+let () =
+  add bm "one" 1; add bm "two" 2; add bm "three" 3;
+  Printf.printf "two -> %d\n" (find_forward bm "two");
+  Printf.printf "3 -> %s\n" (find_backward bm 3)
+```
+**Status:** [ ]
+
+### 129: Format — Pretty Printing with Boxes
+**Source:** OCaml Standard Library
+**Topic:** Use Format module for structured output
+**Difficulty:** Intermediate
+**Category:** stdlib-printf
+**OCaml:**
+```ocaml
+let pp_list pp_item fmt lst =
+  Format.fprintf fmt "[@[<hov 2>";
+  List.iteri (fun i x ->
+    if i > 0 then Format.fprintf fmt ";@ ";
+    pp_item fmt x
+  ) lst;
+  Format.fprintf fmt "@]]"
+
+let pp_int fmt n = Format.fprintf fmt "%d" n
+let pp_string fmt s = Format.fprintf fmt "%S" s
+
+let () =
+  Format.printf "Numbers: %a@." (pp_list pp_int) [1;2;3;4;5;6;7;8;9;10];
+  Format.printf "Words: %a@." (pp_list pp_string) ["hello"; "world"; "ocaml"]
+```
+**Status:** [ ]
+
+### 130: Seq — Interleave and Round-Robin
+**Source:** OCaml Standard Library
+**Topic:** Merge multiple sequences by alternating
+**Difficulty:** Intermediate
+**Category:** stdlib-seq
+**OCaml:**
+```ocaml
+let rec interleave s1 s2 () = match s1 () with
+  | Seq.Nil -> s2 ()
+  | Seq.Cons (x, rest) -> Seq.Cons (x, interleave s2 rest)
+
+let s1 = List.to_seq [1; 3; 5; 7]
+let s2 = List.to_seq [2; 4; 6; 8]
+let merged = interleave s1 s2 |> List.of_seq
+let () = List.iter (fun x -> Printf.printf "%d " x) merged
+(* Output: 1 2 3 4 5 6 7 8 *)
+```
+**Status:** [ ]
+
+### 131: Match Guards and Or-Patterns
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/data/pattern_matching.html
+**Topic:** Pattern matching with when guards and combined patterns
+**Difficulty:** Beginner
+**Category:** pattern-matching
+**OCaml:**
+```ocaml
+let classify_char = function
+  | 'a' | 'e' | 'i' | 'o' | 'u'
+  | 'A' | 'E' | 'I' | 'O' | 'U' -> "vowel"
+  | c when c >= 'a' && c <= 'z' -> "consonant"
+  | c when c >= 'A' && c <= 'Z' -> "consonant"
+  | c when c >= '0' && c <= '9' -> "digit"
+  | _ -> "other"
+
+let fizzbuzz n = match (n mod 3, n mod 5) with
+  | (0, 0) -> "FizzBuzz"
+  | (0, _) -> "Fizz"
+  | (_, 0) -> "Buzz"
+  | _ -> string_of_int n
+
+let () = List.init 20 (fun i -> i+1)
+  |> List.iter (fun n -> Printf.printf "%s " (fizzbuzz n))
+```
+**Status:** [ ]
+
+### 132: Recursive Types — Zipper for Lists
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/ds/zippers.html
+**Topic:** Navigate a list with a zipper data structure
+**Difficulty:** Advanced
+**Category:** data-structures
+**OCaml:**
+```ocaml
+type 'a zipper = { left: 'a list; focus: 'a; right: 'a list }
+
+let of_list = function
+  | [] -> failwith "empty"
+  | x :: xs -> { left = []; focus = x; right = xs }
+
+let move_right z = match z.right with
+  | [] -> None
+  | x :: xs -> Some { left = z.focus :: z.left; focus = x; right = xs }
+
+let move_left z = match z.left with
+  | [] -> None
+  | x :: xs -> Some { left = xs; focus = x; right = z.focus :: z.right }
+
+let modify f z = { z with focus = f z.focus }
+let to_list z = List.rev z.left @ [z.focus] @ z.right
+
+let z = of_list [1;2;3;4;5]
+let z = Option.get (move_right z)  (* focus = 2 *)
+let z = Option.get (move_right z)  (* focus = 3 *)
+let z = modify (( * ) 10) z        (* focus = 30 *)
+let () = List.iter (fun x -> Printf.printf "%d " x) (to_list z)
+```
+**Status:** [ ]
+
+### 133: Anonymous Functions and Closures
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/basics/functions.html
+**Topic:** Lambda expressions (fun keyword)
+**Difficulty:** Beginner
+**Category:** basics
+**OCaml:**
+```ocaml
+(* Anonymous functions with fun *)
+let apply f x = f x
+let apply2 f x y = f x y
+
+let () =
+  Printf.printf "%d\n" (apply (fun x -> x * x) 5);
+  Printf.printf "%d\n" (apply2 (fun x y -> x + y) 3 4);
+
+  (* Multi-argument anonymous function *)
+  let result = List.map (fun x -> x * x + 1) [1;2;3;4;5] in
+  List.iter (fun x -> Printf.printf "%d " x) result;
+  print_newline ();
+
+  (* Nested anonymous functions *)
+  let make_pair = fun x -> fun y -> (x, y) in
+  let (a, b) = make_pair 1 2 in
+  Printf.printf "(%d, %d)\n" a b
+```
+**Status:** [ ]
+
+### 134: Recursive Data — Trie (Prefix Tree)
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/ds/hash_tables.html
+**Topic:** Store strings in a prefix tree
+**Difficulty:** Advanced
+**Category:** data-structures
+**OCaml:**
+```ocaml
+module CharMap = Map.Make(Char)
+
+type trie = { is_end: bool; children: trie CharMap.t }
+let empty = { is_end = false; children = CharMap.empty }
+
+let insert word t =
+  let rec aux i t =
+    if i = String.length word then { t with is_end = true }
+    else
+      let c = word.[i] in
+      let child = try CharMap.find c t.children with Not_found -> empty in
+      { t with children = CharMap.add c (aux (i+1) child) t.children }
+  in aux 0 t
+
+let mem word t =
+  let rec aux i t =
+    if i = String.length word then t.is_end
+    else match CharMap.find_opt word.[i] t.children with
+      | None -> false | Some child -> aux (i+1) child
+  in aux 0 t
+
+let t = List.fold_left (fun t w -> insert w t) empty
+  ["cat"; "car"; "card"; "care"; "bat"]
+let () = List.iter (fun w ->
+  Printf.printf "%s: %b\n" w (mem w t)
+) ["cat"; "ca"; "car"; "care"; "dog"]
+```
+**Status:** [ ]
+
+### 135: Modules — Private Types
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/modules/encapsulation.html
+**Topic:** Hide constructors with private types in signatures
+**Difficulty:** Intermediate
+**Category:** modules
+**OCaml:**
+```ocaml
+module PositiveInt : sig
+  type t = private int
+  val of_int : int -> t option
+  val to_int : t -> int
+  val add : t -> t -> t
+end = struct
+  type t = int
+  let of_int n = if n > 0 then Some n else None
+  let to_int n = n
+  let add a b = a + b
+end
+
+let () = match PositiveInt.of_int 42 with
+  | Some n ->
+    Printf.printf "Positive: %d\n" (PositiveInt.to_int n);
+    (* Can read as int: *)
+    Printf.printf "As int: %d\n" (n :> int)
+  | None -> print_endline "Not positive"
+```
+**Status:** [ ]
+
+### 136: Effect Handlers Preview (OCaml 5)
+**Source:** https://v2.ocaml.org/manual/effects.html
+**Topic:** Algebraic effects for controlled side effects (OCaml 5+)
+**Difficulty:** Advanced
+**Category:** effects
+**OCaml:**
+```ocaml
+(* Note: requires OCaml 5.0+ *)
+(* This shows the concept; run on OCaml 5 *)
+type _ Effect.t += Ask : string Effect.t
+type _ Effect.t += Log : string -> unit Effect.t
+
+let program () =
+  let name = Effect.perform Ask in
+  Effect.perform (Log ("Got name: " ^ name));
+  Printf.printf "Hello, %s!\n" name
+
+(* In OCaml 5 you'd install handlers:
+   Effect.Deep.try_with program ()
+   { effc = fun (type a) (eff : a Effect.t) ->
+     match eff with
+     | Ask -> Some (fun k -> Effect.Deep.continue k "World")
+     | Log msg -> Some (fun k -> print_endline msg; Effect.Deep.continue k ())
+     | _ -> None } *)
+
+(* Simulated version for pre-5: *)
+let () = Printf.printf "Hello, World! (effect simulation)\n"
+```
+**Status:** [ ]
+
+### 137: Recursive Data — Graph as Adjacency List
+**Source:** OCaml Standard Library
+**Topic:** Represent and traverse graphs using maps
+**Difficulty:** Intermediate
+**Category:** data-structures
+**OCaml:**
+```ocaml
+module Graph = struct
+  module SMap = Map.Make(String)
+  type t = string list SMap.t
+
+  let empty = SMap.empty
+  let add_edge g u v =
+    let neighbors = try SMap.find u g with Not_found -> [] in
+    SMap.add u (v :: neighbors) g
+
+  let bfs g start =
+    let visited = Hashtbl.create 16 in
+    let queue = Queue.create () in
+    Queue.add start queue;
+    Hashtbl.add visited start true;
+    let result = ref [] in
+    while not (Queue.is_empty queue) do
+      let node = Queue.pop queue in
+      result := node :: !result;
+      let neighbors = try SMap.find node g with Not_found -> [] in
+      List.iter (fun n ->
+        if not (Hashtbl.mem visited n) then begin
+          Hashtbl.add visited n true;
+          Queue.add n queue
+        end
+      ) neighbors
+    done;
+    List.rev !result
+end
+
+let g = Graph.empty
+  |> Graph.add_edge "A" "B" |> Graph.add_edge "A" "C"
+  |> Graph.add_edge "B" "D" |> Graph.add_edge "C" "D"
+let () = List.iter (fun n -> Printf.printf "%s " n) (Graph.bfs g "A")
+```
+**Status:** [ ]
+
+### 138: List — Interleave Two Lists
+**Source:** OCaml Standard Library
+**Topic:** Alternate elements from two lists
+**Difficulty:** Beginner
+**Category:** stdlib-list
+**OCaml:**
+```ocaml
+let rec interleave l1 l2 = match (l1, l2) with
+  | ([], l) | (l, []) -> l
+  | (x :: xs, y :: ys) -> x :: y :: interleave xs ys
+
+let transpose matrix =
+  match matrix with
+  | [] -> []
+  | first :: _ ->
+    List.mapi (fun i _ ->
+      List.map (fun row -> List.nth row i) matrix
+    ) first
+
+let r = interleave [1;3;5] [2;4;6]
+let () = List.iter (fun x -> Printf.printf "%d " x) r;
+  print_newline ()
+
+let t = transpose [[1;2;3]; [4;5;6]; [7;8;9]]
+let () = List.iter (fun row ->
+  List.iter (fun x -> Printf.printf "%d " x) row;
+  print_newline ()
+) t
+```
+**Status:** [ ]
+
+### 139: Parametric Polymorphism — Generic Pair
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/data/algebraic_data_types.html
+**Topic:** Generic types with type parameters
+**Difficulty:** Beginner
+**Category:** polymorphism
+**OCaml:**
+```ocaml
+type ('a, 'b) either = Left of 'a | Right of 'b
+
+let map_left f = function
+  | Left x -> Left (f x)
+  | Right y -> Right y
+
+let map_right f = function
+  | Left x -> Left x
+  | Right y -> Right (f y)
+
+let partition_either lst =
+  List.fold_right (fun x (lefts, rights) -> match x with
+    | Left l -> (l :: lefts, rights)
+    | Right r -> (lefts, r :: rights)
+  ) lst ([], [])
+
+let items = [Left 1; Right "a"; Left 2; Right "b"; Left 3]
+let (nums, strs) = partition_either items
+let () = Printf.printf "Left: %s, Right: %s\n"
+  (String.concat "," (List.map string_of_int nums))
+  (String.concat "," strs)
+```
+**Status:** [ ]
+
+### 140: Memoization with Lazy Values
+**Source:** OCaml Standard Library
+**Topic:** Use Lazy for one-shot expensive computations
+**Difficulty:** Intermediate
+**Category:** lazy-evaluation
+**OCaml:**
+```ocaml
+(* Lazy Fibonacci stream *)
+type 'a stream = Cons of 'a * 'a stream Lazy.t
+
+let rec fibs_from a b = Cons (a, lazy (fibs_from b (a + b)))
+let fibs = fibs_from 0 1
+
+let rec take n (Cons (x, rest)) =
+  if n <= 0 then []
+  else x :: take (n - 1) (Lazy.force rest)
+
+let rec nth n (Cons (x, rest)) =
+  if n = 0 then x else nth (n - 1) (Lazy.force rest)
+
+let () =
+  Printf.printf "First 10 fibs: %s\n"
+    (String.concat " " (List.map string_of_int (take 10 fibs)));
+  Printf.printf "Fib(20) = %d\n" (nth 20 fibs)
+```
+**Status:** [ ]
+
+### 141: Module Type Sharing Constraints
+**Source:** Real World OCaml — https://dev.realworldocaml.org/functors.html
+**Topic:** Share types between modules using with constraints
+**Difficulty:** Advanced
+**Category:** modules
+**OCaml:**
+```ocaml
+module type KEY = sig
+  type t
+  val compare : t -> t -> int
+  val to_string : t -> string
+end
+
+module type STORE = sig
+  type key
+  type 'a t
+  val empty : 'a t
+  val set : key -> 'a -> 'a t -> 'a t
+  val get : key -> 'a t -> 'a option
+end
+
+module MakeStore (K : KEY) : STORE with type key = K.t = struct
+  type key = K.t
+  module M = Map.Make(K)
+  type 'a t = 'a M.t
+  let empty = M.empty
+  let set k v m = M.add k v m
+  let get k m = M.find_opt k m
+end
+
+module StringStore = MakeStore(struct
+  type t = string let compare = String.compare
+  let to_string s = s
+end)
+
+let s = StringStore.empty |> StringStore.set "key" 42
+let () = match StringStore.get "key" s with
+  | Some v -> Printf.printf "Found: %d\n" v
+  | None -> ()
+```
+**Status:** [ ]
+
+### 142: Array — Matrix Operations
+**Source:** OCaml Standard Library
+**Topic:** Basic matrix math with arrays
+**Difficulty:** Intermediate
+**Category:** stdlib-array
+**OCaml:**
+```ocaml
+let mat_mul a b =
+  let rows = Array.length a and cols = Array.length b.(0) in
+  let k = Array.length b in
+  Array.init rows (fun i ->
+    Array.init cols (fun j ->
+      let sum = ref 0 in
+      for p = 0 to k - 1 do
+        sum := !sum + a.(i).(p) * b.(p).(j)
+      done;
+      !sum
+    )
+  )
+
+let print_mat m =
+  Array.iter (fun row ->
+    Array.iter (fun x -> Printf.printf "%3d " x) row;
+    print_newline ()
+  ) m
+
+let a = [| [|1;2|]; [|3;4|] |]
+let b = [| [|5;6|]; [|7;8|] |]
+let c = mat_mul a b
+let () = print_mat c
+```
+**Status:** [ ]
+
+### 143: String — Regular Expression-like Matching
+**Source:** OCaml Standard Library
+**Topic:** Simple glob-style pattern matching
+**Difficulty:** Intermediate
+**Category:** stdlib-string
+**OCaml:**
+```ocaml
+(* Simple glob matching: * matches any substring, ? matches one char *)
+let rec glob_match pattern str =
+  match (pattern, str) with
+  | ("", "") -> true
+  | ("", _) -> false
+  | ("*", _) -> true
+  | _ when String.length pattern > 0 && String.length str = 0 ->
+    pattern = "*"
+  | _ ->
+    let pc = pattern.[0] and sc = str.[0] in
+    let prest = String.sub pattern 1 (String.length pattern - 1) in
+    let srest = String.sub str 1 (String.length str - 1) in
+    if pc = '*' then
+      glob_match prest str || glob_match pattern srest
+    else if pc = '?' || pc = sc then
+      glob_match prest srest
+    else false
+
+let tests = [("*.ml", "hello.ml"); ("test_?", "test_a"); ("foo*", "bar")]
+let () = List.iter (fun (p, s) ->
+  Printf.printf "glob(%s, %s) = %b\n" p s (glob_match p s)
+) tests
+```
+**Status:** [ ]
+
+### 144: Hashtbl — Default Dict Pattern
+**Source:** OCaml Standard Library
+**Topic:** Hash table with default value factory
+**Difficulty:** Intermediate
+**Category:** stdlib-hashtbl
+**OCaml:**
+```ocaml
+let find_or_add tbl key default_fn =
+  match Hashtbl.find_opt tbl key with
+  | Some v -> v
+  | None ->
+    let v = default_fn () in
+    Hashtbl.add tbl key v; v
+
+(* Group items by category *)
+let group_by key_fn items =
+  let tbl = Hashtbl.create 16 in
+  List.iter (fun item ->
+    let key = key_fn item in
+    let lst = find_or_add tbl key (fun () -> ref []) in
+    lst := item :: !lst
+  ) items;
+  Hashtbl.fold (fun k v acc -> (k, List.rev !v) :: acc) tbl []
+
+let data = ["apple"; "banana"; "avocado"; "blueberry"; "cherry"]
+let groups = group_by (fun s -> s.[0]) data
+let () = List.iter (fun (k, vs) ->
+  Printf.printf "%c: %s\n" k (String.concat ", " vs)
+) groups
+```
+**Status:** [ ]
+
+### 145: Recursive Descent — Infix Expression with Parentheses
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/interp/parsing.html
+**Topic:** Full expression parser with operator precedence
+**Difficulty:** Advanced
+**Category:** parsing
+**OCaml:**
+```ocaml
+type expr = Num of int | Binop of char * expr * expr
+
+let rec eval = function
+  | Num n -> n
+  | Binop ('+', a, b) -> eval a + eval b
+  | Binop ('-', a, b) -> eval a - eval b
+  | Binop ('*', a, b) -> eval a * eval b
+  | Binop ('/', a, b) -> eval a / eval b
+  | Binop _ -> failwith "unknown op"
+
+(* Simple evaluator using Dijkstra's shunting yard *)
+let calc s =
+  let tokens = String.split_on_char ' ' s in
+  (* Simple recursive descent *)
+  let pos = ref 0 in
+  let toks = Array.of_list tokens in
+  let peek () = if !pos < Array.length toks then toks.(!pos) else "" in
+  let consume () = let t = peek () in incr pos; t in
+  let rec expr () =
+    let left = term () in
+    match peek () with
+    | "+" -> ignore (consume ()); Binop ('+', left, expr ())
+    | "-" -> ignore (consume ()); Binop ('-', left, expr ())
+    | _ -> left
+  and term () =
+    let left = atom () in
+    match peek () with
+    | "*" -> ignore (consume ()); Binop ('*', left, term ())
+    | "/" -> ignore (consume ()); Binop ('/', left, term ())
+    | _ -> left
+  and atom () = Num (int_of_string (consume ()))
+  in
+  eval (expr ())
+
+let () = Printf.printf "2 + 3 * 4 = %d\n" (calc "2 + 3 * 4")
+```
+**Status:** [ ]
+
+### 146: Map — Inverse Map (Swap Keys and Values)
+**Source:** OCaml Standard Library
+**Topic:** Create an inverse mapping from values to keys
+**Difficulty:** Intermediate
+**Category:** stdlib-map
+**OCaml:**
+```ocaml
+module SMap = Map.Make(String)
+module IMap = Map.Make(Int)
+
+let invert_map m =
+  SMap.fold (fun k v acc ->
+    let keys = match IMap.find_opt v acc with
+      | Some ks -> k :: ks | None -> [k]
+    in IMap.add v keys acc
+  ) m IMap.empty
+
+let scores = SMap.of_list [("Alice", 95); ("Bob", 87); ("Carol", 95); ("Dave", 87)]
+let by_score = invert_map scores
+
+let () = IMap.iter (fun score names ->
+  Printf.printf "Score %d: %s\n" score (String.concat ", " names)
+) by_score
+```
+**Status:** [ ]
+
+### 147: Option — Chaining Multiple Lookups
+**Source:** OCaml Standard Library
+**Topic:** Chain Option.bind for multi-step lookups
+**Difficulty:** Intermediate
+**Category:** stdlib-option
+**OCaml:**
+```ocaml
+let users = [("alice", 1); ("bob", 2)]
+let profiles = [(1, "Engineer"); (2, "Designer")]
+let salaries = [("Engineer", 90000); ("Designer", 85000)]
+
+let get_salary name =
+  List.assoc_opt name users
+  |> Option.bind (fun id -> List.assoc_opt id profiles)
+  |> Option.bind (fun role -> List.assoc_opt role salaries)
+
+let () = List.iter (fun name ->
+  match get_salary name with
+  | Some s -> Printf.printf "%s earns %d\n" name s
+  | None -> Printf.printf "%s: unknown\n" name
+) ["alice"; "bob"; "charlie"]
+```
+**Status:** [ ]
+
+### 148: Seq — Fibonacci and Collatz via Seq
+**Source:** OCaml Standard Library
+**Topic:** Classic sequences with Seq module
+**Difficulty:** Beginner
+**Category:** stdlib-seq
+**OCaml:**
+```ocaml
+let collatz n =
+  Seq.unfold (fun n ->
+    if n = 1 then None
+    else let next = if n mod 2 = 0 then n / 2 else 3 * n + 1 in
+      Some (n, next)
+  ) n
+
+let () =
+  Printf.printf "Collatz(27): ";
+  let seq = collatz 27 in
+  Seq.iter (fun x -> Printf.printf "%d " x) seq;
+  Printf.printf "1\n";
+  Printf.printf "Length: %d\n" (Seq.length (collatz 27) + 1)
+```
+**Status:** [ ]
+
+### 149: Record — Deriving Comparison
+**Source:** OCaml Standard Library
+**Topic:** Compare records field by field
+**Difficulty:** Beginner
+**Category:** records
+**OCaml:**
+```ocaml
+type date = { year: int; month: int; day: int }
+
+let compare_date a b =
+  match compare a.year b.year with
+  | 0 -> (match compare a.month b.month with
+          | 0 -> compare a.day b.day
+          | n -> n)
+  | n -> n
+
+let dates = [
+  { year=2024; month=3; day=15 };
+  { year=2024; month=1; day=20 };
+  { year=2023; month=12; day=1 };
+  { year=2024; month=3; day=10 };
+]
+
+let sorted = List.sort compare_date dates
+let () = List.iter (fun d ->
+  Printf.printf "%04d-%02d-%02d\n" d.year d.month d.day
+) sorted
+```
+**Status:** [ ]
+
+### 150: Fold — Universal Iterator
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/hop/fold.html
+**Topic:** Implement many list functions using fold
+**Difficulty:** Intermediate
+**Category:** higher-order
+**OCaml:**
+```ocaml
+(* Everything is a fold *)
+let my_length lst = List.fold_left (fun acc _ -> acc + 1) 0 lst
+let my_rev lst = List.fold_left (fun acc x -> x :: acc) [] lst
+let my_map f lst = List.fold_right (fun x acc -> f x :: acc) lst []
+let my_filter p lst = List.fold_right (fun x acc -> if p x then x :: acc else acc) lst []
+let my_exists p lst = List.fold_left (fun acc x -> acc || p x) false lst
+let my_for_all p lst = List.fold_left (fun acc x -> acc && p x) true lst
+let my_flatten lst = List.fold_right ( @ ) lst []
+
+let data = [1; 2; 3; 4; 5]
+let () =
+  Printf.printf "length: %d\n" (my_length data);
+  Printf.printf "rev: %s\n" (String.concat " " (List.map string_of_int (my_rev data)));
+  Printf.printf "evens: %s\n" (String.concat " " (List.map string_of_int (my_filter (fun x -> x mod 2 = 0) data)))
+```
+**Status:** [ ]
+
+### 151: Modules — Include for Extension
+**Source:** Real World OCaml — https://dev.realworldocaml.org/files-modules-and-programs.html
+**Topic:** Extend standard library modules with include
+**Difficulty:** Intermediate
+**Category:** modules
+**OCaml:**
+```ocaml
+module MyString = struct
+  include String
+
+  let starts_with ~prefix s =
+    let plen = length prefix in
+    plen <= length s && sub s 0 plen = prefix
+
+  let ends_with ~suffix s =
+    let slen = length suffix and len = length s in
+    slen <= len && sub s (len - slen) slen = suffix
+
+  let repeat n s =
+    let buf = Buffer.create (n * length s) in
+    for _ = 1 to n do Buffer.add_string buf s done;
+    Buffer.contents buf
+
+  let count_char c s =
+    fold_left (fun acc ch -> if ch = c then acc + 1 else acc) 0 s
+end
+
+let () =
+  Printf.printf "starts: %b\n" (MyString.starts_with ~prefix:"hel" "hello");
+  Printf.printf "repeat: %s\n" (MyString.repeat 3 "ab");
+  Printf.printf "count 'l': %d\n" (MyString.count_char 'l' "hello world")
+```
+**Status:** [ ]
+
+### 152: Sequence — Drop While and Take While
+**Source:** OCaml Standard Library
+**Topic:** Conditional prefix operations on sequences
+**Difficulty:** Intermediate
+**Category:** stdlib-seq
+**OCaml:**
+```ocaml
+let rec take_while p s () = match s () with
+  | Seq.Nil -> Seq.Nil
+  | Seq.Cons (x, rest) ->
+    if p x then Seq.Cons (x, take_while p rest) else Seq.Nil
+
+let rec drop_while p s () = match s () with
+  | Seq.Nil -> Seq.Nil
+  | Seq.Cons (x, rest) ->
+    if p x then drop_while p rest () else Seq.Cons (x, rest)
+
+let data = List.to_seq [1; 2; 3; 10; 20; 1; 2]
+let prefix = take_while (fun x -> x < 10) data |> List.of_seq
+let suffix = drop_while (fun x -> x < 10) data |> List.of_seq
+
+let () =
+  Printf.printf "take_while < 10: %s\n"
+    (String.concat " " (List.map string_of_int prefix));
+  Printf.printf "drop_while < 10: %s\n"
+    (String.concat " " (List.map string_of_int suffix))
+```
+**Status:** [ ]
+
+### 153: Imperative — Stack with Array
+**Source:** Real World OCaml — https://dev.realworldocaml.org/imperative-programming.html
+**Topic:** Array-backed stack with dynamic resizing
+**Difficulty:** Intermediate
+**Category:** data-structures
+**OCaml:**
+```ocaml
+type 'a stack = {
+  mutable data : 'a option array;
+  mutable top : int;
+}
+
+let create () = { data = Array.make 8 None; top = 0 }
+
+let push s x =
+  if s.top = Array.length s.data then begin
+    let new_data = Array.make (s.top * 2) None in
+    Array.blit s.data 0 new_data 0 s.top;
+    s.data <- new_data
+  end;
+  s.data.(s.top) <- Some x;
+  s.top <- s.top + 1
+
+let pop s =
+  if s.top = 0 then None
+  else begin
+    s.top <- s.top - 1;
+    let v = s.data.(s.top) in
+    s.data.(s.top) <- None;
+    v
+  end
+
+let s = create ()
+let () = List.iter (push s) [1;2;3;4;5]
+let () =
+  let rec drain () = match pop s with
+    | Some x -> Printf.printf "%d " x; drain ()
+    | None -> print_newline ()
+  in drain ()
+```
+**Status:** [ ]
+
+### 154: Type Classes via Modules — Show and Eq
+**Source:** Real World OCaml — https://dev.realworldocaml.org/first-class-modules.html
+**Topic:** Simulate type classes with module signatures
+**Difficulty:** Advanced
+**Category:** modules
+**OCaml:**
+```ocaml
+module type SHOW = sig
+  type t
+  val show : t -> string
+end
+
+module type EQ = sig
+  type t
+  val equal : t -> t -> bool
+end
+
+let print_list (type a) (module S : SHOW with type t = a) (lst : a list) =
+  Printf.printf "[%s]\n" (String.concat "; " (List.map S.show lst))
+
+let dedup (type a) (module E : EQ with type t = a) (lst : a list) =
+  List.fold_left (fun acc x ->
+    if List.exists (E.equal x) acc then acc else x :: acc
+  ) [] lst |> List.rev
+
+let () =
+  let module IntShow = struct type t = int let show = string_of_int end in
+  let module IntEq = struct type t = int let equal = Int.equal end in
+  print_list (module IntShow) [1;2;3;4;5];
+  let d = dedup (module IntEq) [1;2;1;3;2;4;3;5] in
+  print_list (module IntShow) d
+```
+**Status:** [ ]
+
+### 155: Environment — Substitution Model
+**Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/interp/substitution.html
+**Topic:** Simple interpreter with environment-based evaluation
+**Difficulty:** Advanced
+**Category:** interpreters
+**OCaml:**
+```ocaml
+type expr =
+  | Var of string | Num of int
+  | Let of string * expr * expr
+  | Fun of string * expr | App of expr * expr
+  | Add of expr * expr
+
+type value = VNum of int | VFun of string * expr * env
+and env = (string * value) list
+
+let rec eval env = function
+  | Num n -> VNum n
+  | Var x -> List.assoc x env
+  | Add (a, b) ->
+    (match (eval env a, eval env b) with
+     | (VNum a, VNum b) -> VNum (a + b) | _ -> failwith "type error")
+  | Let (x, e1, e2) -> eval ((x, eval env e1) :: env) e2
+  | Fun (x, body) -> VFun (x, body, env)
+  | App (f, arg) ->
+    (match eval env f with
+     | VFun (x, body, cenv) -> eval ((x, eval env arg) :: cenv) body
+     | _ -> failwith "not a function")
+
+let prog = Let ("double", Fun ("x", Add (Var "x", Var "x")),
+                App (Var "double", Num 21))
+let () = match eval [] prog with
+  | VNum n -> Printf.printf "Result: %d\n" n | _ -> ()
+```
+**Status:** [ ]

@@ -1,0 +1,4 @@
+[package]
+name = "example-087-difference-of-squares"
+version = "0.1.0"
+edition = "2021"
