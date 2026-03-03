@@ -265,3 +265,483 @@ version = "0.1.0"
 [[package]]
 name = "example-060-option-safe-max"
 version = "0.1.0"
+
+[[package]]
+name = "example-061-binary-tree"
+version = "0.1.0"
+
+[[package]]
+name = "example-061-pangram-check"
+version = "0.1.0"
+
+[[package]]
+name = "example-062-isogram-check"
+version = "0.1.0"
+
+[[package]]
+name = "example-062-records"
+version = "0.1.0"
+
+[[package]]
+name = "example-063-run-length-encoding"
+version = "0.1.0"
+
+[[package]]
+name = "example-063-stack-module"
+version = "0.1.0"
+
+[[package]]
+name = "example-064-balanced-parentheses"
+version = "0.1.0"
+
+[[package]]
+name = "example-064-map-functor"
+version = "0.1.0"
+
+[[package]]
+name = "example-065-association-list"
+version = "0.1.0"
+
+[[package]]
+name = "example-065-church-numerals"
+version = "0.1.0"
+
+[[package]]
+name = "example-066-phantom-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-066-tree-map-fold"
+version = "0.1.0"
+
+[[package]]
+name = "example-067-lazy-sequences"
+version = "0.1.0"
+
+[[package]]
+name = "example-067-mutual-recursion"
+version = "0.1.0"
+
+[[package]]
+name = "example-068-frequency-counter"
+version = "0.1.0"
+
+[[package]]
+name = "example-068-tail-recursive-accumulator"
+version = "0.1.0"
+
+[[package]]
+name = "example-069-sieve-eratosthenes"
+version = "0.1.0"
+
+[[package]]
+name = "example-069-unfold"
+version = "0.1.0"
+
+[[package]]
+name = "example-070-hamming-distance"
+version = "0.1.0"
+
+[[package]]
+name = "example-070-scan-left"
+version = "0.1.0"
+
+[[package]]
+name = "example-071-collatz-conjecture"
+version = "0.1.0"
+
+[[package]]
+name = "example-071-gcd-lcm"
+version = "0.1.0"
+
+[[package]]
+name = "example-071-identity-monad"
+version = "0.1.0"
+
+[[package]]
+name = "example-072-error-accumulation"
+version = "0.1.0"
+
+[[package]]
+name = "example-072-matrix-operations"
+version = "0.1.0"
+
+[[package]]
+name = "example-072-result-railway"
+version = "0.1.0"
+
+[[package]]
+name = "example-073-topological-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-073-validated-type"
+version = "0.1.0"
+
+[[package]]
+name = "example-073-word-count"
+version = "0.1.0"
+
+[[package]]
+name = "example-074-bifunctor"
+version = "0.1.0"
+
+[[package]]
+name = "example-074-catamorphism"
+version = "0.1.0"
+
+[[package]]
+name = "example-074-currying-partial"
+version = "0.1.0"
+
+[[package]]
+name = "example-075-difference-list"
+version = "0.1.0"
+
+[[package]]
+name = "example-075-merge-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-075-profunctor-intro"
+version = "0.1.0"
+
+[[package]]
+name = "example-076-gcd-lcm"
+version = "0.1.0"
+
+[[package]]
+name = "example-077-matrix-ops"
+version = "0.1.0"
+
+[[package]]
+name = "example-078-topological-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-079-lambda-calculus"
+version = "0.1.0"
+
+[[package]]
+name = "example-080-catamorphism"
+version = "0.1.0"
+
+[[package]]
+name = "example-081-difference-list"
+version = "0.1.0"
+
+[[package]]
+name = "example-082-nucleotide-count"
+version = "0.1.0"
+
+[[package]]
+name = "example-083-robot-simulator"
+version = "0.1.0"
+
+[[package]]
+name = "example-084-phone-number"
+version = "0.1.0"
+
+[[package]]
+name = "example-085-accumulate"
+version = "0.1.0"
+
+[[package]]
+name = "example-086-space-age"
+version = "0.1.0"
+
+[[package]]
+name = "example-087-difference-of-squares"
+version = "0.1.0"
+
+[[package]]
+name = "example-088-allergies"
+version = "0.1.0"
+
+[[package]]
+name = "example-089-bob"
+version = "0.1.0"
+
+[[package]]
+name = "example-090-perfect-numbers"
+version = "0.1.0"
+
+[[package]]
+name = "example-091-caesar-cipher"
+version = "0.1.0"
+
+[[package]]
+name = "example-092-pangram-check"
+version = "0.1.0"
+
+[[package]]
+name = "example-093-isogram-check"
+version = "0.1.0"
+
+[[package]]
+name = "example-094-run-length-encoding"
+version = "0.1.0"
+
+[[package]]
+name = "example-095-balanced-parentheses"
+version = "0.1.0"
+
+[[package]]
+name = "example-096-recursive-descent-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-097-zipper"
+version = "0.1.0"
+
+[[package]]
+name = "example-098-church-numerals"
+version = "0.1.0"
+
+[[package]]
+name = "example-099-cps"
+version = "0.1.0"
+
+[[package]]
+name = "example-100-phantom-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-101-lazy-sequences"
+version = "0.1.0"
+
+[[package]]
+name = "example-102-frequency-counter"
+version = "0.1.0"
+
+[[package]]
+name = "example-103-unfold"
+version = "0.1.0"
+
+[[package]]
+name = "example-104-scan-left"
+version = "0.1.0"
+
+[[package]]
+name = "example-105-trie"
+version = "0.1.0"
+
+[[package]]
+name = "example-140-type-safe-printf"
+version = "0.1.0"
+
+[[package]]
+name = "example-141-singleton-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-142-type-equality"
+version = "0.1.0"
+
+[[package]]
+name = "example-143-associated-type-bounds"
+version = "0.1.0"
+
+[[package]]
+name = "example-144-gat-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-145-gat-collections"
+version = "0.1.0"
+
+[[package]]
+name = "example-146-opaque-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-147-type-erasure"
+version = "0.1.0"
+
+[[package]]
+name = "example-148-sealed-traits"
+version = "0.1.0"
+
+[[package]]
+name = "example-149-extension-traits"
+version = "0.1.0"
+
+[[package]]
+name = "example-150-coherence-rules"
+version = "0.1.0"
+
+[[package]]
+name = "example-186-free-monad-interp"
+version = "0.1.0"
+
+[[package]]
+name = "example-187-free-monad-state"
+version = "0.1.0"
+
+[[package]]
+name = "example-188-operational-monad"
+version = "0.1.0"
+
+[[package]]
+name = "example-189-effect-intro"
+version = "0.1.0"
+
+[[package]]
+name = "example-190-effect-handler"
+version = "0.1.0"
+
+[[package]]
+name = "example-191-effect-exceptions"
+version = "0.1.0"
+
+[[package]]
+name = "example-192-effect-state"
+version = "0.1.0"
+
+[[package]]
+name = "example-193-effect-async"
+version = "0.1.0"
+
+[[package]]
+name = "example-194-coroutines-gen"
+version = "0.1.0"
+
+[[package]]
+name = "example-195-continuation-passing"
+version = "0.1.0"
+
+[[package]]
+name = "example-196-delimited-cont"
+version = "0.1.0"
+
+[[package]]
+name = "example-197-trampoline"
+version = "0.1.0"
+
+[[package]]
+name = "example-198-church-encoding"
+version = "0.1.0"
+
+[[package]]
+name = "example-199-scott-encoding"
+version = "0.1.0"
+
+[[package]]
+name = "example-200-tagless-final"
+version = "0.1.0"
+
+[[package]]
+name = "example-227-functor-category"
+version = "0.1.0"
+
+[[package]]
+name = "example-228-natural-transformation"
+version = "0.1.0"
+
+[[package]]
+name = "example-229-monoid-category"
+version = "0.1.0"
+
+[[package]]
+name = "example-230-semigroup"
+version = "0.1.0"
+
+[[package]]
+name = "example-231-product-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-232-sum-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-233-curry-howard"
+version = "0.1.0"
+
+[[package]]
+name = "example-234-propositions-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-235-yoneda-lemma"
+version = "0.1.0"
+
+[[package]]
+name = "example-236-coyoneda"
+version = "0.1.0"
+
+[[package]]
+name = "example-237-day-convolution"
+version = "0.1.0"
+
+[[package]]
+name = "example-238-profunctor-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-239-strong-profunctor"
+version = "0.1.0"
+
+[[package]]
+name = "example-240-choice-profunctor"
+version = "0.1.0"
+
+[[package]]
+name = "example-241-comonad-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-242-store-comonad"
+version = "0.1.0"
+
+[[package]]
+name = "example-243-env-comonad"
+version = "0.1.0"
+
+[[package]]
+name = "example-244-comonad-laws"
+version = "0.1.0"
+
+[[package]]
+name = "example-245-cofree-comonad"
+version = "0.1.0"
+
+[[package]]
+name = "example-246-adjunctions"
+version = "0.1.0"
+
+[[package]]
+name = "example-247-limits-colimits"
+version = "0.1.0"
+
+[[package]]
+name = "example-248-kan-extensions"
+version = "0.1.0"
+
+[[package]]
+name = "example-249-monad-from-adjunction"
+version = "0.1.0"
+
+[[package]]
+name = "example-250-grand-synthesis"
+version = "0.1.0"
+
+[[package]]
+name = "example-251-quicksort"
+version = "0.1.0"
+
+[[package]]
+name = "example-252-insertion-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-253-graph-bfs"
+version = "0.1.0"
+
+[[package]]
+name = "example-254-graph-dfs"
+version = "0.1.0"
+
+[[package]]
+name = "example-255-lazy-fibonacci"
+version = "0.1.0"

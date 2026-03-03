@@ -20,7 +20,6 @@ pub struct Point3d {
 
 // --- Tuple operations ---
 
-// Solution 1: Idiomatic — swap, fst, snd as free functions over generic tuples
 pub fn swap<A, B>(pair: (A, B)) -> (B, A) {
     (pair.1, pair.0)
 }
@@ -39,15 +38,10 @@ pub fn pair<A, B>(a: A, b: B) -> (A, B) {
 
 // --- Curry / Uncurry ---
 
-// Solution 2: Functional — uncurry converts a two-arg function into a tuple-arg function
-// OCaml: let uncurry f (a, b) = f a b
 pub fn uncurry<A, B, C>(f: impl Fn(A, B) -> C) -> impl Fn((A, B)) -> C {
     move |(a, b)| f(a, b)
 }
 
-// Solution 2b: curry converts a tuple-arg function into a two-step curried function.
-// Uses Rc for shared ownership of the inner function across calls.
-// OCaml: let curry f a b = f (a, b)
 pub fn curry<A: Clone + 'static, B: 'static, C: 'static>(
     f: impl Fn((A, B)) -> C + 'static,
 ) -> impl Fn(A) -> Box<dyn Fn(B) -> C> {
@@ -61,14 +55,12 @@ pub fn curry<A: Clone + 'static, B: 'static, C: 'static>(
 
 // --- Distance ---
 
-// Solution 1: Free function (matches OCaml style)
 pub fn distance(p: &Point2d, q: &Point2d) -> f64 {
     let dx = p.x - q.x;
     let dy = p.y - q.y;
     (dx * dx + dy * dy).sqrt()
 }
 
-// Solution 2: Method style (idiomatic Rust — groups behaviour with the type)
 impl Point2d {
     pub fn distance_to(&self, other: &Self) -> f64 {
         let dx = self.x - other.x;
@@ -76,6 +68,46 @@ impl Point2d {
         (dx * dx + dy * dy).sqrt()
     }
 }
+
+fn main() {
+    // Record (struct) product type
+    let p = Point2d { x: 0.0, y: 0.0 };
+    let q = Point2d { x: 3.0, y: 4.0 };
+    println!("distance (free fn) = {:.1}", distance(&p, &q));
+    println!("distance (method)  = {:.1}", p.distance_to(&q));
+
+    // Tuple product type
+    let t = (42, "hello");
+    println!("fst={} snd={}", fst(t), snd(t));
+    println!("swap: snd of swap = {}", snd(swap((42, "hello"))));
+
+    // pair constructor
+    let constructed = pair(10, 20);
+    println!("pair(10, 20) = {:?}", constructed);
+
+    // uncurry
+    let add_pair = uncurry(|a: i32, b: i32| a + b);
+    println!("uncurry (+) (3,4) = {}", add_pair((3, 4)));
+
+    // curry
+    let curried_add = curry(uncurry(|a: i32, b: i32| a + b));
+    println!("curry: 3 + 4 = {}", curried_add(3)(4));
+
+    // Point3d
+    let p3 = Point3d { x: 1.0, y: 2.0, z: 3.0 };
+    println!("Point3d = {:?}", p3);
+}
+
+/* Output:
+   distance (free fn) = 5.0
+   distance (method)  = 5.0
+   fst=42 snd=hello
+   swap: snd of swap = 42
+   pair(10, 20) = (10, 20)
+   uncurry (+) (3,4) = 7
+   curry: 3 + 4 = 7
+   Point3d = Point3d { x: 1.0, y: 2.0, z: 3.0 }
+*/
 
 #[cfg(test)]
 mod tests {

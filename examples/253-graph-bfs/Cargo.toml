@@ -1,0 +1,4 @@
+[package]
+name = "example-253-graph-bfs"
+version = "0.1.0"
+edition = "2021"

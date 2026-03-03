@@ -951,7 +951,7 @@ let () =
   let sorted = quicksort [3; 6; 8; 10; 1; 2; 1] in
   List.iter (Printf.printf "%d ") sorted
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 027: Insertion Sort — Building Sorted Lists
 **Source:** https://rosettacode.org/wiki/Sorting_algorithms/Insertion_sort#OCaml
@@ -973,7 +973,7 @@ let () =
   let sorted = insertion_sort [5; 3; 1; 4; 2] in
   List.iter (Printf.printf "%d ") sorted
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 028: Graph BFS — Breadth-First Search
 **Source:** https://cs3110.github.io/textbook/chapters/ds/bst.html
@@ -1004,7 +1004,7 @@ let () =
   let graph = [("a", ["b";"c"]); ("b", ["d"]); ("c", ["d"]); ("d", [])] in
   List.iter (Printf.printf "%s ") (bfs graph "a")
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 029: Graph DFS — Depth-First Search (Functional)
 **Source:** https://cs3110.github.io/textbook/chapters/ds/bst.html
@@ -1033,7 +1033,7 @@ let () =
   let g = [("a",["b";"c"]); ("b",["d"]); ("c",["d"]); ("d",[])] in
   List.iter (Printf.printf "%s ") (dfs g "a")
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 030: Lazy Sequences — Infinite Fibonacci
 **Source:** https://cs3110.github.io/textbook/chapters/ds/streams.html
@@ -1054,7 +1054,7 @@ let () =
   let fib_stream = fibs 0 1 in
   List.iter (Printf.printf "%d ") (take 10 fib_stream)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 031: Memoization — Fibonacci with Hashtable Cache
 **Source:** https://dev.realworldocaml.org/
