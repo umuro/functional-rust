@@ -385,7 +385,7 @@ let () =
   List.iter (Printf.printf "%d ") (preorder t);
   print_newline ()
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
@@ -421,7 +421,7 @@ let () =
   Printf.printf "contains (1,1)  = %b\n" (contains_point r { x = 1.0; y = 1.0 });
   Printf.printf "contains (11,1) = %b\n" (contains_point r { x = 11.0; y = 1.0 })
 ```
-**Status:** [ ]
+**Status:** [x]
 
 
 ---
@@ -472,7 +472,7 @@ let () =
   let s' = pop s in
   Printf.printf "after pop, peek = %d\n" (peek s')
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
@@ -504,7 +504,7 @@ let () =
   Printf.printf "doubled rust length -> %d\n"
     (StringMap.find "rust" doubled)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
@@ -542,7 +542,7 @@ let () =
     (match lookup "a" d' with Some v -> string_of_int v | None -> "None");
   Printf.printf "keys: %s\n" (String.concat ", " (keys d))
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
@@ -586,7 +586,7 @@ let () =
   let t2 = map_tree (fun v -> v * 2) t in
   Printf.printf "doubled sum = %d\n" (sum t2)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
@@ -624,7 +624,7 @@ let () =
   let e = Mul (Add (Lit 2, Lit 3), Lit 4) in
   Printf.printf "(2+3)*4    = %d\n" (eval_expr e)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
@@ -666,7 +666,7 @@ let () =
   Printf.printf "fib 10        = %d\n" (fib_tr 10);
   Printf.printf "fib 40        = %d\n" (fib_tr 40)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
@@ -700,7 +700,7 @@ let () =
     (List.length (primes_up_to 100));
   Printf.printf "10th prime: %d\n" (nth_prime 10)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
@@ -739,7 +739,7 @@ let () =
   Printf.printf "identical: %d\n" (hamming_distance "AAAA" "AAAA");
   Printf.printf "complete:  %d\n" (hamming_fold "AAAA" "TTTT")
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
@@ -775,7 +775,7 @@ let () =
     | Error e -> Printf.printf "collatz(%3d): %s\n" n e
   ) [1; 6; 11; 27; -1]
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
@@ -817,7 +817,7 @@ let () =
     | Error e -> Printf.printf "process(%S) ERR: %s\n" s e
   ) ["16"; "25"; "-4"; "hello"; "0"]
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
@@ -860,7 +860,7 @@ let () =
   Printf.printf "Counts for: %S\n" s;
   StringMap.iter (fun w n -> Printf.printf "  %-8s %d\n" w n) m
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ---
 
@@ -900,7 +900,7 @@ let () =
   Printf.printf "6 |> *2 |> +1 |> /2 = %d\n" result;
   Printf.printf "212F in Celsius ≈ %d\n" (celsius_of_fahrenheit 212)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 025: Merge Sort — Functional Divide and Conquer
 **Source:** https://cs3110.github.io/textbook/chapters/ds/bst.html
@@ -932,7 +932,7 @@ let () =
   let sorted = merge_sort compare [5; 2; 8; 1; 9; 3] in
   List.iter (Printf.printf "%d ") sorted
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 026: Quick Sort — Functional Partition
 **Source:** https://rosettacode.org/wiki/Sorting_algorithms/Quicksort#OCaml
