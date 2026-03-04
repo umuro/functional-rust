@@ -1240,7 +1240,7 @@ let () =
   List.iter (Printf.printf "%d ") (inorder tree);
   Printf.printf "\nmem 4 = %b, mem 9 = %b\n" (mem 4 tree) (mem 9 tree)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 037: Rose Tree — Multi-Way Tree with Fold
 **Source:** https://cs3110.github.io/textbook/chapters/ds/trees.html
@@ -1271,7 +1271,7 @@ let () =
   Printf.printf "size=%d depth=%d repr=%s\n"
     (size tree) (depth tree) (to_string tree)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 038: AVL Tree — Self-Balancing BST
 **Source:** https://rosettacode.org/wiki/AVL_tree#OCaml
@@ -1313,7 +1313,7 @@ let () =
   let t = List.fold_left (fun t x -> insert x t) Empty [7;3;9;1;5;8;10;2] in
   List.iter (Printf.printf "%d ") (inorder t)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 039: String Anagram Check
 **Source:** https://exercism.org/tracks/ocaml/exercises/anagram
@@ -1339,7 +1339,7 @@ let () =
   let results = find_anagrams "listen" ["enlists";"google";"inlets";"silent"] in
   List.iter (Printf.printf "%s ") results
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 040: Caesar Cipher — Functional Encryption
 **Source:** https://exercism.org/tracks/ocaml/exercises/rotational-cipher
@@ -1363,7 +1363,7 @@ let () =
   let enc = caesar 13 msg in
   Printf.printf "Encrypted: %s\nDecrypted: %s\n" enc (decrypt 13 enc)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 041: Pangram Check
 **Source:** https://exercism.org/tracks/ocaml/exercises/pangram

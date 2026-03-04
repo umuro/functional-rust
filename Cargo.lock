@@ -765,3 +765,23 @@ version = "0.1.0"
 [[package]]
 name = "example-260-functor-comparable-set"
 version = "0.1.0"
+
+[[package]]
+name = "example-261-binary-search-tree"
+version = "0.1.0"
+
+[[package]]
+name = "example-262-rose-tree-fold"
+version = "0.1.0"
+
+[[package]]
+name = "example-263-avl-tree"
+version = "0.1.0"
+
+[[package]]
+name = "example-264-string-anagram"
+version = "0.1.0"
+
+[[package]]
+name = "example-265-caesar-cipher"
+version = "0.1.0"
