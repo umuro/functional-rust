@@ -1,0 +1,4 @@
+[package]
+name = "example-270-flatten-nested-structure"
+version = "0.1.0"
+edition = "2021"

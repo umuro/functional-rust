@@ -1504,7 +1504,7 @@ let () =
   let ast, _ = parse_expr tokens in
   Printf.printf "2+3*4 = %d\n" (eval ast)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 046: Zipper — Functional List Cursor
 **Source:** https://cs3110.github.io/textbook/chapters/ds/zippers.html
@@ -1537,7 +1537,7 @@ let () =
   let z = update (fun x -> x * 10) z in
   List.iter (Printf.printf "%d ") (to_list z)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 047: Church Numerals — Functions as Numbers
 **Source:** https://cs3110.github.io/textbook/chapters/hop/lambda.html
@@ -1598,7 +1598,7 @@ let () =
   let t = Node (Node (Leaf 1, Leaf 2), Node (Leaf 3, Leaf 4)) in
   Printf.printf "%d\n" (sum_cps t)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 049: Phantom Types — Type-Safe Units
 **Source:** https://dev.realworldocaml.org/
@@ -1775,7 +1775,7 @@ let () =
     Printf.printf "%s: %b\n" w (mem w t)
   ) ["cat";"ca";"card";"dare";"dog"]
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 055: GCD and LCM — Euclidean Algorithm
 **Source:** https://exercism.org/tracks/ocaml/exercises/grains
@@ -2381,7 +2381,7 @@ let () =
   ] in
   flatten nested |> List.iter (Printf.printf "%d ")
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 076: Sublist — List Relationship Classification
 **Source:** https://exercism.org/tracks/ocaml/exercises/sublist
@@ -2415,7 +2415,7 @@ let () =
   Printf.printf "%s\n" (name (classify [1;2;3] [0;1;2;3;4]));
   Printf.printf "%s\n" (name (classify [0;1;2;3;4] [1;2;3]))
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 077: Zipper on Trees — Navigating Binary Trees
 **Source:** https://cs3110.github.io/textbook/chapters/ds/zippers.html
@@ -2450,7 +2450,7 @@ let set_value x z = match z.focus with
 
 let rec to_tree z = match go_up z with None -> z.focus | Some z' -> to_tree z'
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 078: Fibonacci Variants — Multiple Approaches
 **Source:** https://cs3110.github.io/textbook/chapters/basics/functions.html
@@ -2483,7 +2483,7 @@ let () =
       i (fib_naive i) (fib_tail i) (fib_fold i)
   done
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 079: Binary to Decimal — Fold on Digits
 **Source:** https://exercism.org/tracks/ocaml/exercises/binary
@@ -2514,7 +2514,7 @@ let () =
     Printf.printf "%s -> %d -> %s\n" s d (decimal_to_binary d)
   ) ["1010"; "11111"; "10000000"; "101010"]
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 080: Yacht — Dice Scoring with Pattern Matching
 **Source:** https://exercism.org/tracks/ocaml/exercises/yacht
@@ -2553,7 +2553,7 @@ let () =
   Printf.printf "Full: %d\n" (score [2;2;3;3;3] FullHouse);
   Printf.printf "Choice: %d\n" (score [1;2;3;4;5] Choice)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 081: Parallel Letter Frequency — Map-Reduce Pattern
 **Source:** https://exercism.org/tracks/ocaml/exercises/parallel-letter-frequency
@@ -3706,7 +3706,7 @@ let () = match validate "42" with
   | Ok v -> Printf.printf "Valid: %d\n" v
   | Error e -> Printf.printf "Error: %s\n" e
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 046: Result.map_error — Transform Error Types
 **Source:** OCaml Standard Library
@@ -3735,7 +3735,7 @@ let () =
   | Ok v -> Printf.printf "Ok: %d\n" v
   | Error e -> Printf.printf "Error: %s\n" (string_of_error e)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 047: Hashtbl — Create, Add, Find, Iterate
 **Source:** OCaml Standard Library
@@ -3780,7 +3780,7 @@ let count_words text =
 let freq = count_words "the cat sat on the mat the cat"
 let () = Hashtbl.iter (fun w n -> Printf.printf "%s: %d\n" w n) freq
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 049: Hashtbl.to_seq — Convert to Sequence
 **Source:** OCaml Standard Library
@@ -3906,7 +3906,7 @@ let stopwords = StringSet.of_list ["the"; "on"; "a"; "an"]
 let content_words = StringSet.diff unique stopwords
 let () = StringSet.iter (fun w -> Printf.printf "%s " w) content_words
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 055: Seq.unfold — Generate Sequences Lazily
 **Source:** OCaml Standard Library
@@ -4458,7 +4458,7 @@ let is_pangram s =
   ) s;
   !bits = all_letters
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 046: Luhn Validation
 **Source:** https://exercism.org/tracks/ocaml/exercises/luhn
@@ -4479,7 +4479,7 @@ let valid s =
       else d) digits in
     List.fold_left (+) 0 doubled mod 10 = 0
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 047: Nth Prime
 **Source:** https://exercism.org/tracks/ocaml/exercises/nth-prime
@@ -4523,7 +4523,7 @@ let find xs value =
   if Array.length xs = 0 then Error "value not in array"
   else go 0 (Array.length xs - 1)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 049: Binary Search Tree
 **Source:** https://exercism.org/tracks/ocaml/exercises/binary-search-tree
@@ -4690,7 +4690,7 @@ let is_valid s =
   in
   aux chars 0 0
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 055: Atbash Cipher
 **Source:** https://exercism.org/tracks/ocaml/exercises/atbash-cipher
@@ -5429,7 +5429,7 @@ let connect board =
     if bfs o_start (fun r _ -> r = h - 1) 'O' then Some O
     else None
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 076: React (Reactive Cells)
 **Source:** https://exercism.org/tracks/ocaml/exercises/react
@@ -5488,7 +5488,7 @@ let remove_callback cell id = match cell with
   | Compute2 c -> c.callbacks <- List.filter (fun (i,_) -> i <> id) c.callbacks
   | _ -> ()
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 077: Scrabble Score
 **Source:** https://exercism.org/tracks/ocaml/exercises/scrabble-score
@@ -5513,7 +5513,7 @@ let score word =
   String.iter (fun c -> total := !total + letter_score c) w;
   !total
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 078: Series (Substring Slicing)
 **Source:** https://exercism.org/tracks/ocaml/exercises/series
@@ -5526,7 +5526,7 @@ let slices s n =
   if n <= 0 || n > String.length s then []
   else List.init (String.length s - n + 1) (fun i -> String.sub s i n)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 079: Protein Translation
 **Source:** https://exercism.org/tracks/ocaml/exercises/protein-translation
@@ -5556,7 +5556,7 @@ let proteins rna =
   in
   go 0 []
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 080: Queen Attack
 **Source:** https://exercism.org/tracks/ocaml/exercises/queen-attack
@@ -5573,7 +5573,7 @@ let create ~row ~column =
 let can_attack (r1, c1) (r2, c2) =
   r1 = r2 || c1 = c2 || abs (r1 - r2) = abs (c1 - c2)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 081: Clock (Modular Arithmetic)
 **Source:** https://exercism.org/tracks/ocaml/exercises/clock
@@ -6209,7 +6209,7 @@ let chinese_remainder congruences =
    try Some (chinese_remainder_exn congruences)
    with modular_inverse -> None
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 046: Ethiopian multiplication
 **Source:** https://rosettacode.org/wiki/Ethiopian_multiplication
@@ -6277,7 +6277,7 @@ ethiopian;;
    me do something else, see for example the RosettaCode page on 
    "Exponentiation operator". *)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 047: Towers of Hanoi
 **Source:** https://rosettacode.org/wiki/Towers_of_Hanoi
@@ -6314,7 +6314,7 @@ let mul_inv a = function 1 -> 1 | b ->
   let x = aux a b 0 1 in
   if x < 0 then x + b else x
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 049: Primality by trial division
 **Source:** https://rosettacode.org/wiki/Primality_by_trial_division
@@ -6459,7 +6459,7 @@ let matrix_multiply x y =
   done;
   z
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 055: Matrix transposition
 **Source:** https://rosettacode.org/wiki/Matrix_transposition
@@ -7057,7 +7057,7 @@ val nonsqr : int -> int = <fun>
   done;;
 - : unit = ()
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 076: Range extraction
 **Source:** https://rosettacode.org/wiki/Range_extraction
@@ -7088,7 +7088,7 @@ let () =
   let rng = range_extract li in
   print_endline(string_of_range rng)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 077: Range expansion
 **Source:** https://rosettacode.org/wiki/Range_expansion
@@ -7121,7 +7121,7 @@ let () =
   List.iter (Printf.printf " %d") exp;
   print_newline ()
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 078: Tree traversal
 **Source:** https://rosettacode.org/wiki/Tree_traversal
@@ -7181,7 +7181,7 @@ let () =
   postorder  (Printf.printf "%d ") tree; print_newline ();
   levelorder (Printf.printf "%d ") tree; print_newline ()
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 079: Algebraic data types
 **Source:** https://rosettacode.org/wiki/Algebraic_data_types
@@ -7215,7 +7215,7 @@ let insert x s =
   in let T (_,a,y,b) = ins s 
   in T (B,a,y,b)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 080: Compound data type
 **Source:** https://rosettacode.org/wiki/Compound_data_type
@@ -7230,7 +7230,7 @@ type tree = Empty
 
 let t1 = Node (Leaf 1, Node (Leaf 2, Leaf 3))
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 081: Abstract type
 **Source:** https://rosettacode.org/wiki/Abstract_type
@@ -9748,7 +9748,7 @@ let () =
   Printf.printf "%s\n" (show int_show 42);
   Printf.printf "%s\n" (show float_show 3.14)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 076: Objects in OCaml
 **Source:** Real World OCaml — https://dev.realworldocaml.org/objects.html
@@ -9777,7 +9777,7 @@ let () =
   p1#move 1 1;
   Printf.printf "p1 moved to %s\n" p1#to_string
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 077: Lazy Evaluation
 **Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/ds/streams.html
@@ -9799,7 +9799,7 @@ let () =
   let v2 = Lazy.force lazy_val in  (* cached, no recomputation *)
   Printf.printf "Second: %d\n" v2
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 078: Mutual Recursion
 **Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/data/algebraic_data_types.html
@@ -9827,7 +9827,7 @@ and forest_size = function
 let t = Node (1, [Node (2, []); Node (3, [Node (4, [])])])
 let () = Printf.printf "Tree size: %d\n" (tree_size t)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 079: Pipe Operator and Function Composition
 **Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/hop/pipelining.html
@@ -9856,7 +9856,7 @@ let result2 =
   |> List.fold_left ( + ) 0
 let () = Printf.printf "Sum of even squares: %d\n" result2
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 080: Recursive Descent Parser
 **Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/interp/parsing.html
@@ -9892,7 +9892,7 @@ let tokens = String.split_on_char ' ' "2 + 3 * 4"
 let (ast, _) = parse_expr tokens
 let () = Printf.printf "2 + 3 * 4 = %d\n" (eval ast)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 081: Queue Implemented with Two Stacks
 **Source:** Cornell CS3110 — https://cs3110.github.io/textbook/chapters/ds/amortized.html
