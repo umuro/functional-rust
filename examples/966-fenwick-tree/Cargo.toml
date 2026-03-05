@@ -1,4 +1,4 @@
 [package]
-name = "966-fenwick-tree"
+name = "example-966-fenwick-tree"
 version = "0.1.0"
 edition = "2021"

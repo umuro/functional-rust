@@ -1,5 +1,5 @@
 [package]
-name = "856-monad-laws"
+name = "example-856-monad-laws"
 version = "0.1.0"
 edition = "2021"
 

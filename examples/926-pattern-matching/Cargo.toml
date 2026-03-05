@@ -1,4 +1,4 @@
 [package]
-name = "926-pattern-matching"
+name = "example-926-pattern-matching"
 version = "0.1.0"
 edition = "2021"

@@ -1,5 +1,5 @@
 [package]
-name = "924-work-stealing"
+name = "example-924-work-stealing"
 version = "0.1.0"
 edition = "2021"
 

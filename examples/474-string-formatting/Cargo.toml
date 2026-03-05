@@ -1,5 +1,5 @@
 [package]
-name = "474-string-formatting"
+name = "example-474-string-formatting"
 version = "0.1.0"
 edition = "2021"
 

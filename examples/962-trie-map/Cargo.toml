@@ -1,4 +1,4 @@
 [package]
-name = "962-trie-map"
+name = "example-962-trie-map"
 version = "0.1.0"
 edition = "2021"

@@ -1,4 +1,4 @@
 [package]
-name = "1007-result-combinators"
+name = "example-1007-result-combinators"
 version = "0.1.0"
 edition = "2021"

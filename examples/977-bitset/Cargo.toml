@@ -1,4 +1,4 @@
 [package]
-name = "977-bitset"
+name = "example-977-bitset"
 version = "0.1.0"
 edition = "2021"

@@ -1,4 +1,4 @@
 [package]
-name = "1028-btreeset-ops"
+name = "example-1028-btreeset-ops"
 version = "0.1.0"
 edition = "2021"

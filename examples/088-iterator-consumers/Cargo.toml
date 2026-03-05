@@ -1,4 +1,4 @@
 [package]
-name = "088-iterator-consumers"
+name = "example-088-iterator-consumers"
 version = "0.1.0"
 edition = "2021"

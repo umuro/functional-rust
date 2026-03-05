@@ -1,4 +1,4 @@
 [package]
-name = "089-lazy-sequences"
+name = "example-089-lazy-sequences"
 version = "0.1.0"
 edition = "2021"

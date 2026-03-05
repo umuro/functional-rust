@@ -1,5 +1,5 @@
 [package]
-name = "467-epoch-gc"
+name = "example-467-epoch-gc"
 version = "0.1.0"
 edition = "2021"
 

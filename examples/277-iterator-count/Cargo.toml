@@ -1,5 +1,5 @@
 [package]
-name = "277-iterator-count"
+name = "example-277-iterator-count"
 version = "0.1.0"
 edition = "2021"
 

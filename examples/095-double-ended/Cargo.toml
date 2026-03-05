@@ -1,4 +1,4 @@
 [package]
-name = "095-double-ended"
+name = "example-095-double-ended"
 version = "0.1.0"
 edition = "2021"

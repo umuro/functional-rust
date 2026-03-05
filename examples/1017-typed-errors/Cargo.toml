@@ -1,4 +1,4 @@
 [package]
-name = "1017-typed-errors"
+name = "example-1017-typed-errors"
 version = "0.1.0"
 edition = "2021"

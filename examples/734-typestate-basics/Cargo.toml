@@ -1,5 +1,5 @@
 [package]
-name = "734-typestate-basics"
+name = "example-734-typestate-basics"
 version = "0.1.0"
 edition = "2021"
 

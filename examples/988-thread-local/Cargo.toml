@@ -1,5 +1,5 @@
 [package]
-name = "988-thread-local"
+name = "example-988-thread-local"
 version = "0.1.0"
 edition = "2021"
 

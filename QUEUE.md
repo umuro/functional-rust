@@ -2884,7 +2884,7 @@ let () =
   Printf.printf "10! = %d\n" (factorial 10);
   Printf.printf "fib(10) = %d\n" (fibonacci 10)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 092: Phantom Type State Machine — File Handle
 **Source:** https://dev.realworldocaml.org/
@@ -2917,7 +2917,7 @@ let () =
   let _closed = close_file f in
   Printf.printf "File safely closed\n"
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 093: Visitor Pattern via Fold — Expression Evaluator
 **Source:** https://cs3110.github.io/textbook/chapters/interp/substitution.html
@@ -2950,7 +2950,7 @@ let () =
   let e = Add (Mul (Lit 2.0, Lit 3.0), Neg (Lit 1.0)) in
   Printf.printf "%s = %g\n" (to_string e) (eval e)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 094: Writer Monad — Logging Computation
 **Source:** https://cs3110.github.io/textbook/chapters/ds/monads.html
@@ -2983,7 +2983,7 @@ let () =
   Printf.printf "Value: %d\n" result.value;
   List.iter (Printf.printf "  Log: %s\n") result.log
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 095: Topological Sort via Kahn's Algorithm
 **Source:** https://rosettacode.org/wiki/Topological_sort#OCaml
@@ -3018,7 +3018,7 @@ let () =
   let edges = [("a","b");("a","c");("b","d");("c","d");("d","e")] in
   List.iter (Printf.printf "%s ") (kahn_sort nodes edges)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 096: Lenses — Functional Getters and Setters
 **Source:** https://dev.realworldocaml.org/

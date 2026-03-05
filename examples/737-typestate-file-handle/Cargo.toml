@@ -1,5 +1,5 @@
 [package]
-name = "737-typestate-file-handle"
+name = "example-737-typestate-file-handle"
 version = "0.1.0"
 edition = "2021"
 

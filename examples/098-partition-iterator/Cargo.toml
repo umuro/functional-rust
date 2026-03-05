@@ -1,4 +1,4 @@
 [package]
-name = "098-partition-iterator"
+name = "example-098-partition-iterator"
 version = "0.1.0"
 edition = "2021"

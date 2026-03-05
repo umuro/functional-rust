@@ -1,4 +1,4 @@
 [package]
-name = "918-iterator-nth"
+name = "example-918-iterator-nth"
 version = "0.1.0"
 edition = "2021"

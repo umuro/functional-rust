@@ -1,4 +1,4 @@
 [package]
-name = "054-applicative-validation"
+name = "example-054-applicative-validation"
 version = "0.1.0"
 edition = "2021"

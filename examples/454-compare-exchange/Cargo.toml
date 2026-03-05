@@ -1,5 +1,5 @@
 [package]
-name = "454-compare-exchange"
+name = "example-454-compare-exchange"
 version = "0.1.0"
 edition = "2021"
 

@@ -1,4 +1,4 @@
 [package]
-name = "1026-error-display"
+name = "example-1026-error-display"
 version = "0.1.0"
 edition = "2021"

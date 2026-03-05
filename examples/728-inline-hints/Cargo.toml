@@ -1,5 +1,5 @@
 [package]
-name = "728-inline-hints"
+name = "example-728-inline-hints"
 version = "0.1.0"
 edition = "2021"
 

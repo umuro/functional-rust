@@ -1,4 +1,4 @@
 [package]
-name = "961-lru-cache"
+name = "example-961-lru-cache"
 version = "0.1.0"
 edition = "2021"

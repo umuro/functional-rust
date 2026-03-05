@@ -1,4 +1,4 @@
 [package]
-name = "1016-error-context"
+name = "example-1016-error-context"
 version = "0.1.0"
 edition = "2021"

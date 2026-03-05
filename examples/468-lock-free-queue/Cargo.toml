@@ -1,5 +1,5 @@
 [package]
-name = "468-lock-free-queue"
+name = "example-468-lock-free-queue"
 version = "0.1.0"
 edition = "2021"
 

@@ -1,4 +1,4 @@
 [package]
-name = "940-gcd-lcm"
+name = "example-940-gcd-lcm"
 version = "0.1.0"
 edition = "2021"

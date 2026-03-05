@@ -1,5 +1,5 @@
 [package]
-name = "996-timeout-pattern"
+name = "example-996-timeout-pattern"
 version = "0.1.0"
 edition = "2021"
 

@@ -1,4 +1,4 @@
 [package]
-name = "1040-queue-via-deque"
+name = "example-1040-queue-via-deque"
 version = "0.1.0"
 edition = "2021"

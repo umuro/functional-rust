@@ -1,4 +1,4 @@
 [package]
-name = "965-segment-tree"
+name = "example-965-segment-tree"
 version = "0.1.0"
 edition = "2021"

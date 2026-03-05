@@ -1,5 +1,5 @@
 [package]
-name = "492-osstr-handling"
+name = "example-492-osstr-handling"
 version = "0.1.0"
 edition = "2021"
 

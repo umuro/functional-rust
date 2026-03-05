@@ -1,5 +1,5 @@
 [package]
-name = "477-string-trimming"
+name = "example-477-string-trimming"
 version = "0.1.0"
 edition = "2021"
 

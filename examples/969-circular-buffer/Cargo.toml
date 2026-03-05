@@ -1,4 +1,4 @@
 [package]
-name = "969-circular-buffer"
+name = "example-969-circular-buffer"
 version = "0.1.0"
 edition = "2021"

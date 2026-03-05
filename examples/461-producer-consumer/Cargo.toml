@@ -1,5 +1,5 @@
 [package]
-name = "461-producer-consumer"
+name = "example-461-producer-consumer"
 version = "0.1.0"
 edition = "2021"
 

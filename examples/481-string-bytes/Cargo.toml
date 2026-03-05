@@ -1,5 +1,5 @@
 [package]
-name = "481-string-bytes"
+name = "example-481-string-bytes"
 version = "0.1.0"
 edition = "2021"
 

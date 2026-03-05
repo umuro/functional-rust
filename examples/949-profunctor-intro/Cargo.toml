@@ -1,4 +1,4 @@
 [package]
-name = "949-profunctor-intro"
+name = "example-949-profunctor-intro"
 version = "0.1.0"
 edition = "2021"

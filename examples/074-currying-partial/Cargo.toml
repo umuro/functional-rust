@@ -1,4 +1,4 @@
 [package]
-name = "074-currying-partial"
+name = "example-074-currying-partial"
 version = "0.1.0"
 edition = "2021"

@@ -1,4 +1,4 @@
 [package]
-name = "932-stack-module"
+name = "example-932-stack-module"
 version = "0.1.0"
 edition = "2021"

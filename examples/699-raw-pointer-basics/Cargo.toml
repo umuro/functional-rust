@@ -1,5 +1,5 @@
 [package]
-name = "699-raw-pointer-basics"
+name = "example-699-raw-pointer-basics"
 version = "0.1.0"
 edition = "2021"
 

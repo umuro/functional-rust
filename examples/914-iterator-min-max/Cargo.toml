@@ -1,5 +1,5 @@
 [package]
-name = "914-iterator-min-max"
+name = "example-914-iterator-min-max"
 version = "0.1.0"
 edition = "2021"
 

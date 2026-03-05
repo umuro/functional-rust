@@ -1,4 +1,4 @@
 [package]
-name = "073-validated-type"
+name = "example-073-validated-type"
 version = "0.1.0"
 edition = "2021"

@@ -1,5 +1,5 @@
 [package]
-name = "464-actor-pattern"
+name = "example-464-actor-pattern"
 version = "0.1.0"
 edition = "2021"
 

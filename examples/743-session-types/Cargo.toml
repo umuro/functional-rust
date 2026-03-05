@@ -1,5 +1,5 @@
 [package]
-name = "743-session-types"
+name = "example-743-session-types"
 version = "0.1.0"
 edition = "2021"
 

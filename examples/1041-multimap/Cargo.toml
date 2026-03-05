@@ -1,4 +1,4 @@
 [package]
-name = "1041-multimap"
+name = "example-1041-multimap"
 version = "0.1.0"
 edition = "2021"

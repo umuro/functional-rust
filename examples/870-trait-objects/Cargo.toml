@@ -1,5 +1,5 @@
 [package]
-name = "870-trait-objects"
+name = "example-870-trait-objects"
 version = "0.1.0"
 edition = "2021"
 

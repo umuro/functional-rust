@@ -1,5 +1,5 @@
 [package]
-name = "982-async-join"
+name = "example-982-async-join"
 version = "0.1.0"
 edition = "2021"
 

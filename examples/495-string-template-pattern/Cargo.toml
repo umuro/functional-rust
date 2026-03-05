@@ -1,5 +1,5 @@
 [package]
-name = "495-string-template-pattern"
+name = "example-495-string-template-pattern"
 version = "0.1.0"
 edition = "2021"
 

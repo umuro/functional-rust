@@ -1,5 +1,5 @@
 [package]
-name = "726-memory-pool-pattern"
+name = "example-726-memory-pool-pattern"
 version = "0.1.0"
 edition = "2021"
 

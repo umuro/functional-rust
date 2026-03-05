@@ -1,5 +1,5 @@
 [package]
-name = "857-flatmap-chains"
+name = "example-857-flatmap-chains"
 version = "0.1.0"
 edition = "2021"
 

@@ -1,4 +1,4 @@
 [package]
-name = "964-union-find"
+name = "example-964-union-find"
 version = "0.1.0"
 edition = "2021"

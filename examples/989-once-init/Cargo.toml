@@ -1,5 +1,5 @@
 [package]
-name = "989-once-init"
+name = "example-989-once-init"
 version = "0.1.0"
 edition = "2021"
 

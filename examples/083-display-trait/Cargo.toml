@@ -1,4 +1,4 @@
 [package]
-name = "083-display-trait"
+name = "example-083-display-trait"
 version = "0.1.0"
 edition = "2021"

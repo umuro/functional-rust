@@ -1,4 +1,4 @@
 [package]
-name = "976-matrix-multiply"
+name = "example-976-matrix-multiply"
 version = "0.1.0"
 edition = "2021"

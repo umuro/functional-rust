@@ -1,5 +1,5 @@
 [package]
-name = "872-where-clauses"
+name = "example-872-where-clauses"
 version = "0.1.0"
 edition = "2021"
 

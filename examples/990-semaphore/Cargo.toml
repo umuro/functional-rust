@@ -1,5 +1,5 @@
 [package]
-name = "990-semaphore"
+name = "example-990-semaphore"
 version = "0.1.0"
 edition = "2021"
 

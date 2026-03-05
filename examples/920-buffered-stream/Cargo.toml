@@ -1,5 +1,5 @@
 [package]
-name = "920-buffered-stream"
+name = "example-920-buffered-stream"
 version = "0.1.0"
 edition = "2021"
 

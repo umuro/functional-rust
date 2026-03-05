@@ -1,5 +1,5 @@
 [package]
-name = "997-retry-backoff"
+name = "example-997-retry-backoff"
 version = "0.1.0"
 edition = "2021"
 

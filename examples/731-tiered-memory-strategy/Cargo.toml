@@ -1,5 +1,5 @@
 [package]
-name = "731-tiered-memory-strategy"
+name = "example-731-tiered-memory-strategy"
 version = "0.1.0"
 edition = "2021"
 

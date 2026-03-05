@@ -1,4 +1,4 @@
 [package]
-name = "081-newtype-pattern"
+name = "example-081-newtype-pattern"
 version = "0.1.0"
 edition = "2021"

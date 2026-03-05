@@ -1,5 +1,5 @@
 [package]
-name = "980-async-map"
+name = "example-980-async-map"
 version = "0.1.0"
 edition = "2021"
 

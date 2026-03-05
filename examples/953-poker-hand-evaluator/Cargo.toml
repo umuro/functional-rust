@@ -1,4 +1,4 @@
 [package]
-name = "953-poker-hand-evaluator"
+name = "example-953-poker-hand-evaluator"
 version = "0.1.0"
 edition = "2021"

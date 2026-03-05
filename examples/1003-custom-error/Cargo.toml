@@ -1,4 +1,4 @@
 [package]
-name = "1003-custom-error"
+name = "example-1003-custom-error"
 version = "0.1.0"
 edition = "2021"

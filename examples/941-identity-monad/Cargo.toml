@@ -1,4 +1,4 @@
 [package]
-name = "941-identity-monad"
+name = "example-941-identity-monad"
 version = "0.1.0"
 edition = "2021"

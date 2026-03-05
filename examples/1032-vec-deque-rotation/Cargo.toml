@@ -1,4 +1,4 @@
 [package]
-name = "1032-vec-deque-rotation"
+name = "example-1032-vec-deque-rotation"
 version = "0.1.0"
 edition = "2021"

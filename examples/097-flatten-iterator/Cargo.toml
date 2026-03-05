@@ -1,4 +1,4 @@
 [package]
-name = "097-flatten-iterator"
+name = "example-097-flatten-iterator"
 version = "0.1.0"
 edition = "2021"

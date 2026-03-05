@@ -1,4 +1,4 @@
 [package]
-name = "1002-backpressure"
+name = "example-1002-backpressure"
 version = "0.1.0"
 edition = "2021"

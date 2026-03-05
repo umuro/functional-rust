@@ -1,0 +1,31 @@
+# Example 1076: Y Combinator — Anonymous Recursion
+
+**Difficulty:** ⭐⭐⭐
+**Category:** Higher-Order Functions
+**OCaml Source:** https://rosettacode.org/wiki/Y_combinator#OCaml
+
+## Problem Statement
+
+Implement the Y combinator — a fixed-point combinator that enables recursion without named function bindings. Use it to define factorial and fibonacci as anonymous recursive functions.
+
+## Learning Outcomes
+
+- How Rust handles recursive types with `Rc<RefCell>` vs OCaml's algebraic type wrapper
+- Interior mutability patterns for self-referencing closures
+- Trait objects (`dyn Fn`) as the Rust equivalent of OCaml's first-class functions
+- Three different approaches to anonymous recursion in Rust
+
+## OCaml Approach
+
+OCaml uses an algebraic type `Fix` to wrap the recursive function reference, then builds the fixed-point by pattern matching on the wrapper. The type system handles the recursion through the `Fix` constructor, and garbage collection manages the cyclic reference.
+
+## Rust Approach
+
+Rust cannot have direct cyclic references due to ownership rules. We use `Rc<RefCell<Option<...>>>` to create a shared mutable cell that holds the closure after construction. The Fix-based approach uses `Arc` and boxed trait objects. A third trait-based approach avoids heap allocation entirely.
+
+## Key Differences
+
+1. **Recursive types:** OCaml uses `type 'a fix = Fix of ('a fix -> 'a)` directly; Rust needs `Rc`/`Box` indirection
+2. **Self-reference:** OCaml's GC handles cycles naturally; Rust needs `RefCell` for interior mutability
+3. **Type erasure:** OCaml functions are first-class; Rust needs `dyn Fn` trait objects for dynamic dispatch
+4. **Memory management:** OCaml's GC cleans up the cycle; Rust's `Rc` reference counting handles it

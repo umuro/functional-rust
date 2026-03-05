@@ -1,5 +1,5 @@
 [package]
-name = "987-rwlock-pattern"
+name = "example-987-rwlock-pattern"
 version = "0.1.0"
 edition = "2021"
 

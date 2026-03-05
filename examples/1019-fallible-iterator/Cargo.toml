@@ -1,4 +1,4 @@
 [package]
-name = "1019-fallible-iterator"
+name = "example-1019-fallible-iterator"
 version = "0.1.0"
 edition = "2021"

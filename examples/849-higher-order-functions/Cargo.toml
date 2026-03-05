@@ -1,5 +1,5 @@
 [package]
-name = "849-higher-order-functions"
+name = "example-849-higher-order-functions"
 version = "0.1.0"
 edition = "2021"
 

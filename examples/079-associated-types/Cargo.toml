@@ -1,4 +1,4 @@
 [package]
-name = "079-associated-types"
+name = "example-079-associated-types"
 version = "0.1.0"
 edition = "2021"

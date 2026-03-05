@@ -1,4 +1,4 @@
 [package]
-name = "929-palindrome-check"
+name = "example-929-palindrome-check"
 version = "0.1.0"
 edition = "2021"

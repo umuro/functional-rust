@@ -1,4 +1,4 @@
 [package]
-name = "1010-partition-results"
+name = "example-1010-partition-results"
 version = "0.1.0"
 edition = "2021"

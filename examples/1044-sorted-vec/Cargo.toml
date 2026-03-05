@@ -1,4 +1,4 @@
 [package]
-name = "1044-sorted-vec"
+name = "example-1044-sorted-vec"
 version = "0.1.0"
 edition = "2021"

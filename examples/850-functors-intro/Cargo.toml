@@ -1,5 +1,5 @@
 [package]
-name = "850-functors-intro"
+name = "example-850-functors-intro"
 version = "0.1.0"
 edition = "2021"
 

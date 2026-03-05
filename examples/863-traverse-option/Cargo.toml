@@ -1,5 +1,5 @@
 [package]
-name = "863-traverse-option"
+name = "example-863-traverse-option"
 version = "0.1.0"
 edition = "2021"
 

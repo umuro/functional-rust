@@ -1,4 +1,4 @@
 [package]
-name = "937-tail-recursive-accumulator"
+name = "example-937-tail-recursive-accumulator"
 version = "0.1.0"
 edition = "2021"

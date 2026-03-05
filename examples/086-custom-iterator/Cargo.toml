@@ -1,4 +1,4 @@
 [package]
-name = "086-custom-iterator"
+name = "example-086-custom-iterator"
 version = "0.1.0"
 edition = "2021"

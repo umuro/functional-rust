@@ -1,5 +1,5 @@
 [package]
-name = "472-string-slices"
+name = "example-472-string-slices"
 version = "0.1.0"
 edition = "2021"
 

@@ -1,5 +1,5 @@
 [package]
-name = "860-reader-monad"
+name = "example-860-reader-monad"
 version = "0.1.0"
 edition = "2021"
 

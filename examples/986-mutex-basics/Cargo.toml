@@ -1,5 +1,5 @@
 [package]
-name = "986-mutex-basics"
+name = "example-986-mutex-basics"
 version = "0.1.0"
 edition = "2021"
 

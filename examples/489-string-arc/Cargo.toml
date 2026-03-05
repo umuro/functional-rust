@@ -1,5 +1,5 @@
 [package]
-name = "489-string-arc"
+name = "example-489-string-arc"
 version = "0.1.0"
 edition = "2021"
 

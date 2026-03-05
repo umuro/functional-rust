@@ -1,4 +1,4 @@
 [package]
-name = "002-list-operations"
+name = "example-002-list-operations"
 version = "0.1.0"
 edition = "2021"

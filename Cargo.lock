@@ -3,6 +3,38 @@
 version = 4
 
 [[package]]
+name = "bitflags"
+version = "2.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "843867be96c8daad0d758b57df9392b6d8d271134fce549de6ce169ff98a92af"
+
+[[package]]
+name = "bytes"
+version = "1.11.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e748733b7cbc798e1434b6ac524f0c1ff2ab456fe201501e6497c8417a4fc33"
+
+[[package]]
+name = "cfg-if"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
+
+[[package]]
+name = "errno"
+version = "0.3.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+dependencies = [
+ "libc",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "example-001-higher-order-functions"
+version = "0.1.0"
+
+[[package]]
 name = "example-001-last-element"
 version = "0.1.0"
 
@@ -11,7 +43,15 @@ name = "example-002-last-two"
 version = "0.1.0"
 
 [[package]]
+name = "example-002-list-operations"
+version = "0.1.0"
+
+[[package]]
 name = "example-003-kth-element"
+version = "0.1.0"
+
+[[package]]
+name = "example-003-pattern-matching"
 version = "0.1.0"
 
 [[package]]
@@ -19,11 +59,23 @@ name = "example-004-list-length"
 version = "0.1.0"
 
 [[package]]
+name = "example-004-option-result"
+version = "0.1.0"
+
+[[package]]
 name = "example-005-currying"
 version = "0.1.0"
 
 [[package]]
+name = "example-005-reverse-list"
+version = "0.1.0"
+
+[[package]]
 name = "example-006-function-composition"
+version = "0.1.0"
+
+[[package]]
+name = "example-006-palindrome-check"
 version = "0.1.0"
 
 [[package]]
@@ -36,10 +88,6 @@ version = "0.1.0"
 
 [[package]]
 name = "example-009-pack-consecutive"
-version = "0.1.0"
-
-[[package]]
-name = "example-01-higher-order-functions"
 version = "0.1.0"
 
 [[package]]
@@ -219,6 +267,10 @@ name = "example-053-pipeline-operator"
 version = "0.1.0"
 
 [[package]]
+name = "example-054-applicative-validation"
+version = "0.1.0"
+
+[[package]]
 name = "example-054-list-map-from-scratch"
 version = "0.1.0"
 
@@ -228,6 +280,10 @@ version = "0.1.0"
 
 [[package]]
 name = "example-056-fold-right"
+version = "0.1.0"
+
+[[package]]
+name = "example-056-monad-result"
 version = "0.1.0"
 
 [[package]]
@@ -255,7 +311,15 @@ name = "example-062-isogram-check"
 version = "0.1.0"
 
 [[package]]
+name = "example-062-records"
+version = "0.1.0"
+
+[[package]]
 name = "example-063-run-length-encoding"
+version = "0.1.0"
+
+[[package]]
+name = "example-063-stack-module"
 version = "0.1.0"
 
 [[package]]
@@ -279,7 +343,15 @@ name = "example-068-frequency-counter"
 version = "0.1.0"
 
 [[package]]
+name = "example-068-tail-recursive-accumulator"
+version = "0.1.0"
+
+[[package]]
 name = "example-069-sieve-eratosthenes"
+version = "0.1.0"
+
+[[package]]
+name = "example-069-unfold"
 version = "0.1.0"
 
 [[package]]
@@ -287,7 +359,15 @@ name = "example-070-hamming-distance"
 version = "0.1.0"
 
 [[package]]
+name = "example-070-scan-left"
+version = "0.1.0"
+
+[[package]]
 name = "example-071-collatz-conjecture"
+version = "0.1.0"
+
+[[package]]
+name = "example-071-gcd-lcm"
 version = "0.1.0"
 
 [[package]]
@@ -295,7 +375,15 @@ name = "example-072-error-accumulation"
 version = "0.1.0"
 
 [[package]]
+name = "example-072-result-railway"
+version = "0.1.0"
+
+[[package]]
 name = "example-073-topological-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-073-validated-type"
 version = "0.1.0"
 
 [[package]]
@@ -303,11 +391,27 @@ name = "example-074-bifunctor"
 version = "0.1.0"
 
 [[package]]
+name = "example-074-currying-partial"
+version = "0.1.0"
+
+[[package]]
 name = "example-075-difference-list"
 version = "0.1.0"
 
 [[package]]
+name = "example-075-merge-sort"
+version = "0.1.0"
+
+[[package]]
 name = "example-076-gcd-lcm"
+version = "0.1.0"
+
+[[package]]
+name = "example-076-trait-objects"
+version = "0.1.0"
+
+[[package]]
+name = "example-077-generic-bounds"
 version = "0.1.0"
 
 [[package]]
@@ -316,6 +420,14 @@ version = "0.1.0"
 
 [[package]]
 name = "example-078-topological-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-078-where-clauses"
+version = "0.1.0"
+
+[[package]]
+name = "example-079-associated-types"
 version = "0.1.0"
 
 [[package]]
@@ -331,11 +443,27 @@ name = "example-081-difference-list"
 version = "0.1.0"
 
 [[package]]
+name = "example-081-newtype-pattern"
+version = "0.1.0"
+
+[[package]]
 name = "example-082-nucleotide-count"
 version = "0.1.0"
 
 [[package]]
+name = "example-082-type-aliases"
+version = "0.1.0"
+
+[[package]]
+name = "example-083-display-trait"
+version = "0.1.0"
+
+[[package]]
 name = "example-083-robot-simulator"
+version = "0.1.0"
+
+[[package]]
+name = "example-084-from-into-traits"
 version = "0.1.0"
 
 [[package]]
@@ -347,6 +475,14 @@ name = "example-085-accumulate"
 version = "0.1.0"
 
 [[package]]
+name = "example-085-iterator-trait"
+version = "0.1.0"
+
+[[package]]
+name = "example-086-custom-iterator"
+version = "0.1.0"
+
+[[package]]
 name = "example-086-space-age"
 version = "0.1.0"
 
@@ -355,7 +491,15 @@ name = "example-087-difference-of-squares"
 version = "0.1.0"
 
 [[package]]
+name = "example-087-iterator-adapters"
+version = "0.1.0"
+
+[[package]]
 name = "example-088-allergies"
+version = "0.1.0"
+
+[[package]]
+name = "example-088-iterator-consumers"
 version = "0.1.0"
 
 [[package]]
@@ -363,7 +507,15 @@ name = "example-089-bob"
 version = "0.1.0"
 
 [[package]]
+name = "example-089-lazy-sequences"
+version = "0.1.0"
+
+[[package]]
 name = "example-090-frequency-analysis"
+version = "0.1.0"
+
+[[package]]
+name = "example-090-infinite-iterators"
 version = "0.1.0"
 
 [[package]]
@@ -371,11 +523,27 @@ name = "example-091-caesar-cipher"
 version = "0.1.0"
 
 [[package]]
+name = "example-091-zip-unzip"
+version = "0.1.0"
+
+[[package]]
 name = "example-092-pangram-check"
 version = "0.1.0"
 
 [[package]]
+name = "example-092-scan-accumulate"
+version = "0.1.0"
+
+[[package]]
 name = "example-093-isogram-check"
+version = "0.1.0"
+
+[[package]]
+name = "example-093-windows-chunks"
+version = "0.1.0"
+
+[[package]]
+name = "example-094-peekable-iterator"
 version = "0.1.0"
 
 [[package]]
@@ -387,7 +555,19 @@ name = "example-095-balanced-parentheses"
 version = "0.1.0"
 
 [[package]]
+name = "example-095-double-ended"
+version = "0.1.0"
+
+[[package]]
+name = "example-096-exact-size"
+version = "0.1.0"
+
+[[package]]
 name = "example-096-recursive-descent-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-097-flatten-iterator"
 version = "0.1.0"
 
 [[package]]
@@ -399,7 +579,15 @@ name = "example-098-church-numerals"
 version = "0.1.0"
 
 [[package]]
+name = "example-098-partition-iterator"
+version = "0.1.0"
+
+[[package]]
 name = "example-099-cps"
+version = "0.1.0"
+
+[[package]]
+name = "example-099-group-by-iter"
 version = "0.1.0"
 
 [[package]]
@@ -407,7 +595,99 @@ name = "example-100-phantom-types"
 version = "0.1.0"
 
 [[package]]
+name = "example-100-step-by"
+version = "0.1.0"
+
+[[package]]
+name = "example-1000-reactive-stream"
+version = "0.1.0"
+
+[[package]]
+name = "example-1001-event-loop"
+version = "0.1.0"
+
+[[package]]
+name = "example-1002-backpressure"
+version = "0.1.0"
+
+[[package]]
+name = "example-1003-custom-error"
+version = "0.1.0"
+
+[[package]]
+name = "example-1004-error-conversion"
+version = "0.1.0"
+
+[[package]]
+name = "example-1005-error-chain"
+version = "0.1.0"
+
+[[package]]
+name = "example-1006-multiple-errors"
+version = "0.1.0"
+
+[[package]]
+name = "example-1007-result-combinators"
+version = "0.1.0"
+
+[[package]]
+name = "example-1008-option-to-result"
+version = "0.1.0"
+
+[[package]]
+name = "example-1009-collecting-results"
+version = "0.1.0"
+
+[[package]]
 name = "example-101-lazy-sequences"
+version = "0.1.0"
+
+[[package]]
+name = "example-101-move-semantics"
+version = "0.1.0"
+
+[[package]]
+name = "example-1010-partition-results"
+version = "0.1.0"
+
+[[package]]
+name = "example-1011-try-operator"
+version = "0.1.0"
+
+[[package]]
+name = "example-1012-never-type"
+version = "0.1.0"
+
+[[package]]
+name = "example-1013-panic-vs-result"
+version = "0.1.0"
+
+[[package]]
+name = "example-1014-recover-from-panic"
+version = "0.1.0"
+
+[[package]]
+name = "example-1015-validation-error"
+version = "0.1.0"
+
+[[package]]
+name = "example-1016-error-context"
+version = "0.1.0"
+
+[[package]]
+name = "example-1017-typed-errors"
+version = "0.1.0"
+
+[[package]]
+name = "example-1018-error-downcast"
+version = "0.1.0"
+
+[[package]]
+name = "example-1019-fallible-iterator"
+version = "0.1.0"
+
+[[package]]
+name = "example-102-clone-copy"
 version = "0.1.0"
 
 [[package]]
@@ -415,7 +695,95 @@ name = "example-102-frequency-counter"
 version = "0.1.0"
 
 [[package]]
+name = "example-1020-try-fold"
+version = "0.1.0"
+
+[[package]]
+name = "example-1021-error-propagation-depth"
+version = "0.1.0"
+
+[[package]]
+name = "example-1022-sentinel-vs-result"
+version = "0.1.0"
+
+[[package]]
+name = "example-1023-parse-int-safe"
+version = "0.1.0"
+
+[[package]]
+name = "example-1024-file-errors"
+version = "0.1.0"
+
+[[package]]
+name = "example-1025-network-errors"
+version = "0.1.0"
+
+[[package]]
+name = "example-1026-error-display"
+version = "0.1.0"
+
+[[package]]
+name = "example-1027-btreemap-sorted"
+version = "0.1.0"
+
+[[package]]
+name = "example-1028-btreeset-ops"
+version = "0.1.0"
+
+[[package]]
+name = "example-1029-hashmap-entry"
+version = "0.1.0"
+
+[[package]]
+name = "example-103-borrowing-shared"
+version = "0.1.0"
+
+[[package]]
 name = "example-103-unfold"
+version = "0.1.0"
+
+[[package]]
+name = "example-1030-hashmap-groupby"
+version = "0.1.0"
+
+[[package]]
+name = "example-1031-hashmap-counting"
+version = "0.1.0"
+
+[[package]]
+name = "example-1032-vec-deque-rotation"
+version = "0.1.0"
+
+[[package]]
+name = "example-1033-binary-heap-topk"
+version = "0.1.0"
+
+[[package]]
+name = "example-1034-linked-list-safe"
+version = "0.1.0"
+
+[[package]]
+name = "example-1035-doubly-linked"
+version = "0.1.0"
+
+[[package]]
+name = "example-1036-arena-graph"
+version = "0.1.0"
+
+[[package]]
+name = "example-1037-adjacency-list"
+version = "0.1.0"
+
+[[package]]
+name = "example-1038-adjacency-matrix"
+version = "0.1.0"
+
+[[package]]
+name = "example-1039-stack-via-vec"
+version = "0.1.0"
+
+[[package]]
+name = "example-104-borrowing-mutable"
 version = "0.1.0"
 
 [[package]]
@@ -423,7 +791,91 @@ name = "example-104-scan-left"
 version = "0.1.0"
 
 [[package]]
+name = "example-1040-queue-via-deque"
+version = "0.1.0"
+
+[[package]]
+name = "example-1041-multimap"
+version = "0.1.0"
+
+[[package]]
+name = "example-1042-bimap"
+version = "0.1.0"
+
+[[package]]
+name = "example-1043-interval-map"
+version = "0.1.0"
+
+[[package]]
+name = "example-1044-sorted-vec"
+version = "0.1.0"
+
+[[package]]
+name = "example-1045-small-vec"
+version = "0.1.0"
+
+[[package]]
+name = "example-1046-cow-collections"
+version = "0.1.0"
+
+[[package]]
+name = "example-1047-flat-tree"
+version = "0.1.0"
+
+[[package]]
+name = "example-1048-zipper-vec"
+version = "0.1.0"
+
+[[package]]
+name = "example-1049-persistent-map"
+version = "0.1.0"
+
+[[package]]
+name = "example-105-lifetime-basics"
+version = "0.1.0"
+
+[[package]]
 name = "example-105-trie"
+version = "0.1.0"
+
+[[package]]
+name = "example-1050-interning"
+version = "0.1.0"
+
+[[package]]
+name = "example-1051-fibonacci-memo"
+version = "0.1.0"
+
+[[package]]
+name = "example-1052-fibonacci-dp"
+version = "0.1.0"
+
+[[package]]
+name = "example-1053-coin-change"
+version = "0.1.0"
+
+[[package]]
+name = "example-1054-knapsack-01"
+version = "0.1.0"
+
+[[package]]
+name = "example-1055-longest-common-subseq"
+version = "0.1.0"
+
+[[package]]
+name = "example-1056-edit-distance"
+version = "0.1.0"
+
+[[package]]
+name = "example-1057-matrix-chain"
+version = "0.1.0"
+
+[[package]]
+name = "example-1058-longest-increasing-subseq"
+version = "0.1.0"
+
+[[package]]
+name = "example-1059-rod-cutting"
 version = "0.1.0"
 
 [[package]]
@@ -431,11 +883,95 @@ name = "example-106-lifetime-elision"
 version = "0.1.0"
 
 [[package]]
+name = "example-1060-partition-equal-subset"
+version = "0.1.0"
+
+[[package]]
+name = "example-1061-word-break"
+version = "0.1.0"
+
+[[package]]
+name = "example-1062-n-queens"
+version = "0.1.0"
+
+[[package]]
+name = "example-1063-sudoku-solver"
+version = "0.1.0"
+
+[[package]]
+name = "example-1064-permutations"
+version = "0.1.0"
+
+[[package]]
+name = "example-1065-combinations-sum"
+version = "0.1.0"
+
+[[package]]
+name = "example-1066-subsets-power-set"
+version = "0.1.0"
+
+[[package]]
+name = "example-1067-letter-combinations"
+version = "0.1.0"
+
+[[package]]
+name = "example-1068-maze-solver"
+version = "0.1.0"
+
+[[package]]
+name = "example-1069-graph-coloring"
+version = "0.1.0"
+
+[[package]]
 name = "example-107-lifetime-structs"
 version = "0.1.0"
 
 [[package]]
+name = "example-1070-hamiltonian-path"
+version = "0.1.0"
+
+[[package]]
+name = "example-1071-regex-matching"
+version = "0.1.0"
+
+[[package]]
+name = "example-1072-wildcard-matching"
+version = "0.1.0"
+
+[[package]]
+name = "example-1073-burst-balloons"
+version = "0.1.0"
+
+[[package]]
+name = "example-1074-egg-drop"
+version = "0.1.0"
+
+[[package]]
+name = "example-1075-stone-game"
+version = "0.1.0"
+
+[[package]]
+name = "example-1076-y-combinator"
+version = "0.1.0"
+
+[[package]]
+name = "example-1077-phantom-type-state-machine"
+version = "0.1.0"
+
+[[package]]
+name = "example-1078-visitor-pattern-fold"
+version = "0.1.0"
+
+[[package]]
+name = "example-1079-writer-monad"
+version = "0.1.0"
+
+[[package]]
 name = "example-108-rc-shared"
+version = "0.1.0"
+
+[[package]]
+name = "example-1080-topological-sort-kahn"
 version = "0.1.0"
 
 [[package]]
@@ -447,51 +983,7 @@ name = "example-110-cell-interior"
 version = "0.1.0"
 
 [[package]]
-name = "example-1104-averagesmean-time-of-day"
-version = "0.1.0"
-
-[[package]]
-name = "example-1105-15-puzzle-game"
-version = "0.1.0"
-
-[[package]]
-name = "example-1106-abbreviations-easy"
-version = "0.1.0"
-
-[[package]]
-name = "example-1107-abbreviations-simple"
-version = "0.1.0"
-
-[[package]]
-name = "example-1108-abc-correlation"
-version = "0.1.0"
-
-[[package]]
-name = "example-1109-abc-problem"
-version = "0.1.0"
-
-[[package]]
 name = "example-111-refcell-runtime"
-version = "0.1.0"
-
-[[package]]
-name = "example-1110-abc-words"
-version = "0.1.0"
-
-[[package]]
-name = "example-1111-address-of-a-variable"
-version = "0.1.0"
-
-[[package]]
-name = "example-1112-align-columns"
-version = "0.1.0"
-
-[[package]]
-name = "example-1113-alternade-words"
-version = "0.1.0"
-
-[[package]]
-name = "example-1114-anadromes"
 version = "0.1.0"
 
 [[package]]
@@ -603,6 +1095,10 @@ name = "example-138-type-witnesses"
 version = "0.1.0"
 
 [[package]]
+name = "example-139-heterogeneous-list"
+version = "0.1.0"
+
+[[package]]
 name = "example-140-type-safe-printf"
 version = "0.1.0"
 
@@ -644,6 +1140,146 @@ version = "0.1.0"
 
 [[package]]
 name = "example-150-coherence-rules"
+version = "0.1.0"
+
+[[package]]
+name = "example-151-parser-intro"
+version = "0.1.0"
+
+[[package]]
+name = "example-152-char-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-153-satisfy-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-154-string-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-155-many-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-156-optional-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-157-choice-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-158-sequence-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-159-map-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-160-flatmap-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-161-digit-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-162-identifier-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-163-whitespace-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-164-number-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-165-keyword-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-166-separated-list"
+version = "0.1.0"
+
+[[package]]
+name = "example-167-recursive-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-168-expression-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-169-operator-precedence"
+version = "0.1.0"
+
+[[package]]
+name = "example-170-error-recovery"
+version = "0.1.0"
+
+[[package]]
+name = "example-171-csv-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-172-ini-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-173-lisp-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-174-arithmetic-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-175-json-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-176-gadt-intro"
+version = "0.1.0"
+
+[[package]]
+name = "example-177-gadt-expr"
+version = "0.1.0"
+
+[[package]]
+name = "example-178-gadt-length-list"
+version = "0.1.0"
+
+[[package]]
+name = "example-179-gadt-safety"
+version = "0.1.0"
+
+[[package]]
+name = "example-180-phantom-safety"
+version = "0.1.0"
+
+[[package]]
+name = "example-181-type-safe-builder"
+version = "0.1.0"
+
+[[package]]
+name = "example-182-existential-gadt"
+version = "0.1.0"
+
+[[package]]
+name = "example-183-heterogeneous-vec"
+version = "0.1.0"
+
+[[package]]
+name = "example-184-free-monad-intro"
+version = "0.1.0"
+
+[[package]]
+name = "example-185-free-monad-dsl"
 version = "0.1.0"
 
 [[package]]
@@ -707,6 +1343,18 @@ name = "example-200-tagless-final"
 version = "0.1.0"
 
 [[package]]
+name = "example-201-lens-intro"
+version = "0.1.0"
+
+[[package]]
+name = "example-202-lens-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-203-lens-laws"
+version = "0.1.0"
+
+[[package]]
 name = "example-204-lens-composition"
 version = "0.1.0"
 
@@ -760,6 +1408,42 @@ version = "0.1.0"
 
 [[package]]
 name = "example-217-catamorphism"
+version = "0.1.0"
+
+[[package]]
+name = "example-218-anamorphism"
+version = "0.1.0"
+
+[[package]]
+name = "example-219-hylomorphism"
+version = "0.1.0"
+
+[[package]]
+name = "example-220-paramorphism"
+version = "0.1.0"
+
+[[package]]
+name = "example-221-apomorphism"
+version = "0.1.0"
+
+[[package]]
+name = "example-222-histomorphism"
+version = "0.1.0"
+
+[[package]]
+name = "example-223-zygomorphism"
+version = "0.1.0"
+
+[[package]]
+name = "example-224-mutumorphism"
+version = "0.1.0"
+
+[[package]]
+name = "example-225-prepromorphism"
+version = "0.1.0"
+
+[[package]]
+name = "example-226-category-basics"
 version = "0.1.0"
 
 [[package]]
@@ -879,7 +1563,15 @@ name = "example-255-lazy-fibonacci"
 version = "0.1.0"
 
 [[package]]
+name = "example-256-iterator-chain"
+version = "0.1.0"
+
+[[package]]
 name = "example-256-memoization-fibonacci"
+version = "0.1.0"
+
+[[package]]
+name = "example-257-iterator-zip"
 version = "0.1.0"
 
 [[package]]
@@ -887,7 +1579,15 @@ name = "example-257-state-machine-turnstile"
 version = "0.1.0"
 
 [[package]]
+name = "example-258-iterator-enumerate"
+version = "0.1.0"
+
+[[package]]
 name = "example-258-monadic-option-chaining"
+version = "0.1.0"
+
+[[package]]
+name = "example-259-iterator-flat-map"
 version = "0.1.0"
 
 [[package]]
@@ -899,7 +1599,19 @@ name = "example-260-functor-comparable-set"
 version = "0.1.0"
 
 [[package]]
+name = "example-260-iterator-scan"
+version = "0.1.0"
+
+[[package]]
 name = "example-261-binary-search-tree"
+version = "0.1.0"
+
+[[package]]
+name = "example-261-iterator-peekable"
+version = "0.1.0"
+
+[[package]]
+name = "example-262-iterator-windows"
 version = "0.1.0"
 
 [[package]]
@@ -911,6 +1623,14 @@ name = "example-263-avl-tree"
 version = "0.1.0"
 
 [[package]]
+name = "example-263-iterator-chunks"
+version = "0.1.0"
+
+[[package]]
+name = "example-264-iterator-take-while"
+version = "0.1.0"
+
+[[package]]
 name = "example-264-string-anagram"
 version = "0.1.0"
 
@@ -919,7 +1639,39 @@ name = "example-265-caesar-cipher"
 version = "0.1.0"
 
 [[package]]
+name = "example-265-iterator-skip-while"
+version = "0.1.0"
+
+[[package]]
+name = "example-266-iterator-step-by"
+version = "0.1.0"
+
+[[package]]
+name = "example-267-iterator-cycle"
+version = "0.1.0"
+
+[[package]]
+name = "example-268-iterator-unzip"
+version = "0.1.0"
+
+[[package]]
+name = "example-269-iterator-partition"
+version = "0.1.0"
+
+[[package]]
+name = "example-270-iterator-position"
+version = "0.1.0"
+
+[[package]]
+name = "example-271-iterator-find-map"
+version = "0.1.0"
+
+[[package]]
 name = "example-271-sublist-classification"
+version = "0.1.0"
+
+[[package]]
+name = "example-272-iterator-flatten"
 version = "0.1.0"
 
 [[package]]
@@ -931,11 +1683,27 @@ name = "example-273-fibonacci-variants"
 version = "0.1.0"
 
 [[package]]
+name = "example-273-iterator-inspect"
+version = "0.1.0"
+
+[[package]]
 name = "example-274-binary-decimal-fold"
 version = "0.1.0"
 
 [[package]]
+name = "example-274-iterator-sum-product"
+version = "0.1.0"
+
+[[package]]
+name = "example-275-iterator-min-max"
+version = "0.1.0"
+
+[[package]]
 name = "example-275-yacht-dice-scoring"
+version = "0.1.0"
+
+[[package]]
+name = "example-276-iterator-min-by-max-by"
 version = "0.1.0"
 
 [[package]]
@@ -947,7 +1715,19 @@ name = "example-277-circular-buffer-queue"
 version = "0.1.0"
 
 [[package]]
+name = "example-277-iterator-count"
+version = "0.1.0"
+
+[[package]]
+name = "example-278-iterator-last"
+version = "0.1.0"
+
+[[package]]
 name = "example-278-sierpinski-triangle"
+version = "0.1.0"
+
+[[package]]
+name = "example-279-iterator-nth"
 version = "0.1.0"
 
 [[package]]
@@ -956,6 +1736,10 @@ version = "0.1.0"
 
 [[package]]
 name = "example-280-hamming-distance"
+version = "0.1.0"
+
+[[package]]
+name = "example-280-iterator-any-all"
 version = "0.1.0"
 
 [[package]]
@@ -1199,11 +1983,23 @@ name = "example-340-async-trait-pattern"
 version = "0.1.0"
 
 [[package]]
+name = "example-341-buffered-stream"
+version = "0.1.0"
+
+[[package]]
 name = "example-341-mpsc-channel"
 version = "0.1.0"
 
 [[package]]
 name = "example-342-arc-mutex-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-342-async-io"
+version = "0.1.0"
+
+[[package]]
+name = "example-343-cancellation-token"
 version = "0.1.0"
 
 [[package]]
@@ -1647,6 +2443,30 @@ name = "example-452-atomic-types"
 version = "0.1.0"
 
 [[package]]
+name = "example-453-memory-ordering"
+version = "0.1.0"
+
+[[package]]
+name = "example-454-compare-exchange"
+version = "0.1.0"
+
+[[package]]
+name = "example-455-lock-free-stack"
+version = "0.1.0"
+
+[[package]]
+name = "example-456-once-cell-sync"
+version = "0.1.0"
+
+[[package]]
+name = "example-457-condvar-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-458-barrier-sync"
+version = "0.1.0"
+
+[[package]]
 name = "example-459-thread-local-storage"
 version = "0.1.0"
 
@@ -1655,11 +2475,35 @@ name = "example-460-send-sync-bounds"
 version = "0.1.0"
 
 [[package]]
+name = "example-461-producer-consumer"
+version = "0.1.0"
+
+[[package]]
 name = "example-462-pipeline-concurrency"
 version = "0.1.0"
 
 [[package]]
+name = "example-463-fan-out-fan-in"
+version = "0.1.0"
+
+[[package]]
+name = "example-464-actor-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-465-message-passing"
+version = "0.1.0"
+
+[[package]]
 name = "example-466-concurrent-hashmap"
+version = "0.1.0"
+
+[[package]]
+name = "example-467-epoch-gc"
+version = "0.1.0"
+
+[[package]]
+name = "example-468-lock-free-queue"
 version = "0.1.0"
 
 [[package]]
@@ -1671,11 +2515,123 @@ name = "example-470-concurrent-btree"
 version = "0.1.0"
 
 [[package]]
+name = "example-471-string-vs-str"
+version = "0.1.0"
+
+[[package]]
+name = "example-472-string-slices"
+version = "0.1.0"
+
+[[package]]
+name = "example-473-string-parsing-fromstr"
+version = "0.1.0"
+
+[[package]]
+name = "example-474-string-formatting"
+version = "0.1.0"
+
+[[package]]
+name = "example-475-string-building"
+version = "0.1.0"
+
+[[package]]
+name = "example-476-string-splitting"
+version = "0.1.0"
+
+[[package]]
+name = "example-477-string-trimming"
+version = "0.1.0"
+
+[[package]]
+name = "example-478-string-searching"
+version = "0.1.0"
+
+[[package]]
+name = "example-479-string-replacing"
+version = "0.1.0"
+
+[[package]]
+name = "example-480-string-chars"
+version = "0.1.0"
+
+[[package]]
+name = "example-481-string-bytes"
+version = "0.1.0"
+
+[[package]]
+name = "example-482-string-unicode"
+version = "0.1.0"
+
+[[package]]
+name = "example-483-string-encoding"
+version = "0.1.0"
+
+[[package]]
+name = "example-484-string-cow-usage"
+version = "0.1.0"
+
+[[package]]
+name = "example-485-string-concatenation"
+version = "0.1.0"
+
+[[package]]
+name = "example-486-string-regex-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-487-string-interning"
+version = "0.1.0"
+
+[[package]]
 name = "example-488-string-owning-ref"
 version = "0.1.0"
 
 [[package]]
+name = "example-489-string-arc"
+version = "0.1.0"
+
+[[package]]
 name = "example-490-string-fixed-array"
+version = "0.1.0"
+
+[[package]]
+name = "example-491-path-pathbuf"
+version = "0.1.0"
+
+[[package]]
+name = "example-492-osstr-handling"
+version = "0.1.0"
+
+[[package]]
+name = "example-493-cstring-ffi"
+version = "0.1.0"
+
+[[package]]
+name = "example-494-string-number-conversion"
+version = "0.1.0"
+
+[[package]]
+name = "example-495-string-template-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-496-string-diff-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-497-string-case-conversion"
+version = "0.1.0"
+
+[[package]]
+name = "example-498-string-truncation"
+version = "0.1.0"
+
+[[package]]
+name = "example-499-string-escape"
+version = "0.1.0"
+
+[[package]]
+name = "example-500-string-compression"
 version = "0.1.0"
 
 [[package]]
@@ -2171,6 +3127,22 @@ name = "example-623-functional-rust-grand-tour"
 version = "0.1.0"
 
 [[package]]
+name = "example-699-raw-pointer-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-700-unsafe-block"
+version = "0.1.0"
+
+[[package]]
+name = "example-701-unsafe-function"
+version = "0.1.0"
+
+[[package]]
+name = "example-702-unsafe-trait"
+version = "0.1.0"
+
+[[package]]
 name = "example-703-raw-pointer-arithmetic"
 version = "0.1.0"
 
@@ -2263,6 +3235,54 @@ name = "example-725-stack-allocation-patterns"
 version = "0.1.0"
 
 [[package]]
+name = "example-726-memory-pool-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-727-simd-portable-concepts"
+version = "0.1.0"
+
+[[package]]
+name = "example-728-inline-hints"
+version = "0.1.0"
+
+[[package]]
+name = "example-729-avoid-allocations"
+version = "0.1.0"
+
+[[package]]
+name = "example-730-small-string-optimization"
+version = "0.1.0"
+
+[[package]]
+name = "example-731-tiered-memory-strategy"
+version = "0.1.0"
+
+[[package]]
+name = "example-732-benchmarking-harness"
+version = "0.1.0"
+
+[[package]]
+name = "example-733-profile-guided-patterns"
+version = "0.1.0"
+
+[[package]]
+name = "example-734-typestate-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-735-typestate-builder"
+version = "0.1.0"
+
+[[package]]
+name = "example-736-typestate-connection"
+version = "0.1.0"
+
+[[package]]
+name = "example-737-typestate-file-handle"
+version = "0.1.0"
+
+[[package]]
 name = "example-738-phantom-type-basics"
 version = "0.1.0"
 
@@ -2272,6 +3292,22 @@ version = "0.1.0"
 
 [[package]]
 name = "example-740-phantom-variance-control"
+version = "0.1.0"
+
+[[package]]
+name = "example-741-parse-dont-validate"
+version = "0.1.0"
+
+[[package]]
+name = "example-742-type-witnesses"
+version = "0.1.0"
+
+[[package]]
+name = "example-743-session-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-744-unit-test-patterns"
 version = "0.1.0"
 
 [[package]]
@@ -2691,6 +3727,150 @@ name = "example-848-algorithm-complexity-guide"
 version = "0.1.0"
 
 [[package]]
+name = "example-849-higher-order-functions"
+version = "0.1.0"
+
+[[package]]
+name = "example-850-functors-intro"
+version = "0.1.0"
+
+[[package]]
+name = "example-851-functor-laws"
+version = "0.1.0"
+
+[[package]]
+name = "example-852-applicative-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-853-applicative-validation"
+version = "0.1.0"
+
+[[package]]
+name = "example-854-monad-option"
+version = "0.1.0"
+
+[[package]]
+name = "example-855-monad-result"
+version = "0.1.0"
+
+[[package]]
+name = "example-856-monad-laws"
+version = "0.1.0"
+
+[[package]]
+name = "example-857-flatmap-chains"
+version = "0.1.0"
+
+[[package]]
+name = "example-858-kleisli-composition"
+version = "0.1.0"
+
+[[package]]
+name = "example-859-state-monad"
+version = "0.1.0"
+
+[[package]]
+name = "example-860-reader-monad"
+version = "0.1.0"
+
+[[package]]
+name = "example-861-writer-monad"
+version = "0.1.0"
+
+[[package]]
+name = "example-862-monad-transformers"
+version = "0.1.0"
+
+[[package]]
+name = "example-863-traverse-option"
+version = "0.1.0"
+
+[[package]]
+name = "example-864-traverse-result"
+version = "0.1.0"
+
+[[package]]
+name = "example-865-sequence-monadic"
+version = "0.1.0"
+
+[[package]]
+name = "example-866-foldable-trait"
+version = "0.1.0"
+
+[[package]]
+name = "example-867-foldable-tree"
+version = "0.1.0"
+
+[[package]]
+name = "example-868-traversable-tree"
+version = "0.1.0"
+
+[[package]]
+name = "example-869-continuation-monad"
+version = "0.1.0"
+
+[[package]]
+name = "example-870-trait-objects"
+version = "0.1.0"
+
+[[package]]
+name = "example-871-generic-bounds"
+version = "0.1.0"
+
+[[package]]
+name = "example-872-where-clauses"
+version = "0.1.0"
+
+[[package]]
+name = "example-873-associated-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-874-phantom-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-875-newtype-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-876-type-aliases"
+version = "0.1.0"
+
+[[package]]
+name = "example-877-display-trait"
+version = "0.1.0"
+
+[[package]]
+name = "example-878-from-into-traits"
+version = "0.1.0"
+
+[[package]]
+name = "example-879-iterator-trait"
+version = "0.1.0"
+
+[[package]]
+name = "example-880-custom-iterator"
+version = "0.1.0"
+
+[[package]]
+name = "example-881-iterator-adapters"
+version = "0.1.0"
+
+[[package]]
+name = "example-882-iterator-consumers"
+version = "0.1.0"
+
+[[package]]
+name = "example-883-lazy-sequences"
+version = "0.1.0"
+
+[[package]]
+name = "example-884-infinite-iterators"
+version = "0.1.0"
+
+[[package]]
 name = "example-885-zip-unzip"
 version = "0.1.0"
 
@@ -2807,69 +3987,673 @@ name = "example-913-iterator-sum-product"
 version = "0.1.0"
 
 [[package]]
-name = "example-982-listflatten-flatten-nested-lists"
+name = "example-914-iterator-min-max"
 version = "0.1.0"
 
 [[package]]
-name = "example-983-listassoc-association-lists-as-simple-maps"
+name = "example-915-iterator-min-by-max-by"
 version = "0.1.0"
 
 [[package]]
-name = "example-984-arraymake-and-arraymakematrix-multi-dimensional-ar"
+name = "example-917-iterator-last"
 version = "0.1.0"
 
 [[package]]
-name = "example-985-stringsplitonchar-tokenize-a-string"
+name = "example-918-iterator-nth"
 version = "0.1.0"
 
 [[package]]
-name = "example-986-stringsub-and-stringconcat-substring-and-join"
+name = "example-919-iterator-any-all"
 version = "0.1.0"
 
 [[package]]
-name = "example-987-string-trim-uppercase-contains"
+name = "example-920-buffered-stream"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-921-async-io"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-922-cancellation-token"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-923-thread-pool"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-924-work-stealing"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-925-list-operations"
 version = "0.1.0"
 
 [[package]]
-name = "example-988-stringmap-and-stringinit-character-level-operation"
+name = "example-926-pattern-matching"
 version = "0.1.0"
 
 [[package]]
-name = "example-989-optionmap-and-optionbind-safe-value-transformation"
+name = "example-927-option-result"
 version = "0.1.0"
 
 [[package]]
-name = "example-990-optionvalue-and-optionissome-default-values"
+name = "example-928-reverse-list"
 version = "0.1.0"
 
 [[package]]
-name = "example-991-optioniter-and-optionfold-side-effects-and-folding"
+name = "example-929-palindrome-check"
 version = "0.1.0"
 
 [[package]]
-name = "example-992-resultbind-and-resultmap-error-handling-pipeline"
+name = "example-930-pangram-check"
 version = "0.1.0"
 
 [[package]]
-name = "example-993-hashtbl-word-frequency-counter"
+name = "example-931-records"
 version = "0.1.0"
 
 [[package]]
-name = "example-994-mapmake-bindings-and-merge"
+name = "example-932-stack-module"
 version = "0.1.0"
 
 [[package]]
-name = "example-995-setmake-immutable-sorted-set"
+name = "example-933-map-functor"
 version = "0.1.0"
 
 [[package]]
-name = "example-996-setmake-set-operations-for-data-processing"
+name = "example-934-church-numerals"
 version = "0.1.0"
 
 [[package]]
-name = "example-997-seqmap-seqfilter-lazy-transformations"
+name = "example-935-tree-map-fold"
 version = "0.1.0"
 
 [[package]]
-name = "example-998-seq-zip-and-iterate"
+name = "example-936-mutual-recursion"
 version = "0.1.0"
+
+[[package]]
+name = "example-937-tail-recursive-accumulator"
+version = "0.1.0"
+
+[[package]]
+name = "example-938-unfold"
+version = "0.1.0"
+
+[[package]]
+name = "example-939-scan-left"
+version = "0.1.0"
+
+[[package]]
+name = "example-940-gcd-lcm"
+version = "0.1.0"
+
+[[package]]
+name = "example-941-identity-monad"
+version = "0.1.0"
+
+[[package]]
+name = "example-942-matrix-operations"
+version = "0.1.0"
+
+[[package]]
+name = "example-943-result-railway"
+version = "0.1.0"
+
+[[package]]
+name = "example-944-validated-type"
+version = "0.1.0"
+
+[[package]]
+name = "example-945-word-count"
+version = "0.1.0"
+
+[[package]]
+name = "example-946-catamorphism"
+version = "0.1.0"
+
+[[package]]
+name = "example-947-currying-partial"
+version = "0.1.0"
+
+[[package]]
+name = "example-948-merge-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-949-profunctor-intro"
+version = "0.1.0"
+
+[[package]]
+name = "example-950-sum-of-multiples"
+version = "0.1.0"
+
+[[package]]
+name = "example-951-series-sliding-window"
+version = "0.1.0"
+
+[[package]]
+name = "example-952-atbash-cipher"
+version = "0.1.0"
+
+[[package]]
+name = "example-953-poker-hand-evaluator"
+version = "0.1.0"
+
+[[package]]
+name = "example-954-perfect-numbers"
+version = "0.1.0"
+
+[[package]]
+name = "example-955-json-value"
+version = "0.1.0"
+
+[[package]]
+name = "example-956-json-pretty-print"
+version = "0.1.0"
+
+[[package]]
+name = "example-957-json-query"
+version = "0.1.0"
+
+[[package]]
+name = "example-958-csv-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-959-csv-writer"
+version = "0.1.0"
+
+[[package]]
+name = "example-960-key-value-store"
+version = "0.1.0"
+
+[[package]]
+name = "example-961-lru-cache"
+version = "0.1.0"
+
+[[package]]
+name = "example-962-trie-map"
+version = "0.1.0"
+
+[[package]]
+name = "example-963-bloom-filter"
+version = "0.1.0"
+
+[[package]]
+name = "example-964-union-find"
+version = "0.1.0"
+
+[[package]]
+name = "example-965-segment-tree"
+version = "0.1.0"
+
+[[package]]
+name = "example-966-fenwick-tree"
+version = "0.1.0"
+
+[[package]]
+name = "example-967-priority-queue"
+version = "0.1.0"
+
+[[package]]
+name = "example-968-deque"
+version = "0.1.0"
+
+[[package]]
+name = "example-969-circular-buffer"
+version = "0.1.0"
+
+[[package]]
+name = "example-970-rope-string"
+version = "0.1.0"
+
+[[package]]
+name = "example-971-persistent-list"
+version = "0.1.0"
+
+[[package]]
+name = "example-972-persistent-tree"
+version = "0.1.0"
+
+[[package]]
+name = "example-973-finger-tree"
+version = "0.1.0"
+
+[[package]]
+name = "example-974-skip-list"
+version = "0.1.0"
+
+[[package]]
+name = "example-975-sparse-matrix"
+version = "0.1.0"
+
+[[package]]
+name = "example-976-matrix-multiply"
+version = "0.1.0"
+
+[[package]]
+name = "example-977-bitset"
+version = "0.1.0"
+
+[[package]]
+name = "example-978-count-min-sketch"
+version = "0.1.0"
+
+[[package]]
+name = "example-979-future-basics"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-980-async-map"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-981-async-sequence"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-982-async-join"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-983-channel-basics"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-984-channel-pipeline"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-985-select-pattern"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-986-mutex-basics"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-987-rwlock-pattern"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-988-thread-local"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-989-once-init"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-990-semaphore"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-991-barrier-sync"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-992-actor-pattern"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-993-work-queue"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-994-map-reduce"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-995-pipeline-stages"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-996-timeout-pattern"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-997-retry-backoff"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-998-circuit-breaker"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "example-999-rate-limiter"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
+name = "libc"
+version = "0.2.182"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6800badb6cb2082ffd7b6a67e6125bb39f18782f793520caee8cb8846be06112"
+
+[[package]]
+name = "lock_api"
+version = "0.4.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "224399e74b87b5f3557511d98dff8b14089b3dadafcab6bb93eab67d3aace965"
+dependencies = [
+ "scopeguard",
+]
+
+[[package]]
+name = "mio"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a69bcab0ad47271a0234d9422b131806bf3968021e5dc9328caf2d4cd58557fc"
+dependencies = [
+ "libc",
+ "wasi",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "parking_lot"
+version = "0.12.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "93857453250e3077bd71ff98b6a65ea6621a19bb0f559a85248955ac12c45a1a"
+dependencies = [
+ "lock_api",
+ "parking_lot_core",
+]
+
+[[package]]
+name = "parking_lot_core"
+version = "0.9.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2621685985a2ebf1c516881c026032ac7deafcda1a2c9b7850dc81e3dfcb64c1"
+dependencies = [
+ "cfg-if",
+ "libc",
+ "redox_syscall",
+ "smallvec",
+ "windows-link",
+]
+
+[[package]]
+name = "pin-project-lite"
+version = "0.2.17"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd"
+
+[[package]]
+name = "proc-macro2"
+version = "1.0.106"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8fd00f0bb2e90d81d1044c2b32617f68fcb9fa3bb7640c23e9c748e53fb30934"
+dependencies = [
+ "unicode-ident",
+]
+
+[[package]]
+name = "quote"
+version = "1.0.45"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "41f2619966050689382d2b44f664f4bc593e129785a36d6ee376ddf37259b924"
+dependencies = [
+ "proc-macro2",
+]
+
+[[package]]
+name = "redox_syscall"
+version = "0.5.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ed2bf2547551a7053d6fdfafda3f938979645c44812fbfcda098faae3f1a362d"
+dependencies = [
+ "bitflags",
+]
+
+[[package]]
+name = "scopeguard"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
+
+[[package]]
+name = "signal-hook-registry"
+version = "1.4.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c4db69cba1110affc0e9f7bcd48bbf87b3f4fc7c61fc9155afd4c469eb3d6c1b"
+dependencies = [
+ "errno",
+ "libc",
+]
+
+[[package]]
+name = "smallvec"
+version = "1.15.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03"
+
+[[package]]
+name = "socket2"
+version = "0.6.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "86f4aa3ad99f2088c990dfa82d367e19cb29268ed67c574d10d0a4bfe71f07e0"
+dependencies = [
+ "libc",
+ "windows-sys 0.60.2",
+]
+
+[[package]]
+name = "syn"
+version = "2.0.117"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e665b8803e7b1d2a727f4023456bbbbe74da67099c585258af0ad9c5013b9b99"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "unicode-ident",
+]
+
+[[package]]
+name = "tokio"
+version = "1.50.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "27ad5e34374e03cfffefc301becb44e9dc3c17584f414349ebe29ed26661822d"
+dependencies = [
+ "bytes",
+ "libc",
+ "mio",
+ "parking_lot",
+ "pin-project-lite",
+ "signal-hook-registry",
+ "socket2",
+ "tokio-macros",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "tokio-macros"
+version = "2.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c55a2eff8b69ce66c84f85e1da1c233edc36ceb85a2058d11b0d6a3c7e7569c"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "unicode-ident"
+version = "1.0.24"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
+
+[[package]]
+name = "wasi"
+version = "0.11.1+wasi-snapshot-preview1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ccf3ec651a847eb01de73ccad15eb7d99f80485de043efb2f370cd654f4ea44b"
+
+[[package]]
+name = "windows-link"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
+
+[[package]]
+name = "windows-sys"
+version = "0.60.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f2f500e4d28234f72040990ec9d39e3a6b950f9f22d3dba18416c35882612bcb"
+dependencies = [
+ "windows-targets",
+]
+
+[[package]]
+name = "windows-sys"
+version = "0.61.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
+dependencies = [
+ "windows-link",
+]
+
+[[package]]
+name = "windows-targets"
+version = "0.53.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4945f9f551b88e0d65f3db0bc25c33b8acea4d9e41163edf90dcd0b19f9069f3"
+dependencies = [
+ "windows-link",
+ "windows_aarch64_gnullvm",
+ "windows_aarch64_msvc",
+ "windows_i686_gnu",
+ "windows_i686_gnullvm",
+ "windows_i686_msvc",
+ "windows_x86_64_gnu",
+ "windows_x86_64_gnullvm",
+ "windows_x86_64_msvc",
+]
+
+[[package]]
+name = "windows_aarch64_gnullvm"
+version = "0.53.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a9d8416fa8b42f5c947f8482c43e7d89e73a173cead56d044f6a56104a6d1b53"
+
+[[package]]
+name = "windows_aarch64_msvc"
+version = "0.53.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b9d782e804c2f632e395708e99a94275910eb9100b2114651e04744e9b125006"
+
+[[package]]
+name = "windows_i686_gnu"
+version = "0.53.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "960e6da069d81e09becb0ca57a65220ddff016ff2d6af6a223cf372a506593a3"
+
+[[package]]
+name = "windows_i686_gnullvm"
+version = "0.53.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fa7359d10048f68ab8b09fa71c3daccfb0e9b559aed648a8f95469c27057180c"
+
+[[package]]
+name = "windows_i686_msvc"
+version = "0.53.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e7ac75179f18232fe9c285163565a57ef8d3c89254a30685b57d83a38d326c2"
+
+[[package]]
+name = "windows_x86_64_gnu"
+version = "0.53.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9c3842cdd74a865a8066ab39c8a7a473c0778a3f29370b5fd6b4b9aa7df4a499"
+
+[[package]]
+name = "windows_x86_64_gnullvm"
+version = "0.53.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0ffa179e2d07eee8ad8f57493436566c7cc30ac536a3379fdf008f47f6bb7ae1"
+
+[[package]]
+name = "windows_x86_64_msvc"
+version = "0.53.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d6bbff5f0aada427a1e5a6da5f1f98158182f26556f345ac9e04d36d0ebed650"

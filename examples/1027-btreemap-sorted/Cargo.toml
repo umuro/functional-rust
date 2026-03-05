@@ -1,4 +1,4 @@
 [package]
-name = "1027-btreemap-sorted"
+name = "example-1027-btreemap-sorted"
 version = "0.1.0"
 edition = "2021"

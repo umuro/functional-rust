@@ -1,4 +1,4 @@
 [package]
-name = "085-iterator-trait"
+name = "example-085-iterator-trait"
 version = "0.1.0"
 edition = "2021"

@@ -1,5 +1,5 @@
 [package]
-name = "456-once-cell-sync"
+name = "example-456-once-cell-sync"
 version = "0.1.0"
 edition = "2021"
 

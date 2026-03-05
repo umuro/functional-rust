@@ -1,5 +1,5 @@
 [package]
-name = "727-simd-portable-concepts"
+name = "example-727-simd-portable-concepts"
 version = "0.1.0"
 edition = "2021"
 

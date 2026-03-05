@@ -1,4 +1,4 @@
 [package]
-name = "948-merge-sort"
+name = "example-948-merge-sort"
 version = "0.1.0"
 edition = "2021"

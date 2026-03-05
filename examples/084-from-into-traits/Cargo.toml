@@ -1,4 +1,4 @@
 [package]
-name = "084-from-into-traits"
+name = "example-084-from-into-traits"
 version = "0.1.0"
 edition = "2021"

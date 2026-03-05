@@ -1,5 +1,5 @@
 [package]
-name = "985-select-pattern"
+name = "example-985-select-pattern"
 version = "0.1.0"
 edition = "2021"
 

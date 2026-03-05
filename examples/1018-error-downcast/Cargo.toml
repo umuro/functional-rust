@@ -1,4 +1,4 @@
 [package]
-name = "1018-error-downcast"
+name = "example-1018-error-downcast"
 version = "0.1.0"
 edition = "2021"

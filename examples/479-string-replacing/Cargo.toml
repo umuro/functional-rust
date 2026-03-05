@@ -1,5 +1,5 @@
 [package]
-name = "479-string-replacing"
+name = "example-479-string-replacing"
 version = "0.1.0"
 edition = "2021"
 

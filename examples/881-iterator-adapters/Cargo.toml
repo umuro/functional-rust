@@ -1,4 +1,4 @@
 [package]
-name = "881-iterator-adapters"
+name = "example-881-iterator-adapters"
 version = "0.1.0"
 edition = "2021"

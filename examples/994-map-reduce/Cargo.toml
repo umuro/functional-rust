@@ -1,5 +1,5 @@
 [package]
-name = "994-map-reduce"
+name = "example-994-map-reduce"
 version = "0.1.0"
 edition = "2021"
 

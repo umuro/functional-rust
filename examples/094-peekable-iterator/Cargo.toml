@@ -1,4 +1,4 @@
 [package]
-name = "094-peekable-iterator"
+name = "example-094-peekable-iterator"
 version = "0.1.0"
 edition = "2021"

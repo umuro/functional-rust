@@ -1,4 +1,4 @@
 [package]
-name = "1024-file-errors"
+name = "example-1024-file-errors"
 version = "0.1.0"
 edition = "2021"

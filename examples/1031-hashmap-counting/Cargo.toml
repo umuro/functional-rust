@@ -1,4 +1,4 @@
 [package]
-name = "1031-hashmap-counting"
+name = "example-1031-hashmap-counting"
 version = "0.1.0"
 edition = "2021"

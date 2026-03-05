@@ -1,5 +1,5 @@
 [package]
-name = "482-string-unicode"
+name = "example-482-string-unicode"
 version = "0.1.0"
 edition = "2021"
 

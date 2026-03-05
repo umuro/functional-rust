@@ -1,5 +1,5 @@
 [package]
-name = "998-circuit-breaker"
+name = "example-998-circuit-breaker"
 version = "0.1.0"
 edition = "2021"
 

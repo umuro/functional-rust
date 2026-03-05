@@ -1,4 +1,4 @@
 [package]
-name = "975-sparse-matrix"
+name = "example-975-sparse-matrix"
 version = "0.1.0"
 edition = "2021"

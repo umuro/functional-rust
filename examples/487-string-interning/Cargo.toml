@@ -1,5 +1,5 @@
 [package]
-name = "487-string-interning"
+name = "example-487-string-interning"
 version = "0.1.0"
 edition = "2021"
 
