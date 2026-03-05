@@ -1,0 +1,20 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/975-sparse-matrix)**
+
+---
+
+# 975-sparse-matrix — Sparse Matrix
+
+See [hightechmind.io/rust/975-sparse-matrix](https://hightechmind.io/rust/975-sparse-matrix) for the full explanation, OCaml comparison, and tests.
+
+## Quick Start
+
+```bash
+cargo test
+```
+
+## Files
+
+- `example.ml` — OCaml implementation
+- `example.rs` — Rust implementation  
+- `src/lib.rs` — Rust library code
+- `COMPARISON.md` — Key differences between OCaml and Rust approaches
