@@ -14,7 +14,7 @@ pub enum Expr {
 // Approach A: Slice-based parser (mirrors OCaml's list consumption)
 // ---------------------------------------------------------------------------
 
-pub fn parse(tokens: &[&str]) -> Result<Expr, String> {
+pub fn parse<'a>(tokens: &'a [&'a str]) -> Result<Expr, String> {
     let (expr, rest) = parse_expr(tokens)?;
     if rest.is_empty() {
         Ok(expr)
@@ -23,9 +23,9 @@ pub fn parse(tokens: &[&str]) -> Result<Expr, String> {
     }
 }
 
-fn parse_expr<'a>(tokens: &'a [&str]) -> Result<(Expr, &'a [&str]), String> {
+fn parse_expr<'a>(tokens: &'a [&'a str]) -> Result<(Expr, &'a [&'a str]), String> {
     let (left, rest) = parse_term(tokens)?;
-    if let Some(("+", rest)) = rest.split_first() {
+    if let Some((&"+", rest)) = rest.split_first() {
         let (right, rest) = parse_expr(rest)?;
         Ok((Expr::Add(Box::new(left), Box::new(right)), rest))
     } else {
@@ -33,9 +33,9 @@ fn parse_expr<'a>(tokens: &'a [&str]) -> Result<(Expr, &'a [&str]), String> {
     }
 }
 
-fn parse_term<'a>(tokens: &'a [&str]) -> Result<(Expr, &'a [&str]), String> {
+fn parse_term<'a>(tokens: &'a [&'a str]) -> Result<(Expr, &'a [&'a str]), String> {
     let (left, rest) = parse_atom(tokens)?;
-    if let Some(("*", rest)) = rest.split_first() {
+    if let Some((&"*", rest)) = rest.split_first() {
         let (right, rest) = parse_term(rest)?;
         Ok((Expr::Mul(Box::new(left), Box::new(right)), rest))
     } else {
@@ -43,7 +43,7 @@ fn parse_term<'a>(tokens: &'a [&str]) -> Result<(Expr, &'a [&str]), String> {
     }
 }
 
-fn parse_atom<'a>(tokens: &'a [&str]) -> Result<(Expr, &'a [&str]), String> {
+fn parse_atom<'a>(tokens: &'a [&'a str]) -> Result<(Expr, &'a [&'a str]), String> {
     match tokens.split_first() {
         Some((token, rest)) => {
             let n: i64 = token.parse().map_err(|_| format!("not a number: {}", token))?;

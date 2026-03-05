@@ -12,11 +12,11 @@ pub fn fact(n: u64) -> u64 {
 }
 
 /// Factorial in CPS - result passed to continuation k.
-pub fn fact_k<R>(n: u64, k: impl FnOnce(u64) -> R) -> R {
+pub fn fact_k<R: 'static>(n: u64, k: Box<dyn FnOnce(u64) -> R>) -> R {
     if n <= 1 {
         k(1)
     } else {
-        fact_k(n - 1, move |r| k(n * r))
+        fact_k(n - 1, Box::new(move |r| k(n * r)))
     }
 }
 
@@ -108,11 +108,10 @@ pub fn parse_int_k<R>(
 
 /// Chained CPS operations.
 pub fn chain_example<R>(s: &str, k: impl FnOnce(f64) -> R, err: impl FnOnce(&str) -> R) -> R {
-    parse_int_k(
-        s,
-        |n| safe_div_k(100.0, n as f64, k, err),
-        err,
-    )
+    match s.parse::<i64>() {
+        Ok(n) => safe_div_k(100.0, n as f64, k, err),
+        Err(_) => err(s),
+    }
 }
 
 /// Identity continuation - extract value from CPS.
@@ -132,15 +131,15 @@ mod tests {
 
     #[test]
     fn test_fact_cps() {
-        fact_k(5, |n| assert_eq!(n, 120));
-        fact_k(10, |n| assert_eq!(n, 3_628_800));
+        fact_k(5, Box::new(|n| assert_eq!(n, 120)));
+        fact_k(10, Box::new(|n| assert_eq!(n, 3_628_800)));
     }
 
     #[test]
     fn test_fact_equivalence() {
         for n in 0..=12 {
             let direct = fact(n);
-            fact_k(n, |cps| assert_eq!(cps, direct));
+            fact_k(n, Box::new(move |cps| assert_eq!(cps, direct)));
         }
     }
 

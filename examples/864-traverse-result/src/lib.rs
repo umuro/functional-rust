@@ -68,7 +68,7 @@ mod tests {
 
     #[test]
     fn test_sequence_ok() {
-        assert_eq!(sequence_result(vec![Ok(1), Ok(2), Ok(3)]), Ok(vec![1, 2, 3]));
+        assert_eq!(sequence_result::<i32, String>(vec![Ok(1), Ok(2), Ok(3)]), Ok(vec![1, 2, 3]));
     }
 
     #[test]

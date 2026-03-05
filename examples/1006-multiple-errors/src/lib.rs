@@ -42,7 +42,7 @@ fn do_net_boxed() -> Result<String, Box<dyn std::error::Error>> {
 fn process_boxed() -> Result<i64, Box<dyn std::error::Error>> {
     let data = do_io_boxed().or_else(|_| Ok::<_, Box<dyn std::error::Error>>("42".into()))?;
     let parsed = do_parse_boxed(&data)?;
-    let _response = do_net_boxed().or_else(|_| Ok("ok".into()))?;
+    let _response = do_net_boxed().or_else(|_| Ok::<String, Box<dyn std::error::Error>>("ok".into()))?;
     Ok(parsed)
 }
 

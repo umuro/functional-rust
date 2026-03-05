@@ -3,10 +3,19 @@
 
 use std::collections::HashMap;
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct TrieNode<V> {
     value: Option<V>,
     children: HashMap<char, TrieNode<V>>,
+}
+
+impl<V> Default for TrieNode<V> {
+    fn default() -> Self {
+        TrieNode {
+            value: None,
+            children: HashMap::new(),
+        }
+    }
 }
 
 pub struct Trie<V> {
@@ -21,7 +30,7 @@ impl<V> Trie<V> {
     pub fn insert(&mut self, key: &str, value: V) {
         let mut node = &mut self.root;
         for c in key.chars() {
-            node = node.children.entry(c).or_insert_with(TrieNode::default);
+            node = node.children.entry(c).or_default();
         }
         node.value = Some(value);
     }

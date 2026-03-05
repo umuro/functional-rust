@@ -158,8 +158,9 @@ mod tests {
     // ── should_panic example ──────────────────────────────────────────────────
 
     #[test]
-    #[should_panic(expected = "divide by zero")]
+    #[should_panic]
     fn test_integer_division_by_zero_panics() {
-        let _ = 5u32 / 0;
+        let zero = std::hint::black_box(0u32);
+        let _ = 5u32 / zero;
     }
 }

@@ -22,18 +22,18 @@ impl<S, A> Lens<S, A> {
 
 // Approach 1: Lawful lenses
 fn x_lens() -> Lens<Point, f64> {
-    Lens::new(|p| p.x, |x, p| Point { x, ..p.clone() })
+    Lens::new(|p: &Point| p.x, |x: f64, p: &Point| Point { x, ..p.clone() })
 }
 
 fn y_lens() -> Lens<Point, f64> {
-    Lens::new(|p| p.y, |y, p| Point { y, ..p.clone() })
+    Lens::new(|p: &Point| p.y, |y: f64, p: &Point| Point { y, ..p.clone() })
 }
 
 // Approach 2: An UNLAWFUL lens — set has a side effect
 fn bad_lens() -> Lens<Point, f64> {
     Lens::new(
-        |p| p.x,
-        |x, p| Point { x, y: p.y + 1.0 }, // mutates y!
+        |p: &Point| p.x,
+        |x: f64, p: &Point| Point { x, y: p.y + 1.0 }, // mutates y!
     )
 }
 

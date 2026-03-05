@@ -8,7 +8,7 @@ struct Counter {
 
 impl Counter {
     fn new(start: i32, step: i32) -> Self {
-        Counter { current: start - step, step }
+        Counter { current: start, step }
     }
 }
 

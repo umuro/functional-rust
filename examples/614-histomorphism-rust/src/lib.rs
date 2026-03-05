@@ -12,8 +12,9 @@ pub fn histo<A, B: Clone>(xs: &[A], nil: B, cons: impl Fn(&A, &[B]) -> B) -> B {
 
 pub fn fib_histo(n: usize) -> u64 {
     if n == 0 { return 0; }
+    if n == 1 { return 1; }
     let xs: Vec<()> = vec![(); n];
-    histo(&xs, 1u64, |_, hist| {
+    histo(&xs, 0u64, |_, hist| {
         if hist.len() < 2 { 1 } else { hist[hist.len()-1] + hist[hist.len()-2] }
     })
 }

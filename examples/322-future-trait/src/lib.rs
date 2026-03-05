@@ -50,11 +50,11 @@ impl<T> Ready<T> {
     }
 }
 
-impl<T> Future for Ready<T> {
+impl<T: Unpin> Future for Ready<T> {
     type Output = T;
 
     fn poll(mut self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<Self::Output> {
-        match self.value.take() {
+        match self.get_mut().value.take() {
             Some(v) => Poll::Ready(v),
             None => panic!("Ready polled after completion"),
         }

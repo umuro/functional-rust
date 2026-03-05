@@ -192,6 +192,6 @@ mod tests {
         // Should not consume trailing comma
         let (v, rest) = p("1, 2, abc").unwrap();
         assert_eq!(v, vec!["1", "2"]);
-        assert_eq!(rest, "abc"); // comma before abc not consumed
+        assert_eq!(rest, ", abc"); // comma before abc not consumed (backtrack)
     }
 }

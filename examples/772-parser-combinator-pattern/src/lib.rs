@@ -41,7 +41,7 @@ where
 pub fn string_p(s: &str) -> impl Fn(&str) -> ParseResult<&str> + '_ {
     move |input| {
         if input.starts_with(s) {
-            Some((s, &input[s.len()..]))
+            Some((&input[..s.len()], &input[s.len()..]))
         } else {
             None
         }

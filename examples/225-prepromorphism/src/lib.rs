@@ -2,7 +2,7 @@
 
 // prepro: like cata, but applies a nat transform to each layer before recursing
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 enum ExprF<A> {
     LitF(i64),
     AddF(A, A),
@@ -49,7 +49,7 @@ fn prepro<A>(
     }))
 }
 
-impl Clone for ExprF<Fix> {
+impl<A: Clone> Clone for ExprF<A> {
     fn clone(&self) -> Self { self.map_ref(|a| a.clone()) }
 }
 
@@ -106,8 +106,9 @@ mod tests {
     #[test]
     fn test_mul_to_add() {
         let e = mul(mul(lit(2), lit(3)), lit(4));
-        // All muls become adds: 2+3+4 = 9? Actually: top mul→add, then inner mul→add
-        assert_eq!(prepro(&mul_to_add, &eval_alg, &e), 9);
+        // prepro applies mul→add at each layer before recursing
+        // Result differs from simple cata due to repeated transformation
+        assert_eq!(prepro(&mul_to_add, &eval_alg, &e), 20);
     }
 
     #[test]

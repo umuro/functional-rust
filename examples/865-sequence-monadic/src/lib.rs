@@ -48,7 +48,7 @@ mod tests {
 
     #[test]
     fn test_sequence_result_all_ok() {
-        assert_eq!(sequence_result(vec![Ok(1), Ok(2), Ok(3)]), Ok(vec![1, 2, 3]));
+        assert_eq!(sequence_result::<i32, String>(vec![Ok(1), Ok(2), Ok(3)]), Ok(vec![1, 2, 3]));
     }
 
     #[test]
@@ -61,7 +61,7 @@ mod tests {
     fn test_fold_versions() {
         assert_eq!(sequence_option_fold(vec![Some(1), Some(2)]), Some(vec![1, 2]));
         assert_eq!(sequence_option_fold(vec![Some(1), None]), None);
-        assert_eq!(sequence_result_fold(vec![Ok(1), Ok(2)]), Ok(vec![1, 2]));
+        assert_eq!(sequence_result_fold::<i32, String>(vec![Ok(1), Ok(2)]), Ok(vec![1, 2]));
     }
 
     #[test]

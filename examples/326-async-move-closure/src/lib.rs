@@ -52,7 +52,8 @@ pub fn shared_counter_demo(num_threads: usize) -> i32 {
         h.join().unwrap();
     }
 
-    *shared.lock().unwrap()
+    let result = *shared.lock().unwrap();
+    result
 }
 
 /// Demonstrates capturing multiple values in a move closure.

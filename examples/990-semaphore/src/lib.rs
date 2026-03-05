@@ -69,7 +69,7 @@ fn limited_concurrency() -> usize {
     }).collect();
 
     for h in handles { h.join().unwrap(); }
-    *max_active.lock().unwrap()
+    let x = *max_active.lock().unwrap(); x
 }
 
 // --- Approach 2: Binary semaphore as mutex ---
@@ -90,7 +90,7 @@ fn binary_semaphore_counter() -> u32 {
     }).collect();
 
     for h in handles { h.join().unwrap(); }
-    *counter.lock().unwrap()
+    let x = *counter.lock().unwrap(); x
 }
 
 // --- Approach 3: Drain a resource pool ---

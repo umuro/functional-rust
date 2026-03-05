@@ -28,8 +28,8 @@ pub fn classify(n: u64) -> Classification {
 
 /// Version 2: Optimized — only check up to sqrt(n)
 pub fn sum_of_divisors_fast(n: u64) -> u64 {
-    if n <= 1 { return if n == 1 { 1 } else { 0 }; }
-    let mut sum = 1u64;
+    if n <= 1 { return if n == 1 { 0 } else { 0 }; }
+    let mut sum = 1u64; // 1 is always a proper divisor for n > 1
     let mut i = 2;
     while i * i <= n {
         if n % i == 0 {
@@ -45,7 +45,7 @@ pub fn sum_of_divisors_fast(n: u64) -> u64 {
 
 /// Version 3: Iterator with flat_map for divisor pairs
 pub fn sum_of_divisors_iter(n: u64) -> u64 {
-    if n <= 1 { return if n == 1 { 1 } else { 0 }; }
+    if n <= 1 { return if n == 1 { 0 } else { 0 }; }
     (2..)
         .take_while(|&i| i * i <= n)
         .flat_map(|i| {

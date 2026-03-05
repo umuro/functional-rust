@@ -23,8 +23,8 @@ pub fn test_hygiene() -> i32 {
 /// Non-hygienic when you want shared names.
 #[macro_export]
 macro_rules! with_counter {
-    ($body:block) => {{
-        let mut __counter = 0;
+    (|$c:ident| $body:block) => {{
+        let mut $c = 0;
         $body
     }};
 }
@@ -53,10 +53,10 @@ mod tests {
 
     #[test]
     fn test_with_counter() {
-        let v = with_counter!({
-            __counter += 1;
-            __counter += 1;
-            __counter
+        let v = with_counter!(|counter| {
+            counter += 1;
+            counter += 1;
+            counter
         });
         assert_eq!(v, 2);
     }

@@ -50,7 +50,7 @@ pub fn process(input: &str) -> Result<i32, AppError> {
 
 /// Alternative: explicit conversion with .into()
 pub fn process_explicit(input: &str) -> Result<i32, AppError> {
-    let n = parse_number(input).map_err(|e| e.into())?;
+    let n = parse_number(input).map_err(AppError::from)?;
     validate_positive(n).map(|v| v * 2)
 }
 
@@ -60,7 +60,7 @@ mod tests {
 
     #[test]
     fn test_process_ok() {
-        assert_eq!(process("21"), Ok(42));
+        assert_eq!(process("21").unwrap(), 42);
     }
 
     #[test]
@@ -82,11 +82,11 @@ mod tests {
 
     #[test]
     fn test_process_whitespace() {
-        assert_eq!(process("  42  "), Ok(84));
+        assert_eq!(process("  42  ").unwrap(), 84);
     }
 
     #[test]
     fn test_process_explicit_same() {
-        assert_eq!(process_explicit("21"), Ok(42));
+        assert_eq!(process_explicit("21").unwrap(), 42);
     }
 }

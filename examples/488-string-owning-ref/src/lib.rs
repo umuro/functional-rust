@@ -81,7 +81,7 @@ impl<'a> StringOrStatic<'a> {
 
 /// Using Cow for zero-copy when possible
 pub fn maybe_uppercase(s: &str) -> Cow<'_, str> {
-    if s.chars().all(|c| c.is_uppercase()) {
+    if s.chars().all(|c| !c.is_lowercase()) {
         Cow::Borrowed(s)
     } else {
         Cow::Owned(s.to_uppercase())

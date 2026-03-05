@@ -20,7 +20,7 @@ fn shared_counter() -> i32 {
     }).collect();
 
     for h in handles { h.join().unwrap(); }
-    *counter.lock().unwrap()
+    let x = *counter.lock().unwrap(); x
 }
 
 // --- Approach 2: Mutex around structured state ---

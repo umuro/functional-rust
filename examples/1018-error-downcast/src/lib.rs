@@ -44,7 +44,7 @@ fn might_fail_auth() -> Result<(), Box<dyn Error>> {
 }
 
 // Approach 1: downcast_ref — borrow the concrete type
-fn classify_error(err: &dyn Error) -> &'static str {
+fn classify_error(err: &(dyn Error + 'static)) -> &'static str {
     if err.downcast_ref::<DatabaseError>().is_some() {
         "database"
     } else if err.downcast_ref::<AuthError>().is_some() {
@@ -66,7 +66,7 @@ fn handle_error(err: Box<dyn Error>) -> String {
 }
 
 // Approach 3: Type ID check
-fn is_database_error(err: &dyn Error) -> bool {
+fn is_database_error(err: &(dyn Error + 'static)) -> bool {
     err.downcast_ref::<DatabaseError>().is_some()
 }
 

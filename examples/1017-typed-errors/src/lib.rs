@@ -158,6 +158,7 @@ mod tests {
 
     #[test]
     fn test_error_source() {
+        use std::error::Error;
         let err = AppError::Db(DbError::ConnectionFailed);
         let source = err.source().unwrap();
         assert_eq!(source.to_string(), "database connection failed");

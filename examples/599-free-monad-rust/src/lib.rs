@@ -9,14 +9,14 @@ pub enum Free<F, A> {
 }
 
 /// Simple DSL for key-value operations.
-#[derive(Debug, Clone)]
+
 pub enum KvOp<Next> {
     Get(String, Box<dyn Fn(Option<String>) -> Next>),
     Put(String, String, Box<dyn Fn(()) -> Next>),
 }
 
 /// A simpler, concrete approach for demonstration.
-#[derive(Debug, Clone)]
+
 pub enum KvDsl {
     Get(String),
     Put(String, String),

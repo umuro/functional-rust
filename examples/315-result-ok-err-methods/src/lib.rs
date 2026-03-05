@@ -21,9 +21,9 @@ pub fn result_methods() {
 
     // Combinators
     let _ = ok.and(Ok::<i32, &str>(10));
-    let _ = err.or(Ok(42));
+    let _ = err.or(Ok::<i32, &str>(42));
     let _ = ok.and_then(|x| Ok::<i32, &str>(x * 2));
-    let _ = err.or_else(|_| Ok(99));
+    let _ = err.or_else(|_| Ok::<i32, &str>(99));
 
     // Unwrap variants
     let _ = ok.unwrap_or(0);
@@ -81,7 +81,7 @@ mod tests {
     #[test]
     fn test_result_or_else() {
         let r: Result<i32, &str> = Err("bad");
-        assert_eq!(r.or_else(|_| Ok(42)), Ok(42));
+        assert_eq!(r.or_else(|_| Ok::<i32, &str>(42)), Ok(42));
     }
 
     #[test]

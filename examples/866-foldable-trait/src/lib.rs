@@ -33,19 +33,36 @@ impl<T> MyList<T> {
 impl<T> Foldable for MyList<T> {
     type Item = T;
     fn fold_left<B, F: FnMut(B, &T) -> B>(&self, init: B, mut f: F) -> B {
-        match self {
-            MyList::Nil => init,
-            MyList::Cons(x, xs) => {
-                let acc = f(init, x);
-                xs.fold_left(acc, f)
+        let mut acc = init;
+        let mut current = self;
+        loop {
+            match current {
+                MyList::Nil => return acc,
+                MyList::Cons(x, xs) => {
+                    acc = f(acc, x);
+                    current = xs;
+                }
             }
         }
     }
     fn fold_right<B, F: FnMut(&T, B) -> B>(&self, init: B, mut f: F) -> B {
-        match self {
-            MyList::Nil => init,
-            MyList::Cons(x, xs) => f(x, xs.fold_right(init, f)),
+        // Collect references, then fold from right
+        let mut items = Vec::new();
+        let mut current = self;
+        loop {
+            match current {
+                MyList::Nil => break,
+                MyList::Cons(x, xs) => {
+                    items.push(x);
+                    current = xs;
+                }
+            }
         }
+        let mut acc = init;
+        for x in items.into_iter().rev() {
+            acc = f(x, acc);
+        }
+        acc
     }
 }
 
@@ -65,24 +82,51 @@ impl<T> Tree<T> {
 impl<T> Foldable for Tree<T> {
     type Item = T;
     fn fold_left<B, F: FnMut(B, &T) -> B>(&self, init: B, mut f: F) -> B {
-        match self {
-            Tree::Leaf => init,
-            Tree::Node(l, v, r) => {
-                let acc = l.fold_left(init, &mut f);
-                let acc = f(acc, v);
-                r.fold_left(acc, f)
+        // In-order traversal using explicit stack
+        let mut stack = Vec::new();
+        let mut current = self;
+        let mut acc = init;
+
+        enum Action<'a, T> {
+            Visit(&'a Tree<T>),
+            Process(&'a T),
+        }
+
+        stack.push(Action::Visit(current));
+        while let Some(action) = stack.pop() {
+            match action {
+                Action::Visit(Tree::Leaf) => {}
+                Action::Visit(Tree::Node(l, v, r)) => {
+                    stack.push(Action::Visit(r));
+                    stack.push(Action::Process(v));
+                    stack.push(Action::Visit(l));
+                }
+                Action::Process(v) => {
+                    acc = f(acc, v);
+                }
             }
         }
+        acc
     }
     fn fold_right<B, F: FnMut(&T, B) -> B>(&self, init: B, mut f: F) -> B {
-        match self {
-            Tree::Leaf => init,
-            Tree::Node(l, v, r) => {
-                let acc = r.fold_right(init, &mut f);
-                let acc = f(v, acc);
-                l.fold_right(acc, f)
+        // Collect in-order, then fold from right
+        let mut items = Vec::new();
+        fn collect<'a, T>(tree: &'a Tree<T>, items: &mut Vec<&'a T>) {
+            match tree {
+                Tree::Leaf => {}
+                Tree::Node(l, v, r) => {
+                    collect(l, items);
+                    items.push(v);
+                    collect(r, items);
+                }
             }
         }
+        collect(self, &mut items);
+        let mut acc = init;
+        for x in items.into_iter().rev() {
+            acc = f(x, acc);
+        }
+        acc
     }
 }
 

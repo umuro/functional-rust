@@ -5,9 +5,9 @@
 
 /// Creates a lazy computation that prints a message when created and another when executed.
 /// Analogous to `async { }` blocks which describe work without running it.
-pub fn lazy_comp<F, T>(label: &str, f: F) -> impl FnOnce() -> T + '_
+pub fn lazy_comp<'a, F, T>(label: &'a str, f: F) -> impl FnOnce() -> T + 'a
 where
-    F: FnOnce() -> T,
+    F: FnOnce() -> T + 'a,
 {
     println!("Creating: {}", label);
     move || {
@@ -115,7 +115,7 @@ mod tests {
 
     #[test]
     fn test_chain_lazy() {
-        let computation = chain_lazy(|| 5, |x| x * 2);
+        let computation = chain_lazy::<i32, i32, i32, _, _>(|| 5, |x| x * 2);
         assert_eq!(computation(), 10);
     }
 }

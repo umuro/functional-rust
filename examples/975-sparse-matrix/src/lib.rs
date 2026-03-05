@@ -153,6 +153,7 @@ mod tests {
         let sum = m1.add(&m2);
         assert_eq!(sum.get(0, 0), 2.0); // 1+1
         assert_eq!(sum.get(1, 1), 0.0); // 3+(-3)=0, removed
-        assert_eq!(sum.nnz(), 6); // 6 + 1 - 1 = 6
+        // m1 had 6 entries, m2 adds (0,0) which merges, (1,1) cancels → 5 non-zero
+        assert_eq!(sum.nnz(), 5);
     }
 }

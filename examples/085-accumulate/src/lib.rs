@@ -8,14 +8,17 @@ pub fn accumulate<T, U, F>(lst: &[T], f: F) -> Vec<U>
 where
     F: Fn(&T) -> U,
 {
-    match lst {
-        [] => vec![],
-        [head, tail @ ..] => {
-            let mut result = vec![f(head)];
-            result.extend(accumulate(tail, &f));
-            result
+    fn inner<T, U>(lst: &[T], f: &dyn Fn(&T) -> U) -> Vec<U> {
+        match lst {
+            [] => vec![],
+            [head, tail @ ..] => {
+                let mut result = vec![f(head)];
+                result.extend(inner(tail, f));
+                result
+            }
         }
     }
+    inner(lst, &f)
 }
 
 /// Tail-recursive version using accumulator

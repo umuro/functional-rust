@@ -26,31 +26,31 @@ impl HeteroVec {
 
 // === Approach 2: Custom trait object with Display + Any ===
 
-trait AnyDisplay: Any + fmt::Display {
+trait AnyDisplay: fmt::Display {
     fn as_any(&self) -> &dyn Any;
 }
 
-impl<T: Any + fmt::Display> AnyDisplay for T {
+impl<T: 'static + fmt::Display> AnyDisplay for T {
     fn as_any(&self) -> &dyn Any { self }
 }
 
 struct DisplayVec {
-    items: Vec<Box<dyn AnyDisplay>>,
+    items: Vec<(Box<dyn Any>, Box<dyn fmt::Display>)>,
 }
 
 impl DisplayVec {
     fn new() -> Self { DisplayVec { items: Vec::new() } }
 
-    fn push<T: Any + fmt::Display>(&mut self, val: T) {
-        self.items.push(Box::new(val));
+    fn push<T: 'static + fmt::Display + Clone>(&mut self, val: T) {
+        self.items.push((Box::new(val.clone()), Box::new(val)));
     }
 
     fn get<T: 'static>(&self, index: usize) -> Option<&T> {
-        self.items.get(index)?.as_any().downcast_ref::<T>()
+        self.items.get(index)?.0.downcast_ref::<T>()
     }
 
     fn display_all(&self) -> Vec<String> {
-        self.items.iter().map(|x| format!("{}", x)).collect()
+        self.items.iter().map(|(_, d)| format!("{}", d)).collect()
     }
 }
 

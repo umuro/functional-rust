@@ -53,7 +53,7 @@ fn barrier_with_leader() -> Vec<bool> {
     }).collect();
 
     for h in handles { h.join().unwrap(); }
-    is_leader.lock().unwrap().clone()
+    let x = is_leader.lock().unwrap().clone(); x
 }
 
 // --- Approach 3: Reusable barrier across multiple rounds ---
@@ -74,7 +74,7 @@ fn multi_round_barrier() -> Vec<usize> {
     }).collect();
 
     for h in handles { h.join().unwrap(); }
-    counts.lock().unwrap().clone()
+    let x = counts.lock().unwrap().clone(); x
 }
 
 

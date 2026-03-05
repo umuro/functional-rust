@@ -7,7 +7,9 @@ use std::marker::PhantomData;
 use std::ops::Add;
 
 /// Unit marker types — zero-sized, exist only for the type system.
+#[derive(Clone, Copy)]
 pub struct Meters;
+#[derive(Clone, Copy)]
 pub struct Seconds;
 
 /// A quantity tagged with a phantom unit type.

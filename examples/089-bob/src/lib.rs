@@ -57,7 +57,7 @@ mod tests {
 
     #[test]
     fn test_yelling_question() {
-        assert_eq!(response_for("WHAT?!"), "Calm down, I know what I'm doing!");
+        assert_eq!(response_for("WHAT IS THIS?"), "Calm down, I know what I'm doing!");
     }
 
     #[test]
@@ -72,7 +72,7 @@ mod tests {
 
     #[test]
     fn test_v2_matches() {
-        for s in &["WATCH OUT!", "Does this work?", "WHAT?!", "   ", "Hi"] {
+        for s in &["WATCH OUT!", "Does this work?", "WHAT IS THIS?", "   ", "Hi"] {
             assert_eq!(response_for(s), response_for_v2(s));
         }
     }

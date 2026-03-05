@@ -12,7 +12,7 @@ pub struct RingBuffer<T, const CAP: usize> {
 }
 
 impl<T: Copy, const CAP: usize> RingBuffer<T, CAP> {
-    pub const fn new() -> Self {
+    pub fn new() -> Self {
         RingBuffer {
             data: [None; CAP],
             head: 0,
@@ -72,23 +72,16 @@ impl<T: Copy, const CAP: usize> Default for RingBuffer<T, CAP> {
     }
 }
 
-/// Bit set with compile-time size
+/// Bit set with compile-time size (stored as array of u64 words)
+/// The number of u64 words is passed as a const generic WORDS parameter.
 #[derive(Debug, Clone, Copy)]
-pub struct BitSet<const BITS: usize>
-where
-    [(); (BITS + 63) / 64]: Sized,
-{
-    data: [u64; (BITS + 63) / 64],
+pub struct BitSet<const BITS: usize, const WORDS: usize> {
+    data: [u64; WORDS],
 }
 
-impl<const BITS: usize> BitSet<BITS>
-where
-    [(); (BITS + 63) / 64]: Sized,
-{
-    pub const fn new() -> Self {
-        BitSet {
-            data: [0; (BITS + 63) / 64],
-        }
+impl<const BITS: usize, const WORDS: usize> BitSet<BITS, WORDS> {
+    pub fn new() -> Self {
+        BitSet { data: [0; WORDS] }
     }
 
     pub const fn bits(&self) -> usize {
@@ -120,10 +113,7 @@ where
     }
 }
 
-impl<const BITS: usize> Default for BitSet<BITS>
-where
-    [(); (BITS + 63) / 64]: Sized,
-{
+impl<const BITS: usize, const WORDS: usize> Default for BitSet<BITS, WORDS> {
     fn default() -> Self {
         Self::new()
     }
@@ -205,7 +195,8 @@ mod tests {
 
     #[test]
     fn test_bitset() {
-        let mut bs: BitSet<100> = BitSet::new();
+        // BitSet<100, 2> means 100 bits stored in 2 u64 words (128 bits capacity)
+        let mut bs: BitSet<100, 2> = BitSet::new();
         assert_eq!(bs.bits(), 100);
         
         bs.set(0);

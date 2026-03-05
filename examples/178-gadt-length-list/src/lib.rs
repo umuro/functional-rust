@@ -15,7 +15,8 @@ impl<T: Default + Copy, const N: usize> Vec2<T, N> {
 }
 
 impl<T: Copy, const N: usize> Vec2<T, N> {
-    fn head(&self) -> T where [(); N - 1]: Sized {
+    fn head(&self) -> T {
+        assert!(N > 0, "Cannot take head of empty Vec2");
         self.data[0]
     }
 
@@ -146,7 +147,9 @@ mod tests {
 
     #[test]
     fn test_peano_vec() {
-        let pv = vcons(1, vcons(2, vcons::<_, Zero, _>(3, vnil())));
+        let inner = vcons::<i32, Zero, VNil>(3, vnil());
+        let mid = vcons::<i32, Succ<Zero>, _>(2, inner);
+        let pv = vcons::<i32, Succ<Succ<Zero>>, _>(1, mid);
         assert_eq!(*pv.head(), 1);
         assert_eq!(pv.to_vec(), vec![1, 2, 3]);
     }

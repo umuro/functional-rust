@@ -74,7 +74,7 @@ fn concurrent_once_init() -> usize {
     }).collect();
 
     for h in handles { h.join().unwrap(); }
-    *call_count.lock().unwrap() // should be 1 — init ran only once
+    let x = *call_count.lock().unwrap(); x // should be 1 — init ran only once
 }
 
 

@@ -134,7 +134,7 @@ mod tests {
     #[test]
     fn test_retry_if_stops_on_permanent() {
         let mut count = 0;
-        let result = retry_if(
+        let result: Result<i32, MyError> = retry_if(
             5, 1,
             |e| matches!(e, MyError::Transient(_)),
             || {

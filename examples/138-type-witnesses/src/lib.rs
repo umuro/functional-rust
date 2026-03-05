@@ -132,6 +132,13 @@ impl TypedExpr<i32> {
     }
 }
 
+impl TypedExpr<bool> {
+    /// Evaluate, returning the witnessed `bool`.
+    pub fn eval(&self) -> bool {
+        eval_bool(&self.raw)
+    }
+}
+
 // ── Approach 2: Typed heterogeneous map ────────────────────────────────────
 //
 // A `TypedKey<T>` witnesses that the value stored under this key has type `T`.

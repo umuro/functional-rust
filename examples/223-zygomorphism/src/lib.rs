@@ -50,10 +50,7 @@ fn zygo<A: Clone, B: Clone>(
     zygo_both(helper, main, fix).0
 }
 
-// Need Clone for ExprF<(A, B)>
-impl<A: Clone> Clone for ExprF<A> {
-    fn clone(&self) -> Self { self.map_ref(|a| a.clone()) }
-}
+// ExprF derives Clone, which covers ExprF<(A, B)> when A: Clone
 
 // Approach 1: Safety check — helper evaluates, main checks bounds
 fn eval_helper(e: ExprF<i64>) -> i64 {

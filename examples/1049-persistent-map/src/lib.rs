@@ -64,15 +64,15 @@ fn persistence_demo() {
 fn version_history() {
     let mut versions: Vec<Rc<PersistentMap<&str, i32>>> = vec![Rc::new(PersistentMap::new())];
 
-    let update = |versions: &mut Vec<Rc<PersistentMap<&str, i32>>>, f: &dyn Fn(&PersistentMap<&str, i32>) -> PersistentMap<&str, i32>| {
+    fn update(versions: &mut Vec<Rc<PersistentMap<&'static str, i32>>>, f: fn(&PersistentMap<&'static str, i32>) -> PersistentMap<&'static str, i32>) {
         let current = versions.last().unwrap().clone();
         versions.push(Rc::new(f(&current)));
-    };
+    }
 
-    update(&mut versions, &|m| m.insert("x", 10));
-    update(&mut versions, &|m| m.insert("y", 20));
-    update(&mut versions, &|m| m.insert("z", 30));
-    update(&mut versions, &|m| m.remove(&"y"));
+    update(&mut versions, |m| m.insert("x", 10));
+    update(&mut versions, |m| m.insert("y", 20));
+    update(&mut versions, |m| m.insert("z", 30));
+    update(&mut versions, |m| m.remove(&"y"));
 
     // Current state
     let current = versions.last().unwrap();

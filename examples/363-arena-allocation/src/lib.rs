@@ -200,8 +200,8 @@ mod tests {
     fn test_typed_arena_strings() {
         let mut arena: TypedArena<String> = TypedArena::new();
         let s1 = arena.alloc("hello".to_string());
-        let s2 = arena.alloc("world".to_string());
         assert_eq!(s1, "hello");
+        let s2 = arena.alloc("world".to_string());
         assert_eq!(s2, "world");
         assert_eq!(arena.count(), 2);
     }

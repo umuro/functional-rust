@@ -98,7 +98,7 @@ where
 pub fn parallel_map<T, U, F>(pool: &ThreadPool, data: Vec<T>, f: F) -> Vec<U>
 where
     T: Send + 'static,
-    U: Send + 'static,
+    U: Send + std::fmt::Debug + 'static,
     F: Fn(T) -> U + Send + Sync + Clone + 'static,
 {
     let results: Arc<Mutex<Vec<Option<(usize, U)>>>> = Arc::new(Mutex::new(Vec::new()));

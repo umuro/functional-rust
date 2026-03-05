@@ -149,6 +149,12 @@ pub enum Expr<'a> {
     Mul(&'a Expr<'a>, &'a Expr<'a>),
 }
 
+impl<'a> Default for Expr<'a> {
+    fn default() -> Self {
+        Expr::Num(0)
+    }
+}
+
 impl<'a> Expr<'a> {
     pub fn eval(&self) -> i64 {
         match self {

@@ -21,7 +21,7 @@ impl<S: Clone + 'static, A: Clone + 'static> Lens<S, A> {
 pub struct Person { pub name: String, pub age: u32 }
 
 pub fn name_lens() -> Lens<Person, String> {
-    Lens::new(|p| p.name.clone(), |p, n| Person { name: n, ..p.clone() })
+    Lens::new(|p: &Person| p.name.clone(), |p: &Person, n| Person { name: n, ..p.clone() })
 }
 
 #[cfg(test)]

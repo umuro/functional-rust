@@ -57,7 +57,7 @@ fn demonstrate_alias_transparency() -> bool {
     raw == 42
 }
 
-fn filter_with<T>(items: &[T], pred: &dyn Fn(&T) -> bool) -> Vec<&T> {
+fn filter_with<'a, T>(items: &'a [T], pred: &dyn Fn(&T) -> bool) -> Vec<&'a T> {
     items.iter().filter(|x| pred(x)).collect()
 }
 

@@ -56,7 +56,7 @@ mod tests {
 
     #[test]
     fn test_validate_port_ok() {
-        assert_eq!(validate_port(8080), Ok(8080));
+        assert_eq!(validate_port(8080).unwrap(), 8080);
     }
 
     #[test]

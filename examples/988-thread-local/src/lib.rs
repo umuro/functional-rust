@@ -57,7 +57,7 @@ fn parallel_sums() -> i64 {
     }).collect();
 
     for h in handles { h.join().unwrap(); }
-    results.lock().unwrap().iter().sum()
+    let x = results.lock().unwrap().iter().sum(); x
 }
 
 // --- Approach 3: Thread-local cache (computed once per thread) ---

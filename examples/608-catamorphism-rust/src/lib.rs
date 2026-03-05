@@ -1,7 +1,7 @@
 //! # Catamorphism (Fold)
 //! Generalized fold over recursive structures.
 
-pub fn cata_list<A: Clone, B>(list: &[A], nil: B, cons: impl Fn(&A, B) -> B) -> B {
+pub fn cata_list<A, B>(list: &[A], nil: B, cons: impl Fn(&A, B) -> B) -> B {
     list.iter().rev().fold(nil, |acc, x| cons(x, acc))
 }
 

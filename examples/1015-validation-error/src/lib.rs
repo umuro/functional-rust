@@ -94,7 +94,7 @@ fn validate_form_functional(name: &str, age: i32, email: &str) -> Result<ValidFo
     ];
 
     let errors: Vec<FieldError> = [
-        validate_field("name", &&name, &name_checks),
+        validate_field("name", &name, &name_checks),
         validate_field("age", &age, &age_checks),
         validate_email(email),
     ]

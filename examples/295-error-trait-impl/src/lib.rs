@@ -107,7 +107,7 @@ mod tests {
 
     #[test]
     fn test_valid_age() {
-        assert_eq!(validate_user_age("25"), Ok(25));
+        assert_eq!(validate_user_age("25").unwrap(), 25);
     }
 
     #[test]

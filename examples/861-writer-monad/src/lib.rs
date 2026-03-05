@@ -13,10 +13,6 @@ impl<A> Writer<A> {
         Writer { value: a, log: vec![] }
     }
 
-    fn tell(msg: String) -> Writer<()> {
-        Writer { value: (), log: vec![msg] }
-    }
-
     fn and_then<B>(self, f: impl FnOnce(A) -> Writer<B>) -> Writer<B> {
         let Writer { value: b, log: log2 } = f(self.value);
         let mut log = self.log;
@@ -29,17 +25,22 @@ impl<A> Writer<A> {
     }
 }
 
+/// tell as a free function returning Writer<()>
+fn tell(msg: String) -> Writer<()> {
+    Writer { value: (), log: vec![msg] }
+}
+
 fn add_with_log(x: i32, y: i32) -> Writer<i32> {
-    Writer::tell(format!("Adding {} + {}", x, y))
+    tell(format!("Adding {} + {}", x, y))
         .and_then(move |()| {
             let sum = x + y;
-            Writer::tell(format!("Result: {}", sum))
+            tell(format!("Result: {}", sum))
                 .map(move |()| sum)
         })
 }
 
 fn multiply_with_log(x: i32, y: i32) -> Writer<i32> {
-    Writer::tell(format!("Multiplying {} * {}", x, y))
+    tell(format!("Multiplying {} * {}", x, y))
         .map(move |()| x * y)
 }
 
@@ -47,7 +48,7 @@ fn computation() -> Writer<i32> {
     add_with_log(3, 4)
         .and_then(|sum| multiply_with_log(sum, 2))
         .and_then(|product| {
-            Writer::tell("Done!".to_string()).map(move |()| product)
+            tell("Done!".to_string()).map(move |()| product)
         })
 }
 
@@ -63,14 +64,14 @@ impl<A> WriterG<String, A> {
         WriterG { value: a, log: String::new() }
     }
 
-    fn str_tell(msg: &str) -> WriterG<String, ()> {
-        WriterG { value: (), log: msg.to_string() }
-    }
-
     fn str_bind<B>(self, f: impl FnOnce(A) -> WriterG<String, B>) -> WriterG<String, B> {
         let w2 = f(self.value);
         WriterG { value: w2.value, log: self.log + &w2.log }
     }
+}
+
+fn str_tell(msg: &str) -> WriterG<String, ()> {
+    WriterG { value: (), log: msg.to_string() }
 }
 
 // Approach 3: Collect values (Writer as accumulator)
@@ -95,20 +96,20 @@ mod tests {
     fn test_computation() {
         let w = computation();
         assert_eq!(w.value, 14);
-        assert_eq!(w.log.len(), 3);
+        assert_eq!(w.log.len(), 4);
         assert!(w.log[0].contains("Adding 3 + 4"));
     }
 
     #[test]
     fn test_pure_empty_log() {
-        let w = Writer::pure(42);
+        let w: Writer<i32> = Writer::pure(42);
         assert_eq!(w.value, 42);
         assert!(w.log.is_empty());
     }
 
     #[test]
     fn test_tell() {
-        let w = Writer::tell("hello".into());
+        let w = tell("hello".into());
         assert_eq!(w.log, vec!["hello"]);
     }
 
@@ -120,15 +121,15 @@ mod tests {
 
     #[test]
     fn test_map() {
-        let w = Writer::pure(5).map(|x| x * 2);
+        let w = Writer::pure(5).map(|x: i32| x * 2);
         assert_eq!(w.value, 10);
         assert!(w.log.is_empty());
     }
 
     #[test]
     fn test_and_then_combines_logs() {
-        let w = Writer::tell("a".into())
-            .and_then(|()| Writer::tell("b".into()));
+        let w = tell("a".into())
+            .and_then(|()| tell("b".into()));
         assert_eq!(w.log, vec!["a", "b"]);
     }
 }

@@ -147,8 +147,7 @@ mod tests {
 
     #[test]
     fn test_escaped_quote() {
-        let input = r#"text
-"say ""hello"""#;
+        let input = "text\n\"say \"\"hello\"\"\"";
         let rows = parse_csv(input).unwrap();
         assert_eq!(rows[1][0], "say \"hello\"");
     }

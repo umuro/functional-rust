@@ -83,11 +83,11 @@ make_lens!(EmpAddress, Employee, address, Address);
 make_lens!(AddrCity, Address, city, String);
 
 fn name_lens() -> Lens<Person, String> {
-    Lens::new(|p| p.name.clone(), |n, p| Person { name: n, ..p.clone() })
+    Lens::new(|p: &Person| p.name.clone(), |n: String, p: &Person| Person { name: n, ..p.clone() })
 }
 
 fn age_lens() -> Lens<Person, u32> {
-    Lens::new(|p| p.age, |a, p| Person { age: a, ..p.clone() })
+    Lens::new(|p: &Person| p.age, |a: u32, p: &Person| Person { age: a, ..p.clone() })
 }
 
 #[cfg(test)]

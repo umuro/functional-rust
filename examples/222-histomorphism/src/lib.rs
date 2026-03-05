@@ -45,15 +45,7 @@ fn histo_build<A: Clone>(alg: &dyn Fn(NatF<Cofree<A>>) -> A, fix: &FixNat) -> Co
     Cofree::new(result, layer)
 }
 
-// Need Clone for NatF<Cofree<A>>
-impl<A: Clone> Clone for NatF<Cofree<A>> {
-    fn clone(&self) -> Self {
-        match self {
-            NatF::ZeroF => NatF::ZeroF,
-            NatF::SuccF(a) => NatF::SuccF(a.clone()),
-        }
-    }
-}
+// NatF derives Clone, which covers NatF<Cofree<A>> when A: Clone
 
 // Approach 1: Fibonacci — algebra looks back 2 steps
 fn fib_alg(n: NatF<Cofree<u64>>) -> u64 {

@@ -2,7 +2,7 @@
 
 // mutu: two folds that depend on EACH OTHER
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 enum NatF<A> { ZeroF, SuccF(A) }
 
 impl<A> NatF<A> {
@@ -44,7 +44,7 @@ fn is_even(n: u32) -> bool { mutu(&is_even_alg, &is_odd_alg, &nat(n)).0 }
 fn is_odd(n: u32) -> bool { mutu(&is_even_alg, &is_odd_alg, &nat(n)).1 }
 
 // Approach 2: Typed expression evaluation — value AND type simultaneously
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, PartialEq)]
 enum ExprF<A> { IntLit(i64), BoolLit(bool), Add(A, A), Eq(A, A), If(A, A, A) }
 
 impl<A> ExprF<A> {

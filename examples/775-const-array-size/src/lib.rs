@@ -10,7 +10,7 @@ pub struct StackVec<T: Copy + Default, const CAP: usize> {
 }
 
 impl<T: Copy + Default, const CAP: usize> StackVec<T, CAP> {
-    pub const fn new() -> Self {
+    pub fn new() -> Self {
         StackVec {
             data: [T::default(); CAP],
             len: 0,
@@ -76,14 +76,8 @@ impl<T: Copy + Default, const CAP: usize> Default for StackVec<T, CAP> {
 }
 
 /// Create an array from a function
-pub const fn array_from_fn<T: Copy, const N: usize>(mut f: impl FnMut(usize) -> T) -> [T; N] {
-    let mut arr = [f(0); N]; // Initialize with first value
-    let mut i = 1;
-    while i < N {
-        arr[i] = f(i);
-        i += 1;
-    }
-    arr
+pub fn array_from_fn<T: Copy, const N: usize>(f: impl Fn(usize) -> T) -> [T; N] {
+    std::array::from_fn(|i| f(i))
 }
 
 /// Sum of array elements
@@ -101,11 +95,7 @@ pub fn zip_arrays<T: Copy, U: Copy, const N: usize>(
     a: &[T; N],
     b: &[U; N],
 ) -> [(T, U); N] {
-    let mut result = [(a[0], b[0]); N];
-    for i in 0..N {
-        result[i] = (a[i], b[i]);
-    }
-    result
+    std::array::from_fn(|i| (a[i], b[i]))
 }
 
 /// Map over array
@@ -113,11 +103,7 @@ pub fn map_array<T: Copy, U: Copy + Default, const N: usize>(
     arr: &[T; N],
     f: impl Fn(T) -> U,
 ) -> [U; N] {
-    let mut result = [U::default(); N];
-    for i in 0..N {
-        result[i] = f(arr[i]);
-    }
-    result
+    std::array::from_fn(|i| f(arr[i]))
 }
 
 #[cfg(test)]

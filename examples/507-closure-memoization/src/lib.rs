@@ -111,15 +111,16 @@ mod tests {
 
     #[test]
     fn test_lazy() {
-        let mut computed = false;
+        use std::cell::Cell;
+        let computed = Cell::new(false);
         let mut lazy = Lazy::new(|| {
-            computed = true;
+            computed.set(true);
             42
         });
 
-        assert!(!computed);
+        assert!(!computed.get());
         assert_eq!(*lazy.get(), 42);
-        assert!(computed);
+        assert!(computed.get());
         assert_eq!(*lazy.get(), 42); // Doesn't recompute
     }
 

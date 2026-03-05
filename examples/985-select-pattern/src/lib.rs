@@ -17,21 +17,27 @@ fn select<A, B>(
     rx1: &mpsc::Receiver<A>,
     rx2: &mpsc::Receiver<B>,
 ) -> Selected<A, B> {
+    let mut r1_closed = false;
+    let mut r2_closed = false;
     loop {
-        let r1 = rx1.try_recv();
-        let r2 = rx2.try_recv();
-
-        match (r1, r2) {
-            (Ok(v), _) => return Selected::Left(v),
-            (_, Ok(v)) => return Selected::Right(v),
-            (Err(TryRecvError::Disconnected), Err(TryRecvError::Disconnected)) => {
-                return Selected::BothClosed;
-            }
-            _ => {
-                // Both empty but not closed — yield and retry
-                thread::yield_now();
+        if !r1_closed {
+            match rx1.try_recv() {
+                Ok(v) => return Selected::Left(v),
+                Err(TryRecvError::Disconnected) => r1_closed = true,
+                Err(TryRecvError::Empty) => {}
             }
         }
+        if !r2_closed {
+            match rx2.try_recv() {
+                Ok(v) => return Selected::Right(v),
+                Err(TryRecvError::Disconnected) => r2_closed = true,
+                Err(TryRecvError::Empty) => {}
+            }
+        }
+        if r1_closed && r2_closed {
+            return Selected::BothClosed;
+        }
+        thread::yield_now();
     }
 }
 

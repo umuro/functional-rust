@@ -79,7 +79,8 @@ mod tests {
     fn test_min_max_by_key_strings() {
         let words = ["banana", "apple", "fig", "kiwi", "cherry"];
         assert_eq!(shortest(&words), Some("fig"));
-        assert_eq!(longest(&words), Some("banana"));
+        // max_by_key returns last of equal elements; "cherry" ties "banana" at len 6
+        assert_eq!(longest(&words), Some("cherry"));
     }
 
     #[test]

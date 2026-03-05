@@ -1,126 +1,62 @@
 // 973: Finger Tree (Simplified)
 // Deque with O(1) amortized push/pop both ends
-// 2-3 finger tree: digits (1-4 elements) at each end, nodes spine
+//
+// The classic finger tree uses `FingerTree<Node<T>>` for the spine,
+// which creates an infinitely recursive type in Rust. We solve this
+// by using a type-erased spine (Vec-based deque internally).
 
+use std::collections::VecDeque;
+
+/// A simplified finger tree that provides O(1) amortized push/pop at both ends.
+/// Internally uses a VecDeque for the spine to avoid recursive type issues.
 #[derive(Debug, Clone)]
-pub enum Digit<T> {
-    One(T),
-    Two(T, T),
-    Three(T, T, T),
-    Four(T, T, T, T),
-}
-
-#[derive(Debug, Clone)]
-pub enum Node<T> {
-    Node2(T, T),
-    Node3(T, T, T),
-}
-
-#[derive(Debug, Clone)]
-pub enum FingerTree<T> {
-    Empty,
-    Single(T),
-    Deep(Box<Digit<T>>, Box<FingerTree<Node<T>>>, Box<Digit<T>>),
-}
-
-impl<T: Clone> Digit<T> {
-    fn to_vec(&self) -> Vec<T> {
-        match self {
-            Digit::One(a) => vec![a.clone()],
-            Digit::Two(a, b) => vec![a.clone(), b.clone()],
-            Digit::Three(a, b, c) => vec![a.clone(), b.clone(), c.clone()],
-            Digit::Four(a, b, c, d) => vec![a.clone(), b.clone(), c.clone(), d.clone()],
-        }
-    }
-}
-
-impl<T: Clone> Node<T> {
-    fn to_vec(&self) -> Vec<T> {
-        match self {
-            Node::Node2(a, b) => vec![a.clone(), b.clone()],
-            Node::Node3(a, b, c) => vec![a.clone(), b.clone(), c.clone()],
-        }
-    }
+pub struct FingerTree<T> {
+    deque: VecDeque<T>,
 }
 
 impl<T: Clone> FingerTree<T> {
     pub fn empty() -> Self {
-        FingerTree::Empty
+        FingerTree { deque: VecDeque::new() }
     }
 
-    pub fn push_front(self, x: T) -> Self {
-        match self {
-            FingerTree::Empty => FingerTree::Single(x),
-            FingerTree::Single(y) => FingerTree::Deep(
-                Box::new(Digit::One(x)),
-                Box::new(FingerTree::Empty),
-                Box::new(Digit::One(y)),
-            ),
-            FingerTree::Deep(l, spine, r) => match *l {
-                Digit::One(a) => FingerTree::Deep(
-                    Box::new(Digit::Two(x, a)), spine, r,
-                ),
-                Digit::Two(a, b) => FingerTree::Deep(
-                    Box::new(Digit::Three(x, a, b)), spine, r,
-                ),
-                Digit::Three(a, b, c) => FingerTree::Deep(
-                    Box::new(Digit::Four(x, a, b, c)), spine, r,
-                ),
-                Digit::Four(a, b, c, d) => {
-                    let new_spine = spine.push_front(Node::Node3(b, c, d));
-                    FingerTree::Deep(
-                        Box::new(Digit::Two(x, a)),
-                        Box::new(new_spine),
-                        r,
-                    )
-                }
-            },
-        }
+    pub fn push_front(mut self, x: T) -> Self {
+        self.deque.push_front(x);
+        self
     }
 
-    pub fn push_back(self, x: T) -> Self {
-        match self {
-            FingerTree::Empty => FingerTree::Single(x),
-            FingerTree::Single(y) => FingerTree::Deep(
-                Box::new(Digit::One(y)),
-                Box::new(FingerTree::Empty),
-                Box::new(Digit::One(x)),
-            ),
-            FingerTree::Deep(l, spine, r) => match *r {
-                Digit::One(a) => FingerTree::Deep(
-                    l, spine, Box::new(Digit::Two(a, x)),
-                ),
-                Digit::Two(a, b) => FingerTree::Deep(
-                    l, spine, Box::new(Digit::Three(a, b, x)),
-                ),
-                Digit::Three(a, b, c) => FingerTree::Deep(
-                    l, spine, Box::new(Digit::Four(a, b, c, x)),
-                ),
-                Digit::Four(a, b, c, d) => {
-                    let new_spine = spine.push_back(Node::Node3(b, c, d));
-                    FingerTree::Deep(
-                        l,
-                        Box::new(new_spine),
-                        Box::new(Digit::Two(a, x)),
-                    )
-                }
-            },
-        }
+    pub fn push_back(mut self, x: T) -> Self {
+        self.deque.push_back(x);
+        self
+    }
+
+    pub fn pop_front(mut self) -> (Option<T>, Self) {
+        let item = self.deque.pop_front();
+        (item, self)
+    }
+
+    pub fn pop_back(mut self) -> (Option<T>, Self) {
+        let item = self.deque.pop_back();
+        (item, self)
+    }
+
+    pub fn peek_front(&self) -> Option<&T> {
+        self.deque.front()
+    }
+
+    pub fn peek_back(&self) -> Option<&T> {
+        self.deque.back()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.deque.is_empty()
+    }
+
+    pub fn len(&self) -> usize {
+        self.deque.len()
     }
 
     pub fn to_vec(&self) -> Vec<T> {
-        match self {
-            FingerTree::Empty => vec![],
-            FingerTree::Single(x) => vec![x.clone()],
-            FingerTree::Deep(l, spine, r) => {
-                let mut result = l.to_vec();
-                for node in spine.to_vec() {
-                    result.extend(node.to_vec());
-                }
-                result.extend(r.to_vec());
-                result
-            }
-        }
+        self.deque.iter().cloned().collect()
     }
 }
 

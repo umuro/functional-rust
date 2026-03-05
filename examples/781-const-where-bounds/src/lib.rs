@@ -1,20 +1,20 @@
 //! # Const Where Bounds
 //!
 //! Constraining const generic parameters.
+//!
+//! Note: Rust stable doesn't support `where [(); expr]:` bounds on const generics.
+//! We demonstrate the concept using runtime assertions and trait-based patterns.
 
-/// Only allow non-zero sizes
-pub struct NonEmptyArray<T, const N: usize>
-where
-    [(); N - 1]: Sized, // N >= 1
-{
+/// Non-empty array — uses a const generic N and stores [T; N].
+/// The constraint N >= 1 is enforced at construction time.
+pub struct NonEmptyArray<T, const N: usize> {
     data: [T; N],
 }
 
-impl<T: Default + Copy, const N: usize> NonEmptyArray<T, N>
-where
-    [(); N - 1]: Sized,
-{
+impl<T: Default + Copy, const N: usize> NonEmptyArray<T, N> {
+    /// Panics if N == 0.
     pub fn new() -> Self {
+        assert!(N >= 1, "NonEmptyArray requires N >= 1");
         NonEmptyArray {
             data: [T::default(); N],
         }
@@ -29,28 +29,21 @@ where
     }
 }
 
-impl<T: Default + Copy, const N: usize> Default for NonEmptyArray<T, N>
-where
-    [(); N - 1]: Sized,
-{
+impl<T: Default + Copy, const N: usize> Default for NonEmptyArray<T, N> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-/// Power of two only
-pub struct PowerOfTwoBuffer<const SIZE: usize>
-where
-    [(); (SIZE & (SIZE - 1))]: Sized, // SIZE is power of 2 (fails if not)
-{
+/// Power of two buffer — fast modulo via bitmask.
+/// The power-of-two constraint is checked at construction.
+pub struct PowerOfTwoBuffer<const SIZE: usize> {
     data: [u8; SIZE],
 }
 
-impl<const SIZE: usize> PowerOfTwoBuffer<SIZE>
-where
-    [(); (SIZE & (SIZE - 1))]: Sized,
-{
-    pub const fn new() -> Self {
+impl<const SIZE: usize> PowerOfTwoBuffer<SIZE> {
+    pub fn new() -> Self {
+        assert!(SIZE > 0 && (SIZE & (SIZE - 1)) == 0, "SIZE must be a power of 2");
         PowerOfTwoBuffer { data: [0; SIZE] }
     }
 
@@ -58,65 +51,49 @@ where
         SIZE
     }
 
-    /// Fast modulo using bit mask
+    /// Fast modulo using bit mask (works because SIZE is power of 2).
     pub const fn wrap_index(&self, idx: usize) -> usize {
         idx & (SIZE - 1)
     }
 }
 
-/// Ensure N divides M evenly
-pub struct AlignedChunks<T, const N: usize, const M: usize>
-where
-    [(); M % N]: Sized, // M must be divisible by N (fails otherwise)
-{
-    data: [[T; N]; M / N],
+/// Aligned chunks: divide M items into chunks of N.
+/// Constraint M % N == 0 is enforced at construction.
+pub struct AlignedChunks<T> {
+    data: Vec<Vec<T>>,
+    chunk_size: usize,
 }
 
-impl<T: Default + Copy, const N: usize, const M: usize> AlignedChunks<T, N, M>
-where
-    [(); M % N]: Sized,
-{
-    pub fn new() -> Self {
-        AlignedChunks {
-            data: [[T::default(); N]; M / N],
-        }
+impl<T: Default + Clone> AlignedChunks<T> {
+    pub fn new(chunk_size: usize, total: usize) -> Self {
+        assert!(chunk_size > 0, "chunk_size must be > 0");
+        assert!(total % chunk_size == 0, "total must be divisible by chunk_size");
+        let num_chunks = total / chunk_size;
+        let data = vec![vec![T::default(); chunk_size]; num_chunks];
+        AlignedChunks { data, chunk_size }
     }
 
-    pub const fn chunk_size(&self) -> usize {
-        N
+    pub fn chunk_size(&self) -> usize {
+        self.chunk_size
     }
 
-    pub const fn num_chunks(&self) -> usize {
-        M / N
+    pub fn num_chunks(&self) -> usize {
+        self.data.len()
     }
 
-    pub fn get_chunk(&self, idx: usize) -> Option<&[T; N]> {
-        self.data.get(idx)
-    }
-}
-
-impl<T: Default + Copy, const N: usize, const M: usize> Default for AlignedChunks<T, N, M>
-where
-    [(); M % N]: Sized,
-{
-    fn default() -> Self {
-        Self::new()
+    pub fn get_chunk(&self, idx: usize) -> Option<&[T]> {
+        self.data.get(idx).map(|v| v.as_slice())
     }
 }
 
-/// Minimum size constraint
-pub struct MinSizeBuffer<const N: usize>
-where
-    [(); N.saturating_sub(64)]: Sized, // N >= 64
-{
+/// Minimum size buffer — ensures N >= 64.
+pub struct MinSizeBuffer<const N: usize> {
     data: [u8; N],
 }
 
-impl<const N: usize> MinSizeBuffer<N>
-where
-    [(); N.saturating_sub(64)]: Sized,
-{
-    pub const fn new() -> Self {
+impl<const N: usize> MinSizeBuffer<N> {
+    pub fn new() -> Self {
+        assert!(N >= 64, "MinSizeBuffer requires N >= 64");
         MinSizeBuffer { data: [0; N] }
     }
 }
@@ -132,8 +109,7 @@ mod tests {
         assert_eq!(*arr.last(), 0);
     }
 
-    // This won't compile:
-    // let bad: NonEmptyArray<i32, 0> = NonEmptyArray::new();
+    // NonEmptyArray::<i32, 0>::new() would panic at runtime
 
     #[test]
     fn test_power_of_two_buffer() {
@@ -142,18 +118,16 @@ mod tests {
         assert_eq!(buf.wrap_index(17), 1); // 17 % 16 = 1
     }
 
-    // This won't compile (not power of 2):
-    // let bad: PowerOfTwoBuffer<15> = PowerOfTwoBuffer::new();
+    // PowerOfTwoBuffer::<15>::new() would panic (15 is not power of 2)
 
     #[test]
     fn test_aligned_chunks() {
-        let chunks: AlignedChunks<i32, 4, 12> = AlignedChunks::new();
+        let chunks: AlignedChunks<i32> = AlignedChunks::new(4, 12);
         assert_eq!(chunks.chunk_size(), 4);
         assert_eq!(chunks.num_chunks(), 3);
     }
 
-    // This won't compile (12 % 5 != 0):
-    // let bad: AlignedChunks<i32, 5, 12> = AlignedChunks::new();
+    // AlignedChunks::new(5, 12) would panic (12 % 5 != 0)
 
     #[test]
     fn test_min_size() {

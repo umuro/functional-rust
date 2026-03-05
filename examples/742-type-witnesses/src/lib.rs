@@ -25,8 +25,8 @@ impl<T: Ord + Clone> Sorted<T> {
                     if av <= bv { result.push(a.next().unwrap()); }
                     else        { result.push(b.next().unwrap()); }
                 }
-                (Some(_), None) => result.extend(a),
-                (None, Some(_)) => result.extend(b),
+                (Some(_), None) => { result.extend(a); break; }
+                (None, Some(_)) => { result.extend(b); break; }
                 (None, None)    => break,
             }
         }

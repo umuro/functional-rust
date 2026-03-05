@@ -5,7 +5,7 @@
 /// multiple types can implement.
 
 /// The trait is Rust's equivalent of OCaml's `module type STACK`.
-pub trait Stack {
+pub trait Stack: Sized {
     type Item;
 
     fn empty() -> Self;

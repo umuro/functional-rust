@@ -111,6 +111,7 @@ mod tests {
 
     #[test]
     fn test_error_source_chain() {
+        use std::error::Error;
         let result = load_config("/missing");
         let err = result.unwrap_err();
         // source() returns the inner error

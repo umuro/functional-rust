@@ -3,7 +3,7 @@
 //! `partition(Result::is_ok)` collects ALL successes and ALL failures in one pass.
 
 /// Partition results into successes and failures
-pub fn partition_results<T, E>(results: Vec<Result<T, E>>) -> (Vec<T>, Vec<E>) {
+pub fn partition_results<T: std::fmt::Debug, E: std::fmt::Debug>(results: Vec<Result<T, E>>) -> (Vec<T>, Vec<E>) {
     let (oks, errs): (Vec<_>, Vec<_>) = results.into_iter().partition(Result::is_ok);
     let ok_vals: Vec<T> = oks.into_iter().map(|r| r.unwrap()).collect();
     let err_vals: Vec<E> = errs.into_iter().map(|r| r.unwrap_err()).collect();

@@ -51,7 +51,7 @@ mod tests {
     #[test]
     fn test_sql_count() {
         let parts = parse_sql("SELECT COUNT(*) FROM items WHERE active = true");
-        assert_eq!(parts.len(), 7);
+        assert_eq!(parts.len(), 8);
     }
 
     #[test]

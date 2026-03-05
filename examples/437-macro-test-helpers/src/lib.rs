@@ -11,7 +11,7 @@ macro_rules! assert_approx {
     ($left:expr, $right:expr, $epsilon:expr) => {
         let left = $left;
         let right = $right;
-        let diff = (left - right).abs();
+        let diff = (left as f64 - right as f64).abs();
         assert!(
             diff < $epsilon,
             "assertion failed: `{} ≈ {}` (diff: {})",

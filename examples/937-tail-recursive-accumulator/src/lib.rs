@@ -12,15 +12,19 @@ pub fn sum_naive(list: &[i64]) -> i64 {
     }
 }
 
-/// Tail-recursive style (Rust doesn't guarantee TCO, but the pattern is instructive).
+/// Tail-recursive style using an explicit loop (since Rust has no TCO guarantee).
 pub fn sum_tr(list: &[i64]) -> i64 {
-    fn go(acc: i64, slice: &[i64]) -> i64 {
+    let mut acc = 0i64;
+    let mut slice = list;
+    loop {
         match slice {
-            [] => acc,
-            [h, rest @ ..] => go(acc + h, rest),
+            [] => return acc,
+            [h, rest @ ..] => {
+                acc += h;
+                slice = rest;
+            }
         }
     }
-    go(0, list)
 }
 
 /// Idiomatic Rust: use iterators. This is the preferred approach.

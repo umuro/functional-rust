@@ -23,7 +23,8 @@ pub fn concurrent_increment(num_threads: usize) -> i32 {
         h.join().unwrap();
     }
 
-    *counter.lock().unwrap()
+    let result = *counter.lock().unwrap();
+    result
 }
 
 /// Demonstrates the correct pattern: release lock before doing other work.

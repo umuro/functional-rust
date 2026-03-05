@@ -26,7 +26,7 @@ impl fmt::Display for NetworkError {
 impl Error for NetworkError {}
 
 /// Handle error by downcasting to specific types
-pub fn handle_error(e: &dyn Error) -> String {
+pub fn handle_error(e: &(dyn Error + 'static)) -> String {
     if let Some(pe) = e.downcast_ref::<ParseError>() {
         return format!("Parse error for: {}", pe.input);
     }

@@ -8,7 +8,7 @@ struct Person {
     email: String,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 enum ValidationError {
     NameEmpty,
     NameTooLong,

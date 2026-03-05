@@ -72,6 +72,7 @@ mod tests {
         let mut counter = 0;
         assert!(matches!(simulate_poll(&mut counter), PollResult::Pending));
         assert!(matches!(simulate_poll(&mut counter), PollResult::Pending));
+        assert!(matches!(simulate_poll(&mut counter), PollResult::Pending));
         assert!(matches!(simulate_poll(&mut counter), PollResult::Ready("done")));
     }
 }

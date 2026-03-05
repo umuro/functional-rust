@@ -18,13 +18,13 @@ mod tests {
 
     #[test]
     fn test_sum_empty() {
-        let s: i32 = vec![].into_iter().sum();
+        let s: i32 = Vec::<i32>::new().into_iter().sum();
         assert_eq!(s, 0);
     }
 
     #[test]
     fn test_product_empty() {
-        let p: i32 = vec![].into_iter().product();
+        let p: i32 = Vec::<i32>::new().into_iter().product();
         assert_eq!(p, 1); // identity element
     }
 }

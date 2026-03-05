@@ -12,7 +12,7 @@ fn escape_html(s: &str) -> String {
 
 fn unescape_html(s: &str) -> String {
     s.replace("&lt;","<").replace("&gt;",">")
-     .replace("&amp;","&").replace("&quot;",""").replace("&#39;","'")
+     .replace("&amp;","&").replace("&quot;","\"").replace("&#39;","'")
 }
 
 fn escape_control(s: &str) -> String {

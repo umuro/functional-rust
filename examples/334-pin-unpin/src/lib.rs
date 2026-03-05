@@ -31,12 +31,12 @@ impl SelfRef {
     }
 
     /// Get the data string.
-    pub fn get_data(self: Pin<&Self>) -> &str {
+    pub fn get_data(&self) -> &str {
         &self.data
     }
 
     /// Check if the internal pointer is still valid (points to data).
-    pub fn ptr_valid(self: Pin<&Self>) -> bool {
+    pub fn ptr_valid(&self) -> bool {
         self.ptr == self.data.as_ptr()
     }
 }

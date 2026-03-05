@@ -28,6 +28,6 @@ mod tests {
     #[test]
     fn test_max_by_key() {
         let words = ["hello", "hi", "world"];
-        assert_eq!(words.iter().max_by_key(|w| w.len()), Some(&"hello"));
+        assert_eq!(words.iter().max_by_key(|w| w.len()), Some(&"world"));
     }
 }

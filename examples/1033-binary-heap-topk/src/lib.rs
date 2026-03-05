@@ -64,7 +64,7 @@ where
     }
 
     let mut indices: Vec<usize> = heap.into_iter().map(|Reverse((_, i))| i).collect();
-    indices.sort_unstable_by(|&a, &b| key_fn(&data[b]).cmp(&key_fn(&data[a])));
+    indices.sort_by(|&a, &b| key_fn(&data[b]).cmp(&key_fn(&data[a])).then(b.cmp(&a)));
     indices.iter().map(|&i| &data[i]).collect()
 }
 

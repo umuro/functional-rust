@@ -55,7 +55,7 @@ impl<T> Resolver<T> {
 
 /// Create a linked future and resolver pair.
 pub fn make_future<T>() -> (ExternalFuture<T>, Resolver<T>) {
-    let state = Arc::new(Mutex::new(SharedState::default()));
+    let state = Arc::new(Mutex::new(SharedState { value: None, waker: None }));
     (
         ExternalFuture { state: Arc::clone(&state) },
         Resolver { state },
@@ -69,37 +69,33 @@ pub fn block_on<F: Future>(fut: F) -> F::Output {
 
     let ready = Arc::new(AtomicBool::new(true));
 
-    // Create a waker that sets the ready flag
-    let ready_clone = Arc::clone(&ready);
-    let wake_fn: Arc<dyn Fn() + Send + Sync> = Arc::new(move || {
-        ready_clone.store(true, Ordering::Release);
-    });
-
+    // Waker vtable that operates on Arc<AtomicBool>
     unsafe fn clone_waker(ptr: *const ()) -> RawWaker {
-        let arc = Arc::from_raw(ptr as *const (dyn Fn() + Send + Sync));
+        let arc = Arc::from_raw(ptr as *const AtomicBool);
         let cloned = Arc::clone(&arc);
-        std::mem::forget(arc);
+        std::mem::forget(arc); // don't drop the original
         RawWaker::new(Arc::into_raw(cloned) as *const (), &VTABLE)
     }
 
     unsafe fn wake(ptr: *const ()) {
-        let arc = Arc::from_raw(ptr as *const (dyn Fn() + Send + Sync));
-        arc();
+        let arc = Arc::from_raw(ptr as *const AtomicBool);
+        arc.store(true, Ordering::Release);
+        // arc is dropped here (consumed)
     }
 
     unsafe fn wake_by_ref(ptr: *const ()) {
-        let arc = Arc::from_raw(ptr as *const (dyn Fn() + Send + Sync));
-        arc();
-        std::mem::forget(arc);
+        let arc = Arc::from_raw(ptr as *const AtomicBool);
+        arc.store(true, Ordering::Release);
+        std::mem::forget(arc); // don't drop
     }
 
     unsafe fn drop_waker(ptr: *const ()) {
-        drop(Arc::from_raw(ptr as *const (dyn Fn() + Send + Sync)));
+        drop(Arc::from_raw(ptr as *const AtomicBool));
     }
 
     static VTABLE: RawWakerVTable = RawWakerVTable::new(clone_waker, wake, wake_by_ref, drop_waker);
 
-    let raw = RawWaker::new(Arc::into_raw(wake_fn) as *const (), &VTABLE);
+    let raw = RawWaker::new(Arc::into_raw(Arc::clone(&ready)) as *const (), &VTABLE);
     let waker = unsafe { Waker::from_raw(raw) };
     let mut cx = Context::from_waker(&waker);
     let mut fut = Box::pin(fut);

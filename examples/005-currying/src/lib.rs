@@ -89,7 +89,7 @@ mod tests {
     #[test]
     fn test_greater_than_as_predicate() {
         let data = vec![1, 5, 3, 8, 2, 9];
-        let big: Vec<_> = data.iter().filter(greater_than(4)).copied().collect();
+        let big: Vec<_> = data.iter().filter(|x| greater_than(4)(x)).copied().collect();
         assert_eq!(big, vec![5, 8, 9]);
     }
 

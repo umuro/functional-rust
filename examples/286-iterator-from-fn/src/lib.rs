@@ -30,7 +30,19 @@ pub fn fibonacci() -> impl Iterator<Item = u64> {
 /// Parse numbers from whitespace-separated string
 pub fn parse_numbers(input: &str) -> impl Iterator<Item = u32> + '_ {
     let mut words = input.split_whitespace();
-    std::iter::from_fn(move || words.next().and_then(|w| w.parse().ok()))
+    std::iter::from_fn(move || {
+        loop {
+            match words.next() {
+                None => return None,
+                Some(w) => {
+                    if let Ok(n) = w.parse() {
+                        return Some(n);
+                    }
+                    // skip invalid, continue to next word
+                }
+            }
+        }
+    })
 }
 
 /// Alternative: Create a range with custom step

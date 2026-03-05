@@ -100,12 +100,12 @@ mod tests {
 
     #[test]
     fn test_lift2_both_just() {
-        assert_eq!(lift2_simple(|a, b| a + b, Maybe::Just(10), Maybe::Just(20)), Maybe::Just(30));
+        assert_eq!(lift2_simple(|a: i32, b: i32| a + b, Maybe::Just(10), Maybe::Just(20)), Maybe::Just(30));
     }
 
     #[test]
     fn test_lift2_one_nothing() {
-        assert_eq!(lift2_simple(|a, b| a + b, Maybe::Nothing, Maybe::Just(20)), Maybe::Nothing);
+        assert_eq!(lift2_simple(|a: i32, b: i32| a + b, Maybe::Nothing, Maybe::Just(20)), Maybe::Nothing);
     }
 
     #[test]
@@ -124,9 +124,9 @@ mod tests {
 
     #[test]
     fn test_parse_and_combine() {
-        let result = lift2_simple(|a, b| a + b, parse_int("42"), parse_int("8"));
+        let result = lift2_simple(|a: i32, b: i32| a + b, parse_int("42"), parse_int("8"));
         assert_eq!(result, Maybe::Just(50));
-        let result2 = lift2_simple(|a, b| a + b, parse_int("bad"), parse_int("8"));
+        let result2 = lift2_simple(|a: i32, b: i32| a + b, parse_int("bad"), parse_int("8"));
         assert_eq!(result2, Maybe::Nothing);
     }
 }

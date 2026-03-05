@@ -62,14 +62,40 @@ impl<T: Clone + 'static> Observable<T> {
 }
 
 // --- Operators as free functions (return new Observable) ---
-fn obs_map<T: Clone + 'static, U: 'static>(
+
+// Adapter structs allow borrowing `observer` without 'static
+struct MapAdapter<'a, U, F> {
+    inner: &'a mut dyn Observer<U>,
+    f: &'a F,
+}
+
+impl<'a, T, U, F: Fn(T) -> U> Observer<T> for MapAdapter<'a, U, F> {
+    fn on_next(&mut self, value: T) { self.inner.on_next((self.f)(value)); }
+    fn on_error(&mut self, err: &str) { self.inner.on_error(err); }
+    fn on_complete(&mut self) { self.inner.on_complete(); }
+}
+
+fn obs_map<T: Clone + 'static, U: Clone + 'static>(
     source: Observable<T>,
     f: impl Fn(T) -> U + 'static,
 ) -> Observable<U> {
     Observable::new(move |observer| {
-        let mut mapped = FnObserver::new(|v| observer.on_next(f(v)));
-        source.subscribe(&mut mapped);
+        let mut adapter = MapAdapter { inner: observer, f: &f };
+        source.subscribe(&mut adapter);
     })
+}
+
+struct FilterAdapter<'a, T, P> {
+    inner: &'a mut dyn Observer<T>,
+    pred: &'a P,
+}
+
+impl<'a, T, P: Fn(&T) -> bool> Observer<T> for FilterAdapter<'a, T, P> {
+    fn on_next(&mut self, value: T) {
+        if (self.pred)(&value) { self.inner.on_next(value); }
+    }
+    fn on_error(&mut self, err: &str) { self.inner.on_error(err); }
+    fn on_complete(&mut self) { self.inner.on_complete(); }
 }
 
 fn obs_filter<T: Clone + 'static>(
@@ -77,26 +103,31 @@ fn obs_filter<T: Clone + 'static>(
     pred: impl Fn(&T) -> bool + 'static,
 ) -> Observable<T> {
     Observable::new(move |observer| {
-        let mut filtered = FnObserver::new(|v: T| {
-            if pred(&v) { observer.on_next(v); }
-        });
-        source.subscribe(&mut filtered);
+        let mut adapter = FilterAdapter { inner: observer, pred: &pred };
+        source.subscribe(&mut adapter);
     })
+}
+
+struct TakeAdapter<'a, T> {
+    inner: &'a mut dyn Observer<T>,
+    remaining: usize,
+}
+
+impl<'a, T> Observer<T> for TakeAdapter<'a, T> {
+    fn on_next(&mut self, value: T) {
+        if self.remaining > 0 {
+            self.remaining -= 1;
+            self.inner.on_next(value);
+        }
+    }
+    fn on_error(&mut self, err: &str) { self.inner.on_error(err); }
+    fn on_complete(&mut self) { self.inner.on_complete(); }
 }
 
 fn obs_take<T: Clone + 'static>(source: Observable<T>, n: usize) -> Observable<T> {
     Observable::new(move |observer| {
-        let count = Rc::new(RefCell::new(0usize));
-        let count2 = Rc::clone(&count);
-        let mut taker = FnObserver::new(move |v: T| {
-            let mut c = count2.borrow_mut();
-            if *c < n {
-                *c += 1;
-                observer.on_next(v);
-            }
-        });
-        source.subscribe(&mut taker);
-        observer.on_complete();
+        let mut adapter = TakeAdapter { inner: observer, remaining: n };
+        source.subscribe(&mut adapter);
     })
 }
 
@@ -108,7 +139,7 @@ fn collect<T: Clone + 'static>(source: Observable<T>) -> Vec<T> {
         results2.borrow_mut().push(v);
     });
     source.subscribe(&mut observer);
-    results.borrow().clone()
+    let x = results.borrow().clone(); x
 }
 
 

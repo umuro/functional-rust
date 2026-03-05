@@ -2,8 +2,6 @@
 //!
 //! Type-level arithmetic using const generics.
 
-use std::marker::PhantomData;
-
 /// Type-level addition result
 pub struct Add<const A: usize, const B: usize>;
 
@@ -34,17 +32,21 @@ impl<const N: usize> Vec3<N> {
     pub fn get(&self, idx: usize) -> Option<f64> {
         self.0.get(idx).copied()
     }
+
+    pub fn as_slice(&self) -> &[f64] {
+        &self.0
+    }
 }
 
-/// Concatenate two vectors at type level
-pub fn concat<const A: usize, const B: usize>(
+/// Concatenate two vectors — returns a Vec since { A + B } requires nightly.
+pub fn concat_vec<const A: usize, const B: usize>(
     a: &Vec3<A>,
     b: &Vec3<B>,
-) -> Vec3<{ A + B }> {
-    let mut result = [0.0; { A + B }];
-    result[..A].copy_from_slice(&a.0);
-    result[A..].copy_from_slice(&b.0);
-    Vec3(result)
+) -> Vec<f64> {
+    let mut result = Vec::with_capacity(A + B);
+    result.extend_from_slice(a.as_slice());
+    result.extend_from_slice(b.as_slice());
+    result
 }
 
 /// Matrix dimensions at type level
@@ -138,10 +140,10 @@ mod tests {
     fn test_vec_concat() {
         let a = Vec3::new([1.0, 2.0]);
         let b = Vec3::new([3.0, 4.0, 5.0]);
-        let c = concat(&a, &b);
+        let c = concat_vec(&a, &b);
         assert_eq!(c.len(), 5);
-        assert_eq!(c.get(0), Some(1.0));
-        assert_eq!(c.get(4), Some(5.0));
+        assert_eq!(c[0], 1.0);
+        assert_eq!(c[4], 5.0);
     }
 
     #[test]

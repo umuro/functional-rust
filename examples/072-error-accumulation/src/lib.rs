@@ -147,13 +147,10 @@ mod tests {
         let age_err = validate_age(15);
         let email_err = validate_email("bad-email");
 
-        let all_errors: Vec<_> = [name_err, age_err, email_err]
-            .into_iter()
-            .flat_map(|v| match v {
-                Validation::Errors(es) => es,
-                Validation::Ok(_) => vec![],
-            })
-            .collect();
+        let mut all_errors: Vec<String> = vec![];
+        if let Validation::Errors(es) = name_err { all_errors.extend(es); }
+        if let Validation::Errors(es) = age_err { all_errors.extend(es); }
+        if let Validation::Errors(es) = email_err { all_errors.extend(es); }
 
         assert_eq!(all_errors.len(), 3);
         assert!(all_errors[0].contains("name"));

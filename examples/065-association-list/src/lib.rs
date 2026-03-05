@@ -37,7 +37,7 @@ pub fn keys<K: Clone, V>(list: &[(K, V)]) -> Vec<K> {
 }
 
 /// Iterator-based lookup using `find` — idiomatic Rust.
-pub fn lookup_iter<K: PartialEq, V>(k: &K, list: &[(K, V)]) -> Option<&V> {
+pub fn lookup_iter<'a, K: PartialEq, V>(k: &K, list: &'a [(K, V)]) -> Option<&'a V> {
     list.iter()
         .find_map(|(key, val)| if key == k { Some(val) } else { None })
 }

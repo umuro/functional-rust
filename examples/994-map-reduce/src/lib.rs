@@ -52,7 +52,7 @@ where
     drop(chunks); // unused — workaround: use collect directly
 
     // Proper chunking via index
-    let items_arc = std::sync::Arc::new(std::sync::Mutex::new(vec![]));
+    let items_arc = std::sync::Arc::new(std::sync::Mutex::new(Vec::<U>::new()));
     drop(items_arc); // We'll use a simpler approach:
 
     // Re-implement: split into chunk_size slices

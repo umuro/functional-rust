@@ -58,7 +58,7 @@ mod tests {
     #[test]
     fn test_not_isogram() {
         assert!(!is_isogram("eleven"));
-        assert!(!is_isogram("background")); // 'g' repeats? No — actually "background" IS an isogram
+        assert!(!is_isogram("balloon")); // 'l' repeats
     }
 
     #[test]

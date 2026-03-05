@@ -81,14 +81,17 @@ impl<S: 'static, A: 'static> Lens<S, A> {
         A: Clone,
         S: Clone,
     {
-        let outer_get = self.get;
+        use std::rc::Rc;
+        let outer_get: Rc<dyn Fn(&S) -> A> = Rc::from(self.get);
         let outer_set = self.set;
         let inner_get = inner.get;
         let inner_set = inner.set;
+        let og1 = outer_get.clone();
+        let og2 = outer_get;
         Lens {
-            get: Box::new(move |s| (inner_get)(&(outer_get)(s))),
+            get: Box::new(move |s| (inner_get)(&(og1)(s))),
             set: Box::new(move |b, s| {
-                let a = (outer_get)(s);
+                let a = (og2)(s);
                 let new_a = (inner_set)(b, &a);
                 (outer_set)(new_a, s)
             }),
@@ -98,22 +101,22 @@ impl<S: 'static, A: 'static> Lens<S, A> {
 
 fn server_lens() -> Lens<AppConfig, ServerConfig> {
     Lens::new(
-        |c| c.server.clone(),
-        |s, c| AppConfig { server: s, ..c.clone() },
+        |c: &AppConfig| c.server.clone(),
+        |s: ServerConfig, c: &AppConfig| AppConfig { server: s, ..c.clone() },
     )
 }
 
 fn db_lens() -> Lens<ServerConfig, DbConfig> {
     Lens::new(
-        |s| s.db.clone(),
-        |d, s| ServerConfig { db: d, ..s.clone() },
+        |s: &ServerConfig| s.db.clone(),
+        |d: DbConfig, s: &ServerConfig| ServerConfig { db: d, ..s.clone() },
     )
 }
 
 fn port_lens() -> Lens<DbConfig, u16> {
     Lens::new(
-        |d| d.port,
-        |p, d| DbConfig { port: p, ..d.clone() },
+        |d: &DbConfig| d.port,
+        |p: u16, d: &DbConfig| DbConfig { port: p, ..d.clone() },
     )
 }
 

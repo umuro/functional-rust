@@ -9,14 +9,13 @@ use std::time::Duration;
 /// Approach 1: Spawn multiple threads and collect their results
 ///
 /// Maps work items to threads and joins them to collect results.
-pub fn parallel_compute<T, F>(items: Vec<T>, f: F) -> Vec<T::Output>
+pub fn parallel_compute<T, R, F>(items: Vec<T>, f: F) -> Vec<R>
 where
     T: Send + 'static,
-    T::Output: Send + 'static,
-    T: std::ops::Mul<T, Output = T::Output> + Copy,
-    F: Fn(T) -> T::Output + Send + Sync + 'static + Clone,
+    R: Send + 'static,
+    F: Fn(T) -> R + Send + Sync + 'static + Clone,
 {
-    let handles: Vec<JoinHandle<T::Output>> = items
+    let handles: Vec<JoinHandle<R>> = items
         .into_iter()
         .map(|item| {
             let f = f.clone();

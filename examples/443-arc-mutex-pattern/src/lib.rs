@@ -25,13 +25,14 @@ pub fn parallel_increment(num_threads: usize, increments_per_thread: usize) -> u
         h.join().unwrap();
     }
 
-    *counter.lock().unwrap()
+    let result = *counter.lock().unwrap();
+    result
 }
 
 /// Approach 2: Shared collection (Vec)
 pub fn parallel_collect<T, F>(num_threads: usize, producer: F) -> Vec<T>
 where
-    T: Send + 'static,
+    T: Send + std::fmt::Debug + 'static,
     F: Fn(usize) -> T + Send + Sync + 'static + Clone,
 {
     let results: Arc<Mutex<Vec<T>>> = Arc::new(Mutex::new(Vec::new()));

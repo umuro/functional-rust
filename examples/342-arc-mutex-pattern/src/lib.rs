@@ -11,7 +11,8 @@ pub fn shared_counter(num_threads: usize) -> i32 {
         thread::spawn(move || { *c.lock().unwrap() += 1; })
     }).collect();
     for h in handles { h.join().unwrap(); }
-    *counter.lock().unwrap()
+    let result = *counter.lock().unwrap();
+    result
 }
 
 pub struct ThreadSafeCache<T> { data: Arc<Mutex<Vec<T>>> }

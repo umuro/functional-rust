@@ -37,15 +37,19 @@ fn para<A: Clone>(alg: &dyn Fn(ListF<(A, FixList)>) -> A, fl: &FixList) -> A {
 
 // Approach 1: tails — needs original subtree to convert
 fn tails(fl: &FixList) -> Vec<Vec<i64>> {
-    let mut result = vec![to_vec(fl)];
-    result.extend(para(&|l: ListF<(Vec<Vec<i64>>, FixList)>| match l {
-        ListF::NilF => vec![vec![]],
+    // Simple recursive implementation using para
+    // tails [1,2] = [[1,2], [2], []]
+    let full = to_vec(fl);
+    let mut result = vec![full];
+    let sub_tails = para(&|l: ListF<(Vec<Vec<i64>>, FixList)>| match l {
+        ListF::NilF => vec![],
         ListF::ConsF(_, (rest_tails, original_tail)) => {
             let mut v = vec![to_vec(&original_tail)];
             v.extend(rest_tails);
             v
         }
-    }, fl));
+    }, fl);
+    result.extend(sub_tails);
     result
 }
 

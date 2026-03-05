@@ -54,7 +54,12 @@ pub fn parse_port(s: &str) -> AnyResult<u16> {
 
 /// Load configuration
 pub fn load_config(port_str: &str, host: &str) -> AnyResult<String> {
-    let port = parse_port(port_str).context("invalid port number")?;
+    let port = parse_port(port_str).map_err(|e| {
+        Box::new(WithContext {
+            context: "invalid port number".to_string(),
+            source: e,
+        }) as Box<dyn Error + Send + Sync>
+    })?;
     if host.is_empty() {
         return Err("empty hostname".into());
     }
@@ -104,7 +109,8 @@ mod tests {
 
     #[test]
     fn test_context_preserves_source() {
-        let result = parse_port("abc").context("parsing port");
+        let pe: Result<u16, std::num::ParseIntError> = "abc".parse();
+        let result = pe.context("parsing port");
         assert!(result.is_err());
         let e = result.unwrap_err();
         assert!(e.source().is_some());

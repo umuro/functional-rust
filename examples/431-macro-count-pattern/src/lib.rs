@@ -12,10 +12,10 @@ macro_rules! count_recursive {
 /// Count using array trick.
 #[macro_export]
 macro_rules! count_array {
+    (@single $_:tt) => { () };
     ($($x:tt)*) => {
         <[()]>::len(&[$(count_array!(@single $x)),*])
     };
-    (@single $_:tt) => { () };
 }
 
 /// Count expressions.

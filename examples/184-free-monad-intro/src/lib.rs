@@ -12,13 +12,14 @@ enum Console<A> {
 impl<A> Console<A> {
     fn pure(a: A) -> Self { Console::Pure(a) }
 
-    fn print(msg: &str) -> Console<()> {
-        Console::Print(msg.to_string(), Box::new(Console::Pure(())))
-    }
+}
 
-    fn get_line() -> Console<String> {
-        Console::GetLine(Box::new(Console::Pure))
-    }
+fn console_print(msg: &str) -> Console<()> {
+    Console::Print(msg.to_string(), Box::new(Console::Pure(())))
+}
+
+fn console_get_line() -> Console<String> {
+    Console::GetLine(Box::new(Console::Pure))
 }
 
 // bind (flatmap) — chain free monad computations
@@ -63,9 +64,9 @@ fn interpret_pure(inputs: &[&str], prog: Console<String>) -> (Vec<String>, Strin
 // === Approach 3: Builder-style DSL with macro ===
 
 fn greet_program() -> Console<String> {
-    bind(Console::print("What is your name?"), move |()| {
-        bind(Console::get_line(), move |name: String| {
-            bind(Console::print(&format!("Hello, {}!", name)), move |()| {
+    bind(console_print("What is your name?"), move |()| {
+        bind(console_get_line(), move |name: String| {
+            bind(console_print(&format!("Hello, {}!", name)), move |()| {
                 Console::pure(name)
             })
         })
@@ -110,7 +111,7 @@ mod tests {
 
     #[test]
     fn test_print_only() {
-        let prog = bind(Console::print("hi"), |()| Console::pure("done".to_string()));
+        let prog = bind(console_print("hi"), |()| Console::pure("done".to_string()));
         let (outputs, result) = interpret_pure(&[], prog);
         assert_eq!(outputs, vec!["hi"]);
         assert_eq!(result, "done");
@@ -118,7 +119,7 @@ mod tests {
 
     #[test]
     fn test_get_line() {
-        let prog = bind(Console::get_line(), |s: String| Console::pure(s));
+        let prog = bind(console_get_line(), |s: String| Console::pure(s));
         let (_, result) = interpret_pure(&["test"], prog);
         assert_eq!(result, "test");
     }

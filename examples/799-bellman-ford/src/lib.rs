@@ -24,6 +24,10 @@ mod tests {
     #[test] fn test_bellman() {
         let edges = [(0, 1, -1), (0, 2, 4), (1, 2, 3), (1, 3, 2), (1, 4, 2), (3, 2, 5), (3, 1, 1), (4, 3, -3)];
         let dist = bellman_ford(5, &edges, 0).unwrap();
-        assert_eq!(dist[4], -2);
+        // Shortest paths from 0: 0→1=-1, 0→1→4=1, 0→1→4→3=-2
+        assert_eq!(dist[0], 0);
+        assert_eq!(dist[1], -1);
+        assert_eq!(dist[3], -2);
+        assert_eq!(dist[4], 1);
     }
 }

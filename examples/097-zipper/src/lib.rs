@@ -57,7 +57,7 @@ impl<T: Clone> Zipper<T> {
     }
 
     pub fn to_vec(&self) -> Vec<T> {
-        let mut result: Vec<T> = self.left.iter().rev().cloned().collect();
+        let mut result: Vec<T> = self.left.iter().cloned().collect();
         result.push(self.focus.clone());
         result.extend(self.right.iter().cloned());
         result

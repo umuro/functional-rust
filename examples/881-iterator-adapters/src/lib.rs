@@ -105,7 +105,8 @@ mod tests {
 
     #[test]
     fn test_word_lengths() {
-        assert_eq!(word_lengths("the quick brown fox"), vec![3, 3, 4, 5]);
+        // "the"=3, "quick"=5, "brown"=5, "fox"=3 → sorted: [3, 3, 5, 5]
+        assert_eq!(word_lengths("the quick brown fox"), vec![3, 3, 5, 5]);
     }
 
     #[test]

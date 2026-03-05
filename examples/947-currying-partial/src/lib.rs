@@ -33,9 +33,10 @@ pub fn halve() -> impl Fn(i32) -> i32 {
 }
 
 /// Curry converter: turns a 2-arg function into a curried one.
+/// Requires A: Copy so the closure can capture it by value in Fn.
 pub fn curry<A, B, C, F>(f: F) -> impl Fn(A) -> Box<dyn Fn(B) -> C>
 where
-    A: 'static,
+    A: Copy + 'static,
     B: 'static,
     C: 'static,
     F: Fn(A, B) -> C + Clone + 'static,

@@ -78,7 +78,7 @@ mod tests {
 
     #[test]
     fn test_empty_parallel_map() {
-        let results: Vec<i32> = parallel_map(vec![]);
+        let results: Vec<i32> = parallel_map::<i32, fn() -> i32>(vec![]);
         assert!(results.is_empty());
     }
 }
