@@ -1,0 +1,5 @@
+[package]
+name = "735-typestate-builder"
+version = "0.1.0"
+edition = "2021"
+

@@ -1,0 +1,4 @@
+[package]
+name = "092-scan-accumulate"
+version = "0.1.0"
+edition = "2021"

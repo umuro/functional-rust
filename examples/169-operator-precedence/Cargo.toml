@@ -1,0 +1,4 @@
+[package]
+name = "169-operator-precedence"
+version = "0.1.0"
+edition = "2021"

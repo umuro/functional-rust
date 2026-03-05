@@ -1,0 +1,5 @@
+[package]
+name = "728-inline-hints"
+version = "0.1.0"
+edition = "2021"
+

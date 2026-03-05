@@ -1,0 +1,4 @@
+[package]
+name = "945-word-count"
+version = "0.1.0"
+edition = "2021"

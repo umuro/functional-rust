@@ -1,0 +1,5 @@
+[package]
+name = "874-phantom-types"
+version = "0.1.0"
+edition = "2021"
+

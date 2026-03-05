@@ -1,0 +1,5 @@
+[package]
+name = "473-string-parsing-fromstr"
+version = "0.1.0"
+edition = "2021"
+

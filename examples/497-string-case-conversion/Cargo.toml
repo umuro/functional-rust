@@ -1,0 +1,5 @@
+[package]
+name = "497-string-case-conversion"
+version = "0.1.0"
+edition = "2021"
+

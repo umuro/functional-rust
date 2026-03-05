@@ -1,0 +1,4 @@
+[package]
+name = "077-generic-bounds"
+version = "0.1.0"
+edition = "2021"

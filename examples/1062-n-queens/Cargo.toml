@@ -1,0 +1,4 @@
+[package]
+name = "1062-n-queens"
+version = "0.1.0"
+edition = "2021"

@@ -1,0 +1,4 @@
+[package]
+name = "957-json-query"
+version = "0.1.0"
+edition = "2021"

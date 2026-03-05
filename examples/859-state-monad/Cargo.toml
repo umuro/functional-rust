@@ -1,0 +1,5 @@
+[package]
+name = "859-state-monad"
+version = "0.1.0"
+edition = "2021"
+

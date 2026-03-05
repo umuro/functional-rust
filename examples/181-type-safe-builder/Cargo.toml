@@ -1,0 +1,4 @@
+[package]
+name = "181-type-safe-builder"
+version = "0.1.0"
+edition = "2021"

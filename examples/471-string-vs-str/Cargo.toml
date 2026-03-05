@@ -1,0 +1,5 @@
+[package]
+name = "471-string-vs-str"
+version = "0.1.0"
+edition = "2021"
+

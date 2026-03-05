@@ -1,0 +1,4 @@
+[package]
+name = "1039-stack-via-vec"
+version = "0.1.0"
+edition = "2021"

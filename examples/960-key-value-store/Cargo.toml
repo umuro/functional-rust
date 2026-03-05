@@ -1,0 +1,4 @@
+[package]
+name = "960-key-value-store"
+version = "0.1.0"
+edition = "2021"

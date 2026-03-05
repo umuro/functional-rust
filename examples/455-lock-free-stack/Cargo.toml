@@ -1,0 +1,5 @@
+[package]
+name = "455-lock-free-stack"
+version = "0.1.0"
+edition = "2021"
+

@@ -1,0 +1,5 @@
+[package]
+name = "861-writer-monad"
+version = "0.1.0"
+edition = "2021"
+

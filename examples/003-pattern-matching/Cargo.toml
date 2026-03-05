@@ -1,0 +1,4 @@
+[package]
+name = "003-pattern-matching"
+version = "0.1.0"
+edition = "2021"

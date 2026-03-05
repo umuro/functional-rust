@@ -1,0 +1,4 @@
+[package]
+name = "274-iterator-sum-product"
+version = "0.1.0"
+edition = "2021"

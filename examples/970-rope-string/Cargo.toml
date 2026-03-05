@@ -1,0 +1,4 @@
+[package]
+name = "970-rope-string"
+version = "0.1.0"
+edition = "2021"

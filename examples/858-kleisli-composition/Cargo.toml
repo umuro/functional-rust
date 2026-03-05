@@ -1,0 +1,5 @@
+[package]
+name = "858-kleisli-composition"
+version = "0.1.0"
+edition = "2021"
+

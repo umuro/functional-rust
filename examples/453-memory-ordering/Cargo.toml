@@ -1,0 +1,5 @@
+[package]
+name = "453-memory-ordering"
+version = "0.1.0"
+edition = "2021"
+

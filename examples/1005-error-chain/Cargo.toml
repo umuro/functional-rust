@@ -1,0 +1,4 @@
+[package]
+name = "1005-error-chain"
+version = "0.1.0"
+edition = "2021"

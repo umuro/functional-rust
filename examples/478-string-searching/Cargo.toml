@@ -1,0 +1,5 @@
+[package]
+name = "478-string-searching"
+version = "0.1.0"
+edition = "2021"
+

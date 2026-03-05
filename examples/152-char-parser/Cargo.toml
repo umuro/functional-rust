@@ -1,0 +1,4 @@
+[package]
+name = "152-char-parser"
+version = "0.1.0"
+edition = "2021"

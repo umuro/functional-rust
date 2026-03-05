@@ -1,0 +1,4 @@
+[package]
+name = "951-series-sliding-window"
+version = "0.1.0"
+edition = "2021"

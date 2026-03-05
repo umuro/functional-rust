@@ -1,0 +1,4 @@
+[package]
+name = "265-iterator-skip-while"
+version = "0.1.0"
+edition = "2021"

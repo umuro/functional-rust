@@ -1,0 +1,5 @@
+[package]
+name = "476-string-splitting"
+version = "0.1.0"
+edition = "2021"
+

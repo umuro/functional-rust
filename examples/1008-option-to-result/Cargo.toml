@@ -1,0 +1,4 @@
+[package]
+name = "1008-option-to-result"
+version = "0.1.0"
+edition = "2021"

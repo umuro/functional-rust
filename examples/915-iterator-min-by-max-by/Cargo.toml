@@ -1,0 +1,4 @@
+[package]
+name = "915-iterator-min-by-max-by"
+version = "0.1.0"
+edition = "2021"

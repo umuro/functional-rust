@@ -1,0 +1,5 @@
+[package]
+name = "484-string-cow-usage"
+version = "0.1.0"
+edition = "2021"
+

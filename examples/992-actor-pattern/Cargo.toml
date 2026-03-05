@@ -1,0 +1,7 @@
+[package]
+name = "992-actor-pattern"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }

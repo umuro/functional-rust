@@ -1,0 +1,4 @@
+[package]
+name = "174-arithmetic-parser"
+version = "0.1.0"
+edition = "2021"

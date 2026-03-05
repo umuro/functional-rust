@@ -1,0 +1,5 @@
+[package]
+name = "851-functor-laws"
+version = "0.1.0"
+edition = "2021"
+

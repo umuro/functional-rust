@@ -1,0 +1,4 @@
+[package]
+name = "880-custom-iterator"
+version = "0.1.0"
+edition = "2021"

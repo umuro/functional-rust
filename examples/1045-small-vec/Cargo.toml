@@ -1,0 +1,4 @@
+[package]
+name = "1045-small-vec"
+version = "0.1.0"
+edition = "2021"
