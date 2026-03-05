@@ -1,0 +1,8 @@
+[package]
+name = "example-123-impl-trait"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "impl_trait"
+path = "src/lib.rs"

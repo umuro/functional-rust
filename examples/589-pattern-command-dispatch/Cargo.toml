@@ -5,3 +5,6 @@ edition = "2021"
 description = "Command pattern with enum dispatch"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

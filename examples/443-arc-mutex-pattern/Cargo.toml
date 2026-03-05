@@ -5,3 +5,6 @@ edition = "2021"
 description = "Arc<Mutex<T>> — Shared Mutable State Across Threads"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

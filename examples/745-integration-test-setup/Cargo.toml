@@ -5,3 +5,6 @@ edition = "2021"
 description = "Integration test structure: tests/ directory pattern"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

@@ -5,3 +5,6 @@ edition = "2021"
 description = "Rayon Parallel Iterators — Data Parallelism Made Easy"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

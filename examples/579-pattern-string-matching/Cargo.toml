@@ -5,3 +5,6 @@ edition = "2021"
 description = "String pattern matching with OR patterns and guards"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

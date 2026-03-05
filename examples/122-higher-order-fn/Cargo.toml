@@ -1,0 +1,8 @@
+[package]
+name = "example-122-higher-order-fn"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "higher_order_fn"
+path = "src/lib.rs"

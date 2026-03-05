@@ -1,0 +1,7 @@
+[package]
+name = "example-991-optioniter-and-optionfold-side-effects-and-folding"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"

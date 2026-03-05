@@ -1,0 +1,8 @@
+[package]
+name = "example-723-branchless-programming"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "branchless_programming"
+path = "src/lib.rs"

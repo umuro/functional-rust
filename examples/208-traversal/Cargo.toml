@@ -1,0 +1,9 @@
+
+[package]
+name = "example-208-traversal"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "traversal"
+path = "src/lib.rs"

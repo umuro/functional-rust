@@ -1,0 +1,8 @@
+[package]
+name = "example-718-soundness-principles"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "soundness_principles"
+path = "src/lib.rs"

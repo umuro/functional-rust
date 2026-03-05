@@ -5,3 +5,6 @@ edition = "2021"
 description = "Monad laws - identity and associativity"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

@@ -5,3 +5,6 @@ edition = "2021"
 description = "Functor laws - identity and composition"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

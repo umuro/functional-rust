@@ -5,3 +5,6 @@ edition = "2021"
 description = "Closure as Argument — Higher-Order Functions"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

@@ -5,3 +5,6 @@ edition = "2021"
 description = "Tuple pattern matching for multi-value decisions"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

@@ -1,0 +1,9 @@
+[package]
+name = "example-120-closure-types"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "closure_types"
+path = "src/lib.rs"
+

@@ -5,3 +5,6 @@ edition = "2021"
 description = "Thread Pool Pattern — Reusable Worker Threads"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

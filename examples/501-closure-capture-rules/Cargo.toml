@@ -5,3 +5,6 @@ edition = "2021"
 description = "Closure Capture Rules — Borrowing and Moving"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

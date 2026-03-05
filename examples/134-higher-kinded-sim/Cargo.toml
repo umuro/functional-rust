@@ -1,0 +1,8 @@
+[package]
+name = "example-134-higher-kinded-sim"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "example_134_higher_kinded_sim"
+path = "src/lib.rs"

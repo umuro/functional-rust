@@ -1,0 +1,9 @@
+[package]
+name = "example-912-iterator-inspect"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "iterator_inspect"
+path = "src/lib.rs"
+

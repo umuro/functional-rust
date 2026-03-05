@@ -1,0 +1,8 @@
+[package]
+name = "example-116-box-heap"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "example_116_box_heap"
+path = "src/lib.rs"

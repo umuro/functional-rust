@@ -1,0 +1,9 @@
+[package]
+name = "example-722-memory-layout-repr"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "memory_layout_repr"
+path = "src/lib.rs"
+

@@ -5,3 +5,6 @@ edition = "2021"
 description = "Closure Move Semantics — Ownership Transfer"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

@@ -5,3 +5,6 @@ edition = "2021"
 description = "Type-safe units"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

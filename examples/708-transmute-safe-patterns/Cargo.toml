@@ -5,3 +5,6 @@ edition = "2021"
 description = "Safe transmute patterns"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

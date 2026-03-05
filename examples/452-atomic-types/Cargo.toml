@@ -5,3 +5,6 @@ edition = "2021"
 description = "Atomic Types — Lock-Free Concurrent Primitives"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

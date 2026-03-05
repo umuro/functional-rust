@@ -5,3 +5,6 @@ edition = "2021"
 description = "Thread-Local Storage — Per-Thread State"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

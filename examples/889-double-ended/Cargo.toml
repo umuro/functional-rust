@@ -1,5 +1,5 @@
 [package]
-name = "889-double-ended"
+name = "example-889-double-ended"
 version = "0.1.0"
 edition = "2021"
 

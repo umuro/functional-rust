@@ -5,3 +5,6 @@ edition = "2021"
 description = "Crossbeam Select — Multiplexing Multiple Channels"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

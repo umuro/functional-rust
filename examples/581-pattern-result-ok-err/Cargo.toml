@@ -5,3 +5,6 @@ edition = "2021"
 description = "Result pattern matching with Ok/Err and ? operator"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

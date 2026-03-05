@@ -5,3 +5,6 @@ edition = "2021"
 description = "Unsafe raw pointer operations"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

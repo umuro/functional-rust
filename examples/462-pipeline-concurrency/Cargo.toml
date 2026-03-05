@@ -5,3 +5,6 @@ edition = "2021"
 description = "Pipeline Concurrency — Staged Processing"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

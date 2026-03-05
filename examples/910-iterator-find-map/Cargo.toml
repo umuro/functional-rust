@@ -1,0 +1,8 @@
+[package]
+name = "example-910-iterator-find-map"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "lib"
+path = "src/lib.rs"

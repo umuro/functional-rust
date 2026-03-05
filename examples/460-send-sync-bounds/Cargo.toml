@@ -5,3 +5,6 @@ edition = "2021"
 description = "Send and Sync Bounds — Thread Safety Markers"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

@@ -5,3 +5,6 @@ edition = "2021"
 description = "Pattern exhaustiveness checking at compile time"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

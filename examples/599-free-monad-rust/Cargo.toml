@@ -5,3 +5,6 @@ edition = "2021"
 description = "Free monad pattern for DSL interpretation"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

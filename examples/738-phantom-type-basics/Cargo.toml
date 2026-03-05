@@ -5,3 +5,6 @@ edition = "2021"
 description = "PhantomData introduction"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

@@ -5,3 +5,6 @@ edition = "2021"
 description = "Command pattern as data with replay and optimization"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

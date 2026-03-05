@@ -5,3 +5,6 @@ edition = "2021"
 description = "Box deref patterns for recursive data structures"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

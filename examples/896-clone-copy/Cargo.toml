@@ -1,0 +1,8 @@
+[package]
+name = "example-896-clone-copy"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "clone_copy"
+path = "src/lib.rs"

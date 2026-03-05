@@ -1,0 +1,9 @@
+[package]
+name = "example-902-iterator-enumerate"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "example_902_iterator_enumerate"
+path = "src/lib.rs"
+

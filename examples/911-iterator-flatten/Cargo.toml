@@ -1,0 +1,8 @@
+[package]
+name = "example-911-iterator-flatten"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "iterator_flatten"
+path = "src/lib.rs"

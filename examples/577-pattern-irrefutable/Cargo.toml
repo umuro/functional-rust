@@ -5,3 +5,6 @@ edition = "2021"
 description = "Irrefutable vs refutable patterns"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

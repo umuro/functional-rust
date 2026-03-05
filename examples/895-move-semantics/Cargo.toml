@@ -1,0 +1,8 @@
+[package]
+name = "example-895-move-semantics"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "example_895_move_semantics"
+path = "src/lib.rs"

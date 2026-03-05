@@ -5,3 +5,6 @@ edition = "2021"
 description = "Interpreter pattern with AST evaluation"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

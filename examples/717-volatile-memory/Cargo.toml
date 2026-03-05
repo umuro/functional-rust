@@ -1,0 +1,8 @@
+[package]
+name = "example-717-volatile-memory"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "volatile_memory"
+path = "src/lib.rs"

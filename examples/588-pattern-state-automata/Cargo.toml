@@ -5,3 +5,6 @@ edition = "2021"
 description = "Finite state machines with pattern matching"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

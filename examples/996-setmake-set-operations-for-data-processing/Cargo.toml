@@ -1,0 +1,7 @@
+[package]
+name = "example-996-setmake-set-operations-for-data-processing"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"

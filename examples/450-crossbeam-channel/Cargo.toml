@@ -5,3 +5,6 @@ edition = "2021"
 description = "Crossbeam Channels — Advanced Channel Patterns"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

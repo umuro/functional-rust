@@ -1,0 +1,8 @@
+[package]
+name = "example-716-global-allocator"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "global_allocator"
+path = "src/lib.rs"

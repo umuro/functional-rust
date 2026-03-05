@@ -1,0 +1,9 @@
+[package]
+name = "example-119-zero-cost-abs"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "example_119_zero_cost_abs"
+path = "src/lib.rs"
+

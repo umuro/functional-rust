@@ -1,0 +1,8 @@
+[package]
+name = "example-713-ffi-repr-c-structs"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "ffi_repr_c_structs"
+path = "src/lib.rs"

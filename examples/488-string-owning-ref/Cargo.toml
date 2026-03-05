@@ -5,3 +5,6 @@ edition = "2021"
 description = "String Owning References — Self-Referential"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

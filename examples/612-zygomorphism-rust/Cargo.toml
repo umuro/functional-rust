@@ -4,3 +4,6 @@ version = "0.1.0"
 edition = "2021"
 description = "Zygomorphism - parallel folds"
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

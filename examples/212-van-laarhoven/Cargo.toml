@@ -1,0 +1,8 @@
+[package]
+name = "example-212-van-laarhoven"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "van_laarhoven"
+path = "src/lib.rs"

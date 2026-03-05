@@ -5,3 +5,6 @@ edition = "2021"
 description = "Finally tagless style for extensible DSLs"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

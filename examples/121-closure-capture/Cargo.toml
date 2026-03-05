@@ -1,0 +1,8 @@
+[package]
+name = "example-121-closure-capture"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "closure_capture"
+path = "src/lib.rs"

@@ -4,14 +4,15 @@
 
 ### OCaml
 ```ocaml
-(* OCaml has no borrow checker — mutation is always available via ref *)
-let items = ref [] in
-items := "first" :: !items;
-items := "second" :: !items;
-let result = List.rev !items in
-assert (result = ["first"; "second"; "third"])
+(* OCaml: mutable reference inside an immutable binding *)
+let collect_items () =
+  let items = ref [] in
+  items := "first" :: !items;
+  items := "second" :: !items;
+  items := "third" :: !items;
+  List.rev !items
 
-(* Mutable field in a record — no special ceremony needed *)
+(* Shared mutable stack with mutable record field *)
 type 'a stack = { mutable data : 'a list }
 let push s x = s.data <- x :: s.data
 let pop s = match s.data with
@@ -19,19 +20,21 @@ let pop s = match s.data with
   | x :: rest -> s.data <- rest; Some x
 ```
 
-### Rust (idiomatic — interior mutability)
+### Rust (idiomatic — RefCell interior mutability)
 ```rust
 use std::cell::RefCell;
 
-// Immutable binding; RefCell provides controlled interior mutation
-let items: RefCell<Vec<String>> = RefCell::new(Vec::new());
-items.borrow_mut().push("first".to_string());
-items.borrow_mut().push("second".to_string());
-let snapshot = items.borrow().clone();
-assert_eq!(snapshot, vec!["first", "second"]);
+pub fn collect_items() -> Vec<String> {
+    let items: RefCell<Vec<String>> = RefCell::new(Vec::new());
+    items.borrow_mut().push("first".to_string());
+    items.borrow_mut().push("second".to_string());
+    items.borrow_mut().push("third".to_string());
+    let borrowed = items.borrow();
+    borrowed.clone()
+}
 ```
 
-### Rust (shared mutable stack with &self API)
+### Rust (functional — interior-mutable Stack via &self)
 ```rust
 pub struct Stack<T> {
     data: RefCell<Vec<T>>,
@@ -51,28 +54,27 @@ impl<T> Stack<T> {
 
 | Concept | OCaml | Rust |
 |---------|-------|------|
-| Mutable reference | `'a ref` | `RefCell<T>` |
-| Get a shared borrow | `!cell` (dereference) | `cell.borrow()` → `Ref<T>` |
-| Get an exclusive borrow | `cell := value` | `cell.borrow_mut()` → `RefMut<T>` |
-| Non-panicking borrow | N/A (no borrow checker) | `cell.try_borrow()` → `Result<Ref<T>, BorrowError>` |
-| Method receiver with interior mutation | `s.data <- x` (mutable field) | `&self` + `RefCell` inside struct |
+| Mutable binding | `let x = ref value` | `let x = RefCell::new(value)` |
+| Read access | `!x` (deref ref) | `x.borrow()` → `Ref<T>` |
+| Write access | `x := new_val` | `x.borrow_mut()` → `RefMut<T>` |
+| Mutable field | `mutable field : 'a` | `field: RefCell<T>` |
+| Borrow violation | — (no rule) | Runtime panic |
+| Safe fallible borrow | — | `try_borrow()` → `Result<Ref<T>, BorrowError>` |
 
 ## Key Insights
 
-1. **No borrow checker in OCaml:** OCaml's `ref` and mutable record fields are always writable — there is no concept of shared vs exclusive borrows, so `RefCell` has no direct OCaml equivalent. It exists purely to satisfy Rust's borrow checker.
+1. **OCaml has no borrow rules** — any `ref` value can be read and written freely at any point; mutation safety is the programmer's responsibility alone.
 
-2. **`&self` that mutates:** `RefCell` lets you write `push(&self, …)` instead of `push(&mut self, …)`. This unlocks `Rc<Stack<T>>` sharing: multiple owners can call `push` without fighting over `&mut` access, because exclusivity is checked at the `borrow_mut()` call site rather than at the function signature.
+2. **RefCell defers the borrow checker to runtime** — Rust's "one writer XOR many readers" rule is enforced when `borrow()` / `borrow_mut()` is called, not at compile time. Violation panics rather than failing to compile.
 
-3. **Panic on violation:** If you call `borrow_mut()` while a `Ref` or another `RefMut` is alive, the program panics. OCaml simply allows the mutation; Rust defers the safety check to runtime. Use `try_borrow_mut()` to get a `Result` instead of a panic.
+3. **Interior mutability unlocks `&self` mutation** — `Stack::push(&self)` can mutate internal state without requiring `&mut self`, enabling shared ownership via `Rc<Stack<T>>` without `Rc<RefCell<Stack<T>>>`.
 
-4. **`Cell<T>` vs `RefCell<T>`:** For `Copy` types (integers, booleans), `Cell<T>` is cheaper — it copies values in and out with no reference counting overhead. `RefCell<T>` is needed when you must hand out actual references (`&T` / `&mut T`) to the interior, which `Cell` cannot do.
+4. **`try_borrow` avoids panics** — when the borrow outcome is uncertain (e.g., in library code), `try_borrow()` returns `Result` instead of panicking, mirroring OCaml's implicit "it just works" but with explicit error handling.
 
-5. **Borrow guards as RAII:** `Ref<T>` and `RefMut<T>` are guard objects. The borrow count increments when they are created and decrements when they drop. This mirrors OCaml's GC-managed heap values, where the runtime tracks what is live — Rust just makes the tracking explicit and scope-bound.
+5. **RAII guards — `Ref<T>` and `RefMut<T>`** — borrows are tracked via guard objects that decrement the borrow count when dropped, so sequential `borrow_mut()` calls in separate statements never overlap.
 
 ## When to Use Each Style
 
-**Use `RefCell<T>` when:** you need interior mutability for a non-`Copy` type — for example, a struct field that must be mutated via `&self`, a shared observer/logger behind `Rc`, or a recursive data structure whose nodes need parent references.
+**Use `RefCell::borrow_mut()` directly** when mutating through a non-shared local value and you want clarity that each statement releases its borrow before the next starts.
 
-**Use `Cell<T>` instead when:** the value is `Copy` (integers, bools, small structs that derive `Copy`) and you only need get/set semantics — `Cell` has zero runtime overhead and cannot panic.
-
-**Prefer `Mutex<T>` or `RwLock<T>` when:** the value crosses thread boundaries (`RefCell` is not `Sync`).
+**Use `RefCell` inside a struct** when you need `&self` methods that still mutate state — most commonly for mock/spy objects in tests, observers/loggers, and data structures shared via `Rc`.

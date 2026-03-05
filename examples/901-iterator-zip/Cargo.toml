@@ -1,0 +1,8 @@
+[package]
+name = "example-901-iterator-zip"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "iterator_zip"
+path = "src/lib.rs"

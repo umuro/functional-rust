@@ -5,3 +5,6 @@ edition = "2021"
 description = "Option pattern matching with Some/None and combinators"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

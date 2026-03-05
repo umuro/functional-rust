@@ -5,3 +5,6 @@ edition = "2021"
 description = "Using named constants in pattern matching"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

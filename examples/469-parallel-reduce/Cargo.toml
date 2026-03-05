@@ -5,3 +5,6 @@ edition = "2021"
 description = "Parallel Reduce — Concurrent Aggregation"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

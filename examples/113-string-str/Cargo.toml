@@ -1,0 +1,8 @@
+[package]
+name = "example-113-string-str"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "example_113_string_str"
+path = "src/lib.rs"

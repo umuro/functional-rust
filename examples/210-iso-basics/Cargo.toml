@@ -1,0 +1,9 @@
+
+[package]
+name = "example-210-iso-basics"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "iso_basics"
+path = "src/lib.rs"

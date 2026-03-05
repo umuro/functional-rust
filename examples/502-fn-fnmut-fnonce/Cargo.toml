@@ -5,3 +5,6 @@ edition = "2021"
 description = "Fn FnMut FnOnce — Closure Traits"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

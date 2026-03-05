@@ -1,0 +1,8 @@
+[package]
+name = "example-899-lifetime-basics"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "example_899_lifetime_basics"
+path = "src/lib.rs"

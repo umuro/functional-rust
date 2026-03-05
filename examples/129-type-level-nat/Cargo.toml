@@ -1,0 +1,8 @@
+[package]
+name = "example-129-type-level-nat"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "example_129_type_level_nat"
+path = "src/lib.rs"

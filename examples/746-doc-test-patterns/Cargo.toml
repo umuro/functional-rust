@@ -5,3 +5,6 @@ edition = "2021"
 description = "Documentation tests: rustdoc examples that are compiled and run"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

@@ -5,3 +5,6 @@ edition = "2021"
 description = "matches! macro - test patterns as boolean expressions"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

@@ -1,0 +1,8 @@
+[package]
+name = "example-125-send-sync"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "send_sync"
+path = "src/lib.rs"

@@ -1,0 +1,8 @@
+[package]
+name = "example-130-typestate-pattern"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "typestate_pattern"
+path = "src/lib.rs"

@@ -5,3 +5,6 @@ edition = "2021"
 description = "Arc<RwLock<T>> — Multiple Readers, One Writer"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

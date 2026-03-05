@@ -5,3 +5,6 @@ edition = "2021"
 description = "Advanced product types and operations"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

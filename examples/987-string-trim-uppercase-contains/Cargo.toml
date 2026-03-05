@@ -1,0 +1,8 @@
+[package]
+name = "example-987-string-trim-uppercase-contains"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "string_trim_uppercase_contains"
+path = "src/lib.rs"

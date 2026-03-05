@@ -11,15 +11,7 @@ name = "example-002-last-two"
 version = "0.1.0"
 
 [[package]]
-name = "example-002-list-operations"
-version = "0.1.0"
-
-[[package]]
 name = "example-003-kth-element"
-version = "0.1.0"
-
-[[package]]
-name = "example-003-pattern-matching"
 version = "0.1.0"
 
 [[package]]
@@ -27,23 +19,11 @@ name = "example-004-list-length"
 version = "0.1.0"
 
 [[package]]
-name = "example-004-option-result"
-version = "0.1.0"
-
-[[package]]
 name = "example-005-currying"
 version = "0.1.0"
 
 [[package]]
-name = "example-005-reverse-list"
-version = "0.1.0"
-
-[[package]]
 name = "example-006-function-composition"
-version = "0.1.0"
-
-[[package]]
-name = "example-006-palindrome-check"
 version = "0.1.0"
 
 [[package]]
@@ -271,15 +251,7 @@ name = "example-061-binary-tree"
 version = "0.1.0"
 
 [[package]]
-name = "example-061-pangram-check"
-version = "0.1.0"
-
-[[package]]
 name = "example-062-isogram-check"
-version = "0.1.0"
-
-[[package]]
-name = "example-062-records"
 version = "0.1.0"
 
 [[package]]
@@ -287,15 +259,7 @@ name = "example-063-run-length-encoding"
 version = "0.1.0"
 
 [[package]]
-name = "example-063-stack-module"
-version = "0.1.0"
-
-[[package]]
 name = "example-064-balanced-parentheses"
-version = "0.1.0"
-
-[[package]]
-name = "example-064-map-functor"
 version = "0.1.0"
 
 [[package]]
@@ -303,15 +267,7 @@ name = "example-065-association-list"
 version = "0.1.0"
 
 [[package]]
-name = "example-065-church-numerals"
-version = "0.1.0"
-
-[[package]]
 name = "example-066-phantom-types"
-version = "0.1.0"
-
-[[package]]
-name = "example-066-tree-map-fold"
 version = "0.1.0"
 
 [[package]]
@@ -319,15 +275,7 @@ name = "example-067-lazy-sequences"
 version = "0.1.0"
 
 [[package]]
-name = "example-067-mutual-recursion"
-version = "0.1.0"
-
-[[package]]
 name = "example-068-frequency-counter"
-version = "0.1.0"
-
-[[package]]
-name = "example-068-tail-recursive-accumulator"
 version = "0.1.0"
 
 [[package]]
@@ -335,15 +283,7 @@ name = "example-069-sieve-eratosthenes"
 version = "0.1.0"
 
 [[package]]
-name = "example-069-unfold"
-version = "0.1.0"
-
-[[package]]
 name = "example-070-hamming-distance"
-version = "0.1.0"
-
-[[package]]
-name = "example-070-scan-left"
 version = "0.1.0"
 
 [[package]]
@@ -351,23 +291,7 @@ name = "example-071-collatz-conjecture"
 version = "0.1.0"
 
 [[package]]
-name = "example-071-gcd-lcm"
-version = "0.1.0"
-
-[[package]]
-name = "example-071-identity-monad"
-version = "0.1.0"
-
-[[package]]
 name = "example-072-error-accumulation"
-version = "0.1.0"
-
-[[package]]
-name = "example-072-matrix-operations"
-version = "0.1.0"
-
-[[package]]
-name = "example-072-result-railway"
 version = "0.1.0"
 
 [[package]]
@@ -375,35 +299,11 @@ name = "example-073-topological-sort"
 version = "0.1.0"
 
 [[package]]
-name = "example-073-validated-type"
-version = "0.1.0"
-
-[[package]]
-name = "example-073-word-count"
-version = "0.1.0"
-
-[[package]]
 name = "example-074-bifunctor"
 version = "0.1.0"
 
 [[package]]
-name = "example-074-catamorphism"
-version = "0.1.0"
-
-[[package]]
-name = "example-074-currying-partial"
-version = "0.1.0"
-
-[[package]]
 name = "example-075-difference-list"
-version = "0.1.0"
-
-[[package]]
-name = "example-075-merge-sort"
-version = "0.1.0"
-
-[[package]]
-name = "example-075-profunctor-intro"
 version = "0.1.0"
 
 [[package]]
@@ -451,15 +351,7 @@ name = "example-086-space-age"
 version = "0.1.0"
 
 [[package]]
-name = "example-086-sum-of-multiples"
-version = "0.1.0"
-
-[[package]]
 name = "example-087-difference-of-squares"
-version = "0.1.0"
-
-[[package]]
-name = "example-087-series-sliding-window"
 version = "0.1.0"
 
 [[package]]
@@ -467,23 +359,11 @@ name = "example-088-allergies"
 version = "0.1.0"
 
 [[package]]
-name = "example-088-atbash-cipher"
-version = "0.1.0"
-
-[[package]]
 name = "example-089-bob"
 version = "0.1.0"
 
 [[package]]
-name = "example-089-poker-hand-evaluator"
-version = "0.1.0"
-
-[[package]]
 name = "example-090-frequency-analysis"
-version = "0.1.0"
-
-[[package]]
-name = "example-090-perfect-numbers"
 version = "0.1.0"
 
 [[package]]
@@ -544,6 +424,182 @@ version = "0.1.0"
 
 [[package]]
 name = "example-105-trie"
+version = "0.1.0"
+
+[[package]]
+name = "example-106-lifetime-elision"
+version = "0.1.0"
+
+[[package]]
+name = "example-107-lifetime-structs"
+version = "0.1.0"
+
+[[package]]
+name = "example-108-rc-shared"
+version = "0.1.0"
+
+[[package]]
+name = "example-109-arc-threads"
+version = "0.1.0"
+
+[[package]]
+name = "example-110-cell-interior"
+version = "0.1.0"
+
+[[package]]
+name = "example-1104-averagesmean-time-of-day"
+version = "0.1.0"
+
+[[package]]
+name = "example-1105-15-puzzle-game"
+version = "0.1.0"
+
+[[package]]
+name = "example-1106-abbreviations-easy"
+version = "0.1.0"
+
+[[package]]
+name = "example-1107-abbreviations-simple"
+version = "0.1.0"
+
+[[package]]
+name = "example-1108-abc-correlation"
+version = "0.1.0"
+
+[[package]]
+name = "example-1109-abc-problem"
+version = "0.1.0"
+
+[[package]]
+name = "example-111-refcell-runtime"
+version = "0.1.0"
+
+[[package]]
+name = "example-1110-abc-words"
+version = "0.1.0"
+
+[[package]]
+name = "example-1111-address-of-a-variable"
+version = "0.1.0"
+
+[[package]]
+name = "example-1112-align-columns"
+version = "0.1.0"
+
+[[package]]
+name = "example-1113-alternade-words"
+version = "0.1.0"
+
+[[package]]
+name = "example-1114-anadromes"
+version = "0.1.0"
+
+[[package]]
+name = "example-112-cow-clone-on-write"
+version = "0.1.0"
+
+[[package]]
+name = "example-113-string-str"
+version = "0.1.0"
+
+[[package]]
+name = "example-114-slice-patterns"
+version = "0.1.0"
+
+[[package]]
+name = "example-115-vec-patterns"
+version = "0.1.0"
+
+[[package]]
+name = "example-116-box-heap"
+version = "0.1.0"
+
+[[package]]
+name = "example-117-recursive-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-118-deref-coercions"
+version = "0.1.0"
+
+[[package]]
+name = "example-119-zero-cost-abs"
+version = "0.1.0"
+
+[[package]]
+name = "example-120-closure-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-121-closure-capture"
+version = "0.1.0"
+
+[[package]]
+name = "example-122-higher-order-fn"
+version = "0.1.0"
+
+[[package]]
+name = "example-123-impl-trait"
+version = "0.1.0"
+
+[[package]]
+name = "example-124-dyn-trait"
+version = "0.1.0"
+
+[[package]]
+name = "example-125-send-sync"
+version = "0.1.0"
+
+[[package]]
+name = "example-126-const-generics"
+version = "0.1.0"
+
+[[package]]
+name = "example-127-const-functions"
+version = "0.1.0"
+
+[[package]]
+name = "example-128-type-level-bool"
+version = "0.1.0"
+
+[[package]]
+name = "example-129-type-level-nat"
+version = "0.1.0"
+
+[[package]]
+name = "example-130-typestate-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-131-builder-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-132-phantom-units"
+version = "0.1.0"
+
+[[package]]
+name = "example-133-variance"
+version = "0.1.0"
+
+[[package]]
+name = "example-134-higher-kinded-sim"
+version = "0.1.0"
+
+[[package]]
+name = "example-135-newtype-generics"
+version = "0.1.0"
+
+[[package]]
+name = "example-136-existential-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-137-rank2-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-138-type-witnesses"
 version = "0.1.0"
 
 [[package]]
@@ -648,6 +704,62 @@ version = "0.1.0"
 
 [[package]]
 name = "example-200-tagless-final"
+version = "0.1.0"
+
+[[package]]
+name = "example-204-lens-composition"
+version = "0.1.0"
+
+[[package]]
+name = "example-205-lens-modify"
+version = "0.1.0"
+
+[[package]]
+name = "example-206-prism-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-207-prism-laws"
+version = "0.1.0"
+
+[[package]]
+name = "example-208-traversal"
+version = "0.1.0"
+
+[[package]]
+name = "example-209-affine-traversal"
+version = "0.1.0"
+
+[[package]]
+name = "example-210-iso-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-211-optics-hierarchy"
+version = "0.1.0"
+
+[[package]]
+name = "example-212-van-laarhoven"
+version = "0.1.0"
+
+[[package]]
+name = "example-213-record-update"
+version = "0.1.0"
+
+[[package]]
+name = "example-214-fold-optic"
+version = "0.1.0"
+
+[[package]]
+name = "example-215-recursion-schemes-intro"
+version = "0.1.0"
+
+[[package]]
+name = "example-216-fix-point"
+version = "0.1.0"
+
+[[package]]
+name = "example-217-catamorphism"
 version = "0.1.0"
 
 [[package]]
@@ -804,26 +916,6 @@ version = "0.1.0"
 
 [[package]]
 name = "example-265-caesar-cipher"
-version = "0.1.0"
-
-[[package]]
-name = "example-266-recursive-descent-parser"
-version = "0.1.0"
-
-[[package]]
-name = "example-267-zipper-list-cursor"
-version = "0.1.0"
-
-[[package]]
-name = "example-268-continuation-passing-style"
-version = "0.1.0"
-
-[[package]]
-name = "example-269-trie-prefix-tree"
-version = "0.1.0"
-
-[[package]]
-name = "example-270-flatten-nested-structure"
 version = "0.1.0"
 
 [[package]]
@@ -1555,30 +1647,6 @@ name = "example-452-atomic-types"
 version = "0.1.0"
 
 [[package]]
-name = "example-453-atomic-ordering"
-version = "0.1.0"
-
-[[package]]
-name = "example-454-lock-free-stack"
-version = "0.1.0"
-
-[[package]]
-name = "example-455-lock-free-queue"
-version = "0.1.0"
-
-[[package]]
-name = "example-456-hazard-pointers"
-version = "0.1.0"
-
-[[package]]
-name = "example-457-epoch-gc"
-version = "0.1.0"
-
-[[package]]
-name = "example-458-memory-ordering"
-version = "0.1.0"
-
-[[package]]
 name = "example-459-thread-local-storage"
 version = "0.1.0"
 
@@ -1587,35 +1655,11 @@ name = "example-460-send-sync-bounds"
 version = "0.1.0"
 
 [[package]]
-name = "example-461-mutex-poisoning"
-version = "0.1.0"
-
-[[package]]
 name = "example-462-pipeline-concurrency"
 version = "0.1.0"
 
 [[package]]
-name = "example-463-fork-join"
-version = "0.1.0"
-
-[[package]]
-name = "example-464-barrier-sync"
-version = "0.1.0"
-
-[[package]]
-name = "example-465-condvar-pattern"
-version = "0.1.0"
-
-[[package]]
 name = "example-466-concurrent-hashmap"
-version = "0.1.0"
-
-[[package]]
-name = "example-467-concurrent-set"
-version = "0.1.0"
-
-[[package]]
-name = "example-468-concurrent-counter"
 version = "0.1.0"
 
 [[package]]
@@ -1627,123 +1671,11 @@ name = "example-470-concurrent-btree"
 version = "0.1.0"
 
 [[package]]
-name = "example-471-unsafe-basics"
-version = "0.1.0"
-
-[[package]]
-name = "example-472-raw-pointers"
-version = "0.1.0"
-
-[[package]]
-name = "example-473-unsafe-functions"
-version = "0.1.0"
-
-[[package]]
-name = "example-474-extern-c"
-version = "0.1.0"
-
-[[package]]
-name = "example-475-ffi-basics"
-version = "0.1.0"
-
-[[package]]
-name = "example-476-ffi-strings"
-version = "0.1.0"
-
-[[package]]
-name = "example-477-ffi-structs"
-version = "0.1.0"
-
-[[package]]
-name = "example-478-ffi-callbacks"
-version = "0.1.0"
-
-[[package]]
-name = "example-479-ffi-ownership"
-version = "0.1.0"
-
-[[package]]
-name = "example-480-ffi-safety"
-version = "0.1.0"
-
-[[package]]
-name = "example-481-ffi-bindgen"
-version = "0.1.0"
-
-[[package]]
-name = "example-482-global-state"
-version = "0.1.0"
-
-[[package]]
-name = "example-483-static-lifetime"
-version = "0.1.0"
-
-[[package]]
-name = "example-484-unsafe-traits"
-version = "0.1.0"
-
-[[package]]
-name = "example-485-union-types"
-version = "0.1.0"
-
-[[package]]
-name = "example-486-inline-asm"
-version = "0.1.0"
-
-[[package]]
-name = "example-487-intrinsics"
-version = "0.1.0"
-
-[[package]]
 name = "example-488-string-owning-ref"
 version = "0.1.0"
 
 [[package]]
-name = "example-489-slice-patterns"
-version = "0.1.0"
-
-[[package]]
 name = "example-490-string-fixed-array"
-version = "0.1.0"
-
-[[package]]
-name = "example-491-string-operations"
-version = "0.1.0"
-
-[[package]]
-name = "example-492-string-parsing"
-version = "0.1.0"
-
-[[package]]
-name = "example-493-string-formatting"
-version = "0.1.0"
-
-[[package]]
-name = "example-494-string-encoding"
-version = "0.1.0"
-
-[[package]]
-name = "example-495-string-search"
-version = "0.1.0"
-
-[[package]]
-name = "example-496-string-replace"
-version = "0.1.0"
-
-[[package]]
-name = "example-497-string-split"
-version = "0.1.0"
-
-[[package]]
-name = "example-498-string-trim"
-version = "0.1.0"
-
-[[package]]
-name = "example-499-string-case"
-version = "0.1.0"
-
-[[package]]
-name = "example-500-string-unicode"
 version = "0.1.0"
 
 [[package]]
@@ -2239,163 +2171,107 @@ name = "example-623-functional-rust-grand-tour"
 version = "0.1.0"
 
 [[package]]
-name = "example-641-fp-applicative-laws"
+name = "example-703-raw-pointer-arithmetic"
 version = "0.1.0"
 
 [[package]]
-name = "example-642-fp-semigroup-laws"
+name = "example-704-dereferencing-raw-ptr"
 version = "0.1.0"
 
 [[package]]
-name = "example-643-fp-monoid-laws"
+name = "example-705-null-pointer-check"
 version = "0.1.0"
 
 [[package]]
-name = "example-644-fp-foldable"
+name = "example-706-unsafe-cell"
 version = "0.1.0"
 
 [[package]]
-name = "example-645-fp-traversable"
+name = "example-707-transmute-basics"
 version = "0.1.0"
 
 [[package]]
-name = "example-646-fp-bifunctor"
+name = "example-708-transmute-safe-patterns"
 version = "0.1.0"
 
 [[package]]
-name = "example-647-fp-profunctor"
+name = "example-709-unions-in-rust"
 version = "0.1.0"
 
 [[package]]
-name = "example-648-fp-contravariant"
+name = "example-710-extern-c-functions"
 version = "0.1.0"
 
 [[package]]
-name = "example-649-fp-comonad"
+name = "example-711-no-mangle-export"
 version = "0.1.0"
 
 [[package]]
-name = "example-650-fp-adjunction"
+name = "example-712-ffi-string-conversion"
 version = "0.1.0"
 
 [[package]]
-name = "example-651-fp-yoneda"
+name = "example-713-ffi-repr-c-structs"
 version = "0.1.0"
 
 [[package]]
-name = "example-652-fp-kan-extension"
+name = "example-714-ffi-callbacks"
 version = "0.1.0"
 
 [[package]]
-name = "example-653-fp-limit-colimit"
+name = "example-715-ffi-error-codes"
 version = "0.1.0"
 
 [[package]]
-name = "example-654-fp-natural-transformation"
+name = "example-716-global-allocator"
 version = "0.1.0"
 
 [[package]]
-name = "example-655-fp-functor-composition"
+name = "example-717-volatile-memory"
 version = "0.1.0"
 
 [[package]]
-name = "example-656-fp-monad-composition"
+name = "example-718-soundness-principles"
 version = "0.1.0"
 
 [[package]]
-name = "example-657-fp-kleisli-category"
+name = "example-719-struct-of-arrays"
 version = "0.1.0"
 
 [[package]]
-name = "example-658-fp-cartesian-closed"
+name = "example-720-cache-friendly-iteration"
 version = "0.1.0"
 
 [[package]]
-name = "example-659-fp-topos"
+name = "example-721-maybe-uninit"
 version = "0.1.0"
 
 [[package]]
-name = "example-660-fp-enriched-category"
+name = "example-722-memory-layout-repr"
 version = "0.1.0"
 
 [[package]]
-name = "example-661-sorting-algorithms"
+name = "example-723-branchless-programming"
 version = "0.1.0"
 
 [[package]]
-name = "example-662-bubble-sort"
+name = "example-724-zero-copy-parsing"
 version = "0.1.0"
 
 [[package]]
-name = "example-663-insertion-sort"
+name = "example-725-stack-allocation-patterns"
 version = "0.1.0"
 
 [[package]]
-name = "example-664-selection-sort"
+name = "example-738-phantom-type-basics"
 version = "0.1.0"
 
 [[package]]
-name = "example-665-merge-sort"
+name = "example-739-phantom-units-of-measure"
 version = "0.1.0"
 
 [[package]]
-name = "example-666-quick-sort"
-version = "0.1.0"
-
-[[package]]
-name = "example-667-heap-sort"
-version = "0.1.0"
-
-[[package]]
-name = "example-668-counting-sort"
-version = "0.1.0"
-
-[[package]]
-name = "example-669-radix-sort"
-version = "0.1.0"
-
-[[package]]
-name = "example-670-bucket-sort"
-version = "0.1.0"
-
-[[package]]
-name = "example-671-timsort"
-version = "0.1.0"
-
-[[package]]
-name = "example-672-intro-sort"
-version = "0.1.0"
-
-[[package]]
-name = "example-673-pdq-sort"
-version = "0.1.0"
-
-[[package]]
-name = "example-674-graph-basics"
-version = "0.1.0"
-
-[[package]]
-name = "example-675-graph-bfs"
-version = "0.1.0"
-
-[[package]]
-name = "example-676-graph-dfs"
-version = "0.1.0"
-
-[[package]]
-name = "example-677-dijkstra"
-version = "0.1.0"
-
-[[package]]
-name = "example-678-bellman-ford"
-version = "0.1.0"
-
-[[package]]
-name = "example-679-floyd-warshall"
-version = "0.1.0"
-
-[[package]]
-name = "example-680-topological-sort"
+name = "example-740-phantom-variance-control"
 version = "0.1.0"
 
 [[package]]
@@ -2812,4 +2688,188 @@ version = "0.1.0"
 
 [[package]]
 name = "example-848-algorithm-complexity-guide"
+version = "0.1.0"
+
+[[package]]
+name = "example-885-zip-unzip"
+version = "0.1.0"
+
+[[package]]
+name = "example-886-scan-accumulate"
+version = "0.1.0"
+
+[[package]]
+name = "example-887-windows-chunks"
+version = "0.1.0"
+
+[[package]]
+name = "example-888-peekable-iterator"
+version = "0.1.0"
+
+[[package]]
+name = "example-889-double-ended"
+version = "0.1.0"
+
+[[package]]
+name = "example-890-exact-size"
+version = "0.1.0"
+
+[[package]]
+name = "example-891-flatten-iterator"
+version = "0.1.0"
+
+[[package]]
+name = "example-892-partition-iterator"
+version = "0.1.0"
+
+[[package]]
+name = "example-893-group-by-iter"
+version = "0.1.0"
+
+[[package]]
+name = "example-894-step-by"
+version = "0.1.0"
+
+[[package]]
+name = "example-895-move-semantics"
+version = "0.1.0"
+
+[[package]]
+name = "example-896-clone-copy"
+version = "0.1.0"
+
+[[package]]
+name = "example-897-borrowing-shared"
+version = "0.1.0"
+
+[[package]]
+name = "example-898-borrowing-mutable"
+version = "0.1.0"
+
+[[package]]
+name = "example-899-lifetime-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-900-iterator-chain"
+version = "0.1.0"
+
+[[package]]
+name = "example-901-iterator-zip"
+version = "0.1.0"
+
+[[package]]
+name = "example-902-iterator-enumerate"
+version = "0.1.0"
+
+[[package]]
+name = "example-903-iterator-flat-map"
+version = "0.1.0"
+
+[[package]]
+name = "example-904-iterator-scan"
+version = "0.1.0"
+
+[[package]]
+name = "example-905-iterator-peekable"
+version = "0.1.0"
+
+[[package]]
+name = "example-906-iterator-windows"
+version = "0.1.0"
+
+[[package]]
+name = "example-907-iterator-chunks"
+version = "0.1.0"
+
+[[package]]
+name = "example-908-iterator-take-while"
+version = "0.1.0"
+
+[[package]]
+name = "example-909-iterator-skip-while"
+version = "0.1.0"
+
+[[package]]
+name = "example-910-iterator-find-map"
+version = "0.1.0"
+
+[[package]]
+name = "example-911-iterator-flatten"
+version = "0.1.0"
+
+[[package]]
+name = "example-912-iterator-inspect"
+version = "0.1.0"
+
+[[package]]
+name = "example-913-iterator-sum-product"
+version = "0.1.0"
+
+[[package]]
+name = "example-982-listflatten-flatten-nested-lists"
+version = "0.1.0"
+
+[[package]]
+name = "example-983-listassoc-association-lists-as-simple-maps"
+version = "0.1.0"
+
+[[package]]
+name = "example-984-arraymake-and-arraymakematrix-multi-dimensional-ar"
+version = "0.1.0"
+
+[[package]]
+name = "example-985-stringsplitonchar-tokenize-a-string"
+version = "0.1.0"
+
+[[package]]
+name = "example-986-stringsub-and-stringconcat-substring-and-join"
+version = "0.1.0"
+
+[[package]]
+name = "example-987-string-trim-uppercase-contains"
+version = "0.1.0"
+
+[[package]]
+name = "example-988-stringmap-and-stringinit-character-level-operation"
+version = "0.1.0"
+
+[[package]]
+name = "example-989-optionmap-and-optionbind-safe-value-transformation"
+version = "0.1.0"
+
+[[package]]
+name = "example-990-optionvalue-and-optionissome-default-values"
+version = "0.1.0"
+
+[[package]]
+name = "example-991-optioniter-and-optionfold-side-effects-and-folding"
+version = "0.1.0"
+
+[[package]]
+name = "example-992-resultbind-and-resultmap-error-handling-pipeline"
+version = "0.1.0"
+
+[[package]]
+name = "example-993-hashtbl-word-frequency-counter"
+version = "0.1.0"
+
+[[package]]
+name = "example-994-mapmake-bindings-and-merge"
+version = "0.1.0"
+
+[[package]]
+name = "example-995-setmake-immutable-sorted-set"
+version = "0.1.0"
+
+[[package]]
+name = "example-996-setmake-set-operations-for-data-processing"
+version = "0.1.0"
+
+[[package]]
+name = "example-997-seqmap-seqfilter-lazy-transformations"
+version = "0.1.0"
+
+[[package]]
+name = "example-998-seq-zip-and-iterate"
 version = "0.1.0"

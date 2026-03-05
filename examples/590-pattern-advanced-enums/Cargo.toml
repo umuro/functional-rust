@@ -5,3 +5,6 @@ edition = "2021"
 description = "Advanced enum patterns with recursive types"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

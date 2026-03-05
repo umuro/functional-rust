@@ -5,3 +5,6 @@ edition = "2021"
 description = "Continuation-passing style (CPS) transformations"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

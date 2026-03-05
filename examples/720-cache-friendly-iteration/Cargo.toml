@@ -1,0 +1,8 @@
+[package]
+name = "example-720-cache-friendly-iteration"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "cache_friendly_iteration"
+path = "src/lib.rs"

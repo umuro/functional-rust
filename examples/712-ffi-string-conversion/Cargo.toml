@@ -1,0 +1,8 @@
+[package]
+name = "example-712-ffi-string-conversion"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "ffi_string_conversion"
+path = "src/lib.rs"

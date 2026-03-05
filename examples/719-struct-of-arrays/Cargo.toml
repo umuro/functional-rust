@@ -1,0 +1,8 @@
+[package]
+name = "example-719-struct-of-arrays"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "example_719_struct_of_arrays"
+path = "src/lib.rs"

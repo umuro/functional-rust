@@ -5,3 +5,6 @@ edition = "2021"
 description = "MPSC Channels — Message Passing Between Threads"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

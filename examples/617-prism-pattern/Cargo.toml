@@ -4,3 +4,6 @@ version = "0.1.0"
 edition = "2021"
 description = "Prism pattern for enum variants"
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

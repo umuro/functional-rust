@@ -5,3 +5,6 @@ edition = "2021"
 description = "Scott encoding - pattern matching as functions"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

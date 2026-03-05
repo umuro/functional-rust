@@ -2,3 +2,6 @@
 name = "example-347-blocking-in-async"
 version = "0.1.0"
 edition = "2021"
+
+[lib]
+path = "src/lib.rs"

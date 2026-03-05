@@ -5,3 +5,6 @@ edition = "2021"
 description = "Concurrent HashMap — Thread-Safe Key-Value Store"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

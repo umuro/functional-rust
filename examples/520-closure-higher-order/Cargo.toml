@@ -2,3 +2,6 @@
 name = "example-520-closure-higher-order"
 version = "0.1.0"
 edition = "2021"
+
+[lib]
+path = "src/lib.rs"

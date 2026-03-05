@@ -1,21 +1,24 @@
-/// Example 206: Prism Basics — Optics for Enum Variants
-///
-/// A Prism is a lens-like abstraction that focuses on one variant of an enum.
-/// Unlike a Lens (which always succeeds), a Prism's `preview` returns `Option`
-/// because the focused variant might not be present.
-///
-/// Two operations define a Prism:
-///   - `preview`: try to extract the inner value (`S -> Option<A>`)
-///   - `review`:  construct the outer type from the inner value (`A -> S`)
+// Example 206: Prism Basics — Optics for Enum Variants
+//
+// A Prism is a lens-like abstraction that focuses on one variant of an enum.
+// Unlike a Lens (which always succeeds), a Prism's `preview` returns `Option`
+// because the focused variant might not be present.
+//
+// Two operations define a Prism:
+//   - `preview`: try to extract the inner value (`S -> Option<A>`)
+//   - `review`:  construct the outer type from the inner value (`A -> S`)
 
 // ---------------------------------------------------------------------------
 // Approach 1: Struct-based Prism with boxed closures
 // ---------------------------------------------------------------------------
 
+type PreviewFn<S, A> = Box<dyn Fn(&S) -> Option<A>>;
+type ReviewFn<S, A> = Box<dyn Fn(A) -> S>;
+
 /// A Prism focuses on one variant of a sum type `S`, exposing payload of type `A`.
 pub struct Prism<S, A> {
-    preview: Box<dyn Fn(&S) -> Option<A>>,
-    review: Box<dyn Fn(A) -> S>,
+    preview: PreviewFn<S, A>,
+    review: ReviewFn<S, A>,
 }
 
 impl<S: 'static, A: 'static> Prism<S, A> {
@@ -40,8 +43,8 @@ impl<S: 'static, A: 'static> Prism<S, A> {
         (self.review)(a)
     }
 
-    /// If the focused variant is present, apply `f` to its payload and
-    /// re-wrap. Otherwise, return a clone of `s` unchanged.
+    /// If the focused variant is present, apply `f` to its payload and re-wrap.
+    /// Otherwise return a clone of `s` unchanged.
     pub fn over(&self, s: &S, f: impl FnOnce(A) -> A) -> S
     where
         S: Clone,
@@ -60,7 +63,7 @@ impl<S: 'static, A: 'static> Prism<S, A> {
         self.over(s, |_| a)
     }
 
-    /// `true` iff `s` is the focused variant.
+    /// Returns `true` iff `s` is the focused variant.
     pub fn is_match(&self, s: &S) -> bool {
         self.preview(s).is_some()
     }
@@ -116,17 +119,14 @@ pub fn triangle_prism() -> Prism<Shape, (f64, f64, f64)> {
 
 /// A Prism that focuses on the `Some` branch of `Option<A>`.
 pub fn some_prism<A: Clone + 'static>() -> Prism<Option<A>, A> {
-    Prism::new(
-        |opt| opt.clone(),
-        Some,
-    )
+    Prism::new(|opt| opt.clone(), Some)
 }
 
 // ---------------------------------------------------------------------------
-// Approach 3: trait-based Prism (zero-allocation, compile-time dispatch)
+// Approach 3: Trait-based Prism (zero-allocation, compile-time dispatch)
 // ---------------------------------------------------------------------------
 
-/// Trait version: implement this to get a zero-cost prism with no boxing.
+/// Implement this trait to get a zero-cost prism with no boxing.
 pub trait PrismTrait {
     type Source: Clone;
     type Focus;

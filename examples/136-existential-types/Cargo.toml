@@ -1,0 +1,9 @@
+[package]
+name = "example-136-existential-types"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "existential_types"
+path = "src/lib.rs"
+

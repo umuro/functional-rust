@@ -1,0 +1,8 @@
+[package]
+name = "example-892-partition-iterator"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "partition_iterator"
+path = "src/lib.rs"

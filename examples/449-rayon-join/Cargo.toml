@@ -5,3 +5,6 @@ edition = "2021"
 description = "Rayon Join — Fork-Join Parallelism"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

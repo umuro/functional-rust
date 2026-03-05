@@ -5,3 +5,6 @@ edition = "2021"
 description = "Scoped Threads — Borrow Stack Data Across Threads"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

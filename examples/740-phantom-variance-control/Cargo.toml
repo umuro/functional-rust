@@ -5,3 +5,6 @@ edition = "2021"
 description = "Controlling type variance"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

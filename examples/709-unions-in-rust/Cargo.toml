@@ -1,5 +1,5 @@
 [package]
-name = "709-unions-in-rust"
+name = "example-709-unions-in-rust"
 version = "0.1.0"
 edition = "2021"
 

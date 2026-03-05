@@ -2,3 +2,6 @@
 name = "example-086-space-age"
 version = "0.1.0"
 edition = "2021"
+
+[lib]
+path = "src/lib.rs"

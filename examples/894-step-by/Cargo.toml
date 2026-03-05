@@ -1,0 +1,7 @@
+[package]
+name = "example-894-step-by"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"

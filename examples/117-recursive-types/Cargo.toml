@@ -1,0 +1,8 @@
+[package]
+name = "example-117-recursive-types"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "recursive_types"
+path = "src/lib.rs"

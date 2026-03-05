@@ -5,3 +5,6 @@ edition = "2021"
 description = "Test fixtures: RAII teardown, shared state, per-test isolation"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

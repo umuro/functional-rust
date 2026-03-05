@@ -1,0 +1,8 @@
+[package]
+name = "example-115-vec-patterns"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "vec_patterns"
+path = "src/lib.rs"

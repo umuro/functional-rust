@@ -5,3 +5,6 @@ edition = "2021"
 description = "Closure Memoization — Caching Results"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

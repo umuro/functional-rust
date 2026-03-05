@@ -1,0 +1,8 @@
+[package]
+name = "example-211-optics-hierarchy"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "optics_hierarchy"
+path = "src/lib.rs"

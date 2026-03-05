@@ -6,3 +6,6 @@ description = "Let chains (&&) - chain multiple pattern checks without nesting"
 rust-version = "1.88"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

@@ -5,3 +5,6 @@ edition = "2021"
 description = "Work Stealing — Load Balancing Across Threads"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"

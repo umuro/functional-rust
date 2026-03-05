@@ -5,3 +5,6 @@ edition = "2021"
 description = "Consolidating match arms with OR patterns"
 
 [dependencies]
+
+[lib]
+path = "src/lib.rs"
