@@ -1,7 +1,0 @@
-[package]
-name = "example-986-stringsub-and-stringconcat-substring-and-join"
-version = "0.1.0"
-edition = "2021"
-
-[lib]
-path = "src/lib.rs"

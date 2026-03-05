@@ -1,7 +1,0 @@
-[package]
-name = "example-993-hashtbl-word-frequency-counter"
-version = "0.1.0"
-edition = "2021"
-
-[lib]
-path = "src/lib.rs"

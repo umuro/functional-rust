@@ -1,7 +1,0 @@
-[package]
-name = "example-01-higher-order-functions"
-version = "0.1.0"
-edition = "2021"
-
-[lib]
-path = "src/lib.rs"

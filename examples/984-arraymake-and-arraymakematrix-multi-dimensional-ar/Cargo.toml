@@ -1,7 +1,0 @@
-[package]
-name = "example-984-arraymake-and-arraymakematrix-multi-dimensional-ar"
-version = "0.1.0"
-edition = "2021"
-
-[lib]
-path = "src/lib.rs"
