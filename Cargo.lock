@@ -825,3 +825,23 @@ version = "0.1.0"
 [[package]]
 name = "example-275-yacht-dice-scoring"
 version = "0.1.0"
+
+[[package]]
+name = "example-276-parallel-letter-frequency"
+version = "0.1.0"
+
+[[package]]
+name = "example-277-circular-buffer-queue"
+version = "0.1.0"
+
+[[package]]
+name = "example-278-sierpinski-triangle"
+version = "0.1.0"
+
+[[package]]
+name = "example-279-pascals-triangle"
+version = "0.1.0"
+
+[[package]]
+name = "example-280-hamming-distance"
+version = "0.1.0"

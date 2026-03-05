@@ -2585,7 +2585,7 @@ let () =
   let freq = parallel_frequency texts in
   CMap.iter (Printf.printf "%c:%d ") freq
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 082: Circular Buffer — Functional Queue
 **Source:** https://dev.realworldocaml.org/
@@ -2616,7 +2616,7 @@ let () =
     | Some (x, q') -> Printf.printf "%d " x; drain q'
   in drain q
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 083: Sierpinski Triangle — Recursive ASCII Art
 **Source:** https://rosettacode.org/wiki/Sierpinski_triangle#OCaml
@@ -2640,7 +2640,7 @@ let sierpinski n =
 
 let () = sierpinski 4
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 084: Pascal's Triangle — Row Generation
 **Source:** https://exercism.org/tracks/ocaml/exercises/pascals-triangle
@@ -2664,7 +2664,7 @@ let () =
     print_newline ()
   )
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 085: Hamming Distance on Lists — Generic Zip
 **Source:** https://exercism.org/tracks/ocaml/exercises/hamming
@@ -2695,7 +2695,7 @@ let () =
   | Ok d -> Printf.printf "Hamming distance: %d\n" d
   | Error e -> Printf.printf "Error: %s\n" e
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 086: Sum of Multiples — Set Union
 **Source:** https://exercism.org/tracks/ocaml/exercises/sum-of-multiples
