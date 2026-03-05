@@ -1,4 +1,4 @@
 [package]
-name = "175-json-parser"
+name = "example-175-json-parser"
 version = "0.1.0"
 edition = "2021"

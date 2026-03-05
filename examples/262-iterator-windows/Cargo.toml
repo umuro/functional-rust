@@ -1,4 +1,4 @@
 [package]
-name = "262-iterator-windows"
+name = "example-262-iterator-windows"
 version = "0.1.0"
 edition = "2021"

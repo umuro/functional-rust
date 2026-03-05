@@ -1,4 +1,4 @@
 [package]
-name = "1056-edit-distance"
+name = "example-1056-edit-distance"
 version = "0.1.0"
 edition = "2021"

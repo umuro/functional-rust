@@ -1,4 +1,4 @@
 [package]
-name = "203-lens-laws"
+name = "example-203-lens-laws"
 version = "0.1.0"
 edition = "2021"

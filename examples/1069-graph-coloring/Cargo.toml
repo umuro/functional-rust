@@ -1,4 +1,4 @@
 [package]
-name = "1069-graph-coloring"
+name = "example-1069-graph-coloring"
 version = "0.1.0"
 edition = "2021"

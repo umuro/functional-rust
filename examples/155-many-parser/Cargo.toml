@@ -1,4 +1,4 @@
 [package]
-name = "155-many-parser"
+name = "example-155-many-parser"
 version = "0.1.0"
 edition = "2021"

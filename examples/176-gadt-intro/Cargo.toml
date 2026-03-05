@@ -1,4 +1,4 @@
 [package]
-name = "176-gadt-intro"
+name = "example-176-gadt-intro"
 version = "0.1.0"
 edition = "2021"

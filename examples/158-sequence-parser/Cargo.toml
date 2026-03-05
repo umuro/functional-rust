@@ -1,4 +1,4 @@
 [package]
-name = "158-sequence-parser"
+name = "example-158-sequence-parser"
 version = "0.1.0"
 edition = "2021"

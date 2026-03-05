@@ -1,4 +1,4 @@
 [package]
-name = "1063-sudoku-solver"
+name = "example-1063-sudoku-solver"
 version = "0.1.0"
 edition = "2021"

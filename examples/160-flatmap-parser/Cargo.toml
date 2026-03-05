@@ -1,4 +1,4 @@
 [package]
-name = "160-flatmap-parser"
+name = "example-160-flatmap-parser"
 version = "0.1.0"
 edition = "2021"

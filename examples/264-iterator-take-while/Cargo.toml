@@ -1,4 +1,4 @@
 [package]
-name = "264-iterator-take-while"
+name = "example-264-iterator-take-while"
 version = "0.1.0"
 edition = "2021"

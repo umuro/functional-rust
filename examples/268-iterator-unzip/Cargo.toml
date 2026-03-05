@@ -1,4 +1,4 @@
 [package]
-name = "268-iterator-unzip"
+name = "example-268-iterator-unzip"
 version = "0.1.0"
 edition = "2021"

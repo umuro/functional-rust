@@ -1,4 +1,4 @@
 [package]
-name = "1053-coin-change"
+name = "example-1053-coin-change"
 version = "0.1.0"
 edition = "2021"

@@ -1,4 +1,4 @@
 [package]
-name = "260-iterator-scan"
+name = "example-260-iterator-scan"
 version = "0.1.0"
 edition = "2021"

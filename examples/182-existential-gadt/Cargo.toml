@@ -1,4 +1,4 @@
 [package]
-name = "182-existential-gadt"
+name = "example-182-existential-gadt"
 version = "0.1.0"
 edition = "2021"

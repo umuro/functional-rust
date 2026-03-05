@@ -1,4 +1,4 @@
 [package]
-name = "184-free-monad-intro"
+name = "example-184-free-monad-intro"
 version = "0.1.0"
 edition = "2021"

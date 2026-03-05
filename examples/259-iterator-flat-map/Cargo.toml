@@ -1,4 +1,4 @@
 [package]
-name = "259-iterator-flat-map"
+name = "example-259-iterator-flat-map"
 version = "0.1.0"
 edition = "2021"

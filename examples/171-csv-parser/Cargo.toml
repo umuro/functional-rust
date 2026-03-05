@@ -1,4 +1,4 @@
 [package]
-name = "171-csv-parser"
+name = "example-171-csv-parser"
 version = "0.1.0"
 edition = "2021"

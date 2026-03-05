@@ -1,4 +1,4 @@
 [package]
-name = "1049-persistent-map"
+name = "example-1049-persistent-map"
 version = "0.1.0"
 edition = "2021"

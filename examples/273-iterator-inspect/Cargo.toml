@@ -1,4 +1,4 @@
 [package]
-name = "273-iterator-inspect"
+name = "example-273-iterator-inspect"
 version = "0.1.0"
 edition = "2021"

@@ -1,4 +1,4 @@
 [package]
-name = "1064-permutations"
+name = "example-1064-permutations"
 version = "0.1.0"
 edition = "2021"

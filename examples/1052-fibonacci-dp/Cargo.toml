@@ -1,4 +1,4 @@
 [package]
-name = "1052-fibonacci-dp"
+name = "example-1052-fibonacci-dp"
 version = "0.1.0"
 edition = "2021"

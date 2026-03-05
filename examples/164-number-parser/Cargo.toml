@@ -1,4 +1,4 @@
 [package]
-name = "164-number-parser"
+name = "example-164-number-parser"
 version = "0.1.0"
 edition = "2021"

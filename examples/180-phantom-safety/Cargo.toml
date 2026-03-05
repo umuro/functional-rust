@@ -1,4 +1,4 @@
 [package]
-name = "180-phantom-safety"
+name = "example-180-phantom-safety"
 version = "0.1.0"
 edition = "2021"

@@ -1,4 +1,4 @@
 [package]
-name = "170-error-recovery"
+name = "example-170-error-recovery"
 version = "0.1.0"
 edition = "2021"

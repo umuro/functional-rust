@@ -1,4 +1,4 @@
 [package]
-name = "153-satisfy-parser"
+name = "example-153-satisfy-parser"
 version = "0.1.0"
 edition = "2021"

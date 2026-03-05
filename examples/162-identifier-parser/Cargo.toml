@@ -1,4 +1,4 @@
 [package]
-name = "162-identifier-parser"
+name = "example-162-identifier-parser"
 version = "0.1.0"
 edition = "2021"

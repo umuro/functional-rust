@@ -1,4 +1,4 @@
 [package]
-name = "1060-partition-equal-subset"
+name = "example-1060-partition-equal-subset"
 version = "0.1.0"
 edition = "2021"

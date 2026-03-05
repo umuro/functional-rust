@@ -1,4 +1,4 @@
 [package]
-name = "1050-interning"
+name = "example-1050-interning"
 version = "0.1.0"
 edition = "2021"

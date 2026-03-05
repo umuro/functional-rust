@@ -1,4 +1,4 @@
 [package]
-name = "256-iterator-chain"
+name = "example-256-iterator-chain"
 version = "0.1.0"
 edition = "2021"
