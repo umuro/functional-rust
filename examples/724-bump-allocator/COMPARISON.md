@@ -1,2 +1,0 @@
-# Bump Allocator
-See example files for comparison.

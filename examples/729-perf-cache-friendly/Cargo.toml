@@ -1,7 +1,0 @@
-[package]
-name = "example-729-perf-cache-friendly"
-version = "0.1.0"
-edition = "2021"
-description = "Cache optimization"
-
-[dependencies]

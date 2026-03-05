@@ -1,0 +1,8 @@
+[package]
+name = "example-888-peekable-iterator"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "peekable_iterator"
+path = "src/lib.rs"

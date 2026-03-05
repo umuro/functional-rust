@@ -1,7 +1,0 @@
-[package]
-name = "example-465-condvar-pattern"
-version = "0.1.0"
-edition = "2021"
-description = "Condition Variables — Wait for State Changes"
-
-[dependencies]

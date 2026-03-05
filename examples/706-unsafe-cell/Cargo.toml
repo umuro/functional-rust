@@ -1,0 +1,8 @@
+[package]
+name = "example-706-unsafe-cell"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "unsafe_cell"
+path = "src/lib.rs"

@@ -1,7 +1,0 @@
-[package]
-name = "example-644-fp-foldable"
-version = "0.1.0"
-edition = "2021"
-description = "Foldable typeclass demonstration in Rust"
-
-[dependencies]

@@ -1,7 +1,0 @@
-[package]
-name = "example-495-string-search"
-version = "0.1.0"
-edition = "2021"
-description = "String Search — Find and Match"
-
-[dependencies]

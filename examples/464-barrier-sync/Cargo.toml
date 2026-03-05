@@ -1,7 +1,0 @@
-[package]
-name = "example-464-barrier-sync"
-version = "0.1.0"
-edition = "2021"
-description = "Barrier Synchronization — Wait for All Threads"
-
-[dependencies]

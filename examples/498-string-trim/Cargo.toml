@@ -1,7 +1,0 @@
-[package]
-name = "example-498-string-trim"
-version = "0.1.0"
-edition = "2021"
-description = "String Trim — Whitespace Handling"
-
-[dependencies]

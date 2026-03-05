@@ -1,7 +1,0 @@
-[package]
-name = "example-703-modular-arithmetic"
-version = "0.1.0"
-edition = "2021"
-description = "Modular operations and inverse"
-
-[dependencies]

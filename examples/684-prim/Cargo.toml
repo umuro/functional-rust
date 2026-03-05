@@ -1,7 +1,0 @@
-[package]
-name = "example-684-prim"
-version = "0.1.0"
-edition = "2021"
-description = "MST using priority queue"
-
-[dependencies]

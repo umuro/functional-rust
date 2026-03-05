@@ -1,7 +1,0 @@
-[package]
-name = "example-660-fp-enriched-category"
-version = "0.1.0"
-edition = "2021"
-description = "Enriched categories in Rust"
-
-[dependencies]

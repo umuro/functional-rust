@@ -1,7 +1,0 @@
-[package]
-name = "example-670-bucket-sort"
-version = "0.1.0"
-edition = "2021"
-description = "Bucket sort implementation in Rust"
-
-[dependencies]

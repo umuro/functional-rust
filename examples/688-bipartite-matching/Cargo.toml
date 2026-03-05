@@ -1,7 +1,0 @@
-[package]
-name = "example-688-bipartite-matching"
-version = "0.1.0"
-edition = "2021"
-description = "Hungarian algorithm"
-
-[dependencies]

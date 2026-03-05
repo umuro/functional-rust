@@ -1,7 +1,0 @@
-[package]
-name = "example-667-heap-sort"
-version = "0.1.0"
-edition = "2021"
-description = "Heap sort implementation in Rust"
-
-[dependencies]

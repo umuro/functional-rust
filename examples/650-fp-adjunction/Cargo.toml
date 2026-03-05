@@ -1,7 +1,0 @@
-[package]
-name = "example-650-fp-adjunction"
-version = "0.1.0"
-edition = "2021"
-description = "Adjunction and derived monads/comonads in Rust"
-
-[dependencies]

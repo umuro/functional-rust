@@ -1,7 +1,0 @@
-[package]
-name = "example-658-fp-cartesian-closed"
-version = "0.1.0"
-edition = "2021"
-description = "Cartesian closed categories in Rust"
-
-[dependencies]

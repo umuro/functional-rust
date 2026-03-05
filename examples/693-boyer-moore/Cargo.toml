@@ -1,7 +1,0 @@
-[package]
-name = "example-693-boyer-moore"
-version = "0.1.0"
-edition = "2021"
-description = "Efficient string search with bad character rule"
-
-[dependencies]

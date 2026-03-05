@@ -1,0 +1,8 @@
+[package]
+name = "example-204-lens-composition"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "lens_composition_204"
+path = "src/lib.rs"

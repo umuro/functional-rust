@@ -1,0 +1,8 @@
+[package]
+name = "example-106-lifetime-elision"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "example_106_lifetime_elision"
+path = "src/lib.rs"

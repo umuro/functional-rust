@@ -1,7 +1,0 @@
-[package]
-name = "example-728-perf-simd"
-version = "0.1.0"
-edition = "2021"
-description = "SIMD optimization"
-
-[dependencies]

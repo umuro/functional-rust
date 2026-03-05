@@ -1,7 +1,0 @@
-[package]
-name = "example-655-fp-functor-composition"
-version = "0.1.0"
-edition = "2021"
-description = "Functor composition in Rust"
-
-[dependencies]

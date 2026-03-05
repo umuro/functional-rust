@@ -1,7 +1,0 @@
-[package]
-name = "example-458-memory-ordering"
-version = "0.1.0"
-edition = "2021"
-description = "Memory Ordering — Fences and Barriers"
-
-[dependencies]

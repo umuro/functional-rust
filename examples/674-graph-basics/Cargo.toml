@@ -1,7 +1,0 @@
-[package]
-name = "example-674-graph-basics"
-version = "0.1.0"
-edition = "2021"
-description = "Graph data structures in Rust"
-
-[dependencies]

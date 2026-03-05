@@ -1,7 +1,0 @@
-[package]
-name = "example-692-kmp-string-search"
-version = "0.1.0"
-edition = "2021"
-description = "Knuth-Morris-Pratt string matching"
-
-[dependencies]

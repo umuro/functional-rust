@@ -1,7 +1,0 @@
-[package]
-name = "example-676-graph-dfs"
-version = "0.1.0"
-edition = "2021"
-description = "Depth-First Search in Rust"
-
-[dependencies]

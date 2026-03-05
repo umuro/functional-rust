@@ -1,7 +1,0 @@
-[package]
-name = "example-725-slab-allocator"
-version = "0.1.0"
-edition = "2021"
-description = "Slab allocation pattern"
-
-[dependencies]

@@ -1,7 +1,0 @@
-[package]
-name = "example-496-string-replace"
-version = "0.1.0"
-edition = "2021"
-description = "String Replace — Substitution Patterns"
-
-[dependencies]

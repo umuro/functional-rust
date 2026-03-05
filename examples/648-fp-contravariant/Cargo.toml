@@ -1,7 +1,0 @@
-[package]
-name = "example-648-fp-contravariant"
-version = "0.1.0"
-edition = "2021"
-description = "Contravariant functor demonstration in Rust"
-
-[dependencies]

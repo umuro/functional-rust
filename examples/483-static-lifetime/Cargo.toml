@@ -1,7 +1,0 @@
-[package]
-name = "example-483-static-lifetime"
-version = "0.1.0"
-edition = "2021"
-description = "Static Lifetime — 'static Bounds"
-
-[dependencies]

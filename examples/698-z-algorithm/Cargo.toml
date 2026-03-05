@@ -1,7 +1,0 @@
-[package]
-name = "example-698-z-algorithm"
-version = "0.1.0"
-edition = "2021"
-description = "Linear time pattern preprocessing"
-
-[dependencies]

@@ -1,7 +1,0 @@
-[package]
-name = "example-653-fp-limit-colimit"
-version = "0.1.0"
-edition = "2021"
-description = "Limits and colimits in Rust"
-
-[dependencies]

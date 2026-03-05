@@ -1,7 +1,0 @@
-[package]
-name = "example-717-ffi-function-ptrs"
-version = "0.1.0"
-edition = "2021"
-description = "Callbacks across FFI boundary"
-
-[dependencies]

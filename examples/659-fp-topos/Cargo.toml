@@ -1,7 +1,0 @@
-[package]
-name = "example-659-fp-topos"
-version = "0.1.0"
-edition = "2021"
-description = "Topos theory concepts in Rust"
-
-[dependencies]

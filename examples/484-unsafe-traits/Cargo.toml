@@ -1,7 +1,0 @@
-[package]
-name = "example-484-unsafe-traits"
-version = "0.1.0"
-edition = "2021"
-description = "Unsafe Traits — Manual Safety Guarantees"
-
-[dependencies]

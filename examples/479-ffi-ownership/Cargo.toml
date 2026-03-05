@@ -1,7 +1,0 @@
-[package]
-name = "example-479-ffi-ownership"
-version = "0.1.0"
-edition = "2021"
-description = "FFI Ownership — Managing Memory Across FFI"
-
-[dependencies]

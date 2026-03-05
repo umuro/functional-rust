@@ -1,0 +1,8 @@
+[package]
+name = "example-705-null-pointer-check"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "null_pointer_check"
+path = "src/lib.rs"

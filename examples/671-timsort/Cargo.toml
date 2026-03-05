@@ -1,7 +1,0 @@
-[package]
-name = "example-671-timsort"
-version = "0.1.0"
-edition = "2021"
-description = "Timsort implementation in Rust"
-
-[dependencies]

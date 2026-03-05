@@ -1,7 +1,0 @@
-[package]
-name = "example-487-intrinsics"
-version = "0.1.0"
-edition = "2021"
-description = "Intrinsics — Compiler Built-ins"
-
-[dependencies]

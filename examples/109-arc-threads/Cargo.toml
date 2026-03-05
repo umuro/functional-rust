@@ -1,0 +1,8 @@
+[package]
+name = "example-109-arc-threads"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "arc_threads"
+path = "src/lib.rs"

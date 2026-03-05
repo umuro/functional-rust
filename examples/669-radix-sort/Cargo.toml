@@ -1,7 +1,0 @@
-[package]
-name = "example-669-radix-sort"
-version = "0.1.0"
-edition = "2021"
-description = "Radix sort implementation in Rust"
-
-[dependencies]

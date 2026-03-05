@@ -1,7 +1,0 @@
-[package]
-name = "example-472-raw-pointers"
-version = "0.1.0"
-edition = "2021"
-description = "Raw Pointers — *const T and *mut T"
-
-[dependencies]

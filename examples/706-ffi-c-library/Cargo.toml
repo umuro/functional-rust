@@ -1,7 +1,0 @@
-[package]
-name = "example-706-ffi-c-library"
-version = "0.1.0"
-edition = "2021"
-description = "Calling C code from Rust"
-
-[dependencies]

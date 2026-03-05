@@ -1,7 +1,0 @@
-[package]
-name = "example-477-ffi-structs"
-version = "0.1.0"
-edition = "2021"
-description = "FFI Structs — C-Compatible Data Structures"
-
-[dependencies]

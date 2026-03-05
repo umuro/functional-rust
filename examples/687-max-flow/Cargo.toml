@@ -1,7 +1,0 @@
-[package]
-name = "example-687-max-flow"
-version = "0.1.0"
-edition = "2021"
-description = "Ford-Fulkerson and Edmonds-Karp"
-
-[dependencies]

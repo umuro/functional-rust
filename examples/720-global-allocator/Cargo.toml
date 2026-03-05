@@ -1,7 +1,0 @@
-[package]
-name = "example-720-global-allocator"
-version = "0.1.0"
-edition = "2021"
-description = "Custom global allocator"
-
-[dependencies]

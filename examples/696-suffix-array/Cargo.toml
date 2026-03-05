@@ -1,7 +1,0 @@
-[package]
-name = "example-696-suffix-array"
-version = "0.1.0"
-edition = "2021"
-description = "Suffix array construction and search"
-
-[dependencies]

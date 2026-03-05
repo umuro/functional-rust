@@ -1,7 +1,0 @@
-[package]
-name = "example-707-unsafe-slice"
-version = "0.1.0"
-edition = "2021"
-description = "Raw slice manipulation"
-
-[dependencies]

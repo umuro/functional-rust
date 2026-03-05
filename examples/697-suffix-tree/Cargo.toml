@@ -1,7 +1,0 @@
-[package]
-name = "example-697-suffix-tree"
-version = "0.1.0"
-edition = "2021"
-description = "Ukkonen's suffix tree algorithm"
-
-[dependencies]

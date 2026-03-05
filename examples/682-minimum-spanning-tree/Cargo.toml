@@ -1,7 +1,0 @@
-[package]
-name = "example-682-minimum-spanning-tree"
-version = "0.1.0"
-edition = "2021"
-description = "MST algorithms overview"
-
-[dependencies]

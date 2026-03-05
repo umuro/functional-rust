@@ -1,7 +1,0 @@
-[package]
-name = "example-695-aho-corasick"
-version = "0.1.0"
-edition = "2021"
-description = "Multi-pattern string matching"
-
-[dependencies]

@@ -1,7 +1,0 @@
-[package]
-name = "example-478-ffi-callbacks"
-version = "0.1.0"
-edition = "2021"
-description = "FFI Callbacks — Passing Functions Across FFI Boundary"
-
-[dependencies]

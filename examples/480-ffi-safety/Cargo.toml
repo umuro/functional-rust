@@ -1,7 +1,0 @@
-[package]
-name = "example-480-ffi-safety"
-version = "0.1.0"
-edition = "2021"
-description = "FFI Safety — Defensive FFI Programming"
-
-[dependencies]

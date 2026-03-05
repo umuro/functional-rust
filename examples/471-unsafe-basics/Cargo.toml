@@ -1,7 +1,0 @@
-[package]
-name = "example-471-unsafe-basics"
-version = "0.1.0"
-edition = "2021"
-description = "Unsafe Basics — When and How to Use Unsafe"
-
-[dependencies]

@@ -1,7 +1,0 @@
-[package]
-name = "example-453-atomic-ordering"
-version = "0.1.0"
-edition = "2021"
-description = "Atomic Ordering — Memory Ordering Semantics"
-
-[dependencies]

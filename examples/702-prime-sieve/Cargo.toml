@@ -1,7 +1,0 @@
-[package]
-name = "example-702-prime-sieve"
-version = "0.1.0"
-edition = "2021"
-description = "Sieve of Eratosthenes"
-
-[dependencies]

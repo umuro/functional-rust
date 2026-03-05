@@ -1,7 +1,0 @@
-[package]
-name = "example-709-inline-assembly"
-version = "0.1.0"
-edition = "2021"
-description = "Using asm! macro"
-
-[dependencies]

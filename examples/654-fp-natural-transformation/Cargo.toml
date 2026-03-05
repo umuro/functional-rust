@@ -1,7 +1,0 @@
-[package]
-name = "example-654-fp-natural-transformation"
-version = "0.1.0"
-edition = "2021"
-description = "Natural transformations in Rust"
-
-[dependencies]

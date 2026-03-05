@@ -1,7 +1,0 @@
-[package]
-name = "example-732-perf-string-ops"
-version = "0.1.0"
-edition = "2021"
-description = "Efficient string handling"
-
-[dependencies]

@@ -1,7 +1,0 @@
-[package]
-name = "example-663-insertion-sort"
-version = "0.1.0"
-edition = "2021"
-description = "Insertion sort implementation in Rust"
-
-[dependencies]

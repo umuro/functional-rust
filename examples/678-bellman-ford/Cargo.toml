@@ -1,7 +1,0 @@
-[package]
-name = "example-678-bellman-ford"
-version = "0.1.0"
-edition = "2021"
-description = "Bellman-Ford shortest path algorithm"
-
-[dependencies]

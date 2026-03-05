@@ -1,7 +1,0 @@
-[package]
-name = "example-721-arena-allocator"
-version = "0.1.0"
-edition = "2021"
-description = "Bump allocation arena"
-
-[dependencies]

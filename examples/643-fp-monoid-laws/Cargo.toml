@@ -1,7 +1,0 @@
-[package]
-name = "example-643-fp-monoid-laws"
-version = "0.1.0"
-edition = "2021"
-description = "Monoid laws demonstration in Rust"
-
-[dependencies]

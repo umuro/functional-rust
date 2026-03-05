@@ -1,7 +1,0 @@
-[package]
-name = "example-656-fp-monad-composition"
-version = "0.1.0"
-edition = "2021"
-description = "Monad composition and transformers in Rust"
-
-[dependencies]

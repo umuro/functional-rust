@@ -1,7 +1,0 @@
-[package]
-name = "example-665-merge-sort"
-version = "0.1.0"
-edition = "2021"
-description = "Merge sort implementation in Rust"
-
-[dependencies]

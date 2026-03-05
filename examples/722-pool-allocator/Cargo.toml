@@ -1,7 +1,0 @@
-[package]
-name = "example-722-pool-allocator"
-version = "0.1.0"
-edition = "2021"
-description = "Fixed-size object pool"
-
-[dependencies]

@@ -1,7 +1,0 @@
-[package]
-name = "example-474-extern-c"
-version = "0.1.0"
-edition = "2021"
-description = "Extern C — C ABI Compatibility"
-
-[dependencies]

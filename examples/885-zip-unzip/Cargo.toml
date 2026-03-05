@@ -1,0 +1,8 @@
+[package]
+name = "example-885-zip-unzip"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "example_885"
+path = "src/lib.rs"
