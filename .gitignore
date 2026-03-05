@@ -4,3 +4,4 @@ target/
 *.byte
 _build/
 .merlin
+prompt*.md
