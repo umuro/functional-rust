@@ -1,0 +1,4 @@
+[package]
+name = "example-088-atbash-cipher"
+version = "0.1.0"
+edition = "2021"

@@ -451,7 +451,15 @@ name = "example-086-space-age"
 version = "0.1.0"
 
 [[package]]
+name = "example-086-sum-of-multiples"
+version = "0.1.0"
+
+[[package]]
 name = "example-087-difference-of-squares"
+version = "0.1.0"
+
+[[package]]
+name = "example-087-series-sliding-window"
 version = "0.1.0"
 
 [[package]]
@@ -459,7 +467,19 @@ name = "example-088-allergies"
 version = "0.1.0"
 
 [[package]]
+name = "example-088-atbash-cipher"
+version = "0.1.0"
+
+[[package]]
 name = "example-089-bob"
+version = "0.1.0"
+
+[[package]]
+name = "example-089-poker-hand-evaluator"
+version = "0.1.0"
+
+[[package]]
+name = "example-090-frequency-analysis"
 version = "0.1.0"
 
 [[package]]

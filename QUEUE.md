@@ -2719,7 +2719,7 @@ let () =
   Printf.printf "%d\n" (sum_of_multiples [3; 5] 1000);
   Printf.printf "%d\n" (sum_of_multiples [2; 3; 5; 7; 11] 10000)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 087: Series — Sliding Window on Strings
 **Source:** https://exercism.org/tracks/ocaml/exercises/series
@@ -2755,7 +2755,7 @@ let () =
   | Ok n -> Printf.printf "Largest: %d\n" n
   | Error e -> Printf.printf "Error: %s\n" e
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 088: Atbash Cipher — Char Mapping
 **Source:** https://exercism.org/tracks/ocaml/exercises/atbash-cipher
@@ -2788,7 +2788,7 @@ let encode s =
 
 let () = Printf.printf "%s\n" (encode "Testing, 1 2 3, testing.")
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 089: Poker Hand Evaluator — Complex Pattern Matching
 **Source:** https://rosettacode.org/wiki/Poker_hand_analyser#OCaml
@@ -2830,7 +2830,7 @@ let () =
   Printf.printf "%s\n" (name (classify [10;11;12;13;14] true));
   Printf.printf "%s\n" (name (classify [3;3;3;7;7] false))
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 090: Frequency Analysis — Letter Distribution
 **Source:** https://rosettacode.org/wiki/Letter_frequency#OCaml
@@ -2858,7 +2858,7 @@ let () =
   sorted_freq text |> List.iter (fun (c, n) ->
     Printf.printf "%c: %s (%d)\n" c (String.make n '#') n)
 ```
-**Status:** [ ]
+**Status:** [x]
 
 ### 091: Y Combinator — Anonymous Recursion
 **Source:** https://rosettacode.org/wiki/Y_combinator#OCaml
