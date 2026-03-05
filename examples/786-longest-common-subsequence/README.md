@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/786-longest-common-subsequence)**
+
+---
+
 # 786. LCS: Classic DP with Backtracking
 
 **Difficulty:** 3  **Level:** Intermediate

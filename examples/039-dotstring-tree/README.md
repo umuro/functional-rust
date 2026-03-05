@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/039-dotstring-tree)**
+
+---
+
 # Example 039: Dotstring Tree
 
 **Difficulty:** ⭐ Beginner  

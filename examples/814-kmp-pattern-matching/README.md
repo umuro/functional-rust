@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/814-kmp-pattern-matching)**
+
+---
+
 # 814: KMP — Knuth-Morris-Pratt Pattern Matching
 
 **Difficulty:** 4  **Level:** Advanced

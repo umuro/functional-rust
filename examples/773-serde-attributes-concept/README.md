@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/773-serde-attributes-concept)**
+
+---
+
 # 773: Serde Attributes: rename, skip, flatten Patterns
 
 **Difficulty:** 3  **Level:** Intermediate

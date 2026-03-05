@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/188-operational-monad)**
+
+---
+
 # Operational Monad — Instructions and Programs
 
 **Category:** Free Monads

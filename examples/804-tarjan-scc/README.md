@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/804-tarjan-scc)**
+
+---
+
 # 804. Tarjan's Strongly Connected Components
 
 **Difficulty:** 5  **Level:** Master

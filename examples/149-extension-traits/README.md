@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/149-extension-traits)**
+
+---
+
 # Extension Modules — Adding Derived Functions
 
 **Category:** Module System

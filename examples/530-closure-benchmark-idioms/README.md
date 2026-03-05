@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/530-closure-benchmark-idioms)**
+
+---
+
 # 530: Closures in Benchmarking
 
 **Difficulty:** 2  **Level:** Beginner-Intermediate

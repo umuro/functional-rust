@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/044-option-filter)**
+
+---
+
 # Example 044: Option Filter
 
 **Difficulty:** ⭐ Beginner  

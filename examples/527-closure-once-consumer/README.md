@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/527-closure-once-consumer)**
+
+---
+
 # 527: FnOnce — Consuming Closures
 
 **Difficulty:** 3  **Level:** Intermediate

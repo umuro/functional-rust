@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/788-coin-change-dp)**
+
+---
+
 # 788. Coin Change: Minimum Coins DP
 
 **Difficulty:** 3  **Level:** Intermediate

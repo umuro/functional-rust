@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/514-closure-observer-pattern)**
+
+---
+
 # 514: Observer/Callback Pattern
 
 **Difficulty:** 3  **Level:** Intermediate

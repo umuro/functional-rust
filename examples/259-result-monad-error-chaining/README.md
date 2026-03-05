@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/259-result-monad-error-chaining)**
+
+---
+
 # Example 259: Result Monad — Error Chaining
 
 **Difficulty:** ⭐⭐

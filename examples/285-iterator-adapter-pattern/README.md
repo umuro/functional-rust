@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/285-iterator-adapter-pattern)**
+
+---
+
 # 285: Building Custom Iterator Adapters
 
 **Difficulty:** 3  **Level:** Advanced

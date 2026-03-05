@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/805-kosaraju-scc)**
+
+---
+
 # 805: Kosaraju's Two-Pass SCC Algorithm
 
 **Difficulty:** 5  **Level:** Master

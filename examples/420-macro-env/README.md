@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/420-macro-env)**
+
+---
+
 # 420: env! and option_env! for Build-time Values
 
 **Difficulty:** 2  **Level:** Intermediate

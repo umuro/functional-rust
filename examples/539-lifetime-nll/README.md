@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/539-lifetime-nll)**
+
+---
+
 # 539: Non-Lexical Lifetimes (NLL)
 
 **Difficulty:** 3  **Level:** Intermediate

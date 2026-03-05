@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/065-association-list)**
+
+---
+
 # Example 065: Association List — Functional Key-Value Store
 
 **Difficulty:** ⭐

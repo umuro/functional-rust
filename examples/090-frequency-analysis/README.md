@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/090-frequency-analysis)**
+
+---
+
 # Example 090: Frequency Analysis — Letter Distribution
 
 **Difficulty:** ⭐⭐

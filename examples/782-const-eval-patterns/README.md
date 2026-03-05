@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/782-const-eval-patterns)**
+
+---
+
 # 782: const eval: Limitations and Workarounds
 
 **Difficulty:** 4  **Level:** Advanced

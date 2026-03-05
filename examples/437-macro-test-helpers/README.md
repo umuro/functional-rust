@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/437-macro-test-helpers)**
+
+---
+
 # 437: Test Helper Macros
 
 **Difficulty:** 2  **Level:** Intermediate

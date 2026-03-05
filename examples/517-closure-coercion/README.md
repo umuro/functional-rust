@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/517-closure-coercion)**
+
+---
+
 # 517: Closure-to-fn-pointer Coercion
 
 **Difficulty:** 3  **Level:** Intermediate

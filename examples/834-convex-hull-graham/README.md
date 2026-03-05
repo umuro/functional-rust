@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/834-convex-hull-graham)**
+
+---
+
 # 834: Convex Hull — Graham Scan
 
 **Difficulty:** 4  **Level:** Advanced

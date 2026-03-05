@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/818-suffix-array)**
+
+---
+
 # 818: Suffix Array Construction O(n log n)
 
 **Difficulty:** 5  **Level:** Master

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/146-opaque-types)**
+
+---
+
 # Opaque Types — Hiding Implementation Details
 
 **Category:** Module System

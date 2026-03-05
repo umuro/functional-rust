@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/189-effect-intro)**
+
+---
+
 # Effect Handlers Intro — OCaml 5 Effects
 
 **Category:** Effects

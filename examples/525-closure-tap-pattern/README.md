@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/525-closure-tap-pattern)**
+
+---
+
 # 525: Tap Pattern for Side Effects
 
 **Difficulty:** 2  **Level:** Beginner-Intermediate

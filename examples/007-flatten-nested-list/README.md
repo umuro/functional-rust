@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/007-flatten-nested-list)**
+
+---
+
 # Example 007: Flatten Nested List
 
 **Difficulty:** ⭐⭐

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/508-closure-partial-application)**
+
+---
+
 # 508: Partial Application with Closures
 
 **Difficulty:** 2  **Level:** Beginner-Intermediate

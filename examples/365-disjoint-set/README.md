@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/365-disjoint-set)**
+
+---
+
 # 365: Union-Find — Disjoint Set Forest
 
 **Difficulty:** 3  **Level:** Advanced

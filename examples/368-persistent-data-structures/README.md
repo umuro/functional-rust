@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/368-persistent-data-structures)**
+
+---
+
 # 368: Persistent Data Structures
 
 **Difficulty:** 4  **Level:** Expert

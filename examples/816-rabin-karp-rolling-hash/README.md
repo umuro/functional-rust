@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/816-rabin-karp-rolling-hash)**
+
+---
+
 # 816: Rabin-Karp Rolling Hash Search
 
 **Difficulty:** 4  **Level:** Advanced

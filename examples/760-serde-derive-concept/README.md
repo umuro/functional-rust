@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/760-serde-derive-concept)**
+
+---
+
 # 760: Derive-Based Serialization: How derive(Serialize) Works
 
 **Difficulty:** 3  **Level:** Intermediate

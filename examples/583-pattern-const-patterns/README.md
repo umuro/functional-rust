@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/583-pattern-const-patterns)**
+
+---
+
 # 583: Const in Patterns
 
 **Difficulty:** 2  **Level:** Beginner

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/421-macro-include)**
+
+---
+
 # 421: include! and include_str!
 
 **Difficulty:** 2  **Level:** Intermediate

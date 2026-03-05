@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/798-kadane-max-subarray)**
+
+---
+
 # 798. Kadane's Algorithm: Maximum Subarray Sum
 
 **Difficulty:** 3  **Level:** Advanced

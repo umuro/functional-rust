@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/598-finally-tagless)**
+
+---
+
 # 598: Finally Tagless Style
 
 **Difficulty:** 4  **Level:** Advanced

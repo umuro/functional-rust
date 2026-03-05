@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/061-binary-tree)**
+
+---
+
 # Example 061: Binary Tree — Size, Membership, Traversal
 
 **Difficulty:** ⭐⭐

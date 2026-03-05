@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/585-pattern-box-deref)**
+
+---
+
 # 585: Box Deref Patterns
 
 **Difficulty:** 2  **Level:** Beginner

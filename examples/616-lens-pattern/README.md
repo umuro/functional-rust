@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/616-lens-pattern)**
+
+---
+
 # 616: Lens Pattern — Composable Getters and Setters
 
 **Difficulty:** 5  **Level:** Master

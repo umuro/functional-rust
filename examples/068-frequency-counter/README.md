@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/068-frequency-counter)**
+
+---
+
 # 068 — Frequency Counter (Map Module)
 
 **Difficulty:** ⭐ Beginner

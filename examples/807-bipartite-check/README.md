@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/807-bipartite-check)**
+
+---
+
 # 807: Bipartite Graph Detection (2-Colouring)
 
 **Difficulty:** 3  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/415-macro-tt-munching)**
+
+---
+
 # 415: Token Tree Munching
 
 **Difficulty:** 4  **Level:** Expert

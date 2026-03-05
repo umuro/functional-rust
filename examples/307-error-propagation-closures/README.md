@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/307-error-propagation-closures)**
+
+---
+
 # 307: Error Propagation in Closures
 
 **Difficulty:** 3  **Level:** Advanced

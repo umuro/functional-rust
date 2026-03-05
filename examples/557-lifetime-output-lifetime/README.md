@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/557-lifetime-output-lifetime)**
+
+---
+
 # 557: Output Lifetimes in Traits
 
 **Difficulty:** 4  **Level:** Intermediate-Advanced

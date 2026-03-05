@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/042-option-map)**
+
+---
+
 # Example 042: Option Map
 
 **Difficulty:** ⭐ Beginner  

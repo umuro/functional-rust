@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/427-syn-quote-basics)**
+
+---
+
 # 427: syn + quote for Proc Macro AST
 
 **Difficulty:** 4  **Level:** Expert

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/831-miller-rabin-primality)**
+
+---
+
 # 831: Miller-Rabin Probabilistic Primality Test
 
 **Difficulty:** 4  **Level:** Advanced

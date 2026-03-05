@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/574-pattern-if-let)**
+
+---
+
 # 574: if let and while let
 
 **Difficulty:** 2  **Level:** Beginner

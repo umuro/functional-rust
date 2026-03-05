@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/820-manacher-palindrome)**
+
+---
+
 # 820: Manacher's Algorithm
 
 **Difficulty:** 4  **Level:** Advanced

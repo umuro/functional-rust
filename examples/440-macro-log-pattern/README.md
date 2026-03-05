@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/440-macro-log-pattern)**
+
+---
+
 # 440: Logging Macros Pattern
 
 **Difficulty:** 2  **Level:** Intermediate

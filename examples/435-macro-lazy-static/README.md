@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/435-macro-lazy-static)**
+
+---
+
 # 435: lazy_static! / OnceLock Pattern
 
 **Difficulty:** 3  **Level:** Advanced

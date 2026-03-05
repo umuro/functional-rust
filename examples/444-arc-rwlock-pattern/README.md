@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/444-arc-rwlock-pattern)**
+
+---
+
 # 444: Arc<RwLock<T>> — Multiple Readers, One Writer
 
 **Difficulty:** 3  **Level:** Intermediate

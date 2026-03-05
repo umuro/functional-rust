@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/286-iterator-from-fn)**
+
+---
+
 # 286: Creating Iterators with from_fn()
 
 **Difficulty:** 2  **Level:** Intermediate

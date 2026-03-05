@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/540-lifetime-borrow-checker)**
+
+---
+
 # 540: Borrow Checker Internals
 
 **Difficulty:** 4  **Level:** Advanced

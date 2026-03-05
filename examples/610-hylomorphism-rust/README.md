@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/610-hylomorphism-rust)**
+
+---
+
 # 610: Hylomorphism — Unfold Then Fold
 
 **Difficulty:** 5  **Level:** Master

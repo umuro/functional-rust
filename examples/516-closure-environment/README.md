@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/516-closure-environment)**
+
+---
+
 # 516: Complex Closure Environments
 
 **Difficulty:** 3  **Level:** Intermediate

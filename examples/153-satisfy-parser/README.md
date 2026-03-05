@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/153-satisfy-parser)**
+
+---
+
 # 153: Satisfy Parser
 
 **Difficulty:** ⭐⭐⭐  **Level:** Foundations

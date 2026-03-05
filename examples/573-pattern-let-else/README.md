@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/573-pattern-let-else)**
+
+---
+
 # 573: let-else for Early Return
 
 **Difficulty:** 2  **Level:** Beginner

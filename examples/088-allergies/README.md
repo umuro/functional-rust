@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/088-allergies)**
+
+---
+
 # 088: Allergies — Bitflag Decoding
 
 **Difficulty:** Beginner

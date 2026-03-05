@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/077-matrix-ops)**
+
+---
+
 # 077: Matrix Operations — Functional 2D
 
 **Difficulty:** Intermediate

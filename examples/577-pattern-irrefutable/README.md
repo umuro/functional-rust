@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/577-pattern-irrefutable)**
+
+---
+
 # 577: Irrefutable vs Refutable Patterns
 
 **Difficulty:** 2  **Level:** Beginner

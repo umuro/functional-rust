@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/096-recursive-descent-parser)**
+
+---
+
 # Example 096: Simple Recursive Descent Parser
 
 **Difficulty:** ⭐⭐⭐

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1060-partition-equal-subset)**
+
+---
+
 # 1060: Partition Equal Subset Sum
 
 **Difficulty:** Intermediate

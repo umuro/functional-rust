@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/255-lazy-fibonacci)**
+
+---
+
 # Example 255: Lazy Fibonacci
 
 **Difficulty:** ⭐⭐

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/308-panic-vs-result)**
+
+---
+
 # 308: When to panic vs Return Result
 
 **Difficulty:** 2  **Level:** Intermediate

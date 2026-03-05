@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/546-lifetime-reborrow)**
+
+---
+
 # 546: Reborrowing Patterns
 
 **Difficulty:** 4  **Level:** Advanced

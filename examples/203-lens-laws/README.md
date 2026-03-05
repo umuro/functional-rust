@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/203-lens-laws)**
+
+---
+
 # 203: Lens Laws — What Makes a Lens Well-Behaved
 
 **Difficulty:** ⭐⭐⭐  **Level:** Intermediate

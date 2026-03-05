@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/756-tempfile-testing)**
+
+---
+
 # 756: Testing with Temporary Files and Directories
 
 **Difficulty:** 2  **Level:** Intermediate

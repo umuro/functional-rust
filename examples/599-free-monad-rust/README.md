@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/599-free-monad-rust)**
+
+---
+
 # 599: Free Monad Interpretation
 
 **Difficulty:** 4  **Level:** Advanced

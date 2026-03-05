@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/567-pattern-binding-modes)**
+
+---
+
 # 567: Binding Modes: ref, ref mut
 
 **Difficulty:** 2  **Level:** Beginner

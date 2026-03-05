@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/342-arc-mutex-pattern)**
+
+---
+
 # 342: Arc<Mutex<T>> Pattern
 
 Thread-safe shared mutable state.

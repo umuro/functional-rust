@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1059-rod-cutting)**
+
+---
+
 # 1059: Rod Cutting
 
 **Difficulty:** Intermediate

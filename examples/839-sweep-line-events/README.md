@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/839-sweep-line-events)**
+
+---
+
 # 839: Sweep Line Algorithm with Event Queue
 
 **Difficulty:** 4  **Level:** Advanced

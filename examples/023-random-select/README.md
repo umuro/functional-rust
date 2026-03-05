@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/023-random-select)**
+
+---
+
 # Example 023: Random Select
 
 **Difficulty:** ⭐ Beginner  

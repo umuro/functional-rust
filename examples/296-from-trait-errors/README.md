@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/296-from-trait-errors)**
+
+---
+
 # 296: From Trait for Error Conversion
 
 **Difficulty:** 2  **Level:** Intermediate

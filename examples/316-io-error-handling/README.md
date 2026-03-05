@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/316-io-error-handling)**
+
+---
+
 # 316: std::io::Error Patterns
 
 **Difficulty:** 2  **Level:** Intermediate

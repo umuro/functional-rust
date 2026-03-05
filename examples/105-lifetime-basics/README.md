@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/105-lifetime-basics)**
+
+---
+
 # 105: Lifetime Basics
 
 **Difficulty:** Intermediate

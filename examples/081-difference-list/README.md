@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/081-difference-list)**
+
+---
+
 # 081: Difference List — O(1) Append
 
 **Difficulty:** Intermediate

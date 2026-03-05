@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/008-eliminate-duplicates)**
+
+---
+
 # Example 008: Eliminate Consecutive Duplicates
 
 **Difficulty:** ⭐

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/157-choice-parser)**
+
+---
+
 # 157: Choice Parser
 
 **Difficulty:** ⭐⭐⭐  **Level:** Foundations

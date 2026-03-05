@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/009-pack-consecutive)**
+
+---
+
 # Example 009: Pack Consecutive Duplicates
 
 **Difficulty:** ⭐⭐

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/105-trie)**
+
+---
+
 # Example 105: Trie — Prefix Tree for Strings
 
 **Difficulty:** ⭐⭐⭐

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/241-comonad-basics)**
+
+---
+
 # Comonad Basics — extract, extend, and duplicate
 
 **Category:** Comonads

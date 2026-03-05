@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/430-macro-debugging)**
+
+---
+
 # 430: Debugging Macros with cargo expand
 
 **Difficulty:** 3  **Level:** Advanced

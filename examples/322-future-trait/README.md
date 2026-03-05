@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/322-future-trait)**
+
+---
+
 # 322: The Future Trait and Poll
 
 **Difficulty:** 4  **Level:** Expert

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/331-timeout-async)**
+
+---
+
 # 331: Timeouts with time::timeout
 
 **Difficulty:** 3  **Level:** Advanced

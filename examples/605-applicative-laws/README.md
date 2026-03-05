@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/605-applicative-laws)**
+
+---
+
 # 605: Applicative Functor Laws
 
 **Difficulty:** 5  **Level:** Master

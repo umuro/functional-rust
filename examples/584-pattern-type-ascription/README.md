@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/584-pattern-type-ascription)**
+
+---
+
 # 584: Type Patterns and `as`
 
 **Difficulty:** 3  **Level:** Intermediate

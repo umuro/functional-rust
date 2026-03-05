@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/079-lambda-calculus)**
+
+---
+
 # 079: Interpreter — Simple Lambda Calculus
 
 **Difficulty:** Advanced

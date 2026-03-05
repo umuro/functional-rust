@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/523-closure-event-handler)**
+
+---
+
 # 523: Event Handler Pattern
 
 **Difficulty:** 3  **Level:** Intermediate

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/269-iterator-partition)**
+
+---
+
 # 269: Splitting by Predicate with partition()
 
 **Difficulty:** 1  **Level:** Beginner

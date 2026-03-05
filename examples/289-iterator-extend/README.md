@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/289-iterator-extend)**
+
+---
+
 # 289: Extending Collections with extend()
 
 **Difficulty:** 2  **Level:** Intermediate

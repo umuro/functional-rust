@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/819-z-algorithm)**
+
+---
+
 # 819: Z-Algorithm
 
 **Difficulty:** 3  **Level:** Intermediate

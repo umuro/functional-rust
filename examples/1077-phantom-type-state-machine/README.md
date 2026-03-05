@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1077-phantom-type-state-machine)**
+
+---
+
 # Example 1077: Phantom Type State Machine — File Handle
 
 **Difficulty:** ⭐⭐⭐

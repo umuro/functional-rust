@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/622-classy-optics)**
+
+---
+
 # 622: Classy Optics (Typeclass-Style)
 
 **Difficulty:** 5  **Level:** Master

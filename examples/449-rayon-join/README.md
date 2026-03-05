@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/449-rayon-join)**
+
+---
+
 # 449: rayon::join for Parallel Tasks
 
 **Difficulty:** 3  **Level:** Intermediate

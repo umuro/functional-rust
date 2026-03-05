@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/402-index-trait)**
+
+---
+
 # 402: Index and IndexMut Traits
 
 **Difficulty:** 2  **Level:** Intermediate

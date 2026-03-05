@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/147-type-erasure)**
+
+---
+
 # Type Erasure — Hiding Types Behind Existentials
 
 **Category:** Existential Types

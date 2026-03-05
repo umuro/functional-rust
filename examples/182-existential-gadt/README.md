@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/182-existential-gadt)**
+
+---
+
 # 182: Existential Types
 
 **Difficulty:** 4  **Level:** Advanced

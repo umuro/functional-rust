@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/528-closure-lifetime-capture)**
+
+---
+
 # 528: Closures Capturing References
 
 **Difficulty:** 4  **Level:** Intermediate-Advanced

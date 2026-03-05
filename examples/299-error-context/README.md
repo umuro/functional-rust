@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/299-error-context)**
+
+---
+
 # 299: Adding Context to Errors
 
 **Difficulty:** 3  **Level:** Advanced

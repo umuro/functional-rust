@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/305-unwrap-or-patterns)**
+
+---
+
 # 305: unwrap_or, unwrap_or_else, unwrap_or_default
 
 **Difficulty:** 1  **Level:** Beginner

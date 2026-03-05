@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/828-modular-exponentiation)**
+
+---
+
 # 828: Fast Modular Exponentiation
 
 **Difficulty:** 3  **Level:** Intermediate

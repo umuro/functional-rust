@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/048-error-propagation)**
+
+---
+
 # Example 048: Error Propagation
 
 **Difficulty:** ⭐ Beginner  

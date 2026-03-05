@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/792-rod-cutting-dp)**
+
+---
+
 # 792: Rod Cutting Problem
 
 **Difficulty:** 3  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/785-knapsack-01)**
+
+---
+
 # 785. 0/1 Knapsack: DP Table Approach
 
 **Difficulty:** 3  **Level:** Intermediate

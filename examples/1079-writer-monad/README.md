@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1079-writer-monad)**
+
+---
+
 # Example 1079: Writer Monad — Logging Computation
 
 **Difficulty:** ⭐⭐⭐

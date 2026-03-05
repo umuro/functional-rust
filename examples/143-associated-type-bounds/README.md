@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/143-associated-type-bounds)**
+
+---
+
 # Associated Type Bounds — Constraining Associated Types
 
 **Category:** Type-Level Programming

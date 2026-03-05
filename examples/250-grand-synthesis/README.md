@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/250-grand-synthesis)**
+
+---
+
 # Grand Synthesis — From Lambda to Rust
 
 **Category:** Synthesis

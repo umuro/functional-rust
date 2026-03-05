@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/509-closure-composition)**
+
+---
+
 # 509: Closure Composition
 
 **Difficulty:** 3  **Level:** Intermediate

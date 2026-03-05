@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/034-complete-tree)**
+
+---
+
 # Example 034: Complete Tree
 
 **Difficulty:** ⭐ Beginner  

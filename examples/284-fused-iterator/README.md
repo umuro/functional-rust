@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/284-fused-iterator)**
+
+---
+
 # 284: FusedIterator
 
 **Difficulty:** 3  **Level:** Advanced

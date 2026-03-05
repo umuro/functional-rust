@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/098-church-numerals)**
+
+---
+
 # Example 098: Church Numerals — Functions as Numbers
 
 **Difficulty:** ⭐⭐⭐

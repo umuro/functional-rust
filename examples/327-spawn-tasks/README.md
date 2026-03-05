@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/327-spawn-tasks)**
+
+---
+
 # 327: Spawning Concurrent Tasks
 
 **Difficulty:** 3  **Level:** Advanced

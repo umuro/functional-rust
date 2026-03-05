@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/441-thread-basics)**
+
+---
+
 # 441: Thread Basics — Spawn and Join
 
 **Difficulty:** 3  **Level:** Intermediate

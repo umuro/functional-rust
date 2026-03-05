@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/047-result-bind)**
+
+---
+
 # Example 047: Result Bind
 
 **Difficulty:** ⭐ Beginner  

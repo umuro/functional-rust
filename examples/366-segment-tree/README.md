@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/366-segment-tree)**
+
+---
+
 # 366: Segment Tree for Range Queries
 
 **Difficulty:** 4  **Level:** Expert

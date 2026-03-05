@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/104-scan-left)**
+
+---
+
 # Example 104: Scan Left — Running Accumulation
 
 **Difficulty:** ⭐

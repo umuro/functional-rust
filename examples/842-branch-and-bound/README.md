@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/842-branch-and-bound)**
+
+---
+
 # 842: Branch and Bound — TSP Optimisation
 
 **Difficulty:** 4  **Level:** Advanced

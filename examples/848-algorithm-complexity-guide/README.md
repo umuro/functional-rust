@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/848-algorithm-complexity-guide)**
+
+---
+
 # 848: Big-O Reasoning and Complexity Analysis in Rust
 
 **Difficulty:** 3  **Level:** Intermediate

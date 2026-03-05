@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/073-topological-sort)**
+
+---
+
 # 073 — Topological Sort
 
 **Difficulty:** ⭐⭐⭐ Advanced

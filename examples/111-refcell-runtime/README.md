@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/111-refcell-runtime)**
+
+---
+
 # Example 111: RefCell<T> — Runtime Borrow Checking
 
 **Difficulty:** ⭐⭐  

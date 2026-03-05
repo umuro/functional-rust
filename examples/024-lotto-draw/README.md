@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/024-lotto-draw)**
+
+---
+
 # Example 024: Lotto Draw
 
 **Difficulty:** ⭐ Beginner  

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/519-closure-type-inference)**
+
+---
+
 # 519: Closure Type Inference
 
 **Difficulty:** 2  **Level:** Beginner-Intermediate

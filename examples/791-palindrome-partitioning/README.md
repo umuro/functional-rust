@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/791-palindrome-partitioning)**
+
+---
+
 # 791: Palindrome Partitioning
 
 **Difficulty:** 4  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/265-iterator-skip-while)**
+
+---
+
 # 265: Conditional Skipping with skip_while()
 
 **Difficulty:** 1  **Level:** Beginner

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/822-burrows-wheeler)**
+
+---
+
 # 822: Burrows-Wheeler Transform
 
 **Difficulty:** 4  **Level:** Advanced

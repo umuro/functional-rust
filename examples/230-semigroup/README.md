@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/230-semigroup)**
+
+---
+
 # Example 230: Semigroup
 
 **Difficulty:** ⭐⭐

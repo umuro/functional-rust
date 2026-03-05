@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/419-macro-cfg-attr)**
+
+---
+
 # 419: cfg! and cfg_attr for Conditional Code
 
 **Difficulty:** 2  **Level:** Intermediate

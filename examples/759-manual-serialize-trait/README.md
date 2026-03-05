@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/759-manual-serialize-trait)**
+
+---
+
 # 759: Manual Serialize/Deserialize Trait Implementation
 
 **Difficulty:** 3  **Level:** Intermediate

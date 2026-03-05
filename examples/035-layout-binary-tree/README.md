@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/035-layout-binary-tree)**
+
+---
+
 # Example 035: Layout Binary Tree
 
 **Difficulty:** ⭐ Beginner  

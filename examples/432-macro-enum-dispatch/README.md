@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/432-macro-enum-dispatch)**
+
+---
+
 # 432: enum_dispatch via Macros
 
 **Difficulty:** 4  **Level:** Expert

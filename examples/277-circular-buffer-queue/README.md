@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/277-circular-buffer-queue)**
+
+---
+
 # Example 277: Circular Buffer — Functional Queue
 
 **Difficulty:** ⭐⭐

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/064-balanced-parentheses)**
+
+---
+
 # 064 — Balanced Parentheses
 
 **Difficulty:** ⭐ Beginner

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/763-json-format-from-scratch)**
+
+---
+
 # 763: JSON-Like Format Built From Scratch
 
 **Difficulty:** 4  **Level:** Advanced

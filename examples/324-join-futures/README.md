@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/324-join-futures)**
+
+---
+
 # 324: Running Futures Concurrently with join!
 
 **Difficulty:** 3  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/569-pattern-range)**
+
+---
+
 # 569: Range Patterns: 1..=10
 
 **Difficulty:** 2  **Level:** Beginner

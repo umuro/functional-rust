@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/262-iterator-windows)**
+
+---
+
 # 262: Sliding Windows over Slices
 
 **Difficulty:** 2  **Level:** Intermediate

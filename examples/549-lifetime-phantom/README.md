@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/549-lifetime-phantom)**
+
+---
+
 # 549: PhantomData for Lifetime Variance
 
 **Difficulty:** 5  **Level:** Advanced

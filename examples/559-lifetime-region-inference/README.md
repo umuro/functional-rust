@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/559-lifetime-region-inference)**
+
+---
+
 # 559: Region Inference Basics
 
 **Difficulty:** 4  **Level:** Intermediate-Advanced

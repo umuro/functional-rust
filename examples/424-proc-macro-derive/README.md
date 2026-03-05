@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/424-proc-macro-derive)**
+
+---
+
 # 424: Custom #[derive(MyTrait)]
 
 **Difficulty:** 4  **Level:** Expert

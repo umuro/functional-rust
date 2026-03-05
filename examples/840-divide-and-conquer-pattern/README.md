@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/840-divide-and-conquer-pattern)**
+
+---
+
 # 840: Divide and Conquer — Generic Recursive Framework
 
 **Difficulty:** 3  **Level:** Intermediate

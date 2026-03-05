@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/058-variants-days)**
+
+---
+
 # Example 058: Variants — Days of the Week
 
 **Difficulty:** ⭐

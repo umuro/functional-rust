@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/780-const-generic-struct)**
+
+---
+
 # 780: Generic Structs Parameterised by const
 
 **Difficulty:** 3  **Level:** Intermediate

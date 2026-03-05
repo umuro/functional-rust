@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/102-frequency-counter)**
+
+---
+
 # Example 102: Map Module — Frequency Counter
 
 **Difficulty:** ⭐

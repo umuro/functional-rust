@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/310-infallible-conversions)**
+
+---
+
 # 310: Infallible Conversions
 
 **Difficulty:** 3  **Level:** Advanced

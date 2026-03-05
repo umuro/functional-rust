@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/553-lifetime-self-referential)**
+
+---
+
 # 553: Self-Referential Structs (Pin)
 
 **Difficulty:** 5  **Level:** Advanced

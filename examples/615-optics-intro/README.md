@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/615-optics-intro)**
+
+---
+
 # 615: Optics Intro — Lenses, Prisms, and the Hierarchy
 
 **Difficulty:** 5  **Level:** Master

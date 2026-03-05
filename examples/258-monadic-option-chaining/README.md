@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/258-monadic-option-chaining)**
+
+---
+
 # Example 258: Monadic Option Chaining
 
 **Difficulty:** ⭐⭐

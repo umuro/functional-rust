@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/799-bellman-ford)**
+
+---
+
 # 799. Bellman-Ford: Shortest Paths with Negative Edges
 
 **Difficulty:** 4  **Level:** Advanced

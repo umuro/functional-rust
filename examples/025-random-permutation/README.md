@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/025-random-permutation)**
+
+---
+
 # Example 025: Random Permutation
 
 **Difficulty:** ⭐ Beginner  

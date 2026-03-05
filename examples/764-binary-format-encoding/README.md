@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/764-binary-format-encoding)**
+
+---
+
 # 764: Binary Serialization: Length-Prefixed Records
 
 **Difficulty:** 3  **Level:** Intermediate

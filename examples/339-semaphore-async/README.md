@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/339-semaphore-async)**
+
+---
+
 # 339: Semaphore Async
 
 **Difficulty:** 3  **Level:** Advanced

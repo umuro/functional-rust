@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/261-binary-search-tree)**
+
+---
+
 # Example 261: Binary Search Tree — Insert and Search
 
 **Difficulty:** ⭐⭐  

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/575-pattern-let-chains)**
+
+---
+
 # 575: let Chains (&&)
 
 **Difficulty:** 3  **Level:** Intermediate

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/789-longest-increasing-subsequence)**
+
+---
+
 # 789. Longest Increasing Subsequence
 
 **Difficulty:** 4  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/536-lifetime-static)**
+
+---
+
 # 536: 'static Lifetime
 
 **Difficulty:** 3  **Level:** Intermediate

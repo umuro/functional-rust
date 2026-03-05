@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/551-lifetime-rc-weak)**
+
+---
+
 # 551: Rc and Weak for Cycles
 
 **Difficulty:** 4  **Level:** Advanced

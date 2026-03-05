@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/314-validated-accumulation)**
+
+---
+
 # 314: Validated — Accumulating All Errors
 
 **Difficulty:** 4  **Level:** Expert

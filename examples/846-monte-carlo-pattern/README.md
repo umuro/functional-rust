@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/846-monte-carlo-pattern)**
+
+---
+
 # 846: Monte Carlo Methods — π Estimation and Sampling
 
 **Difficulty:** 3  **Level:** Intermediate

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/060-option-safe-max)**
+
+---
+
 # Example 060: Option Type — Safe List Maximum
 
 **Difficulty:** ⭐

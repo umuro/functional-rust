@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/010-run-length-encoding)**
+
+---
+
 # Example 010: Run-Length Encoding
 
 **Difficulty:** ⭐⭐

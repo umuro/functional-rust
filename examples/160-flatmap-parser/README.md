@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/160-flatmap-parser)**
+
+---
+
 # 160: FlatMap Parser
 
 **Difficulty:** ⭐⭐⭐  **Level:** Foundations

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/446-thread-pool-pattern)**
+
+---
+
 # 446: Thread Pool — Reuse Threads for Amortised Concurrency
 
 **Difficulty:** 3  **Level:** Intermediate

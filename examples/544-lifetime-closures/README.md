@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/544-lifetime-closures)**
+
+---
+
 # 544: Lifetimes in Closures
 
 **Difficulty:** 4  **Level:** Intermediate-Advanced

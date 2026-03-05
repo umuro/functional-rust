@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/091-caesar-cipher)**
+
+---
+
 # Example 091: Caesar Cipher — Functional Encryption
 
 **Difficulty:** ⭐

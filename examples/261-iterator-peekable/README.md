@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/261-iterator-peekable)**
+
+---
+
 # 261: Lookahead with Peekable
 
 **Difficulty:** 2  **Level:** Intermediate

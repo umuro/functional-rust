@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/425-proc-macro-attribute)**
+
+---
+
 # 425: Attribute Macros #[my_attr]
 
 **Difficulty:** 4  **Level:** Expert

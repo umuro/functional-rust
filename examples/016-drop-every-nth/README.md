@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/016-drop-every-nth)**
+
+---
+
 # Example 016: Drop Every Nth
 
 **Difficulty:** ⭐ Beginner  

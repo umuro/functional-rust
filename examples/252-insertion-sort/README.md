@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/252-insertion-sort)**
+
+---
+
 # Example 252: Insertion Sort
 
 **Difficulty:** ⭐

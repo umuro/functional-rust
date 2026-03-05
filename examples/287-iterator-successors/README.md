@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/287-iterator-successors)**
+
+---
+
 # 287: Recursive Sequences with successors()
 
 **Difficulty:** 2  **Level:** Intermediate

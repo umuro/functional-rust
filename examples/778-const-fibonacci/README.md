@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/778-const-fibonacci)**
+
+---
+
 # 778: Fibonacci Computed at Compile Time
 
 **Difficulty:** 3  **Level:** Intermediate

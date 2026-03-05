@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/340-async-trait-pattern)**
+
+---
+
 # 340: Async Trait Pattern
 
 **Difficulty:** 4  **Level:** Expert

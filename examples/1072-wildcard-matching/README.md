@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1072-wildcard-matching)**
+
+---
+
 # 1072: Wildcard Matching
 
 **Difficulty:** Advanced

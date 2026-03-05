@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/161-digit-parser)**
+
+---
+
 # 161: Digit Parser
 
 **Difficulty:** ⭐⭐⭐  **Level:** Foundations

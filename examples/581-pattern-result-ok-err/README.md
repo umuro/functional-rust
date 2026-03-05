@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/581-pattern-result-ok-err)**
+
+---
+
 # 581: Result Matching Idioms
 
 **Difficulty:** 2  **Level:** Beginner

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/264-iterator-take-while)**
+
+---
+
 # 264: Conditional Stopping with take_while()
 
 **Difficulty:** 1  **Level:** Beginner

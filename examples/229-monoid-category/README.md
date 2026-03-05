@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/229-monoid-category)**
+
+---
+
 # Example 229: Monoid as a Category
 
 **Difficulty:** ⭐⭐⭐

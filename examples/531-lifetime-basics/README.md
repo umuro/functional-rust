@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/531-lifetime-basics)**
+
+---
+
 # 531: Lifetime Annotations — 'a Basics
 
 **Difficulty:** 3  **Level:** Intermediate

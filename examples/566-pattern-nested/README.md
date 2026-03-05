@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/566-pattern-nested)**
+
+---
+
 # 566: Nested Pattern Matching
 
 **Difficulty:** 2  **Level:** Beginner

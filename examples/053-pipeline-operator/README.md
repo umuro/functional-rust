@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/053-pipeline-operator)**
+
+---
+
 # Example 053: Pipeline Operator
 
 **Difficulty:** ⭐

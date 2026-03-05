@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/771-pratt-parser)**
+
+---
+
 # 771: Pratt Parser for Operator Precedence Expressions
 
 **Difficulty:** 4  **Level:** Advanced

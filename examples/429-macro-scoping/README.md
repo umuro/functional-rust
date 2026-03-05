@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/429-macro-scoping)**
+
+---
+
 # 429: Macro Scoping and #[macro_export]
 
 **Difficulty:** 3  **Level:** Advanced

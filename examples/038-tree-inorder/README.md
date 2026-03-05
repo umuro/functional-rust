@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/038-tree-inorder)**
+
+---
+
 # Example 038: Tree Inorder
 
 **Difficulty:** ⭐ Beginner  

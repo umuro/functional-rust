@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/005-currying)**
+
+---
+
 # Example 005: Currying and Partial Application
 
 **Difficulty:** ⭐⭐

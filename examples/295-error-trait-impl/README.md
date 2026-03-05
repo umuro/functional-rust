@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/295-error-trait-impl)**
+
+---
+
 # 295: Implementing std::error::Error
 
 **Difficulty:** 3  **Level:** Advanced

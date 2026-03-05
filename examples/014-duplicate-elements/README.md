@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/014-duplicate-elements)**
+
+---
+
 # Example 014: Duplicate Elements
 
 **Difficulty:** ⭐

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/412-macro-repetition)**
+
+---
+
 # 412: Macro Repetition Patterns
 
 **Difficulty:** 3  **Level:** Advanced

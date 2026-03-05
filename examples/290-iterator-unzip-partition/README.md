@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/290-iterator-unzip-partition)**
+
+---
+
 # 290: Advanced Splitting Patterns
 
 **Difficulty:** 3  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1068-maze-solver)**
+
+---
+
 # 1068: Maze Solver
 
 **Difficulty:** Intermediate

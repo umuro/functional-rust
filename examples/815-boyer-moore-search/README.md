@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/815-boyer-moore-search)**
+
+---
+
 # 815: Boyer-Moore-Horspool String Search
 
 **Difficulty:** 4  **Level:** Advanced

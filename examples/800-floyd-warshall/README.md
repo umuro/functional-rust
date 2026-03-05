@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/800-floyd-warshall)**
+
+---
+
 # 800. Floyd-Warshall: All-Pairs Shortest Paths
 
 **Difficulty:** 4  **Level:** Advanced

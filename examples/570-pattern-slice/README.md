@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/570-pattern-slice)**
+
+---
+
 # 570: Slice Patterns: [first, rest @ ..]
 
 **Difficulty:** 2  **Level:** Beginner

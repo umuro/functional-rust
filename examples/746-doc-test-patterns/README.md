@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/746-doc-test-patterns)**
+
+---
+
 # 746: Documentation Tests: rustdoc Examples
 
 **Difficulty:** 2  **Level:** Intermediate

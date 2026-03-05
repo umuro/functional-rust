@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/587-pattern-visitor-match)**
+
+---
+
 # 587: Visitor Pattern via Match
 
 **Difficulty:** 3  **Level:** Intermediate

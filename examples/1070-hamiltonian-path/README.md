@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1070-hamiltonian-path)**
+
+---
+
 # 1070: Hamiltonian Path
 
 **Difficulty:** Advanced

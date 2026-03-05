@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/083-robot-simulator)**
+
+---
+
 # 083: Robot Simulator — State with Immutable Records
 
 **Difficulty:** Intermediate

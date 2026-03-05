@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/597-scott-encoding-rust)**
+
+---
+
 # 597: Scott Encoding for Algebraic Types
 
 **Difficulty:** 4  **Level:** Advanced

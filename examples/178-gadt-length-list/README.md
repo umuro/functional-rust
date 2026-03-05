@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/178-gadt-length-list)**
+
+---
+
 # 178: Length-Indexed Lists
 
 **Difficulty:** ⭐⭐⭐  **Level:** Advanced

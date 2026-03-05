@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/057-fold-left)**
+
+---
+
 # Example 057: fold_left — Tail-Recursive Accumulator
 
 **Difficulty:** ⭐⭐

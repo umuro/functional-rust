@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/198-church-encoding)**
+
+---
+
 # Church Encoding — Numbers and Booleans as Functions
 
 **Category:** Lambda Calculus

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/363-arena-allocation)**
+
+---
+
 # 363: Arena / Bump Allocation Pattern
 
 **Difficulty:** 4  **Level:** Expert

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/087-difference-of-squares)**
+
+---
+
 # 087: Difference of Squares
 
 **Difficulty:** Beginner

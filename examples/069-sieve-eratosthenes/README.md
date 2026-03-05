@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/069-sieve-eratosthenes)**
+
+---
+
 # Example 069: Sieve of Eratosthenes (Functional)
 
 **Difficulty:** ⭐⭐

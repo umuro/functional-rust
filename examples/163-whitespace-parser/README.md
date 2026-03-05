@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/163-whitespace-parser)**
+
+---
+
 # 163: Whitespace Parser
 
 **Difficulty:** 3  **Level:** Advanced

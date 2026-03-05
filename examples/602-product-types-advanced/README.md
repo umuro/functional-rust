@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/602-product-types-advanced)**
+
+---
+
 # 602: Product Types (Advanced)
 
 **Difficulty:** 5  **Level:** Master

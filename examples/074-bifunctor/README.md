@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/074-bifunctor)**
+
+---
+
 # Bifunctor — Mapping Over Two Type Parameters
 
 **Category:** Category Theory

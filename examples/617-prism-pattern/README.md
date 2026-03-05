@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/617-prism-pattern)**
+
+---
+
 # 617: Prism Pattern — Fallible Access for Enum Variants
 
 **Difficulty:** 5  **Level:** Master

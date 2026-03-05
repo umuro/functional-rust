@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/827-modular-arithmetic)**
+
+---
+
 # 827: Modular Arithmetic
 
 **Difficulty:** 4  **Level:** Advanced

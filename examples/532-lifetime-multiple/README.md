@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/532-lifetime-multiple)**
+
+---
+
 # 532: Multiple Lifetime Parameters
 
 **Difficulty:** 4  **Level:** Intermediate-Advanced

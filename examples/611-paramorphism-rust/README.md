@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/611-paramorphism-rust)**
+
+---
+
 # 611: Paramorphism
 
 **Difficulty:** 5  **Level:** Master

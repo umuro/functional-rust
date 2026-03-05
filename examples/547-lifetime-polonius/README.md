@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/547-lifetime-polonius)**
+
+---
+
 # 547: Polonius Borrow Checker Concepts
 
 **Difficulty:** 5  **Level:** Advanced

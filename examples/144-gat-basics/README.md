@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/144-gat-basics)**
+
+---
+
 # GADTs Basics — Refining Return Types by Constructor
 
 **Category:** GADTs

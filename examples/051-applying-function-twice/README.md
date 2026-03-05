@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/051-applying-function-twice)**
+
+---
+
 # Example 051: Applying a Function Twice
 
 **Difficulty:** ⭐ **Category:** Higher-Order Functions **OCaml Source:** CS3110

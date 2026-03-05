@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/320-fallible-iterator)**
+
+---
+
 # 320: Fallible Iterators
 
 **Difficulty:** 2  **Level:** Intermediate

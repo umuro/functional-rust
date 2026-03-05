@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/515-closure-once-cell)**
+
+---
+
 # 515: Lazy Evaluation with OnceLock
 
 **Difficulty:** 3  **Level:** Intermediate

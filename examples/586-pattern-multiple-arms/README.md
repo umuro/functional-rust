@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/586-pattern-multiple-arms)**
+
+---
+
 # 586: Consolidating Match Arms
 
 **Difficulty:** 2  **Level:** Beginner

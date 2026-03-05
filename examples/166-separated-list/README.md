@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/166-separated-list)**
+
+---
+
 # 166: Separated List
 
 **Difficulty:** 3  **Level:** Advanced

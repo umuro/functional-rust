@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/303-collect-results)**
+
+---
+
 # 303: Collecting Iterator<Result<T>> into Result<Vec<T>>
 
 **Difficulty:** 2  **Level:** Intermediate

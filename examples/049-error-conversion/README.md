@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/049-error-conversion)**
+
+---
+
 # Example 049: Error Conversion
 
 **Difficulty:** ⭐ Beginner  

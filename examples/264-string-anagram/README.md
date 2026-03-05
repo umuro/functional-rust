@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/264-string-anagram)**
+
+---
+
 # Example 264: String Anagram Check
 
 **Difficulty:** ⭐  

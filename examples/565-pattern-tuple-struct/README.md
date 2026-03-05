@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/565-pattern-tuple-struct)**
+
+---
+
 # 565: Tuple Struct Patterns
 
 **Difficulty:** 2  **Level:** Beginner

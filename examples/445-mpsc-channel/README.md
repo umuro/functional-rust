@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/445-mpsc-channel)**
+
+---
+
 # 445: MPSC Channels — Message Passing Between Threads
 
 **Difficulty:** 3  **Level:** Intermediate

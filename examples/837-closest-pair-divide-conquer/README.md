@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/837-closest-pair-divide-conquer)**
+
+---
+
 # 837: Closest Pair of Points — Divide and Conquer
 
 **Difficulty:** 5  **Level:** Master

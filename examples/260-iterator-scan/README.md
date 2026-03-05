@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/260-iterator-scan)**
+
+---
+
 # 260: Stateful Accumulation with scan()
 
 **Difficulty:** 2  **Level:** Intermediate

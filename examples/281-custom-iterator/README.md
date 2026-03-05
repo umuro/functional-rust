@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/281-custom-iterator)**
+
+---
+
 # 281: Implementing Iterator Trait from Scratch
 
 **Difficulty:** 3  **Level:** Advanced

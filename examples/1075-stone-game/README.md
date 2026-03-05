@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1075-stone-game)**
+
+---
+
 # 1075: Stone Game
 
 **Difficulty:** Advanced

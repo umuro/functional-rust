@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/824-sieve-of-eratosthenes)**
+
+---
+
 # 824: Sieve of Eratosthenes
 
 **Difficulty:** 3  **Level:** Intermediate

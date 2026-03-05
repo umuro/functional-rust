@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/172-ini-parser)**
+
+---
+
 # 172: INI File Parser
 
 **Difficulty:** 3  **Level:** Advanced

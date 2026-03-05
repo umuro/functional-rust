@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/274-binary-decimal-fold)**
+
+---
+
 # Example 274: Binary ↔ Decimal Fold
 
 **Difficulty:** ⭐⭐

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/606-natural-transformation-rust)**
+
+---
+
 # 606: Natural Transformations in Rust
 
 **Difficulty:** 5  **Level:** Master

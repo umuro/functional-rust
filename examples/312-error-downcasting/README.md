@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/312-error-downcasting)**
+
+---
+
 # 312: Error Downcasting
 
 **Difficulty:** 4  **Level:** Expert

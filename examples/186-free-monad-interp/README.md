@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/186-free-monad-interp)**
+
+---
+
 # Free Monad Interpreter — Separate DSL from Execution
 
 **Category:** Free Monads

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/321-async-basics)**
+
+---
+
 # 321: async fn and .await Fundamentals
 
 **Difficulty:** 3  **Level:** Advanced

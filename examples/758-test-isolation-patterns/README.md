@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/758-test-isolation-patterns)**
+
+---
+
 # 758: Test Isolation: Avoiding Shared Mutable State
 
 **Difficulty:** 3  **Level:** Advanced

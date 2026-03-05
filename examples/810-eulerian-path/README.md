@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/810-eulerian-path)**
+
+---
+
 # 810. Eulerian Path and Circuit (Hierholzer's Algorithm)
 
 **Difficulty:** 4  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/315-result-ok-err-methods)**
+
+---
+
 # 315: Result ok() and err() Methods
 
 **Difficulty:** 2  **Level:** Intermediate

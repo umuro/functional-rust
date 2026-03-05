@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/623-functional-rust-grand-tour)**
+
+---
+
 # 623: Grand Tour — Functional Programming Patterns in Production Rust
 
 **Difficulty:** 5  **Level:** Master

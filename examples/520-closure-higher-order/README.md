@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/520-closure-higher-order)**
+
+---
+
 # 520: Higher-Order Functions
 
 **Difficulty:** 2  **Level:** Beginner-Intermediate

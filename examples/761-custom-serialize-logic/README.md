@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/761-custom-serialize-logic)**
+
+---
+
 # 761: Custom Serialization for Complex Types
 
 **Difficulty:** 3  **Level:** Intermediate

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/062-isogram-check)**
+
+---
+
 # 062 — Isogram Check
 
 **Difficulty:** ⭐ Beginner

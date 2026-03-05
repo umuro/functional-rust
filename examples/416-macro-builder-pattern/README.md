@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/416-macro-builder-pattern)**
+
+---
+
 # 416: Builder Pattern via Macro
 
 **Difficulty:** 4  **Level:** Expert

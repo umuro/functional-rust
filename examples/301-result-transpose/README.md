@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/301-result-transpose)**
+
+---
+
 # 301: Result::transpose() — Flipping Nested Types
 
 **Difficulty:** 2  **Level:** Intermediate

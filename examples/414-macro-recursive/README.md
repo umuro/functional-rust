@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/414-macro-recursive)**
+
+---
+
 # 414: Recursive Macro Patterns
 
 **Difficulty:** 4  **Level:** Expert

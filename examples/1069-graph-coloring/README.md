@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1069-graph-coloring)**
+
+---
+
 # 1069: Graph Coloring
 
 **Difficulty:** Advanced

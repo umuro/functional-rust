@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/522-closure-predicate)**
+
+---
+
 # 522: Predicate Functions Pattern
 
 **Difficulty:** 2  **Level:** Beginner-Intermediate

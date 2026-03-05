@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/555-lifetime-owning-ref)**
+
+---
+
 # 555: Owning References Pattern
 
 **Difficulty:** 4  **Level:** Intermediate-Advanced

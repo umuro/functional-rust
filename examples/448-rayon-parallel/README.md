@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/448-rayon-parallel)**
+
+---
+
 # 448: Rayon Parallel Iterators
 
 **Difficulty:** 3  **Level:** Intermediate

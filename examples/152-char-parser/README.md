@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/152-char-parser)**
+
+---
+
 # 152: Character Parsers
 
 **Difficulty:** ⭐⭐⭐  **Level:** Foundations

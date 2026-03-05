@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/108-rc-shared)**
+
+---
+
 # Example 108: Rc\<T\> — Shared Ownership
 
 **Difficulty:** ⭐⭐

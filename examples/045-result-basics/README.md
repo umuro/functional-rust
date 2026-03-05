@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/045-result-basics)**
+
+---
+
 # Example 045: Result Basics
 
 **Difficulty:** ⭐ Beginner  

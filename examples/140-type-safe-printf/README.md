@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/140-type-safe-printf)**
+
+---
+
 # Type-Safe Printf — Format Strings as Types
 
 **Category:** Type-Level Programming

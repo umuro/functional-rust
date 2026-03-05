@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/180-phantom-safety)**
+
+---
+
 # 180: PhantomData for API Safety
 
 **Difficulty:** ⭐⭐⭐  **Level:** Advanced

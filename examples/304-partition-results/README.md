@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/304-partition-results)**
+
+---
+
 # 304: Splitting Ok/Err with partition()
 
 **Difficulty:** 2  **Level:** Intermediate

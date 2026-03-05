@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/279-pascals-triangle)**
+
+---
+
 # Example 279: Pascal's Triangle — Row Generation
 
 **Difficulty:** ⭐

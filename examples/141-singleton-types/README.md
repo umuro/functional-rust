@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/141-singleton-types)**
+
+---
+
 # Singleton Types — One Value Per Type
 
 **Category:** Type-Level Programming

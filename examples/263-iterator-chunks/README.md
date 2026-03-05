@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/263-iterator-chunks)**
+
+---
+
 # 263: Fixed-Size Chunks Iteration
 
 **Difficulty:** 2  **Level:** Intermediate

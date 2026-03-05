@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1053-coin-change)**
+
+---
+
 # 1053: Coin Change
 
 **Difficulty:** Intermediate

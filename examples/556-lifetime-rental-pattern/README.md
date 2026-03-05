@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/556-lifetime-rental-pattern)**
+
+---
+
 # 556: Rental / Self-Referential Pattern
 
 **Difficulty:** 4  **Level:** Intermediate-Advanced

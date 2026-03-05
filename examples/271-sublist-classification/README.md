@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/271-sublist-classification)**
+
+---
+
 # Example 271: Sublist Classification
 
 **Difficulty:** ⭐⭐  

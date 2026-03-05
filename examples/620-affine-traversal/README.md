@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/620-affine-traversal)**
+
+---
+
 # 620: Affine Traversal (Optional Lens)
 
 **Difficulty:** 5  **Level:** Master

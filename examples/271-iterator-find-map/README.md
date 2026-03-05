@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/271-iterator-find-map)**
+
+---
+
 # 271: Transform-and-Find with find_map()
 
 **Difficulty:** 2  **Level:** Intermediate

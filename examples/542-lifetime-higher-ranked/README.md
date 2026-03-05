@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/542-lifetime-higher-ranked)**
+
+---
+
 # 542: Higher-Ranked Trait Bounds (for<'a>)
 
 **Difficulty:** 5  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/621-profunctor-optics)**
+
+---
+
 # 621: Profunctor Encoding of Optics
 
 **Difficulty:** 5  **Level:** Master

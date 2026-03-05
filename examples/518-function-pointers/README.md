@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/518-function-pointers)**
+
+---
+
 # 518: Function Pointers vs Closures
 
 **Difficulty:** 2  **Level:** Beginner-Intermediate

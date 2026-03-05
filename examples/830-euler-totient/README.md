@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/830-euler-totient)**
+
+---
+
 # 830: Euler's Totient Function φ(n)
 
 **Difficulty:** 4  **Level:** Advanced

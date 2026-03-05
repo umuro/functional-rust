@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/554-lifetime-transmute-safe)**
+
+---
+
 # 554: Safe Transmute with Lifetimes
 
 **Difficulty:** 5  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1080-topological-sort-kahn)**
+
+---
+
 # Example 1080: Topological Sort via Kahn's Algorithm
 
 **Difficulty:** ⭐⭐⭐

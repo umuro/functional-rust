@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/055-list-filter-from-scratch)**
+
+---
+
 # Example 055: List Filter from Scratch
 
 **Difficulty:** ⭐

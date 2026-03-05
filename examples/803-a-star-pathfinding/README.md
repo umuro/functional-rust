@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/803-a-star-pathfinding)**
+
+---
+
 # 803. A* Pathfinding with Manhattan Heuristic
 
 **Difficulty:** 4  **Level:** Advanced

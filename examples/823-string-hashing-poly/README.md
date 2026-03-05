@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/823-string-hashing-poly)**
+
+---
+
 # 823: Polynomial Rolling Hash
 
 **Difficulty:** 3  **Level:** Intermediate

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/783-const-type-arithmetic)**
+
+---
+
 # 783: Type-Level Arithmetic with const Generics
 
 **Difficulty:** 4  **Level:** Advanced

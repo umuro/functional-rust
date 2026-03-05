@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/829-chinese-remainder-theorem)**
+
+---
+
 # 829: Chinese Remainder Theorem
 
 **Difficulty:** 4  **Level:** Advanced

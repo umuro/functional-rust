@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/751-mock-trait-pattern)**
+
+---
+
 # 751: Mocking via Traits: Test Doubles in Rust
 
 **Difficulty:** 3  **Level:** Advanced

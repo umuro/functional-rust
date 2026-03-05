@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/844-greedy-algorithm-patterns)**
+
+---
+
 # 844: Greedy Algorithm Patterns — Activity Selection and Huffman Coding
 
 **Difficulty:** 3  **Level:** Intermediate

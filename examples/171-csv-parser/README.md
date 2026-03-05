@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/171-csv-parser)**
+
+---
+
 # 171: CSV Parser
 
 **Difficulty:** 3  **Level:** Advanced

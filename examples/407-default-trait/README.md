@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/407-default-trait)**
+
+---
+
 # 407: Default Trait and Initialization
 
 **Difficulty:** 1  **Level:** Beginner

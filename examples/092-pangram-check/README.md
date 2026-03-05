@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/092-pangram-check)**
+
+---
+
 # Example 092: Pangram Check
 
 **Difficulty:** ⭐

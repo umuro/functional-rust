@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/002-last-two)**
+
+---
+
 # Example 002: Last Two Elements
 
 **Difficulty:** ⭐  

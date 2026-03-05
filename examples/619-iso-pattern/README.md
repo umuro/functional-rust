@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/619-iso-pattern)**
+
+---
+
 # 619: Isomorphism (Iso)
 
 **Difficulty:** 5  **Level:** Master

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/795-subset-sum-dp)**
+
+---
+
 # 795. Subset Sum (DP with Bitset Optimisation)
 
 **Difficulty:** 4  **Level:** Advanced

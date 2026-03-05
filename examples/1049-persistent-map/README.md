@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1049-persistent-map)**
+
+---
+
 # 1049: Persistent HashMap
 
 **Difficulty:** Advanced

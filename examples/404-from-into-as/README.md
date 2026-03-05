@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/404-from-into-as)**
+
+---
+
 # 404: From, Into, TryFrom, TryInto
 
 **Difficulty:** 2  **Level:** Intermediate

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/328-channel-async)**
+
+---
+
 # 328: Async Channels (mpsc)
 
 **Difficulty:** 3  **Level:** Advanced

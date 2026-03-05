@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/276-parallel-letter-frequency)**
+
+---
+
 # Example 276: Parallel Letter Frequency
 
 **Difficulty:** ⭐⭐

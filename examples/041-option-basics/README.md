@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/041-option-basics)**
+
+---
+
 # Example 041: Option Basics
 
 **Difficulty:** ⭐ Beginner  

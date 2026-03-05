@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/089-bob)**
+
+---
+
 # 089: Bob — String Pattern Matching
 
 **Difficulty:** Beginner

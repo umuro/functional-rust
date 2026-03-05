@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/534-lifetime-impl)**
+
+---
+
 # 534: Lifetimes in impl Blocks
 
 **Difficulty:** 3  **Level:** Intermediate

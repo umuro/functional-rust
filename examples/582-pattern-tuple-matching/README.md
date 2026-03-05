@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/582-pattern-tuple-matching)**
+
+---
+
 # 582: Tuple Pattern Matching
 
 **Difficulty:** 2  **Level:** Beginner

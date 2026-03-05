@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/162-identifier-parser)**
+
+---
+
 # 162: Identifier Parser
 
 **Difficulty:** ⭐⭐⭐  **Level:** Foundations

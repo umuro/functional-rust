@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/568-pattern-at-bindings)**
+
+---
+
 # 568: @ Bindings in Patterns
 
 **Difficulty:** 2  **Level:** Beginner

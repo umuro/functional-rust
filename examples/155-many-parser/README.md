@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/155-many-parser)**
+
+---
+
 # 155: Many Parser
 
 **Difficulty:** ⭐⭐⭐  **Level:** Foundations

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/262-rose-tree-fold)**
+
+---
+
 # Example 262: Rose Tree — Multi-Way Tree with Fold
 
 **Difficulty:** ⭐⭐  

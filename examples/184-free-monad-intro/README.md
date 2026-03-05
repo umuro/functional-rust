@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/184-free-monad-intro)**
+
+---
+
 # 184: Introduction to Free Monads
 
 **Difficulty:** ⭐⭐⭐  **Level:** Advanced

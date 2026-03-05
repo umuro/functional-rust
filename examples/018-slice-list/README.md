@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/018-slice-list)**
+
+---
+
 # Example 018: Slice List
 
 **Difficulty:** ⭐ Beginner  

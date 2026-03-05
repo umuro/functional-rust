@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/254-graph-dfs)**
+
+---
+
 # Example 254: Graph DFS
 
 **Difficulty:** ⭐⭐

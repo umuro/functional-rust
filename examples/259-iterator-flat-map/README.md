@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/259-iterator-flat-map)**
+
+---
+
 # 259: Flattening with flat_map()
 
 **Difficulty:** 2  **Level:** Intermediate

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/056-fold-right)**
+
+---
+
 # Example 056: fold_right — Structural Recursion
 
 **Difficulty:** ⭐⭐

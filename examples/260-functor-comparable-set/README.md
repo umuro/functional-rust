@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/260-functor-comparable-set)**
+
+---
+
 # Example 260: Functor Comparable Set
 
 **Difficulty:** ⭐⭐⭐

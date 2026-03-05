@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/028-sort-by-length)**
+
+---
+
 # Example 028: Sort By Length
 
 **Difficulty:** ⭐ Beginner  

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/128-type-level-bool)**
+
+---
+
 # Example 128: Type-Level Booleans
 
 **Difficulty:** ⭐⭐⭐  

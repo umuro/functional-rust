@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/579-pattern-string-matching)**
+
+---
+
 # 579: String/str Pattern Matching
 
 **Difficulty:** 2  **Level:** Beginner

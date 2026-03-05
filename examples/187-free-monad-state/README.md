@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/187-free-monad-state)**
+
+---
+
 # Free Monad with State — State as a Free Algebra
 
 **Category:** Free Monads

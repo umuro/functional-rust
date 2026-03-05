@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/447-work-stealing)**
+
+---
+
 # 447: Work-Stealing Pattern
 
 **Difficulty:** 3  **Level:** Intermediate

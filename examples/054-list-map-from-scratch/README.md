@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/054-list-map-from-scratch)**
+
+---
+
 # Example 054: List Map from Scratch
 
 **Difficulty:** ⭐

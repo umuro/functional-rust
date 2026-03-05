@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/403-display-debug-traits)**
+
+---
+
 # 403: Display, Debug, and Formatting
 
 **Difficulty:** 2  **Level:** Intermediate

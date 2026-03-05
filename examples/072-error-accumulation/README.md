@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/072-error-accumulation)**
+
+---
+
 # Error Accumulation — Collecting Multiple Errors
 
 **Category:** Error Handling

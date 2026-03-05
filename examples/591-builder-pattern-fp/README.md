@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/591-builder-pattern-fp)**
+
+---
+
 # 591: Builder Pattern (Functional Style)
 
 **Difficulty:** 3  **Level:** Intermediate

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/793-minimum-path-sum)**
+
+---
+
 # 793: Minimum Path Sum in Grid
 
 **Difficulty:** 3  **Level:** Advanced

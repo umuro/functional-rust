@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/595-trampoline-pattern)**
+
+---
+
 # 595: Trampoline Pattern
 
 **Difficulty:** 4  **Level:** Advanced

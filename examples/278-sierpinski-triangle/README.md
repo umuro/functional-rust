@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/278-sierpinski-triangle)**
+
+---
+
 # Example 278: Sierpinski Triangle — Recursive ASCII Art
 
 **Difficulty:** ⭐⭐

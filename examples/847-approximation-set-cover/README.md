@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/847-approximation-set-cover)**
+
+---
+
 # 847: Approximation Algorithms — Greedy Set Cover
 
 **Difficulty:** 4  **Level:** Advanced

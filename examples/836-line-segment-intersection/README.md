@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/836-line-segment-intersection)**
+
+---
+
 # 836: Line Segment Intersection Detection
 
 **Difficulty:** 4  **Level:** Advanced

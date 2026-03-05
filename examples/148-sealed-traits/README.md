@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/148-sealed-traits)**
+
+---
+
 # Sealed Modules — Closed Type Hierarchies
 
 **Category:** Module System

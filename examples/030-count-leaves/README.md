@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/030-count-leaves)**
+
+---
+
 # Example 030: Count Leaves
 
 **Difficulty:** ⭐ Beginner  

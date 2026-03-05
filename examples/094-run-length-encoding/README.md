@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/094-run-length-encoding)**
+
+---
+
 # Example 094: Run-Length Encoding — String Compression
 
 **Difficulty:** ⭐

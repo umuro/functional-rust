@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/275-yacht-dice-scoring)**
+
+---
+
 # Example 275: Yacht Dice Scoring
 
 **Difficulty:** ⭐⭐

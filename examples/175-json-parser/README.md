@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/175-json-parser)**
+
+---
+
 # 175: Complete JSON Parser
 
 **Difficulty:** 3  **Level:** Advanced

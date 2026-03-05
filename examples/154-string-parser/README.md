@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/154-string-parser)**
+
+---
+
 # 154: String Parser
 
 **Difficulty:** ⭐⭐⭐  **Level:** Foundations

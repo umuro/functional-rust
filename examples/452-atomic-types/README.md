@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/452-atomic-types)**
+
+---
+
 # 452: Atomic Types — Lock-Free Operations on Single Values
 
 **Difficulty:** 3  **Level:** Intermediate

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/578-pattern-exhaustiveness)**
+
+---
+
 # 578: Exhaustive Matching with _
 
 **Difficulty:** 2  **Level:** Beginner

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/183-heterogeneous-vec)**
+
+---
+
 # 183: Heterogeneous Vec with Safe Downcast
 
 **Difficulty:** 4  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/272-iterator-flatten)**
+
+---
+
 # 272: One-Level Flattening with flatten()
 
 **Difficulty:** 2  **Level:** Intermediate

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/150-coherence-rules)**
+
+---
+
 # Coherence — One Instance Per Type
 
 **Category:** Module System

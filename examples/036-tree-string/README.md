@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/036-tree-string)**
+
+---
+
 # Example 036: Tree String
 
 **Difficulty:** ⭐ Beginner  

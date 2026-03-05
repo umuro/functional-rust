@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/169-operator-precedence)**
+
+---
+
 # 169: Operator Precedence
 
 **Difficulty:** 3  **Level:** Advanced

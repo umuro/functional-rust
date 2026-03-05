@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/067-lazy-sequences)**
+
+---
+
 # 067 — Lazy Sequences (Seq Module)
 
 **Difficulty:** ⭐⭐ Intermediate

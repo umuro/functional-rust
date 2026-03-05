@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/319-error-in-tests)**
+
+---
+
 # 319: Error Handling in Tests
 
 **Difficulty:** 1  **Level:** Beginner

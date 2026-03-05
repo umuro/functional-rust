@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/765-csv-parsing-pattern)**
+
+---
+
 # 765: CSV Parsing Without External Crates
 
 **Difficulty:** 3  **Level:** Intermediate

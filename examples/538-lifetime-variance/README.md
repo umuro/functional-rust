@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/538-lifetime-variance)**
+
+---
+
 # 538: Variance — Covariant, Contravariant, Invariant
 
 **Difficulty:** 5  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/270-iterator-position)**
+
+---
+
 # 270: Finding Index with position()
 
 **Difficulty:** 1  **Level:** Beginner

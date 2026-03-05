@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/185-free-monad-dsl)**
+
+---
+
 # 185: Free Monad DSL
 
 **Difficulty:** Expert  **Level:** 4

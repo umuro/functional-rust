@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/362-trie-structure)**
+
+---
+
 # 362: Trie — Prefix Tree for String Lookups
 
 **Difficulty:** 3  **Level:** Advanced

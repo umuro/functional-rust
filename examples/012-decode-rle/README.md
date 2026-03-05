@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/012-decode-rle)**
+
+---
+
 # Example 012: Decode Run-Length Encoding
 
 **Difficulty:** ⭐⭐

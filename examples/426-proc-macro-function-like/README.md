@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/426-proc-macro-function-like)**
+
+---
+
 # 426: Function-like Proc Macros
 
 **Difficulty:** 4  **Level:** Expert

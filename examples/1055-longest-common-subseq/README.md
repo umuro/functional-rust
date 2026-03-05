@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1055-longest-common-subseq)**
+
+---
+
 # 1055: Longest Common Subsequence
 
 **Difficulty:** Intermediate

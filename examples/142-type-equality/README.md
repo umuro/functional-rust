@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/142-type-equality)**
+
+---
+
 # Type Equality — Leibniz Equality and Refl
 
 **Category:** Type-Level Programming

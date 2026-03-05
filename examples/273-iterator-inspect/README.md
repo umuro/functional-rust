@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/273-iterator-inspect)**
+
+---
+
 # 273: Iterator inspect()
 
 **Difficulty:** 1  **Level:** Beginner

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/026-combinations)**
+
+---
+
 # Example 026: Combinations
 
 **Difficulty:** ⭐ Beginner  

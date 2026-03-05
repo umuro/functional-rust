@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/168-expression-parser)**
+
+---
+
 # 168: Expression Parser
 
 **Difficulty:** 3  **Level:** Advanced

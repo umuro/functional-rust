@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/548-lifetime-named-return)**
+
+---
+
 # 548: Named Lifetime in Return Types
 
 **Difficulty:** 3  **Level:** Intermediate

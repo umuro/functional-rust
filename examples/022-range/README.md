@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/022-range)**
+
+---
+
 # Example 022: Range
 
 **Difficulty:** ⭐ Beginner  

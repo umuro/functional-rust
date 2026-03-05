@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/226-category-basics)**
+
+---
+
 # 226: Category Theory Basics
 
 **Difficulty:** Expert  **Level:** 4

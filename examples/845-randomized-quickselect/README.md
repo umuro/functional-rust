@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/845-randomized-quickselect)**
+
+---
+
 # 845: Randomized Quickselect
 
 **Difficulty:** 3  **Level:** Intermediate

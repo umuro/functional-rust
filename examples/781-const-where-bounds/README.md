@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/781-const-where-bounds)**
+
+---
+
 # 781: Where Bounds on const Generic Parameters
 
 **Difficulty:** 4  **Level:** Advanced

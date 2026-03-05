@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/078-topological-sort)**
+
+---
+
 # 078: Topological Sort — DAG Ordering
 
 **Difficulty:** Advanced

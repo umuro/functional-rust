@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/202-lens-basics)**
+
+---
+
 # 202: Lens Basics — View, Set, and Over
 
 **Difficulty:** ⭐⭐⭐  **Level:** Intermediate

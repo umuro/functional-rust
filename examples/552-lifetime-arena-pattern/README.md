@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/552-lifetime-arena-pattern)**
+
+---
+
 # 552: Arena with Lifetimes
 
 **Difficulty:** 4  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/747-test-fixtures)**
+
+---
+
 # 747: Test Fixtures: Setup/Teardown, Shared State
 
 **Difficulty:** 2  **Level:** Intermediate

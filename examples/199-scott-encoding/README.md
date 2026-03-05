@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/199-scott-encoding)**
+
+---
+
 # Scott Encoding — Pattern Matching as Functions
 
 **Category:** Lambda Calculus

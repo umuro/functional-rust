@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/369-cow-clone-on-write)**
+
+---
+
 # 369: Clone-on-Write (Cow) Pattern
 
 **Difficulty:** 3  **Level:** Advanced

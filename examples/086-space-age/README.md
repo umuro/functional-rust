@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/086-space-age)**
+
+---
+
 # 086: Space Age — Float Computation
 
 **Difficulty:** Beginner

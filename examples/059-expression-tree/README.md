@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/059-expression-tree)**
+
+---
+
 # Example 059: Recursive Variant — Expression Tree
 
 **Difficulty:** ⭐⭐

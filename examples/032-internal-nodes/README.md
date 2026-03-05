@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/032-internal-nodes)**
+
+---
+
 # Example 032: Internal Nodes
 
 **Difficulty:** ⭐ Beginner  

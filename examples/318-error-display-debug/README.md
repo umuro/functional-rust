@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/318-error-display-debug)**
+
+---
+
 # 318: Display vs Debug for Errors
 
 **Difficulty:** 2  **Level:** Intermediate

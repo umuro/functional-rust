@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1064-permutations)**
+
+---
+
 # 1064: Permutations
 
 **Difficulty:** Intermediate

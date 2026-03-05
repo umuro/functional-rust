@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/177-gadt-expr)**
+
+---
+
 # 177: GADT Typed Expression Evaluator
 
 **Difficulty:** ⭐⭐⭐  **Level:** Advanced

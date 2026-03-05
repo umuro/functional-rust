@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/521-closure-map-reduce)**
+
+---
+
 # 521: Map-Reduce with Closures
 
 **Difficulty:** 2  **Level:** Beginner-Intermediate

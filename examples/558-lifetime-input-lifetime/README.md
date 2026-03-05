@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/558-lifetime-input-lifetime)**
+
+---
+
 # 558: Input Lifetimes Guide
 
 **Difficulty:** 4  **Level:** Intermediate-Advanced

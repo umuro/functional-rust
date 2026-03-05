@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/843-memoization-generic)**
+
+---
+
 # 843: Generic Memoization with HashMap Cache
 
 **Difficulty:** 3  **Level:** Intermediate

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1076-y-combinator)**
+
+---
+
 # Example 1076: Y Combinator — Anonymous Recursion
 
 **Difficulty:** ⭐⭐⭐

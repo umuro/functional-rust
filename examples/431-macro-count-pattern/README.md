@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/431-macro-count-pattern)**
+
+---
+
 # 431: Counting Elements at Compile Time
 
 **Difficulty:** 3  **Level:** Advanced

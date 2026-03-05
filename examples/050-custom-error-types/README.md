@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/050-custom-error-types)**
+
+---
+
 # Example 050: Custom Error Types
 
 **Difficulty:** ⭐ Beginner  

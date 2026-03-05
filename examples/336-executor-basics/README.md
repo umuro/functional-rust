@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/336-executor-basics)**
+
+---
+
 # 336: Executor Basics
 
 **Difficulty:** 5  **Level:** Master

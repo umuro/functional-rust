@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/541-lifetime-elision)**
+
+---
+
 # 541: Lifetime Elision Rules
 
 **Difficulty:** 3  **Level:** Intermediate

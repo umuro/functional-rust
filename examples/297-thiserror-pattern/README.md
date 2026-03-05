@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/297-thiserror-pattern)**
+
+---
+
 # 297: The thiserror Pattern
 
 **Difficulty:** 3  **Level:** Advanced

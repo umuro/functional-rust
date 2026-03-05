@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/070-hamming-distance)**
+
+---
+
 # Example 070: Hamming Distance
 
 **Difficulty:** ⭐

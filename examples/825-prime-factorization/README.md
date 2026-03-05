@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/825-prime-factorization)**
+
+---
+
 # 825: Prime Factorization
 
 **Difficulty:** 4  **Level:** Advanced

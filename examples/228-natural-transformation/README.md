@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/228-natural-transformation)**
+
+---
+
 # Example 228: Natural Transformations
 
 **Difficulty:** ⭐⭐⭐

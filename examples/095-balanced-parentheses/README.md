@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/095-balanced-parentheses)**
+
+---
+
 # Example 095: Balanced Parentheses
 
 **Difficulty:** ⭐

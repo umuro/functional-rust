@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/745-integration-test-setup)**
+
+---
+
 # 745: Integration Test Structure: tests/ Directory
 
 **Difficulty:** 2  **Level:** Intermediate

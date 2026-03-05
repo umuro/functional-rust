@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/231-product-types)**
+
+---
+
 # Example 231: Product Types
 
 **Difficulty:** ⭐⭐

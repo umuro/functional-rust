@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/436-macro-newtype-derive)**
+
+---
+
 # 436: Deriving Traits for Newtypes
 
 **Difficulty:** 3  **Level:** Advanced

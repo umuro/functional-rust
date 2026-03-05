@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/560-lifetime-cheatsheet)**
+
+---
+
 # 560: Lifetime Annotation Cheatsheet
 
 **Difficulty:** 3  **Level:** Intermediate

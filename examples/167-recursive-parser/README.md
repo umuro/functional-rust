@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/167-recursive-parser)**
+
+---
+
 # 167: Recursive Parser
 
 **Difficulty:** 3  **Level:** Advanced

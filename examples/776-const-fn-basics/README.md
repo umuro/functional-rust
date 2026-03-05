@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/776-const-fn-basics)**
+
+---
+
 # 776: const fn: Compile-Time Computation
 
 **Difficulty:** 3  **Level:** Intermediate

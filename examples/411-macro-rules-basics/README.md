@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/411-macro-rules-basics)**
+
+---
+
 # 411: macro_rules! Declarative Macros
 
 **Difficulty:** 3  **Level:** Advanced

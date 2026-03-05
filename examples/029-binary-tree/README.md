@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/029-binary-tree)**
+
+---
+
 # Example 029: Binary Tree
 
 **Difficulty:** ⭐ Beginner  

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/757-golden-file-tests)**
+
+---
+
 # 757: Golden File Testing Pattern
 
 **Difficulty:** 2  **Level:** Intermediate

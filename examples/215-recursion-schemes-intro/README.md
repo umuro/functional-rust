@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/215-recursion-schemes-intro)**
+
+---
+
 # Example 215: Recursion Schemes — Separating What From How
 
 **Difficulty:** ⭐⭐⭐

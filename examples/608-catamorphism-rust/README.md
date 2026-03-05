@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/608-catamorphism-rust)**
+
+---
+
 # 608: Catamorphism (Fold) Generalized
 
 **Difficulty:** 5  **Level:** Master

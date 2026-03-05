@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/288-iterator-collect-into)**
+
+---
+
 # 288: Iterator collect()
 
 **Difficulty:** 2  **Level:** Intermediate

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/015-replicate-n-times)**
+
+---
+
 # Example 015: Replicate Elements N Times
 
 **Difficulty:** ⭐

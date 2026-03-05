@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/302-option-transpose)**
+
+---
+
 # 302: Option::transpose() — Collecting Optional Results
 
 **Difficulty:** 2  **Level:** Intermediate

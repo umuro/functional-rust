@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/257-state-machine-turnstile)**
+
+---
+
 # Example 257: State Machine — Turnstile
 
 **Difficulty:** ⭐⭐

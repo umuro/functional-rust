@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/361-rope-data-structure)**
+
+---
+
 # 361: Rope for Efficient String Operations
 
 **Difficulty:** 4  **Level:** Expert

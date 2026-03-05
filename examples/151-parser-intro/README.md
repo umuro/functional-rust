@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/151-parser-intro)**
+
+---
+
 # 151: Introduction to Parser Combinators
 
 **Difficulty:** ⭐⭐⭐  **Level:** Foundations

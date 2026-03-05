@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/031-collect-leaves)**
+
+---
+
 # Example 031: Collect Leaves
 
 **Difficulty:** ⭐ Beginner  

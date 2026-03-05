@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/524-closure-builder-closures)**
+
+---
+
 # 524: Builder Pattern with Closures
 
 **Difficulty:** 3  **Level:** Intermediate

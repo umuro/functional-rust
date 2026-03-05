@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/066-phantom-types)**
+
+---
+
 # 066 — Phantom Types
 
 **Difficulty:** ⭐⭐⭐ Advanced

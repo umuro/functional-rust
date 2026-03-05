@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/020-remove-kth)**
+
+---
+
 # Example 020: Remove Kth
 
 **Difficulty:** ⭐ Beginner  

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/563-pattern-struct-destructuring)**
+
+---
+
 # 563: Struct Destructuring
 
 **Difficulty:** 2  **Level:** Beginner

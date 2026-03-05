@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/535-lifetime-enum)**
+
+---
+
 # 535: Lifetimes in Enums
 
 **Difficulty:** 3  **Level:** Intermediate

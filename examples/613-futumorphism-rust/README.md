@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/613-futumorphism-rust)**
+
+---
+
 # 613: Futumorphism
 
 **Difficulty:** 5  **Level:** Master

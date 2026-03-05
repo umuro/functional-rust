@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/750-snapshot-testing)**
+
+---
+
 # 750: Snapshot Testing: Expect Files Pattern
 
 **Difficulty:** 2  **Level:** Intermediate

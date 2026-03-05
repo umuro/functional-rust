@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/145-gat-collections)**
+
+---
+
 # GADTs for Collections — Length-Indexed Vectors
 
 **Category:** GADTs

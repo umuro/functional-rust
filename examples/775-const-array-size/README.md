@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/775-const-array-size)**
+
+---
+
 # 775: Fixed-Size Arrays with const N Parameter
 
 **Difficulty:** 3  **Level:** Intermediate

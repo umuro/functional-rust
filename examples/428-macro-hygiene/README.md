@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/428-macro-hygiene)**
+
+---
+
 # 428: Macro Hygiene Rules
 
 **Difficulty:** 3  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/263-avl-tree)**
+
+---
+
 # Example 263: AVL Tree — Self-Balancing BST
 
 **Difficulty:** ⭐⭐⭐  

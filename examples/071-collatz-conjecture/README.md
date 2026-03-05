@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/071-collatz-conjecture)**
+
+---
+
 # Example 071: Collatz Conjecture
 
 **Difficulty:** ⭐

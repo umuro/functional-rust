@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/179-gadt-safety)**
+
+---
+
 # 179: GADT Preventing Runtime Errors
 
 **Difficulty:** ⭐⭐⭐  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1054-knapsack-01)**
+
+---
+
 # 1054: 0/1 Knapsack
 
 **Difficulty:** Intermediate

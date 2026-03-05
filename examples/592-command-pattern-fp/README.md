@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/592-command-pattern-fp)**
+
+---
+
 # 592: Command Pattern as Data
 
 **Difficulty:** 3  **Level:** Intermediate

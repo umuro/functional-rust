@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/576-pattern-matches-macro)**
+
+---
+
 # 576: `matches!` Macro
 
 **Difficulty:** 2  **Level:** Beginner

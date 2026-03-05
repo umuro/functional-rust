@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/596-church-encoding-rust)**
+
+---
+
 # 596: Church Encoding in Rust
 
 **Difficulty:** 4  **Level:** Advanced

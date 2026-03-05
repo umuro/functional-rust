@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/003-kth-element)**
+
+---
+
 # Example 003: K-th Element
 
 **Difficulty:** ⭐  

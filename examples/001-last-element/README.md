@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/001-last-element)**
+
+---
+
 # 001 — Last Element of a List
 
 **Difficulty**: ⭐

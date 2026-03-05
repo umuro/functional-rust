@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/801-prims-mst)**
+
+---
+
 # 801. Prim's Algorithm: Minimum Spanning Tree
 
 **Difficulty:** 4  **Level:** Advanced

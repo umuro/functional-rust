@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/439-macro-assert-variants)**
+
+---
+
 # 439: assert_matches! and Variant Assertions
 
 **Difficulty:** 2  **Level:** Intermediate

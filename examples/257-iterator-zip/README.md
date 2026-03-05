@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/257-iterator-zip)**
+
+---
+
 # 257: Pairing Elements with zip()
 
 **Difficulty:** 1  **Level:** Beginner

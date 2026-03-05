@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/543-lifetime-trait-objects)**
+
+---
+
 # 543: Lifetimes in dyn Trait
 
 **Difficulty:** 4  **Level:** Advanced

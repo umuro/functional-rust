@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/101-lazy-sequences)**
+
+---
+
 # Example 101: Lazy Sequences
 
 **Difficulty:** ⭐⭐

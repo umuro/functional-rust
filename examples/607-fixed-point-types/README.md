@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/607-fixed-point-types)**
+
+---
+
 # 607: Fixed-Point Types and Recursion Schemes
 
 **Difficulty:** 5  **Level:** Master

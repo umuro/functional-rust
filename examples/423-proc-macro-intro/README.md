@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/423-proc-macro-intro)**
+
+---
+
 # 423: Procedural Macros Overview
 
 **Difficulty:** 4  **Level:** Expert

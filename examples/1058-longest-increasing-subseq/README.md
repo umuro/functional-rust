@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1058-longest-increasing-subseq)**
+
+---
+
 # 1058: Longest Increasing Subsequence
 
 **Difficulty:** Intermediate-Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/222-histomorphism)**
+
+---
+
 # 222: Histomorphism
 
 **Difficulty:** ⭐⭐⭐  **Level:** Recursion Schemes

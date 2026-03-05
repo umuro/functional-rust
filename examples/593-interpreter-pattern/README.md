@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/593-interpreter-pattern)**
+
+---
+
 # 593: Interpreter Pattern
 
 **Difficulty:** 3  **Level:** Intermediate

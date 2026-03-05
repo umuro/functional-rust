@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/100-phantom-types)**
+
+---
+
 # Example 100: Phantom Types — Type-Safe Units
 
 **Difficulty:** ⭐⭐⭐

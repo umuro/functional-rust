@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/173-lisp-parser)**
+
+---
+
 # 173: Lisp / S-expression Parser
 
 **Difficulty:** 3  **Level:** Advanced

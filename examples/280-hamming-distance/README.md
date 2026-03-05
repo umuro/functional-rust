@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/280-hamming-distance)**
+
+---
+
 # Example 280: Hamming Distance — Generic Zip
 
 **Difficulty:** ⭐

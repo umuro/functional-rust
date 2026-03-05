@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/604-monad-laws-rust)**
+
+---
+
 # 604: Monad Laws — Rust Deep Dive
 
 **Difficulty:** 5  **Level:** Master

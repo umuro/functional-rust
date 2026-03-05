@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/052-function-composition)**
+
+---
+
 # Example 052: Function Composition
 
 **Difficulty:** ⭐

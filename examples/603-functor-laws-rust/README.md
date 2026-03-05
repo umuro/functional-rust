@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/603-functor-laws-rust)**
+
+---
+
 # 603: Functor Laws in Practice
 
 **Difficulty:** 5  **Level:** Master

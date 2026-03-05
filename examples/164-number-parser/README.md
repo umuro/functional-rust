@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/164-number-parser)**
+
+---
+
 # 164: Number Parser
 
 **Difficulty:** 3  **Level:** Advanced

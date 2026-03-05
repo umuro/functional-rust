@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/821-trie-autocomplete)**
+
+---
+
 # 821: Trie for Autocomplete and Prefix Search
 
 **Difficulty:** 3  **Level:** Intermediate

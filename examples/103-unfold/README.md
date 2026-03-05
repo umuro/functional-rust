@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/103-unfold)**
+
+---
+
 # Example 103: Unfold — Generating Sequences from Seeds
 
 **Difficulty:** ⭐⭐

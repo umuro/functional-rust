@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/589-pattern-command-dispatch)**
+
+---
+
 # 589: Command Dispatch with Enums
 
 **Difficulty:** 3  **Level:** Intermediate

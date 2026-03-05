@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/341-mpsc-channel)**
+
+---
+
 # 341: MPSC Channel
 
 **Difficulty:** 3  **Level:** Advanced

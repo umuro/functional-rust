@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1061-word-break)**
+
+---
+
 # 1061: Word Break
 
 **Difficulty:** Intermediate

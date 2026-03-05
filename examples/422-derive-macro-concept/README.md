@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/422-derive-macro-concept)**
+
+---
+
 # 422: Derive Macros: Concept and Usage
 
 **Difficulty:** 3  **Level:** Advanced

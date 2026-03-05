@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/174-arithmetic-parser)**
+
+---
+
 # 174: Arithmetic Expression Evaluator
 
 **Difficulty:** 3  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/769-streaming-parser-pattern)**
+
+---
+
 # 769: Streaming Parser for Large Inputs
 
 **Difficulty:** 4  **Level:** Advanced

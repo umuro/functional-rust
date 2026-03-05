@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/040-dotstring-parse)**
+
+---
+
 # Example 040: Dotstring Parse
 
 **Difficulty:** ⭐ Beginner  

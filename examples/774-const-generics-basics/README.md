@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/774-const-generics-basics)**
+
+---
+
 # 774: Const Generics: fn<const N: usize> Fundamentals
 
 **Difficulty:** 3  **Level:** Intermediate

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/590-pattern-advanced-enums)**
+
+---
+
 # 590: Advanced Enum Pattern Cookbook
 
 **Difficulty:** 3  **Level:** Intermediate

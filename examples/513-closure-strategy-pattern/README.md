@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/513-closure-strategy-pattern)**
+
+---
+
 # 513: Strategy Pattern via Closures
 
 **Difficulty:** 3  **Level:** Intermediate

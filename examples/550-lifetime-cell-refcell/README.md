@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/550-lifetime-cell-refcell)**
+
+---
+
 # 550: Interior Mutability — Cell and RefCell
 
 **Difficulty:** 3  **Level:** Intermediate

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/562-pattern-guards)**
+
+---
+
 # 562: Match Guards with if Conditions
 
 **Difficulty:** 2  **Level:** Beginner

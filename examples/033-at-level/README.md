@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/033-at-level)**
+
+---
+
 # Example 033: At Level
 
 **Difficulty:** ⭐ Beginner  

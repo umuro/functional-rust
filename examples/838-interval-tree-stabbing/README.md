@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/838-interval-tree-stabbing)**
+
+---
+
 # 838: Interval Tree for Stabbing Queries
 
 **Difficulty:** 4  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/812-graph-coloring)**
+
+---
+
 # 812. Graph m-Colouring with Backtracking
 
 **Difficulty:** 5  **Level:** Master

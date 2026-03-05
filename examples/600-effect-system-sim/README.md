@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/600-effect-system-sim)**
+
+---
+
 # 600: Simulating Algebraic Effects
 
 **Difficulty:** 4  **Level:** Advanced

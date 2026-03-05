@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/075-difference-list)**
+
+---
+
 # 075 — Difference List
 
 **Difficulty:** ⭐⭐ Intermediate

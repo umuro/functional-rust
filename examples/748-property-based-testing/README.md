@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/748-property-based-testing)**
+
+---
+
 # 748: Property-Based Testing (proptest Pattern)
 
 **Difficulty:** 3  **Level:** Advanced

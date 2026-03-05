@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/833-discrete-log-bsgs)**
+
+---
+
 # 833: Discrete Logarithm — Baby-Step Giant-Step
 
 **Difficulty:** 5  **Level:** Master

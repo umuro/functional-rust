@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/572-pattern-ref-patterns)**
+
+---
+
 # 572: ref Patterns and &
 
 **Difficulty:** 2  **Level:** Beginner

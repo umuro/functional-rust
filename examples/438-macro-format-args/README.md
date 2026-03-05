@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/438-macro-format-args)**
+
+---
+
 # 438: format_args! for Zero-Alloc Formatting
 
 **Difficulty:** 3  **Level:** Advanced

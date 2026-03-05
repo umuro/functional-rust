@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/443-arc-mutex-pattern)**
+
+---
+
 # 443: Arc<Mutex<T>> — Shared Mutable State Across Threads
 
 **Difficulty:** 3  **Level:** Intermediate

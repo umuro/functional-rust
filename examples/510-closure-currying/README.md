@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/510-closure-currying)**
+
+---
+
 # 510: Currying Pattern in Rust
 
 **Difficulty:** 3  **Level:** Intermediate

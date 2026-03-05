@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/794-word-break-dp)**
+
+---
+
 # 794. Word Break (Dictionary DP)
 
 **Difficulty:** 3  **Level:** Advanced

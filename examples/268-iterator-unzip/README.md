@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/268-iterator-unzip)**
+
+---
+
 # 268: Splitting Pairs with unzip()
 
 **Difficulty:** 2  **Level:** Intermediate

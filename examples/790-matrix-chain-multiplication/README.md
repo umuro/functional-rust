@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/790-matrix-chain-multiplication)**
+
+---
+
 # 790: Matrix Chain Multiplication
 
 **Difficulty:** 4  **Level:** Advanced

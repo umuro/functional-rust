@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/772-parser-combinator-pattern)**
+
+---
+
 # 772: Parser Combinator Pattern (nom-Style)
 
 **Difficulty:** 4  **Level:** Advanced

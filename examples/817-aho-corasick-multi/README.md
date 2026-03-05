@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/817-aho-corasick-multi)**
+
+---
+
 # 817: Aho-Corasick Multi-Pattern Matching Automaton
 
 **Difficulty:** 5  **Level:** Master

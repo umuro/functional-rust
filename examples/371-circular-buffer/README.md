@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/371-circular-buffer)**
+
+---
+
 # 371: Circular Buffer / Ring Buffer
 
 **Difficulty:** 3  **Level:** Advanced

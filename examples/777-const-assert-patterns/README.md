@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/777-const-assert-patterns)**
+
+---
+
 # 777: Compile-Time Assertions with const
 
 **Difficulty:** 3  **Level:** Intermediate

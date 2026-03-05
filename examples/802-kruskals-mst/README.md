@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/802-kruskals-mst)**
+
+---
+
 # 802. Kruskal's MST with Union-Find
 
 **Difficulty:** 4  **Level:** Advanced

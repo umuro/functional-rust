@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/027-group-by-size)**
+
+---
+
 # Example 027: Group By Size
 
 **Difficulty:** ⭐ Beginner  

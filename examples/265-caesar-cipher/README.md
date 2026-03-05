@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/265-caesar-cipher)**
+
+---
+
 # Example 265: Caesar Cipher — Functional Encryption
 
 **Difficulty:** ⭐  

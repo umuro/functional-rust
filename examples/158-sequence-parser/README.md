@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/158-sequence-parser)**
+
+---
+
 # 158: Sequence Parser
 
 **Difficulty:** ⭐⭐⭐  **Level:** Foundations

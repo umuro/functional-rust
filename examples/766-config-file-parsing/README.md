@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/766-config-file-parsing)**
+
+---
+
 # 766: Config File Parsing (INI/TOML-Like)
 
 **Difficulty:** 3  **Level:** Intermediate

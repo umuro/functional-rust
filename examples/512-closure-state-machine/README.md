@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/512-closure-state-machine)**
+
+---
+
 # 512: Closures as State Machine Transitions
 
 **Difficulty:** 3  **Level:** Intermediate

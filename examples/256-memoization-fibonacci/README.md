@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/256-memoization-fibonacci)**
+
+---
+
 # Example 256: Memoization — Fibonacci with Hashtable Cache
 
 **Difficulty:** ⭐⭐

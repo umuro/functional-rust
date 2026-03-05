@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1063-sudoku-solver)**
+
+---
+
 # 1063: Sudoku Solver
 
 **Difficulty:** Advanced

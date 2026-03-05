@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/370-small-vec-pattern)**
+
+---
+
 # 370: SmallVec Pattern
 
 **Difficulty:** 3  **Level:** Advanced

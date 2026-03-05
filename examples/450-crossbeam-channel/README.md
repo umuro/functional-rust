@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/450-crossbeam-channel)**
+
+---
+
 # 450: Crossbeam Channels
 
 **Difficulty:** 3  **Level:** Intermediate

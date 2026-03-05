@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/156-optional-parser)**
+
+---
+
 # 156: Optional Parser
 
 **Difficulty:** ⭐⭐⭐  **Level:** Foundations

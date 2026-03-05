@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/311-multiple-error-types)**
+
+---
+
 # 311: Handling Multiple Error Types
 
 **Difficulty:** 3  **Level:** Advanced

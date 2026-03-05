@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/526-closure-pipe-operator)**
+
+---
+
 # 526: Pipe Operator Simulation
 
 **Difficulty:** 2  **Level:** Beginner-Intermediate

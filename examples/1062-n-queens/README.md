@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1062-n-queens)**
+
+---
+
 # 1062: N-Queens
 
 **Difficulty:** Advanced

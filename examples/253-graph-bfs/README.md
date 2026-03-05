@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/253-graph-bfs)**
+
+---
+
 # Example 253: Graph BFS
 
 **Difficulty:** ⭐⭐

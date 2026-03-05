@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/046-result-map)**
+
+---
+
 # Example 046: Result Map
 
 **Difficulty:** ⭐ Beginner  

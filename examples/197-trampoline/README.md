@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/197-trampoline)**
+
+---
+
 # Trampoline — Heap-Based Tail Call Optimization
 
 **Category:** Recursion

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/442-thread-scoped)**
+
+---
+
 # 442: Scoped Threads — Borrow Stack Data Across Threads
 
 **Difficulty:** 3  **Level:** Intermediate

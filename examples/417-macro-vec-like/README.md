@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/417-macro-vec-like)**
+
+---
+
 # 417: Implementing vec!-like Macros
 
 **Difficulty:** 3  **Level:** Advanced

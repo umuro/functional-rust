@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/200-tagless-final)**
+
+---
+
 # Example 200: Tagless Final
 
 **Difficulty:** ⭐⭐⭐

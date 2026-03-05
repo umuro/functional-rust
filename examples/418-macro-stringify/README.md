@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/418-macro-stringify)**
+
+---
+
 # 418: stringify! and concat!
 
 **Difficulty:** 2  **Level:** Intermediate

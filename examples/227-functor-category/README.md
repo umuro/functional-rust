@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/227-functor-category)**
+
+---
+
 # Example 227: Functor Category — Functors as Objects, Natural Transformations as Morphisms
 
 **Difficulty:** ⭐⭐⭐

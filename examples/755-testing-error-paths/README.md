@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/755-testing-error-paths)**
+
+---
+
 # 755: Testing Error Cases and Unwrap Discipline
 
 **Difficulty:** 2  **Level:** Intermediate

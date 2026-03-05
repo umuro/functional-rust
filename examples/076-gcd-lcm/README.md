@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/076-gcd-lcm)**
+
+---
+
 # 076: GCD and LCM — Euclidean Algorithm
 
 **Difficulty:** Beginner

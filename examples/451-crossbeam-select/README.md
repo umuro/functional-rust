@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/451-crossbeam-select)**
+
+---
+
 # 451: Crossbeam select!
 
 **Difficulty:** 3  **Level:** Intermediate

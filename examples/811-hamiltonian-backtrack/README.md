@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/811-hamiltonian-backtrack)**
+
+---
+
 # 811: Hamiltonian Cycle via Backtracking
 
 **Difficulty:** 5  **Level:** Master

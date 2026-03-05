@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/406-hash-eq-ord-traits)**
+
+---
+
 # 406: Hash, Eq, and Ord Traits
 
 **Difficulty:** 2  **Level:** Intermediate

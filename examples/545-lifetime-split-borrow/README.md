@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/545-lifetime-split-borrow)**
+
+---
+
 # 545: Split Borrows from Structs
 
 **Difficulty:** 4  **Level:** Advanced

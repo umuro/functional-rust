@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1057-matrix-chain)**
+
+---
+
 # 1057: Matrix Chain Multiplication
 
 **Difficulty:** Advanced

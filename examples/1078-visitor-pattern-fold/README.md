@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1078-visitor-pattern-fold)**
+
+---
+
 # Example 1078: Visitor Pattern via Fold — Expression Evaluator
 
 **Difficulty:** ⭐⭐

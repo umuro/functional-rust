@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/1073-burst-balloons)**
+
+---
+
 # 1073: Burst Balloons
 
 **Difficulty:** Advanced

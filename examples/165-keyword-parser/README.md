@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/165-keyword-parser)**
+
+---
+
 # 165: Keyword Parser
 
 **Difficulty:** 3  **Level:** Advanced

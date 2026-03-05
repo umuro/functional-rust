@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/017-split-list)**
+
+---
+
 # Example 017: Split List
 
 **Difficulty:** ⭐ Beginner  

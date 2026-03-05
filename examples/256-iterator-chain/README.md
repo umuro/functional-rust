@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/256-iterator-chain)**
+
+---
+
 # 256: Chaining Iterators with chain()
 
 **Difficulty:** 1  **Level:** Beginner

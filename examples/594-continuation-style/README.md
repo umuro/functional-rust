@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/594-continuation-style)**
+
+---
+
 # 594: Continuation-Passing Style (CPS)
 
 **Difficulty:** 4  **Level:** Advanced

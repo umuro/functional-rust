@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/204-lens-composition)**
+
+---
+
 # Example 204: Lens Composition — Zoom Into Nested Structs
 
 **Difficulty:** ⭐⭐⭐

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/082-nucleotide-count)**
+
+---
+
 # 082: Nucleotide Count — Bioinformatics
 
 **Difficulty:** Beginner

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/201-lens-intro)**
+
+---
+
 # 201: The Nested Update Problem — Why Lenses Exist
 
 **Difficulty:** ⭐⭐⭐  **Level:** Intermediate

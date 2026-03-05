@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/614-histomorphism-rust)**
+
+---
+
 # 614: Histomorphism
 
 **Difficulty:** 5  **Level:** Master

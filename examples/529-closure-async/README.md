@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/529-closure-async)**
+
+---
+
 # 529: Async Closures
 
 **Difficulty:** 4  **Level:** Advanced

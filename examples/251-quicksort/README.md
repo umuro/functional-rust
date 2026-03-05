@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/251-quicksort)**
+
+---
+
 # Example 251: Quicksort
 
 **Difficulty:** ⭐⭐

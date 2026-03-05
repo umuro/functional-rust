@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/779-const-lookup-table)**
+
+---
+
 # 779: Compile-Time Lookup Tables with const Arrays
 
 **Difficulty:** 3  **Level:** Intermediate

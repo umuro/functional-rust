@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/511-closure-recursive)**
+
+---
+
 # 511: Recursive Closures (Y Combinator)
 
 **Difficulty:** 5  **Level:** Advanced

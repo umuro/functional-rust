@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/313-try-trait)**
+
+---
+
 # 313: The Try Trait — What ? Actually Does
 
 **Difficulty:** 4  **Level:** Expert

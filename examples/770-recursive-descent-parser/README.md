@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/770-recursive-descent-parser)**
+
+---
+
 # 770: Recursive Descent Parser from Scratch
 
 **Difficulty:** 4  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/580-pattern-option-some-none)**
+
+---
+
 # 580: Option Matching Idioms
 
 **Difficulty:** 2  **Level:** Beginner

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/330-async-sink)**
+
+---
+
 # 330: Async Sink
 
 **Difficulty:** 4  **Level:** Expert

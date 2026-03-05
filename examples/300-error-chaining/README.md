@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/300-error-chaining)**
+
+---
+
 # 300: Chaining Errors with source()
 
 **Difficulty:** 3  **Level:** Advanced

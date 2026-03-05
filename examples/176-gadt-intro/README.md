@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/176-gadt-intro)**
+
+---
+
 # 176: Introduction to GADTs
 
 **Difficulty:** ⭐⭐⭐  **Level:** Advanced

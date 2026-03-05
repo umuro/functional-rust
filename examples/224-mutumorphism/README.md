@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/224-mutumorphism)**
+
+---
+
 # 224: Mutumorphism
 
 **Difficulty:** 5  **Level:** Expert

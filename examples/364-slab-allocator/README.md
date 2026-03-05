@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/364-slab-allocator)**
+
+---
+
 # 364: Slab Pattern for Indexed Storage
 
 **Difficulty:** 3  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/405-iterator-trait-deep)**
+
+---
+
 # 405: Iterator Adapters and Combinators
 
 **Difficulty:** 2  **Level:** Intermediate

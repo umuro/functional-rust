@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/533-lifetime-struct)**
+
+---
+
 # 533: Lifetimes in Structs
 
 **Difficulty:** 3  **Level:** Intermediate

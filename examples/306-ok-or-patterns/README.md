@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/306-ok-or-patterns)**
+
+---
+
 # 306: ok_or and ok_or_else
 
 **Difficulty:** 1  **Level:** Beginner

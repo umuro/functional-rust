@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/796-counting-paths-dp)**
+
+---
+
 # 796: Counting Paths in Grid with Obstacles
 
 **Difficulty:** 3  **Level:** Advanced

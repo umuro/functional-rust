@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/433-macro-state-machine)**
+
+---
+
 # 433: State Machine via Macro
 
 **Difficulty:** 4  **Level:** Expert

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/434-macro-dsl)**
+
+---
+
 # 434: DSL Design with Macros
 
 **Difficulty:** 4  **Level:** Expert

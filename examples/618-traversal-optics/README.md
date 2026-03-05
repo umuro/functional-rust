@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/618-traversal-optics)**
+
+---
+
 # 618: Traversal for Collection Optics
 
 **Difficulty:** 5  **Level:** Master

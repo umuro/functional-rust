@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/326-async-move-closure)**
+
+---
+
 # 326: Capturing with async move
 
 **Difficulty:** 3  **Level:** Advanced

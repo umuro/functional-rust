@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/768-zero-copy-deserialize)**
+
+---
+
 # 768: Zero-Copy Deserialisation with Lifetime Tricks
 
 **Difficulty:** 4  **Level:** Advanced

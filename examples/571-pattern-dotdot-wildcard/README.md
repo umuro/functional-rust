@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/571-pattern-dotdot-wildcard)**
+
+---
+
 # 571: `..` and `_` Wildcards
 
 **Difficulty:** 2  **Level:** Beginner

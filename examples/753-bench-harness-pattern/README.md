@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/753-bench-harness-pattern)**
+
+---
+
 # 753: Benchmark Harness: Measuring Hot Functions
 
 **Difficulty:** 3  **Level:** Advanced

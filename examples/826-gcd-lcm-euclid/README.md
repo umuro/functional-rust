@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/826-gcd-lcm-euclid)**
+
+---
+
 # 826: GCD, LCM, and the Euclidean Algorithm
 
 **Difficulty:** 3  **Level:** Intermediate

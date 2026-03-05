@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/767-versioned-data-format)**
+
+---
+
 # 767: Versioned Serialization with Migration
 
 **Difficulty:** 4  **Level:** Advanced

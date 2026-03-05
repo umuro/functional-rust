@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/813-minimum-vertex-cover)**
+
+---
+
 # 813: Minimum Vertex Cover (2-Approximation)
 
 **Difficulty:** 4  **Level:** Advanced

@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/809-max-flow-ford-fulkerson)**
+
+---
+
 # 809. Max Flow: Ford-Fulkerson with BFS (Edmonds-Karp)
 
 **Difficulty:** 5  **Level:** Master

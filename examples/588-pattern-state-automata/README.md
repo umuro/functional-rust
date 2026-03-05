@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/588-pattern-state-automata)**
+
+---
+
 # 588: Finite Automata with Match
 
 **Difficulty:** 3  **Level:** Intermediate

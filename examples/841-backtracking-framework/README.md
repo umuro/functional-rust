@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/841-backtracking-framework)**
+
+---
+
 # 841: Backtracking — Generic Recursive Framework with Pruning
 
 **Difficulty:** 3  **Level:** Intermediate

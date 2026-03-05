@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/273-fibonacci-variants)**
+
+---
+
 # Example 273: Fibonacci Variants
 
 **Difficulty:** ⭐⭐

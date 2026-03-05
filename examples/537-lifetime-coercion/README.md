@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/537-lifetime-coercion)**
+
+---
+
 # 537: Lifetime Coercion and Subtyping
 
 **Difficulty:** 4  **Level:** Advanced

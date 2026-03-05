@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/762-custom-deserialize-logic)**
+
+---
+
 # 762: Custom Deserialization with Visitor Pattern
 
 **Difficulty:** 4  **Level:** Advanced

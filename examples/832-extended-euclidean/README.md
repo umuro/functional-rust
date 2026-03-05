@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/832-extended-euclidean)**
+
+---
+
 # 832: Extended Euclidean Algorithm
 
 **Difficulty:** 4  **Level:** Advanced

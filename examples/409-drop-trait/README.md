@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/409-drop-trait)**
+
+---
+
 # 409: Drop Trait and RAII
 
 **Difficulty:** 2  **Level:** Intermediate

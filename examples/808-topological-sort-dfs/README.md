@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/808-topological-sort-dfs)**
+
+---
+
 # 808. DFS-Based Topological Sort
 
 **Difficulty:** 3  **Level:** Advanced

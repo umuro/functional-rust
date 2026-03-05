@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/323-async-block)**
+
+---
+
 # 323: async blocks and Lazy Evaluation
 
 **Difficulty:** 3  **Level:** Advanced

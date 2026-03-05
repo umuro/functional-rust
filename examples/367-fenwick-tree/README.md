@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/367-fenwick-tree)**
+
+---
+
 # 367: Fenwick Tree (Binary Indexed Tree)
 
 **Difficulty:** 4  **Level:** Expert

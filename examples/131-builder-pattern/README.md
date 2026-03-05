@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/131-builder-pattern)**
+
+---
+
 # Example 131: Builder Pattern with Typestate
 
 **Difficulty:** ⭐⭐⭐

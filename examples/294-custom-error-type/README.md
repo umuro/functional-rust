@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/294-custom-error-type)**
+
+---
+
 # 294: Custom Error Types
 
 **Difficulty:** 2  **Level:** Intermediate

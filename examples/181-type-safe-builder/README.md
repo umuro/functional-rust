@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/181-type-safe-builder)**
+
+---
+
 # 181: Type-Safe SQL-Like Query Builder
 
 **Difficulty:** ⭐⭐⭐  **Level:** Advanced

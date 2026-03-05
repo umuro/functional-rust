@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/298-anyhow-pattern)**
+
+---
+
 # 298: The anyhow Pattern — Boxed Errors
 
 **Difficulty:** 3  **Level:** Advanced

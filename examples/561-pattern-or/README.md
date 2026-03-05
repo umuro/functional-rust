@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/561-pattern-or)**
+
+---
+
 # 561: Or-Patterns — pat1 | pat2
 
 **Difficulty:** 2  **Level:** Beginner

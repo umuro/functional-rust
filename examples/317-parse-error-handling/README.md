@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/317-parse-error-handling)**
+
+---
+
 # 317: Parse Error Handling
 
 **Difficulty:** 2  **Level:** Intermediate

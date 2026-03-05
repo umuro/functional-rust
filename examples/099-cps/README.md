@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/099-cps)**
+
+---
+
 # Example 099: CPS — Continuation-Passing Style
 
 **Difficulty:** ⭐⭐⭐

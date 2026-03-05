@@ -1,3 +1,7 @@
+📖 **[View on hightechmind.io →](https://hightechmind.io/rust/797-range-minimum-query)**
+
+---
+
 # 797: Range Minimum Query (Sparse Table)
 
 **Difficulty:** 4  **Level:** Advanced
