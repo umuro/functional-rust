@@ -80,3 +80,23 @@ Three Functional Smelt cycles per day (Amsterdam time):
 - 18:00 — Batch C (5 examples)
 
 After all stubs cleared: reduce to 1 cycle/day for steady growth beyond example 056.
+
+## 🔄 Multi-Session Coordination (added 2026-03-05)
+
+Multiple sessions may run conversions concurrently. Always follow this git protocol:
+
+```bash
+# BEFORE committing:
+git pull --rebase origin master
+
+# AFTER committing:
+git push origin master
+```
+
+**Active crons:** Batch A (02:00 CET), Batch B (12:00 CET), Batch C (18:00 CET) — each converts 5 examples and pushes.
+**Hourly watchdog** at :30 catches any missed pushes.
+
+If you're running a manual batch: start from dir numbers ABOVE the current highest in examples/ to avoid conflicts with crons. Check highest with:
+```bash
+ls examples/ | grep -E '^[0-9]' | sort -t'-' -k1 -n | tail -3
+```
