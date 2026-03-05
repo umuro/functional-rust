@@ -1,0 +1,4 @@
+[package]
+name = "example-356-hashmap-patterns"
+version = "0.1.0"
+edition = "2021"

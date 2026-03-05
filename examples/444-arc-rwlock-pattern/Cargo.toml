@@ -1,0 +1,7 @@
+[package]
+name = "example-444-arc-rwlock-pattern"
+version = "0.1.0"
+edition = "2021"
+description = "Arc<RwLock<T>> — Multiple Readers, One Writer"
+
+[dependencies]

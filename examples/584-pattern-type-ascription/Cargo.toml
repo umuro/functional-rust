@@ -1,0 +1,7 @@
+[package]
+name = "example-584-pattern-type-ascription"
+version = "0.1.0"
+edition = "2021"
+description = "Type ascription and runtime type dispatch"
+
+[dependencies]

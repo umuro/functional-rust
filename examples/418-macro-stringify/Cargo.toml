@@ -1,0 +1,4 @@
+[package]
+name = "example-418-macro-stringify"
+version = "0.1.0"
+edition = "2021"

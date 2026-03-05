@@ -1,0 +1,7 @@
+[package]
+name = "example-745-integration-test-setup"
+version = "0.1.0"
+edition = "2021"
+description = "Integration test structure: tests/ directory pattern"
+
+[dependencies]

@@ -1,0 +1,7 @@
+[package]
+name = "example-577-pattern-irrefutable"
+version = "0.1.0"
+edition = "2021"
+description = "Irrefutable vs refutable patterns"
+
+[dependencies]

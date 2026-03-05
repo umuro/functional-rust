@@ -1,0 +1,4 @@
+[package]
+name = "example-295-error-trait-impl"
+version = "0.1.0"
+edition = "2021"

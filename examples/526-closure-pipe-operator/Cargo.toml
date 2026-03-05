@@ -1,0 +1,4 @@
+[package]
+name = "example-526-closure-pipe-operator"
+version = "0.1.0"
+edition = "2021"

@@ -1,0 +1,4 @@
+[package]
+name = "example-349-broadcast-channel"
+version = "0.1.0"
+edition = "2021"

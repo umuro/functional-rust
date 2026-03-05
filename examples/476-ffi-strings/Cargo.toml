@@ -1,0 +1,7 @@
+[package]
+name = "example-476-ffi-strings"
+version = "0.1.0"
+edition = "2021"
+description = "FFI Strings — String Handling Across Languages"
+
+[dependencies]

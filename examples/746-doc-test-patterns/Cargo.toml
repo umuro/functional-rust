@@ -1,0 +1,7 @@
+[package]
+name = "example-746-doc-test-patterns"
+version = "0.1.0"
+edition = "2021"
+description = "Documentation tests: rustdoc examples that are compiled and run"
+
+[dependencies]

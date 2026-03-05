@@ -1,0 +1,7 @@
+[package]
+name = "example-490-string-fixed-array"
+version = "0.1.0"
+edition = "2021"
+description = "String Fixed Array — Stack Strings"
+
+[dependencies]

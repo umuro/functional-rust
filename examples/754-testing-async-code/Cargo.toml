@@ -1,0 +1,6 @@
+[package]
+name = "example-754-testing-async-code"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

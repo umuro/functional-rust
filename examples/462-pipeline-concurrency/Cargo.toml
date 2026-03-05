@@ -1,0 +1,7 @@
+[package]
+name = "example-462-pipeline-concurrency"
+version = "0.1.0"
+edition = "2021"
+description = "Pipeline Concurrency — Staged Processing"
+
+[dependencies]

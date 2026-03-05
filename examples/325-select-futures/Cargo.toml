@@ -1,0 +1,4 @@
+[package]
+name = "example-325-select-futures"
+version = "0.1.0"
+edition = "2021"

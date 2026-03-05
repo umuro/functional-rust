@@ -1,0 +1,7 @@
+[package]
+name = "example-579-pattern-string-matching"
+version = "0.1.0"
+edition = "2021"
+description = "String pattern matching with OR patterns and guards"
+
+[dependencies]

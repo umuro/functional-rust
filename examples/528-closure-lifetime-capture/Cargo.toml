@@ -1,0 +1,4 @@
+[package]
+name = "example-528-closure-lifetime-capture"
+version = "0.1.0"
+edition = "2021"

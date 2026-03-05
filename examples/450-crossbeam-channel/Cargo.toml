@@ -1,0 +1,7 @@
+[package]
+name = "example-450-crossbeam-channel"
+version = "0.1.0"
+edition = "2021"
+description = "Crossbeam Channels — Advanced Channel Patterns"
+
+[dependencies]

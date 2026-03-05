@@ -1,0 +1,7 @@
+[package]
+name = "example-443-arc-mutex-pattern"
+version = "0.1.0"
+edition = "2021"
+description = "Arc<Mutex<T>> — Shared Mutable State Across Threads"
+
+[dependencies]

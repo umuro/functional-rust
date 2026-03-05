@@ -1,0 +1,7 @@
+[package]
+name = "example-737-perf-memoization"
+version = "0.1.0"
+edition = "2021"
+description = "Caching computed results"
+
+[dependencies]

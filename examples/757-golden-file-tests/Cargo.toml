@@ -1,0 +1,6 @@
+[package]
+name = "example-757-golden-file-tests"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

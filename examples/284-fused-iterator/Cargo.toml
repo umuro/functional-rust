@@ -1,0 +1,4 @@
+[package]
+name = "example-284-fused-iterator"
+version = "0.1.0"
+edition = "2021"

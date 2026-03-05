@@ -1,0 +1,6 @@
+[package]
+name = "example-800-floyd-warshall"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

@@ -1,0 +1,8 @@
+[package]
+name = "example-575-pattern-let-chains"
+version = "0.1.0"
+edition = "2021"
+description = "Let chains (&&) - chain multiple pattern checks without nesting"
+rust-version = "1.88"
+
+[dependencies]

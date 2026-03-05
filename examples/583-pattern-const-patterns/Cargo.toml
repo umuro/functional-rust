@@ -1,0 +1,7 @@
+[package]
+name = "example-583-pattern-const-patterns"
+version = "0.1.0"
+edition = "2021"
+description = "Using named constants in pattern matching"
+
+[dependencies]

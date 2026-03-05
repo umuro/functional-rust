@@ -1,0 +1,6 @@
+[package]
+name = "example-837-closest-pair-divide-conquer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

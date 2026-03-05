@@ -1,0 +1,7 @@
+[package]
+name = "example-582-pattern-tuple-matching"
+version = "0.1.0"
+edition = "2021"
+description = "Tuple pattern matching for multi-value decisions"
+
+[dependencies]

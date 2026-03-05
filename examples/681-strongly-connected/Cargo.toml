@@ -1,0 +1,7 @@
+[package]
+name = "example-681-strongly-connected"
+version = "0.1.0"
+edition = "2021"
+description = "Kosaraju's and Tarjan's algorithms for SCC"
+
+[dependencies]

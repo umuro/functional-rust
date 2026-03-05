@@ -1,0 +1,4 @@
+[package]
+name = "example-415-macro-tt-munching"
+version = "0.1.0"
+edition = "2021"

@@ -1,0 +1,7 @@
+[package]
+name = "example-742-phantom-brand-types"
+version = "0.1.0"
+edition = "2021"
+description = "Type branding for safety"
+
+[dependencies]

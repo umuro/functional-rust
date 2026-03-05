@@ -1,0 +1,6 @@
+[package]
+name = "example-847-approximation-set-cover"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

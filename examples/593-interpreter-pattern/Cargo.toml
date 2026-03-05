@@ -1,0 +1,7 @@
+[package]
+name = "example-593-interpreter-pattern"
+version = "0.1.0"
+edition = "2021"
+description = "Interpreter pattern with AST evaluation"
+
+[dependencies]

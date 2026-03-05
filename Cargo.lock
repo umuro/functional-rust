@@ -865,3 +865,1951 @@ version = "0.1.0"
 [[package]]
 name = "example-280-hamming-distance"
 version = "0.1.0"
+
+[[package]]
+name = "example-281-custom-iterator"
+version = "0.1.0"
+
+[[package]]
+name = "example-282-double-ended-iterator"
+version = "0.1.0"
+
+[[package]]
+name = "example-283-exact-size-iterator"
+version = "0.1.0"
+
+[[package]]
+name = "example-284-fused-iterator"
+version = "0.1.0"
+
+[[package]]
+name = "example-285-iterator-adapter-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-286-iterator-from-fn"
+version = "0.1.0"
+
+[[package]]
+name = "example-287-iterator-successors"
+version = "0.1.0"
+
+[[package]]
+name = "example-288-iterator-collect-into"
+version = "0.1.0"
+
+[[package]]
+name = "example-289-iterator-extend"
+version = "0.1.0"
+
+[[package]]
+name = "example-290-iterator-unzip-partition"
+version = "0.1.0"
+
+[[package]]
+name = "example-291-result-combinators"
+version = "0.1.0"
+
+[[package]]
+name = "example-292-option-combinators"
+version = "0.1.0"
+
+[[package]]
+name = "example-293-question-mark-operator"
+version = "0.1.0"
+
+[[package]]
+name = "example-294-custom-error-type"
+version = "0.1.0"
+
+[[package]]
+name = "example-295-error-trait-impl"
+version = "0.1.0"
+
+[[package]]
+name = "example-296-from-trait-errors"
+version = "0.1.0"
+
+[[package]]
+name = "example-297-thiserror-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-298-anyhow-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-299-error-context"
+version = "0.1.0"
+
+[[package]]
+name = "example-300-error-chaining"
+version = "0.1.0"
+
+[[package]]
+name = "example-301-result-transpose"
+version = "0.1.0"
+
+[[package]]
+name = "example-302-option-transpose"
+version = "0.1.0"
+
+[[package]]
+name = "example-303-collect-results"
+version = "0.1.0"
+
+[[package]]
+name = "example-304-partition-results"
+version = "0.1.0"
+
+[[package]]
+name = "example-305-unwrap-or-patterns"
+version = "0.1.0"
+
+[[package]]
+name = "example-306-ok-or-patterns"
+version = "0.1.0"
+
+[[package]]
+name = "example-307-error-propagation-closures"
+version = "0.1.0"
+
+[[package]]
+name = "example-308-panic-vs-result"
+version = "0.1.0"
+
+[[package]]
+name = "example-309-never-type-errors"
+version = "0.1.0"
+
+[[package]]
+name = "example-310-infallible-conversions"
+version = "0.1.0"
+
+[[package]]
+name = "example-311-multiple-error-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-312-error-downcasting"
+version = "0.1.0"
+
+[[package]]
+name = "example-313-try-trait"
+version = "0.1.0"
+
+[[package]]
+name = "example-314-validated-accumulation"
+version = "0.1.0"
+
+[[package]]
+name = "example-315-result-ok-err-methods"
+version = "0.1.0"
+
+[[package]]
+name = "example-316-io-error-handling"
+version = "0.1.0"
+
+[[package]]
+name = "example-317-parse-error-handling"
+version = "0.1.0"
+
+[[package]]
+name = "example-318-error-display-debug"
+version = "0.1.0"
+
+[[package]]
+name = "example-319-error-in-tests"
+version = "0.1.0"
+
+[[package]]
+name = "example-320-fallible-iterator"
+version = "0.1.0"
+
+[[package]]
+name = "example-321-async-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-322-future-trait"
+version = "0.1.0"
+
+[[package]]
+name = "example-323-async-block"
+version = "0.1.0"
+
+[[package]]
+name = "example-324-join-futures"
+version = "0.1.0"
+
+[[package]]
+name = "example-325-select-futures"
+version = "0.1.0"
+
+[[package]]
+name = "example-326-async-move-closure"
+version = "0.1.0"
+
+[[package]]
+name = "example-327-spawn-tasks"
+version = "0.1.0"
+
+[[package]]
+name = "example-328-channel-async"
+version = "0.1.0"
+
+[[package]]
+name = "example-329-async-stream"
+version = "0.1.0"
+
+[[package]]
+name = "example-330-async-sink"
+version = "0.1.0"
+
+[[package]]
+name = "example-331-timeout-async"
+version = "0.1.0"
+
+[[package]]
+name = "example-332-retry-async"
+version = "0.1.0"
+
+[[package]]
+name = "example-333-async-recursion"
+version = "0.1.0"
+
+[[package]]
+name = "example-334-pin-unpin"
+version = "0.1.0"
+
+[[package]]
+name = "example-335-waker-context"
+version = "0.1.0"
+
+[[package]]
+name = "example-336-executor-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-337-async-mutex"
+version = "0.1.0"
+
+[[package]]
+name = "example-338-async-rwlock"
+version = "0.1.0"
+
+[[package]]
+name = "example-339-semaphore-async"
+version = "0.1.0"
+
+[[package]]
+name = "example-340-async-trait-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-341-mpsc-channel"
+version = "0.1.0"
+
+[[package]]
+name = "example-342-arc-mutex-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-343-producer-consumer"
+version = "0.1.0"
+
+[[package]]
+name = "example-344-structured-concurrency"
+version = "0.1.0"
+
+[[package]]
+name = "example-345-async-drop"
+version = "0.1.0"
+
+[[package]]
+name = "example-346-runtime-context"
+version = "0.1.0"
+
+[[package]]
+name = "example-347-blocking-in-async"
+version = "0.1.0"
+
+[[package]]
+name = "example-348-async-generator-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-349-broadcast-channel"
+version = "0.1.0"
+
+[[package]]
+name = "example-350-oneshot-channel"
+version = "0.1.0"
+
+[[package]]
+name = "example-351-btreemap-ordered"
+version = "0.1.0"
+
+[[package]]
+name = "example-352-btreeset-sorted"
+version = "0.1.0"
+
+[[package]]
+name = "example-353-vecdeque-deque"
+version = "0.1.0"
+
+[[package]]
+name = "example-354-binary-heap-priority"
+version = "0.1.0"
+
+[[package]]
+name = "example-355-linked-list-rust"
+version = "0.1.0"
+
+[[package]]
+name = "example-356-hashmap-patterns"
+version = "0.1.0"
+
+[[package]]
+name = "example-357-entry-api"
+version = "0.1.0"
+
+[[package]]
+name = "example-358-indexmap-ordered"
+version = "0.1.0"
+
+[[package]]
+name = "example-359-multimap-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-360-bitset-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-361-rope-data-structure"
+version = "0.1.0"
+
+[[package]]
+name = "example-362-trie-structure"
+version = "0.1.0"
+
+[[package]]
+name = "example-363-arena-allocation"
+version = "0.1.0"
+
+[[package]]
+name = "example-364-slab-allocator"
+version = "0.1.0"
+
+[[package]]
+name = "example-365-disjoint-set"
+version = "0.1.0"
+
+[[package]]
+name = "example-366-segment-tree"
+version = "0.1.0"
+
+[[package]]
+name = "example-367-fenwick-tree"
+version = "0.1.0"
+
+[[package]]
+name = "example-368-persistent-data-structures"
+version = "0.1.0"
+
+[[package]]
+name = "example-369-cow-clone-on-write"
+version = "0.1.0"
+
+[[package]]
+name = "example-370-small-vec-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-371-circular-buffer"
+version = "0.1.0"
+
+[[package]]
+name = "example-372-skip-list-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-373-b-tree-custom"
+version = "0.1.0"
+
+[[package]]
+name = "example-374-radix-tree"
+version = "0.1.0"
+
+[[package]]
+name = "example-375-lru-cache"
+version = "0.1.0"
+
+[[package]]
+name = "example-376-bloom-filter"
+version = "0.1.0"
+
+[[package]]
+name = "example-377-graph-adjacency-list"
+version = "0.1.0"
+
+[[package]]
+name = "example-378-graph-adjacency-matrix"
+version = "0.1.0"
+
+[[package]]
+name = "example-379-directed-acyclic-graph"
+version = "0.1.0"
+
+[[package]]
+name = "example-380-weighted-graph"
+version = "0.1.0"
+
+[[package]]
+name = "example-381-blanket-implementations"
+version = "0.1.0"
+
+[[package]]
+name = "example-382-associated-types-advanced"
+version = "0.1.0"
+
+[[package]]
+name = "example-383-higher-kinded-types-sim"
+version = "0.1.0"
+
+[[package]]
+name = "example-384-trait-objects-dyn"
+version = "0.1.0"
+
+[[package]]
+name = "example-385-trait-objects-any"
+version = "0.1.0"
+
+[[package]]
+name = "example-386-object-safe-traits"
+version = "0.1.0"
+
+[[package]]
+name = "example-387-sealed-trait-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-388-extension-trait-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-389-newtype-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-390-type-alias-impl-trait"
+version = "0.1.0"
+
+[[package]]
+name = "example-391-impl-trait-return"
+version = "0.1.0"
+
+[[package]]
+name = "example-392-impl-trait-argument"
+version = "0.1.0"
+
+[[package]]
+name = "example-393-trait-bounds-where"
+version = "0.1.0"
+
+[[package]]
+name = "example-394-supertrait-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-395-default-methods"
+version = "0.1.0"
+
+[[package]]
+name = "example-396-trait-specialization-sim"
+version = "0.1.0"
+
+[[package]]
+name = "example-397-marker-traits"
+version = "0.1.0"
+
+[[package]]
+name = "example-398-auto-traits"
+version = "0.1.0"
+
+[[package]]
+name = "example-399-coherence-orphan-rules"
+version = "0.1.0"
+
+[[package]]
+name = "example-400-trait-dispatch"
+version = "0.1.0"
+
+[[package]]
+name = "example-401-deref-coercion"
+version = "0.1.0"
+
+[[package]]
+name = "example-402-index-trait"
+version = "0.1.0"
+
+[[package]]
+name = "example-403-display-debug-traits"
+version = "0.1.0"
+
+[[package]]
+name = "example-404-from-into-as"
+version = "0.1.0"
+
+[[package]]
+name = "example-405-iterator-trait-deep"
+version = "0.1.0"
+
+[[package]]
+name = "example-406-hash-eq-ord-traits"
+version = "0.1.0"
+
+[[package]]
+name = "example-407-default-trait"
+version = "0.1.0"
+
+[[package]]
+name = "example-408-clone-copy-traits"
+version = "0.1.0"
+
+[[package]]
+name = "example-409-drop-trait"
+version = "0.1.0"
+
+[[package]]
+name = "example-410-arithmetic-operator-overload"
+version = "0.1.0"
+
+[[package]]
+name = "example-411-macro-rules-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-412-macro-repetition"
+version = "0.1.0"
+
+[[package]]
+name = "example-413-macro-fragment-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-414-macro-recursive"
+version = "0.1.0"
+
+[[package]]
+name = "example-415-macro-tt-munching"
+version = "0.1.0"
+
+[[package]]
+name = "example-416-macro-builder-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-417-macro-vec-like"
+version = "0.1.0"
+
+[[package]]
+name = "example-418-macro-stringify"
+version = "0.1.0"
+
+[[package]]
+name = "example-419-macro-cfg-attr"
+version = "0.1.0"
+
+[[package]]
+name = "example-420-macro-env"
+version = "0.1.0"
+
+[[package]]
+name = "example-421-macro-include"
+version = "0.1.0"
+
+[[package]]
+name = "example-422-derive-macro-concept"
+version = "0.1.0"
+
+[[package]]
+name = "example-423-proc-macro-intro"
+version = "0.1.0"
+
+[[package]]
+name = "example-424-proc-macro-derive"
+version = "0.1.0"
+
+[[package]]
+name = "example-425-proc-macro-attribute"
+version = "0.1.0"
+
+[[package]]
+name = "example-426-proc-macro-function-like"
+version = "0.1.0"
+
+[[package]]
+name = "example-427-syn-quote-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-428-macro-hygiene"
+version = "0.1.0"
+
+[[package]]
+name = "example-429-macro-scoping"
+version = "0.1.0"
+
+[[package]]
+name = "example-430-macro-debugging"
+version = "0.1.0"
+
+[[package]]
+name = "example-431-macro-count-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-432-macro-enum-dispatch"
+version = "0.1.0"
+
+[[package]]
+name = "example-433-macro-state-machine"
+version = "0.1.0"
+
+[[package]]
+name = "example-434-macro-dsl"
+version = "0.1.0"
+
+[[package]]
+name = "example-435-macro-lazy-static"
+version = "0.1.0"
+
+[[package]]
+name = "example-436-macro-newtype-derive"
+version = "0.1.0"
+
+[[package]]
+name = "example-437-macro-test-helpers"
+version = "0.1.0"
+
+[[package]]
+name = "example-438-macro-format-args"
+version = "0.1.0"
+
+[[package]]
+name = "example-439-macro-assert-variants"
+version = "0.1.0"
+
+[[package]]
+name = "example-440-macro-log-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-441-thread-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-442-thread-scoped"
+version = "0.1.0"
+
+[[package]]
+name = "example-443-arc-mutex-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-444-arc-rwlock-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-445-mpsc-channel"
+version = "0.1.0"
+
+[[package]]
+name = "example-446-thread-pool-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-447-work-stealing"
+version = "0.1.0"
+
+[[package]]
+name = "example-448-rayon-parallel"
+version = "0.1.0"
+
+[[package]]
+name = "example-449-rayon-join"
+version = "0.1.0"
+
+[[package]]
+name = "example-450-crossbeam-channel"
+version = "0.1.0"
+
+[[package]]
+name = "example-451-crossbeam-select"
+version = "0.1.0"
+
+[[package]]
+name = "example-452-atomic-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-453-atomic-ordering"
+version = "0.1.0"
+
+[[package]]
+name = "example-454-lock-free-stack"
+version = "0.1.0"
+
+[[package]]
+name = "example-455-lock-free-queue"
+version = "0.1.0"
+
+[[package]]
+name = "example-456-hazard-pointers"
+version = "0.1.0"
+
+[[package]]
+name = "example-457-epoch-gc"
+version = "0.1.0"
+
+[[package]]
+name = "example-458-memory-ordering"
+version = "0.1.0"
+
+[[package]]
+name = "example-459-thread-local-storage"
+version = "0.1.0"
+
+[[package]]
+name = "example-460-send-sync-bounds"
+version = "0.1.0"
+
+[[package]]
+name = "example-461-mutex-poisoning"
+version = "0.1.0"
+
+[[package]]
+name = "example-462-pipeline-concurrency"
+version = "0.1.0"
+
+[[package]]
+name = "example-463-fork-join"
+version = "0.1.0"
+
+[[package]]
+name = "example-464-barrier-sync"
+version = "0.1.0"
+
+[[package]]
+name = "example-465-condvar-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-466-concurrent-hashmap"
+version = "0.1.0"
+
+[[package]]
+name = "example-467-concurrent-set"
+version = "0.1.0"
+
+[[package]]
+name = "example-468-concurrent-counter"
+version = "0.1.0"
+
+[[package]]
+name = "example-469-parallel-reduce"
+version = "0.1.0"
+
+[[package]]
+name = "example-470-concurrent-btree"
+version = "0.1.0"
+
+[[package]]
+name = "example-471-unsafe-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-472-raw-pointers"
+version = "0.1.0"
+
+[[package]]
+name = "example-473-unsafe-functions"
+version = "0.1.0"
+
+[[package]]
+name = "example-474-extern-c"
+version = "0.1.0"
+
+[[package]]
+name = "example-475-ffi-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-476-ffi-strings"
+version = "0.1.0"
+
+[[package]]
+name = "example-477-ffi-structs"
+version = "0.1.0"
+
+[[package]]
+name = "example-478-ffi-callbacks"
+version = "0.1.0"
+
+[[package]]
+name = "example-479-ffi-ownership"
+version = "0.1.0"
+
+[[package]]
+name = "example-480-ffi-safety"
+version = "0.1.0"
+
+[[package]]
+name = "example-481-ffi-bindgen"
+version = "0.1.0"
+
+[[package]]
+name = "example-482-global-state"
+version = "0.1.0"
+
+[[package]]
+name = "example-483-static-lifetime"
+version = "0.1.0"
+
+[[package]]
+name = "example-484-unsafe-traits"
+version = "0.1.0"
+
+[[package]]
+name = "example-485-union-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-486-inline-asm"
+version = "0.1.0"
+
+[[package]]
+name = "example-487-intrinsics"
+version = "0.1.0"
+
+[[package]]
+name = "example-488-string-owning-ref"
+version = "0.1.0"
+
+[[package]]
+name = "example-489-slice-patterns"
+version = "0.1.0"
+
+[[package]]
+name = "example-490-string-fixed-array"
+version = "0.1.0"
+
+[[package]]
+name = "example-491-string-operations"
+version = "0.1.0"
+
+[[package]]
+name = "example-492-string-parsing"
+version = "0.1.0"
+
+[[package]]
+name = "example-493-string-formatting"
+version = "0.1.0"
+
+[[package]]
+name = "example-494-string-encoding"
+version = "0.1.0"
+
+[[package]]
+name = "example-495-string-search"
+version = "0.1.0"
+
+[[package]]
+name = "example-496-string-replace"
+version = "0.1.0"
+
+[[package]]
+name = "example-497-string-split"
+version = "0.1.0"
+
+[[package]]
+name = "example-498-string-trim"
+version = "0.1.0"
+
+[[package]]
+name = "example-499-string-case"
+version = "0.1.0"
+
+[[package]]
+name = "example-500-string-unicode"
+version = "0.1.0"
+
+[[package]]
+name = "example-501-closure-capture-rules"
+version = "0.1.0"
+
+[[package]]
+name = "example-502-fn-fnmut-fnonce"
+version = "0.1.0"
+
+[[package]]
+name = "example-503-closure-as-argument"
+version = "0.1.0"
+
+[[package]]
+name = "example-504-closure-as-return"
+version = "0.1.0"
+
+[[package]]
+name = "example-505-boxing-closures"
+version = "0.1.0"
+
+[[package]]
+name = "example-506-closure-move-semantics"
+version = "0.1.0"
+
+[[package]]
+name = "example-507-closure-memoization"
+version = "0.1.0"
+
+[[package]]
+name = "example-508-closure-partial-application"
+version = "0.1.0"
+
+[[package]]
+name = "example-509-closure-composition"
+version = "0.1.0"
+
+[[package]]
+name = "example-510-closure-currying"
+version = "0.1.0"
+
+[[package]]
+name = "example-511-closure-recursive"
+version = "0.1.0"
+
+[[package]]
+name = "example-512-closure-state-machine"
+version = "0.1.0"
+
+[[package]]
+name = "example-513-closure-strategy-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-514-closure-observer-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-515-closure-once-cell"
+version = "0.1.0"
+
+[[package]]
+name = "example-516-closure-environment"
+version = "0.1.0"
+
+[[package]]
+name = "example-517-closure-coercion"
+version = "0.1.0"
+
+[[package]]
+name = "example-518-function-pointers"
+version = "0.1.0"
+
+[[package]]
+name = "example-519-closure-type-inference"
+version = "0.1.0"
+
+[[package]]
+name = "example-520-closure-higher-order"
+version = "0.1.0"
+
+[[package]]
+name = "example-521-closure-map-reduce"
+version = "0.1.0"
+
+[[package]]
+name = "example-522-closure-predicate"
+version = "0.1.0"
+
+[[package]]
+name = "example-523-closure-event-handler"
+version = "0.1.0"
+
+[[package]]
+name = "example-524-closure-builder-closures"
+version = "0.1.0"
+
+[[package]]
+name = "example-525-closure-tap-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-526-closure-pipe-operator"
+version = "0.1.0"
+
+[[package]]
+name = "example-527-closure-once-consumer"
+version = "0.1.0"
+
+[[package]]
+name = "example-528-closure-lifetime-capture"
+version = "0.1.0"
+
+[[package]]
+name = "example-529-closure-async"
+version = "0.1.0"
+
+[[package]]
+name = "example-530-closure-benchmark-idioms"
+version = "0.1.0"
+
+[[package]]
+name = "example-531-lifetime-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-532-lifetime-multiple"
+version = "0.1.0"
+
+[[package]]
+name = "example-533-lifetime-struct"
+version = "0.1.0"
+
+[[package]]
+name = "example-534-lifetime-impl"
+version = "0.1.0"
+
+[[package]]
+name = "example-535-lifetime-enum"
+version = "0.1.0"
+
+[[package]]
+name = "example-536-lifetime-static"
+version = "0.1.0"
+
+[[package]]
+name = "example-537-lifetime-coercion"
+version = "0.1.0"
+
+[[package]]
+name = "example-538-lifetime-variance"
+version = "0.1.0"
+
+[[package]]
+name = "example-539-lifetime-nll"
+version = "0.1.0"
+
+[[package]]
+name = "example-540-lifetime-borrow-checker"
+version = "0.1.0"
+
+[[package]]
+name = "example-541-lifetime-elision"
+version = "0.1.0"
+
+[[package]]
+name = "example-542-lifetime-higher-ranked"
+version = "0.1.0"
+
+[[package]]
+name = "example-543-lifetime-trait-objects"
+version = "0.1.0"
+
+[[package]]
+name = "example-544-lifetime-closures"
+version = "0.1.0"
+
+[[package]]
+name = "example-545-lifetime-split-borrow"
+version = "0.1.0"
+
+[[package]]
+name = "example-546-lifetime-reborrow"
+version = "0.1.0"
+
+[[package]]
+name = "example-547-lifetime-polonius"
+version = "0.1.0"
+
+[[package]]
+name = "example-548-lifetime-named-return"
+version = "0.1.0"
+
+[[package]]
+name = "example-549-lifetime-phantom"
+version = "0.1.0"
+
+[[package]]
+name = "example-550-lifetime-cell-refcell"
+version = "0.1.0"
+
+[[package]]
+name = "example-551-lifetime-rc-weak"
+version = "0.1.0"
+
+[[package]]
+name = "example-552-lifetime-arena-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-553-lifetime-self-referential"
+version = "0.1.0"
+
+[[package]]
+name = "example-554-lifetime-transmute-safe"
+version = "0.1.0"
+
+[[package]]
+name = "example-555-lifetime-owning-ref"
+version = "0.1.0"
+
+[[package]]
+name = "example-556-lifetime-rental-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-557-lifetime-output-lifetime"
+version = "0.1.0"
+
+[[package]]
+name = "example-558-lifetime-input-lifetime"
+version = "0.1.0"
+
+[[package]]
+name = "example-559-lifetime-region-inference"
+version = "0.1.0"
+
+[[package]]
+name = "example-560-lifetime-cheatsheet"
+version = "0.1.0"
+
+[[package]]
+name = "example-561-pattern-or"
+version = "0.1.0"
+
+[[package]]
+name = "example-562-pattern-guards"
+version = "0.1.0"
+
+[[package]]
+name = "example-563-pattern-struct-destructuring"
+version = "0.1.0"
+
+[[package]]
+name = "example-564-pattern-enum-variants"
+version = "0.1.0"
+
+[[package]]
+name = "example-565-pattern-tuple-struct"
+version = "0.1.0"
+
+[[package]]
+name = "example-566-pattern-nested"
+version = "0.1.0"
+
+[[package]]
+name = "example-567-pattern-binding-modes"
+version = "0.1.0"
+
+[[package]]
+name = "example-568-pattern-at-bindings"
+version = "0.1.0"
+
+[[package]]
+name = "example-569-pattern-range"
+version = "0.1.0"
+
+[[package]]
+name = "example-570-pattern-slice"
+version = "0.1.0"
+
+[[package]]
+name = "example-571-pattern-dotdot-wildcard"
+version = "0.1.0"
+
+[[package]]
+name = "example-572-pattern-ref-patterns"
+version = "0.1.0"
+
+[[package]]
+name = "example-573-pattern-let-else"
+version = "0.1.0"
+
+[[package]]
+name = "example-574-pattern-if-let"
+version = "0.1.0"
+
+[[package]]
+name = "example-575-pattern-let-chains"
+version = "0.1.0"
+
+[[package]]
+name = "example-576-pattern-matches-macro"
+version = "0.1.0"
+
+[[package]]
+name = "example-577-pattern-irrefutable"
+version = "0.1.0"
+
+[[package]]
+name = "example-578-pattern-exhaustiveness"
+version = "0.1.0"
+
+[[package]]
+name = "example-579-pattern-string-matching"
+version = "0.1.0"
+
+[[package]]
+name = "example-580-pattern-option-some-none"
+version = "0.1.0"
+
+[[package]]
+name = "example-581-pattern-result-ok-err"
+version = "0.1.0"
+
+[[package]]
+name = "example-582-pattern-tuple-matching"
+version = "0.1.0"
+
+[[package]]
+name = "example-583-pattern-const-patterns"
+version = "0.1.0"
+
+[[package]]
+name = "example-584-pattern-type-ascription"
+version = "0.1.0"
+
+[[package]]
+name = "example-585-pattern-box-deref"
+version = "0.1.0"
+
+[[package]]
+name = "example-586-pattern-multiple-arms"
+version = "0.1.0"
+
+[[package]]
+name = "example-587-pattern-visitor-match"
+version = "0.1.0"
+
+[[package]]
+name = "example-588-pattern-state-automata"
+version = "0.1.0"
+
+[[package]]
+name = "example-589-pattern-command-dispatch"
+version = "0.1.0"
+
+[[package]]
+name = "example-590-pattern-advanced-enums"
+version = "0.1.0"
+
+[[package]]
+name = "example-591-builder-pattern-fp"
+version = "0.1.0"
+
+[[package]]
+name = "example-592-command-pattern-fp"
+version = "0.1.0"
+
+[[package]]
+name = "example-593-interpreter-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-594-continuation-style"
+version = "0.1.0"
+
+[[package]]
+name = "example-595-trampoline-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-596-church-encoding-rust"
+version = "0.1.0"
+
+[[package]]
+name = "example-597-scott-encoding-rust"
+version = "0.1.0"
+
+[[package]]
+name = "example-598-finally-tagless"
+version = "0.1.0"
+
+[[package]]
+name = "example-599-free-monad-rust"
+version = "0.1.0"
+
+[[package]]
+name = "example-600-effect-system-sim"
+version = "0.1.0"
+
+[[package]]
+name = "example-601-coproduct-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-602-product-types-advanced"
+version = "0.1.0"
+
+[[package]]
+name = "example-603-functor-laws-rust"
+version = "0.1.0"
+
+[[package]]
+name = "example-604-monad-laws-rust"
+version = "0.1.0"
+
+[[package]]
+name = "example-605-applicative-laws"
+version = "0.1.0"
+
+[[package]]
+name = "example-606-natural-transformation-rust"
+version = "0.1.0"
+
+[[package]]
+name = "example-607-fixed-point-types"
+version = "0.1.0"
+
+[[package]]
+name = "example-608-catamorphism-rust"
+version = "0.1.0"
+
+[[package]]
+name = "example-609-anamorphism-rust"
+version = "0.1.0"
+
+[[package]]
+name = "example-610-hylomorphism-rust"
+version = "0.1.0"
+
+[[package]]
+name = "example-611-paramorphism-rust"
+version = "0.1.0"
+
+[[package]]
+name = "example-612-zygomorphism-rust"
+version = "0.1.0"
+
+[[package]]
+name = "example-613-futumorphism-rust"
+version = "0.1.0"
+
+[[package]]
+name = "example-614-histomorphism-rust"
+version = "0.1.0"
+
+[[package]]
+name = "example-615-optics-intro"
+version = "0.1.0"
+
+[[package]]
+name = "example-616-lens-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-617-prism-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-618-traversal-optics"
+version = "0.1.0"
+
+[[package]]
+name = "example-619-iso-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-620-affine-traversal"
+version = "0.1.0"
+
+[[package]]
+name = "example-621-profunctor-optics"
+version = "0.1.0"
+
+[[package]]
+name = "example-622-classy-optics"
+version = "0.1.0"
+
+[[package]]
+name = "example-623-functional-rust-grand-tour"
+version = "0.1.0"
+
+[[package]]
+name = "example-641-fp-applicative-laws"
+version = "0.1.0"
+
+[[package]]
+name = "example-642-fp-semigroup-laws"
+version = "0.1.0"
+
+[[package]]
+name = "example-643-fp-monoid-laws"
+version = "0.1.0"
+
+[[package]]
+name = "example-644-fp-foldable"
+version = "0.1.0"
+
+[[package]]
+name = "example-645-fp-traversable"
+version = "0.1.0"
+
+[[package]]
+name = "example-646-fp-bifunctor"
+version = "0.1.0"
+
+[[package]]
+name = "example-647-fp-profunctor"
+version = "0.1.0"
+
+[[package]]
+name = "example-648-fp-contravariant"
+version = "0.1.0"
+
+[[package]]
+name = "example-649-fp-comonad"
+version = "0.1.0"
+
+[[package]]
+name = "example-650-fp-adjunction"
+version = "0.1.0"
+
+[[package]]
+name = "example-651-fp-yoneda"
+version = "0.1.0"
+
+[[package]]
+name = "example-652-fp-kan-extension"
+version = "0.1.0"
+
+[[package]]
+name = "example-653-fp-limit-colimit"
+version = "0.1.0"
+
+[[package]]
+name = "example-654-fp-natural-transformation"
+version = "0.1.0"
+
+[[package]]
+name = "example-655-fp-functor-composition"
+version = "0.1.0"
+
+[[package]]
+name = "example-656-fp-monad-composition"
+version = "0.1.0"
+
+[[package]]
+name = "example-657-fp-kleisli-category"
+version = "0.1.0"
+
+[[package]]
+name = "example-658-fp-cartesian-closed"
+version = "0.1.0"
+
+[[package]]
+name = "example-659-fp-topos"
+version = "0.1.0"
+
+[[package]]
+name = "example-660-fp-enriched-category"
+version = "0.1.0"
+
+[[package]]
+name = "example-661-sorting-algorithms"
+version = "0.1.0"
+
+[[package]]
+name = "example-662-bubble-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-663-insertion-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-664-selection-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-665-merge-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-666-quick-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-667-heap-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-668-counting-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-669-radix-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-670-bucket-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-671-timsort"
+version = "0.1.0"
+
+[[package]]
+name = "example-672-intro-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-673-pdq-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-674-graph-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-675-graph-bfs"
+version = "0.1.0"
+
+[[package]]
+name = "example-676-graph-dfs"
+version = "0.1.0"
+
+[[package]]
+name = "example-677-dijkstra"
+version = "0.1.0"
+
+[[package]]
+name = "example-678-bellman-ford"
+version = "0.1.0"
+
+[[package]]
+name = "example-679-floyd-warshall"
+version = "0.1.0"
+
+[[package]]
+name = "example-680-topological-sort"
+version = "0.1.0"
+
+[[package]]
+name = "example-745-integration-test-setup"
+version = "0.1.0"
+
+[[package]]
+name = "example-746-doc-test-patterns"
+version = "0.1.0"
+
+[[package]]
+name = "example-747-test-fixtures"
+version = "0.1.0"
+
+[[package]]
+name = "example-748-property-based-testing"
+version = "0.1.0"
+
+[[package]]
+name = "example-749-fuzzing-concepts"
+version = "0.1.0"
+
+[[package]]
+name = "example-750-snapshot-testing"
+version = "0.1.0"
+
+[[package]]
+name = "example-751-mock-trait-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-752-test-doubles-taxonomy"
+version = "0.1.0"
+
+[[package]]
+name = "example-753-bench-harness-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-754-testing-async-code"
+version = "0.1.0"
+
+[[package]]
+name = "example-755-testing-error-paths"
+version = "0.1.0"
+
+[[package]]
+name = "example-756-tempfile-testing"
+version = "0.1.0"
+
+[[package]]
+name = "example-757-golden-file-tests"
+version = "0.1.0"
+
+[[package]]
+name = "example-758-test-isolation-patterns"
+version = "0.1.0"
+
+[[package]]
+name = "example-759-manual-serialize-trait"
+version = "0.1.0"
+
+[[package]]
+name = "example-760-serde-derive-concept"
+version = "0.1.0"
+
+[[package]]
+name = "example-761-custom-serialize-logic"
+version = "0.1.0"
+
+[[package]]
+name = "example-762-custom-deserialize-logic"
+version = "0.1.0"
+
+[[package]]
+name = "example-763-json-format-from-scratch"
+version = "0.1.0"
+
+[[package]]
+name = "example-764-binary-format-encoding"
+version = "0.1.0"
+
+[[package]]
+name = "example-765-csv-parsing-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-766-config-file-parsing"
+version = "0.1.0"
+
+[[package]]
+name = "example-767-versioned-data-format"
+version = "0.1.0"
+
+[[package]]
+name = "example-768-zero-copy-deserialize"
+version = "0.1.0"
+
+[[package]]
+name = "example-769-streaming-parser-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-770-recursive-descent-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-771-pratt-parser"
+version = "0.1.0"
+
+[[package]]
+name = "example-772-parser-combinator-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-773-serde-attributes-concept"
+version = "0.1.0"
+
+[[package]]
+name = "example-774-const-generics-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-775-const-array-size"
+version = "0.1.0"
+
+[[package]]
+name = "example-776-const-fn-basics"
+version = "0.1.0"
+
+[[package]]
+name = "example-777-const-assert-patterns"
+version = "0.1.0"
+
+[[package]]
+name = "example-778-const-fibonacci"
+version = "0.1.0"
+
+[[package]]
+name = "example-779-const-lookup-table"
+version = "0.1.0"
+
+[[package]]
+name = "example-780-const-generic-struct"
+version = "0.1.0"
+
+[[package]]
+name = "example-781-const-where-bounds"
+version = "0.1.0"
+
+[[package]]
+name = "example-782-const-eval-patterns"
+version = "0.1.0"
+
+[[package]]
+name = "example-783-const-type-arithmetic"
+version = "0.1.0"
+
+[[package]]
+name = "example-784-fibonacci-memo-tab"
+version = "0.1.0"
+
+[[package]]
+name = "example-785-knapsack-01"
+version = "0.1.0"
+
+[[package]]
+name = "example-786-longest-common-subsequence"
+version = "0.1.0"
+
+[[package]]
+name = "example-787-edit-distance-levenshtein"
+version = "0.1.0"
+
+[[package]]
+name = "example-788-coin-change-dp"
+version = "0.1.0"
+
+[[package]]
+name = "example-789-longest-increasing-subsequence"
+version = "0.1.0"
+
+[[package]]
+name = "example-790-matrix-chain-multiplication"
+version = "0.1.0"
+
+[[package]]
+name = "example-791-palindrome-partitioning"
+version = "0.1.0"
+
+[[package]]
+name = "example-792-rod-cutting-dp"
+version = "0.1.0"
+
+[[package]]
+name = "example-793-minimum-path-sum"
+version = "0.1.0"
+
+[[package]]
+name = "example-794-word-break-dp"
+version = "0.1.0"
+
+[[package]]
+name = "example-795-subset-sum-dp"
+version = "0.1.0"
+
+[[package]]
+name = "example-796-counting-paths-dp"
+version = "0.1.0"
+
+[[package]]
+name = "example-797-range-minimum-query"
+version = "0.1.0"
+
+[[package]]
+name = "example-798-kadane-max-subarray"
+version = "0.1.0"
+
+[[package]]
+name = "example-799-bellman-ford"
+version = "0.1.0"
+
+[[package]]
+name = "example-800-floyd-warshall"
+version = "0.1.0"
+
+[[package]]
+name = "example-801-prims-mst"
+version = "0.1.0"
+
+[[package]]
+name = "example-802-kruskals-mst"
+version = "0.1.0"
+
+[[package]]
+name = "example-803-a-star-pathfinding"
+version = "0.1.0"
+
+[[package]]
+name = "example-804-tarjan-scc"
+version = "0.1.0"
+
+[[package]]
+name = "example-805-kosaraju-scc"
+version = "0.1.0"
+
+[[package]]
+name = "example-806-articulation-points"
+version = "0.1.0"
+
+[[package]]
+name = "example-807-bipartite-check"
+version = "0.1.0"
+
+[[package]]
+name = "example-808-topological-sort-dfs"
+version = "0.1.0"
+
+[[package]]
+name = "example-809-max-flow-ford-fulkerson"
+version = "0.1.0"
+
+[[package]]
+name = "example-810-eulerian-path"
+version = "0.1.0"
+
+[[package]]
+name = "example-811-hamiltonian-backtrack"
+version = "0.1.0"
+
+[[package]]
+name = "example-812-graph-coloring"
+version = "0.1.0"
+
+[[package]]
+name = "example-813-minimum-vertex-cover"
+version = "0.1.0"
+
+[[package]]
+name = "example-814-kmp-pattern-matching"
+version = "0.1.0"
+
+[[package]]
+name = "example-815-boyer-moore-search"
+version = "0.1.0"
+
+[[package]]
+name = "example-816-rabin-karp-rolling-hash"
+version = "0.1.0"
+
+[[package]]
+name = "example-817-aho-corasick-multi"
+version = "0.1.0"
+
+[[package]]
+name = "example-818-suffix-array"
+version = "0.1.0"
+
+[[package]]
+name = "example-819-z-algorithm"
+version = "0.1.0"
+
+[[package]]
+name = "example-820-manacher-palindrome"
+version = "0.1.0"
+
+[[package]]
+name = "example-821-trie-autocomplete"
+version = "0.1.0"
+
+[[package]]
+name = "example-822-burrows-wheeler"
+version = "0.1.0"
+
+[[package]]
+name = "example-823-string-hashing-poly"
+version = "0.1.0"
+
+[[package]]
+name = "example-824-sieve-of-eratosthenes"
+version = "0.1.0"
+
+[[package]]
+name = "example-825-prime-factorization"
+version = "0.1.0"
+
+[[package]]
+name = "example-826-gcd-lcm-euclid"
+version = "0.1.0"
+
+[[package]]
+name = "example-827-modular-arithmetic"
+version = "0.1.0"
+
+[[package]]
+name = "example-828-modular-exponentiation"
+version = "0.1.0"
+
+[[package]]
+name = "example-829-chinese-remainder-theorem"
+version = "0.1.0"
+
+[[package]]
+name = "example-830-euler-totient"
+version = "0.1.0"
+
+[[package]]
+name = "example-831-miller-rabin-primality"
+version = "0.1.0"
+
+[[package]]
+name = "example-832-extended-euclidean"
+version = "0.1.0"
+
+[[package]]
+name = "example-833-discrete-log-bsgs"
+version = "0.1.0"
+
+[[package]]
+name = "example-834-convex-hull-graham"
+version = "0.1.0"
+
+[[package]]
+name = "example-835-point-in-polygon"
+version = "0.1.0"
+
+[[package]]
+name = "example-836-line-segment-intersection"
+version = "0.1.0"
+
+[[package]]
+name = "example-837-closest-pair-divide-conquer"
+version = "0.1.0"
+
+[[package]]
+name = "example-838-interval-tree-stabbing"
+version = "0.1.0"
+
+[[package]]
+name = "example-839-sweep-line-events"
+version = "0.1.0"
+
+[[package]]
+name = "example-840-divide-and-conquer-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-841-backtracking-framework"
+version = "0.1.0"
+
+[[package]]
+name = "example-842-branch-and-bound"
+version = "0.1.0"
+
+[[package]]
+name = "example-843-memoization-generic"
+version = "0.1.0"
+
+[[package]]
+name = "example-844-greedy-algorithm-patterns"
+version = "0.1.0"
+
+[[package]]
+name = "example-845-randomized-quickselect"
+version = "0.1.0"
+
+[[package]]
+name = "example-846-monte-carlo-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-847-approximation-set-cover"
+version = "0.1.0"
+
+[[package]]
+name = "example-848-algorithm-complexity-guide"
+version = "0.1.0"

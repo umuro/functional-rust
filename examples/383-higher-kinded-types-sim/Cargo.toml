@@ -1,0 +1,4 @@
+[package]
+name = "example-383-higher-kinded-types-sim"
+version = "0.1.0"
+edition = "2021"

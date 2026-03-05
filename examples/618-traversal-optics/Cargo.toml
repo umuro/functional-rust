@@ -1,0 +1,6 @@
+[package]
+name = "example-618-traversal-optics"
+version = "0.1.0"
+edition = "2021"
+description = "Traversal optics for multiple elements"
+[dependencies]

@@ -1,0 +1,7 @@
+[package]
+name = "example-701-gcd-lcm"
+version = "0.1.0"
+edition = "2021"
+description = "Euclidean algorithm for GCD"
+
+[dependencies]

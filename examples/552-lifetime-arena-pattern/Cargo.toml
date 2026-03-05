@@ -1,0 +1,4 @@
+[package]
+name = "example-552-lifetime-arena-pattern"
+version = "0.1.0"
+edition = "2021"

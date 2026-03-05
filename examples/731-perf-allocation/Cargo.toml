@@ -1,0 +1,7 @@
+[package]
+name = "example-731-perf-allocation"
+version = "0.1.0"
+edition = "2021"
+description = "Reducing allocations"
+
+[dependencies]

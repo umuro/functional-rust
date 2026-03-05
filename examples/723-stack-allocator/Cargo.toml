@@ -1,0 +1,7 @@
+[package]
+name = "example-723-stack-allocator"
+version = "0.1.0"
+edition = "2021"
+description = "LIFO memory allocator"
+
+[dependencies]

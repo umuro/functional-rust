@@ -1,0 +1,7 @@
+[package]
+name = "example-595-trampoline-pattern"
+version = "0.1.0"
+edition = "2021"
+description = "Trampoline pattern for stack-safe recursion"
+
+[dependencies]

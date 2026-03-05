@@ -1,0 +1,6 @@
+[package]
+name = "example-846-monte-carlo-pattern"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

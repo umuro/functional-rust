@@ -1,0 +1,6 @@
+[package]
+name = "example-752-test-doubles-taxonomy"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

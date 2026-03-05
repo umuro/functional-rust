@@ -1,0 +1,7 @@
+[package]
+name = "example-457-epoch-gc"
+version = "0.1.0"
+edition = "2021"
+description = "Epoch-Based Garbage Collection — Memory Reclamation"
+
+[dependencies]

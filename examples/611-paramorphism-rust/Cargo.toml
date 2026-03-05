@@ -1,0 +1,6 @@
+[package]
+name = "example-611-paramorphism-rust"
+version = "0.1.0"
+edition = "2021"
+description = "Paramorphism - fold with substructure"
+[dependencies]

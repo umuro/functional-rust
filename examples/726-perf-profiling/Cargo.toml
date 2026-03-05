@@ -1,0 +1,7 @@
+[package]
+name = "example-726-perf-profiling"
+version = "0.1.0"
+edition = "2021"
+description = "Profiling techniques"
+
+[dependencies]

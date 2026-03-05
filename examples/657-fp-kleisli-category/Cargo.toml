@@ -1,0 +1,7 @@
+[package]
+name = "example-657-fp-kleisli-category"
+version = "0.1.0"
+edition = "2021"
+description = "Kleisli category and arrow composition in Rust"
+
+[dependencies]

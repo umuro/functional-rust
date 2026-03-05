@@ -1,0 +1,7 @@
+[package]
+name = "example-710-simd-basics"
+version = "0.1.0"
+edition = "2021"
+description = "Single Instruction Multiple Data"
+
+[dependencies]

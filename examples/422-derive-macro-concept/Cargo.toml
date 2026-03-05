@@ -1,0 +1,4 @@
+[package]
+name = "example-422-derive-macro-concept"
+version = "0.1.0"
+edition = "2021"

@@ -1,0 +1,7 @@
+[package]
+name = "example-576-pattern-matches-macro"
+version = "0.1.0"
+edition = "2021"
+description = "matches! macro - test patterns as boolean expressions"
+
+[dependencies]

@@ -1,0 +1,7 @@
+[package]
+name = "example-507-closure-memoization"
+version = "0.1.0"
+edition = "2021"
+description = "Closure Memoization — Caching Results"
+
+[dependencies]

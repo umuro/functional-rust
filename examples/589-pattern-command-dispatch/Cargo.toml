@@ -1,0 +1,7 @@
+[package]
+name = "example-589-pattern-command-dispatch"
+version = "0.1.0"
+edition = "2021"
+description = "Command pattern with enum dispatch"
+
+[dependencies]

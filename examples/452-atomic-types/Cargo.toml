@@ -1,0 +1,7 @@
+[package]
+name = "example-452-atomic-types"
+version = "0.1.0"
+edition = "2021"
+description = "Atomic Types — Lock-Free Concurrent Primitives"
+
+[dependencies]

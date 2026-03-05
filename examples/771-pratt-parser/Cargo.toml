@@ -1,0 +1,6 @@
+[package]
+name = "example-771-pratt-parser"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

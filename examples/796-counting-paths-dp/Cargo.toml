@@ -1,0 +1,6 @@
+[package]
+name = "example-796-counting-paths-dp"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

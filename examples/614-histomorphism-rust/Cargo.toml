@@ -1,0 +1,6 @@
+[package]
+name = "example-614-histomorphism-rust"
+version = "0.1.0"
+edition = "2021"
+description = "Histomorphism - fold with history"
+[dependencies]

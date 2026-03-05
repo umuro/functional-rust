@@ -1,0 +1,7 @@
+[package]
+name = "example-683-kruskal"
+version = "0.1.0"
+edition = "2021"
+description = "MST using Union-Find"
+
+[dependencies]

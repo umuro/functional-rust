@@ -1,0 +1,6 @@
+[package]
+name = "example-820-manacher-palindrome"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

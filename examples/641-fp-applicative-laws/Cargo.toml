@@ -1,0 +1,7 @@
+[package]
+name = "example-641-fp-applicative-laws"
+version = "0.1.0"
+edition = "2021"
+description = "Applicative functor laws demonstration in Rust"
+
+[dependencies]

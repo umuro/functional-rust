@@ -1,0 +1,7 @@
+[package]
+name = "example-604-monad-laws-rust"
+version = "0.1.0"
+edition = "2021"
+description = "Monad laws - identity and associativity"
+
+[dependencies]

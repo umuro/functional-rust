@@ -1,0 +1,7 @@
+[package]
+name = "example-481-ffi-bindgen"
+version = "0.1.0"
+edition = "2021"
+description = "FFI Bindgen — Automatic Bindings"
+
+[dependencies]

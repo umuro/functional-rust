@@ -1,0 +1,6 @@
+[package]
+name = "example-620-affine-traversal"
+version = "0.1.0"
+edition = "2021"
+description = "Affine traversal - at most one"
+[dependencies]

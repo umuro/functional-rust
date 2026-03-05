@@ -1,0 +1,7 @@
+[package]
+name = "example-679-floyd-warshall"
+version = "0.1.0"
+edition = "2021"
+description = "Floyd-Warshall all-pairs shortest path"
+
+[dependencies]

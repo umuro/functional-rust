@@ -1,0 +1,7 @@
+[package]
+name = "example-675-graph-bfs"
+version = "0.1.0"
+edition = "2021"
+description = "Breadth-First Search in Rust"
+
+[dependencies]

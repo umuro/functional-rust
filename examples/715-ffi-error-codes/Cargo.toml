@@ -1,0 +1,7 @@
+[package]
+name = "example-715-ffi-error-codes"
+version = "0.1.0"
+edition = "2021"
+description = "Error handling across FFI"
+
+[dependencies]

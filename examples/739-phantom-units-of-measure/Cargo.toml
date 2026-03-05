@@ -1,0 +1,7 @@
+[package]
+name = "example-739-phantom-units-of-measure"
+version = "0.1.0"
+edition = "2021"
+description = "Type-safe units"
+
+[dependencies]

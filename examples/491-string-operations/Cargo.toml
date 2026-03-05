@@ -1,0 +1,7 @@
+[package]
+name = "example-491-string-operations"
+version = "0.1.0"
+edition = "2021"
+description = "String Operations — Common String Methods"
+
+[dependencies]

@@ -1,0 +1,6 @@
+[package]
+name = "example-621-profunctor-optics"
+version = "0.1.0"
+edition = "2021"
+description = "Profunctor optics"
+[dependencies]

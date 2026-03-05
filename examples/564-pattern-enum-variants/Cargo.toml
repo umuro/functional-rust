@@ -1,0 +1,4 @@
+[package]
+name = "example-564-pattern-enum-variants"
+version = "0.1.0"
+edition = "2021"

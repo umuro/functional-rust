@@ -1,0 +1,7 @@
+[package]
+name = "example-719-ffi-threading"
+version = "0.1.0"
+edition = "2021"
+description = "Thread safety in FFI"
+
+[dependencies]

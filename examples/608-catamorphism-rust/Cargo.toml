@@ -1,0 +1,6 @@
+[package]
+name = "example-608-catamorphism-rust"
+version = "0.1.0"
+edition = "2021"
+description = "Catamorphism - generalized fold"
+[dependencies]

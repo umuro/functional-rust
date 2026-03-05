@@ -1,0 +1,7 @@
+[package]
+name = "example-661-sorting-algorithms"
+version = "0.1.0"
+edition = "2021"
+description = "Overview of sorting algorithms in Rust"
+
+[dependencies]

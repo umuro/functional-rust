@@ -1,0 +1,7 @@
+[package]
+name = "example-493-string-formatting"
+version = "0.1.0"
+edition = "2021"
+description = "String Formatting — Display and Format"
+
+[dependencies]

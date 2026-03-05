@@ -1,0 +1,7 @@
+[package]
+name = "example-585-pattern-box-deref"
+version = "0.1.0"
+edition = "2021"
+description = "Box deref patterns for recursive data structures"
+
+[dependencies]

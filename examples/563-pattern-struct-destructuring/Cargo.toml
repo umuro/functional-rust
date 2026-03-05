@@ -1,0 +1,4 @@
+[package]
+name = "example-563-pattern-struct-destructuring"
+version = "0.1.0"
+edition = "2021"

@@ -1,0 +1,4 @@
+[package]
+name = "example-416-macro-builder-pattern"
+version = "0.1.0"
+edition = "2021"

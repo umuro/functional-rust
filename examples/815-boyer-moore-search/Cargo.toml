@@ -1,0 +1,6 @@
+[package]
+name = "example-815-boyer-moore-search"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

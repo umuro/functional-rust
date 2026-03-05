@@ -1,0 +1,6 @@
+[package]
+name = "example-764-binary-format-encoding"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

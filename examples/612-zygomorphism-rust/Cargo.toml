@@ -1,0 +1,6 @@
+[package]
+name = "example-612-zygomorphism-rust"
+version = "0.1.0"
+edition = "2021"
+description = "Zygomorphism - parallel folds"
+[dependencies]

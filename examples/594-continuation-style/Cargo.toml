@@ -1,0 +1,7 @@
+[package]
+name = "example-594-continuation-style"
+version = "0.1.0"
+edition = "2021"
+description = "Continuation-passing style (CPS) transformations"
+
+[dependencies]

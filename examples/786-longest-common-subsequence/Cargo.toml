@@ -1,0 +1,6 @@
+[package]
+name = "example-786-longest-common-subsequence"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

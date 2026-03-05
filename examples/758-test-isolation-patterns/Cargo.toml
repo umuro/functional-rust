@@ -1,0 +1,6 @@
+[package]
+name = "example-758-test-isolation-patterns"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

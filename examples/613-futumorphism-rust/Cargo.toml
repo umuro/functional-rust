@@ -1,0 +1,6 @@
+[package]
+name = "example-613-futumorphism-rust"
+version = "0.1.0"
+edition = "2021"
+description = "Futumorphism - multi-layer unfold"
+[dependencies]

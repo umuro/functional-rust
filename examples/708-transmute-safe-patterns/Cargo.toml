@@ -1,0 +1,7 @@
+[package]
+name = "example-708-transmute-safe-patterns"
+version = "0.1.0"
+edition = "2021"
+description = "Safe transmute patterns"
+
+[dependencies]

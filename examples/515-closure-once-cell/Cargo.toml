@@ -1,0 +1,4 @@
+[package]
+name = "example-515-closure-once-cell"
+version = "0.1.0"
+edition = "2021"

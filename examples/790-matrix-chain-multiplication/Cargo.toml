@@ -1,0 +1,6 @@
+[package]
+name = "example-790-matrix-chain-multiplication"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

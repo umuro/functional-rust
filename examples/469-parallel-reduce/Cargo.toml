@@ -1,0 +1,7 @@
+[package]
+name = "example-469-parallel-reduce"
+version = "0.1.0"
+edition = "2021"
+description = "Parallel Reduce — Concurrent Aggregation"
+
+[dependencies]

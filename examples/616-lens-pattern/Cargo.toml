@@ -1,0 +1,6 @@
+[package]
+name = "example-616-lens-pattern"
+version = "0.1.0"
+edition = "2021"
+description = "Lens pattern for struct access"
+[dependencies]

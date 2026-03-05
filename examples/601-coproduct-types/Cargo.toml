@@ -1,0 +1,7 @@
+[package]
+name = "example-601-coproduct-types"
+version = "0.1.0"
+edition = "2021"
+description = "Coproduct types (sum types, Either)"
+
+[dependencies]

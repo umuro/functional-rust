@@ -1,0 +1,4 @@
+[package]
+name = "example-439-macro-assert-variants"
+version = "0.1.0"
+edition = "2021"

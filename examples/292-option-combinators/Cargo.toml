@@ -1,0 +1,4 @@
+[package]
+name = "example-292-option-combinators"
+version = "0.1.0"
+edition = "2021"

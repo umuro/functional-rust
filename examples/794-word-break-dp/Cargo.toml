@@ -1,0 +1,6 @@
+[package]
+name = "example-794-word-break-dp"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

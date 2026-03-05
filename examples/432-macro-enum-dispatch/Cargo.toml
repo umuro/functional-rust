@@ -1,0 +1,4 @@
+[package]
+name = "example-432-macro-enum-dispatch"
+version = "0.1.0"
+edition = "2021"

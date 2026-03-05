@@ -1,0 +1,7 @@
+[package]
+name = "example-694-rabin-karp"
+version = "0.1.0"
+edition = "2021"
+description = "Rolling hash string matching"
+
+[dependencies]

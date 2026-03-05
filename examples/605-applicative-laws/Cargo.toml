@@ -1,0 +1,6 @@
+[package]
+name = "example-605-applicative-laws"
+version = "0.1.0"
+edition = "2021"
+description = "Applicative functor laws"
+[dependencies]

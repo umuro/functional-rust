@@ -1,0 +1,7 @@
+[package]
+name = "example-646-fp-bifunctor"
+version = "0.1.0"
+edition = "2021"
+description = "Bifunctor typeclass demonstration in Rust"
+
+[dependencies]

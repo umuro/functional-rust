@@ -1,0 +1,6 @@
+[package]
+name = "example-622-classy-optics"
+version = "0.1.0"
+edition = "2021"
+description = "Classy optics via traits"
+[dependencies]

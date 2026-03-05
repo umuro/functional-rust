@@ -1,0 +1,7 @@
+[package]
+name = "example-596-church-encoding-rust"
+version = "0.1.0"
+edition = "2021"
+description = "Church encoding - data as functions"
+
+[dependencies]

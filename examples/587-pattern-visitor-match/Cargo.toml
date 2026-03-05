@@ -1,0 +1,7 @@
+[package]
+name = "example-587-pattern-visitor-match"
+version = "0.1.0"
+edition = "2021"
+description = "Visitor pattern implemented via pattern matching"
+
+[dependencies]

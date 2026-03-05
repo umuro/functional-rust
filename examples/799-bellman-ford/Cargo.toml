@@ -1,0 +1,6 @@
+[package]
+name = "example-799-bellman-ford"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

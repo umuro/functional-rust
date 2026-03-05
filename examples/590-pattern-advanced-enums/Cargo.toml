@@ -1,0 +1,7 @@
+[package]
+name = "example-590-pattern-advanced-enums"
+version = "0.1.0"
+edition = "2021"
+description = "Advanced enum patterns with recursive types"
+
+[dependencies]

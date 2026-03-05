@@ -1,0 +1,7 @@
+[package]
+name = "example-668-counting-sort"
+version = "0.1.0"
+edition = "2021"
+description = "Counting sort implementation in Rust"
+
+[dependencies]

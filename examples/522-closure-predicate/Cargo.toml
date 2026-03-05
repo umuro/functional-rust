@@ -1,0 +1,4 @@
+[package]
+name = "example-522-closure-predicate"
+version = "0.1.0"
+edition = "2021"

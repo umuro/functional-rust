@@ -1,0 +1,7 @@
+[package]
+name = "example-486-inline-asm"
+version = "0.1.0"
+edition = "2021"
+description = "Inline Assembly — Low-Level Control"
+
+[dependencies]

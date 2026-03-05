@@ -1,0 +1,4 @@
+[package]
+name = "example-427-syn-quote-basics"
+version = "0.1.0"
+edition = "2021"

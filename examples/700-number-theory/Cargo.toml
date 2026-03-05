@@ -1,0 +1,7 @@
+[package]
+name = "example-700-number-theory"
+version = "0.1.0"
+edition = "2021"
+description = "Number theory algorithms overview"
+
+[dependencies]

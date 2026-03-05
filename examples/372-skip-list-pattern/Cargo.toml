@@ -1,0 +1,4 @@
+[package]
+name = "example-372-skip-list-pattern"
+version = "0.1.0"
+edition = "2021"

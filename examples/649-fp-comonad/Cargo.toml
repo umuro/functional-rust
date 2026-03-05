@@ -1,0 +1,7 @@
+[package]
+name = "example-649-fp-comonad"
+version = "0.1.0"
+edition = "2021"
+description = "Comonad demonstration in Rust"
+
+[dependencies]

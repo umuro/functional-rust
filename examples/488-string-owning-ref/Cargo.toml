@@ -1,0 +1,7 @@
+[package]
+name = "example-488-string-owning-ref"
+version = "0.1.0"
+edition = "2021"
+description = "String Owning References — Self-Referential"
+
+[dependencies]

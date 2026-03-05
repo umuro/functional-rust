@@ -1,0 +1,6 @@
+[package]
+name = "example-617-prism-pattern"
+version = "0.1.0"
+edition = "2021"
+description = "Prism pattern for enum variants"
+[dependencies]

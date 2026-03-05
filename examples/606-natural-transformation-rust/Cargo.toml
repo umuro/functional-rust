@@ -1,0 +1,6 @@
+[package]
+name = "example-606-natural-transformation-rust"
+version = "0.1.0"
+edition = "2021"
+description = "Natural transformations between functors"
+[dependencies]

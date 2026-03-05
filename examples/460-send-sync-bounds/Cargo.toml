@@ -1,0 +1,7 @@
+[package]
+name = "example-460-send-sync-bounds"
+version = "0.1.0"
+edition = "2021"
+description = "Send and Sync Bounds — Thread Safety Markers"
+
+[dependencies]

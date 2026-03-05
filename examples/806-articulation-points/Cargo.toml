@@ -1,0 +1,6 @@
+[package]
+name = "example-806-articulation-points"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

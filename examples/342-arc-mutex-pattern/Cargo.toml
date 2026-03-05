@@ -1,0 +1,4 @@
+[package]
+name = "example-342-arc-mutex-pattern"
+version = "0.1.0"
+edition = "2021"

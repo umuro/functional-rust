@@ -1,0 +1,6 @@
+[package]
+name = "example-787-edit-distance-levenshtein"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

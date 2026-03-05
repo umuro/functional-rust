@@ -1,0 +1,7 @@
+[package]
+name = "example-689-network-flow"
+version = "0.1.0"
+edition = "2021"
+description = "Flow network algorithms"
+
+[dependencies]

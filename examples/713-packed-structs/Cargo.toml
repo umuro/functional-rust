@@ -1,0 +1,7 @@
+[package]
+name = "example-713-packed-structs"
+version = "0.1.0"
+edition = "2021"
+description = "repr(packed) and memory"
+
+[dependencies]

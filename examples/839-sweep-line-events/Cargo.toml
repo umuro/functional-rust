@@ -1,0 +1,6 @@
+[package]
+name = "example-839-sweep-line-events"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

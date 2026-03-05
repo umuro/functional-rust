@@ -1,0 +1,7 @@
+[package]
+name = "example-489-slice-patterns"
+version = "0.1.0"
+edition = "2021"
+description = "Slice Patterns — Pattern Matching on Slices"
+
+[dependencies]

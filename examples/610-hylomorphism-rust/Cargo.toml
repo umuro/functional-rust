@@ -1,0 +1,6 @@
+[package]
+name = "example-610-hylomorphism-rust"
+version = "0.1.0"
+edition = "2021"
+description = "Hylomorphism - unfold then fold"
+[dependencies]

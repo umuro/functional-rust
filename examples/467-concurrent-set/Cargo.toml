@@ -1,0 +1,7 @@
+[package]
+name = "example-467-concurrent-set"
+version = "0.1.0"
+edition = "2021"
+description = "Concurrent Set — Thread-Safe Set Operations"
+
+[dependencies]

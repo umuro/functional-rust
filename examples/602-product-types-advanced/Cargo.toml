@@ -1,0 +1,7 @@
+[package]
+name = "example-602-product-types-advanced"
+version = "0.1.0"
+edition = "2021"
+description = "Advanced product types and operations"
+
+[dependencies]

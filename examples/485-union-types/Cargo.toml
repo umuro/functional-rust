@@ -1,0 +1,7 @@
+[package]
+name = "example-485-union-types"
+version = "0.1.0"
+edition = "2021"
+description = "Union Types — C-style Unions"
+
+[dependencies]

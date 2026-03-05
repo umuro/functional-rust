@@ -1,0 +1,7 @@
+[package]
+name = "example-461-mutex-poisoning"
+version = "0.1.0"
+edition = "2021"
+description = "Mutex Poisoning — Handling Panics in Critical Sections"
+
+[dependencies]

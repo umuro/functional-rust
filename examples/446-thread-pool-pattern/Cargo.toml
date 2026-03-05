@@ -1,0 +1,7 @@
+[package]
+name = "example-446-thread-pool-pattern"
+version = "0.1.0"
+edition = "2021"
+description = "Thread Pool Pattern — Reusable Worker Threads"
+
+[dependencies]

@@ -1,0 +1,4 @@
+[package]
+name = "example-573-pattern-let-else"
+version = "0.1.0"
+edition = "2021"

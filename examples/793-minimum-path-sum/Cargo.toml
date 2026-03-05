@@ -1,0 +1,6 @@
+[package]
+name = "example-793-minimum-path-sum"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

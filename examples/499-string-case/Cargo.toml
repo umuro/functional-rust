@@ -1,0 +1,7 @@
+[package]
+name = "example-499-string-case"
+version = "0.1.0"
+edition = "2021"
+description = "String Case — Case Conversion"
+
+[dependencies]

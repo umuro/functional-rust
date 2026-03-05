@@ -1,0 +1,7 @@
+[package]
+name = "example-680-topological-sort"
+version = "0.1.0"
+edition = "2021"
+description = "Topological sort for DAGs"
+
+[dependencies]

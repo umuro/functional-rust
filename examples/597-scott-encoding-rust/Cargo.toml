@@ -1,0 +1,7 @@
+[package]
+name = "example-597-scott-encoding-rust"
+version = "0.1.0"
+edition = "2021"
+description = "Scott encoding - pattern matching as functions"
+
+[dependencies]

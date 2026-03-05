@@ -1,0 +1,6 @@
+[package]
+name = "example-607-fixed-point-types"
+version = "0.1.0"
+edition = "2021"
+description = "Fixed-point types for recursion"
+[dependencies]

@@ -1,0 +1,7 @@
+[package]
+name = "example-730-perf-branch-prediction"
+version = "0.1.0"
+edition = "2021"
+description = "Avoiding branch misprediction"
+
+[dependencies]

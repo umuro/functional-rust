@@ -1,0 +1,4 @@
+[package]
+name = "example-355-linked-list-rust"
+version = "0.1.0"
+edition = "2021"

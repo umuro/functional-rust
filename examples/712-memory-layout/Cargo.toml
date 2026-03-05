@@ -1,0 +1,7 @@
+[package]
+name = "example-712-memory-layout"
+version = "0.1.0"
+edition = "2021"
+description = "Struct memory layout and alignment"
+
+[dependencies]

@@ -1,0 +1,6 @@
+[package]
+name = "example-609-anamorphism-rust"
+version = "0.1.0"
+edition = "2021"
+description = "Anamorphism - generalized unfold"
+[dependencies]

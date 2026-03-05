@@ -1,0 +1,7 @@
+[package]
+name = "example-473-unsafe-functions"
+version = "0.1.0"
+edition = "2021"
+description = "Unsafe Functions — Declaring and Calling"
+
+[dependencies]

@@ -1,0 +1,6 @@
+[package]
+name = "example-824-sieve-of-eratosthenes"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

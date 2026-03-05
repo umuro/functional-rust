@@ -1,0 +1,4 @@
+[package]
+name = "example-440-macro-log-pattern"
+version = "0.1.0"
+edition = "2021"

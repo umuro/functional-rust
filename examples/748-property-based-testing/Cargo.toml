@@ -1,0 +1,6 @@
+[package]
+name = "example-748-property-based-testing"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

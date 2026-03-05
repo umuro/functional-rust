@@ -1,0 +1,4 @@
+[package]
+name = "example-571-pattern-dotdot-wildcard"
+version = "0.1.0"
+edition = "2021"

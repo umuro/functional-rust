@@ -1,0 +1,6 @@
+[package]
+name = "example-791-palindrome-partitioning"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

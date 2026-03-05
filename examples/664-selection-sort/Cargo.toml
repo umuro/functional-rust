@@ -1,0 +1,7 @@
+[package]
+name = "example-664-selection-sort"
+version = "0.1.0"
+edition = "2021"
+description = "Selection sort implementation in Rust"
+
+[dependencies]

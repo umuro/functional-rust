@@ -1,0 +1,4 @@
+[package]
+name = "example-385-trait-objects-any"
+version = "0.1.0"
+edition = "2021"

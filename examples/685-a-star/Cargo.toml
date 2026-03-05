@@ -1,0 +1,7 @@
+[package]
+name = "example-685-a-star"
+version = "0.1.0"
+edition = "2021"
+description = "Heuristic pathfinding algorithm"
+
+[dependencies]

@@ -1,0 +1,7 @@
+[package]
+name = "example-504-closure-as-return"
+version = "0.1.0"
+edition = "2021"
+description = "Closure as Return — Returning Closures"
+
+[dependencies]

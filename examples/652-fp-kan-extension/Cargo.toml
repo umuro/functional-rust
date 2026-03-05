@@ -1,0 +1,7 @@
+[package]
+name = "example-652-fp-kan-extension"
+version = "0.1.0"
+edition = "2021"
+description = "Kan extensions and related constructions in Rust"
+
+[dependencies]

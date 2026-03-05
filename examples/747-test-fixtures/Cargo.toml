@@ -1,0 +1,7 @@
+[package]
+name = "example-747-test-fixtures"
+version = "0.1.0"
+edition = "2021"
+description = "Test fixtures: RAII teardown, shared state, per-test isolation"
+
+[dependencies]

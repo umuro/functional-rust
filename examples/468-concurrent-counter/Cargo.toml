@@ -1,0 +1,7 @@
+[package]
+name = "example-468-concurrent-counter"
+version = "0.1.0"
+edition = "2021"
+description = "Concurrent Counter — Thread-Safe Counting"
+
+[dependencies]

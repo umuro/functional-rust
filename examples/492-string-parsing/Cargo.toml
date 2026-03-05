@@ -1,0 +1,7 @@
+[package]
+name = "example-492-string-parsing"
+version = "0.1.0"
+edition = "2021"
+description = "String Parsing — FromStr and Parse"
+
+[dependencies]

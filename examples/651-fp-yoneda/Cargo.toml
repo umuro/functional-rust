@@ -1,0 +1,7 @@
+[package]
+name = "example-651-fp-yoneda"
+version = "0.1.0"
+edition = "2021"
+description = "Yoneda lemma and map fusion in Rust"
+
+[dependencies]

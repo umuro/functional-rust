@@ -1,0 +1,4 @@
+[package]
+name = "example-541-lifetime-elision"
+version = "0.1.0"
+edition = "2021"

@@ -1,0 +1,4 @@
+[package]
+name = "example-402-index-trait"
+version = "0.1.0"
+edition = "2021"

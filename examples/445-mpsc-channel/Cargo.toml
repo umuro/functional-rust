@@ -1,0 +1,7 @@
+[package]
+name = "example-445-mpsc-channel"
+version = "0.1.0"
+edition = "2021"
+description = "MPSC Channels — Message Passing Between Threads"
+
+[dependencies]

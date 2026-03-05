@@ -1,0 +1,7 @@
+[package]
+name = "example-448-rayon-parallel"
+version = "0.1.0"
+edition = "2021"
+description = "Rayon Parallel Iterators — Data Parallelism Made Easy"
+
+[dependencies]

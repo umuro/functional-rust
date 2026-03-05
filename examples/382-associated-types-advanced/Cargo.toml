@@ -1,0 +1,4 @@
+[package]
+name = "example-382-associated-types-advanced"
+version = "0.1.0"
+edition = "2021"

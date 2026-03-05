@@ -1,0 +1,7 @@
+[package]
+name = "example-502-fn-fnmut-fnonce"
+version = "0.1.0"
+edition = "2021"
+description = "Fn FnMut FnOnce — Closure Traits"
+
+[dependencies]

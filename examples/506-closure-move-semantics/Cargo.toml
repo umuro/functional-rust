@@ -1,0 +1,7 @@
+[package]
+name = "example-506-closure-move-semantics"
+version = "0.1.0"
+edition = "2021"
+description = "Closure Move Semantics — Ownership Transfer"
+
+[dependencies]

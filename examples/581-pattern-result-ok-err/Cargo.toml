@@ -1,0 +1,7 @@
+[package]
+name = "example-581-pattern-result-ok-err"
+version = "0.1.0"
+edition = "2021"
+description = "Result pattern matching with Ok/Err and ? operator"
+
+[dependencies]

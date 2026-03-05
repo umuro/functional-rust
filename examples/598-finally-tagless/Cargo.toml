@@ -1,0 +1,7 @@
+[package]
+name = "example-598-finally-tagless"
+version = "0.1.0"
+edition = "2021"
+description = "Finally tagless style for extensible DSLs"
+
+[dependencies]

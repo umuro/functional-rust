@@ -1,0 +1,4 @@
+[package]
+name = "example-286-iterator-from-fn"
+version = "0.1.0"
+edition = "2021"

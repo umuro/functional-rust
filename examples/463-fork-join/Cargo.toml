@@ -1,0 +1,7 @@
+[package]
+name = "example-463-fork-join"
+version = "0.1.0"
+edition = "2021"
+description = "Fork-Join Pattern — Divide and Conquer"
+
+[dependencies]

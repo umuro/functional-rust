@@ -1,0 +1,7 @@
+[package]
+name = "example-500-string-unicode"
+version = "0.1.0"
+edition = "2021"
+description = "String Unicode — Graphemes and Normalization"
+
+[dependencies]

@@ -1,0 +1,6 @@
+[package]
+name = "example-840-divide-and-conquer-pattern"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

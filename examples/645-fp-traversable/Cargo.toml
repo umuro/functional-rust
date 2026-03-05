@@ -1,0 +1,7 @@
+[package]
+name = "example-645-fp-traversable"
+version = "0.1.0"
+edition = "2021"
+description = "Traversable typeclass demonstration in Rust"
+
+[dependencies]

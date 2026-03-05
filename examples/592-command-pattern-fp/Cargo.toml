@@ -1,0 +1,7 @@
+[package]
+name = "example-592-command-pattern-fp"
+version = "0.1.0"
+edition = "2021"
+description = "Command pattern as data with replay and optimization"
+
+[dependencies]

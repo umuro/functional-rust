@@ -1,0 +1,6 @@
+[package]
+name = "example-623-functional-rust-grand-tour"
+version = "0.1.0"
+edition = "2021"
+description = "Summary of functional Rust patterns"
+[dependencies]

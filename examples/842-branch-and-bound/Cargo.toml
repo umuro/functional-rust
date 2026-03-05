@@ -1,0 +1,6 @@
+[package]
+name = "example-842-branch-and-bound"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
