@@ -619,7 +619,15 @@ name = "example-100-step-by"
 version = "0.1.0"
 
 [[package]]
+name = "example-1000-option-list-max"
+version = "0.1.0"
+
+[[package]]
 name = "example-1000-reactive-stream"
+version = "0.1.0"
+
+[[package]]
+name = "example-1001-binary-tree-traversal"
 version = "0.1.0"
 
 [[package]]
@@ -631,11 +639,23 @@ name = "example-1002-backpressure"
 version = "0.1.0"
 
 [[package]]
+name = "example-1002-stack-module"
+version = "0.1.0"
+
+[[package]]
 name = "example-1003-custom-error"
 version = "0.1.0"
 
 [[package]]
+name = "example-1003-map-fold-trees"
+version = "0.1.0"
+
+[[package]]
 name = "example-1004-error-conversion"
+version = "0.1.0"
+
+[[package]]
+name = "example-1004-leap-year"
 version = "0.1.0"
 
 [[package]]

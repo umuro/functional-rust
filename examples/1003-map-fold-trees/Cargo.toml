@@ -1,0 +1,8 @@
+[package]
+name = "example-1003-map-fold-trees"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "map_fold_trees"
+path = "src/lib.rs"
