@@ -31,11 +31,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "example-001-applying-a-function-twice"
+version = "0.1.0"
+
+[[package]]
 name = "example-001-higher-order-functions"
 version = "0.1.0"
 
 [[package]]
 name = "example-001-last-element"
+version = "0.1.0"
+
+[[package]]
+name = "example-002-function-composition"
 version = "0.1.0"
 
 [[package]]
@@ -55,7 +63,15 @@ name = "example-003-pattern-matching"
 version = "0.1.0"
 
 [[package]]
+name = "example-003-pipeline-operator"
+version = "0.1.0"
+
+[[package]]
 name = "example-004-list-length"
+version = "0.1.0"
+
+[[package]]
+name = "example-004-list-map-from-scratch"
 version = "0.1.0"
 
 [[package]]
@@ -64,6 +80,10 @@ version = "0.1.0"
 
 [[package]]
 name = "example-005-currying"
+version = "0.1.0"
+
+[[package]]
+name = "example-005-list-filter-from-scratch"
 version = "0.1.0"
 
 [[package]]
