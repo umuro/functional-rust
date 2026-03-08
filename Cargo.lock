@@ -1035,6 +1035,26 @@ name = "example-1080-topological-sort-kahn"
 version = "0.1.0"
 
 [[package]]
+name = "example-1081-lenses"
+version = "0.1.0"
+
+[[package]]
+name = "example-1082-tail-recursive-map-cps"
+version = "0.1.0"
+
+[[package]]
+name = "example-1083-red-black-tree"
+version = "0.1.0"
+
+[[package]]
+name = "example-1084-monoid-pattern"
+version = "0.1.0"
+
+[[package]]
+name = "example-1085-dijkstra-shortest-path"
+version = "0.1.0"
+
+[[package]]
 name = "example-109-arc-threads"
 version = "0.1.0"
 
