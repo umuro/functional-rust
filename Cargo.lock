@@ -619,6 +619,10 @@ name = "example-100-step-by"
 version = "0.1.0"
 
 [[package]]
+name = "example-1000-list-map"
+version = "0.1.0"
+
+[[package]]
 name = "example-1000-option-list-max"
 version = "0.1.0"
 
@@ -635,7 +639,15 @@ name = "example-1001-event-loop"
 version = "0.1.0"
 
 [[package]]
+name = "example-1001-list-filter"
+version = "0.1.0"
+
+[[package]]
 name = "example-1002-backpressure"
+version = "0.1.0"
+
+[[package]]
+name = "example-1002-list-fold-left"
 version = "0.1.0"
 
 [[package]]
@@ -644,6 +656,10 @@ version = "0.1.0"
 
 [[package]]
 name = "example-1003-custom-error"
+version = "0.1.0"
+
+[[package]]
+name = "example-1003-leap-year"
 version = "0.1.0"
 
 [[package]]
@@ -656,6 +672,10 @@ version = "0.1.0"
 
 [[package]]
 name = "example-1004-leap-year"
+version = "0.1.0"
+
+[[package]]
+name = "example-1004-quicksort"
 version = "0.1.0"
 
 [[package]]
