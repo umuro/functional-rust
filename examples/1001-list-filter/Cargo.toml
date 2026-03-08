@@ -1,0 +1,13 @@
+[package]
+name = "example-1001-list-filter"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "list_filter"
+path = "src/lib.rs"
+doctest = false
+
+[[bin]]
+name = "example"
+path = "src/example.rs"

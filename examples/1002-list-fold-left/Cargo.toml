@@ -1,0 +1,12 @@
+[package]
+name = "example-1002-list-fold-left"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "example"
+path = "src/example.rs"
+
+[lib]
+name = "list_fold_left"
+path = "src/lib.rs"

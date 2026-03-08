@@ -1,0 +1,8 @@
+[package]
+name = "example-1003-leap-year"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "leap_year"
+path = "src/lib.rs"

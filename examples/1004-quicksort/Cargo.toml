@@ -1,0 +1,12 @@
+[package]
+name = "example-1004-quicksort"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "quicksort"
+path = "src/lib.rs"
+
+[[bin]]
+name = "example"
+path = "src/example.rs"
