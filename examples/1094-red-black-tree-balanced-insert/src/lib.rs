@@ -1,4 +1,4 @@
-// Red-Black Tree — Balanced Insert
+// Red-Black Tree — Okasaki's Functional Balanced Insert
 //
 // A persistent (immutable) red-black tree following Okasaki's elegant
 // functional approach. The `balance` function captures all four rotation
@@ -47,13 +47,7 @@ impl<T: Ord + Clone> RBTree<T> {
         // Destructuring nested enums mirrors OCaml's nested pattern match exactly.
         match (color, &left, &right) {
             // Case 1: Left-left red violation
-            //     z(B)              y(R)
-            //    /                 /    \
-            //   y(R)      →    x(B)   z(B)
-            //  /
-            // x(R)
             (Black, Node(Red, ref ll, _, _), _) if matches!(ll.as_ref(), Node(Red, _, _, _)) => {
-                // Must move out of left/right — destructure by value
                 if let Node(Red, ll, y, c) = left {
                     if let Node(Red, a, x, b) = *ll {
                         return Node(
@@ -68,11 +62,6 @@ impl<T: Ord + Clone> RBTree<T> {
             }
 
             // Case 2: Left-right red violation
-            //   z(B)                y(R)
-            //  /                   /    \
-            // x(R)        →    x(B)   z(B)
-            //    \
-            //    y(R)
             (Black, Node(Red, _, _, ref lr), _) if matches!(lr.as_ref(), Node(Red, _, _, _)) => {
                 if let Node(Red, a, x, lr) = left {
                     if let Node(Red, b, y, c) = *lr {
@@ -88,11 +77,6 @@ impl<T: Ord + Clone> RBTree<T> {
             }
 
             // Case 3: Right-left red violation
-            //   x(B)                y(R)
-            //      \               /    \
-            //      z(R)    →    x(B)   z(B)
-            //     /
-            //    y(R)
             (Black, _, Node(Red, ref rl, _, _)) if matches!(rl.as_ref(), Node(Red, _, _, _)) => {
                 if let Node(Red, rl, z, d) = right {
                     if let Node(Red, b, y, c) = *rl {
@@ -108,11 +92,6 @@ impl<T: Ord + Clone> RBTree<T> {
             }
 
             // Case 4: Right-right red violation
-            //   x(B)                y(R)
-            //      \               /    \
-            //      y(R)    →    x(B)   z(B)
-            //         \
-            //         z(R)
             (Black, _, Node(Red, _, _, ref rr)) if matches!(rr.as_ref(), Node(Red, _, _, _)) => {
                 if let Node(Red, b, y, rr) = right {
                     if let Node(Red, c, z, d) = *rr {
@@ -137,6 +116,7 @@ impl<T: Ord + Clone> RBTree<T> {
     /// Returns a new tree (persistent — original is not modified).
     /// The root is always painted black after insertion.
     pub fn insert(&self, x: T) -> Self {
+        // Inner recursive helper mirrors OCaml's `ins` local function
         fn ins<T: Ord + Clone>(tree: &RBTree<T>, x: T) -> RBTree<T> {
             match tree {
                 Empty => Node(Red, Box::new(Empty), x, Box::new(Empty)),
@@ -180,7 +160,7 @@ impl<T: Ord + Clone> RBTree<T> {
         }
     }
 
-    // ── Solution 3: In-order traversal via iterator ──
+    // ── Solution 3: In-order traversal — collects to sorted Vec ──
 
     /// Collects elements in sorted order (in-order traversal).
     pub fn to_sorted_vec(&self) -> Vec<&T> {
@@ -314,7 +294,6 @@ mod tests {
 
     #[test]
     fn test_root_always_black() {
-        // After any sequence of inserts, root must be black
         for n in 1..=20 {
             let tree: RBTree<i32> = (1..=n).collect();
             assert_eq!(
@@ -327,7 +306,6 @@ mod tests {
 
     #[test]
     fn test_rb_invariants_hold() {
-        // Insert ascending, descending, and random-ish orders
         let orders: Vec<Vec<i32>> = vec![
             (1..=15).collect(),
             (1..=15).rev().collect(),
