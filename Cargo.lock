@@ -1095,6 +1095,14 @@ name = "example-1094-red-black-tree-balanced-insert"
 version = "0.1.0"
 
 [[package]]
+name = "example-1095-red-black-tree-balanced-insert"
+version = "0.1.0"
+
+[[package]]
+name = "example-1096-red-black-tree-balanced-insert"
+version = "0.1.0"
+
+[[package]]
 name = "example-110-cell-interior"
 version = "0.1.0"
 
