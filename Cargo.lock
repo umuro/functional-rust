@@ -1055,7 +1055,27 @@ name = "example-1085-dijkstra-shortest-path"
 version = "0.1.0"
 
 [[package]]
+name = "example-1086-lenses-functional-getters-and-setters"
+version = "0.1.0"
+
+[[package]]
+name = "example-1087-tail-recursive-map-with-cps"
+version = "0.1.0"
+
+[[package]]
+name = "example-1088-red-black-tree-balanced-insert"
+version = "0.1.0"
+
+[[package]]
+name = "example-1089-monoid-pattern-generic-combining"
+version = "0.1.0"
+
+[[package]]
 name = "example-109-arc-threads"
+version = "0.1.0"
+
+[[package]]
+name = "example-1090-dijkstra-shortest-path-priority-queue"
 version = "0.1.0"
 
 [[package]]
@@ -4072,6 +4092,10 @@ version = "0.1.0"
 
 [[package]]
 name = "example-915-iterator-min-by-max-by"
+version = "0.1.0"
+
+[[package]]
+name = "example-916-iterator-count"
 version = "0.1.0"
 
 [[package]]

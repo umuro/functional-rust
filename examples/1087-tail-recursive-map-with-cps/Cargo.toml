@@ -1,0 +1,4 @@
+[package]
+name = "example-1087-tail-recursive-map-with-cps"
+version = "0.1.0"
+edition = "2021"
