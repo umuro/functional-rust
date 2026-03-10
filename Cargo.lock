@@ -1127,6 +1127,26 @@ name = "example-1101-persistent-vector-functional-array"
 version = "0.1.0"
 
 [[package]]
+name = "example-1102-red-black-tree-balanced-insert"
+version = "0.1.0"
+
+[[package]]
+name = "example-1103-monoid-pattern-generic-combining"
+version = "0.1.0"
+
+[[package]]
+name = "example-1104-dijkstra-shortest-path-priority-queue"
+version = "0.1.0"
+
+[[package]]
+name = "example-1105-huffman-encoding-greedy-tree-building"
+version = "0.1.0"
+
+[[package]]
+name = "example-1106-persistent-vector-functional-array"
+version = "0.1.0"
+
+[[package]]
 name = "example-111-refcell-runtime"
 version = "0.1.0"
 
