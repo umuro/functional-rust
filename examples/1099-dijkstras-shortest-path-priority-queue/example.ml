@@ -1,9 +1,12 @@
+(* Dijkstra's shortest path using a priority queue (ordered set) *)
+
 module PQ = Set.Make(struct
   type t = int * string
   let compare (d1,n1) (d2,n2) = compare (d1,n1) (d2,n2)
 end)
 module SMap = Map.Make(String)
 
+(* Idiomatic OCaml — immutable maps and sets, recursive loop *)
 let dijkstra graph start =
   let dist = SMap.singleton start 0 in
   let pq = PQ.singleton (0, start) in
@@ -25,8 +28,19 @@ let dijkstra graph start =
 
 let () =
   let g = SMap.of_list [
-    ("a",[("b",1);("c",4)]); ("b",[("c",2);("d",6)]);
-    ("c",[("d",3)]); ("d",[])
+    ("a", [("b",1);("c",4)]);
+    ("b", [("c",2);("d",6)]);
+    ("c", [("d",3)]);
+    ("d", [])
   ] in
   let dist = dijkstra g "a" in
-  SMap.iter (Printf.printf "%s: %d\n") dist
+  assert (SMap.find "a" dist = 0);
+  assert (SMap.find "b" dist = 1);
+  assert (SMap.find "c" dist = 3);
+  assert (SMap.find "d" dist = 6);
+  (* Single node *)
+  let g2 = SMap.singleton "x" [] in
+  let dist2 = dijkstra g2 "x" in
+  assert (SMap.find "x" dist2 = 0);
+  assert (SMap.cardinal dist2 = 1);
+  print_endline "ok"

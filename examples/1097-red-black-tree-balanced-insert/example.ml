@@ -28,4 +28,14 @@ let rec to_list = function
 
 let () =
   let t = List.fold_left (fun t x -> insert x t) E [5;3;7;1;4;6;8;2;9] in
-  List.iter (Printf.printf "%d ") (to_list t)
+  assert (to_list t = [1;2;3;4;5;6;7;8;9]);
+  assert (mem 5 t = true);
+  assert (mem 10 t = false);
+  (* Ascending insertion — stress test for balancing *)
+  let t2 = List.fold_left (fun t x -> insert x t) E [1;2;3;4;5;6;7] in
+  assert (to_list t2 = [1;2;3;4;5;6;7]);
+  (* Duplicate ignored *)
+  let t3 = List.fold_left (fun t x -> insert x t) E [3;1;2;3;1;2] in
+  assert (to_list t3 = [1;2;3]);
+  List.iter (Printf.printf "%d ") (to_list t);
+  print_endline " ok"
