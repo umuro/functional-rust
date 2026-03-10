@@ -1147,6 +1147,10 @@ name = "example-1106-persistent-vector-functional-array"
 version = "0.1.0"
 
 [[package]]
+name = "example-1107-currying-partial-application-and-sections"
+version = "0.1.0"
+
+[[package]]
 name = "example-111-refcell-runtime"
 version = "0.1.0"
 
