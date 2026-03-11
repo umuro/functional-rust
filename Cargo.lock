@@ -1155,6 +1155,10 @@ name = "example-1108-red-black-tree-balanced-insert"
 version = "0.1.0"
 
 [[package]]
+name = "example-1109-monoid-pattern-generic-combining"
+version = "0.1.0"
+
+[[package]]
 name = "example-111-refcell-runtime"
 version = "0.1.0"
 
