@@ -1,14 +1,17 @@
-Convert this OCaml example to idiomatic Rust.
+(* 1110: Dijkstra's Shortest Path — Priority Queue
+   OCaml uses Set.Make as an ordered-BST priority queue and Map.Make(String)
+   as the distance map. The algorithm is a tail-recursive accumulator. *)
 
-Directory: examples/1110-dijkstra-shortest-path-priority-queue/
-
-## OCaml source
 module PQ = Set.Make(struct
   type t = int * string
   let compare (d1,n1) (d2,n2) = compare (d1,n1) (d2,n2)
 end)
+
 module SMap = Map.Make(String)
 
+(* Idiomatic OCaml — tail-recursive via accumulator pattern.
+   `go pq dist` processes the minimum-distance node from pq,
+   relaxes its outgoing edges, then recurses. *)
 let dijkstra graph start =
   let dist = SMap.singleton start 0 in
   let pq = PQ.singleton (0, start) in
@@ -30,16 +33,15 @@ let dijkstra graph start =
 
 let () =
   let g = SMap.of_list [
-    ("a",[("b",1);("c",4)]); ("b",[("c",2);("d",6)]);
-    ("c",[("d",3)]); ("d",[])
+    ("a", [("b",1); ("c",4)]);
+    ("b", [("c",2); ("d",6)]);
+    ("c", [("d",3)]);
+    ("d", [])
   ] in
   let dist = dijkstra g "a" in
-  SMap.iter (Printf.printf "%s: %d\n") dist
-
-## Topic
-Dijkstra's Shortest Path — Priority Queue
-
-Read CLAUDE.md in this directory — it defines all quality standards, file structure, and self-verification steps. Follow it exactly.
-
-When done, report:
-DONE — 1110-dijkstra-shortest-path-priority-queue — cargo fmt ✓ clippy ✓ test ✓ [N tests passed]
+  assert (SMap.find "a" dist = 0);
+  assert (SMap.find "b" dist = 1);
+  assert (SMap.find "c" dist = 3);  (* a→b→c = 1+2, beats a→c = 4 *)
+  assert (SMap.find "d" dist = 6);  (* a→b→c→d = 1+2+3 *)
+  SMap.iter (Printf.printf "%s: %d\n") dist;
+  print_endline "ok"

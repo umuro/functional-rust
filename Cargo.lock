@@ -1163,6 +1163,22 @@ name = "example-111-refcell-runtime"
 version = "0.1.0"
 
 [[package]]
+name = "example-1110-dijkstra-shortest-path-priority-queue"
+version = "0.1.0"
+
+[[package]]
+name = "example-1111-huffman-encoding-greedy-tree-building"
+version = "0.1.0"
+
+[[package]]
+name = "example-1112-persistent-vector-functional-array"
+version = "0.1.0"
+
+[[package]]
+name = "example-1113-knapsack-problem-dynamic-programming-functional"
+version = "0.1.0"
+
+[[package]]
 name = "example-112-cow-clone-on-write"
 version = "0.1.0"
 
