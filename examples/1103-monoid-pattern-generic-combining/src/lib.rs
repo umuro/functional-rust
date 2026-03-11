@@ -14,13 +14,21 @@ mod tests {
     use super::*;
 
     impl Monoid for i32 {
-        fn empty() -> Self { 0 }
-        fn combine(self, other: Self) -> Self { self + other }
+        fn empty() -> Self {
+            0
+        }
+        fn combine(self, other: Self) -> Self {
+            self + other
+        }
     }
 
     impl Monoid for String {
-        fn empty() -> Self { String::new() }
-        fn combine(self, other: Self) -> Self { self + &other }
+        fn empty() -> Self {
+            String::new()
+        }
+        fn combine(self, other: Self) -> Self {
+            self + &other
+        }
     }
 
     #[test]
