@@ -17,12 +17,15 @@ use RBTree::*;
 /// Takes a tuple (color, left, value, right) and returns a balanced tree.
 pub fn balance<T>(color: Color, left: RBTree<T>, value: T, right: RBTree<T>) -> RBTree<T> {
     match (color, left, value, right) {
-        (Black, T(Red, T(Red, a, x, b), y, c), z, d) |
-        (Black, T(Red, a, x, T(Red, b, y, c)), z, d) |
-        (Black, a, x, T(Red, T(Red, b, y, c), z, d)) |
-        (Black, a, x, T(Red, b, y, T(Red, c, z, d))) => {
-            T(Red, Box::new(T(Black, a, x, b)), y, Box::new(T(Black, c, z, d)))
-        }
+        (Black, T(Red, T(Red, a, x, b), y, c), z, d)
+        | (Black, T(Red, a, x, T(Red, b, y, c)), z, d)
+        | (Black, a, x, T(Red, T(Red, b, y, c), z, d))
+        | (Black, a, x, T(Red, b, y, T(Red, c, z, d))) => T(
+            Red,
+            Box::new(T(Black, a, x, b)),
+            y,
+            Box::new(T(Black, c, z, d)),
+        ),
         (color, a, x, b) => T(color, Box::new(a), x, Box::new(b)),
     }
 }
@@ -115,16 +118,17 @@ mod tests {
     #[test]
     fn test_balance_red_red_left() {
         // Build a tree that triggers balance case
-        let t = T(Black,
-            Box::new(T(Red,
-                Box::new(T(Red,
-                    Box::new(E),
-                    1,
-                    Box::new(E))),
+        let t = T(
+            Black,
+            Box::new(T(
+                Red,
+                Box::new(T(Red, Box::new(E), 1, Box::new(E))),
                 2,
-                Box::new(E))),
+                Box::new(E),
+            )),
             3,
-            Box::new(E));
+            Box::new(E),
+        );
         let balanced = balance(Black, *Box::new(t), 4, E);
         // After balancing, root should be Red
         match balanced {
