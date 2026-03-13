@@ -1179,6 +1179,22 @@ name = "example-1113-knapsack-problem-dynamic-programming-functional"
 version = "0.1.0"
 
 [[package]]
+name = "example-1114-red-black-tree-balanced-insert"
+version = "0.1.0"
+
+[[package]]
+name = "example-1115-red-black-tree-balanced-insert"
+version = "0.1.0"
+
+[[package]]
+name = "example-1116-monoid-pattern-generic-combining"
+version = "0.1.0"
+
+[[package]]
+name = "example-1117-dijkstras-shortest-path-priority-queue"
+version = "0.1.0"
+
+[[package]]
 name = "example-112-cow-clone-on-write"
 version = "0.1.0"
 
