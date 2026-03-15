@@ -32,10 +32,10 @@ from datetime import datetime
 
 # ---- Paths ----
 # Canonical source: git-tracked repo (github.com/umuro/functional-rust)
-EXAMPLES_DIR = Path("/home/umur/.openclaw/workspace/examples")
+EXAMPLES_DIR = Path("/home/umur/.openclaw/workspace/functional-rust/examples")
 if not EXAMPLES_DIR.exists():
     for candidate in [
-        Path("/home/node/.openclaw/workspace/examples"),
+        Path("/home/node/.openclaw/workspace/functional-rust/examples"),
         Path("/home/umur/workspaces/hightechmind2024/functional-rust/examples"),
         Path("/work/hightechmind2024/functional-rust/examples"),
     ]:
