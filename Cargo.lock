@@ -611,6 +611,10 @@ name = "example-099-group-by-iter"
 version = "0.1.0"
 
 [[package]]
+name = "example-100-dijkstra-shortest-path"
+version = "0.1.0"
+
+[[package]]
 name = "example-100-phantom-types"
 version = "0.1.0"
 
@@ -1235,11 +1239,27 @@ name = "example-1122-leap-year"
 version = "0.1.0"
 
 [[package]]
+name = "example-1122-listfilter-select-elements-by-predicate"
+version = "0.1.0"
+
+[[package]]
+name = "example-1123-listfold_left-accumulate-a-result"
+version = "0.1.0"
+
+[[package]]
 name = "example-1123-sorting-algorithmsquicksort"
 version = "0.1.0"
 
 [[package]]
 name = "example-1124-listfilter-select-elements-by-predicate"
+version = "0.1.0"
+
+[[package]]
+name = "example-1124-listsort-sort-with-custom-comparator"
+version = "0.1.0"
+
+[[package]]
+name = "example-1125-listpartition-split-by-predicate"
 version = "0.1.0"
 
 [[package]]
