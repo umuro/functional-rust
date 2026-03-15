@@ -400,8 +400,140 @@ def extract_title(readme):
         return m.group(1).strip()
     return ""
 
-def extract_difficulty(readme):
-    """Count star emoji symbols to determine level."""
+# Manual level corrections — README tags wrong level or concept is clearly mis-tagged.
+# Fundamental = complete beginner can understand (variables, basic loops, simple functions).
+# Intermediate = some Rust/FP experience needed.
+# Advanced = solid Rust knowledge required.
+# Expert = deep type theory / algorithms / category theory.
+LEVEL_OVERRIDES = {
+    # Higher-order / FP concepts — not beginner
+    "001-applying-a-function-twice":     "intermediate",
+    "001-higher-order-functions":        "intermediate",
+    "002-function-composition":          "intermediate",
+    "005-list-filter-from-scratch":      "intermediate",
+    "004-list-map-from-scratch":         "intermediate",
+    "052-function-composition":          "intermediate",
+    "053-pipeline-operator":             "intermediate",
+    "054-list-map-from-scratch":         "intermediate",
+    "055-list-filter-from-scratch":      "intermediate",
+    # Recursion / structural
+    "056-fold-right":                    "intermediate",
+    "057-fold-left":                     "intermediate",
+    # Data structures
+    "061-binary-tree":                   "intermediate",
+    # Parser combinators — not fundamental
+    "163-whitespace-parser":             "advanced",
+    # Optics — advanced/expert
+    "202-lens-basics":                   "advanced",
+    "618-traversal-optics":              "expert",
+    "597-scott-encoding-rust":           "expert",
+    # Iterators
+    "262-iterator-windows":              "intermediate",
+    # Error handling nuance
+    "307-error-propagation-closures":    "intermediate",
+    "314-validated-accumulation":        "advanced",
+    "316-io-error-handling":             "intermediate",
+    # Async
+    "321-async-basics":                  "intermediate",
+    # Lifetimes
+    "553-lifetime-self-referential":     "advanced",
+    # Type-level / const generics
+    "774-const-generics-basics":         "advanced",
+    # DP / algorithms — not fundamental
+    "784-fibonacci-memo-tab":            "intermediate",
+    "795-subset-sum-dp":                 "advanced",
+    "818-suffix-array":                  "advanced",
+    "834-convex-hull-graham":            "advanced",
+    "835-point-in-polygon":              "intermediate",
+    # Benchmarking / tooling
+    "753-bench-harness-pattern":         "intermediate",
+    "765-csv-parsing-pattern":           "intermediate",
+    # Phantom types — type-level programming, not beginner FP
+    "066-phantom-types":                 "advanced",
+    "100-phantom-types":                 "advanced",
+    "180-phantom-safety":                "advanced",
+    # Lazy sequences — codata / iterators require solid FP footing
+    "067-lazy-sequences":                "intermediate",
+    "101-lazy-sequences":                "intermediate",
+    # Topological sort — graph algorithm, clearly advanced
+    "073-topological-sort":              "advanced",
+    "1080-topological-sort-kahn":        "advanced",
+    # Difference list — advanced FP data structure
+    "075-difference-list":               "advanced",
+    # Recursive descent parser — advanced topic
+    "096-recursive-descent-parser":      "advanced",
+    # Zipper — advanced functional data structure
+    "097-zipper":                        "advanced",
+    # Church numerals — lambda calculus theory
+    "098-church-numerals":               "expert",
+    # CPS — Continuation-Passing Style
+    "099-cps":                           "advanced",
+    "1082-tail-recursive-map-cps":       "advanced",
+    "1087-tail-recursive-map-with-cps":  "advanced",
+    # Graph algorithms — Dijkstra with priority queue
+    "100-dijkstra-shortest-path":        "advanced",
+    "1099-dijkstras-shortest-path-priority-queue": "advanced",
+    "1110-dijkstra-shortest-path-priority-queue":  "advanced",
+    # Unfold / corecursion
+    "103-unfold":                        "advanced",
+    # Type-level booleans
+    "128-type-level-bool":               "advanced",
+    # Builder pattern with typestate
+    "131-builder-pattern":               "advanced",
+    # Parser combinator series (151–174)
+    "151-parser-intro":                  "advanced",
+    "152-char-parser":                   "advanced",
+    "153-satisfy-parser":                "advanced",
+    "154-string-parser":                 "advanced",
+    "155-many-parser":                   "advanced",
+    "156-optional-parser":               "advanced",
+    "157-choice-parser":                 "advanced",
+    "158-sequence-parser":               "advanced",
+    "159-map-parser":                    "advanced",
+    "160-flatmap-parser":                "advanced",
+    "161-digit-parser":                  "advanced",
+    "162-identifier-parser":             "advanced",
+    "174-arithmetic-parser":             "advanced",
+    # GADTs — expert type theory
+    "176-gadt-intro":                    "expert",
+    "177-gadt-expr":                     "expert",
+    "178-gadt-length-list":              "expert",
+    "179-gadt-safety":                   "expert",
+    # RefCell — runtime borrow, nuanced
+    "111-refcell-runtime":               "advanced",
+    # Monoid pattern
+    "1098-monoid-pattern-generic-combining": "advanced",
+    "1109-monoid-pattern-generic-combining": "advanced",
+    "1118-monoid-pattern--generic-combining": "advanced",
+    # Red-black trees — advanced balanced BST
+    "1083-red-black-tree":               "advanced",
+    "1086-lenses-functional-getters-and-setters": "advanced",
+    "1088-red-black-tree-balanced-insert": "advanced",
+    "1091-red-black-tree-balanced-insert": "advanced",
+    "1092-red-black-tree-balanced-insert": "advanced",
+    "1094-red-black-tree-balanced-insert": "advanced",
+    "1095-red-black-tree-balanced-insert": "advanced",
+    "1096-red-black-tree-balanced-insert": "advanced",
+    "1097-red-black-tree-balanced-insert": "advanced",
+    "1102-red-black-tree-balanced-insert": "advanced",
+    "1114-red-black-tree-balanced-insert": "advanced",
+    "1115-red-black-tree-balanced-insert": "advanced",
+    # Lenses
+    "1081-lenses":                       "advanced",
+    # Y combinator — lambda calculus / expert FP
+    "1076-y-combinator":                 "expert",
+    # Phantom type state machine — type-level expert
+    "1077-phantom-type-state-machine":   "expert",
+    # Visitor pattern via fold
+    "1078-visitor-pattern-fold":         "advanced",
+    # Writer monad — category theory
+    "1079-writer-monad":                 "expert",
+}
+
+def extract_difficulty(readme, dirname=""):
+    """Count star emoji symbols to determine level, with manual overrides."""
+    if dirname in LEVEL_OVERRIDES:
+        return LEVEL_OVERRIDES[dirname]
     m = re.search(r"\*\*Difficulty:\*\*\s*([⭐🌟]+)", readme)
     if m:
         count = m.group(1).count("⭐") + m.group(1).count("🌟")
@@ -560,8 +692,8 @@ def example_card(ex, show_path=False):
 
 def repo_cards_html(dirname=None):
     fr_url = (
-        f"https://github.com/umurozkul/functional-rust/tree/main/examples/{dirname}"
-        if dirname else "https://github.com/umurozkul/functional-rust"
+        f"https://github.com/umuro/functional-rust/tree/master/examples/{dirname}"
+        if dirname else "https://github.com/umuro/functional-rust"
     )
     fr_desc = (
         f"View the source for this example on GitHub — OCaml and Rust side by side in the repo."
@@ -571,9 +703,6 @@ def repo_cards_html(dirname=None):
         {"name": "functional-rust", "url": fr_url,
          "desc": fr_desc,
          "lang": "Rust", "color": "#dea584"},
-        {"name": "openclaw", "url": "https://github.com/openclaw/openclaw",
-         "desc": "AI agent gateway — connect Claude, GPT-4, and others to any messaging platform.",
-         "lang": "TypeScript", "color": "#3178c6"},
     ]
     gh = ('<svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 24 24">'
           '<path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57'
@@ -1200,7 +1329,7 @@ def generate_example_page(example_dir, all_examples, examples_data):
     ml_code    = read_file(example_dir / "example.ml")
 
     title     = extract_title(readme) or dirname.replace("-", " ").title()
-    level     = extract_difficulty(readme)
+    level     = extract_difficulty(readme, dirname)
     concepts  = extract_concepts(readme)
     video_url = extract_video_url(readme)
 
@@ -1261,10 +1390,31 @@ def generate_example_page(example_dir, all_examples, examples_data):
             break
 
     if local_video_exists:
-        # Copy video file to output directory alongside HTML
-        video_out = RUST_DIR / f"{dirname}-video.mp4"
-        import shutil as _shutil
-        _shutil.copy2(str(local_video_path), str(video_out))
+        # Videos are deployed separately (scp'd from examples/ directly).
+        # Do NOT copy into /tmp — they are too large and fill the container's disk.
+        # HTML references the video by filename; scp step uploads it alongside the HTML.
+
+        # Auto-generate accessibility text from example metadata when no manual file exists
+        if not a11y_text:
+            parts = [f"This video demonstrates the \"{title}\" functional Rust example."]
+            if level:
+                parts.append(f"Difficulty level: {level.capitalize()}.")
+            if concepts:
+                parts.append(f"Key concepts covered: {', '.join(concepts[:5])}.")
+            if problem:
+                # First sentence of problem statement
+                first_sentence = re.split(r'(?<=[.!?])\s', problem.strip())[0]
+                parts.append(first_sentence)
+            if learning:
+                first_outcome = re.split(r'[\n•\-]', learning.strip())[0].strip()
+                if first_outcome:
+                    parts.append(f"Learning outcome: {first_outcome}")
+            if key_diff:
+                first_diff = re.split(r'[\n•\-]', key_diff.strip())[0].strip()
+                if first_diff:
+                    parts.append(f"Key difference from OCaml: {first_diff}")
+            a11y_text = " ".join(p for p in parts if p)
+
         a11y_html = ""
         if a11y_text:
             a11y_escaped = escape_html(a11y_text)
@@ -1279,9 +1429,11 @@ def generate_example_page(example_dir, all_examples, examples_data):
         video_html = (
             '\n      <section class="mb-10">'
             '\n        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Tutorial Video</h2>'
-            f'\n        <video class="w-full rounded-xl shadow-lg bg-black" controls preload="metadata"'
-            f'\n               aria-label="Tutorial video: {escape_html(title)}">'
-            f'\n          <source src="{dirname}-video.mp4" type="video/mp4">'
+            f'\n        <video class="w-full rounded-xl shadow-lg bg-black" controls preload="none"'
+            f'\n               aria-label="Tutorial video: {escape_html(title)}"'
+            f'\n               onerror="this.closest(\'section\').style.display=\'none\'">'
+            f'\n          <source src="{dirname}-video.mp4" type="video/mp4"'
+            f'\n                  onerror="this.closest(\'section\').style.display=\'none\'">'
             '\n          Your browser does not support video playback.'
             '\n        </video>'
             f'{a11y_html}'
@@ -1522,7 +1674,7 @@ for ex in all_examples:
         print(f"  [skip] {ex.name} — duplicate title: {title}")
         continue
     _seen_titles.add(title_key)
-    level    = extract_difficulty(readme)
+    level    = extract_difficulty(readme, ex.name)
     concepts = extract_concepts(readme)
     path_id  = classify_learning_path(concepts, title, ex.name)
     topic_id = classify_topic(ex.name)
