@@ -1003,10 +1003,34 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>"""
 
+def in_page_pills_html(active=""):
+    """Horizontal pill bar shown inside the page body — visible on all screen sizes."""
+    items = [
+        ("Examples",       "index.html",            "examples"),
+        ("By Level",       "by-level.html",         "by-level"),
+        ("By Topic",       "by-topic.html",         "by-topic"),
+        ("Learning Paths", "by-learning-path.html", "learning-paths"),
+    ]
+    pills = "".join(
+        '<a href="{}" class="px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap {}">{}</a>'.format(
+            href,
+            "bg-orange-500 text-white" if key == active
+            else "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700",
+            label,
+        )
+        for label, href, key in items
+    )
+    return (
+        '<div class="flex flex-wrap gap-2 mb-6">'
+        + pills +
+        '</div>'
+    )
+
 def render_page(*, title, description, content, url, extra_head="", back_link=False,
                 nav_active="", n_examples=0, keywords=None, og_type="website"):
     back = ("<div class='mb-6'><a href='index.html' class='text-orange-500 hover:underline font-medium'>"
             "← Back to Examples</a></div>" if back_link else "")
+    pills = in_page_pills_html(nav_active) if nav_active else ""
     return (
         '<!DOCTYPE html>\n'
         '<html lang="en" class="scroll-smooth">\n'
@@ -1025,6 +1049,7 @@ def render_page(*, title, description, content, url, extra_head="", back_link=Fa
         '<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 antialiased transition-colors duration-200">\n'
         f'  {nav_html(nav_active)}\n'
         '  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">\n'
+        f'    {pills}\n'
         f'    {back}\n'
         f'    {content}\n'
         '  </main>\n'
