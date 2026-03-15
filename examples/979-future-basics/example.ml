@@ -1,131 +1,70 @@
-(* 979: Future Basics
-   OCaml 5 provides Domain for true parallelism and Thread for concurrency.
-   The nearest equivalent to Rust futures is a "promise/future" pair built
-   on Mutex + Condition variable, which mirrors async computation completion.
-   We also show Domain-based parallel futures for CPU work. *)
+(* 979: Future/Promise Basics *)
+(* OCaml: Lwt monad concept shown with pure Option/Result monads *)
+(* We model the Future/Promise monad pattern without external deps *)
 
-(* --- Simple promise/future over Thread + Mutex --- *)
-type 'a state =
-  | Pending
-  | Resolved of 'a
-  | Failed of exn
+(* --- Approach 1: Model Future as a lazy thunk (pure simulation) --- *)
 
-type 'a future = {
-  mutable state : 'a state;
-  mutex : Mutex.t;
-  cond  : Condition.t;
-}
+type 'a future = unit -> 'a
 
-let create_future () =
-  { state = Pending; mutex = Mutex.create (); cond = Condition.create () }
+let return_ x : 'a future = fun () -> x
 
-let resolve fut value =
-  Mutex.lock fut.mutex;
-  fut.state <- Resolved value;
-  Condition.broadcast fut.cond;
-  Mutex.unlock fut.mutex
+let bind (f : 'a future) (k : 'a -> 'b future) : 'b future =
+  fun () -> k (f ()) ()
 
-let reject fut exn =
-  Mutex.lock fut.mutex;
-  fut.state <- Failed exn;
-  Condition.broadcast fut.cond;
-  Mutex.unlock fut.mutex
+let map (f : 'a -> 'b) (fut : 'a future) : 'b future =
+  fun () -> f (fut ())
 
-(* Block until the future resolves *)
-let await fut =
-  Mutex.lock fut.mutex;
-  while fut.state = Pending do
-    Condition.wait fut.cond fut.mutex
-  done;
-  let result = fut.state in
-  Mutex.unlock fut.mutex;
-  match result with
-  | Resolved v -> v
-  | Failed e   -> raise e
-  | Pending    -> assert false
-
-(* Spawn an async computation — runs in a background thread *)
-let async f =
-  let fut = create_future () in
-  let _thread = Thread.create (fun () ->
-    match f () with
-    | v   -> resolve fut v
-    | exception e -> reject fut e
-  ) () in
-  fut
-
-(* Combinators *)
-let map fut f =
-  async (fun () -> f (await fut))
-
-let bind fut f =
-  async (fun () -> await (f (await fut)))
-
-(* Wait for both futures *)
-let both fa fb =
-  async (fun () -> (await fa, await fb))
-
-(* Race: return whichever resolves first *)
-let first_of futures =
-  let winner = create_future () in
-  List.iter (fun fut ->
-    let _t = Thread.create (fun () ->
-      (try resolve winner (await fut)
-       with _ -> ())
-    ) () in ()
-  ) futures;
-  winner
+let run fut = fut ()
 
 let () =
-  Printf.printf "=== Future basics ===\n";
+  let fut = return_ 42 in
+  let fut2 = bind fut (fun x -> return_ (x + 1)) in
+  let fut3 = map (fun x -> x * 2) fut2 in
+  assert (run fut3 = 86);
+  Printf.printf "Approach 1 (lazy thunk future): %d\n" (run fut3)
 
-  (* Simple async computation *)
-  let f1 = async (fun () ->
-    Thread.delay 0.01;
-    42
-  ) in
-  let f2 = async (fun () ->
-    Thread.delay 0.005;
-    "hello"
-  ) in
-  Printf.printf "f1 = %d\n" (await f1);
-  Printf.printf "f2 = %s\n" (await f2);
+(* --- Approach 2: Future as Result monad (error-aware) --- *)
 
-  (* map: transform the result *)
-  let f3 = map f1 (fun x -> x * 2) in
-  Printf.printf "f1 mapped *2 = %d\n" (await f3);
+type ('a, 'e) result_future = unit -> ('a, 'e) result
 
-  (* bind: chain async computations *)
-  let f4 = bind (async (fun () -> 10)) (fun n ->
-    async (fun () -> n + 5)
-  ) in
-  Printf.printf "bind 10 + 5 = %d\n" (await f4);
+let ok x : ('a, 'e) result_future = fun () -> Ok x
+let err e : ('a, 'e) result_future = fun () -> Error e
 
-  (* both: parallel execution *)
-  let start = Unix.gettimeofday () in
-  let fa = async (fun () -> Thread.delay 0.02; "A done") in
-  let fb = async (fun () -> Thread.delay 0.02; "B done") in
-  let (ra, rb) = await (both fa fb) in
-  let elapsed = Unix.gettimeofday () -. start in
-  Printf.printf "both: (%s, %s) in %.0fms (ran in parallel)\n"
-    ra rb (elapsed *. 1000.0);
+let bind_r (f : ('a, 'e) result_future) (k : 'a -> ('b, 'e) result_future) : ('b, 'e) result_future =
+  fun () -> match f () with
+    | Ok v -> k v ()
+    | Error e -> Error e
 
-  (* Error handling *)
-  let failing = async (fun () -> failwith "something went wrong") in
-  (try ignore (await failing)
-   with Failure msg -> Printf.printf "caught: %s\n" msg);
-
-  Printf.printf "\n=== Domain-based parallel futures (OCaml 5) ===\n";
-  (* Domains for true CPU parallelism *)
-  let compute n =
-    Domain.spawn (fun () ->
-      (* simulate work *)
-      let sum = ref 0 in
-      for i = 1 to n do sum := !sum + i done;
-      !sum
-    )
+let () =
+  let computation =
+    bind_r (ok 10) (fun x ->
+    bind_r (ok 20) (fun y ->
+    ok (x + y)))
   in
-  let d1 = compute 1000 in
-  let d2 = compute 2000 in
-  Printf.printf "sum 1..1000 = %d\n" (Domain.join d1);
-  Printf.printf "sum 1..2000 = %d\n" (Domain.join d2)
+  (match computation () with
+  | Ok v -> assert (v = 30); Printf.printf "Approach 2 (result future): %d\n" v
+  | Error _ -> assert false)
+
+(* --- Approach 3: Promise with state (mutable cell) --- *)
+
+type 'a promise_state = Pending | Resolved of 'a
+
+type 'a promise = { mutable state : 'a promise_state }
+
+let make_promise () = { state = Pending }
+
+let resolve p v = p.state <- Resolved v
+
+let await p =
+  match p.state with
+  | Resolved v -> v
+  | Pending -> failwith "promise not yet resolved"
+
+let () =
+  let p = make_promise () in
+  resolve p 99;
+  let v = await p in
+  assert (v = 99);
+  Printf.printf "Approach 3 (promise state): %d\n" v
+
+let () = Printf.printf "✓ All tests passed\n"

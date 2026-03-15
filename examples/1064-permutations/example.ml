@@ -1,79 +1,76 @@
-(* 1064: Generate All Permutations via Backtracking
-   Three approaches: swap-based, used-flags, and Heap's algorithm. *)
+(* 1064: Generate All Permutations via Backtracking *)
 
 (* Approach 1: Swap-based backtracking *)
-let permutations_swap nums =
-  let arr = Array.copy nums in
+let permutations_swap arr =
   let n = Array.length arr in
   let results = ref [] in
   let rec permute start =
-    if start = n then results := Array.to_list arr :: !results
+    if start = n then
+      results := Array.to_list arr :: !results
     else
       for i = start to n - 1 do
-        let tmp = arr.(start) in arr.(start) <- arr.(i); arr.(i) <- tmp;
+        let tmp = arr.(start) in
+        arr.(start) <- arr.(i);
+        arr.(i) <- tmp;
         permute (start + 1);
-        let tmp = arr.(start) in arr.(start) <- arr.(i); arr.(i) <- tmp
+        let tmp = arr.(start) in
+        arr.(start) <- arr.(i);
+        arr.(i) <- tmp
       done
   in
   permute 0;
-  !results
+  List.rev !results
 
-(* Approach 2: Used-flags — builds permutation by picking unused elements *)
-let permutations_flags nums =
-  let n = List.length nums in
-  let arr = Array.of_list nums in
+(* Approach 2: Functional with list insertion *)
+let permutations_insert lst =
+  let rec insert x = function
+    | [] -> [[x]]
+    | hd :: tl as l ->
+      (x :: l) :: List.map (fun rest -> hd :: rest) (insert x tl)
+  in
+  let rec perms = function
+    | [] -> [[]]
+    | hd :: tl ->
+      List.concat_map (insert hd) (perms tl)
+  in
+  perms lst
+
+(* Approach 3: Using used-flags *)
+let permutations_flags lst =
+  let arr = Array.of_list lst in
+  let n = Array.length arr in
   let used = Array.make n false in
-  let current = ref [] in
   let results = ref [] in
-  let rec build () =
-    if List.length !current = n then
-      results := List.rev !current :: !results
+  let current = Array.make n 0 in
+  let rec build pos =
+    if pos = n then
+      results := Array.to_list current :: !results
     else
       for i = 0 to n - 1 do
         if not used.(i) then begin
           used.(i) <- true;
-          current := arr.(i) :: !current;
-          build ();
-          current := List.tl !current;
+          current.(pos) <- arr.(i);
+          build (pos + 1);
           used.(i) <- false
         end
       done
   in
-  build ();
-  !results
-
-(* Approach 3: Purely functional — insert into all positions *)
-(* insert_at i x lst inserts x before the i-th element *)
-let insert_at i x lst =
-  let rec aux j = function
-    | [] -> [x]
-    | h :: t -> if j = i then x :: h :: t else h :: aux (j+1) t
-  in
-  aux 0 lst
-
-let rec permutations_func = function
-  | [] -> [[]]
-  | x :: rest ->
-    let sub = permutations_func rest in
-    List.concat_map (fun perm ->
-      let n = List.length perm in
-      List.init (n + 1) (fun i -> insert_at i x perm)
-    ) sub
+  build 0;
+  List.rev !results
 
 let () =
-  let nums = [|1;2;3|] in
-  let p1 = permutations_swap nums in
-  assert (List.length p1 = 6);
-  assert (List.mem [1;2;3] p1);
-  assert (List.mem [3;2;1] p1);
+  let perms1 = permutations_swap [|1; 2; 3|] in
+  assert (List.length perms1 = 6);
+  assert (List.mem [1; 2; 3] perms1);
+  assert (List.mem [3; 2; 1] perms1);
 
-  let p2 = permutations_flags [1;2;3] in
-  assert (List.length p2 = 6);
+  let perms2 = permutations_insert [1; 2; 3] in
+  assert (List.length perms2 = 6);
 
-  let p3 = permutations_func [1;2;3] in
-  assert (List.length p3 = 6);
+  let perms3 = permutations_flags [1; 2; 3] in
+  assert (List.length perms3 = 6);
 
   (* Single element *)
-  assert (List.length (permutations_flags [42]) = 1);
+  assert (List.length (permutations_insert [42]) = 1);
 
-  Printf.printf "All permutation tests passed.\n"
+  Printf.printf "✓ All tests passed\n"

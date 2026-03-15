@@ -1,63 +1,44 @@
-(* 734: Typestate basics — compile-time state machine in OCaml *)
-(* Rust uses PhantomData<State> to encode state in the type parameter.
-   OCaml uses phantom types: type parameters that appear in the type
-   but not in the runtime representation.
+(* 734: Typestate Basics — OCaml GADT approach
+   OCaml doesn't have zero-cost phantom types like Rust, but GADTs let us
+   encode state in the type safely. *)
 
-   Transitions consume the old state and return a value with a new type.
-   Invalid transitions simply do not exist as functions — they cannot be
-   called, so they cannot be written. This is a compile-time guarantee. *)
+(* State phantom types *)
+type red = Red
+type green = Green
+type yellow = Yellow
 
-(* ── State marker types (abstract, no values) ────────────────────────────── *)
-(* These types are only used as type parameters; they have no constructors. *)
+(* Traffic light parameterized by phantom state *)
+(* We use a simple record + witness value *)
+type 'state light = {
+  state_name: string;
+  _phantom: 'state;  (* phantom field to carry state type *)
+}
 
-type red    = private Red_
-type green  = private Green_
-type yellow = private Yellow_
+(* Type-safe constructors and transitions *)
+let red_light () : red light = { state_name = "Red"; _phantom = Red }
 
-(* ── Traffic Light ─────────────────────────────────────────────────────── *)
-(* 'state is the phantom type parameter encoding the current state.
-   At runtime, a light is just unit — no space overhead. *)
+let green_of_red (l : red light) : green light =
+  let _ = l in
+  { state_name = "Green"; _phantom = Green }
 
-type 'state light = Light
+let yellow_of_green (l : green light) : yellow light =
+  let _ = l in
+  { state_name = "Yellow"; _phantom = Yellow }
 
-(* Create a light — must start Red. Returns a Light in Red state. *)
-let new_light () : red light =
-  print_endline "Light: Red";
-  Light
+let red_of_yellow (l : yellow light) : red light =
+  let _ = l in
+  { state_name = "Red"; _phantom = Red }
 
-(* Red → Green: only callable on (red light) *)
-let go (Light : red light) : green light =
-  print_endline "Light: Green";
-  Light
-
-(* Green → Yellow: only callable on (green light) *)
-let slow (Light : green light) : yellow light =
-  print_endline "Light: Yellow";
-  Light
-
-(* Yellow → Red: only callable on (yellow light) *)
-let stop (Light : yellow light) : red light =
-  print_endline "Light: Red";
-  Light
-
-(* Size: a light is represented as unit — zero bytes of payload *)
+let print_light l = Printf.printf "Light is: %s\n" l.state_name
 
 let () =
-  (* Full cycle — each step only type-checks if the previous step was valid *)
-  let red    = new_light () in
-  let green  = go red in
-  let yellow = slow green in
-  let _red2  = stop yellow in
-  print_endline "full cycle: ok";
-
-  (* The following would be a COMPILE ERROR (type mismatch):
-       let _ = slow red    (* red light has no slow *)
-       let _ = go yellow   (* yellow light has no go *)
-  *)
-
-  (* Size check: light is represented as a unit constructor — 0 payload bytes *)
-  assert (Obj.size (Obj.repr Light) = 0 ||
-          Obj.tag  (Obj.repr Light) = Obj.int_tag);
-  print_endline "light is zero-payload: ok";
-
-  print_endline "All assertions passed."
+  let r = red_light () in
+  print_light r;
+  let g = green_of_red r in
+  print_light g;
+  let y = yellow_of_green g in
+  print_light y;
+  let r2 = red_of_yellow y in
+  print_light r2;
+  (* Invalid: green_of_red y  ← would be a type error in OCaml too! *)
+  ignore r2

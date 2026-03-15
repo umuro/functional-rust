@@ -1,77 +1,65 @@
-(* 1018: Error Downcast
-   Rust downcasts Box<dyn Error> to concrete types via TypeId.
-   OCaml achieves the same with extensible variants + pattern matching,
-   or by tagging errors in a unified variant type.
+(* 1018: Error Downcast *)
+(* OCaml: pattern matching on exception types *)
 
-   We show both: a tagged union approach and an extensible exception approach. *)
+(* In OCaml, exceptions are already pattern-matchable *)
+exception DatabaseError of string
+exception AuthError of string
+exception NetworkError of string
 
-(* Approach 1: Tagged union — safe, type-checked "downcast" *)
-type error_kind =
-  | DatabaseErr of string
-  | AuthErr of string
-  | NetworkErr of string
+(* Approach 1: Direct pattern matching on exceptions *)
+let handle_error f =
+  try Ok (f ())
+  with
+  | DatabaseError msg -> Error (Printf.sprintf "DB: %s" msg)
+  | AuthError msg -> Error (Printf.sprintf "Auth: %s" msg)
+  | NetworkError msg -> Error (Printf.sprintf "Net: %s" msg)
+  | exn -> Error (Printf.sprintf "Unknown: %s" (Printexc.to_string exn))
 
-let string_of_error_kind = function
-  | DatabaseErr s -> Printf.sprintf "database error: %s" s
-  | AuthErr s     -> Printf.sprintf "auth error: %s" s
-  | NetworkErr s  -> Printf.sprintf "network error: %s" s
+(* Approach 2: Using a general exception container *)
+type any_error = ..  (* extensible variant type *)
+type any_error += DB of string | Auth of string | Net of string
 
-let classify_error = function
-  | DatabaseErr _ -> "database"
-  | AuthErr _     -> "auth"
-  | NetworkErr _  -> "network"
+let classify_error (e : any_error) =
+  match e with
+  | DB msg -> Printf.sprintf "database: %s" msg
+  | Auth msg -> Printf.sprintf "auth: %s" msg
+  | Net msg -> Printf.sprintf "network: %s" msg
+  | _ -> "unknown error"
 
-let is_database_error = function
-  | DatabaseErr _ -> true
-  | _             -> false
+(* Approach 3: GADT-style typed errors *)
+type _ error_kind =
+  | DbKind : string error_kind
+  | AuthKind : string error_kind
 
-let handle_error = function
-  | DatabaseErr s -> Printf.sprintf "Handling DB: %s" s
-  | _             -> "unhandled error"
+type packed_error = Pack : 'a error_kind * 'a -> packed_error
 
-(* Approach 2: OCaml's extensible exception type — works like Box<dyn Any> *)
-exception Db_exn of string
-exception Auth_exn of string
-exception Net_exn of string
+let describe_packed (Pack (kind, value)) =
+  match kind with
+  | DbKind -> Printf.sprintf "DB error: %s" value
+  | AuthKind -> Printf.sprintf "Auth error: %s" value
 
-(* "Downcast" by catching the specific exception type *)
-let classify_exn exn =
-  match exn with
-  | Db_exn _   -> "database"
-  | Auth_exn _ -> "auth"
-  | Net_exn _  -> "network"
-  | _          -> "unknown"
+let test_exceptions () =
+  let r = handle_error (fun () -> raise (DatabaseError "timeout")) in
+  assert (r = Error "DB: timeout");
+  let r = handle_error (fun () -> 42) in
+  assert (r = Ok 42);
+  Printf.printf "  Approach 1 (exception matching): passed\n"
 
-let might_fail_db () = raise (Db_exn "timeout")
-let might_fail_auth () = raise (Auth_exn "expired token")
+let test_extensible () =
+  assert (classify_error (DB "conn failed") = "database: conn failed");
+  assert (classify_error (Auth "bad token") = "auth: bad token");
+  Printf.printf "  Approach 2 (extensible variants): passed\n"
+
+let test_gadt () =
+  let e = Pack (DbKind, "query failed") in
+  assert (describe_packed e = "DB error: query failed");
+  let e = Pack (AuthKind, "expired") in
+  assert (describe_packed e = "Auth error: expired");
+  Printf.printf "  Approach 3 (GADT packed): passed\n"
 
 let () =
-  (* Tagged union approach *)
-  let err = DatabaseErr "test" in
-  assert (classify_error err = "database");
-  assert (handle_error err = "Handling DB: test");
-
-  let err2 = AuthErr "bad" in
-  assert (classify_error err2 = "auth");
-
-  assert (is_database_error (DatabaseErr "x") = true);
-  assert (is_database_error (AuthErr "x") = false);
-
-  assert (handle_error (AuthErr "nope") = "unhandled error");
-
-  (* Extensible exception approach *)
-  (try might_fail_db ()
-   with exn ->
-     assert (classify_exn exn = "database");
-     (match exn with
-      | Db_exn s -> assert (s = "timeout")
-      | _ -> assert false));
-
-  (try might_fail_auth ()
-   with exn ->
-     assert (classify_exn exn = "auth"));
-
-  (* Unknown exception *)
-  assert (classify_exn Exit = "unknown");
-
-  Printf.printf "Downcast tests passed\n"
+  Printf.printf "Testing error downcast:\n";
+  test_exceptions ();
+  test_extensible ();
+  test_gadt ();
+  Printf.printf "✓ All tests passed\n"

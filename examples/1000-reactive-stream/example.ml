@@ -1,82 +1,113 @@
-(* 1000: Reactive Stream
-   Push-based observable in OCaml using higher-order functions.
-   An observable is just a function that accepts a callback (observer).
-   map/filter/take are operators returning new observables — pure composition. *)
+(* 1000: Reactive Stream *)
+(* Push-based Observable<T> with map/filter/subscribe *)
 
-(* An observable is a function: observer -> unit *)
-(* observer receives values via on_next, completion via on_complete *)
-type 'a observable = {
-  subscribe: ('a -> unit) -> (unit -> unit) -> unit;
-  (* subscribe on_next on_complete *)
+(* --- Observable: a source that pushes values to subscribers --- *)
+
+type 'a observer = {
+  on_next: 'a -> unit;
+  on_error: exn -> unit;
+  on_complete: unit -> unit;
 }
 
-(* Create an observable from a list *)
-let from_list items =
-  { subscribe = fun on_next on_complete ->
-      List.iter on_next items;
-      on_complete ()
+type 'a observable = { subscribe: 'a observer -> unit -> unit }
+(* subscribe returns an unsubscribe function *)
+
+let make_observer ?(on_error=fun _ -> ()) ?(on_complete=fun () -> ()) on_next =
+  { on_next; on_error; on_complete }
+
+(* --- Source: emit values from a list --- *)
+
+let from_list xs =
+  { subscribe = fun observer ->
+    List.iter observer.on_next xs;
+    observer.on_complete ();
+    fun () -> () (* unsubscribe is no-op for completed streams *)
   }
 
-(* Operator: map *)
-let obs_map f obs =
-  { subscribe = fun on_next on_complete ->
-      obs.subscribe (fun v -> on_next (f v)) on_complete
+(* --- Operators --- *)
+
+let map f obs =
+  { subscribe = fun observer ->
+    obs.subscribe {
+      on_next = (fun v -> observer.on_next (f v));
+      on_error = observer.on_error;
+      on_complete = observer.on_complete;
+    }
   }
 
-(* Operator: filter *)
-let obs_filter pred obs =
-  { subscribe = fun on_next on_complete ->
-      obs.subscribe (fun v -> if pred v then on_next v) on_complete
+let filter pred obs =
+  { subscribe = fun observer ->
+    obs.subscribe {
+      on_next = (fun v -> if pred v then observer.on_next v);
+      on_error = observer.on_error;
+      on_complete = observer.on_complete;
+    }
   }
 
-(* Operator: take — emit at most n values *)
-let obs_take n obs =
-  { subscribe = fun on_next on_complete ->
-      let remaining = ref n in
-      obs.subscribe
-        (fun v ->
-           if !remaining > 0 then begin
-             decr remaining;
-             on_next v
-           end)
-        on_complete
+let take n obs =
+  { subscribe = fun observer ->
+    let count = ref 0 in
+    obs.subscribe {
+      on_next = (fun v ->
+        if !count < n then begin
+          incr count;
+          observer.on_next v;
+          if !count = n then observer.on_complete ()
+        end);
+      on_error = observer.on_error;
+      on_complete = observer.on_complete;
+    }
   }
 
-(* Collect all emitted values into a list *)
-let collect obs =
-  let buf = ref [] in
-  obs.subscribe (fun v -> buf := v :: !buf) (fun () -> ());
-  List.rev !buf
+(* --- Approach 1: Chain operators --- *)
 
 let () =
-  (* from_list *)
-  assert (collect (from_list [1; 2; 3]) = [1; 2; 3]);
-
-  (* map *)
-  let mapped = obs_map (fun x -> x * 2) (from_list [1; 2; 3]) in
-  assert (collect mapped = [2; 4; 6]);
-
-  (* filter *)
-  let filtered = obs_filter (fun x -> x mod 2 = 0) (from_list [1; 2; 3; 4; 5]) in
-  assert (collect filtered = [2; 4]);
-
-  (* take *)
-  let taken = obs_take 3 (from_list [1; 2; 3; 4; 5]) in
-  assert (collect taken = [1; 2; 3]);
-
-  (* chain: filter evens, square, take 3 *)
-  let source = from_list [1; 2; 3; 4; 5; 6; 7; 8; 9; 10] in
-  let result =
+  let results = ref [] in
+  let source = from_list [1;2;3;4;5;6;7;8;9;10] in
+  let stream =
     source
-    |> obs_filter (fun x -> x mod 2 = 0)
-    |> obs_map (fun x -> x * x)
-    |> obs_take 3
-    |> collect
+    |> filter (fun x -> x mod 2 = 0)  (* keep even *)
+    |> map (fun x -> x * x)            (* square *)
+    |> take 3                          (* first 3 *)
   in
-  assert (result = [4; 16; 36]);
+  let observer = make_observer (fun v -> results := v :: !results) in
+  let _ = stream.subscribe observer in
+  let results = List.rev !results in
+  assert (results = [4; 16; 36]);
+  Printf.printf "Approach 1 (reactive chain): [%s]\n"
+    (String.concat "; " (List.map string_of_int results))
 
-  (* empty observable *)
-  assert (collect (from_list []) = []);
+(* --- Approach 2: Subject (hot observable — broadcast to multiple) --- *)
 
-  Printf.printf "chain result: [%s]\n"
-    (String.concat "; " (List.map string_of_int result))
+type 'a subject = {
+  mutable observers: ('a observer) list;
+  mutable completed: bool;
+}
+
+let make_subject () = { observers = []; completed = false }
+
+let subject_subscribe subj obs =
+  if not subj.completed then
+    subj.observers <- obs :: subj.observers;
+  fun () -> subj.observers <- List.filter (fun o -> o != obs) subj.observers
+
+let subject_next subj v =
+  List.iter (fun o -> o.on_next v) subj.observers
+
+let subject_complete subj =
+  subj.completed <- true;
+  List.iter (fun o -> o.on_complete ()) subj.observers
+
+let () =
+  let subj = make_subject () in
+  let r1 = ref [] and r2 = ref [] in
+  let _ = subject_subscribe subj (make_observer (fun v -> r1 := v :: !r1)) in
+  let _ = subject_subscribe subj (make_observer (fun v -> r2 := v :: !r2)) in
+  List.iter (subject_next subj) [10; 20; 30];
+  subject_complete subj;
+  assert (List.rev !r1 = [10;20;30]);
+  assert (List.rev !r2 = [10;20;30]);
+  Printf.printf "Approach 2 (subject): r1=%d r2=%d items\n"
+    (List.length !r1) (List.length !r2)
+
+let () = Printf.printf "✓ All tests passed\n"

@@ -1,137 +1,75 @@
-(* 982: Async Join
-   Run multiple async tasks concurrently and wait for all (join_all)
-   or the first one to complete (select/race).
-   OCaml: Domain.spawn for parallelism; Thread + Mutex + Condition for concurrency. *)
+(* 982: Join Parallel Async *)
+(* OCaml: Lwt.both p1 p2 runs them "concurrently" and waits for both *)
 
-(* Reusable future primitives *)
-type 'a fut = {
-  mutable v : 'a option;
-  mutable e : exn option;
-  m : Mutex.t;
-  c : Condition.t;
-}
+(* --- Approach 1: Simulate Lwt.both with threads --- *)
 
-let new_fut () = { v = None; e = None; m = Mutex.create (); c = Condition.create () }
+let parallel_both f1 f2 =
+  let t1 = Thread.create f1 () in
+  let t2 = Thread.create f2 () in
+  (* In Lwt: Lwt.both returns (v1, v2) when both resolve *)
+  (* With threads, we join both *)
+  Thread.join t1;
+  Thread.join t2
 
-let resolve_ok fut x =
-  Mutex.lock fut.m;
-  fut.v <- Some x;
-  Condition.broadcast fut.c;
-  Mutex.unlock fut.m
-
-let resolve_err fut ex =
-  Mutex.lock fut.m;
-  fut.e <- Some ex;
-  Condition.broadcast fut.c;
-  Mutex.unlock fut.m
-
-let await fut =
-  Mutex.lock fut.m;
-  while fut.v = None && fut.e = None do Condition.wait fut.c fut.m done;
-  let r = (fut.v, fut.e) in
-  Mutex.unlock fut.m;
-  match r with (Some v, _) -> v | (_, Some e) -> raise e | _ -> assert false
-
-let spawn f =
-  let fut = new_fut () in
-  let _t = Thread.create (fun () ->
-    (try resolve_ok fut (f ())
-     with e -> resolve_err fut e)
-  ) () in
-  fut
-
-(* join_all: wait for every future, collect results in order *)
-let join_all futures =
-  List.map await futures
-
-(* join_all with error collection: returns list of Result *)
-let join_all_results futures =
-  List.map (fun fut ->
-    try Ok (await fut)
-    with e -> Error e
-  ) futures
-
-(* race: return the value of the first future that resolves *)
-let race futures =
-  let winner = new_fut () in
-  List.iter (fun fut ->
-    let _t = Thread.create (fun () ->
-      (try resolve_ok winner (await fut)
-       with _ -> ())
-    ) () in ()
-  ) futures;
-  await winner
-
-(* join_n: wait for first n out of m futures *)
-let first_n n futures =
-  let results = ref [] in
-  let mutex = Mutex.create () in
-  let cond = Condition.create () in
-  List.iter (fun fut ->
-    let _t = Thread.create (fun () ->
-      let v = try Ok (await fut) with e -> Error e in
-      Mutex.lock mutex;
-      if List.length !results < n then begin
-        results := v :: !results;
-        if List.length !results = n then Condition.broadcast cond
-      end;
-      Mutex.unlock mutex
-    ) () in ()
-  ) futures;
-  Mutex.lock mutex;
-  while List.length !results < n do Condition.wait cond mutex done;
-  let r = !results in
-  Mutex.unlock mutex;
-  List.rev r
-
-(* Domain-based parallel join (CPU-bound) *)
-let domain_join_all fns =
-  let domains = List.map Domain.spawn fns in
-  List.map Domain.join domains
+let result1 = ref 0
+let result2 = ref 0
 
 let () =
-  Printf.printf "=== join_all: wait for every task ===\n";
+  parallel_both
+    (fun () -> result1 := 6 * 7)
+    (fun () -> result2 := 10 + 20);
+  assert (!result1 = 42);
+  assert (!result2 = 30);
+  Printf.printf "Approach 1 (parallel threads): %d, %d\n" !result1 !result2
+
+(* --- Approach 2: Lwt.both concept — collect results via mutex --- *)
+
+let compute_parallel tasks =
+  let m = Mutex.create () in
+  let results = Array.make (List.length tasks) 0 in
+  let threads = List.mapi (fun i f ->
+    Thread.create (fun () ->
+      let v = f () in
+      Mutex.lock m;
+      results.(i) <- v;
+      Mutex.unlock m
+    ) ()
+  ) tasks in
+  List.iter Thread.join threads;
+  Array.to_list results
+
+let () =
   let tasks = [
-    (fun () -> Thread.delay 0.01; "task A");
-    (fun () -> Thread.delay 0.005; "task B");
-    (fun () -> Thread.delay 0.02; "task C");
+    (fun () -> 2 + 2);
+    (fun () -> 3 * 3);
+    (fun () -> 10 - 1);
   ] in
-  let start = Unix.gettimeofday () in
-  let futures = List.map spawn tasks in
-  let results = join_all futures in
-  let elapsed = Unix.gettimeofday () -. start in
-  Printf.printf "results: [%s]\n" (String.concat "; " results);
-  Printf.printf "elapsed: ~%.0fms (parallel, not serial ~35ms)\n" (elapsed *. 1000.0);
-
-  Printf.printf "\n=== join_all_results: partial failure OK ===\n";
-  let mixed = [
-    spawn (fun () -> 42);
-    spawn (fun () -> failwith "oops");
-    spawn (fun () -> 99);
-  ] in
-  let res = join_all_results mixed in
-  List.iter (function
-    | Ok v   -> Printf.printf "  Ok %d\n" v
-    | Error e -> Printf.printf "  Error: %s\n" (Printexc.to_string e)
-  ) res;
-
-  Printf.printf "\n=== race: first to finish wins ===\n";
-  let racers = [
-    spawn (fun () -> Thread.delay 0.02; "slow");
-    spawn (fun () -> Thread.delay 0.005; "fast");
-    spawn (fun () -> Thread.delay 0.01; "medium");
-  ] in
-  let winner = race racers in
-  Printf.printf "winner: %s\n" winner;
-
-  Printf.printf "\n=== Domain parallel join (CPU-bound) ===\n";
-  let fib n =
-    let rec f a b n = if n = 0 then a else f b (a+b) (n-1) in f 0 1 n
-  in
-  let results = domain_join_all [
-    (fun () -> fib 30);
-    (fun () -> fib 35);
-    (fun () -> fib 25);
-  ] in
-  Printf.printf "fib results: [%s]\n"
+  let results = compute_parallel tasks in
+  assert (results = [4; 9; 9]);
+  Printf.printf "Approach 2 (parallel collect): [%s]\n"
     (String.concat "; " (List.map string_of_int results))
+
+(* --- Approach 3: Join all, sum results --- *)
+
+let parallel_sum ns =
+  let total = ref 0 in
+  let m = Mutex.create () in
+  let threads = List.map (fun n ->
+    Thread.create (fun () ->
+      (* simulate work: n * n *)
+      let v = n * n in
+      Mutex.lock m;
+      total := !total + v;
+      Mutex.unlock m
+    ) ()
+  ) ns in
+  List.iter Thread.join threads;
+  !total
+
+let () =
+  (* 1^2 + 2^2 + 3^2 + 4^2 = 1+4+9+16 = 30 *)
+  let s = parallel_sum [1;2;3;4] in
+  assert (s = 30);
+  Printf.printf "Approach 3 (parallel sum): %d\n" s
+
+let () = Printf.printf "✓ All tests passed\n"

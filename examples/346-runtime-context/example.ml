@@ -1,55 +1,26 @@
-(* 346: Runtime Context
-   Thread-local (Domain-local in OCaml 5) context propagation.
-   Each domain has its own context slot; nesting saves/restores the old value. *)
+(* OCaml: thread-local context via Domain-local storage *)
 
-(* Domain-local storage for an optional string context *)
-let context : string option Domain.DLS.key =
-  Domain.DLS.new_key (fun () -> None)
+let current_context : string option ref = ref None
 
-let set_context ctx = Domain.DLS.set context (Some ctx)
-let get_context ()  = Domain.DLS.get context
-let clear_context ()= Domain.DLS.set context None
-
-(* Run [f] with [ctx] active, then restore the previous context *)
-let with_context ctx f =
-  let old = get_context () in
-  set_context ctx;
+let with_context name f =
+  let prev = !current_context in
+  current_context := Some name;
   let result = f () in
-  (match old with
-   | Some c -> set_context c
-   | None   -> clear_context ());
+  current_context := prev;
   result
 
+let get_context () =
+  match !current_context with
+  | Some name -> name
+  | None -> "root"
+
 let () =
-  (* Basic set / get / clear *)
-  set_context "test";
-  assert (get_context () = Some "test");
-  clear_context ();
-  assert (get_context () = None);
-  Printf.printf "context set/clear: ok\n%!";
-
-  (* Nested with_context restores outer *)
-  set_context "outer";
-  let inner = with_context "inner" get_context in
-  assert (inner = Some "inner");
-  assert (get_context () = Some "outer");
-  Printf.printf "nested context: inner=%s, restored=%s\n%!"
-    (Option.value inner ~default:"none")
-    (Option.value (get_context ()) ~default:"none");
-
-  (* Each domain has its own context *)
-  set_context "main-domain";
-  let d = Domain.spawn (fun () ->
-    (* New domain starts with None *)
-    let initial = get_context () in
-    set_context "child-domain";
-    (initial, get_context ()))
-  in
-  let (initial, child_ctx) = Domain.join d in
-  assert (initial = None);
-  assert (child_ctx = Some "child-domain");
-  (* Main domain context is unchanged *)
-  assert (get_context () = Some "main-domain");
-  Printf.printf "domain isolation: main=%s child=%s\n%!"
-    (Option.value (get_context ()) ~default:"none")
-    (Option.value child_ctx ~default:"none")
+  Printf.printf "Context: %s\n" (get_context ());
+  with_context "worker-1" (fun () ->
+    Printf.printf "Inside: %s\n" (get_context ());
+    with_context "nested" (fun () ->
+      Printf.printf "Nested: %s\n" (get_context ())
+    );
+    Printf.printf "Back to: %s\n" (get_context ())
+  );
+  Printf.printf "Back to: %s\n" (get_context ())

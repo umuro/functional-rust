@@ -1,119 +1,109 @@
-(* 977: Bitset
-   A compact set of non-negative integers backed by an integer array.
-   Each word holds 63 bits (on 64-bit OCaml, int is 63 bits due to the tag bit).
-   Supports O(1) member/add/remove and O(n/w) union/intersection. *)
+(* 977: Bitset Operations *)
+(* Set, clear, toggle, union, intersection using u64 word arrays *)
 
-let bits_per_word = Sys.int_size - 1   (* 63 on 64-bit *)
+let words_for_bits n = (n + 62) / 63  (* OCaml int is 63-bit on 64-bit systems *)
 
 type bitset = {
-  mutable words : int array;
-  mutable cap   : int;   (* number of bits we can hold *)
+  bits: int array;
+  size: int;
 }
 
-let create ?(capacity=64) () =
-  let words = (capacity + bits_per_word - 1) / bits_per_word in
-  { words = Array.make words 0; cap = words * bits_per_word }
+let create size = { bits = Array.make (words_for_bits size) 0; size }
 
-(* Grow if needed *)
-let ensure_capacity bs i =
-  if i >= bs.cap then begin
-    let need_words = (i + bits_per_word) / bits_per_word in
-    let new_words = Array.make need_words 0 in
-    Array.blit bs.words 0 new_words 0 (Array.length bs.words);
-    bs.words <- new_words;
-    bs.cap   <- need_words * bits_per_word
-  end
+let word_index i = i / 63
+let bit_index i = i mod 63
 
-let add bs i =
-  ensure_capacity bs i;
-  bs.words.(i / bits_per_word) <- bs.words.(i / bits_per_word) lor (1 lsl (i mod bits_per_word))
+let set bs i =
+  if i >= bs.size then failwith "out of range";
+  bs.bits.(word_index i) <- bs.bits.(word_index i) lor (1 lsl bit_index i)
 
-let remove bs i =
-  if i < bs.cap then
-    bs.words.(i / bits_per_word) <- bs.words.(i / bits_per_word) land (lnot (1 lsl (i mod bits_per_word)))
+let clear bs i =
+  if i >= bs.size then failwith "out of range";
+  bs.bits.(word_index i) <- bs.bits.(word_index i) land (lnot (1 lsl bit_index i))
 
-let mem bs i =
-  if i >= bs.cap then false
-  else bs.words.(i / bits_per_word) land (1 lsl (i mod bits_per_word)) <> 0
+let toggle bs i =
+  if i >= bs.size then failwith "out of range";
+  bs.bits.(word_index i) <- bs.bits.(word_index i) lxor (1 lsl bit_index i)
 
-(* Count set bits (Kernighan's method per word) *)
+let test bs i =
+  if i >= bs.size then false
+  else (bs.bits.(word_index i) lsr bit_index i) land 1 = 1
+
 let popcount w =
-  let w = ref w and c = ref 0 in
-  while !w <> 0 do incr c; w := !w land (!w - 1) done;
-  !c
-
-let count bs = Array.fold_left (fun acc w -> acc + popcount w) 0 bs.words
-
-(* Iterate over all set bits *)
-let iter f bs =
-  Array.iteri (fun wi word ->
-    let w = ref word and base = wi * bits_per_word in
-    let bit = ref 0 in
-    while !w <> 0 do
-      (* find lowest set bit position *)
-      while !w land (1 lsl !bit) = 0 do incr bit done;
-      f (base + !bit);
-      w := !w land (!w - 1);
-      incr bit
-    done
-  ) bs.words
-
-let to_list bs =
-  let acc = ref [] in
-  iter (fun i -> acc := i :: !acc) bs;
-  List.rev !acc
-
-(* Set operations — pairwise on words *)
-let pairwise_op op a b =
-  let n = max (Array.length a.words) (Array.length b.words) in
-  let r = { words = Array.make n 0; cap = n * bits_per_word } in
-  for i = 0 to n - 1 do
-    let wa = if i < Array.length a.words then a.words.(i) else 0 in
-    let wb = if i < Array.length b.words then b.words.(i) else 0 in
-    r.words.(i) <- op wa wb
+  let w = ref w in
+  let count = ref 0 in
+  while !w <> 0 do
+    w := !w land (!w - 1);  (* clear lowest set bit *)
+    incr count
   done;
-  r
+  !count
 
-let union        a b = pairwise_op ( lor  ) a b
-let inter        a b = pairwise_op ( land ) a b
-let difference   a b = pairwise_op (fun x y -> x land (lnot y)) a b
-let sym_diff     a b = pairwise_op ( lxor ) a b
+let count bs =
+  Array.fold_left (fun acc w -> acc + popcount w) 0 bs.bits
 
-let subset a b =
-  (* a ⊆ b iff a AND NOT b = 0 *)
-  let d = difference a b in
-  count d = 0
+let union a b =
+  assert (a.size = b.size);
+  let result = create a.size in
+  for i = 0 to Array.length a.bits - 1 do
+    result.bits.(i) <- a.bits.(i) lor b.bits.(i)
+  done;
+  result
 
-let of_list lst =
-  let bs = create () in
-  List.iter (add bs) lst;
-  bs
+let intersect a b =
+  assert (a.size = b.size);
+  let result = create a.size in
+  for i = 0 to Array.length a.bits - 1 do
+    result.bits.(i) <- a.bits.(i) land b.bits.(i)
+  done;
+  result
+
+let difference a b =
+  assert (a.size = b.size);
+  let result = create a.size in
+  for i = 0 to Array.length a.bits - 1 do
+    result.bits.(i) <- a.bits.(i) land (lnot b.bits.(i))
+  done;
+  result
 
 let () =
-  let a = of_list [0; 1; 3; 5; 7; 9] in
-  let b = of_list [0; 2; 4; 6; 8; 9] in
+  let bs = create 64 in
+  set bs 0;
+  set bs 5;
+  set bs 10;
+  set bs 63;
 
-  Printf.printf "a = {%s}\n" (String.concat "," (List.map string_of_int (to_list a)));
-  Printf.printf "b = {%s}\n" (String.concat "," (List.map string_of_int (to_list b)));
+  assert (test bs 0);
+  assert (test bs 5);
+  assert (test bs 10);
+  assert (test bs 63);
+  assert (not (test bs 1));
+  assert (count bs = 4);
 
-  Printf.printf "mem a 3 = %b, mem a 4 = %b\n" (mem a 3) (mem a 4);
-  Printf.printf "|a| = %d, |b| = %d\n" (count a) (count b);
+  clear bs 5;
+  assert (not (test bs 5));
+  assert (count bs = 3);
+
+  toggle bs 5;
+  assert (test bs 5);
+  toggle bs 5;
+  assert (not (test bs 5));
+
+  let a = create 64 in
+  let b = create 64 in
+  List.iter (set a) [0; 1; 2; 3];
+  List.iter (set b) [2; 3; 4; 5];
 
   let u = union a b in
-  Printf.printf "a ∪ b = {%s}\n" (String.concat "," (List.map string_of_int (to_list u)));
+  assert (count u = 6);
 
-  let i = inter a b in
-  Printf.printf "a ∩ b = {%s}\n" (String.concat "," (List.map string_of_int (to_list i)));
+  let i = intersect a b in
+  assert (count i = 2);
+  assert (test i 2);
+  assert (test i 3);
 
   let d = difference a b in
-  Printf.printf "a \\ b = {%s}\n" (String.concat "," (List.map string_of_int (to_list d)));
+  assert (count d = 2);
+  assert (test d 0);
+  assert (test d 1);
 
-  let sd = sym_diff a b in
-  Printf.printf "a △ b = {%s}\n" (String.concat "," (List.map string_of_int (to_list sd)));
-
-  let c = of_list [1; 3] in
-  Printf.printf "subset {1,3} ⊆ a: %b\n" (subset c a);
-  Printf.printf "subset {1,3} ⊆ b: %b\n" (subset c b);
-
-  remove a 3;
-  Printf.printf "after remove 3: {%s}\n" (String.concat "," (List.map string_of_int (to_list a)))
+  Printf.printf "✓ All tests passed\n"

@@ -1,55 +1,23 @@
-(* 457: Condition Variable Pattern
-   OCaml's Condition module works exactly like Rust's Condvar:
-   always paired with a Mutex, supporting wait/signal/broadcast. *)
+(* 457. Condvar – OCaml *)
+let m=Mutex.create () let c=Condition.create () let items=Queue.create ()
+let done_=ref false
 
 let () =
-  let mutex = Mutex.create () in
-  let cond  = Condition.create () in
-  let ready = ref false in
-
-  (* Notifier domain: sets flag and signals the waiting domain *)
-  let notifier = Domain.spawn (fun () ->
-    Unix.sleepf 0.005;
-    Mutex.lock mutex;
-    ready := true;
-    Condition.signal cond;
-    Mutex.unlock mutex)
-  in
-
-  (* Wait until [ready] is true — spurious wakeup safe *)
-  Mutex.lock mutex;
-  while not !ready do
-    Condition.wait cond mutex
-  done;
-  assert !ready;
-  Mutex.unlock mutex;
-  Domain.join notifier;
-  Printf.printf "condvar notify: ok, ready=%b\n%!" !ready;
-
-  (* Broadcast: wake all waiting domains at once *)
-  let n = 4 in
-  let mutex2   = Mutex.create () in
-  let cond2    = Condition.create () in
-  let go       = ref false in
-  let arrived  = Atomic.make 0 in
-
-  let waiters = List.init n (fun _ ->
-    Domain.spawn (fun () ->
-      Mutex.lock mutex2;
-      while not !go do
-        Condition.wait cond2 mutex2
-      done;
-      Mutex.unlock mutex2;
-      ignore (Atomic.fetch_and_add arrived 1)))
-  in
-
-  Unix.sleepf 0.005;
-  Mutex.lock mutex2;
-  go := true;
-  Condition.broadcast cond2;
-  Mutex.unlock mutex2;
-
-  List.iter Domain.join waiters;
-  assert (Atomic.get arrived = n);
-  Printf.printf "condvar broadcast: %d/%d domains woke up\n%!"
-    (Atomic.get arrived) n
+  let prod = Thread.create (fun () ->
+    for i=1 to 5 do
+      Thread.delay 0.01;
+      Mutex.lock m; Queue.push i items; Condition.signal c; Mutex.unlock m
+    done;
+    Mutex.lock m; done_:=true; Condition.broadcast c; Mutex.unlock m
+  ) () in
+  let cons = Thread.create (fun () ->
+    let go = ref true in
+    while !go do
+      Mutex.lock m;
+      while Queue.is_empty items && not !done_ do Condition.wait c m done;
+      if not (Queue.is_empty items) then
+        let v = Queue.pop items in (Mutex.unlock m; Printf.printf "got %d\n%!" v)
+      else (Mutex.unlock m; go:=false)
+    done
+  ) () in
+  Thread.join prod; Thread.join cons

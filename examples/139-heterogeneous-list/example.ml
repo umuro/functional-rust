@@ -1,90 +1,45 @@
-(* 139: Heterogeneous List (HList)
-   OCaml's GADTs let us build type-safe heterogeneous lists natively.
-   The full element type is preserved in the list's type signature. *)
+(* Example 139: HList — Heterogeneous List *)
 
-(* ── Core GADT ────────────────────────────────────────────────────────────── *)
+(* Approach 1: GADT heterogeneous list *)
+type hnil = HNil_t
+type ('h, 't) hcons = HCons_t
 
-(* 'a hlist encodes the types of all elements at the type level:
-   - hnil has type unit hlist
-   - hcons h t has type (h * t_shape) hlist  *)
 type _ hlist =
-  | HNil  : unit hlist
-  | HCons : 'h * 't hlist -> ('h * 't) hlist
+  | HNil : hnil hlist
+  | HCons : 'a * 'b hlist -> ('a, 'b) hcons hlist
 
-(* ── Smart constructors ───────────────────────────────────────────────────── *)
+let empty = HNil
+let ex1 = HCons (42, HCons ("hello", HCons (true, HNil)))
 
-let hnil = HNil
-let hcons h t = HCons (h, t)
+let hd : type a b. (a, b) hcons hlist -> a = function
+  | HCons (x, _) -> x
 
-(* ── Accessors ────────────────────────────────────────────────────────────── *)
+let tl : type a b. (a, b) hcons hlist -> b hlist = function
+  | HCons (_, rest) -> rest
 
-let hhead (HCons (h, _)) = h
-let htail (HCons (_, t)) = t
+(* Approach 2: Existential list (loses type info) *)
+type any = Any : 'a -> any
 
-(* ── Compile-time length via type class ──────────────────────────────────── *)
+let any_list = [Any 42; Any "hello"; Any true]
 
-(* We compute length at runtime, but the type guarantees correctness *)
-let rec hlength : type a. a hlist -> int = function
-  | HNil       -> 0
-  | HCons (_, t) -> 1 + hlength t
+(* Approach 3: Tuple-based HList via nesting *)
+type ('a, 'b) pair = { fst : 'a; snd : 'b }
 
-(* ── Map collecting results into a list (uniform output type) ─────────────── *)
+let hlist3 a b c = { fst = a; snd = { fst = b; snd = c } }
+let get_first p = p.fst
+let get_second p = p.snd.fst
+let get_third p = p.snd.snd
 
-(* Because OCaml lists must be uniform, we map to a common type R.
-   The function receives each element as a polymorphic argument via a record. *)
-type 'r mapper = { f : 'a. 'a -> 'r }
-
-let rec hmap_collect : type a r. r mapper -> a hlist -> r list =
-  fun m -> function
-  | HNil         -> []
-  | HCons (h, t) -> m.f h :: hmap_collect m t
-
-(* ── Fold over elements that share a class via a type constraint ──────────── *)
-
-(* Fold where every element must satisfy a constraint recorded in the list.
-   We use a constraint list that mirrors the hlist structure. *)
-type 'a to_int = ToInt : ('a -> int) -> 'a to_int
-
-type _ int_witnesses =
-  | WNil  : unit int_witnesses
-  | WCons : 'h to_int * 't int_witnesses -> ('h * 't) int_witnesses
-
-let rec hfold_int : type a. int -> (int -> int -> int) -> a int_witnesses -> a hlist -> int =
-  fun init f witnesses lst ->
-  match witnesses, lst with
-  | WNil, HNil -> init
-  | WCons (ToInt conv, wt), HCons (h, t) ->
-    hfold_int (f init (conv h)) f wt t
-
-(* ── Demo ─────────────────────────────────────────────────────────────────── *)
-
+(* Tests *)
 let () =
-  (* Build a heterogeneous list: int * (string * (bool * unit)) hlist *)
-  let lst = hcons 42 (hcons "hello" (hcons true hnil)) in
+  let h = HCons (42, HCons ("hello", HCons (3.14, HNil))) in
+  assert (hd h = 42);
+  assert (hd (tl h) = "hello");
+  assert (hd (tl (tl h)) = 3.14);
 
-  Printf.printf "length = %d\n" (hlength lst);
-  Printf.printf "head   = %d\n" (hhead lst);
-  Printf.printf "tail.head = %s\n" (hhead (htail lst));
-  Printf.printf "tail.tail.head = %b\n" (hhead (htail (htail lst)));
+  let p = hlist3 1 "two" 3.0 in
+  assert (get_first p = 1);
+  assert (get_second p = "two");
+  assert (get_third p = 3.0);
 
-  (* Map every element to its string representation *)
-  let strings = hmap_collect { f = fun x -> Printf.sprintf "%s" (Obj.repr x |> ignore; "?") } lst in
-  (* More practical: use format_any via show functions *)
-  let show_lst = hcons 1 (hcons 2 (hcons 3 hnil)) in
-  let strs = hmap_collect { f = (fun x -> string_of_int (Obj.magic x)) } show_lst in
-  Printf.printf "mapped ints: [%s]\n" (String.concat "; " strs);
-  ignore strings;
-
-  (* Fold an int hlist to sum *)
-  let int_lst = hcons 10 (hcons 20 (hcons 30 hnil)) in
-  let witnesses = WCons (ToInt Fun.id, WCons (ToInt Fun.id, WCons (ToInt Fun.id, WNil))) in
-  let sum = hfold_int 0 ( + ) witnesses int_lst in
-  Printf.printf "sum [10;20;30] = %d\n" sum;
-
-  (* Compile-time type distinctness:
-     int * (string * unit) hlist  ≠  string * (int * unit) hlist
-     Each is a different OCaml type — swapping is a type error. *)
-  let _a : (int * (string * unit)) hlist = hcons 1 (hcons "a" hnil) in
-  let _b : (string * (int * unit)) hlist = hcons "a" (hcons 1 hnil) in
-  Printf.printf "type distinctness: a.head=%d  b.head=%s\n"
-    (hhead _a) (hhead _b)
+  Printf.printf "✓ All tests passed\n"

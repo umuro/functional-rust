@@ -1,56 +1,55 @@
-(* 076: Trait Objects / Dynamic Dispatch
-   OCaml uses first-class modules or records of functions for dynamic dispatch *)
+(* 076: Trait Objects — OCaml objects for dynamic dispatch *)
 
-(* --- Approach 1: Variant-based polymorphism (most common OCaml idiom) --- *)
-
-type shape =
-  | Circle    of float
-  | Rectangle of float * float
-
-let area = function
-  | Circle r        -> Float.pi *. r *. r
-  | Rectangle (w, h) -> w *. h
-
-let shape_name = function
-  | Circle _    -> "circle"
-  | Rectangle _ -> "rectangle"
-
-(* --- Approach 2: Record-of-functions ("vtable" / trait object equivalent) ---
-   This is the OCaml analogue to Rust's dyn Trait *)
-
-type shape_obj = {
-  area : unit -> float;
-  name : unit -> string;
-}
-
-let make_circle r =
-  { area = (fun () -> Float.pi *. r *. r)
-  ; name = (fun () -> "circle") }
-
-let make_rectangle w h =
-  { area = (fun () -> w *. h)
-  ; name = (fun () -> "rectangle") }
-
-let describe s =
-  Printf.sprintf "%s with area %.2f" (s.name ()) (s.area ())
-
-let total_area shapes =
-  List.fold_left (fun acc s -> acc +. s.area ()) 0.0 shapes
-
-(* --- Approach 3: First-class modules (type-safe open polymorphism) --- *)
-
-module type SHAPE = sig
-  type t
-  val area : t -> float
-  val name : t -> string
+(* Approach 1: OCaml object types *)
+class virtual shape = object
+  method virtual area : float
+  method virtual name : string
 end
 
-let () =
-  (* variant dispatch *)
-  Printf.printf "circle area r=5: %.2f\n" (area (Circle 5.0));
-  Printf.printf "rectangle 3x4: %.2f\n" (area (Rectangle (3.0, 4.0)));
+class circle r = object
+  inherit shape
+  method area = Float.pi *. r *. r
+  method name = "circle"
+end
 
-  (* record-of-functions dispatch *)
-  let shapes = [make_circle 5.0; make_rectangle 3.0 4.0] in
-  List.iter (fun s -> Printf.printf "%s\n" (describe s)) shapes;
-  Printf.printf "total area: %.2f\n" (total_area shapes)
+class rectangle w h = object
+  inherit shape
+  method area = w *. h
+  method name = "rectangle"
+end
+
+(* Approach 2: Using objects polymorphically *)
+let describe (s : shape) =
+  Printf.sprintf "%s with area %.2f" s#name s#area
+
+let total_area (shapes : shape list) =
+  List.fold_left (fun acc s -> acc +. s#area) 0.0 shapes
+
+(* Approach 3: First-class modules as alternative *)
+module type SHAPE = sig
+  val area : unit -> float
+  val name : unit -> string
+end
+
+let make_circle r : (module SHAPE) =
+  (module struct
+    let area () = Float.pi *. r *. r
+    let name () = "circle"
+  end)
+
+let describe_mod (module S : SHAPE) =
+  Printf.sprintf "%s with area %.2f" (S.name ()) (S.area ())
+
+(* Tests *)
+let () =
+  let c = new circle 5.0 in
+  let r = new rectangle 3.0 4.0 in
+  assert (abs_float (c#area -. 78.54) < 0.01);
+  assert (r#area = 12.0);
+  assert (c#name = "circle");
+  let shapes = [c :> shape; r :> shape] in
+  assert (abs_float (total_area shapes -. 90.54) < 0.01);
+  let mc = make_circle 5.0 in
+  let desc = describe_mod mc in
+  assert (String.sub desc 0 6 = "circle");
+  Printf.printf "✓ All tests passed\n"

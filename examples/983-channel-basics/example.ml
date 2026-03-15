@@ -1,148 +1,91 @@
-(* 983: Channel Basics
-   Message passing between threads using a bounded/unbounded channel.
-   OCaml: Queue + Mutex + Condition variable (the standard pattern).
-   For synchronous rendezvous, OCaml's Event module provides typed channels. *)
+(* 983: MPSC Channel Basics *)
+(* OCaml: Thread + Event module for synchronous channels *)
 
-(* --- Unbounded MPSC channel (Multi-Producer, Single-Consumer) --- *)
-type 'a chan = {
-  q     : 'a Queue.t;
-  mutex : Mutex.t;
-  not_empty : Condition.t;
-  mutable closed : bool;
-}
-
-let create_chan () =
-  { q = Queue.create (); mutex = Mutex.create ();
-    not_empty = Condition.create (); closed = false }
-
-let send ch x =
-  Mutex.lock ch.mutex;
-  if ch.closed then (Mutex.unlock ch.mutex; failwith "send on closed channel");
-  Queue.push x ch.q;
-  Condition.signal ch.not_empty;
-  Mutex.unlock ch.mutex
-
-(* recv: blocks until a message is available or the channel is closed *)
-let recv ch =
-  Mutex.lock ch.mutex;
-  while Queue.is_empty ch.q && not ch.closed do
-    Condition.wait ch.not_empty ch.mutex
-  done;
-  let r = if Queue.is_empty ch.q then None else Some (Queue.pop ch.q) in
-  Mutex.unlock ch.mutex;
-  r
-
-(* try_recv: non-blocking *)
-let try_recv ch =
-  Mutex.lock ch.mutex;
-  let r = if Queue.is_empty ch.q then None else Some (Queue.pop ch.q) in
-  Mutex.unlock ch.mutex;
-  r
-
-let close_chan ch =
-  Mutex.lock ch.mutex;
-  ch.closed <- true;
-  Condition.broadcast ch.not_empty;  (* wake any blocked receivers *)
-  Mutex.unlock ch.mutex
-
-(* --- Bounded channel (blocks producer when full) --- *)
-type 'a bounded_chan = {
-  buf     : 'a array;
-  mutable head : int;
-  mutable len  : int;
-  cap     : int;
-  mutex   : Mutex.t;
-  not_empty : Condition.t;
-  not_full  : Condition.t;
-  mutable closed : bool;
-  dummy : 'a;
-}
-
-let create_bounded cap dummy =
-  { buf = Array.make cap dummy; head = 0; len = 0; cap;
-    mutex = Mutex.create ();
-    not_empty = Condition.create (); not_full = Condition.create ();
-    closed = false; dummy }
-
-let send_bounded ch x =
-  Mutex.lock ch.mutex;
-  while ch.len = ch.cap && not ch.closed do
-    Condition.wait ch.not_full ch.mutex
-  done;
-  if ch.closed then (Mutex.unlock ch.mutex; failwith "closed");
-  ch.buf.((ch.head + ch.len) mod ch.cap) <- x;
-  ch.len <- ch.len + 1;
-  Condition.signal ch.not_empty;
-  Mutex.unlock ch.mutex
-
-let recv_bounded ch =
-  Mutex.lock ch.mutex;
-  while ch.len = 0 && not ch.closed do
-    Condition.wait ch.not_empty ch.mutex
-  done;
-  if ch.len = 0 then (Mutex.unlock ch.mutex; None)
-  else begin
-    let x = ch.buf.(ch.head) in
-    ch.head <- (ch.head + 1) mod ch.cap;
-    ch.len <- ch.len - 1;
-    Condition.signal ch.not_full;
-    Mutex.unlock ch.mutex;
-    Some x
-  end
+(* --- Approach 1: Simple Thread + Mutex queue (simulates MPSC) --- *)
 
 let () =
-  Printf.printf "=== Unbounded channel (producer → consumer) ===\n";
-  let ch : int chan = create_chan () in
+  let q = Queue.create () in
+  let m = Mutex.create () in
+  let cond = Condition.create () in
+  let done_ = ref false in
+
+  (* Producer thread *)
   let producer = Thread.create (fun () ->
-    for i = 1 to 5 do
-      send ch i;
-      Printf.printf "sent %d\n%!" i
-    done;
-    close_chan ch
+    List.iter (fun msg ->
+      Mutex.lock m;
+      Queue.push msg q;
+      Condition.signal cond;
+      Mutex.unlock m
+    ) [1; 2; 3; 4; 5];
+    Mutex.lock m;
+    done_ := true;
+    Condition.signal cond;
+    Mutex.unlock m
   ) () in
-  let consumer = Thread.create (fun () ->
-    let sum = ref 0 in
-    let running = ref true in
-    while !running do
-      match recv ch with
-      | Some v -> sum := !sum + v; Printf.printf "recv %d\n%!" v
-      | None   -> running := false
+
+  (* Consumer (main thread) *)
+  let results = ref [] in
+  let running = ref true in
+  while !running do
+    Mutex.lock m;
+    while Queue.is_empty q && not !done_ do
+      Condition.wait cond m
     done;
-    Printf.printf "consumer total = %d\n%!" !sum
-  ) () in
+    if Queue.is_empty q && !done_ then
+      running := false
+    else if not (Queue.is_empty q) then
+      results := Queue.pop q :: !results;
+    Mutex.unlock m
+  done;
   Thread.join producer;
-  Thread.join consumer;
+  let results = List.sort compare !results in
+  assert (results = [1;2;3;4;5]);
+  Printf.printf "Approach 1 (Thread+Queue): [%s]\n"
+    (String.concat "; " (List.map string_of_int results))
 
-  Printf.printf "\n=== Bounded channel (capacity=2) ===\n";
-  let bch : int bounded_chan = create_bounded 2 0 in
-  let prod2 = Thread.create (fun () ->
-    for i = 1 to 4 do
-      Printf.printf "sending %d...\n%!" i;
-      send_bounded bch i;
-      Printf.printf "sent %d\n%!" i
+(* --- Approach 2: Multiple producers, one consumer --- *)
+
+let () =
+  let q = Queue.create () in
+  let m = Mutex.create () in
+  let cond = Condition.create () in
+  let pending = ref 3 in (* 3 producers *)
+
+  let make_producer start =
+    Thread.create (fun () ->
+      for i = start to start + 2 do
+        Mutex.lock m;
+        Queue.push i q;
+        Condition.signal cond;
+        Mutex.unlock m
+      done;
+      Mutex.lock m;
+      decr pending;
+      Condition.signal cond;
+      Mutex.unlock m
+    ) ()
+  in
+
+  let p1 = make_producer 1 in
+  let p2 = make_producer 10 in
+  let p3 = make_producer 100 in
+
+  let results = ref [] in
+  let running = ref true in
+  while !running do
+    Mutex.lock m;
+    while Queue.is_empty q && !pending > 0 do
+      Condition.wait cond m
     done;
-    Mutex.lock bch.mutex; bch.closed <- true;
-    Condition.broadcast bch.not_empty;
-    Mutex.unlock bch.mutex
-  ) () in
-  Thread.delay 0.01;  (* let producer fill the buffer first *)
-  let cons2 = Thread.create (fun () ->
-    let running = ref true in
-    while !running do
-      match recv_bounded bch with
-      | Some v -> Printf.printf "received %d\n%!" v; Thread.delay 0.005
-      | None   -> running := false
-    done
-  ) () in
-  Thread.join prod2;
-  Thread.join cons2;
+    if not (Queue.is_empty q) then
+      results := Queue.pop q :: !results
+    else if !pending = 0 then
+      running := false;
+    Mutex.unlock m
+  done;
+  List.iter Thread.join [p1; p2; p3];
+  let results = List.sort compare !results in
+  assert (List.length results = 9);
+  Printf.printf "Approach 2 (multi-producer): %d items\n" (List.length results)
 
-  Printf.printf "\n=== Synchronous Event channel ===\n";
-  (* OCaml's Event module provides CML-style synchronous channels *)
-  let ech = Event.new_channel () in
-  let _t1 = Thread.create (fun () ->
-    let v = Event.sync (Event.receive ech) in
-    Printf.printf "received: %d\n" v
-  ) () in
-  Event.sync (Event.send ech 42);
-  Thread.delay 0.01
+let () = Printf.printf "✓ All tests passed\n"

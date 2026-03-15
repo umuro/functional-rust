@@ -1,74 +1,51 @@
-(* 1033: Top-K Elements with a Priority Queue
-   OCaml stdlib has no built-in heap, so we implement a simple min-heap
-   using a sorted approach, or use the functional "sort + take" idiom. *)
+(* 1033: Top-K Elements with Binary Heap *)
+(* OCaml has no built-in heap — we use sorted insertion or a manual heap *)
 
-(* Top-K using sort: simple and idiomatic for moderate inputs *)
-let top_k k data =
-  let sorted = List.sort (fun a b -> compare b a) data in  (* descending *)
-  let rec take n lst =
-    if n = 0 then []
-    else match lst with
-    | [] -> []
-    | x :: rest -> x :: take (n - 1) rest
-  in
-  take k sorted
+(* Approach 1: Sort and take top-k *)
+let top_k_sort k lst =
+  lst |> List.sort (fun a b -> compare b a) |> List.filteri (fun i _ -> i < k)
 
-(* Top-K with a maintained min-heap via a sorted list (bounded size k) *)
-(* Insert into sorted list keeping only the k largest *)
-let top_k_bounded k data =
-  let insert_sorted x lst =
-    let rec aux = function
-      | [] -> [x]
-      | h :: t -> if x >= h then x :: h :: t else h :: aux t
-    in
-    aux lst
-  in
-  let heap =
-    List.fold_left
-      (fun acc x ->
-        let h = insert_sorted x acc in
-        (* Keep only top k — drop smallest (last element in descending list) *)
-        let rec drop_last = function
-          | [] -> []
-          | [_] -> []
-          | h :: t -> h :: drop_last t
-        in
-        if List.length h > k then drop_last h else h)
-      [] data
-  in
-  heap  (* already in descending order *)
-
-(* Top-K by a key function *)
-let top_k_by k key_fn data =
-  let sorted = List.sort (fun a b -> compare (key_fn b) (key_fn a)) data in
-  let rec take n = function
-    | [] -> []
-    | _ when n = 0 -> []
-    | x :: rest -> x :: take (n - 1) rest
-  in
-  take k sorted
-
-let () =
+let sort_approach () =
   let data = [3; 1; 4; 1; 5; 9; 2; 6; 5; 3] in
+  let top3 = top_k_sort 3 data in
+  assert (top3 = [9; 6; 5])
 
-  let top3 = top_k 3 data in
-  Printf.printf "Top-3: %s\n"
-    (String.concat ", " (List.map string_of_int top3));
-  assert (top3 = [9; 6; 5]);
+(* Approach 2: Maintain a min-heap of size k using a sorted list *)
+(* Keep only k largest elements *)
+let top_k_linear k lst =
+  let insert_bounded heap x =
+    if List.length heap < k then
+      List.sort compare (x :: heap)
+    else
+      let min_val = List.hd heap in
+      if x > min_val then
+        List.sort compare (x :: List.tl heap)
+      else
+        heap
+  in
+  List.fold_left (fun heap x -> insert_bounded heap x) [] lst
 
-  let top1 = top_k 1 data in
-  assert (top1 = [9]);
+let bounded_heap_approach () =
+  let data = [3; 1; 4; 1; 5; 9; 2; 6; 5; 3] in
+  let top3 = top_k_linear 3 data |> List.rev in
+  assert (top3 = [9; 6; 5])
 
-  let top3b = top_k_bounded 3 data in
-  Printf.printf "Top-3 (bounded): %s\n"
-    (String.concat ", " (List.map string_of_int top3b));
-  assert (top3b = [9; 6; 5]);
+(* Approach 3: Top-k with key function *)
+let top_k_by k key_fn lst =
+  lst
+  |> List.map (fun x -> (key_fn x, x))
+  |> List.sort (fun (a, _) (b, _) -> compare b a)
+  |> List.filteri (fun i _ -> i < k)
+  |> List.map snd
 
-  (* Top-K strings by length *)
+let top_k_by_test () =
   let words = ["hi"; "hello"; "hey"; "howdy"; "h"] in
   let longest3 = top_k_by 3 String.length words in
-  Printf.printf "Longest-3: %s\n" (String.concat ", " longest3);
   assert (List.length longest3 = 3);
-  assert (List.hd longest3 = "howdy" || List.hd longest3 = "hello");
+  assert (List.hd longest3 = "howdy")
 
-  Printf.printf "All assertions passed.\n"
+let () =
+  sort_approach ();
+  bounded_heap_approach ();
+  top_k_by_test ();
+  Printf.printf "✓ All tests passed\n"

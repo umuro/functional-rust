@@ -1,110 +1,77 @@
-(* 1032: VecDeque Rotation — Efficient Front/Back Operations
-   OCaml has no built-in VecDeque; we use a functional deque (two-list representation)
-   or a mutable Queue. For rotation, we show both.
-   The two-list deque achieves amortized O(1) push/pop at both ends. *)
+(* 1032: VecDeque Rotation — Efficient Front/Back Operations *)
+(* OCaml uses lists (efficient at front) or Queue module *)
 
-(* Functional double-ended queue: (front_list, rear_list) *)
-(* Pop from front by taking from front_list; if empty, reverse rear_list *)
-type 'a deque = { front: 'a list; rear: 'a list }
+(* Approach 1: List as a deque — efficient front, O(n) back *)
+let list_deque () =
+  let q = [1; 2; 3; 4; 5] in
+  (* Push front: O(1) *)
+  let q = 0 :: q in
+  assert (q = [0; 1; 2; 3; 4; 5]);
+  (* Pop front: O(1) *)
+  let (front, q) = (List.hd q, List.tl q) in
+  assert (front = 0);
+  assert (q = [1; 2; 3; 4; 5]);
+  (* Push back: O(n) *)
+  let q = q @ [6] in
+  assert (q = [1; 2; 3; 4; 5; 6])
 
-let empty = { front = []; rear = [] }
+(* Approach 2: Two-list queue for amortized O(1) both ends *)
+type 'a deque = { front: 'a list; back: 'a list }
 
-let push_back  dq x = { dq with rear  = x :: dq.rear  }
-let push_front dq x = { dq with front = x :: dq.front }
+let empty = { front = []; back = [] }
+let push_front x d = { d with front = x :: d.front }
+let push_back x d = { d with back = x :: d.back }
 
-let pop_front dq =
-  match dq.front with
-  | x :: rest -> Some (x, { dq with front = rest })
+let pop_front d =
+  match d.front with
+  | x :: rest -> Some (x, { d with front = rest })
   | [] ->
-    (match List.rev dq.rear with
-     | [] -> None
-     | x :: rest -> Some (x, { front = rest; rear = [] }))
+    match List.rev d.back with
+    | x :: rest -> Some (x, { front = rest; back = [] })
+    | [] -> None
 
-let pop_back dq =
-  match dq.rear with
-  | x :: rest -> Some (x, { dq with rear = rest })
+let pop_back d =
+  match d.back with
+  | x :: rest -> Some (x, { d with back = rest })
   | [] ->
-    (match List.rev dq.front with
-     | [] -> None
-     | x :: rest -> Some (x, { rear = rest; front = [] }))
+    match List.rev d.front with
+    | x :: rest -> Some (x, { front = []; back = rest })
+    | [] -> None
 
-let of_list lst = List.fold_left push_back empty lst
+let two_list_deque () =
+  let d = empty in
+  let d = push_back 1 d in
+  let d = push_back 2 d in
+  let d = push_back 3 d in
+  let d = push_front 0 d in
+  let (v, d) = Option.get (pop_front d) in
+  assert (v = 0);
+  let (v, d) = Option.get (pop_front d) in
+  assert (v = 1);
+  let (v, _d) = Option.get (pop_back d) in
+  assert (v = 3)
 
-let to_list dq = dq.front @ List.rev dq.rear
-
-(* Rotate left by n: move first n elements to the back *)
-let rotate_left n dq =
-  let lst = to_list dq in
+(* Approach 3: Rotation *)
+let rotate_left lst n =
   let len = List.length lst in
-  if len = 0 then dq
-  else
-    let n' = n mod len in
-    let (head, tail) = (List.filteri (fun i _ -> i < n') lst,
-                        List.filteri (fun i _ -> i >= n') lst) in
-    of_list (tail @ head)
-
-let rotate_right n dq =
-  let lst = to_list dq in
-  let len = List.length lst in
-  if len = 0 then dq
-  else
-    let n' = n mod len in
-    rotate_left (len - n') dq
-
-(* Basic front/back operations *)
-let basic_deque () =
-  let dq = empty
-    |> fun d -> push_back d 1
-    |> fun d -> push_back d 2
-    |> fun d -> push_back d 3
-    |> fun d -> push_front d 0
+  let n = n mod len in
+  let rec take_drop i = function
+    | [] -> ([], [])
+    | x :: xs when i > 0 ->
+      let (taken, rest) = take_drop (i - 1) xs in
+      (x :: taken, rest)
+    | xs -> ([], xs)
   in
-  let (Some (v0, dq)) = pop_front dq in assert (v0 = 0);
-  let (Some (v1, dq)) = pop_front dq in assert (v1 = 1);
-  let (Some (v3, dq)) = pop_back  dq in assert (v3 = 3);
-  let (Some (v2, dq)) = pop_back  dq in assert (v2 = 2);
-  assert (to_list dq = [])
+  let (front, back) = take_drop n lst in
+  back @ front
 
-let rotation () =
-  let dq = of_list [1; 2; 3; 4; 5] in
-  let dq2 = rotate_left 2 dq in
-  assert (to_list dq2 = [3; 4; 5; 1; 2]);
-  let dq3 = rotate_right 2 dq2 in
-  assert (to_list dq3 = [1; 2; 3; 4; 5])
-
-(* Sliding window using a list-based deque *)
-let sliding_window data window_size =
-  let rec loop window sums rest =
-    match rest with
-    | [] -> List.rev sums
-    | v :: tl ->
-      let win = window @ [v] in
-      let win' = if List.length win > window_size then List.tl win else win in
-      let sums' = if List.length win' = window_size
-                  then (List.fold_left (+) 0 win') :: sums
-                  else sums
-      in
-      loop win' sums' tl
-  in
-  loop [] [] data
+let rotation_test () =
+  let lst = [1; 2; 3; 4; 5] in
+  assert (rotate_left lst 2 = [3; 4; 5; 1; 2]);
+  assert (rotate_left lst 0 = [1; 2; 3; 4; 5])
 
 let () =
-  basic_deque ();
-  rotation ();
-
-  let sums = sliding_window [1; 2; 3; 4; 5; 6; 7] 3 in
-  assert (sums = [6; 9; 12; 15; 18]);
-
-  (* Conversion: list -> deque -> list *)
-  let dq = of_list [1; 2; 3; 4; 5] in
-  let dq' = push_front dq 0 in
-  assert (to_list dq' = [0; 1; 2; 3; 4; 5]);
-
-  (* Indexed access *)
-  let dq2 = of_list [10; 20; 30] in
-  let lst = to_list dq2 in
-  assert (List.nth lst 0 = 10);
-  assert (List.nth lst 1 = 20);
-  assert (List.nth lst 2 = 30);
-
-  Printf.printf "VecDeque (functional deque) tests passed\n"
+  list_deque ();
+  two_list_deque ();
+  rotation_test ();
+  Printf.printf "✓ All tests passed\n"

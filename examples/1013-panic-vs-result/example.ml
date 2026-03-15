@@ -1,60 +1,57 @@
-(* 1013: Panic vs Result
-   OCaml uses:
-   - failwith / invalid_arg / assert for programming errors (like Rust panic!)
-   - Result for expected, recoverable failures
-   The distinction: "this cannot happen" vs "the caller should handle this" *)
+(* 1013: Panic vs Result *)
+(* When to use exceptions vs Result in OCaml *)
 
-(* Approach 1: failwith / assert — for programming errors / invariants *)
-let divide_or_panic a b =
+(* Approach 1: Exceptions — for "should never happen" bugs *)
+let divide_exn a b =
   if b = 0 then failwith "division by zero: programming error"
   else a / b
 
-let first_element = function
-  | []    -> invalid_arg "slice must not be empty"
+let head_exn = function
+  | [] -> invalid_arg "head of empty list"
   | x :: _ -> x
 
-(* Approach 2: Result — for expected recoverable failures *)
+(* Approach 2: Result — for expected failures *)
 let divide a b =
   if b = 0 then Error "division by zero"
   else Ok (a / b)
 
 let parse_positive s =
-  match int_of_string_opt (String.trim s) with
-  | None   -> Error (Printf.sprintf "not a number: %s" s)
-  | Some n ->
-    if n <= 0 then Error (Printf.sprintf "not positive: %d" n)
-    else Ok n
+  match int_of_string_opt s with
+  | None -> Error (Printf.sprintf "not a number: %s" s)
+  | Some n when n <= 0 -> Error (Printf.sprintf "not positive: %d" n)
+  | Some n -> Ok n
 
-(* assert — always checked, fails loudly *)
-let process_data data =
-  assert (List.length data <= 1000);  (* always checked *)
-  List.fold_left (+) 0 data
+(* Approach 3: assert for invariants *)
+let process_list lst =
+  assert (List.length lst > 0);  (* crashes if invariant violated *)
+  List.hd lst
 
-let () =
-  assert (divide_or_panic 10 2 = 5);
+let test_exceptions () =
+  assert (divide_exn 10 2 = 5);
+  (try let _ = divide_exn 10 0 in assert false
+   with Failure _ -> ());
+  assert (head_exn [1; 2; 3] = 1);
+  (try let _ = head_exn [] in assert false
+   with Invalid_argument _ -> ());
+  Printf.printf "  Approach 1 (exceptions for bugs): passed\n"
 
-  (try ignore (divide_or_panic 10 0)
-   with Failure msg ->
-     assert (String.length msg > 0));
-
-  assert (first_element [1; 2; 3] = 1);
-
-  (try ignore (first_element [])
-   with Invalid_argument msg ->
-     assert (String.length msg > 0));
-
+let test_result () =
   assert (divide 10 2 = Ok 5);
   assert (divide 10 0 = Error "division by zero");
-
   assert (parse_positive "42" = Ok 42);
-  (match parse_positive "-5" with Error msg -> assert (String.length msg > 0) | _ -> assert false);
-  (match parse_positive "abc" with Error msg -> assert (String.length msg > 0) | _ -> assert false);
+  assert (parse_positive "-5" = Error "not positive: -5");
+  assert (parse_positive "abc" = Error "not a number: abc");
+  Printf.printf "  Approach 2 (result for expected failures): passed\n"
 
-  assert (process_data [1; 2; 3] = 6);
+let test_assert () =
+  assert (process_list [1; 2; 3] = 1);
+  (try let _ = process_list [] in assert false
+   with Assert_failure _ -> ());
+  Printf.printf "  Approach 3 (assert for invariants): passed\n"
 
-  (* option wrapping — like unwrap/expect *)
-  let v = Some 42 in
-  assert (Option.get v = 42);  (* raises Invalid_argument if None — like unwrap *)
-
-  Printf.printf "divide 10 2 = %s\n"
-    (match divide 10 2 with Ok n -> string_of_int n | Error e -> e)
+let () =
+  Printf.printf "Testing panic vs result:\n";
+  test_exceptions ();
+  test_result ();
+  test_assert ();
+  Printf.printf "✓ All tests passed\n"

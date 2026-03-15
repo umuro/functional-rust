@@ -1,77 +1,25 @@
-(* 464: Actor Pattern
-   An actor owns private state and processes messages sequentially.
-   In OCaml we use a Domain running a message loop over a channel
-   (Mutex + Queue + Condition). *)
-
-type msg =
-  | Inc  of int64
-  | Dec  of int64
-  | Get  of int64 ref * Mutex.t * Condition.t
-  | Reset
-  | Stop
-
-type actor = { send : msg -> unit }
+(* 464. Actor model – OCaml *)
+type msg = Inc of int | Get of int Queue.t | Stop
 
 let make_actor () =
-  let mu   = Mutex.create () in
-  let cond = Condition.create () in
-  let q    = Queue.create () in
-
-  let send msg =
-    Mutex.lock mu;
-    Queue.push msg q;
-    Condition.signal cond;
-    Mutex.unlock mu
-  in
-
-  (* Actor domain: event loop *)
-  let _domain = Domain.spawn (fun () ->
-    let state = ref 0L in
-    let running = ref true in
-    while !running do
-      Mutex.lock mu;
-      while Queue.is_empty q do Condition.wait cond mu done;
-      let msg = Queue.pop q in
-      Mutex.unlock mu;
-      match msg with
-      | Inc n             -> state := Int64.add !state n
-      | Dec n             -> state := Int64.sub !state n
-      | Reset             -> state := 0L
-      | Stop              -> running := false
-      | Get (cell, m, c)  ->
-        Mutex.lock m;
-        cell := !state;
-        Condition.signal c;
-        Mutex.unlock m
-    done)
-  in
-  { send }
-
-(* Synchronous get: sends a Get message and blocks until reply *)
-let actor_get actor =
-  let cell = ref 0L in
-  let m    = Mutex.create () in
-  let c    = Condition.create () in
-  Mutex.lock m;
-  actor.send (Get (cell, m, c));
-  Condition.wait c m;
-  let v = !cell in
-  Mutex.unlock m;
-  v
+  let q=Queue.create () let m=Mutex.create () let c=Condition.create () in
+  let send v=Mutex.lock m; Queue.push v q; Condition.signal c; Mutex.unlock m in
+  let recv ()=Mutex.lock m; while Queue.is_empty q do Condition.wait c m done;
+    let v=Queue.pop q in Mutex.unlock m; v in
+  ignore (Thread.create (fun () ->
+    let st=ref 0 and go=ref true in
+    while !go do match recv () with
+    | Inc n -> st := !st+n
+    | Get rq -> Queue.push !st rq
+    | Stop -> go:=false
+    done) ());
+  send
 
 let () =
-  let a = make_actor () in
-  a.send (Inc 7L);
-  a.send (Inc 3L);
-  assert (actor_get a = 10L);
-  Printf.printf "after inc 7+3: %Ld\n%!" (actor_get a);
-
-  a.send (Dec 4L);
-  assert (actor_get a = 6L);
-  Printf.printf "after dec 4: %Ld\n%!" (actor_get a);
-
-  a.send Reset;
-  assert (actor_get a = 0L);
-  Printf.printf "after reset: %Ld\n%!" (actor_get a);
-
-  a.send Stop
+  let send=make_actor () in
+  send (Inc 10); send (Inc 5);
+  let rq=Queue.create () in send (Get rq);
+  (* spin wait *)
+  while Queue.is_empty rq do Thread.delay 0.001 done;
+  Printf.printf "state=%d\n" (Queue.pop rq);
+  send Stop; Thread.delay 0.01

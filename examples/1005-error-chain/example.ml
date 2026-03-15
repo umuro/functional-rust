@@ -1,68 +1,56 @@
-(* 1005: Error Chaining
-   Wrap low-level errors with context using map_error / Result.bind.
-   The 'with_context' pattern attaches a context string to any error. *)
+(* 1005: Error Chaining *)
+(* Adding context to errors as they propagate *)
 
-type io_error =
-  | NotFound
-  | Corrupted of string
+type inner_error = NotFound | Corrupted of string
+type app_error = { context: string; cause: inner_error }
 
-let string_of_io_error = function
-  | NotFound       -> "not found"
-  | Corrupted s    -> Printf.sprintf "corrupted: %s" s
-
-(* App error bundles context + underlying io error *)
-type app_error = {
-  context: string;
-  source: io_error;
-}
+let string_of_inner = function
+  | NotFound -> "not found"
+  | Corrupted s -> Printf.sprintf "corrupted: %s" s
 
 let string_of_app_error e =
-  Printf.sprintf "%s: %s" e.context (string_of_io_error e.source)
+  Printf.sprintf "%s: %s" e.context (string_of_inner e.cause)
 
-(* Low-level function *)
+(* Approach 1: Manual context wrapping *)
 let read_file path =
-  match path with
-  | "/missing" -> Error NotFound
-  | "/bad"     -> Error (Corrupted "invalid utf-8")
-  | _          -> Ok "data"
+  if path = "/missing" then Error NotFound
+  else if path = "/bad" then Error (Corrupted "invalid utf-8")
+  else Ok "data"
 
-(* Approach 1: map_error to add context *)
-let load_config path =
-  Result.map_error (fun source ->
-    { context = Printf.sprintf "loading %s" path; source }
-  ) (read_file path)
+let load_with_context path =
+  match read_file path with
+  | Error e -> Error { context = Printf.sprintf "loading %s" path; cause = e }
+  | Ok v -> Ok v
 
-(* Approach 2: helper that mirrors the with_context extension trait *)
+(* Approach 2: Generic context helper (like Rust's map_err) *)
 let with_context ctx result =
-  Result.map_error (fun source -> { context = ctx (); source }) result
+  match result with
+  | Error e -> Error { context = ctx; cause = e }
+  | Ok v -> Ok v
 
-let load_config_ext path =
-  with_context (fun () -> Printf.sprintf "loading %s" path) (read_file path)
+let load_with_helper path =
+  read_file path |> with_context (Printf.sprintf "loading %s" path)
 
-let () =
-  assert (load_config "/ok" = Ok "data");
-
-  (match load_config "/missing" with
+let test_manual () =
+  (match load_with_context "/missing" with
    | Error e ->
      assert (e.context = "loading /missing");
-     (match e.source with NotFound -> () | _ -> assert false)
-   | _ -> assert false);
+     assert (e.cause = NotFound)
+   | Ok _ -> assert false);
+  assert (load_with_context "/ok" = Ok "data");
+  Printf.printf "  Approach 1 (manual context): passed\n"
 
-  (match load_config "/bad" with
+let test_helper () =
+  (match load_with_helper "/bad" with
    | Error e ->
-     let s = string_of_app_error e in
-     assert (String.length s > 0);
-     assert (try let _ = Str.search_forward (Str.regexp "corrupted") s 0 in true
-             with Not_found -> false || String.sub s 0 5 = "loadi")
-   | _ -> assert false);
+     assert (String.length (string_of_app_error e) > 0);
+     assert (e.cause = Corrupted "invalid utf-8")
+   | Ok _ -> assert false);
+  assert (load_with_helper "/ok" = Ok "data");
+  Printf.printf "  Approach 2 (context helper): passed\n"
 
-  assert (load_config_ext "/ok" = Ok "data");
-  (match load_config_ext "/missing" with
-   | Error e -> assert (e.context = "loading /missing")
-   | _ -> assert false);
-
-  let err = { context = "loading /missing"; source = NotFound } in
-  assert (string_of_app_error err = "loading /missing: not found");
-
-  Printf.printf "load_config /ok: %s\n"
-    (match load_config "/ok" with Ok s -> s | Error e -> string_of_app_error e)
+let () =
+  Printf.printf "Testing error chaining:\n";
+  test_manual ();
+  test_helper ();
+  Printf.printf "✓ All tests passed\n"

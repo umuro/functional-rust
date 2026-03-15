@@ -1,41 +1,43 @@
-(* 070: Scan Left — running accumulation
-   scan_left produces all intermediate fold results *)
+(* 070: Scan Left — running accumulation *)
 
-(* --- Approach 1: Manual scan_left --- *)
-
-(* Returns [init; f init x0; f (f init x0) x1; ...] *)
-let scan_left f init xs =
-  let rec aux acc prev = function
-    | [] -> List.rev acc
-    | x :: rest ->
-      let next = f prev x in
-      aux (next :: acc) next rest
+(* Approach 1: Recursive scan_left *)
+let scan_left f init lst =
+  let rec aux acc current = function
+    | [] -> List.rev (current :: acc)
+    | x :: xs -> aux (current :: acc) (f current x) xs
   in
-  aux [init] init xs
+  aux [] init lst
 
-let running_sum xs = scan_left ( + ) 0 xs
+(* Running sum *)
+let running_sum lst = scan_left ( + ) 0 lst
 
-let running_product xs = scan_left ( * ) 1 xs
+(* Running product *)
+let running_product lst = scan_left ( * ) 1 lst
 
-(* --- Approach 2: Running max (same idea, different operator) --- *)
+(* Approach 2: Using fold_left to build scan *)
+let scan_left_fold f init lst =
+  let result, _ =
+    List.fold_left
+      (fun (acc_list, current) x ->
+        let next = f current x in
+        (next :: acc_list, next))
+      ([init], init)
+      lst
+  in
+  List.rev result
 
-let running_max = function
+(* Approach 3: Running max *)
+let running_max lst =
+  match lst with
   | [] -> []
-  | first :: rest ->
-    scan_left max first rest
+  | x :: xs ->
+    scan_left (fun a b -> max a b) x xs
 
-(* --- Approach 3: Using Seq for lazy running sums --- *)
-
-let running_sum_seq xs =
-  let s = List.to_seq xs in
-  Seq.scan ( + ) 0 s |> List.of_seq
-
+(* Tests *)
 let () =
-  Printf.printf "running_sum [1;2;3;4] = [%s]\n"
-    (String.concat "; " (List.map string_of_int (running_sum [1;2;3;4])));
-  Printf.printf "running_product [1;2;3;4] = [%s]\n"
-    (String.concat "; " (List.map string_of_int (running_product [1;2;3;4])));
-  Printf.printf "running_max [3;1;4;1;5;9] = [%s]\n"
-    (String.concat "; " (List.map string_of_int (running_max [3;1;4;1;5;9])));
-  Printf.printf "running_sum_seq [1;2;3;4] = [%s]\n"
-    (String.concat "; " (List.map string_of_int (running_sum_seq [1;2;3;4])))
+  assert (running_sum [1; 2; 3; 4] = [0; 1; 3; 6; 10]);
+  assert (running_sum [] = [0]);
+  assert (running_product [1; 2; 3; 4] = [1; 1; 2; 6; 24]);
+  assert (scan_left_fold ( + ) 0 [1; 2; 3] = [0; 1; 3; 6]);
+  assert (running_max [3; 1; 4; 1; 5; 9] = [3; 3; 4; 4; 5; 9]);
+  Printf.printf "✓ All tests passed\n"

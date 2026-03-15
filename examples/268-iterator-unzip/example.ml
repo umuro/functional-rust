@@ -1,37 +1,18 @@
-(* 268: unzip — split a list of pairs into two separate lists.
-   OCaml: List.split does exactly this. *)
+(* 268. Splitting pairs with unzip() - OCaml *)
 
 let () =
-  (* Basic unzip *)
-  let pairs = [(1, 'a'); (2, 'b'); (3, 'c')] in
-  let (nums, chars) = List.split pairs in
-  Printf.printf "nums  = [%s]\n"
-    (nums |> List.map string_of_int |> String.concat ";");
-  Printf.printf "chars = [%s]\n"
-    (chars |> List.map (String.make 1) |> String.concat ";");
+  let pairs = [(1, "one"); (2, "two"); (3, "three")] in
+  let (nums, words) = List.split pairs in
+  Printf.printf "Nums: %s\n" (String.concat ", " (List.map string_of_int nums));
+  Printf.printf "Words: %s\n" (String.concat ", " words);
 
-  (* Round-trip: zip then unzip *)
-  let a = [1;2;3] and b = [4;5;6] in
-  let zipped = List.combine a b in
-  let (a2, b2) = List.split zipped in
-  Printf.printf "roundtrip a: %b\n" (a = a2);
-  Printf.printf "roundtrip b: %b\n" (b = b2);
+  let xs = [1; 2; 3] in
+  let ys = ["a"; "b"; "c"] in
+  let (xs2, ys2) = List.split (List.combine xs ys) in
+  Printf.printf "Roundtrip OK: %b\n" (xs = xs2 && ys = ys2);
 
-  (* Empty unzip *)
-  let (ea, eb) = List.split ([] : (int * int) list) in
-  Printf.printf "empty unzip: |a|=%d |b|=%d\n"
-    (List.length ea) (List.length eb);
-
-  (* Practical: separate key-value associations *)
-  let assoc = [("name", "Alice"); ("city", "Paris"); ("age", "30")] in
-  let (keys, values) = List.split assoc in
-  Printf.printf "keys   = [%s]\n" (String.concat ";" keys);
-  Printf.printf "values = [%s]\n" (String.concat ";" values);
-
-  (* Unzip a sequence of integer pairs *)
-  let int_pairs = List.mapi (fun i _ -> (i, i * i)) [0;0;0;0;0] in
-  let (indices, squares) = List.split int_pairs in
-  Printf.printf "indices = [%s]\n"
-    (indices |> List.map string_of_int |> String.concat ";");
-  Printf.printf "squares = [%s]\n"
-    (squares |> List.map string_of_int |> String.concat ";")
+  let scores = [("Alice", 95); ("Bob", 87); ("Carol", 92)] in
+  let (names, vals) = List.split scores in
+  let avg = List.fold_left (+) 0 vals / List.length vals in
+  Printf.printf "Students: %s, Average: %d\n"
+    (String.concat ", " names) avg

@@ -1,82 +1,82 @@
-(* 963: Bloom Filter
-   A probabilistic data structure: O(1) insert and membership test.
-   False positives are possible; false negatives are not.
-   Uses k independent hash functions mapping to m-bit array. *)
+(* 963: Bloom Filter *)
+(* Probabilistic set membership: may have false positives, no false negatives *)
 
-(* Simple bit array implemented as an int array *)
+(* Simple hash functions using djb2 and sdbm *)
+
+let hash1 s =
+  String.fold_left (fun h c -> h * 31 + Char.code c) 5381 s
+
+let hash2 s =
+  String.fold_left (fun h c -> (Char.code c) + (h lsl 6) + (h lsl 16) - h) 0 s
+
+let hash3 s =
+  String.fold_left (fun h c -> h * 33 lxor Char.code c) 0 s
+
+(* Approach 1: Bloom filter with fixed bit array *)
+
 type bloom_filter = {
-  bits : int array;   (* each element holds 63 bits on 64-bit OCaml *)
-  m : int;            (* total number of bits *)
-  k : int;            (* number of hash functions *)
+  bits: bool array;
+  size: int;
 }
 
-let bits_per_word = Sys.int_size - 1  (* 63 on 64-bit *)
-
-let create ~m ~k =
-  assert (m > 0 && k > 0);
-  let words = (m + bits_per_word - 1) / bits_per_word in
-  { bits = Array.make words 0; m; k }
-
-let set_bit bf i =
-  let word = i / bits_per_word in
-  let bit  = i mod bits_per_word in
-  bf.bits.(word) <- bf.bits.(word) lor (1 lsl bit)
-
-let test_bit bf i =
-  let word = i / bits_per_word in
-  let bit  = i mod bits_per_word in
-  (bf.bits.(word) lsr bit) land 1 = 1
-
-(* k hash positions for a string — uses double hashing: h1 + i*h2 mod m *)
-let hash_positions bf s =
-  (* Polynomial rolling hashes with two different bases *)
-  let h1 = ref 0 and h2 = ref 0 in
-  String.iter (fun c ->
-    h1 := (!h1 * 31 + Char.code c) land max_int;
-    h2 := (!h2 * 37 + Char.code c) land max_int;
-  ) s;
-  (* Ensure h2 is odd so it stays coprime to m *)
-  let h2v = if !h2 = 0 then 1 else !h2 lor 1 in
-  Array.init bf.k (fun i -> (!h1 + i * h2v) mod bf.m)
+let create size = { bits = Array.make size false; size }
 
 let add bf s =
-  Array.iter (set_bit bf) (hash_positions bf s)
+  let h1 = abs (hash1 s) mod bf.size in
+  let h2 = abs (hash2 s) mod bf.size in
+  let h3 = abs (hash3 s) mod bf.size in
+  bf.bits.(h1) <- true;
+  bf.bits.(h2) <- true;
+  bf.bits.(h3) <- true
 
 let might_contain bf s =
-  Array.for_all (test_bit bf) (hash_positions bf s)
+  let h1 = abs (hash1 s) mod bf.size in
+  let h2 = abs (hash2 s) mod bf.size in
+  let h3 = abs (hash3 s) mod bf.size in
+  bf.bits.(h1) && bf.bits.(h2) && bf.bits.(h3)
 
-(* Estimate the current false-positive rate given n items inserted *)
-let false_positive_rate bf n =
-  (* (1 - e^(-k*n/m))^k *)
-  let k = float_of_int bf.k in
-  let m = float_of_int bf.m in
-  let exponent = -. k *. float_of_int n /. m in
-  (1.0 -. exp exponent) ** k
+(* Approach 2: Compact bit representation using int array *)
+
+let create_compact num_bits =
+  let words = (num_bits + 62) / 63 in
+  Array.make words 0
+
+let set_bit bits i =
+  let word = i / 63 in
+  let bit = i mod 63 in
+  bits.(word) <- bits.(word) lor (1 lsl bit)
+
+let get_bit bits i =
+  let word = i / 63 in
+  let bit = i mod 63 in
+  (bits.(word) lsr bit) land 1 = 1
 
 let () =
-  (* m=1000, k=3 → ~1% FP rate at ~100 items *)
-  let bf = create ~m:1000 ~k:3 in
-  let words = ["apple"; "banana"; "cherry"; "date"; "elderberry"] in
-  List.iter (add bf) words;
+  let bf = create 1024 in
 
-  Printf.printf "Membership tests (should all be true):\n";
-  List.iter (fun w ->
-    Printf.printf "  %s: %b\n" w (might_contain bf w)
-  ) words;
+  add bf "apple";
+  add bf "banana";
+  add bf "cherry";
 
-  Printf.printf "\nNon-members (expect false, possibly true with low probability):\n";
-  let non_members = ["fig"; "grape"; "kiwi"; "lemon"; "mango"] in
-  List.iter (fun w ->
-    Printf.printf "  %s: %b\n" w (might_contain bf w)
-  ) non_members;
+  (* All added items must be found *)
+  assert (might_contain bf "apple");
+  assert (might_contain bf "banana");
+  assert (might_contain bf "cherry");
 
-  Printf.printf "\nFalse positive rate at 5 items: %.4f\n"
-    (false_positive_rate bf 5);
+  (* These might or might not be found (false positives possible) *)
+  (* but very unlikely with 1024 bits and 3 hashes for these strings *)
+  let likely_absent = not (might_contain bf "dragon") in
+  let _ = likely_absent in (* suppressing: could be false positive *)
 
-  (* Demonstrate with a larger set *)
-  let bf2 = create ~m:10000 ~k:5 in
-  for i = 0 to 999 do
-    add bf2 (string_of_int i)
-  done;
-  Printf.printf "FP rate at 1000 items (m=10000, k=5): %.4f\n"
-    (false_positive_rate bf2 1000)
+  (* Compact bit array test *)
+  let bits = create_compact 128 in
+  set_bit bits 0;
+  set_bit bits 63;
+  set_bit bits 127;
+  assert (get_bit bits 0);
+  assert (get_bit bits 63);
+  assert (get_bit bits 127);
+  assert (not (get_bit bits 1));
+  assert (not (get_bit bits 64));
+
+  Printf.printf "✓ All tests passed\n"

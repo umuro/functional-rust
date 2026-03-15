@@ -1,44 +1,21 @@
-(* 092: Scan with Accumulator
-   Running prefix computations — scan_left produces all intermediate fold results *)
+(* 092: Scan with Accumulator *)
 
-(* --- Approach 1: Running sum using Seq.scan --- *)
+let scan_left f init lst =
+  let _, result =
+    List.fold_left (fun (acc, res) x ->
+      let next = f acc x in (next, next :: res)
+    ) (init, [init]) lst
+  in
+  List.rev result
 
-let running_sum xs =
-  xs
-  |> List.to_seq
-  |> Seq.scan ( + ) 0
-  |> List.of_seq
-
-(* --- Approach 2: Running max --- *)
-
-let running_max = function
+let running_sum lst = scan_left ( + ) 0 lst
+let running_max lst =
+  match lst with
   | [] -> []
-  | first :: rest ->
-    List.fold_left
-      (fun (max_so_far, acc) x ->
-        let new_max = max max_so_far x in
-        (new_max, new_max :: acc))
-      (first, [first])
-      rest
-    |> (fun (_, acc) -> List.rev acc)
+  | x :: xs -> scan_left max x xs
 
-(* --- Approach 3: Generic scan_left --- *)
-
-let scan_left f init xs =
-  xs
-  |> List.to_seq
-  |> Seq.scan f init
-  |> List.of_seq
-
+(* Tests *)
 let () =
-  Printf.printf "running_sum [1;2;3;4] = [%s]\n"
-    (String.concat "; " (List.map string_of_int (running_sum [1;2;3;4])));
-
-  Printf.printf "running_max [3;1;4;1;5] = [%s]\n"
-    (String.concat "; " (List.map string_of_int (running_max [3;1;4;1;5])));
-
-  Printf.printf "scan_left (*) 1 [1;2;3;4] = [%s]\n"
-    (String.concat "; " (List.map string_of_int (scan_left ( * ) 1 [1;2;3;4])));
-
-  Printf.printf "running_sum [] = [%s]\n"
-    (String.concat "; " (List.map string_of_int (running_sum [])))
+  assert (running_sum [1; 2; 3; 4] = [0; 1; 3; 6; 10]);
+  assert (running_max [3; 1; 4; 1; 5] = [3; 3; 4; 4; 5]);
+  Printf.printf "✓ All tests passed\n"

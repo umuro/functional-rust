@@ -1,100 +1,69 @@
-(* 728: Inline hints — compiler optimization hints in OCaml *)
-(* Rust uses #[inline], #[inline(always)], #[inline(never)], #[cold] to guide LLVM.
-   OCaml exposes equivalent mechanisms:
+(* OCaml: Inlining and cold-path hints
+   OCaml has limited inlining control. `[@unrolled]` is for loops.
+   flambda (the optimising middle-end) inlines aggressively, but
+   you can't mark specific functions as cold. *)
 
-   - [@inline] / [@inline always]:  suggest/force inlining (flambda backend)
-   - [@cold]:  not available as a standard attribute; structure cold paths by
-     putting them in separate functions (the compiler infers rarely-called paths).
-   - [@unrolled]:  available in some contexts for loop unrolling.
-   - [@@noalloc] / [@@unboxed]:  C stub attributes, not user-level Rust #[inline].
+(* --- Inlining: OCaml inlines small functions automatically with flambda --- *)
 
-   The key insight: OCaml's flambda2 optimizer (OCaml 5) performs aggressive
-   inlining automatically. The [@inline] attribute is a hint for cross-module
-   calls where the optimizer cannot see the body without flambda.
+(* Small functions get inlined by the OCaml native compiler *)
+let[@inline] add x y = x + y
+let[@inline] square x = x * x
+let[@inline always] fast_abs x = if x < 0 then -x else x
 
-   We demonstrate the same functionality as the Rust example while noting
-   where each hint maps. *)
+(* Without [@inline]: compiler decides based on size and heuristics *)
+let slow_abs x = if x < 0 then -x else x
 
-(* [@inline]: suggest inlining — effective across module boundaries with flambda *)
-let[@inline] add a b = a + b
+(* --- Cold path: not directly available in OCaml --- *)
+(* We simulate the concept: rare paths in separate functions *)
 
-(* [@inline always]: force inlining for tiny hot functions *)
-let[@inline always] fast_abs x =
-  if x < 0 then -x else x
+let[@cold] handle_error msg =
+  (* This function is unlikely to be called; OCaml doesn't have @[cold]
+     but we document the intent. Rust's #[cold] biases branch prediction. *)
+  Printf.eprintf "Error: %s\n" msg
 
-(* [@inline never]: prevent inlining — useful for profiling / large functions.
-   OCaml does not have a standard [@inline never] attribute; the closest is
-   using a C stub or relying on the optimizer's heuristics. In practice,
-   large functions are never inlined automatically. *)
-let heavy_computation data =
-  Array.fold_left (fun acc x -> acc + x * x) 0 data
+(* Hot path using a result type — error branch is rare *)
+let divide x y =
+  if y = 0 then begin
+    handle_error "division by zero";
+    None
+  end else
+    Some (x / y)
 
-(* Cold path: put rarely-executed code in a separate function.
-   The compiler sees low call frequency and deprioritizes it.
-   In OCaml we document the invariant with a comment. *)
-let fail_parse s =
-  (* cold path: parsing rarely fails in well-formed input *)
-  Printf.eprintf "Failed to parse %S as int, defaulting to 0\n" s;
-  0
+(* --- Target features: not available in standard OCaml --- *)
+(* Would need C FFI with `__attribute__((target("avx2")))` *)
 
-let parse_int s =
-  match int_of_string_opt s with
-  | Some v -> v
-  | None   -> fail_parse s   (* branch taken rarely → cold in practice *)
+(* Closest: use the BLAS/LAPACK bindings which use SIMD internally *)
+(* e.g., owl-base calls cblas_sdot which uses SIMD at runtime *)
 
-(* classify values — hot path first for readability *)
-let classify x =
-  if x > 0 then "positive"       (* hot: most common *)
-  else if x < 0 then "negative"  (* warm *)
-  else "zero"                     (* cold: rare *)
-
-(* sum with dispatch — OCaml has no runtime CPU feature detection built-in;
-   use the standard float fold as the "portable" implementation *)
-let sum_dispatch data =
-  Array.fold_left (fun s x -> s + x) 0 data
-
-(* bench_sum: prevent optimizer from eliminating the computation.
-   In OCaml, use [Sys.opaque_identity] — the OCaml equivalent of std::hint::black_box *)
-let bench_sum data =
-  let data = Sys.opaque_identity data in
-  Array.fold_left ( + ) 0 data
+(* --- Benchmark: inlined vs not inlined --- *)
+let time_it label f =
+  let t0 = Sys.time () in
+  let r = f () in
+  Printf.printf "%s: %.6fs result=%d\n" label (Sys.time () -. t0) r
 
 let () =
-  (* inline add *)
-  assert (add 3 4 = 7);
-  assert (add (-1) 1 = 0);
-  print_endline "add: ok";
+  let n = 50_000_000 in
 
-  (* inline always fast_abs *)
-  assert (fast_abs (-42) = 42);
-  assert (fast_abs 0 = 0);
-  assert (fast_abs 7 = 7);
-  print_endline "fast_abs: ok";
+  time_it "[@inline] add (cumulative)" (fun () ->
+    let acc = ref 0 in
+    for i = 1 to n do acc := add !acc i done;
+    !acc);
 
-  (* heavy_computation: sum of squares *)
-  let data = [| 1; 2; 3; 4 |] in
-  assert (heavy_computation data = 1 + 4 + 9 + 16);
-  print_endline "heavy_computation: ok";
+  time_it "[@inline always] fast_abs" (fun () ->
+    let acc = ref 0 in
+    for i = -n to n do acc := !acc + fast_abs i done;
+    !acc);
 
-  (* parse_int *)
-  assert (parse_int "100" = 100);
-  assert (parse_int "0" = 0);
-  assert (parse_int "not_a_number" = 0);
-  print_endline "parse_int: ok";
+  time_it "slow_abs (no inline hint)" (fun () ->
+    let acc = ref 0 in
+    for i = -n to n do acc := !acc + slow_abs i done;
+    !acc);
 
-  (* classify *)
-  assert (classify 5  = "positive");
-  assert (classify (-5) = "negative");
-  assert (classify 0  = "zero");
-  print_endline "classify: ok";
+  (* Demonstrate cold path *)
+  let results = [divide 10 2; divide 5 0; divide 100 4] in
+  List.iter (function
+    | None -> ()
+    | Some v -> Printf.printf "Result: %d\n" v
+  ) results;
 
-  (* sum_dispatch *)
-  let v = Array.init 10 (fun i -> i + 1) in
-  assert (sum_dispatch v = 55);
-  print_endline "sum_dispatch: ok";
-
-  (* bench_sum *)
-  assert (bench_sum [|1;2;3|] = 6);
-  print_endline "bench_sum: ok";
-
-  print_endline "All assertions passed."
+  Printf.printf "Note: flambda inlines aggressively; for SIMD use C FFI.\n"

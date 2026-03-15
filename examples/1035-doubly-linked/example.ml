@@ -1,105 +1,90 @@
-(* 1035: Doubly-Linked List
-   OCaml uses mutable records with option references for doubly-linked lists.
-   No Rc<RefCell<>> needed — OCaml's GC handles cycles safely. *)
+(* 1035: Doubly-Linked List *)
+(* OCaml: immutable doubly-linked lists are impractical *)
+(* We use a zipper (functional approach) or mutable records *)
 
+(* Approach 1: Zipper as functional doubly-linked list *)
+type 'a zipper = {
+  left: 'a list;   (* reversed left part *)
+  focus: 'a;
+  right: 'a list;
+}
+
+let of_list = function
+  | [] -> None
+  | x :: xs -> Some { left = []; focus = x; right = xs }
+
+let move_right z =
+  match z.right with
+  | [] -> None
+  | x :: xs -> Some { left = z.focus :: z.left; focus = x; right = xs }
+
+let move_left z =
+  match z.left with
+  | [] -> None
+  | x :: xs -> Some { left = xs; focus = x; right = z.focus :: z.right }
+
+let to_list z =
+  List.rev z.left @ [z.focus] @ z.right
+
+let zipper_test () =
+  let z = Option.get (of_list [1; 2; 3; 4; 5]) in
+  assert (z.focus = 1);
+  let z = Option.get (move_right z) in
+  assert (z.focus = 2);
+  let z = Option.get (move_right z) in
+  assert (z.focus = 3);
+  let z = Option.get (move_left z) in
+  assert (z.focus = 2);
+  assert (to_list z = [1; 2; 3; 4; 5])
+
+(* Approach 2: Mutable doubly-linked using records *)
 type 'a dnode = {
-  mutable value : 'a;
-  mutable prev  : 'a dnode option;
-  mutable next  : 'a dnode option;
+  mutable value: 'a;
+  mutable prev: 'a dnode option;
+  mutable next: 'a dnode option;
 }
 
 type 'a dlist = {
-  mutable head : 'a dnode option;
-  mutable tail : 'a dnode option;
-  mutable len  : int;
+  mutable head: 'a dnode option;
+  mutable tail: 'a dnode option;
+  mutable length: int;
 }
 
-let make_dlist () = { head = None; tail = None; len = 0 }
+let create () = { head = None; tail = None; length = 0 }
 
-let push_back dl value =
-  let node = { value; prev = dl.tail; next = None } in
+let push_back dl v =
+  let node = { value = v; prev = dl.tail; next = None } in
   (match dl.tail with
    | Some t -> t.next <- Some node
-   | None   -> dl.head <- Some node);
+   | None -> dl.head <- Some node);
   dl.tail <- Some node;
-  dl.len <- dl.len + 1
+  dl.length <- dl.length + 1
 
-let push_front dl value =
-  let node = { value; prev = None; next = dl.head } in
+let push_front dl v =
+  let node = { value = v; prev = None; next = dl.head } in
   (match dl.head with
    | Some h -> h.prev <- Some node
-   | None   -> dl.tail <- Some node);
+   | None -> dl.tail <- Some node);
   dl.head <- Some node;
-  dl.len <- dl.len + 1
+  dl.length <- dl.length + 1
 
-let pop_front dl =
-  match dl.head with
-  | None -> None
-  | Some node ->
-    (match node.next with
-     | Some next -> next.prev <- None; dl.head <- Some next
-     | None      -> dl.head <- None; dl.tail <- None);
-    dl.len <- dl.len - 1;
-    Some node.value
-
-let pop_back dl =
-  match dl.tail with
-  | None -> None
-  | Some node ->
-    (match node.prev with
-     | Some prev -> prev.next <- None; dl.tail <- Some prev
-     | None      -> dl.head <- None; dl.tail <- None);
-    dl.len <- dl.len - 1;
-    Some node.value
-
-(* Forward traversal via fold *)
-let fold_forward f acc dl =
-  let rec aux acc = function
-    | None -> acc
-    | Some node -> aux (f acc node.value) node.next
+let to_list_forward dl =
+  let rec go acc = function
+    | None -> List.rev acc
+    | Some n -> go (n.value :: acc) n.next
   in
-  aux acc dl.head
+  go [] dl.head
 
-let to_list dl =
-  fold_forward (fun acc x -> acc @ [x]) [] dl
-
-(* Backward traversal: start at tail, follow prev links — collect in order *)
-let to_list_rev dl =
-  let rec aux = function
-    | None -> []
-    | Some node -> node.value :: aux node.prev
-  in
-  aux dl.tail
-
-let () =
-  let dl = make_dlist () in
+let mutable_dlist_test () =
+  let dl = create () in
   push_back dl 1;
   push_back dl 2;
   push_back dl 3;
   push_front dl 0;
-  assert (to_list dl = [0; 1; 2; 3]);
-  assert (dl.len = 4);
+  assert (to_list_forward dl = [0; 1; 2; 3]);
+  assert (dl.length = 4)
 
-  assert (pop_front dl = Some 0);
-  assert (pop_back dl = Some 3);
-  assert (to_list dl = [1; 2]);
-
-  (* Bidirectional traversal *)
-  let dl2 = make_dlist () in
-  List.iter (push_back dl2) [1; 2; 3; 4; 5];
-  assert (to_list dl2 = [1; 2; 3; 4; 5]);
-  assert (to_list_rev dl2 = [5; 4; 3; 2; 1]);
-
-  (* Empty edge cases *)
-  let empty = make_dlist () in
-  assert (pop_front empty = None);
-  assert (pop_back empty = None);
-
-  (* Single element *)
-  let single = make_dlist () in
-  push_back single 42;
-  assert (pop_front single = Some 42);
-  assert (single.head = None);
-  assert (single.tail = None);
-
-  Printf.printf "All doubly-linked list tests passed.\n"
+let () =
+  zipper_test ();
+  mutable_dlist_test ();
+  Printf.printf "✓ All tests passed\n"

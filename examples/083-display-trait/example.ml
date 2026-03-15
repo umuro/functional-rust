@@ -1,63 +1,44 @@
-(* 083: Display Trait / to_string
-   OCaml uses to_string functions or Format module for custom printing *)
+(* 083: Display — custom string representation *)
 
-(* --- Approach 1: Simple to_string for variants --- *)
-
+(* Approach 1: Simple to_string *)
 type color = Red | Green | Blue
 
 let color_to_string = function
-  | Red   -> "Red"
+  | Red -> "Red"
   | Green -> "Green"
-  | Blue  -> "Blue"
+  | Blue -> "Blue"
 
 type point = { x: float; y: float }
 
-let point_to_string { x; y } =
-  Printf.sprintf "(%.1f, %.1f)" x y
+let point_to_string p =
+  Printf.sprintf "(%.1f, %.1f)" p.x p.y
 
-(* --- Approach 2: Record with a display function --- *)
-
+(* Approach 2: Complex formatting *)
 type person = { name: string; age: int; email: string }
 
-let person_to_string { name; age; email } =
-  Printf.sprintf "%s (age %d, %s)" name age email
+let person_to_string p =
+  Printf.sprintf "%s (age %d, %s)" p.name p.age p.email
 
-(* --- Approach 3: Recursive pretty-printer for a tree --- *)
+let person_to_debug p =
+  Printf.sprintf "{ name = %S; age = %d; email = %S }" p.name p.age p.email
 
+(* Approach 3: Recursive display *)
 type 'a tree = Leaf | Node of 'a tree * 'a * 'a tree
 
-let rec tree_to_string show = function
-  | Leaf          -> "."
+let rec tree_to_string to_s = function
+  | Leaf -> "."
   | Node (l, v, r) ->
     Printf.sprintf "(%s %s %s)"
-      (tree_to_string show l)
-      (show v)
-      (tree_to_string show r)
+      (tree_to_string to_s l)
+      (to_s v)
+      (tree_to_string to_s r)
 
-(* Using Format module for structured output *)
-let pp_list pp_elem ppf xs =
-  let open Format in
-  fprintf ppf "[";
-  List.iteri (fun i x ->
-    if i > 0 then fprintf ppf "; ";
-    pp_elem ppf x) xs;
-  fprintf ppf "]"
-
+(* Tests *)
 let () =
-  Printf.printf "%s\n" (color_to_string Red);
-  Printf.printf "%s\n" (color_to_string Green);
-  Printf.printf "%s\n" (point_to_string { x = 3.0; y = 4.0 });
+  assert (color_to_string Red = "Red");
+  assert (point_to_string { x = 3.0; y = 4.0 } = "(3.0, 4.0)");
   let p = { name = "Alice"; age = 30; email = "alice@ex.com" } in
-  Printf.printf "%s\n" (person_to_string p);
-
-  let tree =
-    Node (Node (Leaf, 1, Leaf), 2, Node (Leaf, 3, Leaf))
-  in
-  Printf.printf "%s\n" (tree_to_string string_of_int tree);
-
-  (* Format-based list printer *)
-  let buf = Buffer.create 32 in
-  let ppf = Format.formatter_of_buffer buf in
-  pp_list (fun ppf n -> Format.fprintf ppf "%d" n) ppf [1;2;3];
-  Format.pp_print_flush ppf ();
-  Printf.printf "%s\n" (Buffer.contents buf)
+  assert (person_to_string p = "Alice (age 30, alice@ex.com)");
+  let t = Node (Node (Leaf, 1, Leaf), 2, Node (Leaf, 3, Leaf)) in
+  assert (tree_to_string string_of_int t = "((. 1 .) 2 (. 3 .))");
+  Printf.printf "✓ All tests passed\n"

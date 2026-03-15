@@ -1,52 +1,42 @@
-(* 082: Type Aliases
-   Shorten complex types and encode domain intent *)
+(* 082: Type Aliases *)
 
-(* --- Approach 1: Simple aliases --- *)
+(* Approach 1: Simple aliases *)
+type point = float * float
+type name = string
+type age = int
 
-type point = float * float     (* alias for a pair *)
-type name  = string
-
-let distance (x1, y1) (x2, y2) =
+let distance ((x1, y1) : point) ((x2, y2) : point) : float =
   sqrt ((x2 -. x1) ** 2.0 +. (y2 -. y1) ** 2.0)
 
-(* --- Approach 2: Result alias — common in real codebases --- *)
+(* Approach 2: Result alias *)
+type error = string
+type 'a result_t = ('a, error) result
 
-type app_error =
-  | ParseError of string
-  | DivByZero
-
-type 'a app_result = ('a, app_error) result   (* parametric alias *)
-
-let parse_int s : int app_result =
+let parse_int (s : string) : int result_t =
   match int_of_string_opt s with
-  | None   -> Error (ParseError (Printf.sprintf "Not a number: %s" s))
   | Some n -> Ok n
+  | None -> Error (Printf.sprintf "Not a number: %s" s)
 
-let safe_div a b : int app_result =
-  if b = 0 then Error DivByZero else Ok (a / b)
+let safe_div (a : int) (b : int) : int result_t =
+  if b = 0 then Error "Division by zero" else Ok (a / b)
 
-(* --- Approach 3: Function-type aliases (predicates, transforms) --- *)
+(* Approach 3: Complex type alias *)
+type 'a predicate = 'a -> bool
+type 'a transform = 'a -> 'a
+type ('a, 'b) mapper = 'a -> 'b
 
-type 'a predicate  = 'a -> bool
-type 'a transform  = 'a -> 'a
+let filter_map (pred : 'a predicate) (f : ('a, 'b) mapper) lst =
+  lst |> List.filter pred |> List.map f
 
-let filter_transform
-    (pred : 'a predicate)
-    (f    : 'a transform)
-    (xs   : 'a list) =
-  xs |> List.filter pred |> List.map f
-
-(* IO-like result alias *)
-type 'a io_result = ('a, exn) result
-
+(* Tests *)
 let () =
-  Printf.printf "distance (0,0) (3,4) = %.1f\n" (distance (0.0, 0.0) (3.0, 4.0));
-  Printf.printf "parse_int \"42\"  = %s\n"
-    (match parse_int "42" with Ok v -> string_of_int v | Error _ -> "Error");
-  Printf.printf "parse_int \"abc\" = %s\n"
-    (match parse_int "abc" with Ok _ -> "Ok" | Error (ParseError m) -> "ParseError: " ^ m | Error _ -> "Error");
-  Printf.printf "safe_div 10 0 = %s\n"
-    (match safe_div 10 0 with Ok v -> string_of_int v | Error DivByZero -> "DivByZero" | Error _ -> "Error");
-  let evens_doubled = filter_transform (fun x -> x mod 2 = 0) (fun x -> x * 2) [1;2;3;4;5;6] in
-  Printf.printf "even+doubled [1..6] = [%s]\n"
-    (String.concat "; " (List.map string_of_int evens_doubled))
+  let p1 : point = (0.0, 0.0) in
+  let p2 : point = (3.0, 4.0) in
+  assert (abs_float (distance p1 p2 -. 5.0) < 0.001);
+  assert (parse_int "42" = Ok 42);
+  assert (parse_int "abc" = Error "Not a number: abc");
+  assert (safe_div 10 3 = Ok 3);
+  let is_even : int predicate = fun x -> x mod 2 = 0 in
+  let double : (int, int) mapper = fun x -> x * 2 in
+  assert (filter_map is_even double [1; 2; 3; 4; 5; 6] = [4; 8; 12]);
+  Printf.printf "✓ All tests passed\n"

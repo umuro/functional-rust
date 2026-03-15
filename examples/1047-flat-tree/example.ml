@@ -1,107 +1,92 @@
-(* 1047: Flat Binary Tree Stored in an Array
-   Children of node i: left = 2*i+1, right = 2*i+2, parent = (i-1)/2
-   Same arithmetic works in OCaml with a plain array. *)
+(* 1047: Flat Binary Tree in Array *)
+(* Children of node i: left = 2i+1, right = 2i+2, parent = (i-1)/2 *)
 
-type 'a flat_tree = { data : 'a array }
-
-let make data = { data }
-
-let left_child  i = 2 * i + 1
+(* Approach 1: Basic flat tree operations *)
+let left_child i = 2 * i + 1
 let right_child i = 2 * i + 2
-let parent      i = (i - 1) / 2
+let parent i = (i - 1) / 2
 
-let get tree i =
-  if i < Array.length tree.data then Some tree.data.(i) else None
+let basic_tree () =
+  (*       1
+         /   \
+        2     3
+       / \   /
+      4   5 6      *)
+  let tree = [|1; 2; 3; 4; 5; 6|] in
+  let n = Array.length tree in
+  (* Root *)
+  assert (tree.(0) = 1);
+  (* Children of root *)
+  assert (tree.(left_child 0) = 2);
+  assert (tree.(right_child 0) = 3);
+  (* Children of node 1 (value=2) *)
+  assert (tree.(left_child 1) = 4);
+  assert (tree.(right_child 1) = 5);
+  (* Parent of node 5 (index=4) *)
+  assert (tree.(parent 4) = 2);
+  (* Leaf check *)
+  let is_leaf i = left_child i >= n in
+  assert (is_leaf 3);
+  assert (not (is_leaf 0))
 
-let is_leaf tree i =
-  left_child i >= Array.length tree.data
-
-let left  tree i = get tree (left_child i)
-let right tree i = get tree (right_child i)
-
-(* Level-order decomposition *)
-let levels tree =
-  let n = Array.length tree.data in
-  if n = 0 then []
-  else begin
-    let result = ref [] in
-    let start = ref 0 and level_size = ref 1 in
-    while !start < n do
-      let end_ = min (!start + !level_size) n in
-      result := Array.to_list (Array.sub tree.data !start (end_ - !start)) :: !result;
-      start := end_;
-      level_size := !level_size * 2
+(* Approach 2: Level-order traversal *)
+let level_order tree =
+  let n = Array.length tree in
+  let levels = ref [] in
+  let i = ref 0 in
+  let level_size = ref 1 in
+  while !i < n do
+    let level = ref [] in
+    for j = 0 to min (!level_size - 1) (n - !i - 1) do
+      level := tree.(!i + j) :: !level
     done;
-    List.rev !result
+    levels := List.rev !level :: !levels;
+    i := !i + !level_size;
+    level_size := !level_size * 2
+  done;
+  List.rev !levels
+
+let level_order_test () =
+  let tree = [|1; 2; 3; 4; 5; 6; 7|] in
+  let levels = level_order tree in
+  assert (levels = [[1]; [2; 3]; [4; 5; 6; 7]])
+
+(* Approach 3: Build max-heap (heapify) *)
+let swap arr i j =
+  let tmp = arr.(i) in
+  arr.(i) <- arr.(j);
+  arr.(j) <- tmp
+
+let rec sift_down arr n i =
+  let largest = ref i in
+  let l = left_child i in
+  let r = right_child i in
+  if l < n && arr.(l) > arr.(!largest) then largest := l;
+  if r < n && arr.(r) > arr.(!largest) then largest := r;
+  if !largest <> i then begin
+    swap arr i !largest;
+    sift_down arr n !largest
   end
 
-(* Depth of the tree *)
-let depth tree =
-  let n = Array.length tree.data in
-  if n = 0 then 0
-  else int_of_float (log (float_of_int n) /. log 2.0) + 1
-
-(* Max-heapify in-place using sift-down *)
-let heapify tree =
-  let arr = Array.copy tree.data in
+let heapify arr =
   let n = Array.length arr in
-  let sift_down i =
-    let i = ref i in
-    let continue_ = ref true in
-    while !continue_ do
-      let largest = ref !i in
-      let l = left_child !i and r = right_child !i in
-      if l < n && arr.(l) > arr.(!largest) then largest := l;
-      if r < n && arr.(r) > arr.(!largest) then largest := r;
-      if !largest = !i then continue_ := false
-      else begin
-        let tmp = arr.(!i) in
-        arr.(!i) <- arr.(!largest);
-        arr.(!largest) <- tmp;
-        i := !largest
-      end
-    done
-  in
-  for i = n / 2 - 1 downto 0 do sift_down i done;
-  { data = arr }
+  for i = n / 2 - 1 downto 0 do
+    sift_down arr n i
+  done
+
+let heap_test () =
+  let arr = [|3; 1; 4; 1; 5; 9; 2; 6|] in
+  heapify arr;
+  (* After heapify, root should be max *)
+  assert (arr.(0) = 9);
+  (* Heap property: parent >= children *)
+  let n = Array.length arr in
+  for i = 1 to n - 1 do
+    assert (arr.(parent i) >= arr.(i))
+  done
 
 let () =
-  (*       1
-          / \
-         2   3
-        / \ /
-       4  5 6 *)
-  let tree = make [|1; 2; 3; 4; 5; 6|] in
-  assert (get tree 0 = Some 1);
-  assert (left  tree 0 = Some 2);
-  assert (right tree 0 = Some 3);
-  assert (left  tree 1 = Some 4);
-  assert (right tree 1 = Some 5);
-  assert (left  tree 2 = Some 6);
-  assert (right tree 2 = None);
-  assert (is_leaf tree 3);
-  assert (not (is_leaf tree 0));
-
-  let tree2 = make [|1;2;3;4;5;6;7|] in
-  let lvls = levels tree2 in
-  assert (List.length lvls = 3);
-  assert (List.nth lvls 0 = [1]);
-  assert (List.nth lvls 1 = [2; 3]);
-  assert (List.nth lvls 2 = [4; 5; 6; 7]);
-
-  (* Heapify *)
-  let tree3 = heapify (make [|3;1;4;1;5;9;2;6|]) in
-  assert (tree3.data.(0) = 9);  (* root is max *)
-  (* Verify heap property: parent >= all children *)
-  let n = Array.length tree3.data in
-  for i = 1 to n - 1 do
-    assert (tree3.data.(parent i) >= tree3.data.(i))
-  done;
-
-  (* Depth *)
-  assert (depth (make [|1|]) = 1);
-  assert (depth (make [|1;2;3|]) = 2);
-  assert (depth (make [|1;2;3;4;5;6;7|]) = 3);
-  assert (depth (make [||]) = 0);
-
-  Printf.printf "All flat-tree tests passed.\n"
+  basic_tree ();
+  level_order_test ();
+  heap_test ();
+  Printf.printf "✓ All tests passed\n"

@@ -1,41 +1,26 @@
-(* 104: Mutable Borrowing
-   OCaml has no borrow checker: mutation is explicit via ref/mutable fields.
-   This shows OCaml's approach to controlled mutation and demonstrates
-   the same patterns Rust enforces at compile time. *)
+(* 104: Mutable Borrowing *)
+(* OCaml: mutable fields, but no borrow checker *)
 
-(* Rust's &mut T = OCaml's ref passing (explicit, always single writer) *)
-let increment (x : int ref) =
-  x := !x + 1
+(* Approach 1: Mutable ref *)
+let increment r = r := !r + 1
 
-(* Mutable list append via Buffer-style accumulator *)
-let push_doubled (buf : int list ref) value =
-  buf := !buf @ [value * 2]
-
-(* Swap first and last element in an array *)
-let swap_first_last arr =
-  let n = Array.length arr in
-  if n >= 2 then begin
-    let tmp = arr.(0) in
-    arr.(0) <- arr.(n - 1);
-    arr.(n - 1) <- tmp
-  end
-
-(* In OCaml, there is no rule preventing two mutable references to the same
-   value simultaneously — the programmer is responsible for coordination.
-   Rust enforces unique writer at compile time; OCaml trusts the programmer. *)
-
-let () =
+let demo_mut () =
   let x = ref 0 in
   increment x;
   increment x;
-  assert (!x = 2);
+  !x
 
-  let v = ref [1; 2] in
-  push_doubled v 3;
-  assert (!v = [1; 2; 6]);
+(* Approach 2: Mutable array — aliasing is possible! *)
+let demo_alias () =
+  let arr = [|1; 2; 3|] in
+  let alias = arr in  (* same array! *)
+  alias.(0) <- 99;
+  arr.(0)  (* returns 99 — aliased mutation! *)
 
-  let arr = [| 1; 2; 3; 4; 5 |] in
-  swap_first_last arr;
-  assert (arr = [| 5; 2; 3; 4; 1 |]);
+(* In Rust, the borrow checker prevents this aliasing *)
 
-  Printf.printf "All mutable-borrowing demos passed.\n"
+(* Tests *)
+let () =
+  assert (demo_mut () = 2);
+  assert (demo_alias () = 99);  (* OCaml allows this! *)
+  Printf.printf "✓ All tests passed\n"

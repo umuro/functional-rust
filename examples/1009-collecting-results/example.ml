@@ -1,60 +1,61 @@
-(* 1009: Collecting Results
-   Turn a list of Results into a single Result<list> — stopping at first error.
-   This mirrors Rust's Iterator<Item=Result<T,E>> -> Result<Vec<T>,E> via collect().
-   In OCaml we use List.fold_left or a recursive approach. *)
+(* 1009: Collecting Results *)
+(* Turning a list of results into a result of list *)
 
 let parse_int s =
-  match int_of_string_opt (String.trim s) with
+  match int_of_string_opt s with
   | Some n -> Ok n
-  | None   -> Error (Printf.sprintf "bad: %s" s)
+  | None -> Error (Printf.sprintf "bad: %s" s)
 
-(* Approach 1: fold that short-circuits at first error *)
-let parse_all inputs =
-  List.fold_left (fun acc s ->
-    match acc with
-    | Error _ as e -> e   (* already failed, pass error through *)
-    | Ok ns ->
-      (match parse_int s with
-       | Ok n    -> Ok (ns @ [n])
-       | Error e -> Error e)
-  ) (Ok []) inputs
+(* Approach 1: Manual fold — short-circuits on first error *)
+let collect_results results =
+  List.fold_left (fun acc r ->
+    match acc, r with
+    | Error e, _ -> Error e        (* already failed *)
+    | _, Error e -> Error e        (* new failure *)
+    | Ok xs, Ok x -> Ok (xs @ [x]) (* both ok, accumulate *)
+  ) (Ok []) results
 
-(* Approach 2: Recursive — tail-call variant *)
-let parse_all_rec inputs =
-  let rec loop acc = function
-    | [] -> Ok (List.rev acc)
-    | s :: rest ->
-      (match parse_int s with
-       | Error e -> Error e
-       | Ok n    -> loop (n :: acc) rest)
-  in
-  loop [] inputs
+(* Approach 2: Tail-recursive with early exit *)
+let rec sequence_results acc = function
+  | [] -> Ok (List.rev acc)
+  | Ok x :: rest -> sequence_results (x :: acc) rest
+  | Error e :: _ -> Error e
 
-(* Approach 3: Using the standard library helper *)
-(* In OCaml 4.14+ there is no direct List.result_all,
-   but we can write a clean version using Result.bind *)
-let parse_all_bind inputs =
-  List.fold_right (fun s acc ->
-    Result.bind (parse_int s) (fun n ->
-      Result.map (fun ns -> n :: ns) acc)
-  ) inputs (Ok [])
+let sequence rs = sequence_results [] rs
+
+(* Approach 3: map then sequence *)
+let traverse f xs =
+  List.map f xs |> sequence
+
+let test_fold () =
+  let inputs = ["1"; "2"; "3"] in
+  let results = List.map parse_int inputs in
+  assert (collect_results results = Ok [1; 2; 3]);
+  let bad_inputs = ["1"; "abc"; "3"] in
+  let bad_results = List.map parse_int bad_inputs in
+  (match collect_results bad_results with
+   | Error e -> assert (e = "bad: abc")
+   | Ok _ -> assert false);
+  Printf.printf "  Approach 1 (fold): passed\n"
+
+let test_sequence () =
+  assert (sequence [Ok 1; Ok 2; Ok 3] = Ok [1; 2; 3]);
+  (match sequence [Ok 1; Error "fail"; Ok 3] with
+   | Error "fail" -> ()
+   | _ -> assert false);
+  Printf.printf "  Approach 2 (sequence): passed\n"
+
+let test_traverse () =
+  assert (traverse parse_int ["10"; "20"; "30"] = Ok [10; 20; 30]);
+  assert (traverse parse_int [] = Ok []);
+  (match traverse parse_int ["1"; "x"] with
+   | Error _ -> ()
+   | Ok _ -> assert false);
+  Printf.printf "  Approach 3 (traverse): passed\n"
 
 let () =
-  assert (parse_all ["1"; "2"; "3"] = Ok [1; 2; 3]);
-  assert (parse_all ["1"; "abc"; "3"] = Error "bad: abc");
-  assert (parse_all [] = Ok []);
-  assert (parse_all ["42"] = Ok [42]);
-  assert (Result.is_error (parse_all ["xyz"]));
-
-  (* All approaches should agree *)
-  let inputs = ["10"; "20"; "30"] in
-  assert (parse_all inputs = parse_all_rec inputs);
-  assert (parse_all inputs = parse_all_bind inputs);
-
-  let bad = ["10"; "x"] in
-  assert (Result.is_error (parse_all_rec bad));
-
-  Printf.printf "parse_all [1;2;3]: %s\n"
-    (match parse_all ["1"; "2"; "3"] with
-     | Ok ns -> "[" ^ String.concat "; " (List.map string_of_int ns) ^ "]"
-     | Error e -> e)
+  Printf.printf "Testing collecting results:\n";
+  test_fold ();
+  test_sequence ();
+  test_traverse ();
+  Printf.printf "✓ All tests passed\n"

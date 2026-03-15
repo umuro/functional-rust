@@ -1,87 +1,76 @@
-(* 1044: Sorted Vec — Maintained-order List with Binary Search
-   OCaml's Set module gives O(log n) insert/lookup with balanced BST.
-   We also show a sorted array approach for direct binary search. *)
+(* 1044: Sorted Vec — Binary Search Insert *)
+(* Maintain a sorted list/array with efficient search *)
 
-(* Approach 1: OCaml Set (always sorted, no duplicates) *)
-module IntSet = Set.Make(Int)
-
-let set_demo () =
-  let s = IntSet.of_list [5; 3; 7; 1; 4] in
-  let sorted = IntSet.elements s in
-  assert (sorted = [1; 3; 4; 5; 7]);
-  assert (IntSet.mem 4 s);
-  assert (not (IntSet.mem 6 s));
-  let s2 = IntSet.remove 3 s in
-  assert (not (IntSet.mem 3 s2))
-
-(* Approach 2: Sorted array with binary search and range query *)
-(* Binary search: returns index of value or insertion point *)
-let binary_search arr value =
-  let lo = ref 0 and hi = ref (Array.length arr) in
-  while !lo < !hi do
-    let mid = (!lo + !hi) / 2 in
-    if arr.(mid) < value then lo := mid + 1
-    else hi := mid
-  done;
-  (* !lo is insertion point; check if exact match *)
-  if !lo < Array.length arr && arr.(!lo) = value then Ok !lo
-  else Error !lo
-
-(* Sorted vec backed by array — insert maintains order *)
-let sorted_insert arr value =
-  let insert_pos = match binary_search arr value with
-    | Ok i -> i
-    | Error i -> i
+(* Approach 1: Sorted list with binary search on array *)
+let binary_search arr target =
+  let rec go lo hi =
+    if lo >= hi then lo
+    else
+      let mid = lo + (hi - lo) / 2 in
+      if arr.(mid) < target then go (mid + 1) hi
+      else go lo mid
   in
-  let n = Array.length arr in
-  let result = Array.make (n + 1) value in
-  Array.blit arr 0 result 0 insert_pos;
-  result.(insert_pos) <- value;
-  Array.blit arr insert_pos result (insert_pos + 1) (n - insert_pos);
-  result
+  go 0 (Array.length arr)
 
-let sorted_contains arr value =
-  match binary_search arr value with Ok _ -> true | Error _ -> false
+let sorted_array_ops () =
+  let arr = [|1; 3; 5; 7; 9; 11|] in
+  assert (binary_search arr 5 = 2);
+  assert (binary_search arr 6 = 3);  (* insertion point *)
+  assert (binary_search arr 0 = 0);
+  assert (binary_search arr 12 = 6)
 
-let sorted_find arr value =
-  match binary_search arr value with Ok i -> Some i | Error _ -> None
-
-(* Range query: elements in [lo, hi] *)
-let range_query arr lo hi =
-  let start = match binary_search arr lo with
-    | Ok i -> i
-    | Error i -> i
+(* Approach 2: Sorted list with insertion *)
+let sorted_insert lst x =
+  let rec go = function
+    | [] -> [x]
+    | (h :: _) as l when x <= h -> x :: l
+    | h :: t -> h :: go t
   in
-  (* Find end: first element > hi *)
-  let hi_end = ref (Array.length arr) in
-  let lo_h = ref start and hi_h = ref (Array.length arr) in
-  while !lo_h < !hi_h do
-    let mid = (!lo_h + !hi_h) / 2 in
-    if arr.(mid) <= hi then lo_h := mid + 1
-    else hi_h := mid
-  done;
-  hi_end := !lo_h;
-  Array.sub arr start (!hi_end - start)
+  go lst
+
+let sorted_list_ops () =
+  let lst = [] in
+  let lst = sorted_insert lst 5 in
+  let lst = sorted_insert lst 3 in
+  let lst = sorted_insert lst 7 in
+  let lst = sorted_insert lst 1 in
+  let lst = sorted_insert lst 4 in
+  assert (lst = [1; 3; 4; 5; 7])
+
+(* Approach 3: Sorted collection operations *)
+let sorted_contains lst x =
+  (* Linear for list, but maintains concept *)
+  List.exists (fun e -> e = x) lst
+
+let sorted_merge a b =
+  let rec go a b =
+    match a, b with
+    | [], r | r, [] -> r
+    | x :: xs, y :: ys ->
+      if x <= y then x :: go xs (y :: ys)
+      else y :: go (x :: xs) ys
+  in
+  go a b
+
+let sorted_dedup lst =
+  let rec go = function
+    | [] | [_] as l -> l
+    | x :: (y :: _ as rest) ->
+      if x = y then go rest
+      else x :: go rest
+  in
+  go lst
+
+let collection_ops () =
+  let a = [1; 3; 5; 7] in
+  let b = [2; 3; 6; 8] in
+  let merged = sorted_merge a b in
+  assert (merged = [1; 2; 3; 3; 5; 6; 7; 8]);
+  let deduped = sorted_dedup merged in
+  assert (deduped = [1; 2; 3; 5; 6; 7; 8])
 
 let () =
-  set_demo ();
-
-  (* Build sorted array incrementally *)
-  let arr = ref [||] in
-  List.iter (fun x -> arr := sorted_insert !arr x) [5; 3; 7; 1; 4];
-  assert (!arr = [|1; 3; 4; 5; 7|]);
-  assert (sorted_contains !arr 4);
-  assert (not (sorted_contains !arr 6));
-  assert (sorted_find !arr 5 = Some 3);
-
-  (* Range query *)
-  let arr2 = Array.of_list [1; 3; 5; 7; 9; 11] in
-  assert (range_query arr2 3 9 = [|3; 5; 7; 9|]);
-  assert (range_query arr2 4 8 = [|5; 7|]);
-  assert (range_query arr2 20 30 = [||]);
-
-  (* Duplicates in sorted list using List.sort *)
-  let sorted_dupes = List.sort compare [1; 1; 2] in
-  assert (sorted_dupes = [1; 1; 2]);
-
-  Printf.printf "All sorted-vec tests passed.\n"
+  sorted_array_ops ();
+  sorted_list_ops ();
+  collection_ops ();
+  Printf.printf "✓ All tests passed\n"

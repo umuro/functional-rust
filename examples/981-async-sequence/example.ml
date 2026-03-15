@@ -1,115 +1,89 @@
-(* 981: Async Sequence (Sequential Async Chain)
-   Chain async computations so each step begins only after the previous completes.
-   OCaml: monadic bind on futures — equivalent to Rust's sequential .await.
-   Demonstrates let-binding style and error propagation. *)
+(* 981: Sequential Async Chain *)
+(* OCaml: let* x = ... in let* y = ... using ppx_let or Lwt.( let* ) *)
 
-(* Result-future type: captures both success and error *)
-type ('a, 'e) result_future = {
-  mutable result : ('a, 'e) result option;
-  mutex : Mutex.t;
-  cond  : Condition.t;
-}
+type 'a future = unit -> 'a
 
-let make () =
-  { result = None; mutex = Mutex.create (); cond = Condition.create () }
+let return_ x : 'a future = fun () -> x
+let bind fut k = fun () -> k (fut ()) ()
+let run f = f ()
 
-let complete fut r =
-  Mutex.lock fut.mutex;
-  fut.result <- Some r;
-  Condition.broadcast fut.cond;
-  Mutex.unlock fut.mutex
+(* Simulated let* (monadic bind) *)
+let ( let* ) = bind
 
-let await fut =
-  Mutex.lock fut.mutex;
-  while fut.result = None do Condition.wait fut.cond fut.mutex done;
-  let r = Option.get fut.result in
-  Mutex.unlock fut.mutex;
-  r
+(* --- Approach 1: Sequential chain with let* --- *)
 
-(* Spawn an async task returning Result *)
-let async_ok f =
-  let fut = make () in
-  let _t = Thread.create (fun () ->
-    let r = try Ok (f ()) with e -> Error e in
-    complete fut r
-  ) () in
-  fut
+let fetch_user_id () = return_ 42
+let fetch_user_name _id = return_ "Alice"
+let fetch_user_email _name = return_ "alice@example.com"
 
-(* Monadic bind: run f only if previous step succeeded *)
-let ( let* ) fut f =
-  match await fut with
-  | Error e  -> let r = make () in complete r (Error e); r
-  | Ok value -> f value
-
-(* Lift a pure value into a future *)
-let return x =
-  let fut = make () in
-  complete fut (Ok x);
-  fut
-
-(* --- Simulated async operations --- *)
-let fetch_user_id () =
-  Thread.delay 0.005;
-  42
-
-let fetch_user_name id =
-  Thread.delay 0.005;
-  if id = 42 then "Alice" else failwith "unknown user"
-
-let fetch_email name =
-  Thread.delay 0.005;
-  Printf.sprintf "%s@example.com" (String.lowercase_ascii name)
-
-let safe_div a b =
-  if b = 0 then Error "division by zero" else Ok (a / b)
+let full_lookup () =
+  let* id = fetch_user_id () in
+  let* name = fetch_user_name id in
+  let* email = fetch_user_email name in
+  return_ (id, name, email)
 
 let () =
-  Printf.printf "=== Sequential async chain ===\n";
+  let (id, name, email) = run (full_lookup ()) in
+  assert (id = 42);
+  assert (name = "Alice");
+  assert (email = "alice@example.com");
+  Printf.printf "Approach 1 (let* chain): id=%d name=%s email=%s\n" id name email
 
-  (* Step 1: fetch id → Step 2: fetch name → Step 3: fetch email *)
-  let pipeline =
-    let* id   = async_ok fetch_user_id in
-    let* name = async_ok (fun () -> fetch_user_name id) in
-    let* email = async_ok (fun () -> fetch_email name) in
-    return (id, name, email)
-  in
-  (match await pipeline with
-   | Ok (id, name, email) ->
-     Printf.printf "id=%d  name=%s  email=%s\n" id name email
-   | Error e -> Printf.printf "error: %s\n" (Printexc.to_string e));
+(* --- Approach 2: Accumulating values through chain --- *)
 
-  (* Arithmetic pipeline *)
-  Printf.printf "\n=== Arithmetic pipeline ===\n";
-  let arith =
-    let* a = async_ok (fun () -> 10) in
-    let* b = async_ok (fun () -> a + 5) in
-    let* c = async_ok (fun () -> b * 2) in
-    return (a, b, c)
-  in
-  (match await arith with
-   | Ok (a, b, c) -> Printf.printf "10 → +5=%d → *2=%d\n" b c; ignore a
-   | Error e -> Printf.printf "error: %s\n" (Printexc.to_string e));
+let step1 x = return_ (x + 10)
+let step2 x = return_ (x * 2)
+let step3 x = return_ (x - 5)
 
-  (* Error short-circuits the chain *)
-  Printf.printf "\n=== Error short-circuit ===\n";
-  let failing =
-    let* x  = async_ok (fun () -> 100) in
-    let* _y = async_ok (fun () -> failwith "oops") in
-    return (x + 1)  (* never reached *)
-  in
-  (match await failing with
-   | Ok v   -> Printf.printf "ok: %d\n" v
-   | Error e -> Printf.printf "short-circuited at error: %s\n" (Printexc.to_string e));
+let pipeline_seq input =
+  let* a = step1 input in
+  let* b = step2 a in
+  let* c = step3 b in
+  return_ (input, a, b, c)
 
-  (* Collect results: sequential fold over a list *)
-  Printf.printf "\n=== Sequential fold ===\n";
-  let steps = [10; 20; 30; 40] in
-  let sum_future = List.fold_left (fun acc_fut n ->
-    let* acc = acc_fut in
-    async_ok (fun () ->
-      Thread.delay 0.002;
-      acc + n)
-  ) (return 0) steps in
-  (match await sum_future with
-   | Ok total -> Printf.printf "sequential sum = %d\n" total
-   | Error e  -> Printf.printf "error: %s\n" (Printexc.to_string e))
+let () =
+  let (orig, a, b, c) = run (pipeline_seq 5) in
+  (* 5 -> 15 -> 30 -> 25 *)
+  assert (orig = 5);
+  assert (a = 15);
+  assert (b = 30);
+  assert (c = 25);
+  Printf.printf "Approach 2 (pipeline): %d->%d->%d->%d\n" orig a b c
+
+(* --- Approach 3: Short-circuit with error-aware sequence --- *)
+
+type ('a, 'e) result_future = unit -> ('a, 'e) result
+
+let ok x : ('a, 'e) result_future = fun () -> Ok x
+let fail e : ('a, 'e) result_future = fun () -> Error e
+let run_r f = f ()
+
+let ( let*? ) (fut : ('a, 'e) result_future) k =
+  fun () -> match fut () with
+    | Ok v -> k v ()
+    | Error e -> Error e
+
+let guarded_div a b =
+  if b = 0 then fail "division by zero"
+  else ok (a / b)
+
+let safe_pipeline () =
+  let*? x = ok 100 in
+  let*? y = guarded_div x 4 in
+  let*? z = guarded_div y 5 in
+  ok z
+
+let bad_pipeline () =
+  let*? x = ok 100 in
+  let*? _ = guarded_div x 0 in  (* short-circuits here *)
+  ok 999
+
+let () =
+  (match run_r (safe_pipeline ()) with
+  | Ok v -> assert (v = 5); Printf.printf "Approach 3 (safe): %d\n" v
+  | Error _ -> assert false);
+  (match run_r (bad_pipeline ()) with
+  | Ok _ -> assert false
+  | Error e -> Printf.printf "Approach 3 (error): %s\n" e)
+
+let () = Printf.printf "✓ All tests passed\n"

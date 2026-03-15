@@ -1,94 +1,76 @@
-(* 961: LRU Cache
-   OCaml: Hashtbl for O(1) lookup + doubly-linked list for O(1) recency tracking.
-   The key insight: a doubly-linked list lets us move any node to the front in O(1),
-   while Hashtbl maps keys directly to their list nodes. *)
+(* 961: LRU Cache *)
+(* Capacity-bounded cache: evicts least recently used on overflow *)
+(* OCaml: Hashtbl for O(1) lookup + Queue for LRU order *)
 
-(* Doubly-linked list node *)
-type 'a node = {
-  key : string;
-  mutable value : 'a;
-  mutable prev : 'a node option;
-  mutable next : 'a node option;
+type ('k, 'v) lru = {
+  capacity: int;
+  table: ('k, 'v) Hashtbl.t;
+  order: 'k Queue.t;
 }
-
-type 'a lru_cache = {
-  capacity : int;
-  table : (string, 'a node) Hashtbl.t;
-  (* sentinel head/tail — simplifies boundary cases *)
-  head : 'a node;
-  tail : 'a node;
-}
-
-let make_sentinel () = { key = ""; value = Obj.magic (); prev = None; next = None }
 
 let create capacity =
-  assert (capacity > 0);
-  let head = make_sentinel () in
-  let tail = make_sentinel () in
-  head.next <- Some tail;
-  tail.prev <- Some head;
-  { capacity; table = Hashtbl.create capacity; head; tail }
+  { capacity;
+    table = Hashtbl.create capacity;
+    order = Queue.create () }
 
-(* Remove a node from the doubly-linked list *)
-let remove_node node =
-  (match node.prev with Some p -> p.next <- node.next | None -> ());
-  (match node.next with Some n -> n.prev <- node.prev | None -> ());
-  node.prev <- None;
-  node.next <- None
-
-(* Insert a node right after head (most-recently-used position) *)
-let insert_after_head cache node =
-  let second = cache.head.next in
-  cache.head.next <- Some node;
-  node.prev <- Some cache.head;
-  node.next <- second;
-  (match second with Some s -> s.prev <- Some node | None -> ())
+(* Remove first occurrence of key from queue *)
+let remove_from_queue q key =
+  let tmp = Queue.create () in
+  Queue.iter (fun k -> if k <> key then Queue.add k tmp) q;
+  Queue.clear q;
+  Queue.iter (fun k -> Queue.add k q) tmp
 
 let get cache key =
   match Hashtbl.find_opt cache.table key with
   | None -> None
-  | Some node ->
-    (* Move to front: most recently used *)
-    remove_node node;
-    insert_after_head cache node;
-    Some node.value
+  | Some v ->
+    (* Move key to back (most recently used) *)
+    remove_from_queue cache.order key;
+    Queue.add key cache.order;
+    Some v
 
 let put cache key value =
-  match Hashtbl.find_opt cache.table key with
-  | Some node ->
-    (* Update existing: move to front *)
-    node.value <- value;
-    remove_node node;
-    insert_after_head cache node
-  | None ->
-    (* Evict LRU (node just before tail) if at capacity *)
+  (* If key exists, remove from order queue first *)
+  if Hashtbl.mem cache.table key then
+    remove_from_queue cache.order key
+  else begin
+    (* If at capacity, evict LRU *)
     if Hashtbl.length cache.table >= cache.capacity then begin
-      match cache.tail.prev with
-      | Some lru when lru != cache.head ->
-        remove_node lru;
-        Hashtbl.remove cache.table lru.key
-      | _ -> ()
-    end;
-    let node = { key; value; prev = None; next = None } in
-    Hashtbl.add cache.table key node;
-    insert_after_head cache node
+      let lru_key = Queue.pop cache.order in
+      Hashtbl.remove cache.table lru_key
+    end
+  end;
+  Hashtbl.replace cache.table key value;
+  Queue.add key cache.order
 
 let size cache = Hashtbl.length cache.table
-let contains cache key = Hashtbl.mem cache.table key
 
 let () =
-  let cache : int lru_cache = create 3 in
-  put cache "a" 1;
-  put cache "b" 2;
-  put cache "c" 3;
-  Printf.printf "get a = %s\n" (match get cache "a" with Some v -> string_of_int v | None -> "None");
-  (* Access "a" → now "b" is LRU. Insert "d" → evicts "b". *)
-  put cache "d" 4;
-  Printf.printf "contains b = %b\n" (contains cache "b");  (* false *)
-  Printf.printf "contains a = %b\n" (contains cache "a");  (* true *)
-  Printf.printf "size = %d\n" (size cache);
+  let c = create 3 in
 
-  (* Update existing key — should not grow cache *)
-  put cache "a" 99;
-  Printf.printf "get a after update = %d\n" (Option.get (get cache "a"));
-  Printf.printf "size after update = %d\n" (size cache)
+  put c "a" 1;
+  put c "b" 2;
+  put c "c" 3;
+
+  assert (get c "a" = Some 1);
+  assert (get c "b" = Some 2);
+  assert (size c = 3);
+
+  (* Access "a" to make it recently used. LRU should be "c" then "b" *)
+  (* After get "a": order is c, b, a (most recent) wait.. let's check *)
+  (* Initial order: a, b, c *)
+  (* get "a" → moves a to back: order = b, c, a *)
+  (* Now insert "d" → evict "b" (front) *)
+  put c "d" 4;
+  assert (size c = 3);
+  assert (get c "b" = None); (* "b" should be evicted *)
+  assert (get c "a" = Some 1);
+  assert (get c "c" = Some 3);
+  assert (get c "d" = Some 4);
+
+  (* Update existing key *)
+  put c "a" 99;
+  assert (get c "a" = Some 99);
+  assert (size c = 3);
+
+  Printf.printf "✓ All tests passed\n"

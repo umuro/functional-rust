@@ -1,123 +1,87 @@
-(* 990: Semaphore
-   Counting semaphore: limits the number of concurrent accesses to a resource.
-   Binary semaphore (max=1) acts as a mutex.
-   OCaml: Mutex + Condition variable (no semaphore in stdlib). *)
+(* 990: Semaphore via Mutex + Condvar *)
+(* Counting semaphore: allow at most N concurrent operations *)
 
 type semaphore = {
-  mutable count : int;
-  max   : int;
-  mutex : Mutex.t;
-  cond  : Condition.t;
+  mutable count: int;
+  max_count: int;
+  m: Mutex.t;
+  cond: Condition.t;
 }
 
-(* Create a semaphore with initial permits *)
-let create ?(max=max_int) init =
-  assert (init >= 0 && init <= max);
-  { count = init; max; mutex = Mutex.create (); cond = Condition.create () }
+let make_semaphore n = {
+  count = n;
+  max_count = n;
+  m = Mutex.create ();
+  cond = Condition.create ();
+}
 
-(* Acquire (P / down / wait): block until a permit is available *)
 let acquire sem =
-  Mutex.lock sem.mutex;
+  Mutex.lock sem.m;
   while sem.count = 0 do
-    Condition.wait sem.cond sem.mutex
+    Condition.wait sem.cond sem.m
   done;
   sem.count <- sem.count - 1;
-  Mutex.unlock sem.mutex
+  Mutex.unlock sem.m
 
-(* Try-acquire: non-blocking; returns true if a permit was taken *)
-let try_acquire sem =
-  Mutex.lock sem.mutex;
-  let r = if sem.count > 0 then (sem.count <- sem.count - 1; true) else false in
-  Mutex.unlock sem.mutex;
-  r
-
-(* Release (V / up / signal): return a permit *)
 let release sem =
-  Mutex.lock sem.mutex;
-  if sem.count < sem.max then begin
+  Mutex.lock sem.m;
+  if sem.count < sem.max_count then begin
     sem.count <- sem.count + 1;
     Condition.signal sem.cond
   end;
-  Mutex.unlock sem.mutex
+  Mutex.unlock sem.m
 
-(* RAII: acquire, run f, release even on exception *)
 let with_semaphore sem f =
   acquire sem;
-  match f () with
-  | v -> release sem; v
-  | exception e -> release sem; raise e
+  let result = (try f () with e -> release sem; raise e) in
+  release sem;
+  result
 
-let permits sem =
-  Mutex.lock sem.mutex;
-  let c = sem.count in
-  Mutex.unlock sem.mutex;
-  c
+(* --- Approach 1: Limit concurrent workers to 3 --- *)
 
 let () =
-  Printf.printf "=== Connection pool semaphore (max 3 concurrent) ===\n";
-  let pool = create ~max:3 3 in
-  let active = ref 0 and max_active = ref 0 in
-  let mutex = Mutex.create () in
+  let sem = make_semaphore 3 in
+  let active = ref 0 in
+  let max_active = ref 0 in
+  let m = Mutex.create () in
 
-  let threads = List.init 8 (fun i ->
+  let threads = List.init 10 (fun i ->
     Thread.create (fun () ->
-      with_semaphore pool (fun () ->
-        Mutex.lock mutex;
-        active := !active + 1;
+      with_semaphore sem (fun () ->
+        Mutex.lock m;
+        incr active;
         if !active > !max_active then max_active := !active;
-        Mutex.unlock mutex;
+        Mutex.unlock m;
 
-        Printf.printf "  worker %d: using connection (active=%d)\n%!" i !active;
-        Thread.delay 0.01;
+        (* simulate work *)
+        Unix.sleepf 0.005;
 
-        Mutex.lock mutex;
-        active := !active - 1;
-        Mutex.unlock mutex
+        Mutex.lock m;
+        decr active;
+        Mutex.unlock m;
+
+        Printf.printf "worker %d done\n" i
       )
     ) ()
   ) in
   List.iter Thread.join threads;
-  Printf.printf "max concurrent = %d (limit = 3)\n" !max_active;
-  Printf.printf "permits after = %d (back to 3)\n" (permits pool);
+  assert (!max_active <= 3);
+  Printf.printf "Approach 1: max concurrent = %d (≤ 3)\n" !max_active
 
-  Printf.printf "\n=== Binary semaphore as mutex ===\n";
-  let bin_sem = create ~max:1 1 in
+(* --- Approach 2: Binary semaphore (mutex-like) --- *)
+
+let () =
+  let sem = make_semaphore 1 in
   let counter = ref 0 in
-  let workers = List.init 5 (fun _ ->
+  let threads = List.init 5 (fun _ ->
     Thread.create (fun () ->
-      for _ = 1 to 200 do
-        with_semaphore bin_sem (fun () ->
-          counter := !counter + 1)
+      for _ = 1 to 100 do
+        with_semaphore sem (fun () -> incr counter)
       done
     ) ()
   ) in
-  List.iter Thread.join workers;
-  Printf.printf "counter = %d (expected 1000)\n" !counter;
+  List.iter Thread.join threads;
+  assert (!counter = 500);
+  Printf.printf "Approach 2 (binary semaphore): counter = %d\n" !counter
 
-  Printf.printf "\n=== Semaphore for producer-consumer throttling ===\n";
-  (* Producer makes items; consumer must signal when it finishes each one *)
-  let items_ready = create 0 in  (* 0 permits initially *)
-  let results = ref [] and res_mutex = Mutex.create () in
-
-  let producer = Thread.create (fun () ->
-    for i = 1 to 5 do
-      Thread.delay 0.005;
-      Printf.printf "  produced %d\n%!" i;
-      release items_ready  (* signal one item available *)
-    done
-  ) () in
-
-  let consumer = Thread.create (fun () ->
-    for _ = 1 to 5 do
-      acquire items_ready;  (* wait for an item *)
-      let v = permits items_ready in
-      Mutex.lock res_mutex;
-      results := v :: !results;
-      Mutex.unlock res_mutex;
-      Printf.printf "  consumed (permits remaining=%d)\n%!" v
-    done
-  ) () in
-
-  Thread.join producer;
-  Thread.join consumer;
-  Printf.printf "processed all 5 items: %b\n" (List.length !results = 5)
+let () = Printf.printf "✓ All tests passed\n"

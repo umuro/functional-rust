@@ -1,105 +1,64 @@
-(* 079: Associated Types
-   OCaml expresses associated types via module type members *)
+(* 079: Associated Types — OCaml module abstract types *)
 
-(* --- Approach 1: Module type with abstract type member --- *)
-
-module type CONTAINER = sig
-  type item                         (* the "associated type" *)
+(* Approach 1: Module type with associated type *)
+module type Container = sig
   type t
-  val create   : unit -> t
-  val push     : t -> item -> unit
-  val pop      : t -> item option
+  type item
+  val empty : t
+  val push : item -> t -> t
+  val pop : t -> (item * t) option
   val is_empty : t -> bool
 end
 
-(* int stack implementation *)
-module IntStack : CONTAINER with type item = int = struct
+module IntStack : Container with type item = int = struct
+  type t = int list
   type item = int
-  type t    = { mutable elements: int list }
-  let create () = { elements = [] }
-  let is_empty s = s.elements = []
-  let push s x   = s.elements <- x :: s.elements
-  let pop s =
-    match s.elements with
-    | []     -> None
-    | x :: r -> s.elements <- r; Some x
+  let empty = []
+  let push x s = x :: s
+  let pop = function [] -> None | x :: xs -> Some (x, xs)
+  let is_empty = function [] -> true | _ -> false
 end
 
-(* string queue implementation *)
-module StringQueue : CONTAINER with type item = string = struct
+module StringQueue : Container with type item = string = struct
+  type t = string list
   type item = string
-  type t    = { mutable elements: string list }
-  let create () = { elements = [] }
-  let is_empty q = q.elements = []
-  let push q x   = q.elements <- q.elements @ [x]   (* append = FIFO *)
-  let pop q =
-    match q.elements with
-    | []     -> None
-    | x :: r -> q.elements <- r; Some x
+  let empty = []
+  let push x s = s @ [x]
+  let pop = function [] -> None | x :: xs -> Some (x, xs)
+  let is_empty = function [] -> true | _ -> false
 end
 
-(* --- Approach 2: drain_all using the module's associated type --- *)
+(* Approach 2: Iterator-like with associated type *)
+module type Iterator = sig
+  type t
+  type item
+  val next : t -> (item * t) option
+end
 
-let drain_all (type a) (module C : CONTAINER with type item = a and type t = a C.t) container =
-  let rec aux acc =
-    match C.pop container with
-    | None   -> List.rev acc
-    | Some v -> aux (v :: acc)
-  in
-  aux []
-[@@warning "-38"]  (* suppress unused module warning in demo *)
-
-(* Simpler non-functor version for a concrete type: *)
-let drain_int_stack s =
-  let rec aux acc =
-    match IntStack.pop s with
-    | None   -> List.rev acc
-    | Some v -> aux (v :: acc)
-  in
-  aux []
-
-(* --- Approach 3: Custom sequence (range) using a module --- *)
-
-module Range = struct
-  type t = { mutable current: int; stop: int }
-  let make start stop = { current = start; stop }
+module RangeIter : Iterator with type item = int = struct
+  type t = { current: int; stop: int }
+  type item = int
   let next r =
     if r.current >= r.stop then None
-    else begin
-      let v = r.current in
-      r.current <- r.current + 1;
-      Some v
-    end
-  let to_list r =
-    let rec aux acc =
-      match next r with
-      | None   -> List.rev acc
-      | Some v -> aux (v :: acc)
-    in
-    aux []
+    else Some (r.current, { r with current = r.current + 1 })
 end
 
+let collect_iter (type a) (module I : Iterator with type item = a) init =
+  let rec aux acc state =
+    match I.next state with
+    | None -> List.rev acc
+    | Some (item, next) -> aux (item :: acc) next
+  in
+  aux [] init
+
+(* Tests *)
 let () =
-  (* int stack *)
-  let s = IntStack.create () in
-  IntStack.push s 1; IntStack.push s 2; IntStack.push s 3;
-  Printf.printf "int stack pop = %s\n"
-    (match IntStack.pop s with Some v -> string_of_int v | None -> "None");
-
-  (* string queue *)
-  let q = StringQueue.create () in
-  StringQueue.push q "a"; StringQueue.push q "b";
-  Printf.printf "string queue pop = %s\n"
-    (match StringQueue.pop q with Some v -> v | None -> "None");
-
-  (* drain *)
-  let s2 = IntStack.create () in
-  IntStack.push s2 1; IntStack.push s2 2; IntStack.push s2 3;
-  let items = drain_int_stack s2 in
-  Printf.printf "drained: [%s]\n"
-    (String.concat "; " (List.map string_of_int items));
-
-  (* range *)
-  let r = Range.make 0 5 in
-  Printf.printf "range 0..5 = [%s]\n"
-    (String.concat "; " (List.map string_of_int (Range.to_list r)))
+  let s = IntStack.push 3 (IntStack.push 2 (IntStack.push 1 IntStack.empty)) in
+  assert (not (IntStack.is_empty s));
+  (match IntStack.pop s with Some (v, _) -> assert (v = 3) | None -> assert false);
+  let q = StringQueue.push "b" (StringQueue.push "a" StringQueue.empty) in
+  (match StringQueue.pop q with Some (v, _) -> assert (v = "a") | None -> assert false);
+  let range = RangeIter.{ current = 0; stop = 5 } in
+  let items = collect_iter (module RangeIter) range in
+  assert (items = [0; 1; 2; 3; 4]);
+  Printf.printf "✓ All tests passed\n"

@@ -1,99 +1,42 @@
-(* 735: Typestate builder — required fields enforced at compile time in OCaml *)
-(* Rust uses phantom type parameters (Set / Unset) to ensure build() is only
-   callable when all required fields have been provided.
+(* 735: Typestate Builder — OCaml approach with labeled arguments
+   OCaml uses labeled/optional arguments for similar effect, but
+   compile-time enforcement of required fields needs GADTs. *)
 
-   In OCaml we use the same phantom-type approach:
-   type ('has_host, 'has_port) builder
-   The 'has_host and 'has_port type parameters are abstract tags that are
-   instantiated to different types when the corresponding field is set. *)
+(* In OCaml, we can use phantom types + GADT to mimic typestate builder *)
+type unset = Unset
+type set = Set
 
-(* ── State marker types ───────────────────────────────────────────────────── *)
-type set   = private Set_
-type unset = private Unset_
-
-(* ── The product we're building ─────────────────────────────────────────── *)
-type http_client = {
-  host        : string;
-  port        : int;
-  timeout_ms  : int;
-  max_retries : int;
+(* Simple simulation: we use options and fail at build time *)
+(* A truly type-safe builder in OCaml would use GADT witnesses *)
+type ('name, 'port) http_builder = {
+  name: string option;
+  port: int option;
+  timeout_ms: int;
 }
 
-(* ── Builder ─────────────────────────────────────────────────────────────── *)
-(* The phantom parameters track which required fields have been set.
-   ('h, 'p) means has_host=h, has_port=p. *)
+let new_builder () : (unset, unset) http_builder =
+  { name = None; port = None; timeout_ms = 5000 }
 
-type ('h, 'p) builder = {
-  b_host        : string option;
-  b_port        : int option;
-  b_timeout_ms  : int;
-  b_max_retries : int;
-}
+(* Note: OCaml can't enforce 'name = set here without GADTs *)
+let set_name b name = { b with name = Some name }
+let set_port b port = { b with port = Some port }
+let set_timeout b t = { b with timeout_ms = t }
 
-(* Entry point: both required fields unset *)
-let new_builder () : (unset, unset) builder = {
-  b_host        = None;
-  b_port        = None;
-  b_timeout_ms  = 5_000;
-  b_max_retries = 3;
-}
+type http_client = { name: string; port: int; timeout_ms: int }
 
-(* Setting host transitions 'has_host from unset → set.
-   The port phantom type is preserved unchanged. *)
-let with_host h (b : (unset, 'p) builder) : (set, 'p) builder =
-  { b with b_host = Some h }
-
-(* Setting port transitions 'has_port from unset → set. *)
-let with_port p (b : ('h, unset) builder) : ('h, set) builder =
-  { b with b_port = Some p }
-
-(* Optional setters: available in any state *)
-let with_timeout_ms ms b = { b with b_timeout_ms = ms }
-let with_max_retries n  b = { b with b_max_retries = n }
-
-(* build() is only callable when BOTH required fields are set.
-   Calling it on an (unset, _) or (_, unset) builder is a type error. *)
-let build (b : (set, set) builder) : http_client = {
-  host        = Option.get b.b_host;
-  port        = Option.get b.b_port;
-  timeout_ms  = b.b_timeout_ms;
-  max_retries = b.b_max_retries;
-}
+let build b =
+  match b.name, b.port with
+  | Some name, Some port -> { name; port; timeout_ms = b.timeout_ms }
+  | None, _ -> failwith "name is required"   (* runtime, not compile time *)
+  | _, None -> failwith "port is required"
 
 let () =
-  (* Full build succeeds *)
-  let c = new_builder ()
-    |> with_host "localhost"
-    |> with_port 3000
+  let client =
+    new_builder ()
+    |> (fun b -> set_name b "api.example.com")
+    |> (fun b -> set_port b 8080)
+    |> (fun b -> set_timeout b 3000)
     |> build
   in
-  assert (c.host = "localhost");
-  assert (c.port = 3000);
-  assert (c.timeout_ms = 5_000);
-  print_endline "full build: ok";
-
-  (* Custom timeout and retries *)
-  let c2 = new_builder ()
-    |> with_host "example.com"
-    |> with_port 443
-    |> with_timeout_ms 1_000
-    |> with_max_retries 0
-    |> build
-  in
-  assert (c2.timeout_ms = 1_000);
-  assert (c2.max_retries = 0);
-  print_endline "custom options: ok";
-
-  (* Order of host/port does not matter *)
-  let c3 = new_builder () |> with_host "a" |> with_port 1 |> build in
-  let c4 = new_builder () |> with_port 1 |> with_host "a" |> build in
-  assert (c3.host = c4.host);
-  assert (c3.port = c4.port);
-  print_endline "order does not matter: ok";
-
-  (* The following would be a COMPILE ERROR:
-       new_builder () |> with_host "x" |> build   (* port still unset *)
-       new_builder () |> with_port 80 |> build    (* host still unset *)
-  *)
-
-  print_endline "All assertions passed."
+  Printf.printf "Client: %s:%d timeout=%dms\n"
+    client.name client.port client.timeout_ms

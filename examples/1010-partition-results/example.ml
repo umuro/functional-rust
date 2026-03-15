@@ -1,66 +1,52 @@
-(* 1010: Partition Results
-   Separate Ok and Error values from a list of Results.
-   We use List.partition_map (OCaml 4.12+) or a fold. *)
+(* 1010: Partition Results *)
+(* Separate Ok and Err values from a list of results *)
 
 let parse_int s =
-  match int_of_string_opt (String.trim s) with
+  match int_of_string_opt s with
   | Some n -> Ok n
-  | None   -> Error (Printf.sprintf "bad: %s" s)
+  | None -> Error (Printf.sprintf "bad: %s" s)
 
-(* Approach 1: List.partition_map — clean and direct *)
-let partition_results inputs =
-  List.partition_map (fun s ->
-    match parse_int s with
-    | Ok n    -> Left n
-    | Error e -> Right e
-  ) inputs
+(* Approach 1: List.partition with is_ok helper *)
+let is_ok = function Ok _ -> true | Error _ -> false
 
-(* Approach 2: fold into two accumulators *)
-let partition_fold inputs =
-  let (oks, errs) =
-    List.fold_left (fun (oks, errs) s ->
-      match parse_int s with
-      | Ok n    -> (n :: oks, errs)
-      | Error e -> (oks, e :: errs)
-    ) ([], []) inputs
-  in
+let partition_results results =
+  let oks, errs = List.partition is_ok results in
+  let unwrap_ok = function Ok v -> v | Error _ -> assert false in
+  let unwrap_err = function Error e -> e | Ok _ -> assert false in
+  (List.map unwrap_ok oks, List.map unwrap_err errs)
+
+(* Approach 2: Single fold separating into two accumulators *)
+let partition_fold results =
+  let oks, errs = List.fold_left (fun (oks, errs) r ->
+    match r with
+    | Ok v -> (v :: oks, errs)
+    | Error e -> (oks, e :: errs)
+  ) ([], []) results in
   (List.rev oks, List.rev errs)
 
-(* Approach 3: filter_map for just one side *)
-let only_successes inputs =
-  List.filter_map (fun s ->
-    match parse_int s with Ok n -> Some n | Error _ -> None
-  ) inputs
-
-let only_errors inputs =
-  List.filter_map (fun s ->
-    match parse_int s with Ok _ -> None | Error e -> Some e
-  ) inputs
-
-let () =
-  let (oks, errs) = partition_results ["1"; "abc"; "3"; "def"; "5"] in
+let test_partition () =
+  let inputs = ["1"; "abc"; "3"; "def"; "5"] in
+  let results = List.map parse_int inputs in
+  let oks, errs = partition_results results in
   assert (oks = [1; 3; 5]);
   assert (errs = ["bad: abc"; "bad: def"]);
+  Printf.printf "  Approach 1 (partition + unwrap): passed\n"
 
-  let (oks2, errs2) = partition_results ["1"; "2"; "3"] in
-  assert (oks2 = [1; 2; 3]);
-  assert (errs2 = []);
+let test_fold () =
+  let inputs = ["1"; "abc"; "3"; "def"; "5"] in
+  let results = List.map parse_int inputs in
+  let oks, errs = partition_fold results in
+  assert (oks = [1; 3; 5]);
+  assert (errs = ["bad: abc"; "bad: def"]);
+  (* All ok *)
+  let all_ok = List.map parse_int ["1"; "2"; "3"] in
+  let oks, errs = partition_fold all_ok in
+  assert (oks = [1; 2; 3]);
+  assert (errs = []);
+  Printf.printf "  Approach 2 (fold): passed\n"
 
-  let (oks3, errs3) = partition_results ["a"; "b"; "c"] in
-  assert (oks3 = []);
-  assert (List.length errs3 = 3);
-
-  (* fold matches partition_map *)
-  let (f_oks, f_errs) = partition_fold ["1"; "abc"; "3"] in
-  let (p_oks, p_errs) = partition_results ["1"; "abc"; "3"] in
-  assert (f_oks = p_oks && f_errs = p_errs);
-
-  assert (only_successes ["1"; "x"; "3"] = [1; 3]);
-  assert (only_errors ["1"; "x"; "3"] = ["bad: x"]);
-
-  let (e_oks, e_errs) = partition_results [] in
-  assert (e_oks = [] && e_errs = []);
-
-  Printf.printf "oks: [%s]  errs: [%s]\n"
-    (String.concat "; " (List.map string_of_int oks))
-    (String.concat "; " errs)
+let () =
+  Printf.printf "Testing partition results:\n";
+  test_partition ();
+  test_fold ();
+  Printf.printf "✓ All tests passed\n"

@@ -1,134 +1,74 @@
-(* 994: Map-Reduce
-   Parallel map over partitions followed by a sequential reduce.
-   OCaml 5 Domains for true CPU parallelism; Thread-based variant also shown.
-   The pattern: split input → map each chunk in parallel → reduce results. *)
+(* 994: MapReduce *)
+(* Parallel map with threads, collect results, reduce *)
 
-(* --- Generic map-reduce with OCaml 5 Domains --- *)
-let parallel_map_reduce
-    ?(n_workers = Domain.recommended_domain_count ())
-    ~map ~reduce ~init items =
+(* --- Approach 1: Parallel map → collect → fold (reduce) --- *)
 
-  let arr = Array.of_list items in
-  let n   = Array.length arr in
-  if n = 0 then init
-  else begin
-    (* Split into n_workers chunks *)
-    let chunk_size = max 1 ((n + n_workers - 1) / n_workers) in
-    let chunks = Array.init n_workers (fun i ->
-      let lo = i * chunk_size in
-      let hi = min n ((i + 1) * chunk_size) in
-      if lo >= n then [||]
-      else Array.sub arr lo (hi - lo)
-    ) in
+let parallel_map f xs =
+  let n = List.length xs in
+  let results = Array.make n None in
+  let threads = List.mapi (fun i x ->
+    Thread.create (fun () ->
+      results.(i) <- Some (f x)
+    ) ()
+  ) xs in
+  List.iter Thread.join threads;
+  Array.to_list results |> List.filter_map Fun.id
 
-    (* Map phase: each domain processes one chunk *)
-    let domains = Array.map (fun chunk ->
-      if Array.length chunk = 0 then Domain.spawn (fun () -> init)
-      else Domain.spawn (fun () ->
-        Array.fold_left (fun acc x -> reduce acc (map x)) init chunk
-      )
-    ) chunks in
-
-    (* Reduce phase: combine domain results *)
-    Array.fold_left (fun acc d -> reduce acc (Domain.join d)) init domains
-  end
-
-(* --- Word frequency count (classic map-reduce) --- *)
-let word_frequency_mr docs =
-  (* Map: tokenize each document into word counts *)
-  let map doc =
-    let words = String.split_on_char ' ' doc
-                |> List.filter (fun s -> s <> "")
-                |> List.map String.lowercase_ascii in
-    let tbl = Hashtbl.create 16 in
-    List.iter (fun w ->
-      let c = Option.value (Hashtbl.find_opt tbl w) ~default:0 in
-      Hashtbl.replace tbl w (c + 1)
-    ) words;
-    tbl
-  in
-  (* Reduce: merge two frequency tables *)
-  let reduce acc tbl =
-    let merged = Hashtbl.copy acc in
-    Hashtbl.iter (fun w c ->
-      let prev = Option.value (Hashtbl.find_opt merged w) ~default:0 in
-      Hashtbl.replace merged w (prev + c)
-    ) tbl;
-    merged
-  in
-  let domains = Array.of_list (List.map (fun doc ->
-    Domain.spawn (fun () -> map doc)
-  ) docs) in
-  let tables = Array.map Domain.join domains in
-  Array.fold_left reduce (Hashtbl.create 16) tables
-
-(* --- Parallel sum / min / max using chunks --- *)
-let parallel_sum arr =
-  let n = Array.length arr in
-  let nw = min n (Domain.recommended_domain_count ()) in
-  let chunk = max 1 ((n + nw - 1) / nw) in
-  let domains = Array.init nw (fun i ->
-    Domain.spawn (fun () ->
-      let lo = i * chunk and hi = min n ((i+1)*chunk) in
-      let s = ref 0 in
-      for j = lo to hi-1 do s := !s + arr.(j) done;
-      !s
-    )
-  ) in
-  Array.fold_left (fun acc d -> acc + Domain.join d) 0 domains
-
-let parallel_histogram arr n_buckets max_val =
-  let counts = Array.make n_buckets 0 in
-  let mutex  = Mutex.create () in
-  let nw = min (Array.length arr) 4 in
-  let chunk = max 1 ((Array.length arr + nw - 1) / nw) in
-  let domains = Array.init nw (fun i ->
-    Domain.spawn (fun () ->
-      let local = Array.make n_buckets 0 in
-      let lo = i * chunk and hi = min (Array.length arr) ((i+1)*chunk) in
-      for j = lo to hi-1 do
-        let b = arr.(j) * n_buckets / (max_val + 1) in
-        local.(b) <- local.(b) + 1
-      done;
-      Mutex.lock mutex;
-      Array.iteri (fun b c -> counts.(b) <- counts.(b) + c) local;
-      Mutex.unlock mutex
-    )
-  ) in
-  Array.iter Domain.join domains;
-  counts
+let map_reduce ~map_fn ~reduce_fn ~init xs =
+  let mapped = parallel_map map_fn xs in
+  List.fold_left reduce_fn init mapped
 
 let () =
-  Printf.printf "=== Parallel map-reduce: sum of squares ===\n";
-  let items = List.init 100 (fun i -> i + 1) in
-  let result = parallel_map_reduce
-    ~map:(fun x -> x * x)
-    ~reduce:( + )
+  (* Word count simulation: count chars in each word, sum total *)
+  let words = ["hello"; "world"; "ocaml"; "functional"; "programming"] in
+  let total_chars = map_reduce
+    ~map_fn:(fun w -> String.length w)
+    ~reduce_fn:(+)
     ~init:0
-    items
+    words
   in
-  Printf.printf "sum of squares 1..100 = %d (expected 338350)\n" result;
+  assert (total_chars = 5+5+5+10+11);
+  Printf.printf "Approach 1 (char count): %d\n" total_chars
 
-  Printf.printf "\n=== Parallel sum ===\n";
-  let arr = Array.init 1000 (fun i -> i + 1) in
-  Printf.printf "sum 1..1000 = %d (expected 500500)\n" (parallel_sum arr);
+(* --- Approach 2: Map with chunking (divide-and-conquer) --- *)
 
-  Printf.printf "\n=== Word frequency (map-reduce) ===\n";
-  let docs = [
-    "the quick brown fox";
-    "the fox jumped over the lazy dog";
-    "the dog slept all day";
-    "quick brown dog quick";
-  ] in
-  let freq = word_frequency_mr docs in
-  let sorted = Hashtbl.fold (fun w c acc -> (w,c)::acc) freq []
-               |> List.sort (fun (_,a) (_,b) -> compare b a) in
-  Printf.printf "top words:\n";
-  List.iter (fun (w,c) -> Printf.printf "  %-10s %d\n" w c)
-    (List.filteri (fun i _ -> i < 6) sorted);
+let chunk_parallel_map f xs num_workers =
+  let arr = Array.of_list xs in
+  let n = Array.length arr in
+  let chunk_size = max 1 ((n + num_workers - 1) / num_workers) in
+  let results = Array.make n (f arr.(0)) in  (* placeholder *)
+  let threads = List.init num_workers (fun w ->
+    Thread.create (fun () ->
+      let start = w * chunk_size in
+      let stop = min n ((w + 1) * chunk_size) in
+      for i = start to stop - 1 do
+        results.(i) <- f arr.(i)
+      done
+    ) ()
+  ) in
+  List.iter Thread.join threads;
+  Array.to_list results
 
-  Printf.printf "\n=== Parallel histogram ===\n";
-  let data = Array.init 50 (fun i -> i mod 10) in
-  let hist = parallel_histogram data 10 9 in
-  Printf.printf "histogram (each bucket should be 5):\n";
-  Array.iteri (fun b c -> Printf.printf "  [%d..%d]: %d\n" b b c) hist
+let () =
+  let nums = List.init 20 (fun i -> i + 1) in  (* 1..20 *)
+  let squares = chunk_parallel_map (fun x -> x * x) nums 4 in
+  let sum = List.fold_left (+) 0 squares in
+  assert (sum = 2870);
+  Printf.printf "Approach 2 (chunked map-reduce): sum_squares=%d\n" sum
+
+(* --- Approach 3: MapReduce with string processing --- *)
+
+let () =
+  let sentences = ["the quick brown fox"; "jumps over the lazy"; "dog today"] in
+  let word_counts = map_reduce
+    ~map_fn:(fun s ->
+      String.split_on_char ' ' s |> List.length)
+    ~reduce_fn:(+)
+    ~init:0
+    sentences
+  in
+  (* 4+4+2 = 10 *)
+  assert (word_counts = 10);
+  Printf.printf "Approach 3 (word count): %d words\n" word_counts
+
+let () = Printf.printf "✓ All tests passed\n"

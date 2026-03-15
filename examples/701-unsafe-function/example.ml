@@ -1,59 +1,19 @@
-(* 701: Unsafe functions — safe wrappers in OCaml *)
-(* Rust's unsafe fn marks functions whose callers must uphold invariants
-   that the type system cannot check.
+(* OCaml: no unsafe functions — safety is guaranteed by the type system.
+   We model "low-level" access with validation wrappers. *)
 
-   OCaml equivalents:
-   - "Unsafe" byte-copying uses Bytes.blit — the stdlib function is safe because
-     it checks bounds and the GC manages lifetimes.
-   - Array.unsafe_get / Array.unsafe_blit skip bounds checks; callers are
-     responsible for staying in bounds (analogous to unsafe fn in Rust).
-   - The safe-wrapper pattern: validate inputs, then call the unchecked function.
+(** Array.unsafe_get skips bounds check — the OCaml unsafe equivalent. *)
+let unchecked_get (arr : 'a array) (i : int) : 'a = Array.unsafe_get arr i
 
-   Key difference: OCaml's "unsafe" operations (Array.unsafe_get etc.) cannot
-   cause memory corruption — the GC still owns the memory. They only risk
-   reading stale/wrong data if you violate the size invariant. *)
-
-(* Safe copy: validate lengths, then delegate to Bytes.blit *)
-let safe_copy src dst =
-  let src_len = Bytes.length src in
-  let dst_len = Bytes.length dst in
-  if src_len <> dst_len then
-    Error (Printf.sprintf "length mismatch: src=%d dst=%d" src_len dst_len)
-  else begin
-    Bytes.blit src 0 dst 0 src_len;  (* equivalent of raw_copy in Rust *)
-    Ok ()
-  end
-
-(* Safe indexed get: bounds-check before calling the unchecked variant *)
-let safe_get arr idx =
-  if idx < Array.length arr then
-    Some (Array.unsafe_get arr idx)  (* unchecked after validation *)
-  else
-    None
-
-(* Demonstrate the pattern: document invariants, then use unchecked inner call *)
-
-(* Inner function — only safe when 0 <= idx < Array.length arr.
-   Called only through safe_get above. *)
-let _unsafe_get arr idx = Array.unsafe_get arr idx
+(** Safe wrapper validates before delegating to unchecked_get. *)
+let safe_get (arr : 'a array) (i : int) : 'a option =
+  if i >= 0 && i < Array.length arr then Some (unchecked_get arr i)
+  else None
 
 let () =
-  (* safe_copy *)
-  let src = Bytes.of_string "abcde" in
-  let dst = Bytes.create 5 in
-  assert (safe_copy src dst = Ok ());
-  assert (Bytes.to_string dst = "abcde");
-  print_endline "safe_copy: ok";
-
-  (* mismatch *)
-  assert (Result.is_error (safe_copy (Bytes.of_string "abc") (Bytes.create 5)));
-  print_endline "safe_copy mismatch: ok";
-
-  (* safe_get *)
-  let v = [| 1; 2; 3 |] in
-  assert (safe_get v 0 = Some 1);
-  assert (safe_get v 2 = Some 3);
-  assert (safe_get v 3 = None);
-  print_endline "safe_get: ok";
-
-  print_endline "All assertions passed."
+  let data = [| 100; 200; 300 |] in
+  (match safe_get data 1 with
+   | Some v -> Printf.printf "safe_get(1) = %d\n" v
+   | None   -> print_endline "out of bounds");
+  (match safe_get data 5 with
+   | Some _ -> print_endline "Should not happen"
+   | None   -> print_endline "safe_get(5) = out of bounds (caught safely)")

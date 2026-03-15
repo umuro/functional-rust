@@ -1,113 +1,117 @@
-(* 1002: Backpressure
-   OCaml (stdlib) has no native bounded channels, but we can model
-   backpressure with a simple bounded queue and Thread/Mutex/Condition.
+(* 1002: Backpressure — Bounded Channel Blocks Producer *)
+(* When consumer is slow, bounded buffer fills up and blocks the producer *)
 
-   The key concept: a bounded buffer forces the producer to wait when
-   the consumer is slow — coordinating producer/consumer speeds.
+(* --- Bounded queue (simulates sync_channel) --- *)
 
-   We demonstrate the concept with a functional bounded queue module,
-   then show blocking push semantics with Mutex/Condition. *)
+type 'a bounded_chan = {
+  q: 'a Queue.t;
+  capacity: int;
+  m: Mutex.t;
+  not_full: Condition.t;
+  not_empty: Condition.t;
+  mutable closed: bool;
+}
 
-module BoundedQueue = struct
-  type 'a t = {
-    mutable buf: 'a Queue.t;
-    capacity: int;
-    mutex: Mutex.t;
-    not_full: Condition.t;   (* signalled when space becomes available *)
-    not_empty: Condition.t;  (* signalled when item becomes available *)
-  }
+let make_bounded_chan capacity = {
+  q = Queue.create ();
+  capacity;
+  m = Mutex.create ();
+  not_full = Condition.create ();
+  not_empty = Condition.create ();
+  closed = false;
+}
 
-  let create capacity = {
-    buf = Queue.create ();
-    capacity;
-    mutex = Mutex.create ();
-    not_full = Condition.create ();
-    not_empty = Condition.create ();
-  }
+let send_bounded c v =
+  Mutex.lock c.m;
+  while Queue.length c.q >= c.capacity && not c.closed do
+    Condition.wait c.not_full c.m  (* BLOCK when full — backpressure! *)
+  done;
+  if not c.closed then begin
+    Queue.push v c.q;
+    Condition.signal c.not_empty
+  end;
+  Mutex.unlock c.m
 
-  (* Blocking push — waits if full (backpressure) *)
-  let push q item =
-    Mutex.lock q.mutex;
-    while Queue.length q.buf >= q.capacity do
-      Condition.wait q.not_full q.mutex
-    done;
-    Queue.push item q.buf;
-    Condition.signal q.not_empty;
-    Mutex.unlock q.mutex
+let recv_bounded c =
+  Mutex.lock c.m;
+  while Queue.is_empty c.q && not c.closed do
+    Condition.wait c.not_empty c.m
+  done;
+  let v = if Queue.is_empty c.q then None else Some (Queue.pop c.q) in
+  Condition.signal c.not_full;
+  Mutex.unlock c.m;
+  v
 
-  (* Try push — returns false when full (non-blocking backpressure) *)
-  let try_push q item =
-    Mutex.lock q.mutex;
-    let accepted = Queue.length q.buf < q.capacity in
-    if accepted then begin
-      Queue.push item q.buf;
-      Condition.signal q.not_empty
-    end;
-    Mutex.unlock q.mutex;
-    accepted
+let close_bounded c =
+  Mutex.lock c.m;
+  c.closed <- true;
+  Condition.broadcast c.not_full;
+  Condition.broadcast c.not_empty;
+  Mutex.unlock c.m
 
-  (* Blocking pop *)
-  let pop q =
-    Mutex.lock q.mutex;
-    while Queue.is_empty q.buf do
-      Condition.wait q.not_empty q.mutex
-    done;
-    let item = Queue.pop q.buf in
-    Condition.signal q.not_full;
-    Mutex.unlock q.mutex;
-    item
+(* --- Approach 1: Slow consumer applies backpressure --- *)
 
-  let length q =
-    Mutex.lock q.mutex;
-    let n = Queue.length q.buf in
-    Mutex.unlock q.mutex;
-    n
-end
-
-(* Demo: bounded pipeline — producer blocks when buffer is full *)
-let bounded_backpressure () =
-  let q = BoundedQueue.create 3 in
-  let produced = ref 0 in
-  let consumed = ref 0 in
+let () =
+  let chan = make_bounded_chan 3 in  (* buffer of 3 *)
+  let sent_times = ref [] in
+  let recv_times = ref [] in
+  let m = Mutex.create () in
 
   let producer = Thread.create (fun () ->
     for i = 1 to 9 do
-      BoundedQueue.push q i;
-      incr produced
-    done
+      send_bounded chan i;
+      Mutex.lock m;
+      sent_times := Unix.gettimeofday () :: !sent_times;
+      Mutex.unlock m
+    done;
+    close_bounded chan
   ) () in
 
   let consumer = Thread.create (fun () ->
-    for _ = 1 to 9 do
-      let _item = BoundedQueue.pop q in
-      incr consumed
-    done
+    let rec loop () =
+      match recv_bounded chan with
+      | None -> ()
+      | Some _ ->
+        Unix.sleepf 0.005;  (* slow consumer *)
+        Mutex.lock m;
+        recv_times := Unix.gettimeofday () :: !recv_times;
+        Mutex.unlock m;
+        loop ()
+    in loop ()
   ) () in
 
   Thread.join producer;
   Thread.join consumer;
-  (!produced, !consumed)
 
-(* Demo: try_push drops items when full *)
-let try_send_demo () =
-  let q = BoundedQueue.create 2 in
-  let accepted = ref 0 in
-  let dropped = ref 0 in
-  for i = 1 to 10 do
-    ignore i;
-    if BoundedQueue.try_push q i then incr accepted
-    else incr dropped
-  done;
-  (!accepted, !dropped)
+  assert (List.length !sent_times = 9);
+  assert (List.length !recv_times = 9);
+  Printf.printf "Approach 1 (backpressure): sent=%d recv=%d (producer was blocked by slow consumer)\n"
+    (List.length !sent_times) (List.length !recv_times)
+
+(* --- Approach 2: Producer detects backpressure (try_send) --- *)
+
+let try_send c v =
+  Mutex.lock c.m;
+  let ok = Queue.length c.q < c.capacity in
+  if ok then begin
+    Queue.push v c.q;
+    Condition.signal c.not_empty
+  end;
+  Mutex.unlock c.m;
+  ok
 
 let () =
-  let (prod, cons) = bounded_backpressure () in
-  assert (prod = 9);
-  assert (cons = 9);
+  let chan = make_bounded_chan 2 in
+  let accepted = ref 0 in
+  let dropped = ref 0 in
 
-  let (acc, dropped) = try_send_demo () in
-  assert (acc + dropped = 10);
-  assert (acc <= 2);  (* buffer capacity = 2 *)
+  for i = 1 to 10 do
+    if try_send chan i then incr accepted
+    else incr dropped
+  done;
 
-  Printf.printf "bounded: produced=%d consumed=%d\n" prod cons;
-  Printf.printf "try_push: accepted=%d dropped=%d\n" acc dropped
+  assert (!accepted = 2);
+  assert (!dropped = 8);
+  Printf.printf "Approach 2 (try_send): accepted=%d dropped=%d\n" !accepted !dropped
+
+let () = Printf.printf "✓ All tests passed\n"

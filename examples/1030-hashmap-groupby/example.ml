@@ -1,64 +1,56 @@
-(* 1030: Group Elements by Key — HashMap<K, Vec<V>>
-   OCaml: use Hashtbl for mutable group accumulation, or
-   List.sort + custom group_by for a pure functional approach. *)
+(* 1030: Group Elements by Key *)
+(* Build a map from key to list of values *)
 
-(* Group words by first character using Hashtbl *)
+module StringMap = Map.Make(String)
+
+(* Approach 1: Group words by first letter *)
 let group_by_first_letter () =
   let words = ["apple"; "avocado"; "banana"; "blueberry"; "cherry"] in
-  let groups : (char, string list) Hashtbl.t = Hashtbl.create 8 in
-  List.iter (fun word ->
-    let key = word.[0] in
-    let existing = match Hashtbl.find_opt groups key with Some l -> l | None -> [] in
-    Hashtbl.replace groups key (existing @ [word])
-  ) words;
-  assert (Hashtbl.find groups 'a' = ["apple"; "avocado"]);
-  assert (Hashtbl.find groups 'b' = ["banana"; "blueberry"]);
-  assert (Hashtbl.find groups 'c' = ["cherry"])
+  let groups = List.fold_left (fun acc w ->
+    let key = String.make 1 w.[0] in
+    let current = match StringMap.find_opt key acc with
+      | Some lst -> lst
+      | None -> []
+    in
+    StringMap.add key (current @ [w]) acc
+  ) StringMap.empty words in
+  assert (StringMap.find "a" groups = ["apple"; "avocado"]);
+  assert (StringMap.find "b" groups = ["banana"; "blueberry"]);
+  assert (StringMap.find "c" groups = ["cherry"])
 
-(* Group numbers by parity *)
+(* Approach 2: Group numbers by property *)
 let group_by_parity () =
   let nums = [1; 2; 3; 4; 5; 6; 7; 8] in
-  let groups : (string, int list) Hashtbl.t = Hashtbl.create 4 in
-  List.iter (fun n ->
+  let groups = List.fold_left (fun acc n ->
     let key = if n mod 2 = 0 then "even" else "odd" in
-    let existing = match Hashtbl.find_opt groups key with Some l -> l | None -> [] in
-    Hashtbl.replace groups key (existing @ [n])
-  ) nums;
-  assert (Hashtbl.find groups "even" = [2; 4; 6; 8]);
-  assert (Hashtbl.find groups "odd"  = [1; 3; 5; 7])
+    let current = match StringMap.find_opt key acc with
+      | Some lst -> lst
+      | None -> []
+    in
+    StringMap.add key (current @ [n]) acc
+  ) StringMap.empty nums in
+  assert (StringMap.find "even" groups = [2; 4; 6; 8]);
+  assert (StringMap.find "odd" groups = [1; 3; 5; 7])
 
-(* Pure functional group_by — returns an association list sorted by key *)
-let group_by key_fn items =
+(* Approach 3: Generic group_by function *)
+let group_by (type a) key_fn (items : a list) =
   List.fold_left (fun acc item ->
-    let k = key_fn item in
-    let existing = match List.assoc_opt k acc with Some l -> l | None -> [] in
-    let updated = List.map (fun (k2, v) -> if k2 = k then (k2, v @ [item]) else (k2, v)) acc in
-    if List.assoc_opt k acc = None then acc @ [(k, [item])]
-    else updated
-  ) [] items
+    let key = key_fn item in
+    let current = match StringMap.find_opt key acc with
+      | Some lst -> lst
+      | None -> []
+    in
+    StringMap.add key (current @ [item]) acc
+  ) StringMap.empty items
+
+let test_generic_group_by () =
+  let data = [("Alice", 90); ("Bob", 85); ("Alice", 92); ("Bob", 88)] in
+  let groups = group_by fst data in
+  assert (StringMap.find "Alice" groups = [("Alice", 90); ("Alice", 92)]);
+  assert (StringMap.find "Bob" groups = [("Bob", 85); ("Bob", 88)])
 
 let () =
   group_by_first_letter ();
   group_by_parity ();
-
-  (* Generic group_by *)
-  let data = [("Alice", 90); ("Bob", 85); ("Alice", 92); ("Bob", 88)] in
-  let groups = group_by (fun (name, _) -> name) data in
-  let alice = match List.assoc_opt "Alice" groups with Some l -> l | None -> [] in
-  let bob   = match List.assoc_opt "Bob"   groups with Some l -> l | None -> [] in
-  assert (List.length alice = 2);
-  assert (List.length bob   = 2);
-  assert (snd (List.nth alice 0) = 90);
-  assert (snd (List.nth alice 1) = 92);
-
-  (* group by length *)
-  let words = ["hi"; "hey"; "hello"; "yo"; "yes"] in
-  let by_len = group_by (fun w -> String.length w) words in
-  let len2 = match List.assoc_opt 2 by_len with Some l -> l | None -> [] in
-  let len3 = match List.assoc_opt 3 by_len with Some l -> l | None -> [] in
-  let len5 = match List.assoc_opt 5 by_len with Some l -> l | None -> [] in
-  assert (List.length len2 = 2);
-  assert (List.length len3 = 2);
-  assert (List.length len5 = 1);
-
-  Printf.printf "Group-by tests passed\n"
+  test_generic_group_by ();
+  Printf.printf "✓ All tests passed\n"

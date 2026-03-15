@@ -1,29 +1,12 @@
-(* 077: Generic Bounds
-   OCaml uses parametric polymorphism + type-class-like patterns via modules *)
+(* 077: Generic Bounds — OCaml parametric polymorphism *)
+(* OCaml doesn't need bounds — polymorphism is structural *)
 
-(* --- Approach 1: Polymorphic functions (implicitly "bounded" by usage) --- *)
+(* Approach 1: Generic identity and pair — no bounds needed *)
+let identity x = x
+let make_pair a b = (a, b)
+let swap (a, b) = (b, a)
 
-(* OCaml's structural typing means 'a list works for any 'a *)
-let print_list show xs =
-  "[" ^ String.concat "; " (List.map show xs) ^ "]"
-
-(* find_max using polymorphic compare *)
-let find_max = function
-  | [] -> None
-  | xs -> Some (List.fold_left max (List.hd xs) (List.tl xs))
-
-let contains xs x = List.mem x xs
-
-let larger a b = if a >= b then a else b
-
-(* --- Approach 2: Explicit comparator functions (like bounds on PartialOrd) --- *)
-
-let find_max_by cmp = function
-  | [] -> None
-  | xs -> Some (List.fold_left (fun a b -> if cmp a b >= 0 then a else b) (List.hd xs) (List.tl xs))
-
-(* --- Approach 3: Module-based bounds (like trait constraints) --- *)
-
+(* Approach 2: Functors as "bounded" generics *)
 module type PRINTABLE = sig
   type t
   val to_string : t -> string
@@ -34,24 +17,34 @@ module type COMPARABLE = sig
   val compare : t -> t -> int
 end
 
-(* A function that requires both printable and comparable *)
-module PrintAndCompare (P : PRINTABLE) (C : COMPARABLE with type t = P.t) = struct
-  let show_max a b =
-    if C.compare a b >= 0
-    then Printf.sprintf "max = %s" (P.to_string a)
-    else Printf.sprintf "max = %s" (P.to_string b)
+module Printer (P : PRINTABLE) = struct
+  let print_list lst =
+    let strs = List.map P.to_string lst in
+    "[" ^ String.concat "; " strs ^ "]"
 end
 
-module IntPC = PrintAndCompare
-  (struct type t = int let to_string = string_of_int end)
-  (struct type t = int let compare = Int.compare end)
+module IntPrint = Printer(struct
+  type t = int
+  let to_string = string_of_int
+end)
 
+(* Approach 3: Using polymorphic comparison *)
+let find_max lst =
+  match lst with
+  | [] -> None
+  | x :: xs -> Some (List.fold_left max x xs)
+
+let contains lst x = List.exists (fun e -> e = x) lst
+
+(* Tests *)
 let () =
-  Printf.printf "print_list int [1;2;3] = %s\n"
-    (print_list string_of_int [1;2;3]);
-  Printf.printf "find_max [3;1;4;1;5] = %s\n"
-    (match find_max [3;1;4;1;5] with Some v -> string_of_int v | None -> "None");
-  Printf.printf "contains [1;2;3] 2 = %b\n" (contains [1;2;3] 2);
-  Printf.printf "larger 10 20 = %d\n" (larger 10 20);
-  Printf.printf "larger \"z\" \"a\" = %s\n" (larger "z" "a");
-  Printf.printf "%s\n" (IntPC.show_max 10 20)
+  assert (identity 42 = 42);
+  assert (identity "hello" = "hello");
+  assert (make_pair 1 "a" = (1, "a"));
+  assert (swap (1, 2) = (2, 1));
+  assert (IntPrint.print_list [1; 2; 3] = "[1; 2; 3]");
+  assert (find_max [3; 1; 4; 1; 5] = Some 5);
+  assert (find_max [] = None);
+  assert (contains [1; 2; 3] 2);
+  assert (not (contains [1; 2; 3] 4));
+  Printf.printf "✓ All tests passed\n"

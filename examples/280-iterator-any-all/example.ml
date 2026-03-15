@@ -1,36 +1,18 @@
-(* 280: any (∃) and all (∀) — short-circuit existential/universal checks.
-   OCaml: List.exists and List.for_all; Seq.exists and Seq.for_all for lazy. *)
+(* 280. Existential checks: any() and all() - OCaml *)
 
 let () =
-  (* any: true if at least one element satisfies the predicate *)
-  Printf.printf "any (=2) [1;2;3]    = %b\n" (List.exists (( = ) 2) [1;2;3]);
-  Printf.printf "any (=9) [1;2;3]    = %b\n" (List.exists (( = ) 9) [1;2;3]);
+  let nums = [2; 4; 6; 8; 10] in
+  Printf.printf "All even: %b\n" (List.for_all (fun x -> x mod 2 = 0) nums);
+  Printf.printf "Any > 5: %b\n"  (List.exists (fun x -> x > 5) nums);
+  Printf.printf "Any odd: %b\n"  (List.exists (fun x -> x mod 2 <> 0) nums);
+  Printf.printf "All > 0: %b\n"  (List.for_all (fun x -> x > 0) nums);
 
-  (* all: true if every element satisfies the predicate *)
-  Printf.printf "all even [2;4;6]    = %b\n"
-    (List.for_all (fun x -> x mod 2 = 0) [2;4;6]);
-  Printf.printf "all even [1;2;3]    = %b\n"
-    (List.for_all (fun x -> x mod 2 = 0) [1;2;3]);
+  (* Vacuous truth / false *)
+  Printf.printf "all [] > 0: %b\n" (List.for_all (fun x -> x > 0) []);
+  Printf.printf "any [] > 0: %b\n" (List.exists (fun x -> x > 0) []);
 
-  (* Vacuous truth: all holds on empty list; any is false on empty *)
-  Printf.printf "all false []        = %b (vacuously true)\n"
-    (List.for_all (fun _ -> false) []);
-  Printf.printf "any true  []        = %b\n"
-    (List.exists (fun _ -> true) []);
-
-  (* Lazy short-circuit using Seq — stops as soon as answer is known *)
-  let log = ref 0 in
-  let counting_pred x = incr log; x > 3 in
-  let _ = List.to_seq [1;2;4;5] |> Seq.exists counting_pred in
-  Printf.printf "seq any: evaluated %d elements (short-circuits at first true)\n" !log;
-
-  log := 0;
-  let _ = List.to_seq [1;2;3;4] |> Seq.for_all (fun x -> incr log; x > 0) in
-  Printf.printf "seq all: evaluated %d elements (stops at first false)\n" !log;
-
-  (* Practical: check all results are Ok *)
-  let results = [Ok 1; Ok 2; Ok 3] in
-  Printf.printf "all Ok: %b\n" (List.for_all Result.is_ok results);
-
-  let with_err = [Ok 1; Error "e"; Ok 3] in
-  Printf.printf "any Error: %b\n" (List.exists Result.is_error with_err)
+  (* Practical: validate list of strings *)
+  let words = ["hello"; "world"; "rust"] in
+  let all_lowercase = List.for_all (fun w ->
+    String.lowercase_ascii w = w) words in
+  Printf.printf "All lowercase: %b\n" all_lowercase

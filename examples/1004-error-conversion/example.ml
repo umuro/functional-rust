@@ -1,61 +1,81 @@
-(* 1004: Error Conversion
-   Rust's From trait auto-converts sub-errors via ?. In OCaml we use
-   Result.map_error to wrap low-level errors into a unified app error type.
-   Composition replaces automatic conversion. *)
+(* 1004: Error Conversion *)
+(* OCaml: manual error wrapping vs Rust's From trait *)
 
-type io_error =
-  | FileNotFound of string
-  | PermissionDenied of string
+type io_error = FileNotFound of string | PermissionDenied of string
+type parse_error = InvalidFormat of string | OutOfRange of int
+
+type app_error =
+  | IoError of io_error
+  | ParseError of parse_error
 
 let string_of_io_error = function
-  | FileNotFound p -> Printf.sprintf "file not found: %s" p
-  | PermissionDenied p -> Printf.sprintf "permission denied: %s" p
+  | FileNotFound s -> Printf.sprintf "file not found: %s" s
+  | PermissionDenied s -> Printf.sprintf "permission denied: %s" s
 
-type parse_error = ParseFailed of string
-
-let string_of_parse_error (ParseFailed s) = Printf.sprintf "parse error: %s" s
-
-(* Unified app error — wraps subsystem errors *)
-type app_error =
-  | Io of io_error
-  | Parse of parse_error
+let string_of_parse_error = function
+  | InvalidFormat s -> Printf.sprintf "invalid format: %s" s
+  | OutOfRange n -> Printf.sprintf "out of range: %d" n
 
 let string_of_app_error = function
-  | Io e    -> Printf.sprintf "IO: %s" (string_of_io_error e)
-  | Parse e -> Printf.sprintf "Parse: %s" (string_of_parse_error e)
+  | IoError e -> Printf.sprintf "IO: %s" (string_of_io_error e)
+  | ParseError e -> Printf.sprintf "Parse: %s" (string_of_parse_error e)
 
-(* Low-level IO function *)
-let read_config path =
+(* Approach 1: Manual wrapping *)
+let read_config_exn path =
+  if path = "/missing" then Error (IoError (FileNotFound path))
+  else Ok "42"
+
+let parse_value_exn s =
+  match int_of_string_opt s with
+  | None -> Error (ParseError (InvalidFormat s))
+  | Some n when n < 0 -> Error (ParseError (OutOfRange n))
+  | Some n -> Ok n
+
+(* Approach 2: Helper to lift sub-errors *)
+let lift_io f x =
+  match f x with
+  | Error e -> Error (IoError e)
+  | Ok v -> Ok v
+
+let lift_parse f x =
+  match f x with
+  | Error e -> Error (ParseError e)
+  | Ok v -> Ok v
+
+let read_raw path =
   if path = "/missing" then Error (FileNotFound path)
   else Ok "42"
 
-(* Parse a string as int — returns parse_error *)
-let parse_int s =
+let parse_raw s =
   match int_of_string_opt s with
+  | None -> Error (InvalidFormat s)
   | Some n -> Ok n
-  | None -> Error (ParseFailed (Printf.sprintf "not an int: %s" s))
 
-(* Application layer: wraps sub-errors into app_error using Result.map_error *)
 let load_config path =
-  Result.map_error (fun e -> Io e) (read_config path)
-  |> Result.bind (fun content ->
-       Result.map_error (fun e -> Parse e) (parse_int content))
+  match lift_io read_raw path with
+  | Error e -> Error e
+  | Ok s -> lift_parse parse_raw s
+
+let test_manual () =
+  assert (read_config_exn "/ok" = Ok "42");
+  (match read_config_exn "/missing" with
+   | Error (IoError (FileNotFound _)) -> ()
+   | _ -> assert false);
+  assert (parse_value_exn "42" = Ok 42);
+  (match parse_value_exn "abc" with
+   | Error (ParseError (InvalidFormat _)) -> ()
+   | _ -> assert false);
+  Printf.printf "  Approach 1 (manual wrapping): passed\n"
+
+let test_lift () =
+  assert (load_config "/ok" = Ok 42);
+  (match load_config "/missing" with
+   | Error (IoError (FileNotFound _)) -> ()
+   | _ -> assert false);
+  Printf.printf "  Approach 2 (lift helpers): passed\n"
 
 let () =
-  assert (load_config "/ok" = Ok 42);
-
-  (match load_config "/missing" with
-   | Error (Io (FileNotFound _)) -> ()
-   | _ -> assert false);
-
-  (match load_config "/bad" with
-   | _ -> ());  (* /bad reads "42" which is valid *)
-
-  (* Manual from-style conversions *)
-  let io_as_app = Result.map_error (fun e -> Io e) (read_config "/missing") in
-  assert (Result.is_error io_as_app);
-
-  Printf.printf "load_config /ok: %s\n"
-    (match load_config "/ok" with
-     | Ok n -> string_of_int n
-     | Error e -> string_of_app_error e)
+  Printf.printf "Testing error conversion:\n";
+  test_manual ();
+  test_lift ();
+  Printf.printf "✓ All tests passed\n"

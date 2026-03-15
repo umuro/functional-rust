@@ -1,65 +1,27 @@
-(* 465: Message Passing vs Shared Memory
-   Two approaches to concurrent word counting:
-   1. Message passing: each domain computes a local count, sends it back.
-   2. Shared memory: domains write to a shared Hashtbl under a Mutex. *)
-
-module StringMap = Map.Make(String)
-
-(* Count words in a string; returns a pure functional map *)
+(* 465. Message passing vs shared memory – OCaml *)
 let count_words text =
-  String.split_on_char ' ' text
-  |> List.filter (fun s -> s <> "")
-  |> List.map (fun w -> String.lowercase_ascii w)
-  |> List.fold_left (fun m w ->
-       let n = try StringMap.find w m with Not_found -> 0 in
-       StringMap.add w (n + 1) m)
-     StringMap.empty
+  List.length (List.filter ((<>) "") (String.split_on_char ' ' text))
 
-(* Merge two word-count maps *)
-let merge a b =
-  StringMap.union (fun _ x y -> Some (x + y)) a b
+(* Message passing: collect results *)
+let (send,_,recv) =
+  let q=Queue.create () let m=Mutex.create () let c=Condition.create () in
+  (fun v -> Mutex.lock m; Queue.push v q; Condition.signal c; Mutex.unlock m),
+  (),
+  (fun () -> Mutex.lock m; while Queue.is_empty q do Condition.wait c m done;
+    let v=Queue.pop q in Mutex.unlock m; v)
 
-(* Approach 1: message passing — each domain returns its local result *)
-let msg_passing texts =
-  let domains = List.map (fun t ->
-    Domain.spawn (fun () -> count_words t)) texts
-  in
-  List.map Domain.join domains
-  |> List.fold_left merge StringMap.empty
-
-(* Approach 2: shared Hashtbl under a Mutex *)
-let shared_mem texts =
-  let mu     = Mutex.create () in
-  let shared = Hashtbl.create 16 in
-  let domains = List.map (fun t ->
-    Domain.spawn (fun () ->
-      let local = count_words t in
-      (* Merge local into shared under the lock *)
-      Mutex.lock mu;
-      StringMap.iter (fun w n ->
-        let prev = try Hashtbl.find shared w with Not_found -> 0 in
-        Hashtbl.replace shared w (prev + n)
-      ) local;
-      Mutex.unlock mu))
-    texts
-  in
-  List.iter Domain.join domains;
-  (* Convert Hashtbl → StringMap for comparison *)
-  Hashtbl.fold (fun k v m -> StringMap.add k v m) shared StringMap.empty
+(* Shared memory: update global counter *)
+let total=ref 0 let mutex=Mutex.create ()
 
 let () =
-  let texts = ["a b c"; "a d"] in
+  let texts=["hello world";"foo bar baz";"one two three four"] in
+  let ts=List.map (fun t -> Thread.create (fun () -> send (count_words t)) ()) texts in
+  List.iter Thread.join ts;
+  let mp_total = List.fold_left (fun a _ -> a + recv ()) 0 texts in
+  Printf.printf "message passing: %d\n" mp_total;
 
-  let mp  = msg_passing texts in
-  let sm  = shared_mem  texts in
-  assert (mp = sm);
-  Printf.printf "message-passing == shared-memory: %b\n%!" (mp = sm);
-
-  (* Spot check *)
-  assert (StringMap.find "a" mp = 2);
-  assert (StringMap.find "b" mp = 1);
-  Printf.printf "word counts: a=%d b=%d c=%d d=%d\n%!"
-    (StringMap.find "a" mp)
-    (StringMap.find "b" mp)
-    (StringMap.find "c" mp)
-    (StringMap.find "d" mp)
+  let ts=List.map (fun t -> Thread.create (fun () ->
+    let n=count_words t in Mutex.lock mutex; total:= !total+n; Mutex.unlock mutex) ()
+  ) texts in
+  List.iter Thread.join ts;
+  Printf.printf "shared memory: %d\n" !total

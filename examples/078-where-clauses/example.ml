@@ -1,58 +1,64 @@
-(* 078: Where Clauses / Complex Constraints
-   OCaml expresses complex constraints via module signatures and functors *)
+(* 078: Where Clauses — OCaml functor constraints *)
+(* OCaml uses module signatures as "where clause" equivalent *)
 
-(* --- Approach 1: Polymorphic compare + display via passed functions --- *)
-
-(* Like Rust's where T: Display + PartialEq *)
-let print_if_equal show eq a b =
-  if eq a b
-  then Printf.sprintf "%s == %s" (show a) (show b)
-  else Printf.sprintf "%s != %s" (show a) (show b)
-
-(* --- Approach 2: zip_with — multiple type params with constraints --- *)
-
-let zip_with f xs ys =
-  List.map2 f xs ys
-
-(* --- Approach 3: Module constraints (= Rust where clauses on assoc. types) --- *)
-
-module type ADDABLE = sig
+module type SUMMABLE = sig
   type t
   val zero : t
-  val add  : t -> t -> t
+  val add : t -> t -> t
+  val to_string : t -> string
 end
 
-(* sum_items: like Rust's where I::Item: Add + Default *)
-module SumItems (A : ADDABLE) = struct
-  let sum = List.fold_left A.add A.zero
+module type MULTIPLIABLE = sig
+  type t
+  val one : t
+  val mul : t -> t -> t
 end
 
-module IntAdd  = SumItems (struct type t = int   let zero = 0   let add = ( + ) end)
-module FloatAdd = SumItems (struct type t = float let zero = 0.0 let add = ( +. ) end)
+(* Functor with multiple constraints *)
+module MathOps (S : SUMMABLE) = struct
+  let sum lst = List.fold_left S.add S.zero lst
+  let sum_to_string lst =
+    S.to_string (sum lst)
+end
 
-(* dot product — requires both mul and add *)
-let dot_product mul add zero xs ys =
-  List.fold_left2 (fun acc x y -> add acc (mul x y)) zero xs ys
+module IntSum = MathOps(struct
+  type t = int
+  let zero = 0
+  let add = ( + )
+  let to_string = string_of_int
+end)
 
-(* display_collection: like where I::Item: Display *)
-let display_collection show xs =
-  "[" ^ String.concat "; " (List.map show xs) ^ "]"
+module FloatSum = MathOps(struct
+  type t = float
+  let zero = 0.0
+  let add = ( +. )
+  let to_string = string_of_float
+end)
 
+(* Complex constraint: both summable and multipliable *)
+module type RING = sig
+  include SUMMABLE
+  include MULTIPLIABLE with type t := t
+end
+
+module RingOps (R : RING) = struct
+  let dot_product a b =
+    List.fold_left2 (fun acc x y -> R.add acc (R.mul x y)) R.zero a b
+end
+
+module IntRing = RingOps(struct
+  type t = int
+  let zero = 0
+  let one = 1
+  let add = ( + )
+  let mul = ( * )
+  let to_string = string_of_int
+end)
+
+(* Tests *)
 let () =
-  Printf.printf "%s\n"
-    (print_if_equal string_of_int ( = ) 5 5);
-  Printf.printf "%s\n"
-    (print_if_equal string_of_int ( = ) 3 4);
-
-  Printf.printf "zip_with (+) [1;2;3] [4;5;6] = [%s]\n"
-    (String.concat "; " (List.map string_of_int
-      (zip_with ( + ) [1;2;3] [4;5;6])));
-
-  Printf.printf "sum ints [1..5] = %d\n" (IntAdd.sum [1;2;3;4;5]);
-  Printf.printf "sum floats = %.1f\n" (FloatAdd.sum [1.0;2.0;3.0]);
-
-  Printf.printf "dot [1;2;3] [4;5;6] = %d\n"
-    (dot_product ( * ) ( + ) 0 [1;2;3] [4;5;6]);
-
-  Printf.printf "display_collection [1;2;3] = %s\n"
-    (display_collection string_of_int [1;2;3])
+  assert (IntSum.sum [1; 2; 3; 4; 5] = 15);
+  assert (IntSum.sum_to_string [1; 2; 3] = "6");
+  assert (abs_float (FloatSum.sum [1.0; 2.0; 3.0] -. 6.0) < 0.001);
+  assert (IntRing.dot_product [1; 2; 3] [4; 5; 6] = 32);
+  Printf.printf "✓ All tests passed\n"

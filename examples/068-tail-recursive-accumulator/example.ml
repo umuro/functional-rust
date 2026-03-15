@@ -1,55 +1,54 @@
-(* 068: Tail-Recursive Accumulator
-   OCaml DOES guarantee tail-call optimisation — tail-rec is safe for large inputs *)
+(* 068: Tail-Recursive Accumulator *)
+(* Transform naive recursion into tail-recursive form *)
 
-(* --- Approach 1: Naive vs tail-recursive sum --- *)
-
-(* NOT tail-recursive: + waits after recursive call *)
+(* Approach 1: Naive vs tail-recursive sum *)
 let rec sum_naive = function
   | [] -> 0
   | x :: xs -> x + sum_naive xs
 
-(* Tail-recursive with explicit accumulator *)
-let sum_acc xs =
+let sum_tail lst =
   let rec aux acc = function
     | [] -> acc
-    | x :: rest -> aux (acc + x) rest
+    | x :: xs -> aux (acc + x) xs
   in
-  aux 0 xs
+  aux 0 lst
 
-(* Stdlib List.fold_left is also tail-recursive *)
-let sum_fold xs = List.fold_left ( + ) 0 xs
-
-(* --- Approach 2: Factorial --- *)
-
+(* Approach 2: Factorial *)
 let rec fact_naive n =
   if n <= 1 then 1 else n * fact_naive (n - 1)
 
 let fact_tail n =
-  let rec aux acc i =
-    if i <= 1 then acc else aux (acc * i) (i - 1)
+  let rec aux acc n =
+    if n <= 1 then acc
+    else aux (acc * n) (n - 1)
   in
   aux 1 n
 
-(* --- Approach 3: Fibonacci with accumulator (O(n) time, O(1) space) --- *)
-
-let fib n =
-  (* carry two consecutive values forward *)
-  let rec aux a b = function
-    | 0 -> a
-    | k -> aux b (a + b) (k - 1)
+(* Approach 3: Fibonacci with accumulator *)
+let fib_tail n =
+  let rec aux a b n =
+    if n = 0 then a
+    else aux b (a + b) (n - 1)
   in
   aux 0 1 n
 
+let rec fib_naive n =
+  if n <= 1 then n
+  else fib_naive (n - 1) + fib_naive (n - 2)
+
+(* Tests *)
 let () =
-  let xs = List.init 5 (fun i -> i + 1) in   (* [1;2;3;4;5] *)
-  Printf.printf "sum_naive [1..5]  = %d\n" (sum_naive xs);
-  Printf.printf "sum_acc   [1..5]  = %d\n" (sum_acc xs);
-  Printf.printf "sum_fold  [1..5]  = %d\n" (sum_fold xs);
-  Printf.printf "fact_naive 5      = %d\n" (fact_naive 5);
-  Printf.printf "fact_tail  5      = %d\n" (fact_tail 5);
-  Printf.printf "fib 0 = %d\n" (fib 0);
-  Printf.printf "fib 1 = %d\n" (fib 1);
-  Printf.printf "fib 10 = %d\n" (fib 10);
-  (* large input — safe because tail-recursive *)
-  let large = List.init 100_000 (fun _ -> 1) in
-  Printf.printf "sum of 100k ones = %d\n" (sum_acc large)
+  assert (sum_naive [1; 2; 3; 4; 5] = 15);
+  assert (sum_tail [1; 2; 3; 4; 5] = 15);
+  assert (sum_tail [] = 0);
+  assert (fact_naive 5 = 120);
+  assert (fact_tail 5 = 120);
+  assert (fact_tail 0 = 1);
+  assert (fib_tail 0 = 0);
+  assert (fib_tail 1 = 1);
+  assert (fib_tail 10 = 55);
+  assert (fib_naive 10 = 55);
+  (* Tail-recursive can handle large inputs *)
+  let large = List.init 100000 (fun _ -> 1) in
+  assert (sum_tail large = 100000);
+  Printf.printf "✓ All tests passed\n"

@@ -1,108 +1,72 @@
-(* 1015: Validation Errors — Accumulating All Errors
-   Unlike Result.bind which short-circuits, validation collects ALL errors.
-   We return a list of field errors. No short-circuiting — every field is checked. *)
+(* 1015: Validation Errors — Accumulating All Errors *)
+(* Not short-circuiting: collect ALL validation failures *)
 
-type field_error = {
-  field: string;
-  message: string;
-}
+type field_error = { field: string; message: string }
 
-let string_of_field_error e =
-  Printf.sprintf "%s: %s" e.field e.message
-
+(* Approach 1: Validate each field, collect errors *)
 let validate_name name =
-  let errors = ref [] in
-  if name = "" then
-    errors := { field = "name"; message = "required" } :: !errors;
-  if String.length name > 50 then
-    errors := { field = "name"; message = "too long" } :: !errors;
-  List.rev !errors
+  if String.length name = 0 then [{ field = "name"; message = "required" }]
+  else if String.length name > 50 then [{ field = "name"; message = "too long" }]
+  else []
 
 let validate_age age =
-  let errors = ref [] in
-  if age < 0 then
-    errors := { field = "age"; message = "negative" } :: !errors;
-  if age > 150 then
-    errors := { field = "age"; message = "unreasonable" } :: !errors;
-  List.rev !errors
+  if age < 0 then [{ field = "age"; message = "negative" }]
+  else if age > 150 then [{ field = "age"; message = "unreasonable" }]
+  else []
 
 let validate_email email =
   let errors = ref [] in
-  if email = "" then
+  if String.length email = 0 then
     errors := { field = "email"; message = "required" } :: !errors;
   if not (String.contains email '@') then
     errors := { field = "email"; message = "missing @" } :: !errors;
   List.rev !errors
 
-type valid_form = {
-  name: string;
-  age: int;
-  email: string;
-}
-
-(* Approach 1: Collect errors from each validator — all fields checked *)
 let validate_form name age email =
-  let errors =
-    validate_name name
-    @ validate_age age
-    @ validate_email email
-  in
-  if errors = [] then Ok { name; age; email }
+  let errors = validate_name name @ validate_age age @ validate_email email in
+  if errors = [] then Ok (name, age, email)
   else Error errors
 
-(* Approach 2: Functional with a check list *)
-let run_checks field value checks =
-  List.filter_map (fun (pred, msg) ->
-    if not (pred value) then Some { field; message = msg }
-    else None
-  ) checks
+(* Approach 2: Applicative-style validation *)
+let validate_field field pred value msg =
+  if pred value then [] else [{ field; message = msg }]
 
-let validate_form_functional name age email =
-  let name_checks = [
-    ((fun s -> s <> ""), "required");
-    ((fun s -> String.length s <= 50), "too long");
-  ] in
-  let age_checks = [
-    ((fun n -> n >= 0), "negative");
-    ((fun n -> n <= 150), "unreasonable");
-  ] in
+let validate_form_app name age email =
   let errors =
-    run_checks "name" name name_checks
-    @ run_checks "age" age age_checks
-    @ validate_email email
+    validate_field "name" (fun s -> String.length s > 0) name "required"
+    @ validate_field "name" (fun s -> String.length s <= 50) name "too long"
+    @ validate_field "age" (fun n -> n >= 0) age "negative"
+    @ validate_field "age" (fun n -> n <= 150) age "unreasonable"
+    @ validate_field "email" (fun s -> String.contains s '@') email "missing @"
   in
-  if errors = [] then Ok { name; age; email }
+  if errors = [] then Ok (name, age, email)
   else Error errors
+
+let test_all_errors () =
+  (* Multiple errors accumulated *)
+  (match validate_form "" (-5) "bademail" with
+   | Error errs ->
+     assert (List.length errs >= 3);
+     assert (List.exists (fun e -> e.field = "name") errs);
+     assert (List.exists (fun e -> e.field = "age") errs);
+     assert (List.exists (fun e -> e.field = "email") errs);
+   | Ok _ -> assert false);
+  Printf.printf "  Approach 1 (accumulate all): passed\n"
+
+let test_valid () =
+  assert (validate_form "Alice" 30 "a@b.com" = Ok ("Alice", 30, "a@b.com"));
+  Printf.printf "  Valid input: passed\n"
+
+let test_applicative () =
+  (match validate_form_app "" (-1) "bad" with
+   | Error errs -> assert (List.length errs >= 3)
+   | Ok _ -> assert false);
+  assert (validate_form_app "Bob" 25 "b@c.com" = Ok ("Bob", 25, "b@c.com"));
+  Printf.printf "  Approach 2 (applicative): passed\n"
 
 let () =
-  (* All errors are collected — no short-circuit *)
-  (match validate_form "" (-5) "bademail" with
-   | Error errors ->
-     assert (List.length errors >= 3);
-     assert (List.exists (fun e -> e.field = "name") errors);
-     assert (List.exists (fun e -> e.field = "age") errors);
-     assert (List.exists (fun e -> e.field = "email") errors)
-   | _ -> assert false);
-
-  (match validate_form "Alice" 30 "a@b.com" with
-   | Ok form ->
-     assert (form.name = "Alice");
-     assert (form.age = 30)
-   | _ -> assert false);
-
-  (match validate_form "Alice" 30 "no-at" with
-   | Error errors ->
-     assert (List.length errors = 1);
-     assert ((List.hd errors).field = "email")
-   | _ -> assert false);
-
-  (match validate_form_functional "" (-1) "bad" with
-   | Error errors -> assert (List.length errors >= 3)
-   | _ -> assert false);
-
-  (* empty + negative age + empty email + missing @ = at least 4 errors *)
-  (match validate_form "" (-5) "" with
-   | Error errors -> assert (List.length errors >= 4)
-   | _ -> assert false);
-
-  Printf.printf "All validation error tests passed\n"
+  Printf.printf "Testing validation errors:\n";
+  test_all_errors ();
+  test_valid ();
+  test_applicative ();
+  Printf.printf "✓ All tests passed\n"

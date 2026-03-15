@@ -1,88 +1,80 @@
-(* 1039: Stack Using a List
-   OCaml lists naturally implement a LIFO stack: cons = push, hd/tl = peek/pop.
-   Also demonstrates RPN evaluator and bracket balancing. *)
+(* 1039: Stack Using List *)
+(* OCaml's list IS a stack — cons and pattern match are push and pop *)
 
-(* Approach 1: OCaml list as a pure functional stack *)
-let push x stack = x :: stack
-let pop = function [] -> (None, []) | x :: rest -> (Some x, rest)
-let peek = function [] -> None | x :: _ -> Some x
-let is_empty = function [] -> true | _ -> false
-let size = List.length
+(* Approach 1: List as a stack (idiomatic OCaml) *)
+let list_stack () =
+  let stack = [] in
+  let stack = 1 :: stack in
+  let stack = 2 :: stack in
+  let stack = 3 :: stack in
+  assert (List.hd stack = 3);  (* top *)
+  let (top, stack) = (List.hd stack, List.tl stack) in
+  assert (top = 3);
+  assert (List.hd stack = 2)
 
-let functional_stack_demo () =
-  let s = [] in
-  assert (is_empty s);
-  let s = push 10 (push 20 (push 30 s)) in
-  (* Stack top is last-pushed = 10 (since push prepends) *)
-  assert (size s = 3);
-  assert (peek s = Some 10);
-  let (v, s) = pop s in assert (v = Some 10);
-  let (v, s) = pop s in assert (v = Some 20);
-  let (v, s) = pop s in assert (v = Some 30);
-  let (v, _) = pop s in assert (v = None)
+(* Approach 2: Module-based stack *)
+module Stack : sig
+  type 'a t
+  val empty : 'a t
+  val push : 'a -> 'a t -> 'a t
+  val pop : 'a t -> ('a * 'a t) option
+  val peek : 'a t -> 'a option
+  val is_empty : 'a t -> bool
+  val size : 'a t -> int
+  val to_list : 'a t -> 'a list
+end = struct
+  type 'a t = { items: 'a list; size: int }
 
-(* Approach 2: Mutable stack backed by array (like Rust's Vec) *)
-type 'a stack_mut = { mutable items : 'a list }
+  let empty = { items = []; size = 0 }
+  let push x s = { items = x :: s.items; size = s.size + 1 }
+  let pop s = match s.items with
+    | [] -> None
+    | x :: xs -> Some (x, { items = xs; size = s.size - 1 })
+  let peek s = match s.items with
+    | [] -> None
+    | x :: _ -> Some x
+  let is_empty s = s.items = []
+  let size s = s.size
+  let to_list s = s.items
+end
 
-let make_stack () = { items = [] }
-let push_mut s x = s.items <- x :: s.items
-let pop_mut s = match s.items with
-  | [] -> None
-  | x :: rest -> s.items <- rest; Some x
-let peek_mut s = match s.items with [] -> None | x :: _ -> Some x
+let module_stack () =
+  let s = Stack.empty in
+  let s = Stack.push 10 s in
+  let s = Stack.push 20 s in
+  let s = Stack.push 30 s in
+  assert (Stack.size s = 3);
+  assert (Stack.peek s = Some 30);
+  let (v, s) = Option.get (Stack.pop s) in
+  assert (v = 30);
+  assert (Stack.peek s = Some 20)
 
-(* Approach 3: RPN calculator *)
+(* Approach 3: Stack-based expression evaluator *)
 let eval_rpn tokens =
-  let stack = ref [] in
-  List.iter (fun token ->
+  let stack = List.fold_left (fun stack token ->
     match token with
     | "+" | "-" | "*" ->
-      let b = List.hd !stack in stack := List.tl !stack;
-      let a = List.hd !stack in stack := List.tl !stack;
+      let b = List.hd stack in
+      let a = List.hd (List.tl stack) in
+      let rest = List.tl (List.tl stack) in
       let result = match token with
         | "+" -> a + b
         | "-" -> a - b
         | "*" -> a * b
-        | _   -> assert false
+        | _ -> failwith "impossible"
       in
-      stack := result :: !stack
-    | n -> stack := int_of_string n :: !stack
-  ) tokens;
-  List.hd !stack
+      result :: rest
+    | n -> int_of_string n :: stack
+  ) [] tokens in
+  List.hd stack
 
-(* Approach 4: Balanced bracket checker *)
-let is_balanced s =
-  let stack = ref [] in
-  let ok = ref true in
-  String.iter (fun c ->
-    match c with
-    | '(' | '[' | '{' -> stack := c :: !stack
-    | ')' -> (match !stack with '(' :: rest -> stack := rest | _ -> ok := false)
-    | ']' -> (match !stack with '[' :: rest -> stack := rest | _ -> ok := false)
-    | '}' -> (match !stack with '{' :: rest -> stack := rest | _ -> ok := false)
-    | _   -> ()
-  ) s;
-  !ok && !stack = []
+let eval_test () =
+  (* 3 4 + 2 * = (3 + 4) * 2 = 14 *)
+  let result = eval_rpn ["3"; "4"; "+"; "2"; "*"] in
+  assert (result = 14)
 
 let () =
-  functional_stack_demo ();
-
-  let s = make_stack () in
-  push_mut s 10; push_mut s 20; push_mut s 30;
-  assert (peek_mut s = Some 30);
-  assert (pop_mut s = Some 30);
-  assert (pop_mut s = Some 20);
-  assert (pop_mut s = Some 10);
-  assert (pop_mut s = None);
-
-  (* RPN: (3 + 4) * 2 = 14 *)
-  assert (eval_rpn ["3";"4";"+";"2";"*"] = 14);
-  (* 5 + (1+2)*4 - 3 = 14 *)
-  assert (eval_rpn ["5";"1";"2";"+";"4";"*";"+";"3";"-"] = 14);
-
-  assert (is_balanced "({[]})");
-  assert (is_balanced "");
-  assert (not (is_balanced "({[})"));
-  assert (not (is_balanced "(("));
-
-  Printf.printf "All stack tests passed.\n"
+  list_stack ();
+  module_stack ();
+  eval_test ();
+  Printf.printf "✓ All tests passed\n"

@@ -1,78 +1,66 @@
-(* 1011: The ? (Try) Operator
-   Rust's ? desugars to early-return on Err + From conversion.
-   In OCaml we achieve the same with Result.bind (>>=) chains or
-   the let* syntax (available with Result monad or a let-bind helper). *)
+(* 1011: The Try Operator (?) *)
+(* OCaml has no ? — we simulate with bind/let* *)
 
-type app_error =
-  | NotFound
-  | ParseFailed of string
-  | TooLarge of int
+type error = NotFound | ParseFailed of string | TooLarge of int
 
-let string_of_app_error = function
-  | NotFound        -> "not found"
-  | ParseFailed s   -> Printf.sprintf "parse failed: %s" s
-  | TooLarge n      -> Printf.sprintf "too large: %d" n
-
+(* Approach 1: Nested match — what Rust's ? replaces *)
 let read_data key =
   if key = "missing" then Error NotFound
   else Ok "42"
 
 let parse_data s =
   match int_of_string_opt s with
+  | None -> Error (ParseFailed s)
   | Some n -> Ok n
-  | None   -> Error (ParseFailed (Printf.sprintf "not an int: %s" s))
 
 let validate n =
   if n > 100 then Error (TooLarge n)
   else Ok n
 
-(* Approach 1: explicit Result.bind chain (mirrors ? in Rust) *)
-let process_bind key =
-  Result.bind (read_data key) (fun s ->
-    Result.bind (parse_data s) (fun n ->
-      validate n))
+let process_nested key =
+  match read_data key with
+  | Error e -> Error e
+  | Ok s ->
+    match parse_data s with
+    | Error e -> Error e
+    | Ok n ->
+      match validate n with
+      | Error e -> Error e
+      | Ok v -> Ok v
 
-(* Approach 2: using let* via a local bind operator *)
+(* Approach 2: bind operator — monadic chaining *)
+let ( >>= ) r f = match r with Ok v -> f v | Error e -> Error e
+
+let process_bind key =
+  read_data key >>= parse_data >>= validate
+
+(* Approach 3: let* syntax (OCaml 4.08+ binding operators) *)
 let ( let* ) = Result.bind
 
 let process_let_star key =
   let* s = read_data key in
   let* n = parse_data s in
-  validate n
+  let* v = validate n in
+  Ok v
 
-(* Approach 3: inline composition *)
-let process_inline key =
-  read_data key
-  |> Result.bind parse_data
-  |> Result.bind validate
+let test_nested () =
+  assert (process_nested "ok" = Ok 42);
+  assert (process_nested "missing" = Error NotFound);
+  Printf.printf "  Approach 1 (nested match): passed\n"
 
-let () =
+let test_bind () =
   assert (process_bind "ok" = Ok 42);
   assert (process_bind "missing" = Error NotFound);
+  Printf.printf "  Approach 2 (bind operator): passed\n"
 
-  (* All three are equivalent *)
-  assert (process_bind "ok" = process_let_star "ok");
-  assert (process_bind "missing" = process_let_star "missing");
-  assert (process_bind "ok" = process_inline "ok");
-  assert (process_bind "missing" = process_inline "missing");
+let test_let_star () =
+  assert (process_let_star "ok" = Ok 42);
+  assert (process_let_star "missing" = Error NotFound);
+  Printf.printf "  Approach 3 (let* syntax): passed\n"
 
-  (* ParseFailed conversion *)
-  (match parse_data "abc" with
-   | Error (ParseFailed _) -> ()
-   | _ -> assert false);
-
-  (* TooLarge *)
-  let r =
-    let* n =
-      match int_of_string_opt "200" with
-      | Some n -> Ok n
-      | None -> Error (ParseFailed "not an int")
-    in
-    validate n
-  in
-  assert (r = Error (TooLarge 200));
-
-  Printf.printf "process ok: %s\n"
-    (match process_let_star "ok" with
-     | Ok n -> string_of_int n
-     | Error e -> string_of_app_error e)
+let () =
+  Printf.printf "Testing try operator equivalents:\n";
+  test_nested ();
+  test_bind ();
+  test_let_star ();
+  Printf.printf "✓ All tests passed\n"

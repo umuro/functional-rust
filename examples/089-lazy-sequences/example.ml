@@ -1,45 +1,32 @@
-(* 089: Lazy Sequences
-   OCaml's Seq module provides demand-driven (lazy) sequences *)
+(* 089: Lazy Sequences *)
 
-(* --- Approach 1: Natural numbers from a seed --- *)
+(* Approach 1: Lazy list via thunks *)
+let naturals =
+  let rec aux n () = Seq.Cons (n, aux (n + 1)) in
+  aux 0
 
-(* Seq.ints is built-in from 4.14; show it manually too *)
-let naturals_from n = Seq.iterate (fun x -> x + 1) n
+let take n s = List.of_seq (Seq.take n s)
 
-(* --- Approach 2: Fibonacci as an infinite lazy Seq --- *)
-
+(* Approach 2: Lazy fibonacci *)
 let fibs =
-  Seq.unfold (fun (a, b) -> Some (a, (b, a + b))) (0, 1)
+  let rec aux a b () = Seq.Cons (a, aux b (a + b)) in
+  aux 0 1
 
-(* --- Approach 3: Powers of 2 (finite lazy sequence via take) --- *)
+(* Approach 3: from_fn equivalent *)
+let from_fn f =
+  let state = ref 0 in
+  let rec aux () =
+    match f !state with
+    | None -> Seq.Nil
+    | Some v -> state := !state + 1; Seq.Cons (v, aux)
+  in
+  aux
 
-let powers_of_2 =
-  Seq.unfold (fun exp ->
-    if exp >= 4 then None
-    else Some (1 lsl exp, exp + 1)
-  ) 0
+let powers_of_2 = from_fn (fun n -> if n >= 10 then None else Some (1 lsl n))
 
-(* --- Approach 4: Seq.map / filter are also lazy --- *)
-
-let lazy_pipeline () =
-  (* No computation until List.of_seq forces it *)
-  naturals_from 0
-  |> Seq.filter (fun x -> x mod 3 = 0)
-  |> Seq.map    (fun x -> x * x)
-  |> Seq.take   5
-  |> List.of_seq
-
+(* Tests *)
 let () =
-  Printf.printf "naturals from 0, take 5 = [%s]\n"
-    (String.concat "; " (List.map string_of_int
-      (List.of_seq (Seq.take 5 (naturals_from 0)))));
-
-  Printf.printf "fibs take 8 = [%s]\n"
-    (String.concat "; " (List.map string_of_int
-      (List.of_seq (Seq.take 8 fibs))));
-
-  Printf.printf "powers of 2 (0..3) = [%s]\n"
-    (String.concat "; " (List.map string_of_int (List.of_seq powers_of_2)));
-
-  Printf.printf "multiples-of-3 squared, take 5 = [%s]\n"
-    (String.concat "; " (List.map string_of_int (lazy_pipeline ())))
+  assert (take 5 naturals = [0; 1; 2; 3; 4]);
+  assert (take 8 fibs = [0; 1; 1; 2; 3; 5; 8; 13]);
+  assert (take 4 powers_of_2 = [1; 2; 4; 8]);
+  Printf.printf "✓ All tests passed\n"

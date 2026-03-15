@@ -1,5 +1,4 @@
-(* 1052: Fibonacci Bottom-Up DP
-   Three approaches: array DP, O(1) space with two vars, and fold. *)
+(* 1052: Fibonacci Bottom-Up DP with O(1) Space *)
 
 (* Approach 1: Array-based bottom-up DP *)
 let fib_array n =
@@ -8,7 +7,7 @@ let fib_array n =
     let dp = Array.make (n + 1) 0 in
     dp.(1) <- 1;
     for i = 2 to n do
-      dp.(i) <- dp.(i-1) + dp.(i-2)
+      dp.(i) <- dp.(i - 1) + dp.(i - 2)
     done;
     dp.(n)
   end
@@ -16,47 +15,31 @@ let fib_array n =
 (* Approach 2: O(1) space — two variables *)
 let fib_const n =
   if n <= 1 then n
-  else
-    let a = ref 0 and b = ref 1 in
+  else begin
+    let a = ref 0 in
+    let b = ref 1 in
     for _ = 2 to n do
       let t = !a + !b in
       a := !b;
       b := t
     done;
     !b
+  end
 
-(* Approach 3: Purely functional with List.fold_left — no mutation *)
+(* Approach 3: Functional fold with tuple *)
 let fib_fold n =
   if n <= 1 then n
   else
     let (_, b) =
-      List.fold_left
-        (fun (a, b) _ -> (b, a + b))
-        (0, 1)
-        (List.init (n - 1) (fun _ -> ()))
+      List.init (n - 1) Fun.id
+      |> List.fold_left (fun (a, b) _ -> (b, a + b)) (0, 1)
     in
     b
 
-(* Approach 4: Generate first N Fibonacci numbers via unfold *)
-let fib_list n =
-  (* Iteratively build the list of the first n Fibonacci numbers *)
-  let rec go i a b acc =
-    if i = 0 then List.rev acc
-    else go (i - 1) b (a + b) (a :: acc)
-  in
-  go n 0 1 []
-
 let () =
-  let cases = [(0,0);(1,1);(2,1);(5,5);(10,55);(20,6765);(30,832040)] in
-
   List.iter (fun (n, expected) ->
     assert (fib_array n = expected);
     assert (fib_const n = expected);
-    assert (fib_fold  n = expected)
-  ) cases;
-
-  (* First 10 Fibonacci numbers *)
-  let first10 = fib_list 10 in
-  assert (first10 = [0;1;1;2;3;5;8;13;21;34]);
-
-  Printf.printf "All fibonacci-dp tests passed.\n"
+    assert (fib_fold n = expected)
+  ) [(0, 0); (1, 1); (2, 1); (5, 5); (10, 55); (20, 6765); (30, 832040)];
+  Printf.printf "✓ All tests passed\n"

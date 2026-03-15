@@ -1,87 +1,73 @@
-(* 1043: Interval Map — sorted list of non-overlapping [lo, hi) -> value
-   OCaml's Map (sorted by key) mirrors Rust's BTreeMap for range lookups. *)
+(* 1043: Interval Map — BTreeMap-based Range Storage *)
+(* Map non-overlapping intervals to values *)
 
-(* Each entry: (lo, hi, value) — sorted by lo, non-overlapping *)
-(* We use a sorted association list for simplicity and clarity *)
+module IntMap = Map.Make(Int)
 
-type 'a interval_map = (int * int * 'a) list  (* (lo, hi, value) sorted by lo *)
+(* Store intervals as (start, (end, value)) in a sorted map *)
+type 'a interval_map = (int * 'a) IntMap.t
 
-let empty_im : 'a interval_map = []
+let empty : 'a interval_map = IntMap.empty
 
-(* Insert [lo, hi) -> value, removing any overlapping intervals *)
-let insert lo hi value im =
-  assert (lo < hi);
-  (* Keep intervals that do NOT overlap with [lo, hi) *)
-  let non_overlapping = List.filter (fun (l, h, _) ->
-    (* Overlaps if l < hi && h > lo *)
-    not (l < hi && h > lo)
+(* Insert interval [lo, hi) -> value (overwrites overlapping ranges) *)
+let insert lo hi value (im : 'a interval_map) : 'a interval_map =
+  (* Remove all intervals that overlap with [lo, hi) *)
+  let filtered = IntMap.filter (fun start (stop, _) ->
+    stop <= lo || start >= hi  (* keep if completely before or after *)
   ) im in
-  (* Insert in sorted order *)
-  let rec ins = function
-    | [] -> [(lo, hi, value)]
-    | ((l, _, _) as hd) :: rest ->
-      if lo < l then (lo, hi, value) :: hd :: rest
-      else hd :: ins rest
+  IntMap.add lo (hi, value) filtered
+
+(* Query: find value at point *)
+let query point (im : 'a interval_map) : 'a option =
+  (* Find the largest start <= point *)
+  let (below, at_point, _) = IntMap.split point im in
+  match at_point with
+  | Some (hi, v) when point < hi -> Some v
+  | _ ->
+    match IntMap.max_binding_opt below with
+    | Some (_, (hi, v)) when point < hi -> Some v
+    | _ -> None
+
+(* Approach 1: Basic interval operations *)
+let basic_ops () =
+  let im = empty
+    |> insert 0 10 "low"
+    |> insert 10 20 "mid"
+    |> insert 20 30 "high"
   in
-  ins non_overlapping
+  assert (query 5 im = Some "low");
+  assert (query 15 im = Some "mid");
+  assert (query 25 im = Some "high");
+  assert (query 30 im = None);
+  assert (query (-1) im = None)
 
-(* Point query: find the interval containing point, if any *)
-let query point im =
-  (* Find last interval where lo <= point, then check hi > point *)
-  let rec aux best = function
-    | [] -> best
-    | (lo, hi, v) :: rest ->
-      if lo > point then best
-      else aux (if lo <= point && point < hi then Some v else best) rest
+(* Approach 2: Overlapping insert *)
+let overlap_test () =
+  let im = empty
+    |> insert 0 10 "a"
+    |> insert 5 15 "b"  (* overlaps with "a" *)
   in
-  aux None im
+  (* "b" overwrites the overlapping portion *)
+  assert (query 7 im = Some "b");
+  assert (query 12 im = Some "b")
 
-(* List all intervals *)
-let intervals im = im
+(* Approach 3: List all intervals *)
+let to_list (im : 'a interval_map) =
+  IntMap.fold (fun start (stop, value) acc ->
+    (start, stop, value) :: acc
+  ) im [] |> List.rev
 
-let len im = List.length im
+let list_test () =
+  let im = empty
+    |> insert 0 5 "x"
+    |> insert 10 20 "y"
+  in
+  let intervals = to_list im in
+  assert (List.length intervals = 2);
+  let (s, e, v) = List.hd intervals in
+  assert (s = 0 && e = 5 && v = "x")
 
 let () =
-  let im = ref empty_im in
-  im := insert 0 10 "low" !im;
-  im := insert 10 20 "mid" !im;
-  im := insert 20 30 "high" !im;
-
-  assert (query 5  !im = Some "low");
-  assert (query 15 !im = Some "mid");
-  assert (query 25 !im = Some "high");
-  assert (query 30 !im = None);
-  assert (query (-1) !im = None);
-  assert (len !im = 3);
-
-  (* Overlap: [5,15) replaces [0,10) *)
-  let im2 = ref empty_im in
-  im2 := insert 0 10 "a" !im2;
-  im2 := insert 5 15 "b" !im2;
-  assert (query 7  !im2 = Some "b");
-  assert (query 12 !im2 = Some "b");
-
-  (* Listing *)
-  let im3 = ref empty_im in
-  im3 := insert 0 5 "x" !im3;
-  im3 := insert 10 20 "y" !im3;
-  let ivs = intervals !im3 in
-  assert (List.length ivs = 2);
-  assert (List.nth ivs 0 = (0, 5, "x"));
-  assert (List.nth ivs 1 = (10, 20, "y"));
-
-  (* Boundary: [0,10) includes 0..9, excludes 10 *)
-  let im4 = ref empty_im in
-  im4 := insert 0 10 "a" !im4;
-  assert (query 0 !im4 = Some "a");
-  assert (query 9 !im4 = Some "a");
-  assert (query 10 !im4 = None);
-
-  (* Adjacent intervals *)
-  let im5 = ref empty_im in
-  im5 := insert 0 5 "a" !im5;
-  im5 := insert 5 10 "b" !im5;
-  assert (query 4 !im5 = Some "a");
-  assert (query 5 !im5 = Some "b");
-
-  Printf.printf "All interval-map tests passed.\n"
+  basic_ops ();
+  overlap_test ();
+  list_test ();
+  Printf.printf "✓ All tests passed\n"

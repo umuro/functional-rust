@@ -1,111 +1,89 @@
-(* 958: CSV Parser
+(* 958: CSV Parser *)
+(* Handle quoted fields, commas inside quotes, escaped quotes *)
 
-   OCaml: state machine over characters using a variant type.
-   Three approaches:
-   1. Simple split (no quote handling)
-   2. Full state machine with RFC 4180 quote handling
-   3. Multi-row parser *)
-
-(* ── Approach 1: Simple split ────────────────────────────────────────────── *)
+(* Approach 1: Simple split (no quote handling) *)
 
 let split_simple line =
   String.split_on_char ',' line
 
-(* ── Approach 2: Full CSV state machine ─────────────────────────────────── *)
+(* Approach 2: Proper CSV field parser using state machine *)
 
 type state = Normal | InQuote | AfterQuote
 
 let parse_csv_line line =
-  let fields  = Buffer.create 64 in
+  let n = String.length line in
+  let fields = ref [] in
   let current = Buffer.create 16 in
-  let state   = ref Normal in
-  String.iter (fun c ->
-    match (!state, c) with
-    | (Normal,     '"') -> state := InQuote
-    | (Normal,     ',') ->
-      Buffer.add_string fields (Buffer.contents current);
-      Buffer.add_char fields '\x00';   (* separator between fields *)
+  let state = ref Normal in
+
+  for i = 0 to n - 1 do
+    let c = line.[i] in
+    match !state, c with
+    | Normal, '"' ->
+      state := InQuote
+    | Normal, ',' ->
+      fields := Buffer.contents current :: !fields;
       Buffer.clear current
-    | (Normal,      c ) -> Buffer.add_char current c
-    | (InQuote,    '"') -> state := AfterQuote
-    | (InQuote,     c ) -> Buffer.add_char current c
-    | (AfterQuote, '"') ->
+    | Normal, c ->
+      Buffer.add_char current c
+    | InQuote, '"' ->
+      state := AfterQuote
+    | InQuote, c ->
+      Buffer.add_char current c
+    | AfterQuote, '"' ->
+      (* Escaped quote: "" inside quoted field *)
       Buffer.add_char current '"';
       state := InQuote
-    | (AfterQuote, ',') ->
-      Buffer.add_string fields (Buffer.contents current);
-      Buffer.add_char fields '\x00';
+    | AfterQuote, ',' ->
+      fields := Buffer.contents current :: !fields;
       Buffer.clear current;
       state := Normal
-    | (AfterQuote,  _ ) -> state := Normal
-  ) line;
-  (* Push last field *)
-  Buffer.add_string fields (Buffer.contents current);
-  (* Split on null separator *)
-  String.split_on_char '\x00' (Buffer.contents fields)
+    | AfterQuote, _ ->
+      state := Normal
+  done;
+  (* Add the last field *)
+  fields := Buffer.contents current :: !fields;
+  List.rev !fields
 
-(* Alternative: accumulate into a list, avoid the double-buffer trick *)
-let parse_csv_line_clean line =
-  let current = Buffer.create 16 in
-  let state   = ref Normal in
-  let push_field acc =
-    let f = Buffer.contents current in
-    Buffer.clear current;
-    f :: acc
-  in
-  let result = String.fold_left (fun acc c ->
-    match (!state, c) with
-    | (Normal,     '"') -> state := InQuote; acc
-    | (Normal,     ',') -> push_field acc
-    | (Normal,      c ) -> Buffer.add_char current c; acc
-    | (InQuote,    '"') -> state := AfterQuote; acc
-    | (InQuote,     c ) -> Buffer.add_char current c; acc
-    | (AfterQuote, '"') ->
-      Buffer.add_char current '"';
-      state := InQuote; acc
-    | (AfterQuote, ',') ->
-      let a = push_field acc in
-      state := Normal; a
-    | (AfterQuote,  _ ) -> state := Normal; acc
-  ) [] line in
-  List.rev (push_field result)
-
-(* ── Approach 3: Multi-row parser ────────────────────────────────────────── *)
+(* Approach 3: Parse multiple rows *)
 
 let parse_csv text =
-  text
-  |> String.split_on_char '\n'
-  |> List.filter (fun l -> l <> "")
-  |> List.map parse_csv_line_clean
+  let lines = String.split_on_char '\n' text in
+  List.filter_map (fun line ->
+    if String.length line = 0 then None
+    else Some (parse_csv_line line)
+  ) lines
 
 let () =
-  (* simple split *)
-  assert (split_simple "a,b,c" = ["a"; "b"; "c"]);
-  assert (split_simple "one"   = ["one"]);
+  (* Simple split *)
+  let row = split_simple "a,b,c" in
+  assert (row = ["a"; "b"; "c"]);
 
-  let parse = parse_csv_line_clean in
+  (* Quoted fields *)
+  let row2 = parse_csv_line "\"hello\",\"world\",plain" in
+  assert (row2 = ["hello"; "world"; "plain"]);
 
-  (* quoted fields *)
-  assert (parse "\"hello\",\"world\",plain" = ["hello"; "world"; "plain"]);
+  (* Comma inside quotes *)
+  let row3 = parse_csv_line "\"one, two\",three" in
+  assert (row3 = ["one, two"; "three"]);
 
-  (* comma inside quotes *)
-  assert (parse "\"one, two\",three" = ["one, two"; "three"]);
+  (* Escaped quotes inside quoted field *)
+  let row4 = parse_csv_line "\"say \"\"hi\"\"\",end" in
+  assert (row4 = ["say \"hi\""; "end"]);
 
-  (* escaped quotes: "" inside quoted field *)
-  assert (parse "\"say \"\"hi\"\"\",end" = ["say \"hi\""; "end"]);
+  (* Empty fields *)
+  let row5 = parse_csv_line ",," in
+  assert (row5 = [""; ""; ""]);
 
-  (* empty fields *)
-  assert (parse ",,"  = [""; ""; ""]);
-  assert (parse "a,,c" = ["a"; ""; "c"]);
+  (* Mixed *)
+  let row6 = parse_csv_line "name,\"Alice, Bob\",42" in
+  assert (row6 = ["name"; "Alice, Bob"; "42"]);
 
-  (* mixed *)
-  assert (parse "name,\"Alice, Bob\",42" = ["name"; "Alice, Bob"; "42"]);
-
-  (* multi-row *)
+  (* Multi-row *)
   let csv = "a,b,c\n1,2,3\n\"x,y\",z,w" in
   let rows = parse_csv csv in
   assert (List.length rows = 3);
   assert (List.nth rows 0 = ["a"; "b"; "c"]);
   assert (List.nth rows 2 = ["x,y"; "z"; "w"]);
 
-  print_endline "958-csv-parser: all tests passed"
+  Printf.printf "✓ All tests passed\n"

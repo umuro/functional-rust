@@ -1,112 +1,74 @@
-(* 972: Persistent BST (Immutable Red-Black Tree)
-   OCaml's standard Map module is a balanced persistent BST.
-   Each insertion/deletion returns a new tree; old versions remain valid.
-   We demonstrate both the stdlib Map and a hand-rolled persistent AVL tree. *)
+(* 972: Persistent Binary Search Tree *)
+(* Functional update: insert/delete return new root, old tree unchanged *)
 
-(* --- Using OCaml's stdlib Map (red-black tree internally) --- *)
-module IntMap = Map.Make(Int)
-module StringMap = Map.Make(String)
-
-(* --- Hand-rolled persistent AVL tree --- *)
-type 'a avl =
+type 'a bst =
   | Empty
-  | Node of { left : 'a avl; key : int; value : 'a; right : 'a avl; height : int }
+  | Node of 'a bst * 'a * 'a bst
 
-let height = function Empty -> 0 | Node n -> n.height
+(* Approach 1: Insert returns new tree (functional style) *)
 
-let make_node left key value right =
-  Node { left; key; value; right; height = 1 + max (height left) (height right) }
-
-let balance_factor = function
-  | Empty -> 0
-  | Node n -> height n.left - height n.right
-
-let rotate_right = function
-  | Node ({ left = Node lc; _ } as n) ->
-    make_node lc.left lc.key lc.value (make_node lc.right n.key n.value n.right)
-  | t -> t
-
-let rotate_left = function
-  | Node ({ right = Node rc; _ } as n) ->
-    make_node (make_node n.left n.key n.value rc.left) rc.key rc.value rc.right
-  | t -> t
-
-let rebalance left key value right =
-  let t = make_node left key value right in
-  match balance_factor t with
-  | bf when bf > 1 ->
-    (* Left heavy *)
-    let t' = if balance_factor left < 0
-             then Node { (match t with Node n -> n | _ -> assert false)
-                         with left = rotate_left left }
-             else t
-    in rotate_right t'
-  | bf when bf < -1 ->
-    (* Right heavy *)
-    let t' = if balance_factor right > 0
-             then Node { (match t with Node n -> n | _ -> assert false)
-                         with right = rotate_right right }
-             else t
-    in rotate_left t'
-  | _ -> t
-
-let rec insert tree k v =
+let rec insert tree x =
   match tree with
-  | Empty -> make_node Empty k v Empty
-  | Node n ->
-    if k < n.key      then rebalance (insert n.left k v) n.key n.value n.right
-    else if k > n.key then rebalance n.left n.key n.value (insert n.right k v)
-    else Node { n with value = v }  (* update existing key — O(log n) *)
+  | Empty -> Node (Empty, x, Empty)
+  | Node (l, v, r) ->
+    if x < v then Node (insert l x, v, r)
+    else if x > v then Node (l, v, insert r x)
+    else tree  (* duplicate: return same tree *)
 
-let rec find tree k =
+let rec member tree x =
   match tree with
+  | Empty -> false
+  | Node (l, v, r) ->
+    if x = v then true
+    else if x < v then member l x
+    else member r x
+
+let rec min_val = function
   | Empty -> None
-  | Node n ->
-    if k = n.key then Some n.value
-    else if k < n.key then find n.left k
-    else find n.right k
+  | Node (Empty, v, _) -> Some v
+  | Node (l, _, _) -> min_val l
 
-let rec to_sorted_list = function
-  | Empty  -> []
-  | Node n -> to_sorted_list n.left @ [(n.key, n.value)] @ to_sorted_list n.right
+(* Approach 2: Functional delete *)
+
+let rec delete tree x =
+  match tree with
+  | Empty -> Empty
+  | Node (l, v, r) ->
+    if x < v then Node (delete l x, v, r)
+    else if x > v then Node (l, v, delete r x)
+    else
+      (* Found: merge left and right subtrees *)
+      match min_val r with
+      | None -> l  (* no right subtree *)
+      | Some m -> Node (l, m, delete r m)
+
+let rec to_list tree =
+  match tree with
+  | Empty -> []
+  | Node (l, v, r) -> to_list l @ [v] @ to_list r
 
 let () =
-  (* --- stdlib Map: functional/persistent --- *)
-  Printf.printf "=== stdlib Map (persistent BST) ===\n";
-  let m0 = IntMap.empty in
-  let m1 = IntMap.add 3 "three" m0 in
-  let m2 = IntMap.add 1 "one"   m1 in
-  let m3 = IntMap.add 2 "two"   m2 in
-
-  (* All three versions are independently valid *)
-  Printf.printf "m1 size=%d  m2 size=%d  m3 size=%d\n"
-    (IntMap.cardinal m1) (IntMap.cardinal m2) (IntMap.cardinal m3);
-
-  IntMap.iter (fun k v -> Printf.printf "  %d -> %s\n" k v) m3;
-
-  let m4 = IntMap.add 2 "TWO" m3 in  (* update: returns new map *)
-  Printf.printf "m3[2]=%s  m4[2]=%s  (m3 unchanged)\n"
-    (IntMap.find 2 m3) (IntMap.find 2 m4);
-
-  (* --- Hand-rolled persistent AVL tree --- *)
-  Printf.printf "\n=== Persistent AVL tree ===\n";
   let t0 = Empty in
-  let t1 = insert t0 5 "five" in
-  let t2 = insert t1 3 "three" in
-  let t3 = insert t2 7 "seven" in
-  let t4 = insert t3 1 "one" in
-  let t5 = insert t4 4 "four" in
+  let t1 = insert t0 5 in
+  let t2 = insert t1 3 in
+  let t3 = insert t2 7 in
+  let t4 = insert t3 1 in
+  let t5 = insert t4 4 in
 
-  Printf.printf "t5 sorted: %s\n"
-    (String.concat "; "
-      (List.map (fun (k,v) -> Printf.sprintf "%d:%s" k v) (to_sorted_list t5)));
+  (* t4 still exists unchanged *)
+  assert (to_list t4 = [1; 3; 5; 7]);
+  assert (to_list t5 = [1; 3; 4; 5; 7]);
 
-  (* Branching: t5a and t5b diverge from t4 *)
-  let t5a = insert t4 4 "FOUR"  in  (* version A *)
-  let t5b = insert t4 4 "vier"  in  (* version B *)
-  Printf.printf "t5a[4]=%s  t5b[4]=%s  t4[4]=%s\n"
-    (Option.value (find t5a 4) ~default:"None")
-    (Option.value (find t5b 4) ~default:"None")
-    (Option.value (find t4  4) ~default:"None");
+  assert (member t5 4);
+  assert (member t5 5);
+  assert (not (member t5 2));
+  assert (not (member t5 6));
 
-  Printf.printf "height t5=%d (balanced)\n" (height t5)
+  let t6 = delete t5 3 in
+  assert (to_list t6 = [1; 4; 5; 7]);
+  assert (to_list t5 = [1; 3; 4; 5; 7]);  (* t5 unchanged! *)
+
+  let t7 = delete t5 5 in
+  assert (to_list t7 = [1; 3; 4; 7]);
+
+  Printf.printf "✓ All tests passed\n"

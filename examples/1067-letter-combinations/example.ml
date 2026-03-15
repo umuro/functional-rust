@@ -1,62 +1,79 @@
-(* 1067: Phone Keypad Letter Combinations
-   Backtracking, iterative queue, and functional fold. *)
+(* 1067: Phone Keypad Letter Combinations *)
 
-let phone_map = [|""; ""; "abc"; "def"; "ghi"; "jkl"; "mno"; "pqrs"; "tuv"; "wxyz"|]
-
-let digit_letters d = phone_map.(Char.code d - Char.code '0')
+let phone_map = [|
+  "";     (* 0 *)
+  "";     (* 1 *)
+  "abc";  (* 2 *)
+  "def";  (* 3 *)
+  "ghi";  (* 4 *)
+  "jkl";  (* 5 *)
+  "mno";  (* 6 *)
+  "pqrs"; (* 7 *)
+  "tuv";  (* 8 *)
+  "wxyz"; (* 9 *)
+|]
 
 (* Approach 1: Backtracking *)
 let letter_combos digits =
   if String.length digits = 0 then []
   else begin
     let results = ref [] in
-    let buf = Buffer.create 8 in
-    let len = String.length digits in
+    let buf = Buffer.create (String.length digits) in
     let rec backtrack idx =
-      if idx = len then results := Buffer.contents buf :: !results
-      else
+      if idx = String.length digits then
+        results := Buffer.contents buf :: !results
+      else begin
+        let letters = phone_map.(Char.code digits.[idx] - Char.code '0') in
         String.iter (fun c ->
           Buffer.add_char buf c;
           backtrack (idx + 1);
-          Buffer.truncate buf (Buffer.length buf - 1)
-        ) (digit_letters digits.[idx])
+          let len = Buffer.length buf in
+          Buffer.truncate buf (len - 1)
+        ) letters
+      end
     in
     backtrack 0;
-    !results
+    List.rev !results
   end
 
-(* Helper: fold over characters of a string (not available in OCaml 4.10) *)
-let string_fold_left f init s =
-  let acc = ref init in
-  String.iter (fun c -> acc := f !acc c) s;
-  !acc
+(* Approach 2: Functional with List.concat_map *)
+let letter_combos_func digits =
+  if String.length digits = 0 then []
+  else begin
+    let chars_of_string s = List.init (String.length s) (fun i -> s.[i]) in
+    let digit_chars idx =
+      chars_of_string phone_map.(Char.code digits.[idx] - Char.code '0')
+    in
+    let rec solve idx =
+      if idx = String.length digits then [""]
+      else
+        let letters = digit_chars idx in
+        let rest = solve (idx + 1) in
+        List.concat_map (fun c ->
+          List.map (fun suffix -> String.make 1 c ^ suffix) rest
+        ) letters
+    in
+    solve 0
+  end
 
-(* Approach 2: Iterative with queue (level-by-level expansion) *)
+(* Approach 3: Iterative with queue *)
 let letter_combos_iter digits =
   if String.length digits = 0 then []
-  else
-    string_fold_left (fun acc d ->
-      let letters = digit_letters d in
-      List.concat_map (fun prefix ->
-        let result = ref [] in
-        String.iter (fun c -> result := (prefix ^ String.make 1 c) :: !result) letters;
-        List.rev !result
-      ) acc
-    ) [""] digits
-
-(* Approach 3: Functional fold — most idiomatic *)
-let letter_combos_fold digits =
-  if String.length digits = 0 then []
-  else
-    string_fold_left
-      (fun acc d ->
-        let letters = digit_letters d in
-        List.concat_map (fun prefix ->
-          List.map (fun c -> prefix ^ String.make 1 c)
-            (List.init (String.length letters) (String.get letters))
-        ) acc)
-      [""]
-      digits
+  else begin
+    let queue = Queue.create () in
+    Queue.push "" queue;
+    for i = 0 to String.length digits - 1 do
+      let letters = phone_map.(Char.code digits.[i] - Char.code '0') in
+      let size = Queue.length queue in
+      for _ = 1 to size do
+        let current = Queue.pop queue in
+        String.iter (fun c ->
+          Queue.push (current ^ String.make 1 c) queue
+        ) letters
+      done
+    done;
+    Queue.fold (fun acc x -> x :: acc) [] queue |> List.rev
+  end
 
 let () =
   let r1 = letter_combos "23" in
@@ -64,15 +81,13 @@ let () =
   assert (List.mem "ad" r1);
   assert (List.mem "cf" r1);
 
-  let r2 = letter_combos_iter "23" in
+  let r2 = letter_combos_func "23" in
   assert (List.length r2 = 9);
 
-  let r3 = letter_combos_fold "23" in
+  let r3 = letter_combos_iter "23" in
   assert (List.length r3 = 9);
 
   assert (letter_combos "" = []);
-
-  (* "7" = pqrs, 4 letters *)
   assert (List.length (letter_combos "7") = 4);
 
-  Printf.printf "All letter-combination tests passed.\n"
+  Printf.printf "✓ All tests passed\n"

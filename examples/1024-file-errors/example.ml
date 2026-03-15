@@ -1,78 +1,74 @@
-(* 1024: File Operation Errors
-   OCaml's Unix module and Sys module provide file operations.
-   Exceptions like Sys_error carry the OS error message.
-   We classify exceptions into typed error variants. *)
+(* 1024: File Operation Errors *)
+(* Handling file I/O errors in OCaml *)
 
-(* Approach 1: Basic file operations — exceptions become Result via try/with *)
+(* Approach 1: Exception-based file I/O *)
+let read_file_exn path =
+  try
+    let ic = open_in path in
+    let content = really_input_string ic (in_channel_length ic) in
+    close_in ic;
+    content
+  with
+  | Sys_error msg -> failwith (Printf.sprintf "IO error: %s" msg)
+
+(* Approach 2: Result-based file I/O *)
+type io_error =
+  | FileNotFound of string
+  | PermissionDenied of string
+  | OtherIO of string
+
 let read_file path =
-  try Ok (In_channel.input_all (In_channel.open_text path))
-  with Sys_error msg -> Error msg
+  try
+    let ic = open_in path in
+    let content = really_input_string ic (in_channel_length ic) in
+    close_in ic;
+    Ok content
+  with
+  | Sys_error msg when String.length msg > 0 ->
+    if String.sub msg 0 (min 2 (String.length msg)) = "No" then
+      Error (FileNotFound path)
+    else
+      Error (OtherIO msg)
 
 let write_file path content =
   try
-    Out_channel.with_open_text path (fun oc ->
-      Out_channel.output_string oc content);
+    let oc = open_out path in
+    output_string oc content;
+    close_out oc;
     Ok ()
-  with Sys_error msg -> Error msg
+  with Sys_error msg -> Error (OtherIO msg)
 
-(* Approach 2: Classify the error *)
-type file_error =
-  | FileNotFound of string
-  | PermissionDenied of string
-  | OtherFileError of string
+(* Approach 3: Safe file operations with cleanup *)
+let with_file path f =
+  let ic = open_in path in
+  Fun.protect ~finally:(fun () -> close_in_noerr ic) (fun () -> f ic)
 
-let string_of_file_error = function
-  | FileNotFound p        -> Printf.sprintf "file not found: %s" p
-  | PermissionDenied p    -> Printf.sprintf "permission denied: %s" p
-  | OtherFileError msg    -> Printf.sprintf "file error: %s" msg
+let test_exception () =
+  (* Can't really test file ops without temp files, so test the error path *)
+  (try
+     let _ = read_file_exn "/nonexistent_file_12345" in
+     assert false
+   with Failure msg -> assert (String.length msg > 0));
+  Printf.printf "  Approach 1 (exception-based): passed\n"
 
-let classify_sys_error path msg =
-  (* Sys_error messages contain the path and OS description *)
-  if String.length msg > 0 &&
-     (try let _ = Str.search_forward (Str.regexp "No such file") msg 0 in true
-      with Not_found -> false)
-  then FileNotFound path
-  else if
-     (try let _ = Str.search_forward (Str.regexp "Permission denied") msg 0 in true
-      with Not_found -> false)
-  then PermissionDenied path
-  else OtherFileError msg
-
-let read_file_typed path =
-  try Ok (In_channel.input_all (In_channel.open_text path))
-  with Sys_error msg -> Error (classify_sys_error path msg)
-
-(* Read if exists — returns None for missing files *)
-let read_if_exists path =
-  if Sys.file_exists path then
-    (try Ok (Some (In_channel.input_all (In_channel.open_text path)))
-     with Sys_error msg -> Error msg)
-  else Ok None
-
-let () =
-  (* Read nonexistent — should error *)
+let test_result () =
   (match read_file "/nonexistent_file_12345" with
    | Error _ -> ()
-   | Ok _    -> assert false);
-
-  (* Write/read roundtrip *)
-  let tmp = "/tmp/ocaml_test_1024.txt" in
-  assert (write_file tmp "hello ocaml" = Ok ());
-  assert (read_file tmp = Ok "hello ocaml");
-  Sys.remove tmp;
-
-  (* Typed error *)
-  (match read_file_typed "/nonexistent_12345" with
-   | Error (FileNotFound _) -> ()
-   | Error e -> ignore (string_of_file_error e)
    | Ok _ -> assert false);
+  Printf.printf "  Approach 2 (result-based): passed\n"
 
-  (* read_if_exists *)
-  assert (read_if_exists "/nonexistent_12345" = Ok None);
+let test_write_read () =
+  let tmp = "/tmp/ocaml_test_1024.txt" in
+  assert (write_file tmp "hello" = Ok ());
+  (match read_file tmp with
+   | Ok content -> assert (content = "hello")
+   | Error _ -> assert false);
+  Sys.remove tmp;
+  Printf.printf "  Write/read round-trip: passed\n"
 
-  let tmp2 = "/tmp/ocaml_test_1024b.txt" in
-  assert (write_file tmp2 "exists" = Ok ());
-  assert (read_if_exists tmp2 = Ok (Some "exists"));
-  Sys.remove tmp2;
-
-  Printf.printf "File error tests passed\n"
+let () =
+  Printf.printf "Testing file errors:\n";
+  test_exception ();
+  test_result ();
+  test_write_read ();
+  Printf.printf "✓ All tests passed\n"

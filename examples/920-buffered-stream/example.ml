@@ -1,71 +1,40 @@
-(* 920: Buffered Stream — bounded-concurrency parallel map
+(* OCaml: buffered concurrent processing *)
 
-   OCaml 5.x has domains for true parallelism. For OCaml 4.x we use
-   threads (Thread module) with a semaphore via Mutex + Condition.
-   The idiomatic OCaml 5 approach uses Domain.spawn + Semaphore.Counting. *)
-
-(* ── Semaphore via Mutex + Condition ──────────────────────────────────────── *)
-
-type semaphore = {
-  mutable count : int;
-  mutex : Mutex.t;
-  cond  : Condition.t;
-}
-
-let make_semaphore n = { count = n; mutex = Mutex.create (); cond = Condition.create () }
-
-let acquire sem =
-  Mutex.lock sem.mutex;
-  while sem.count = 0 do
-    Condition.wait sem.cond sem.mutex
-  done;
-  sem.count <- sem.count - 1;
-  Mutex.unlock sem.mutex
-
-let release sem =
-  Mutex.lock sem.mutex;
-  sem.count <- sem.count + 1;
-  Condition.signal sem.cond;
-  Mutex.unlock sem.mutex
-
-(* ── buffered_map: apply f to each item with at most `concurrency` in flight ── *)
-
-let buffered_map ~concurrency items f =
-  let n = List.length items in
-  let results = Array.make n None in
-  let sem = make_semaphore concurrency in
+let process_with_limit n items f =
+  let sem = Semaphore.counting_semaphore n in
+  let results = Array.make (List.length items) None in
   let threads = List.mapi (fun i item ->
     Thread.create (fun () ->
-      acquire sem;
-      let result = f item in
-      release sem;
-      results.(i) <- Some result
+      Semaphore.acquire sem;
+      let r = f item in
+      results.(i) <- Some r;
+      Semaphore.release sem
     ) ()
   ) items in
   List.iter Thread.join threads;
-  Array.to_list (Array.map Option.get results)
+  Array.to_list results |> List.filter_map Fun.id
 
-(* ── Sequential fallback (no threads) ────────────────────────────────────── *)
-
-(* When concurrency = 1 the semaphore makes it effectively sequential *)
-let sequential_map items f = List.map f items
+(* Simpler version using Thread pool concept *)
+let chunked_process chunk_size items f =
+  let chunks =
+    let rec go acc = function
+      | [] -> List.rev acc
+      | lst ->
+        let chunk = List.filteri (fun i _ -> i < chunk_size) lst in
+        let rest  = List.filteri (fun i _ -> i >= chunk_size) lst in
+        go (chunk :: acc) rest
+    in go [] items
+  in
+  List.concat_map (fun chunk ->
+    let threads = List.map (fun x -> Thread.create (fun () -> f x) ()) chunk in
+    List.map Thread.join threads
+  ) chunks
 
 let () =
-  (* buffered_map preserves order *)
-  let result = buffered_map ~concurrency:2 [1; 2; 3; 4; 5] (fun x -> x * 2) in
-  assert (result = [2; 4; 6; 8; 10]);
-
-  (* concurrency 1 — effectively sequential *)
-  let result2 = buffered_map ~concurrency:1 [1; 2; 3] (fun x -> x + 10) in
-  assert (result2 = [11; 12; 13]);
-
-  (* sequential map gives same results *)
-  let result3 = sequential_map [1; 2; 3; 4; 5] (fun x -> x * 2) in
-  assert (result3 = [2; 4; 6; 8; 10]);
-
-  (* verify ordering even with variable work *)
-  let result4 = buffered_map ~concurrency:4 [5; 3; 1; 4; 2]
-    (fun x -> Unix.sleepf (float_of_int x *. 0.001); x * x) in
-  assert (result4 = [25; 9; 1; 16; 4]);
-
-  print_endline "920-buffered-stream: all tests passed"
+  let items = List.init 10 (fun i -> i + 1) in
+  let results = chunked_process 3 items (fun x ->
+    Thread.delay (float_of_int (11 - x) *. 0.005);
+    x * x
+  ) in
+  List.iter (Printf.printf "%d ") results;
+  print_newline ()

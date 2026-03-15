@@ -1,84 +1,53 @@
-(* 054: Applicative Validation
-   Collect ALL errors instead of stopping at first failure *)
+(* 054: Applicative Validation *)
+(* Collect all validation errors instead of stopping at the first *)
 
-type validation_error =
-  | NameEmpty
-  | NameTooLong
-  | AgeNegative
-  | AgeUnrealistic
-  | EmailInvalid
+type 'a validated = Valid of 'a | Invalid of string list
 
-type person = {
-  name  : string;
-  age   : int;
-  email : string;
-}
-
-(* --- Approach 1: Individual validators returning error lists --- *)
-
-(* We use (_, error list) result where Ok carries the valid value *)
+(* Approach 1: Individual validators *)
 let validate_name name =
-  if String.length name = 0 then Error [NameEmpty]
-  else if String.length name > 50 then Error [NameTooLong]
-  else Ok name
+  if String.length name = 0 then Invalid ["Name cannot be empty"]
+  else if String.length name > 50 then Invalid ["Name too long"]
+  else Valid name
 
 let validate_age age =
-  if age < 0 then Error [AgeNegative]
-  else if age > 150 then Error [AgeUnrealistic]
-  else Ok age
+  if age < 0 then Invalid ["Age cannot be negative"]
+  else if age > 150 then Invalid ["Age unrealistic"]
+  else Valid age
 
 let validate_email email =
-  if not (String.contains email '@') then Error [EmailInvalid]
-  else Ok email
+  if not (String.contains email '@') then Invalid ["Email must contain @"]
+  else Valid email
 
-(* --- Approach 2: Applicative: collect all errors instead of failing fast --- *)
+(* Approach 2: Combine validators — applicative style *)
+let map_validated f = function
+  | Valid x -> Valid (f x)
+  | Invalid errs -> Invalid errs
 
-(* Helper: combine two validation results, accumulating all errors *)
-let ( <+> ) r1 r2 =
-  match r1, r2 with
-  | Ok _, Ok _       -> Ok ()      (* both good; values assembled separately *)
-  | Ok _, Error e    -> Error e
-  | Error e, Ok _    -> Error e
-  | Error e1, Error e2 -> Error (e1 @ e2)   (* KEY: accumulate both error lists *)
+let apply_validated fv xv =
+  match fv, xv with
+  | Valid f, Valid x -> Valid (f x)
+  | Valid _, Invalid errs -> Invalid errs
+  | Invalid errs, Valid _ -> Invalid errs
+  | Invalid e1, Invalid e2 -> Invalid (e1 @ e2)
+
+type person = { name: string; age: int; email: string }
 
 let validate_person name age email =
-  let nr = validate_name name in
-  let ar = validate_age age in
-  let er = validate_email email in
-  (* check all three together, accumulating errors *)
-  match nr <+> ar <+> er with
-  | Error errs -> Error errs
-  | Ok _ ->
-    (* safe unwraps: we know all succeeded *)
-    Ok {
-      name  = Result.get_ok nr;
-      age   = Result.get_ok ar;
-      email = Result.get_ok er;
-    }
+  let mk_person n a e = { name = n; age = a; email = e } in
+  Valid mk_person
+  |> fun fv -> apply_validated fv (validate_name name)
+  |> fun fv -> apply_validated fv (validate_age age)
+  |> fun fv -> apply_validated fv (validate_email email)
 
-(* --- Approach 3: Generic applicative combinator over a list of validators --- *)
-
-let validate_all validators value =
-  List.fold_left (fun acc v ->
-    match acc, v value with
-    | Error es, Error e -> Error (es @ e)
-    | Error es, Ok _    -> Error es
-    | Ok _, Error e     -> Error e
-    | Ok _, Ok x        -> Ok x
-  ) (Ok value) validators
-
+(* Tests *)
 let () =
-  (* valid *)
   (match validate_person "Alice" 30 "alice@example.com" with
-   | Ok p -> Printf.printf "Valid: %s, age %d\n" p.name p.age
-   | Error _ -> print_endline "Unexpected error");
-
-  (* all errors collected *)
+   | Valid p -> assert (p.name = "Alice" && p.age = 30)
+   | Invalid _ -> assert false);
   (match validate_person "" (-5) "bad" with
-   | Error errs -> Printf.printf "Errors collected: %d\n" (List.length errs)
-   | Ok _ -> print_endline "Unexpected ok");
-
-  (* partial error *)
+   | Valid _ -> assert false
+   | Invalid errs -> assert (List.length errs = 3));
   (match validate_person "Bob" 25 "bad" with
-   | Error errs -> Printf.printf "Partial errors: %d\n" (List.length errs)
-   | Ok _ -> print_endline "Unexpected ok")
+   | Valid _ -> assert false
+   | Invalid errs -> assert (List.length errs = 1));
+  Printf.printf "✓ All tests passed\n"

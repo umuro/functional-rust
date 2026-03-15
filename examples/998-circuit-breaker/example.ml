@@ -1,142 +1,87 @@
-(* 998: Circuit Breaker
-   Protects a service by "opening" after too many failures and refusing
-   further calls until a cooldown period elapses.
-   States: Closed (normal) → Open (failing fast) → Half-Open (testing) → Closed.
-   OCaml: mutable state machine guarded by a Mutex. *)
+(* 998: Circuit Breaker *)
+(* Open/Half-Open/Closed state machine for fault tolerance *)
 
-type state =
-  | Closed                   (* normal operation *)
-  | Open of float            (* opened_at timestamp *)
-  | Half_open                (* testing: one probe request allowed *)
+type state = Closed | Open of float | HalfOpen
 
-type circuit_breaker = {
-  mutable state           : state;
-  mutable failure_count   : int;
-  mutable success_count   : int;
-  failure_threshold : int;   (* failures to open *)
-  success_threshold : int;   (* successes in half-open to close *)
-  timeout_s         : float; (* seconds to stay open before half-open *)
-  mutex : Mutex.t;
+type 'a circuit_breaker = {
+  mutable state: state;
+  mutable failures: int;
+  failure_threshold: int;
+  recovery_timeout_s: float;
+  m: Mutex.t;
 }
 
-exception Circuit_open
+let make_breaker ?(failure_threshold=3) ?(recovery_timeout_s=1.0) () = {
+  state = Closed;
+  failures = 0;
+  failure_threshold;
+  recovery_timeout_s;
+  m = Mutex.create ();
+}
 
-let create
-    ?(failure_threshold=5)
-    ?(success_threshold=2)
-    ?(timeout_s=1.0)
-    () =
-  { state = Closed;
-    failure_count = 0;
-    success_count = 0;
-    failure_threshold;
-    success_threshold;
-    timeout_s;
-    mutex = Mutex.create () }
+type 'a breaker_result = BrResult of 'a | CircuitOpen | CallError of string
 
-(* Execute f through the circuit breaker.
-   Returns Ok result, Error Circuit_open (fast fail), or Error (f's exception). *)
-let call cb f =
-  Mutex.lock cb.mutex;
-  let state_snapshot = match cb.state with
-    | Open t when Unix.gettimeofday () -. t >= cb.timeout_s ->
-      cb.state <- Half_open;
-      cb.success_count <- 0;
-      Half_open
-    | s -> s
-  in
-  Mutex.unlock cb.mutex;
+let call breaker f =
+  Mutex.lock breaker.m;
 
-  match state_snapshot with
-  | Open _ -> Error Circuit_open
+  (* Transition from Open to HalfOpen if timeout elapsed *)
+  (match breaker.state with
+  | Open since when Unix.gettimeofday () -. since >= breaker.recovery_timeout_s ->
+    breaker.state <- HalfOpen
+  | _ -> ());
 
-  | Closed | Half_open ->
-    (match (try Ok (f ()) with e -> Error e) with
-     | Ok v ->
-       Mutex.lock cb.mutex;
-       (match cb.state with
-        | Half_open ->
-          cb.success_count <- cb.success_count + 1;
-          if cb.success_count >= cb.success_threshold then begin
-            cb.state <- Closed;
-            cb.failure_count <- 0;
-            Printf.printf "  [CB] → CLOSED (recovered)\n%!"
-          end
-        | Closed ->
-          cb.failure_count <- 0   (* reset on success in closed state *)
-        | _ -> ());
-       Mutex.unlock cb.mutex;
-       Ok v
+  let state = breaker.state in
+  Mutex.unlock breaker.m;
 
-     | Error Circuit_open as e ->
-       Mutex.unlock (Mutex.create ());  (* no-op; already unlocked *)
-       e
+  match state with
+  | Open _ -> CircuitOpen
+  | Closed | HalfOpen ->
+    (match (try Ok (f ()) with e -> Error (Printexc.to_string e)) with
+    | Ok v ->
+      Mutex.lock breaker.m;
+      breaker.failures <- 0;
+      breaker.state <- Closed;
+      Mutex.unlock breaker.m;
+      BrResult v
+    | Error e ->
+      Mutex.lock breaker.m;
+      breaker.failures <- breaker.failures + 1;
+      if breaker.failures >= breaker.failure_threshold then
+        breaker.state <- Open (Unix.gettimeofday ());
+      Mutex.unlock breaker.m;
+      CallError e)
 
-     | Error e ->
-       Mutex.lock cb.mutex;
-       cb.failure_count <- cb.failure_count + 1;
-       (match cb.state with
-        | Closed when cb.failure_count >= cb.failure_threshold ->
-          cb.state <- Open (Unix.gettimeofday ());
-          Printf.printf "  [CB] → OPEN after %d failures\n%!" cb.failure_count
-        | Half_open ->
-          cb.state <- Open (Unix.gettimeofday ());
-          Printf.printf "  [CB] → OPEN again (probe failed)\n%!"
-        | _ -> ());
-       Mutex.unlock cb.mutex;
-       Error e)
+let state_name b = match b.state with
+  | Closed -> "Closed"
+  | Open _ -> "Open"
+  | HalfOpen -> "HalfOpen"
 
-let state_name cb =
-  Mutex.lock cb.mutex;
-  let s = match cb.state with
-    | Closed   -> "CLOSED"
-    | Open _   -> "OPEN"
-    | Half_open -> "HALF-OPEN"
-  in
-  Mutex.unlock cb.mutex;
-  s
+(* --- Approach 1: Fail 3 times → Open, then recover --- *)
 
 let () =
-  Printf.printf "=== Circuit breaker demonstration ===\n";
-  let cb = create ~failure_threshold:3 ~success_threshold:2 ~timeout_s:0.05 () in
+  let b = make_breaker ~failure_threshold:3 ~recovery_timeout_s:0.05 () in
+  assert (state_name b = "Closed");
 
-  let call_service will_fail label =
-    let r = call cb (fun () ->
-      if will_fail then failwith "service unavailable"
-      else Printf.sprintf "%s: ok" label
-    ) in
-    match r with
-    | Ok msg       -> Printf.printf "  %s → %s [%s]\n" label msg (state_name cb)
-    | Error Circuit_open ->
-      Printf.printf "  %s → FAST FAIL (circuit open) [%s]\n" label (state_name cb)
-    | Error e      ->
-      Printf.printf "  %s → ERROR: %s [%s]\n" label (Printexc.to_string e) (state_name cb)
-  in
-
-  (* Phase 1: trigger failures to open the circuit *)
-  Printf.printf "\n-- Phase 1: triggering failures --\n";
-  for i = 1 to 5 do
-    call_service true (Printf.sprintf "call-%d" i)
+  (* Fail 3 times *)
+  for _ = 1 to 3 do
+    let _ = call b (fun () -> failwith "simulated error") in ()
   done;
+  assert (state_name b = "Open");
+  Printf.printf "Approach 1: after 3 failures: %s\n" (state_name b);
 
-  (* Phase 2: circuit is open — fast fail *)
-  Printf.printf "\n-- Phase 2: circuit open --\n";
-  for i = 6 to 8 do
-    call_service false (Printf.sprintf "call-%d" i)
-  done;
+  (* Circuit is open — calls rejected *)
+  (match call b (fun () -> 42) with
+  | CircuitOpen -> Printf.printf "Approach 1: call rejected (circuit open)\n"
+  | _ -> assert false);
 
-  (* Phase 3: wait for timeout, half-open state, probe *)
-  Printf.printf "\n-- Phase 3: wait for timeout → half-open --\n";
-  Thread.delay 0.06;
-  call_service false "probe-1";  (* success: half-open *)
-  call_service false "probe-2";  (* success: closes circuit *)
+  (* Wait for recovery timeout *)
+  Unix.sleepf 0.06;
+  (* Next call should go through (HalfOpen) *)
+  (match call b (fun () -> 99) with
+  | BrResult v ->
+    assert (v = 99);
+    assert (state_name b = "Closed");
+    Printf.printf "Approach 1: recovered, got %d, state: %s\n" v (state_name b)
+  | _ -> assert false)
 
-  (* Phase 4: circuit closed again *)
-  Printf.printf "\n-- Phase 4: circuit recovered --\n";
-  for i = 1 to 3 do
-    call_service false (Printf.sprintf "healthy-call-%d" i)
-  done;
-
-  Printf.printf "\n=== Statistics ===\n";
-  Printf.printf "failure_count = %d  success_count = %d  state = %s\n"
-    cb.failure_count cb.success_count (state_name cb)
+let () = Printf.printf "✓ All tests passed\n"

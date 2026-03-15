@@ -1,125 +1,114 @@
-(* 217: Catamorphism — The Universal Fold
-   A catamorphism (cata) is a single function that encodes all bottom-up
-   traversals of a recursive structure. Write one non-recursive algebra;
-   cata handles all the recursion. *)
+(* Example 217: Catamorphism — Fold ANY Recursive Structure *)
 
-(* ── Step 1: Base functor — expression shape with children abstracted ──────── *)
+(* cata : ('f 'a -> 'a) -> fix -> 'a
+   "Give me what to do at each layer, I'll handle the recursion." *)
 
-(* ExprF 'a: one layer of an arithmetic expression.
-   'a is the type for child positions; LitF has no children. *)
 type 'a expr_f =
-  | LitF    of int
-  | AddF    of 'a * 'a
-  | MulF    of 'a * 'a
-  | NegF    of 'a
-  | IfZeroF of 'a * 'a * 'a   (* cond, then, else *)
+  | LitF of int
+  | AddF of 'a * 'a
+  | MulF of 'a * 'a
+  | NegF of 'a
+  | IfZeroF of 'a * 'a * 'a  (* condition, then, else *)
 
-(* Functorial map: apply f to every child position *)
-let fmap (f : 'a -> 'b) : 'a expr_f -> 'b expr_f = function
-  | LitF n           -> LitF n
-  | AddF (a, b)      -> AddF (f a, f b)
-  | MulF (a, b)      -> MulF (f a, f b)
-  | NegF a           -> NegF (f a)
+let map_f f = function
+  | LitF n -> LitF n
+  | AddF (a, b) -> AddF (f a, f b)
+  | MulF (a, b) -> MulF (f a, f b)
+  | NegF a -> NegF (f a)
   | IfZeroF (c, t, e) -> IfZeroF (f c, f t, f e)
 
-(* ── Step 2: Fix wrapper — ties the recursive knot ──────────────────────── *)
-
-(* 'fix' wraps ExprF<fix> to form a fully recursive tree *)
 type fix = Fix of fix expr_f
+let unfix (Fix f) = f
 
-let wrap layer = Fix layer
-let unfix (Fix layer) = layer
+let rec cata alg (Fix f) = alg (map_f (cata alg) f)
 
-(* Smart constructors *)
-let lit n         = wrap (LitF n)
-let mk_add a b    = wrap (AddF (a, b))
-let mk_mul a b    = wrap (MulF (a, b))
-let mk_neg a      = wrap (NegF a)
-let if_zero c t e = wrap (IfZeroF (c, t, e))
+(* Approach 1: Multiple algebras — each just one layer *)
+let eval_alg = function
+  | LitF n -> n
+  | AddF (a, b) -> a + b
+  | MulF (a, b) -> a * b
+  | NegF a -> -a
+  | IfZeroF (c, t, e) -> if c = 0 then t else e
 
-(* ── Step 3: cata — the one and only recursive function ─────────────────── *)
+let eval = cata eval_alg
 
-(* Catamorphism: fold bottom-up using algebra alg.
-   alg handles one node after all children have been reduced.
-   cata alg (Fix layer) = alg (fmap (cata alg) layer) *)
-let rec cata (alg : 'a expr_f -> 'a) (Fix layer) : 'a =
-  alg (fmap (cata alg) layer)
+let show_alg = function
+  | LitF n -> string_of_int n
+  | AddF (a, b) -> "(" ^ a ^ " + " ^ b ^ ")"
+  | MulF (a, b) -> "(" ^ a ^ " * " ^ b ^ ")"
+  | NegF a -> "(-" ^ a ^ ")"
+  | IfZeroF (c, t, e) -> "(if0 " ^ c ^ " then " ^ t ^ " else " ^ e ^ ")"
 
-(* ── Algebras — zero recursion, one concern each ────────────────────────── *)
+let show = cata show_alg
 
-(* Evaluate to an integer *)
-let run_eval expr =
-  cata (function
-    | LitF n           -> n
-    | AddF (a, b)      -> a + b
-    | MulF (a, b)      -> a * b
-    | NegF a           -> -a
-    | IfZeroF (c, t, e) -> if c = 0 then t else e
-  ) expr
+(* Approach 2: Constant propagation — transform structure *)
+let opt_alg = function
+  | AddF (Fix (LitF 0), b) -> b
+  | AddF (a, Fix (LitF 0)) -> a
+  | MulF (Fix (LitF 0), _) | MulF (_, Fix (LitF 0)) -> Fix (LitF 0)
+  | MulF (Fix (LitF 1), b) -> b
+  | MulF (a, Fix (LitF 1)) -> a
+  | NegF (Fix (NegF a)) -> a
+  | other -> Fix other
 
-(* Pretty-print as a string *)
-let show expr =
-  cata (function
-    | LitF n           -> string_of_int n
-    | AddF (a, b)      -> Printf.sprintf "(%s + %s)" a b
-    | MulF (a, b)      -> Printf.sprintf "(%s * %s)" a b
-    | NegF a           -> Printf.sprintf "(-%s)" a
-    | IfZeroF (c, t, e) -> Printf.sprintf "(ifz %s then %s else %s)" c t e
-  ) expr
+let optimize = cata opt_alg
 
-(* Count total nodes in the tree *)
-let count_nodes expr =
-  cata (function
-    | LitF _           -> 1
-    | AddF (a, b)      -> 1 + a + b
-    | MulF (a, b)      -> 1 + a + b
-    | NegF a           -> 1 + a
-    | IfZeroF (c, t, e) -> 1 + c + t + e
-  ) expr
+(* Approach 3: Collecting free variables (with named vars) *)
+type 'a expr_v =
+  | VLitF of int
+  | VVarF of string
+  | VAddF of 'a * 'a
 
-(* Collect all literal values in left-to-right order *)
-let collect_lits expr =
-  cata (function
-    | LitF n           -> [n]
-    | AddF (a, b)      -> a @ b
-    | MulF (a, b)      -> a @ b
-    | NegF a           -> a
-    | IfZeroF (c, t, e) -> c @ t @ e
-  ) expr
+let map_v f = function
+  | VLitF n -> VLitF n
+  | VVarF s -> VVarF s
+  | VAddF (a, b) -> VAddF (f a, f b)
 
-(* Maximum depth of the tree *)
-let depth expr =
-  cata (function
-    | LitF _           -> 0
-    | AddF (a, b)      -> 1 + max a b
-    | MulF (a, b)      -> 1 + max a b
-    | NegF a           -> 1 + a
-    | IfZeroF (c, t, e) -> 1 + max c (max t e)
-  ) expr
+type fix_v = FixV of fix_v expr_v
 
-(* ── Demo ─────────────────────────────────────────────────────────────────── *)
+let rec cata_v alg (FixV f) = alg (map_v (cata_v alg) f)
 
+let free_vars_alg = function
+  | VLitF _ -> []
+  | VVarF s -> [s]
+  | VAddF (a, b) -> a @ b
+
+let free_vars = cata_v free_vars_alg
+
+(* Builders *)
+let lit n = Fix (LitF n)
+let add a b = Fix (AddF (a, b))
+let mul a b = Fix (MulF (a, b))
+let neg a = Fix (NegF a)
+let ifzero c t e = Fix (IfZeroF (c, t, e))
+
+let vlit n = FixV (VLitF n)
+let vvar s = FixV (VVarF s)
+let vadd a b = FixV (VAddF (a, b))
+
+(* === Tests === *)
 let () =
-  (* (2 + 3) * (-4)  →  -20 *)
-  let sample = mk_mul (mk_add (lit 2) (lit 3)) (mk_neg (lit 4)) in
-  Printf.printf "show:        %s\n"  (show sample);
-  Printf.printf "evaluate:    %d\n"  (run_eval sample);
-  Printf.printf "nodes:       %d\n"  (count_nodes sample);
-  Printf.printf "lits:        [%s]\n"
-    (collect_lits sample |> List.map string_of_int |> String.concat ";");
-  Printf.printf "depth:       %d\n"  (depth sample);
+  let e = add (lit 1) (mul (lit 2) (neg (lit 3))) in
+  assert (eval e = -5);
+  assert (show e = "(1 + (2 * (-3)))");
 
-  (* ifz 0 then 10 else 99  →  10 *)
-  let iz = if_zero (lit 0) (lit 10) (lit 99) in
-  Printf.printf "\nifz example: %s = %d\n" (show iz) (run_eval iz);
+  let e2 = ifzero (lit 0) (lit 42) (lit 99) in
+  assert (eval e2 = 42);
 
-  (* Custom algebra inline: count negative literals *)
-  let tree = mk_add (mk_neg (lit (-3))) (mk_mul (lit 5) (mk_neg (lit (-1)))) in
-  let neg_count = cata (function
-    | LitF n           -> if n < 0 then 1 else 0
-    | AddF (a, b)      -> a + b
-    | MulF (a, b)      -> a + b
-    | NegF a           -> a
-    | IfZeroF (c, t, e) -> c + t + e
-  ) tree in
-  Printf.printf "\nnegative literals in tree: %d\n" neg_count
+  let e3 = ifzero (lit 1) (lit 42) (lit 99) in
+  assert (eval e3 = 99);
+
+  (* Optimization *)
+  let e4 = add (lit 0) (mul (lit 1) (lit 5)) in
+  let opt = optimize e4 in
+  assert (eval opt = 5);
+
+  let e5 = neg (neg (lit 42)) in
+  let opt5 = optimize e5 in
+  assert (eval opt5 = 42);
+
+  (* Free variables *)
+  let ve = vadd (vvar "x") (vadd (vlit 1) (vvar "y")) in
+  assert (free_vars ve = ["x"; "y"]);
+
+  print_endline "✓ All tests passed"

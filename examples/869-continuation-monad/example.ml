@@ -1,102 +1,66 @@
-(* 869: Continuation Monad — Delimited Continuations in OCaml
+(* Example 070: Continuation Monad *)
+(* CPS: continuation-passing style *)
 
-   The continuation monad wraps computations that pass their result to a callback.
-   type ('a, 'r) cont = ('a -> 'r) -> 'r
+(* Approach 1: Basic CPS transforms *)
+let add_cps x y k = k (x + y)
+let mul_cps x y k = k (x * y)
+let square_cps x k = k (x * x)
 
-   In OCaml, closures are first-class and uniform, so the encoding is clean
-   without the Box<dyn Fn> gymnastics needed in Rust. *)
+(* Chain: (3 + 4) * 2 *)
+let example1 k = add_cps 3 4 (fun sum -> mul_cps sum 2 k)
 
-(* ── Core type and operations ─────────────────────────────────────────────── *)
+(* Approach 2: Cont monad *)
+type ('a, 'r) cont = Cont of (('a -> 'r) -> 'r)
 
-(* A continuation computation: given a callback k, produce a result *)
-type ('a, 'r) cont = { run_cont : ('a -> 'r) -> 'r }
+let run_cont (Cont f) k = f k
+let return_ x = Cont (fun k -> k x)
+let bind (Cont m) f = Cont (fun k ->
+  m (fun a -> run_cont (f a) k))
+let ( >>= ) = bind
 
-(* Wrap a pure value: \k -> k a *)
-let return_cont a = { run_cont = fun k -> k a }
+(* callcc: capture the current continuation *)
+let callcc f = Cont (fun k ->
+  run_cont (f (fun a -> Cont (fun _ -> k a))) k)
 
-(* Bind: sequence continuations — m >>= f *)
-let bind_cont m f = { run_cont = fun k -> m.run_cont (fun a -> (f a).run_cont k) }
+(* Approach 3: Early exit with callcc *)
+let find_first_negative xs =
+  callcc (fun exit ->
+    List.fold_left (fun acc x ->
+      acc >>= fun _ ->
+      if x < 0 then exit (Some x)
+      else return_ None
+    ) (return_ None) xs
+  )
 
-(* Run: supply the final continuation *)
-let run_cont c k = c.run_cont k
-
-(* Idiomatic let-binding syntax for continuation chains *)
-let ( let* ) = bind_cont
-
-(* ── CPS (Continuation-Passing Style) — direct functions ──────────────────── *)
-
-(* CPS add: calls k with the sum *)
-let cps_add a b k = k (a + b)
-
-(* CPS factorial — tail-recursive via continuations *)
-let rec fact_cps n k =
-  if n <= 1 then k 1
-  else fact_cps (n - 1) (fun r -> k (n * r))
-
-(* CPS Fibonacci *)
-let rec fib_cps n k =
-  if n <= 1 then k n
-  else
-    fib_cps (n - 1) (fun a ->
-    fib_cps (n - 2) (fun b ->
-    k (a + b)))
-
-(* ── Using the monad ──────────────────────────────────────────────────────── *)
-
-(* Monadic computation: add two numbers and double the result *)
-let add_and_double a b =
-  let* x = return_cont a in
-  let* y = return_cont b in
-  return_cont ((x + y) * 2)
-
-(* ── callCC — call with current continuation ──────────────────────────────── *)
-
-(* callCC: capture the current continuation for early exit *)
-let call_cc f = { run_cont = fun k -> (f (fun a -> { run_cont = fun _ -> k a })).run_cont k }
-
-(* Early exit example: sum a list, but bail out if a zero is found *)
-let sum_no_zeros lst =
-  run_cont
-    (call_cc (fun exit ->
-      List.fold_left (fun acc_c x ->
-        let* acc = acc_c in
-        if x = 0 then exit (-1)   (* early exit with sentinel *)
-        else return_cont (acc + x)
-      ) (return_cont 0) lst))
-    (fun x -> x)
-
-(* ── Demo ─────────────────────────────────────────────────────────────────── *)
+let safe_div_cont x y =
+  callcc (fun exit ->
+    if y = 0 then exit (Error "Division by zero")
+    else return_ (Ok (x / y))
+  )
 
 let () =
-  (* Direct CPS *)
-  let r = cps_add 3 4 (fun x -> x) in
-  assert (r = 7);
+  (* Basic CPS *)
+  example1 (fun result -> assert (result = 14));
+  square_cps 5 (fun result -> assert (result = 25));
 
-  let r2 = fact_cps 5 (fun x -> x) in
-  assert (r2 = 120);
+  (* Cont monad *)
+  let result = run_cont (
+    return_ 5 >>= fun x ->
+    return_ (x * 2) >>= fun y ->
+    return_ (y + 1)
+  ) Fun.id in
+  assert (result = 11);
 
-  let r3 = fib_cps 10 (fun x -> x) in
-  assert (r3 = 55);
+  (* callcc: early exit *)
+  let result = run_cont (find_first_negative [1; 2; -3; 4]) Fun.id in
+  assert (result = Some (-3));
 
-  (* Monad return *)
-  assert (run_cont (return_cont 42) (fun x -> x) = 42);
-  assert (run_cont (return_cont 10) (fun x -> x * 2) = 20);
+  let result = run_cont (find_first_negative [1; 2; 3]) Fun.id in
+  assert (result = None);
 
-  (* Monadic bind chain *)
-  let result =
-    run_cont
-      (let* x = return_cont 10 in
-       let* y = return_cont (x * 2) in
-       return_cont (y + 1))
-      (fun x -> x)
-  in
-  assert (result = 21);
+  let result = run_cont (safe_div_cont 10 2) Fun.id in
+  assert (result = Ok 5);
+  let result = run_cont (safe_div_cont 10 0) Fun.id in
+  assert (result = Error "Division by zero");
 
-  (* add_and_double *)
-  assert (run_cont (add_and_double 3 4) (fun x -> x) = 14);
-
-  (* callCC early exit *)
-  assert (sum_no_zeros [1; 2; 3; 4; 5] = 15);
-  assert (sum_no_zeros [1; 2; 0; 4; 5] = -1);  (* bailed out *)
-
-  print_endline "869-continuation-monad: all tests passed"
+  Printf.printf "✓ All tests passed\n"

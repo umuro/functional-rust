@@ -1,83 +1,75 @@
-(* 1025: Network Error Classification (Simulated)
-   Rich error variants with methods (is_retryable, is_client_error).
-   OCaml uses module functions instead of methods, and record/variant types
-   for structured errors. Retry logic is a clean recursive function. *)
+(* 1025: Network Error Classification (Simulated) *)
+(* Classifying and handling network-like errors *)
 
 type net_error =
-  | Timeout of { seconds: float }
-  | ConnectionRefused of string
+  | Timeout of float          (* seconds waited *)
+  | ConnectionRefused of string  (* host *)
   | DnsResolutionFailed of string
   | TlsError of string
-  | HttpError of { status: int; body: string }
+  | HttpError of int * string    (* status code, body *)
 
 let string_of_net_error = function
-  | Timeout { seconds }         -> Printf.sprintf "timeout after %.1fs" seconds
-  | ConnectionRefused host      -> Printf.sprintf "connection refused: %s" host
-  | DnsResolutionFailed host    -> Printf.sprintf "DNS failed: %s" host
-  | TlsError msg                -> Printf.sprintf "TLS error: %s" msg
-  | HttpError { status; body }  -> Printf.sprintf "HTTP %d: %s" status body
+  | Timeout secs -> Printf.sprintf "timeout after %.1fs" secs
+  | ConnectionRefused host -> Printf.sprintf "connection refused: %s" host
+  | DnsResolutionFailed host -> Printf.sprintf "DNS failed: %s" host
+  | TlsError msg -> Printf.sprintf "TLS error: %s" msg
+  | HttpError (code, body) -> Printf.sprintf "HTTP %d: %s" code body
 
 let is_retryable = function
-  | Timeout _            -> true
-  | ConnectionRefused _  -> true
-  | DnsResolutionFailed _ -> false
-  | TlsError _           -> false
-  | HttpError { status; _ } -> status >= 500
-
-let is_client_error = function
-  | HttpError { status; _ } -> status >= 400 && status < 500
-  | _ -> false
+  | Timeout _ -> true
+  | ConnectionRefused _ -> true
+  | DnsResolutionFailed _ -> false  (* unlikely to change *)
+  | TlsError _ -> false
+  | HttpError (code, _) -> code >= 500  (* server errors are retryable *)
 
 (* Simulated network call *)
 let fetch url =
-  match url with
-  | "" -> Error (DnsResolutionFailed "empty url")
-  | "http://timeout"  -> Error (Timeout { seconds = 30.0 })
-  | "http://refused"  -> Error (ConnectionRefused "refused:80")
-  | "http://500" -> Error (HttpError { status = 500; body = "Internal Server Error" })
-  | "http://404" -> Error (HttpError { status = 404; body = "Not Found" })
-  | u -> Ok (Printf.sprintf "response from %s" u)
+  if String.length url = 0 then Error (DnsResolutionFailed "empty url")
+  else if url = "http://timeout" then Error (Timeout 30.0)
+  else if url = "http://refused" then Error (ConnectionRefused "refused:80")
+  else if url = "http://500" then Error (HttpError (500, "Internal Server Error"))
+  else if url = "http://404" then Error (HttpError (404, "Not Found"))
+  else Ok (Printf.sprintf "response from %s" url)
 
-(* Retry logic — recursive with decreasing retries *)
-let rec fetch_with_retry url attempts =
+(* Retry logic *)
+let rec fetch_with_retry url retries =
   match fetch url with
-  | Ok resp -> Ok resp
-  | Error e when is_retryable e && attempts > 0 ->
-    fetch_with_retry url (attempts - 1)
-  | Error e -> Error e
+  | Ok _ as result -> result
+  | Error e when is_retryable e && retries > 0 ->
+    fetch_with_retry url (retries - 1)
+  | Error _ as result -> result
+
+let test_errors () =
+  assert (fetch "http://example.com" = Ok "response from http://example.com");
+  (match fetch "" with
+   | Error (DnsResolutionFailed _) -> ()
+   | _ -> assert false);
+  (match fetch "http://timeout" with
+   | Error (Timeout _) -> ()
+   | _ -> assert false);
+  Printf.printf "  Error classification: passed\n"
+
+let test_retryable () =
+  assert (is_retryable (Timeout 30.0));
+  assert (is_retryable (ConnectionRefused "host"));
+  assert (not (is_retryable (DnsResolutionFailed "host")));
+  assert (is_retryable (HttpError (503, "Unavailable")));
+  assert (not (is_retryable (HttpError (404, "Not Found"))));
+  Printf.printf "  Retryable classification: passed\n"
+
+let test_retry () =
+  (* This will retry but still fail (simulated always-timeout) *)
+  (match fetch_with_retry "http://timeout" 3 with
+   | Error (Timeout _) -> ()
+   | _ -> assert false);
+  (* Success doesn't need retry *)
+  assert (fetch_with_retry "http://example.com" 3
+          = Ok "response from http://example.com");
+  Printf.printf "  Retry logic: passed\n"
 
 let () =
-  assert (Result.is_ok (fetch "http://example.com"));
-
-  (match fetch "http://timeout" with
-   | Error (Timeout _) -> assert (is_retryable (Timeout { seconds = 1.0 }))
-   | _ -> assert false);
-
-  (match fetch "http://refused" with
-   | Error (ConnectionRefused _) -> assert (is_retryable (ConnectionRefused ""))
-   | _ -> assert false);
-
-  (match fetch "" with
-   | Error (DnsResolutionFailed _) -> assert (not (is_retryable (DnsResolutionFailed "")))
-   | _ -> assert false);
-
-  (match fetch "http://500" with
-   | Error (HttpError { status = 500; _ } as e) ->
-     assert (is_retryable e);
-     assert (not (is_client_error e))
-   | _ -> assert false);
-
-  (match fetch "http://404" with
-   | Error (HttpError { status = 404; _ } as e) ->
-     assert (not (is_retryable e));
-     assert (is_client_error e)
-   | _ -> assert false);
-
-  assert (Result.is_ok (fetch_with_retry "http://example.com" 3));
-  assert (Result.is_error (fetch_with_retry "http://timeout" 2));
-  assert (Result.is_error (fetch_with_retry "http://404" 3));
-
-  let err = Timeout { seconds = 5.0 } in
-  assert (string_of_net_error err = "timeout after 5.0s");
-
-  Printf.printf "Network error tests passed\n"
+  Printf.printf "Testing network errors:\n";
+  test_errors ();
+  test_retryable ();
+  test_retry ();
+  Printf.printf "✓ All tests passed\n"

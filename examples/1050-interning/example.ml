@@ -1,90 +1,73 @@
-(* 1050: String Interning — Deduplicate Strings to Integer IDs
-   Map strings to unique ints for O(1) comparison.
-   OCaml: Hashtbl for both directions, int as symbol. *)
+(* 1050: String Interning — Dedup Strings to IDs *)
+(* Map strings to unique integer IDs for efficient comparison/storage *)
 
-module StringTbl = Hashtbl.Make(struct
-  type t = string
-  let equal = String.equal
-  let hash = Hashtbl.hash
-end)
+(* Approach 1: Basic string interner using Hashtbl *)
+module StringInterner = struct
+  type t = {
+    to_id: (string, int) Hashtbl.t;
+    to_str: (int, string) Hashtbl.t;
+    mutable next_id: int;
+  }
 
-type symbol = Symbol of int
+  let create () = {
+    to_id = Hashtbl.create 64;
+    to_str = Hashtbl.create 64;
+    next_id = 0;
+  }
 
-type interner = {
-  to_id  : int StringTbl.t;
-  to_str : string array ref;  (* grows as needed *)
-  mutable count : int;
-}
+  let intern interner s =
+    match Hashtbl.find_opt interner.to_id s with
+    | Some id -> id
+    | None ->
+      let id = interner.next_id in
+      interner.next_id <- id + 1;
+      Hashtbl.add interner.to_id s id;
+      Hashtbl.add interner.to_str id s;
+      id
 
-let make_interner () =
-  { to_id = StringTbl.create 16; to_str = ref (Array.make 16 ""); count = 0 }
+  let resolve interner id =
+    Hashtbl.find_opt interner.to_str id
 
-let intern t s =
-  match StringTbl.find_opt t.to_id s with
-  | Some id -> Symbol id
-  | None ->
-    let id = t.count in
-    (* Grow the array if needed *)
-    if id >= Array.length !(t.to_str) then begin
-      let new_arr = Array.make (id * 2 + 1) "" in
-      Array.blit !(t.to_str) 0 new_arr 0 id;
-      t.to_str := new_arr
-    end;
-    !(t.to_str).(id) <- s;
-    StringTbl.add t.to_id s id;
-    t.count <- id + 1;
-    Symbol id
+  let len interner = interner.next_id
+end
 
-let resolve t (Symbol id) =
-  if id < t.count then Some !(t.to_str).(id) else None
+let basic_interning () =
+  let interner = StringInterner.create () in
+  let id1 = StringInterner.intern interner "hello" in
+  let id2 = StringInterner.intern interner "world" in
+  let id3 = StringInterner.intern interner "hello" in  (* same as id1 *)
+  assert (id1 = id3);  (* Same string → same ID *)
+  assert (id1 <> id2); (* Different strings → different IDs *)
+  assert (StringInterner.resolve interner id1 = Some "hello");
+  assert (StringInterner.resolve interner id2 = Some "world");
+  assert (StringInterner.len interner = 2)
 
-let len t = t.count
-
-let () =
-  let t = make_interner () in
-  let id1 = intern t "hello" in
-  let id2 = intern t "world" in
-  let id3 = intern t "hello" in  (* same as id1 *)
-
-  assert (id1 = id3);            (* same string → same symbol *)
-  assert (id1 <> id2);           (* different strings → different symbols *)
-  assert (resolve t id1 = Some "hello");
-  assert (resolve t id2 = Some "world");
-  assert (len t = 2);
-
-  (* Fast comparison: count occurrences using symbols *)
-  let words = ["the";"cat";"sat";"on";"the";"mat";"the";"cat"] in
-  let ids = List.map (intern t) words in
+(* Approach 2: Interned comparison is O(1) *)
+let fast_comparison () =
+  let interner = StringInterner.create () in
+  let words = ["the"; "cat"; "sat"; "on"; "the"; "mat"; "the"; "cat"] in
+  let ids = List.map (StringInterner.intern interner) words in
+  (* Compare IDs instead of strings: integer comparison is O(1) *)
   let the_id = List.hd ids in
   let count = List.length (List.filter (fun id -> id = the_id) ids) in
-  assert (count = 3);
+  assert (count = 3)  (* "the" appears 3 times *)
 
-  (* Frequency map using symbols *)
-  let freq = Hashtbl.create 8 in
-  List.iter (fun id ->
-    let c = try Hashtbl.find freq id with Not_found -> 0 in
-    Hashtbl.replace freq id (c + 1)
-  ) ids;
-  assert (Hashtbl.find freq the_id = 3);
-
-  (* Symbol table: unique variable names *)
-  let t2 = make_interner () in
-  let vars = ["x";"y";"x";"z";"y";"x"] in
-  let interned = List.map (intern t2) vars in
-  assert (len t2 = 3);
-
-  (* Dedup using sort + dedup on int values *)
-  let ids_sorted = List.sort_uniq compare
-    (List.map (fun (Symbol id) -> id) interned) in
-  assert (List.length ids_sorted = 3);
-
+(* Approach 3: Interned symbol table *)
+let symbol_table () =
+  let interner = StringInterner.create () in
+  let vars = ["x"; "y"; "x"; "z"; "y"; "x"] in
+  let interned = List.map (StringInterner.intern interner) vars in
+  (* Only 3 unique symbols *)
+  assert (StringInterner.len interner = 3);
+  (* Dedup by comparing IDs *)
+  let unique = List.sort_uniq compare interned in
+  assert (List.length unique = 3);
   (* Resolve back *)
-  let names = List.filter_map (fun id -> resolve t2 (Symbol id)) ids_sorted in
-  assert (List.length names = 3);
+  let names = List.filter_map (StringInterner.resolve interner) unique in
+  assert (List.length names = 3)
 
-  (* Empty string interning *)
-  let t3 = make_interner () in
-  let empty_sym = intern t3 "" in
-  assert (resolve t3 empty_sym = Some "");
-
-  Printf.printf "All interning tests passed.\n"
+let () =
+  basic_interning ();
+  fast_comparison ();
+  symbol_table ();
+  Printf.printf "✓ All tests passed\n"

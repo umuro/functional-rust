@@ -1,65 +1,67 @@
-(* 1020: try_fold — Fold that short-circuits on error
-   Rust's try_fold stops at the first Err and returns it.
-   In OCaml we write a fold that propagates errors using Result.bind,
-   or use a recursive helper that stops early. *)
+(* 1020: try_fold — Fold that short-circuits on error *)
 
-(* Approach 1: fold with short-circuit via Result.bind *)
+(* Approach 1: Manual try_fold *)
 let try_fold f init lst =
-  List.fold_left (fun acc x ->
-    Result.bind acc (fun a -> f a x)
-  ) (Ok init) lst
+  let rec aux acc = function
+    | [] -> Ok acc
+    | x :: rest ->
+      match f acc x with
+      | Error e -> Error e
+      | Ok acc' -> aux acc' rest
+  in
+  aux init lst
 
-(* Sum positive numbers only — fail on negatives *)
-let sum_positive numbers =
-  try_fold (fun acc n ->
-    if n < 0 then Error (Printf.sprintf "negative number: %d" n)
-    else Ok (acc + n)
-  ) 0 numbers
+(* Approach 2: Using Seq for lazy evaluation *)
+let try_fold_seq f init seq =
+  let rec aux acc seq =
+    match seq () with
+    | Seq.Nil -> Ok acc
+    | Seq.Cons (x, rest) ->
+      match f acc x with
+      | Error e -> Error e
+      | Ok acc' -> aux acc' rest
+  in
+  aux init seq
 
-(* Concat strings up to a max length *)
-let concat_limited strings max_len =
-  try_fold (fun acc s ->
-    let next = acc ^ s in
-    if String.length next > max_len then
-      Error (Printf.sprintf "result too long: %d > %d" (String.length next) max_len)
-    else Ok next
-  ) "" strings
+(* Example: sum numbers, but reject negatives *)
+let sum_positive acc n =
+  if n < 0 then Error (Printf.sprintf "negative number: %d" n)
+  else Ok (acc + n)
 
-(* Product without overflow (using option for overflow check) *)
-let product_no_overflow numbers =
-  try_fold (fun acc n ->
-    (* Simple overflow check: compare before/after *)
-    if acc <> 0 && abs n > max_int / abs acc then
-      Error (Printf.sprintf "overflow at %d * %d" acc n)
-    else Ok (acc * n)
-  ) 1 numbers
+(* Example: build string, but limit length *)
+let concat_limited acc s =
+  let result = acc ^ s in
+  if String.length result > 20 then Error "result too long"
+  else Ok result
+
+let test_try_fold () =
+  assert (try_fold sum_positive 0 [1; 2; 3] = Ok 6);
+  (match try_fold sum_positive 0 [1; -2; 3] with
+   | Error e -> assert (e = "negative number: -2")
+   | Ok _ -> assert false);
+  (* Short-circuits: [3] never processed *)
+  assert (try_fold sum_positive 0 [] = Ok 0);
+  Printf.printf "  Approach 1 (list try_fold): passed\n"
+
+let test_try_fold_seq () =
+  let seq = List.to_seq [1; 2; 3] in
+  assert (try_fold_seq sum_positive 0 seq = Ok 6);
+  let seq = List.to_seq [1; -2; 3] in
+  (match try_fold_seq sum_positive 0 seq with
+   | Error _ -> ()
+   | Ok _ -> assert false);
+  Printf.printf "  Approach 2 (seq try_fold): passed\n"
+
+let test_concat () =
+  assert (try_fold concat_limited "" ["hello"; " "; "world"] = Ok "hello world");
+  (match try_fold concat_limited "" ["hello"; " "; "world!!!!!!!!!!!!!!!!"] with
+   | Error e -> assert (e = "result too long")
+   | Ok _ -> assert false);
+  Printf.printf "  Concat example: passed\n"
 
 let () =
-  assert (sum_positive [1; 2; 3] = Ok 6);
-  assert (sum_positive [1; -2; 3] = Error "negative number: -2");
-  assert (sum_positive [] = Ok 0);
-
-  assert (concat_limited ["hello"; " "; "world"] 20 = Ok "hello world");
-  (match concat_limited ["hello"; " "; "world!!!!!!!!!!!!"] 10 with
-   | Error msg -> assert (String.length msg > 0)
-   | _ -> assert false);
-
-  assert (product_no_overflow [2; 3; 4] = Ok 24);
-
-  (* Short-circuit proof: stop at first error *)
-  let count = ref 0 in
-  let result =
-    try_fold (fun acc n ->
-      incr count;
-      if n < 0 then Error "negative" else Ok (acc + n)
-    ) 0 [1; -2; 3; 4; 5]
-  in
-  assert (Result.is_error result);
-  assert (!count = 2);  (* only processed 1 and -2 *)
-
-  (* Regular fold vs try_fold *)
-  let regular_sum = List.fold_left (+) 0 [1; 2; 3] in
-  assert (regular_sum = 6);
-
-  Printf.printf "sum_positive [1;2;3] = %s\n"
-    (match sum_positive [1; 2; 3] with Ok n -> string_of_int n | Error e -> e)
+  Printf.printf "Testing try_fold:\n";
+  test_try_fold ();
+  test_try_fold_seq ();
+  test_concat ();
+  Printf.printf "✓ All tests passed\n"

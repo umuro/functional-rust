@@ -1,64 +1,59 @@
-(* 1008: Option to Result Conversion
-   Option.to_result (available in OCaml 4.08+) converts Option to Result.
-   The equivalent of Rust's ok_or / ok_or_else is built-in.
-   Result.to_option converts back. *)
+(* 1008: Option to Result Conversion *)
+(* Converting Option to Result with error context *)
 
-(* Build a simple "user database" using a Hashtbl *)
-let build_users () =
-  let tbl = Hashtbl.create 4 in
-  Hashtbl.add tbl "Alice" ("alice@ex.com", 30);
-  Hashtbl.add tbl "Bob"   ("bob@ex.com",   17);
-  tbl
+(* Approach 1: Pattern matching *)
+let find_user_manual users name =
+  match List.assoc_opt name users with
+  | Some user -> Ok user
+  | None -> Error (Printf.sprintf "user not found: %s" name)
 
-(* Approach 1: Option.to_result — eager error value *)
-let find_user_eager users name =
-  Option.to_result
-    ~none:(Printf.sprintf "user not found: %s" name)
-    (Hashtbl.find_opt users name)
-
-(* Approach 2: Lazy error using match *)
-let find_user_lazy users name =
-  match Hashtbl.find_opt users name with
+(* Approach 2: Helper function (like ok_or) *)
+let ok_or error = function
   | Some v -> Ok v
-  | None   -> Error (Printf.sprintf "user not found: %s" name)
+  | None -> Error error
 
-(* Approach 3: Chain Option -> Result into a pipeline *)
+let ok_or_else error_fn = function
+  | Some v -> Ok v
+  | None -> Error (error_fn ())
+
+let find_user users name =
+  List.assoc_opt name users
+  |> ok_or_else (fun () -> Printf.sprintf "user not found: %s" name)
+
+(* Approach 3: Chaining Option-to-Result in a pipeline *)
 let find_and_validate users name min_age =
-  let open Result in
-  bind
-    (Option.to_result ~none:(Printf.sprintf "user not found: %s" name)
-       (Hashtbl.find_opt users name))
-    (fun (email, age) ->
-       if age >= min_age then Ok (email, age)
+  List.assoc_opt name users
+  |> ok_or_else (fun () -> Printf.sprintf "user not found: %s" name)
+  |> Result.bind (fun (_, age) ->
+       if age >= min_age then Ok (name, age)
        else Error (Printf.sprintf "%s is too young (%d < %d)" name age min_age))
 
-let () =
-  let users = build_users () in
+let users = [("Alice", ("alice@ex.com", 30)); ("Bob", ("bob@ex.com", 17))]
 
-  (* ok_or equivalent *)
-  assert (Result.is_ok (find_user_eager users "Alice"));
-  (match find_user_eager users "Alice" with Ok (_, age) -> assert (age = 30) | _ -> assert false);
-  assert (find_user_eager users "Unknown" = Error "user not found: Unknown");
+let test_manual () =
+  assert (find_user_manual users "Alice" = Ok ("alice@ex.com", 30));
+  assert (find_user_manual users "Unknown" = Error "user not found: Unknown");
+  Printf.printf "  Approach 1 (manual): passed\n"
 
-  (* ok_or_else equivalent *)
-  assert (Result.is_ok (find_user_lazy users "Bob"));
-  assert (Result.is_error (find_user_lazy users "Nobody"));
+let test_ok_or () =
+  assert (ok_or "missing" (Some 42) = Ok 42);
+  assert (ok_or "missing" None = Error "missing");
+  assert (find_user users "Alice" = Ok ("alice@ex.com", 30));
+  Printf.printf "  Approach 2 (ok_or helper): passed\n"
 
-  (* pipeline *)
-  (match find_and_validate users "Alice" 18 with
-   | Ok (email, age) ->
-     assert (email = "alice@ex.com");
-     assert (age = 30)
-   | _ -> assert false);
-
+let test_chain () =
+  assert (find_and_validate users "Alice" 18 = Ok ("Alice", 30));
   (match find_and_validate users "Bob" 18 with
    | Error msg -> assert (String.length msg > 0)
-   | _ -> assert false);
+   | Ok _ -> assert false);
+  (match find_and_validate users "Unknown" 18 with
+   | Error msg -> assert (msg = "user not found: Unknown")
+   | Ok _ -> assert false);
+  Printf.printf "  Approach 3 (chained pipeline): passed\n"
 
-  (* Direct Option ↔ Result conversions *)
-  assert (Option.to_result ~none:"missing" (Some 42) = Ok 42);
-  assert (Option.to_result ~none:"missing" None = Error "missing");
-  assert (Result.to_option (Ok 42) = Some 42);
-  assert (Result.to_option (Error "fail" : (int, string) result) = None);
-
-  Printf.printf "Alice found: %b\n" (Result.is_ok (find_user_eager users "Alice"))
+let () =
+  Printf.printf "Testing option to result:\n";
+  test_manual ();
+  test_ok_or ();
+  test_chain ();
+  Printf.printf "✓ All tests passed\n"

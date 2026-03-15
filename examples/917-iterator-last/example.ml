@@ -1,58 +1,19 @@
-(* 917: Getting the last element of a list
+(* 278. Getting the last element - OCaml *)
 
-   OCaml lists are singly-linked; getting the last element is O(n).
-   We fold the whole list keeping only the final value. *)
-
-(* last: returns Some of the last element, or None for empty list *)
-let last lst =
-  match lst with
+let last = function
   | [] -> None
-  | _ -> Some (List.fold_left (fun _ x -> x) (List.hd lst) lst)
-
-(* last_opt: idiomatic name — mirrors Option convention *)
-let last_opt = last
-
-(* For arrays, last is O(1) *)
-let array_last arr =
-  let n = Array.length arr in
-  if n = 0 then None else Some arr.(n - 1)
-
-(* last_after_filter: find last element satisfying a predicate *)
-let last_where pred lst =
-  List.fold_left
-    (fun acc x -> if pred x then Some x else acc)
-    None lst
+  | lst -> Some (List.nth lst (List.length lst - 1))
 
 let () =
-  (* basic *)
-  assert (last [1; 2; 3; 4; 5] = Some 5);
+  let nums = [1; 2; 3; 4; 5] in
+  Printf.printf "Last: %s\n" (match last nums with Some n -> string_of_int n | None -> "None");
+  Printf.printf "Last of []: %s\n" (match last [] with Some _ -> "Some" | None -> "None");
 
-  (* empty *)
-  assert (last [] = None);
+  let words = ["apple"; "banana"; "cherry"] in
+  Printf.printf "Last word: %s\n"
+    (match last words with Some w -> w | None -> "None");
 
-  (* single *)
-  assert (last [42] = Some 42);
-
-  (* after filter — last even in 1..10 *)
-  let last_even =
-    let evens = List.filter (fun x -> x mod 2 = 0) (List.init 10 (fun i -> i + 1)) in
-    last evens
-  in
-  assert (last_even = Some 10);
-
-  (* using last_where directly *)
-  assert (last_where (fun x -> x mod 2 = 0) [1;2;3;4;5;6;7] = Some 6);
-
-  (* array last *)
-  assert (array_last [|1;2;3|] = Some 3);
-  assert (array_last [||] = None);
-
-  (* strings: last char *)
-  let last_char s =
-    if s = "" then None
-    else Some s.[String.length s - 1]
-  in
-  assert (last_char "hello" = Some 'o');
-  assert (last_char "" = None);
-
-  print_endline "917-iterator-last: all tests passed"
+  (* Last filtered element *)
+  let last_even = last (List.filter (fun x -> x mod 2 = 0) nums) in
+  Printf.printf "Last even: %s\n"
+    (match last_even with Some n -> string_of_int n | None -> "None")

@@ -1,36 +1,23 @@
-(* 344: Structured Concurrency
-   OCaml 5 Domains provide structured parallelism:
-   all spawned domains are joined before the enclosing scope returns. *)
+(* OCaml: structured concurrency via nested thread management *)
 
-(* Run a function in a new domain and wait for its result *)
-let scoped_work f =
-  let d = Domain.spawn f in
-  Domain.join d
+let run_scoped tasks =
+  let handles = List.map (fun f -> Thread.create f ()) tasks in
+  List.iter Thread.join handles
 
-(* Parallel sum via recursive domain splitting *)
-let rec parallel_sum arr lo hi =
-  let len = hi - lo in
-  if len < 100 then
-    (* Small slice: compute directly *)
-    Array.sub arr lo len |> Array.fold_left (+) 0
-  else begin
-    let mid = lo + len / 2 in
-    (* Spawn left half in a new domain *)
-    let left_d = Domain.spawn (fun () -> parallel_sum arr lo mid) in
-    (* Compute right half in current domain *)
-    let right  = parallel_sum arr mid hi in
-    let left   = Domain.join left_d in
-    left + right
-  end
+let with_resources setup teardown f =
+  let r = setup () in
+  (try f r with e -> teardown r; raise e);
+  teardown r
 
 let () =
-  (* scoped_work test *)
-  let r = scoped_work (fun () -> 42) in
-  assert (r = 42);
-  Printf.printf "scoped_work returned: %d\n%!" r;
-
-  (* parallel_sum test *)
-  let nums = Array.init 1000 (fun i -> i + 1) in   (* 1..1000 *)
-  let total = parallel_sum nums 0 (Array.length nums) in
-  assert (total = 500500);
-  Printf.printf "parallel_sum(1..1000) = %d\n%!" total
+  run_scoped [
+    (fun () ->
+      Thread.delay 0.01;
+      Printf.printf "Task A done\n");
+    (fun () ->
+      Thread.delay 0.005;
+      Printf.printf "Task B done\n");
+    (fun () ->
+      Printf.printf "Task C done\n");
+  ];
+  Printf.printf "All tasks in scope completed\n"

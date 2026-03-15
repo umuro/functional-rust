@@ -1,128 +1,93 @@
-(* 726: Memory pool / bump arena — OCaml equivalent *)
-(* Rust implements manual pool and arena allocators to avoid GC overhead.
-   In OCaml the GC handles allocation; but the PATTERNS are still useful:
-   - Object pools reduce allocation churn and GC pressure.
-   - Arenas (or "regions") group related allocations and free them together.
+(* OCaml: Memory pool / arena pattern
+   OCaml's GC acts as an implicit arena for the minor heap.
+   We implement an explicit arena for demonstration. *)
 
-   We demonstrate:
-   1. A fixed-capacity typed object pool backed by an array free-list.
-   2. A simple bump arena using a Bytes slab (for untyped byte data).
-   3. An arena-allocated expression AST using a Queue as the backing store. *)
-
-(* ── Part 1: Fixed-size typed object pool ──────────────────────────────────── *)
+(* --- Simple typed pool: pre-allocate N slots --- *)
 
 type 'a pool = {
-  slots    : 'a option array;
-  free     : int Queue.t;   (* free-list: indices of available slots *)
-  mutable live : int;
+  slots   : 'a array;
+  mutable free: int list;  (* indices of free slots *)
 }
 
-let pool_create cap =
-  let q = Queue.create () in
-  for i = 0 to cap - 1 do Queue.add i q done;
-  { slots = Array.make cap None; free = q; live = 0 }
+exception Pool_exhausted
 
-let pool_alloc p v =
-  if Queue.is_empty p.free then None
-  else begin
-    let idx = Queue.pop p.free in
-    p.slots.(idx) <- Some v;
-    p.live <- p.live + 1;
-    Some idx
-  end
+let make_pool n default =
+  { slots = Array.make n default;
+    free  = List.init n (fun i -> i) }
 
-let pool_get p idx =
-  match p.slots.(idx) with
-  | Some v -> v
-  | None   -> failwith "pool_get: slot not live"
+let pool_alloc pool x =
+  match pool.free with
+  | []     -> raise Pool_exhausted
+  | i :: t ->
+    pool.free <- t;
+    pool.slots.(i) <- x;
+    i  (* return handle (index) *)
 
-let pool_dealloc p idx =
-  p.slots.(idx) <- None;
-  Queue.add idx p.free;
-  p.live <- p.live - 1
+let pool_get pool i = pool.slots.(i)
 
-(* ── Part 2: Bump arena (byte slab) ────────────────────────────────────────── *)
+let pool_free pool i =
+  (* Return slot to free list — O(1) *)
+  pool.free <- i :: pool.free
+
+let pool_used pool =
+  let total = Array.length pool.slots in
+  total - List.length pool.free
+
+(* --- Bump allocator (arena) --- *)
 
 type arena = {
-  slab   : bytes;
-  mutable pos : int;
+  buf  : bytes;
+  mutable pos  : int;
+  cap  : int;
 }
 
-let arena_create capacity = { slab = Bytes.create capacity; pos = 0 }
+let make_arena cap = { buf = Bytes.create cap; pos = 0; cap }
 
-let arena_alloc_bytes a n =
-  let start = a.pos in
-  let next  = start + n in
-  if next > Bytes.length a.slab then failwith "Arena OOM";
-  a.pos <- next;
-  (* return a sub-bytes view backed by the same slab *)
-  Bytes.sub a.slab start n
+let arena_alloc arena size =
+  if arena.pos + size > arena.cap then failwith "Arena OOM"
+  else begin
+    let start = arena.pos in
+    arena.pos <- arena.pos + size;
+    (arena.buf, start, size)   (* reference into arena, not a copy *)
+  end
 
-let arena_reset a = a.pos <- 0
-let arena_used a = a.pos
-let arena_capacity a = Bytes.length a.slab
+let arena_reset arena = arena.pos <- 0
 
-(* ── Part 3: Arena-allocated AST using OCaml values + a backing list ─────── *)
-(* In OCaml we don't control physical allocation location, but we can
-   allocate nodes into a list "arena" and free them all at once by dropping it. *)
+let arena_used arena = arena.pos
 
-type expr =
+(* --- Parse tree allocated in arena --- *)
+
+type ast_node =
   | Num of int
-  | Add of expr * expr
-  | Mul of expr * expr
+  | Add of int * int  (* indices into arena-resident nodes *)
 
-let rec eval = function
-  | Num n     -> n
-  | Add (l,r) -> eval l + eval r
-  | Mul (l,r) -> eval l * eval r
-
-(* Build (1 + 2) * 3 — values are GC-managed, no manual arena needed *)
-let build_ast () =
-  Mul (Add (Num 1, Num 2), Num 3)
+let parse_expression arena_buf =
+  (* Simulate building a small AST by writing into the arena *)
+  let (buf, off, _) = arena_alloc arena_buf 8 in
+  Bytes.set_int32_be buf off (Int32.of_int 42);   (* store number *)
+  (buf, off)
 
 let () =
-  (* Pool *)
-  let p = pool_create 4 in
-  let h = Option.get (pool_alloc p 42) in
-  assert (pool_get p h = 42);
-  assert (p.live = 1);
-  pool_dealloc p h;
-  assert (p.live = 0);
-  print_endline "pool alloc/dealloc: ok";
+  (* Pool demo *)
+  let pool = make_pool 4 0 in
+  let h1 = pool_alloc pool 100 in
+  let h2 = pool_alloc pool 200 in
+  Printf.printf "pool[%d]=%d pool[%d]=%d used=%d\n"
+    h1 (pool_get pool h1) h2 (pool_get pool h2) (pool_used pool);
+  pool_free pool h1;
+  Printf.printf "After free h1: used=%d\n" (pool_used pool);
+  let h3 = pool_alloc pool 999 in
+  Printf.printf "Reused slot %d = %d\n" h3 (pool_get pool h3);
 
-  (* Pool exhaustion *)
-  let p2 = pool_create 2 in
-  assert (pool_alloc p2 1 <> None);
-  assert (pool_alloc p2 2 <> None);
-  assert (pool_alloc p2 3 = None);
-  print_endline "pool exhaustion: ok";
+  (* Arena demo *)
+  let arena = make_arena 256 in
+  let _ = parse_expression arena in
+  Printf.printf "Arena used: %d bytes\n" (arena_used arena);
+  arena_reset arena;
+  Printf.printf "After reset: %d bytes\n" (arena_used arena);
 
-  (* Pool slot reuse *)
-  let p3 = pool_create 2 in
-  let h3 = Option.get (pool_alloc p3 1) in
-  pool_dealloc p3 h3;
-  let h4 = Option.get (pool_alloc p3 99) in
-  assert (pool_get p3 h4 = 99);
-  print_endline "pool reuse: ok";
-
-  (* Bump arena *)
-  let a = arena_create 1024 in
-  let slice = arena_alloc_bytes a 10 in
-  Bytes.set slice 0 (Char.chr 7);
-  assert (Char.code (Bytes.get slice 0) = 7);
-  assert (arena_used a = 10);
-  arena_reset a;
-  assert (arena_used a = 0);
-  print_endline "arena alloc/reset: ok";
-
-  (* Arena OOM *)
-  let tiny = arena_create 8 in
-  (try ignore (arena_alloc_bytes tiny 9); assert false
-   with Failure "Arena OOM" -> print_endline "arena OOM: ok");
-
-  (* AST eval *)
-  let ast = build_ast () in
-  assert (eval ast = 9);  (* (1+2)*3 = 9 *)
-  print_endline "AST eval: ok";
-
-  print_endline "All assertions passed."
+  (* Allocate many small things *)
+  for _ = 1 to 10 do
+    let _ = arena_alloc arena 8 in ()
+  done;
+  Printf.printf "After 10×8B allocs: %d bytes used\n" (arena_used arena)

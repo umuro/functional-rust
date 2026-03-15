@@ -1,49 +1,41 @@
-(* 069: Unfold — generate a sequence from a seed value
-   OCaml 4.11+ has Seq.unfold; we also show manual versions *)
+(* 069: Unfold — generate a sequence from a seed *)
 
-(* --- Approach 1: Manual unfold as eager list builder --- *)
+(* Approach 1: Manual list unfold *)
+let rec unfold f seed =
+  match f seed with
+  | None -> []
+  | Some (value, next_seed) -> value :: unfold f next_seed
 
-let unfold seed f =
-  let rec aux acc state =
-    match f state with
-    | None           -> List.rev acc
-    | Some (v, next) -> aux (v :: acc) next
-  in
-  aux [] seed
-
+(* Generate range [a, b) *)
 let range a b =
-  unfold a (fun i -> if i >= b then None else Some (i, i + 1))
+  unfold (fun i -> if i >= b then None else Some (i, i + 1)) a
 
+(* Fibonacci sequence up to limit *)
 let fibs_up_to limit =
-  unfold (0, 1) (fun (a, b) ->
-    if a > limit then None else Some (a, (b, a + b)))
+  unfold (fun (a, b) ->
+    if a > limit then None
+    else Some (a, (b, a + b))
+  ) (0, 1)
 
-(* --- Approach 2: Using Seq.unfold (lazy, OCaml 4.11+) --- *)
-
-let collatz_seq n =
-  Seq.unfold (fun x ->
-    if x = 0 then None
-    else if x = 1 then Some (1, 0)     (* emit 1 then stop *)
-    else if x mod 2 = 0 then Some (x, x / 2)
-    else Some (x, 3 * x + 1)
+(* Approach 2: Collatz sequence *)
+let collatz n =
+  unfold (fun n ->
+    if n = 1 then Some (1, 0)
+    else if n = 0 then None
+    else Some (n, if n mod 2 = 0 then n / 2 else 3 * n + 1)
   ) n
 
-let collatz n = List.of_seq (collatz_seq n)
+(* Approach 3: Using Seq.unfold *)
+let range_seq a b =
+  Seq.unfold (fun i -> if i >= b then None else Some (i, i + 1)) a
 
-(* --- Approach 3: Seq.iterate to build an infinite sequence, then take --- *)
+let seq_to_list s = List.of_seq s
 
-let naturals_from start =
-  Seq.iterate (fun n -> n + 1) start
-
-let take n seq =
-  List.of_seq (Seq.take n seq)
-
+(* Tests *)
 let () =
-  Printf.printf "range 1 6 = [%s]\n"
-    (String.concat "; " (List.map string_of_int (range 1 6)));
-  Printf.printf "fibs up to 20 = [%s]\n"
-    (String.concat "; " (List.map string_of_int (fibs_up_to 20)));
-  Printf.printf "collatz 6 = [%s]\n"
-    (String.concat "; " (List.map string_of_int (collatz 6)));
-  Printf.printf "naturals from 5, take 5 = [%s]\n"
-    (String.concat "; " (List.map string_of_int (take 5 (naturals_from 5))))
+  assert (range 1 6 = [1; 2; 3; 4; 5]);
+  assert (range 5 5 = []);
+  assert (fibs_up_to 20 = [0; 1; 1; 2; 3; 5; 8; 13]);
+  assert (collatz 6 = [6; 3; 10; 5; 16; 8; 4; 2; 1]);
+  assert (seq_to_list (range_seq 1 4) = [1; 2; 3]);
+  Printf.printf "✓ All tests passed\n"

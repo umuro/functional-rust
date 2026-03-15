@@ -1,72 +1,69 @@
-(* 1022: Sentinel Values vs Result
-   C uses -1 / "" as sentinels for "not found". OCaml and Rust prefer
-   Option for "maybe absent" and Result for "absent with a reason".
-   Demonstrates the migration pattern: sentinel → Option → Result *)
+(* 1022: Sentinel Values vs Result *)
+(* Migrating from sentinel values (-1, null, "") to Option/Result *)
 
-(* Approach 1: Sentinel values — the C way (avoid in OCaml) *)
-let find_index_sentinel haystack needle =
-  let found = ref (-1) in
-  List.iteri (fun i v -> if v = needle then found := i) haystack;
-  !found  (* -1 = "not found" *)
+(* Approach 1: Sentinel values — the bad old way *)
+let find_index_sentinel lst target =
+  let rec aux i = function
+    | [] -> -1  (* sentinel: "not found" *)
+    | x :: _ when x = target -> i
+    | _ :: rest -> aux (i + 1) rest
+  in aux 0 lst
 
 let get_config_sentinel key =
-  match key with
-  | "port" -> "8080"
-  | _      -> ""  (* "" = "missing" — ambiguous! *)
+  if key = "port" then "8080"
+  else ""  (* sentinel: "missing" *)
 
-(* Approach 2: Option — explicit absence (PREFERRED for lookups) *)
-let find_index haystack needle =
-  let rec loop i = function
+(* Approach 2: Option — explicit absence *)
+let find_index lst target =
+  let rec aux i = function
     | [] -> None
-    | x :: _ when x = needle -> Some i
-    | _ :: rest -> loop (i + 1) rest
-  in
-  loop 0 haystack
+    | x :: _ when x = target -> Some i
+    | _ :: rest -> aux (i + 1) rest
+  in aux 0 lst
 
 let get_config key =
-  match key with
-  | "port" -> Some "8080"
-  | _      -> None
+  if key = "port" then Some "8080"
+  else None
 
 (* Approach 3: Result — absence with reason *)
-let find_index_result haystack needle =
-  match find_index haystack needle with
-  | Some i -> Ok i
-  | None   -> Error (Printf.sprintf "%s not in list" needle)
+let find_index_result lst target =
+  let rec aux i = function
+    | [] -> Error (Printf.sprintf "%s not in list" target)
+    | x :: _ when x = target -> Ok i
+    | _ :: rest -> aux (i + 1) rest
+  in aux 0 lst
 
 let get_config_result key =
-  match key with
-  | "port" -> Ok "8080"
-  | _      -> Error (Printf.sprintf "key not found: %s" key)
+  if key = "port" then Ok "8080"
+  else Error (Printf.sprintf "key not found: %s" key)
 
-(* Migration wrapper: sentinel int → Option *)
-let migrate_sentinel v =
-  if v = -1 then None else Some v
-
-let () =
+let test_sentinel () =
   assert (find_index_sentinel [1; 2; 3] 2 = 1);
   assert (find_index_sentinel [1; 2; 3] 9 = -1);
+  (* Bug: what if -1 is a valid value? Sentinel is ambiguous *)
+  assert (get_config_sentinel "port" = "8080");
+  assert (get_config_sentinel "missing" = "");
+  (* Bug: what if "" is a valid config value? *)
+  Printf.printf "  Approach 1 (sentinel values): passed\n"
 
+let test_option () =
   assert (find_index [1; 2; 3] 2 = Some 1);
   assert (find_index [1; 2; 3] 9 = None);
+  assert (get_config "port" = Some "8080");
+  assert (get_config "missing" = None);
+  Printf.printf "  Approach 2 (Option): passed\n"
 
-  assert (find_index_result ["a"; "b"; "c"] "b" = Ok 1);
-  (match find_index_result ["a"; "b"] "z" with
+let test_result () =
+  assert (find_index_result ["a";"b";"c"] "b" = Ok 1);
+  (match find_index_result ["a";"b"] "z" with
    | Error msg -> assert (String.length msg > 0)
-   | _ -> assert false);
-
-  (* Ambiguity with sentinels *)
-  assert (get_config_sentinel "missing" = "");
-  assert (get_config "missing" = None);  (* clear: absent *)
-
+   | Ok _ -> assert false);
   assert (get_config_result "port" = Ok "8080");
-  assert (Result.is_error (get_config_result "unknown"));
+  Printf.printf "  Approach 3 (Result): passed\n"
 
-  (* Migration pattern *)
-  assert (migrate_sentinel (find_index_sentinel [1; 2] 2) = Some 1);
-  assert (migrate_sentinel (find_index_sentinel [1; 2] 9) = None);
-
-  Printf.printf "find_index [1;2;3] 2 = %s\n"
-    (match find_index [1; 2; 3] 2 with
-     | Some i -> string_of_int i
-     | None -> "not found")
+let () =
+  Printf.printf "Testing sentinel vs result:\n";
+  test_sentinel ();
+  test_option ();
+  test_result ();
+  Printf.printf "✓ All tests passed\n"

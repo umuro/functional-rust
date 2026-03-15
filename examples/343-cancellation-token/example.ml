@@ -1,51 +1,43 @@
-(* 343: Cancellation Token
-   Cooperative cancellation using Atomic_bool across domains/threads. *)
+(* 343: Cancellation Token *)
+(* OCaml: use Atomic or ref for cooperative cancellation *)
 
-(* A cancellation token is just a shared atomic boolean *)
-let make_token () = Atomic.make false
+(* Approach 1: Simple ref-based cancellation *)
+let make_token () = ref false
+let cancel token = token := true
+let is_cancelled token = !token
 
-let cancel token = Atomic.set token true
-
-let is_cancelled token = Atomic.get token
-
-(* Worker that checks the token and counts iterations *)
 let worker token name =
   let count = ref 0 in
-  while not (is_cancelled token) && !count < 1_000_000 do
+  while not (is_cancelled token) && !count < 100 do
     incr count
   done;
   Printf.sprintf "%s did %d iterations" name !count
 
-(* Spawn multiple workers sharing one token, then cancel them *)
+(* Approach 2: Atomic for thread safety *)
+let make_atomic_token () = Atomic.make false
+let atomic_cancel token = Atomic.set token true
+let atomic_is_cancelled token = Atomic.get token
+
+(* Approach 3: Multi-worker cancellation *)
 let run_workers n =
   let token = make_token () in
-  let domains =
-    List.init n (fun i ->
-      let name = Printf.sprintf "worker-%d" i in
-      Domain.spawn (fun () -> worker token name))
-  in
-  (* Let them run briefly, then cancel *)
+  let results = Array.make n "" in
+  let threads = Array.init n (fun i ->
+    Thread.create (fun () ->
+      results.(i) <- worker token (Printf.sprintf "worker-%d" i)
+    ) ()
+  ) in
   Unix.sleepf 0.001;
   cancel token;
-  List.map Domain.join domains
+  Array.iter Thread.join threads;
+  Array.to_list results
 
+(* Tests *)
 let () =
-  (* Basic token test *)
-  let t = make_token () in
-  assert (not (is_cancelled t));
-  cancel t;
-  assert (is_cancelled t);
-  Printf.printf "Token cancel: ok\n%!";
-
-  (* Single worker *)
-  let t2 = make_token () in
-  let d = Domain.spawn (fun () -> worker t2 "alpha") in
-  Unix.sleepf 0.001;
-  cancel t2;
-  let result = Domain.join d in
-  Printf.printf "Worker result: %s\n%!" result;
-
-  (* Multi-worker *)
-  let results = run_workers 3 in
-  List.iter (fun r -> Printf.printf "  %s\n%!" r) results;
-  Printf.printf "All %d workers cancelled.\n%!" (List.length results)
+  let token = make_token () in
+  assert (not (is_cancelled token));
+  cancel token;
+  assert (is_cancelled token);
+  let result = worker (make_token ()) "test" in
+  assert (String.length result > 0);
+  Printf.printf "✓ All tests passed\n"

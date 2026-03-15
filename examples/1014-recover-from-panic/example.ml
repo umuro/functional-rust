@@ -1,70 +1,56 @@
-(* 1014: Recover from Panic
-   Rust uses std::panic::catch_unwind to convert panics into Result.
-   OCaml uses try...with to catch exceptions — the idiomatic equivalent.
-   Exceptions in OCaml are lightweight and pervasive; catching them is normal. *)
+(* 1014: Recover from Panic *)
+(* OCaml try/with for catching exceptions *)
 
-(* Approach 1: catch_unwind equivalent — wrap any thunk in try/with *)
+(* Approach 1: try/with — catch specific exceptions *)
+let risky_divide a b =
+  if b = 0 then failwith "division by zero"
+  else a / b
+
 let safe_divide a b =
-  if b = 0 then Error "division by zero"
-  else
-    (* Demonstrate catching a failwith *)
-    match
-      (try
-         if b = 0 then failwith "division by zero";
-         Ok (a / b)
-       with Failure msg -> Error msg)
-    with
-    | r -> r
+  try Ok (risky_divide a b)
+  with Failure msg -> Error msg
 
-(* Generic: run a thunk and convert any exception to Result *)
-let catch_exn f =
+(* Approach 2: Catch all exceptions *)
+let catch_all f =
   try Ok (f ())
   with
-  | Failure msg -> Error msg
-  | Invalid_argument msg -> Error msg
-  | exn -> Error (Printexc.to_string exn)
+  | Failure msg -> Error (Printf.sprintf "Failure: %s" msg)
+  | Invalid_argument msg -> Error (Printf.sprintf "Invalid: %s" msg)
+  | exn -> Error (Printf.sprintf "Unknown: %s" (Printexc.to_string exn))
 
-(* Approach 2: catch_unwind with state — works naturally in OCaml *)
-let catch_with_state data =
-  let data = ref data in
-  catch_exn (fun () ->
-    data := !data @ [42];
-    if List.length !data > 5 then
-      failwith "too many elements";
-    List.fold_left (+) 0 !data)
-  |> (fun result -> (result, !data))
+(* Approach 3: Using Fun.protect for cleanup *)
+let with_resource f =
+  let resource = "opened" in
+  Fun.protect
+    ~finally:(fun () -> Printf.printf "    cleanup: resource closed\n")
+    (fun () -> f resource)
 
-(* Approach 3: Quiet panic suppression — OCaml does not print exceptions
-   unless they bubble to the top; no hook needed *)
-let with_quiet_exn f =
-  try Ok (f ())
-  with exn -> Error (Printexc.to_string exn)
+let test_try_with () =
+  assert (safe_divide 10 2 = Ok 5);
+  (match safe_divide 10 0 with
+   | Error msg -> assert (msg = "division by zero")
+   | Ok _ -> assert false);
+  Printf.printf "  Approach 1 (try/with): passed\n"
+
+let test_catch_all () =
+  assert (catch_all (fun () -> 42) = Ok 42);
+  (match catch_all (fun () -> failwith "boom") with
+   | Error msg -> assert (String.length msg > 0)
+   | Ok _ -> assert false);
+  (match catch_all (fun () -> invalid_arg "bad") with
+   | Error msg -> assert (String.length msg > 0)
+   | Ok _ -> assert false);
+  Printf.printf "  Approach 2 (catch all): passed\n"
+
+let test_protect () =
+  let result = try Ok (with_resource (fun r -> String.length r))
+               with _ -> Error "failed" in
+  assert (result = Ok 6);
+  Printf.printf "  Approach 3 (Fun.protect): passed\n"
 
 let () =
-  assert (safe_divide 10 2 = Ok 5);
-  assert (safe_divide 10 0 = Error "division by zero");
-
-  (* catch_exn *)
-  let ok = catch_exn (fun () -> 42) in
-  assert (ok = Ok 42);
-
-  let err = catch_exn (fun () -> failwith "boom"; 0) in
-  assert (Result.is_error err);
-
-  (* catch_with_state *)
-  let (result, final_data) = catch_with_state [1; 2; 3] in
-  assert (Result.is_ok result);
-  assert (List.length final_data = 4);  (* 42 was appended *)
-
-  let (result2, _) = catch_with_state [1; 2; 3; 4; 5] in
-  assert (Result.is_error result2);
-
-  (* quiet exn *)
-  let quiet = with_quiet_exn (fun () -> failwith "silent failure"; 0) in
-  assert (Result.is_error quiet);
-
-  let quiet_ok = with_quiet_exn (fun () -> 42) in
-  assert (quiet_ok = Ok 42);
-
-  Printf.printf "safe_divide 10/2: %s\n"
-    (match safe_divide 10 2 with Ok n -> string_of_int n | Error e -> e)
+  Printf.printf "Testing recover from panic:\n";
+  test_try_with ();
+  test_catch_all ();
+  test_protect ();
+  Printf.printf "✓ All tests passed\n"

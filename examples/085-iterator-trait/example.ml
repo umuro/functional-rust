@@ -1,68 +1,61 @@
-(* 085: Iterator Trait — implement from scratch
-   OCaml uses the Seq module for lazy sequences or custom generators *)
+(* 085: Iterator — implementing Seq from scratch *)
 
-(* --- Approach 1: A range "iterator" as a stateful ref-based generator --- *)
+(* Approach 1: Simple sequence type *)
+type 'a my_seq = unit -> 'a my_node
+and 'a my_node = Nil | Cons of 'a * 'a my_seq
 
-(* In OCaml, a simple iterator is a unit -> 'a option function *)
-type 'a gen = unit -> 'a option
+let empty () = Nil
 
-let make_range start stop : int gen =
-  let current = ref start in
-  fun () ->
-    if !current >= stop then None
-    else begin
-      let v = !current in
-      incr current;
-      Some v
-    end
+let rec range_seq a b () =
+  if a >= b then Nil
+  else Cons (a, range_seq (a + 1) b)
 
-let gen_to_list gen =
-  let rec aux acc =
-    match gen () with
-    | None   -> List.rev acc
-    | Some v -> aux (v :: acc)
+(* Approach 2: Sequence operations *)
+let rec seq_map f s () =
+  match s () with
+  | Nil -> Nil
+  | Cons (x, rest) -> Cons (f x, seq_map f rest)
+
+let rec seq_filter p s () =
+  match s () with
+  | Nil -> Nil
+  | Cons (x, rest) ->
+    if p x then Cons (x, seq_filter p rest)
+    else seq_filter p rest ()
+
+let seq_fold f init s =
+  let rec aux acc s =
+    match s () with
+    | Nil -> acc
+    | Cons (x, rest) -> aux (f acc x) rest
   in
-  aux []
+  aux init s
 
-(* --- Approach 2: Fibonacci as a Seq (lazy, infinite) --- *)
+let seq_to_list s =
+  let rec aux acc s =
+    match s () with
+    | Nil -> List.rev acc
+    | Cons (x, rest) -> aux (x :: acc) rest
+  in
+  aux [] s
 
-let fibonacci : int Seq.t =
-  Seq.unfold (fun (a, b) -> Some (a, (b, a + b))) (0, 1)
+(* Approach 3: Take and collect *)
+let rec seq_take n s () =
+  if n <= 0 then Nil
+  else match s () with
+    | Nil -> Nil
+    | Cons (x, rest) -> Cons (x, seq_take (n - 1) rest)
 
-(* --- Approach 3: Range as Seq — compose with stdlib list operations --- *)
-
-let range_seq start stop =
-  Seq.unfold (fun i ->
-    if i >= stop then None else Some (i, i + 1)
-  ) start
-
-(* Once we have a Seq we get map/filter/fold for free *)
-let demo_free_methods () =
-  range_seq 0 10
-  |> Seq.filter (fun x -> x mod 2 = 0)
-  |> Seq.map    (fun x -> x * x)
-  |> List.of_seq
-
+(* Tests *)
 let () =
-  (* range generator *)
-  let r = make_range 0 5 in
-  Printf.printf "range 0..5 = [%s]\n"
-    (String.concat "; " (List.map string_of_int (gen_to_list r)));
-
-  (* empty range *)
-  let empty = make_range 5 5 in
-  Printf.printf "empty range = [%s]\n"
-    (String.concat "; " (List.map string_of_int (gen_to_list empty)));
-
-  (* fibonacci (take first 8) *)
-  let fibs = fibonacci |> Seq.take 8 |> List.of_seq in
-  Printf.printf "fibs[0..7] = [%s]\n"
-    (String.concat "; " (List.map string_of_int fibs));
-
-  (* free methods demo *)
-  Printf.printf "even squares 0..9 = [%s]\n"
-    (String.concat "; " (List.map string_of_int (demo_free_methods ())));
-
-  (* sum via fold *)
-  let s = range_seq 1 6 |> Seq.fold_left ( + ) 0 in
-  Printf.printf "sum 1..5 = %d\n" s
+  let r = range_seq 0 5 in
+  assert (seq_to_list r = [0; 1; 2; 3; 4]);
+  let doubled = seq_map (fun x -> x * 2) (range_seq 1 4) in
+  assert (seq_to_list doubled = [2; 4; 6]);
+  let evens = seq_filter (fun x -> x mod 2 = 0) (range_seq 0 10) in
+  assert (seq_to_list evens = [0; 2; 4; 6; 8]);
+  let sum = seq_fold ( + ) 0 (range_seq 1 6) in
+  assert (sum = 15);
+  let first3 = seq_take 3 (range_seq 0 100) in
+  assert (seq_to_list first3 = [0; 1; 2]);
+  Printf.printf "✓ All tests passed\n"

@@ -1,84 +1,40 @@
-(* 342: Async I/O Concepts — polling vs blocking, parallel reads.
-   OCaml 5 equivalent: Domain for parallelism, Thread + Mutex + channels for
-   concurrent I/O, and a hand-rolled Poll type for cooperative scheduling. *)
+(* 342: Async I/O Concepts *)
+(* OCaml: simulate with threads and channels *)
 
-(* ── Approach 1: Simulated blocking read (sequential) ──────────────────────── *)
-
+(* Approach 1: Blocking I/O simulation *)
 let blocking_read () =
-  (* Simulate I/O latency with Thread.delay *)
-  Thread.delay 0.01;
+  Unix.sleepf 0.01;
   "data from blocking read"
 
-(* ── Approach 2: Parallel reads via Domain + mutex-protected result list ────── *)
-
+(* Approach 2: Threaded I/O *)
 let parallel_reads () =
-  let results = ref [] in
-  let mutex   = Mutex.create () in
-  let push s  =
-    Mutex.lock mutex;
-    results := s :: !results;
-    Mutex.unlock mutex
-  in
-  let d1 = Domain.spawn (fun () ->
-    Thread.delay 0.01;
-    push "result1"
-  ) in
-  let d2 = Domain.spawn (fun () ->
-    Thread.delay 0.01;
-    push "result2"
-  ) in
-  Domain.join d1;
-  Domain.join d2;
-  !results
+  let ch = Event.new_channel () in
+  let t1 = Thread.create (fun () ->
+    Unix.sleepf 0.01;
+    Event.sync (Event.send ch "result1")
+  ) () in
+  let t2 = Thread.create (fun () ->
+    Unix.sleepf 0.01;
+    Event.sync (Event.send ch "result2")
+  ) () in
+  let r1 = Event.sync (Event.receive ch) in
+  let r2 = Event.sync (Event.receive ch) in
+  Thread.join t1;
+  Thread.join t2;
+  [r1; r2]
 
-(* ── Approach 3: Poll type — cooperative scheduling / future simulation ──────── *)
+(* Approach 3: Simple polling simulation *)
+type 'a poll_result = Ready of 'a | Pending
 
-(* A Poll represents a computation that may or may not be ready yet.
-   This mirrors Rust's std::task::Poll / Future model. *)
-type 'a poll = Ready of 'a | Pending
+let simulate_poll counter =
+  if !counter >= 3 then (counter := 0; Ready "done")
+  else (incr counter; Pending)
 
-(* Simulate a future that becomes ready after n calls *)
-let make_future total_steps =
-  let counter = ref 0 in
-  fun () ->
-    if !counter >= total_steps then Ready "done"
-    else begin incr counter; Pending end
-
-(* A simple "executor" that drives a poll-based future to completion *)
-let run_future poll_fn =
-  let steps = ref 0 in
-  let result = ref None in
-  while !result = None do
-    incr steps;
-    match poll_fn () with
-    | Ready v -> result := Some v
-    | Pending -> ()
-  done;
-  (!steps, Option.get !result)
-
-(* ── Demo ─────────────────────────────────────────────────────────────────── *)
-
+(* Tests *)
 let () =
-  (* Blocking read *)
-  let data = blocking_read () in
-  Printf.printf "blocking_read = %S\n" data;
-
-  (* Parallel reads *)
-  let results = parallel_reads () in
-  Printf.printf "parallel_reads count = %d\n" (List.length results);
-  assert (List.mem "result1" results);
-  assert (List.mem "result2" results);
-  Printf.printf "parallel_reads contains result1=%b result2=%b\n"
-    (List.mem "result1" results) (List.mem "result2" results);
-
-  (* Poll simulation *)
-  let future = make_future 3 in
-  assert (future () = Pending);
-  assert (future () = Pending);
-  assert (future () = Pending);
-  assert (future () = Ready "done");
-  Printf.printf "poll: Pending → Pending → Pending → Ready\n";
-
-  (* Run a fresh future with the executor *)
-  let (steps, value) = run_future (make_future 3) in
-  Printf.printf "executor ran future in %d steps, result = %S\n" steps value
+  assert (blocking_read () = "data from blocking read");
+  let counter = ref 0 in
+  assert (simulate_poll counter = Pending);
+  assert (simulate_poll counter = Pending);
+  assert (simulate_poll counter = Ready "done");
+  Printf.printf "✓ All tests passed\n"

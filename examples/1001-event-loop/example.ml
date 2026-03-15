@@ -1,14 +1,36 @@
-(* 1001: Event Loop
-   Pure functional event dispatch using pattern matching and records.
-   State is immutable — each event produces a new state value.
-   The loop is a fold over the event list, stopping at Quit. *)
+(* 1001: Simple Event Loop *)
+(* Poll events, dispatch enum handlers, process until Quit *)
+
+(* --- Event types --- *)
 
 type event =
-  | Click of { x: int; y: int }
+  | Click of int * int         (* x, y *)
   | KeyPress of char
-  | Timer of string
-  | NetworkData of string
+  | Timer of string            (* timer name *)
+  | NetworkData of string      (* payload *)
   | Quit
+
+type 'state handler = {
+  on_click: int -> int -> 'state -> 'state;
+  on_key: char -> 'state -> 'state;
+  on_timer: string -> 'state -> 'state;
+  on_network: string -> 'state -> 'state;
+}
+
+(* --- Event loop: dispatch events to handlers, accumulate state --- *)
+
+let run_event_loop ~handler ~init events =
+  let rec loop state = function
+    | [] -> state
+    | Quit :: _ -> state
+    | Click (x, y) :: rest -> loop (handler.on_click x y state) rest
+    | KeyPress c :: rest -> loop (handler.on_key c state) rest
+    | Timer name :: rest -> loop (handler.on_timer name state) rest
+    | NetworkData s :: rest -> loop (handler.on_network s state) rest
+  in
+  loop init events
+
+(* --- Approach 1: Pure functional event loop --- *)
 
 type app_state = {
   clicks: int;
@@ -17,62 +39,52 @@ type app_state = {
   network_msgs: string list;
 }
 
-let initial_state = {
-  clicks = 0;
-  keys = "";
-  timers = 0;
-  network_msgs = [];
+let initial_state = { clicks = 0; keys = ""; timers = 0; network_msgs = [] }
+
+let app_handler = {
+  on_click = (fun _x _y s -> { s with clicks = s.clicks + 1 });
+  on_key = (fun c s -> { s with keys = s.keys ^ String.make 1 c });
+  on_timer = (fun _name s -> { s with timers = s.timers + 1 });
+  on_network = (fun msg s -> { s with network_msgs = msg :: s.network_msgs });
 }
 
-(* Pure dispatch: event → next state *)
-let dispatch state = function
-  | Click _       -> { state with clicks = state.clicks + 1 }
-  | KeyPress c    -> { state with keys = state.keys ^ String.make 1 c }
-  | Timer _       -> { state with timers = state.timers + 1 }
-  | NetworkData m -> { state with network_msgs = state.network_msgs @ [m] }
-  | Quit          -> state  (* handled by loop *)
+let () =
+  let events = [
+    Click (10, 20);
+    KeyPress 'h';
+    KeyPress 'i';
+    Timer "heartbeat";
+    NetworkData "hello";
+    Click (5, 5);
+    NetworkData "world";
+    Timer "refresh";
+    Quit;
+    Click (0, 0);  (* ignored after Quit *)
+  ] in
+  let final_state = run_event_loop ~handler:app_handler ~init:initial_state events in
+  assert (final_state.clicks = 2);
+  assert (final_state.keys = "hi");
+  assert (final_state.timers = 2);
+  assert (List.length final_state.network_msgs = 2);
+  Printf.printf "Approach 1: clicks=%d keys=%s timers=%d msgs=%d\n"
+    final_state.clicks final_state.keys final_state.timers
+    (List.length final_state.network_msgs)
 
-(* Functional event loop — stops at Quit *)
-let run_until_quit events init =
-  let rec loop state = function
-    | [] -> state
-    | Quit :: _ -> state
-    | ev :: rest -> loop (dispatch state ev) rest
-  in
-  loop init events
-
-(* Also show fold-based variant (does not short-circuit) *)
-let run_event_loop events init =
-  List.fold_left (fun state ev ->
-    if ev = Quit then state else dispatch state ev
-  ) init events
-
-let test_events = [
-  Click { x = 10; y = 20 };
-  KeyPress 'h';
-  KeyPress 'i';
-  Timer "heartbeat";
-  NetworkData "hello";
-  Click { x = 5; y = 5 };
-  NetworkData "world";
-  Timer "refresh";
-  Quit;
-  Click { x = 0; y = 0 };  (* ignored — after Quit *)
-]
+(* --- Approach 2: Stateful event loop with mutation --- *)
 
 let () =
-  let s = run_until_quit test_events initial_state in
-  assert (s.clicks = 2);
-  assert (s.keys = "hi");
-  assert (s.timers = 2);
-  assert (List.length s.network_msgs = 2);
+  let q = Queue.create () in
+  List.iter (Queue.push q) [Click(1,1); KeyPress 'x'; Timer "t1"; Quit];
+  (* Queue is FIFO — push order is preserved when popping *)
+  let event_count = ref 0 in
+  let rec loop () =
+    if Queue.is_empty q then ()
+    else match Queue.pop q with
+      | Quit -> ()
+      | _ -> incr event_count; loop ()
+  in
+  loop ();
+  assert (!event_count = 3);
+  Printf.printf "Approach 2 (stateful loop): %d events processed\n" !event_count
 
-  (* Quit stops processing *)
-  let s2 = run_until_quit [Click { x = 0; y = 0 }; Quit; Click { x = 0; y = 0 }] initial_state in
-  assert (s2.clicks = 1);
-
-  let s3 = run_until_quit [] initial_state in
-  assert (s3 = initial_state);
-
-  Printf.printf "clicks=%d  keys=%s  timers=%d  network_msgs=%d\n"
-    s.clicks s.keys s.timers (List.length s.network_msgs)
+let () = Printf.printf "✓ All tests passed\n"

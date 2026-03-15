@@ -1,52 +1,57 @@
-(* 1012: Never Type
-   Rust's ! (never) type indicates a diverging computation.
-   OCaml has the 'a (empty type / bottom) via 'raise' or infinite loops.
-   - Functions that raise an exception never return normally
-   - Pattern matches on empty types are exhaustive automatically
-   - The 'assert false' expression has type 'a — the bottom type *)
+(* 1012: The Never Type *)
+(* OCaml doesn't have a never/bottom type, but we can simulate *)
 
-(* Diverging function — raises, never returns a value *)
-let diverge_panic () : 'a =
+(* Approach 1: Functions that never return — use 'a return type *)
+(* In OCaml, exit/raise have type 'a (universally quantified = bottom) *)
+
+let diverge_exit () : 'a =
+  Printf.printf "about to exit\n";
+  exit 1
+
+let diverge_raise () : 'a =
   failwith "this never returns"
 
-(* Another diverging function: infinite loop *)
-let diverge_loop () : 'a =
-  let rec loop () = loop () in
-  loop ()
+(* Approach 2: Empty variant type (closest to Rust's !) *)
+type never = |  (* empty variant — no constructors, uninhabitable *)
 
-(* In OCaml there is no Infallible type, but we can model it with an empty variant *)
-(* type infallible = |   (* empty type — no constructors *) *)
+(* A function returning never can never actually return *)
+(* let impossible () : never = ??? — can't construct it! *)
 
-(* classify: exhaustive pattern match — 'assert false' has type 'a *)
+(* Using in match for exhaustiveness *)
+let handle_result (r : (int, never) result) : int =
+  match r with
+  | Ok n -> n
+  (* Error case is unreachable — never has no constructors *)
+
+(* Approach 3: Diverging in match arms *)
 let classify n =
-  if n > 0 then Printf.sprintf "positive: %d" n
-  else if n < 0 then Printf.sprintf "negative: %d" n
-  else "zero"
+  match n with
+  | n when n > 0 -> Printf.sprintf "positive: %d" n
+  | n when n < 0 -> Printf.sprintf "negative: %d" n
+  | 0 -> "zero"
+  | _ -> failwith "unreachable"  (* type 'a unifies with string *)
 
-(* The 'assert false' trick — equivalent to Rust's unreachable!() *)
-let safe_head = function
-  | [] -> assert false  (* caller guarantees non-empty *)
-  | x :: _ -> x
+let test_diverging () =
+  (* We can't test that diverge_exit/diverge_raise return,
+     but we can test they have the right type *)
+  (try let _ = diverge_raise () in assert false
+   with Failure _ -> ());
+  Printf.printf "  Approach 1 (diverging functions): passed\n"
 
-(* Values that can't fail — Option/Result where Error = never *)
-let always_succeeds () : (int, [`Never]) result = Ok 42
+let test_empty_variant () =
+  (* never type makes Error branch unreachable *)
+  assert (handle_result (Ok 42) = 42);
+  Printf.printf "  Approach 2 (empty variant): passed\n"
 
-let () =
+let test_match_diverge () =
   assert (classify 5 = "positive: 5");
   assert (classify (-3) = "negative: -3");
   assert (classify 0 = "zero");
+  Printf.printf "  Approach 3 (diverging match arms): passed\n"
 
-  (* assert false has type 'a — can appear in any branch *)
-  let _val : int = if true then 42 else assert false in
-  assert (_val = 42);
-
-  (* always_succeeds is always Ok *)
-  assert (always_succeeds () = Ok 42);
-
-  (* diverge_panic raises — test with exception catching *)
-  (try
-     ignore (diverge_panic ())
-   with Failure msg ->
-     assert (msg = "this never returns"));
-
-  Printf.printf "classify 5: %s\n" (classify 5)
+let () =
+  Printf.printf "Testing never type:\n";
+  test_diverging ();
+  test_empty_variant ();
+  test_match_diverge ();
+  Printf.printf "✓ All tests passed\n"

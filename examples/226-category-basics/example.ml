@@ -1,87 +1,75 @@
-(* 226: Category Basics
-   A category has: objects, morphisms, identity, and composition.
-   In OCaml: types = objects, functions = morphisms. *)
+(* Example 226: Category Basics *)
+(* A category has objects, morphisms, composition, and identity *)
 
-(* ── Approach 1: Simple compose and identity ──────────────────────────────── *)
+(* === Approach 1: Category as composition and identity === *)
 
-let identity x = x
+(* In OCaml, types are objects and functions are morphisms.
+   Composition is (.) and identity is Fun.id *)
 
-(* compose f g x = f (g x) — standard function composition *)
 let compose f g x = f (g x)
+let id x = x
 
-(* Infix operator for readability *)
-let ( << ) f g = compose f g
-
-(* ── Category laws ────────────────────────────────────────────────────────── *)
-
-(* Left identity:  (identity << f) x = f x  *)
-(* Right identity: (f << identity) x = f x  *)
-(* Associativity:  ((f << g) << h) x = (f << (g << h)) x *)
-
-(* ── Approach 2: Category as a first-class module (type class encoding) ───── *)
-
-module type CATEGORY = sig
-  (* A morphism from 'a to 'b *)
-  type ('a, 'b) hom
-  val id      : ('a, 'a) hom
-  val compose : ('b, 'c) hom -> ('a, 'b) hom -> ('a, 'c) hom
-end
-
-(* The function category: morphisms are ordinary functions *)
-module FnCategory : CATEGORY with type ('a, 'b) hom = 'a -> 'b = struct
-  type ('a, 'b) hom = 'a -> 'b
-  let id      = fun x -> x
-  let compose f g = fun x -> f (g x)
-end
-
-(* ── Approach 3: Kleisli category — morphisms of type a -> b option ─────── *)
-
-(* In the Kleisli category for Option:
-   - identity = fun a -> Some a
-   - composition uses Option.bind (>>=) *)
-
-let kleisli_id a = Some a
-
-(* Kleisli composition: f >=> g  means  fun a -> g a >>= f *)
-let kleisli_compose f g a =
-  match g a with
-  | None   -> None
-  | Some b -> f b
-
-let ( >=> ) f g = kleisli_compose f g
-
-(* ── Demo ─────────────────────────────────────────────────────────────────── *)
+(* Category laws:
+   1. Left identity:  compose id f = f
+   2. Right identity: compose f id = f
+   3. Associativity:  compose (compose f g) h = compose f (compose g h) *)
 
 let () =
-  let add1 = fun x -> x + 1 in
-  let mul2 = fun x -> x * 2 in
-  let sub3 = fun x -> x - 3 in
+  let f x = x + 1 in
+  let g x = x * 2 in
+  let h x = x - 3 in
+  (* Left identity *)
+  assert (compose id f 5 = f 5);
+  (* Right identity *)
+  assert (compose f id 5 = f 5);
+  (* Associativity *)
+  assert (compose (compose f g) h 10 = compose f (compose g h) 10);
+  Printf.printf "Approach 1 - Category laws verified\n"
 
-  (* Composition *)
-  Printf.printf "compose(add1, mul2)(5)  = %d\n" ((compose add1 mul2) 5);
-  Printf.printf "(add1 << mul2)(5)       = %d\n" ((add1 << mul2) 5);
+(* === Approach 2: Explicit Category module type === *)
 
-  (* Left/right identity law *)
-  Printf.printf "identity law left:  %b\n" ((identity << add1) 10 = add1 10);
-  Printf.printf "identity law right: %b\n" ((add1 << identity) 10 = add1 10);
+module type CATEGORY = sig
+  type ('a, 'b) morphism
+  val id : ('a, 'a) morphism
+  val compose : ('b, 'c) morphism -> ('a, 'b) morphism -> ('a, 'c) morphism
+end
 
-  (* Associativity law *)
-  let lhs = ((add1 << mul2) << sub3) 7 in
-  let rhs = (add1 << (mul2 << sub3)) 7 in
-  Printf.printf "associativity:      %b  (%d = %d)\n" (lhs = rhs) lhs rhs;
+(* The category of OCaml types and functions *)
+module FnCategory : CATEGORY with type ('a, 'b) morphism = 'a -> 'b = struct
+  type ('a, 'b) morphism = 'a -> 'b
+  let id x = x
+  let compose f g x = f (g x)
+end
 
-  (* FnCategory module *)
+let () =
   let open FnCategory in
-  let f = compose add1 mul2 in
-  Printf.printf "FnCategory compose: %d\n" (f 5);
-  Printf.printf "FnCategory id:      %d\n" (id 42);
+  let f = fun x -> x + 1 in
+  let g = fun x -> x * 2 in
+  let result = compose f g 5 in
+  assert (result = 11);
+  assert (compose id f 5 = f 5);
+  Printf.printf "Approach 2 - FnCategory works: compose (+1) (*2) 5 = %d\n" result
 
-  (* Kleisli category *)
-  let safe_div y x = if x = 0 then None else Some (y / x) in
-  let safe_sqrt x  = if x < 0  then None else Some (int_of_float (sqrt (float_of_int x))) in
-  let pipeline = safe_sqrt >=> (safe_div 100) in
-  Printf.printf "kleisli 4   -> %s\n" (Option.fold ~none:"None" ~some:string_of_int (pipeline 4));
-  Printf.printf "kleisli 0   -> %s\n" (Option.fold ~none:"None" ~some:string_of_int (pipeline 0));
-  Printf.printf "kleisli -1  -> %s\n" (Option.fold ~none:"None" ~some:string_of_int (pipeline (-1)));
-  Printf.printf "kleisli_id: %b\n"
-    (kleisli_id 5 = Some 5)
+(* === Approach 3: Kleisli category (morphisms a -> 'b option) === *)
+
+module KleisliOption = struct
+  type ('a, 'b) morphism = 'a -> 'b option
+  let id x = Some x
+  let compose f g x =
+    match g x with
+    | None -> None
+    | Some y -> f y
+end
+
+let () =
+  let open KleisliOption in
+  let safe_div x = if x = 0 then None else Some (100 / x) in
+  let safe_succ x = Some (x + 1) in
+  assert (compose safe_succ safe_div 5 = Some 21);
+  assert (compose safe_succ safe_div 0 = None);
+  (* Identity law *)
+  assert (compose id safe_div 5 = safe_div 5);
+  assert (compose safe_div id 5 = safe_div 5);
+  Printf.printf "Approach 3 - Kleisli category verified\n"
+
+let () = Printf.printf "✓ All tests passed\n"

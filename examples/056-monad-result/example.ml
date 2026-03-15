@@ -1,30 +1,17 @@
-(* 056: Result as Monad
-   Chain fallible operations with Result.bind (>>=) *)
+(* 056: Result as Monad *)
+(* Chain fallible operations with bind *)
 
-type calc_error =
-  | ParseError of string
-  | DivByZero
-
+(* Approach 1: Explicit pattern matching *)
 let parse_int s =
   match int_of_string_opt s with
-  | None   -> Error (ParseError (Printf.sprintf "not an integer: %s" s))
   | Some n -> Ok n
+  | None -> Error (Printf.sprintf "Not a number: %s" s)
 
 let safe_div a b =
-  if b = 0 then Error DivByZero else Ok (a / b)
+  if b = 0 then Error "Division by zero"
+  else Ok (a / b)
 
-(* --- Approach 1: Using Result.bind (monadic bind / >>=) --- *)
-
-let ( >>= ) = Result.bind
-
-let compute_bind s1 s2 =
-  parse_int s1 >>= fun a ->
-  parse_int s2 >>= fun b ->
-  safe_div a b
-
-(* --- Approach 2: Let-syntax style (sequential, explicit) --- *)
-
-let compute_let s1 s2 =
+let compute_explicit s1 s2 =
   match parse_int s1 with
   | Error e -> Error e
   | Ok a ->
@@ -32,22 +19,33 @@ let compute_let s1 s2 =
     | Error e -> Error e
     | Ok b -> safe_div a b
 
-(* --- Approach 3: Chained pipeline using map and bind --- *)
+(* Approach 2: Using Result.bind *)
+let compute_bind s1 s2 =
+  parse_int s1
+  |> Result.bind (fun a ->
+    parse_int s2
+    |> Result.bind (fun b ->
+      safe_div a b))
+
+(* Approach 3: Pipeline with map and bind *)
+let add_one r = Result.map (fun x -> x + 1) r
+let double r = Result.map (fun x -> x * 2) r
 
 let pipeline s =
   parse_int s
-  >>= (fun n -> safe_div n 2)
+  |> Result.bind (fun n -> safe_div n 2)
   |> Result.map (fun n -> n + 1)
   |> Result.map (fun n -> n * 2)
 
+(* Tests *)
 let () =
-  let show_result = function
-    | Ok v    -> string_of_int v
-    | Error DivByZero  -> "DivByZero"
-    | Error (ParseError msg) -> "ParseError: " ^ msg
-  in
-  Printf.printf "compute_bind \"10\" \"3\" = %s\n" (show_result (compute_bind "10" "3"));
-  Printf.printf "compute_bind \"10\" \"0\" = %s\n" (show_result (compute_bind "10" "0"));
-  Printf.printf "compute_bind \"abc\" \"3\" = %s\n" (show_result (compute_bind "abc" "3"));
-  Printf.printf "pipeline \"10\" = %s\n" (show_result (pipeline "10"));
-  Printf.printf "pipeline \"abc\" = %s\n" (show_result (pipeline "abc"))
+  assert (parse_int "42" = Ok 42);
+  assert (parse_int "abc" = Error "Not a number: abc");
+  assert (compute_explicit "10" "3" = Ok 3);
+  assert (compute_explicit "10" "0" = Error "Division by zero");
+  assert (compute_explicit "abc" "3" = Error "Not a number: abc");
+  assert (compute_bind "10" "3" = Ok 3);
+  assert (compute_bind "10" "0" = Error "Division by zero");
+  assert (pipeline "10" = Ok 12);
+  assert (pipeline "abc" = Error "Not a number: abc");
+  Printf.printf "✓ All tests passed\n"

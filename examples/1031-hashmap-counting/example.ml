@@ -1,74 +1,58 @@
-(* 1031: Count Frequencies
-   The classic frequency-counting pattern.
-   OCaml: Hashtbl with or-insert-0 pattern, or a pure fold using Map. *)
+(* 1031: Count Frequencies *)
+(* Count occurrences of each element *)
 
-(* Count character frequencies using Hashtbl *)
+module CharMap = Map.Make(Char)
+module StringMap = Map.Make(String)
+
+(* Approach 1: Character frequency counting *)
 let char_frequency () =
   let text = "abracadabra" in
-  let counts : (char, int) Hashtbl.t = Hashtbl.create 16 in
-  String.iter (fun ch ->
-    let n = match Hashtbl.find_opt counts ch with Some n -> n | None -> 0 in
-    Hashtbl.replace counts ch (n + 1)
-  ) text;
-  assert (Hashtbl.find counts 'a' = 5);
-  assert (Hashtbl.find counts 'b' = 2);
-  assert (Hashtbl.find counts 'r' = 2);
-  assert (Hashtbl.find counts 'c' = 1);
-  assert (Hashtbl.find counts 'd' = 1)
+  let counts = String.fold_left (fun acc ch ->
+    let n = match CharMap.find_opt ch acc with
+      | Some n -> n
+      | None -> 0
+    in
+    CharMap.add ch (n + 1) acc
+  ) CharMap.empty text in
+  assert (CharMap.find 'a' counts = 5);
+  assert (CharMap.find 'b' counts = 2);
+  assert (CharMap.find 'r' counts = 2);
+  assert (CharMap.find 'c' counts = 1);
+  assert (CharMap.find 'd' counts = 1)
 
-(* Word frequency *)
+(* Approach 2: Word frequency *)
 let word_frequency () =
   let words = ["the"; "cat"; "sat"; "on"; "the"; "mat"; "the"; "cat"] in
-  let counts : (string, int) Hashtbl.t = Hashtbl.create 8 in
-  List.iter (fun word ->
-    let n = match Hashtbl.find_opt counts word with Some n -> n | None -> 0 in
-    Hashtbl.replace counts word (n + 1)
-  ) words;
-  assert (Hashtbl.find counts "the" = 3);
-  assert (Hashtbl.find counts "cat" = 2);
-  assert (Hashtbl.find counts "sat" = 1)
+  let counts = List.fold_left (fun acc w ->
+    let n = match StringMap.find_opt w acc with
+      | Some n -> n
+      | None -> 0
+    in
+    StringMap.add w (n + 1) acc
+  ) StringMap.empty words in
+  assert (StringMap.find "the" counts = 3);
+  assert (StringMap.find "cat" counts = 2);
+  assert (StringMap.find "sat" counts = 1)
 
-(* Find the most frequent element — pure functional with fold *)
-let most_frequent lst =
-  (* Build frequency map via fold *)
-  let counts =
-    List.fold_left (fun acc x ->
-      let n = match List.assoc_opt x acc with Some n -> n | None -> 0 in
-      (x, n + 1) :: List.filter (fun (k, _) -> k <> x) acc
-    ) [] lst
-  in
-  match counts with
-  | [] -> None
-  | _  ->
-    Some (List.fold_left (fun (bk, bv) (k, v) ->
-      if v > bv then (k, v) else (bk, bv)
-    ) (List.hd counts) (List.tl counts))
-
-(* Functional counting using Map — purely immutable *)
-module IntMap = Map.Make(Int)
-
-let functional_counting data =
-  List.fold_left (fun acc x ->
-    let n = match IntMap.find_opt x acc with Some n -> n | None -> 0 in
+(* Approach 3: Most frequent element *)
+let most_frequent () =
+  let items = [1; 2; 3; 2; 1; 2; 3; 2; 2] in
+  module IntMap = Map.Make(Int) in
+  let counts = List.fold_left (fun acc x ->
+    let n = match IntMap.find_opt x acc with
+      | Some n -> n
+      | None -> 0
+    in
     IntMap.add x (n + 1) acc
-  ) IntMap.empty data
+  ) IntMap.empty items in
+  let (most, count) = IntMap.fold (fun k v (mk, mv) ->
+    if v > mv then (k, v) else (mk, mv)
+  ) counts (0, 0) in
+  assert (most = 2);
+  assert (count = 5)
 
 let () =
   char_frequency ();
   word_frequency ();
-
-  (match most_frequent [1; 2; 3; 2; 1; 2; 3; 2; 2] with
-   | Some (most, count) ->
-     assert (most = 2);
-     assert (count = 5)
-   | None -> assert false);
-
-  let counts = functional_counting [1; 1; 2; 3; 3; 3] in
-  assert (IntMap.find 1 counts = 2);
-  assert (IntMap.find 3 counts = 3);
-
-  (* Empty input *)
-  let empty_counts = functional_counting [] in
-  assert (IntMap.is_empty empty_counts);
-
-  Printf.printf "Frequency counting tests passed\n"
+  most_frequent ();
+  Printf.printf "✓ All tests passed\n"

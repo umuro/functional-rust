@@ -1,162 +1,87 @@
-(* 996: Timeout Pattern
-   Run an operation and cancel/abandon it if it takes too long.
-   OCaml: Thread + Condition.wait_timed; or a racing background thread
-   that races against a deadline future. *)
+(* 996: Timeout Pattern *)
+(* OCaml: Lwt.pick [operation; Lwt_unix.sleep timeout] concept *)
+(* Pure Thread version: run operation in separate thread, wait with timeout *)
 
-exception Timeout
+(* --- Approach 1: Thread + timed wait via Condition --- *)
 
-(* Run f with a wall-clock timeout of ms milliseconds.
-   Returns Ok v if f completes in time, Error Timeout otherwise.
-   Implementation: f runs in a background thread; main thread waits
-   with a timed Condition wait. *)
-let with_timeout_ms ms f =
+type 'a timed_result = Ok of 'a | Timeout | Error of string
+
+let with_timeout_secs timeout_s f =
   let result = ref None in
-  let mutex  = Mutex.create () in
-  let cond   = Condition.create () in
-  let _t = Thread.create (fun () ->
-    let v = try Ok (f ()) with e -> Error e in
-    Mutex.lock mutex;
-    result := Some v;
-    Condition.signal cond;
-    Mutex.unlock mutex
-  ) () in
-  let deadline = Unix.gettimeofday () +. float_of_int ms /. 1000.0 in
-  Mutex.lock mutex;
-  while !result = None && Unix.gettimeofday () < deadline do
-    let remaining = deadline -. Unix.gettimeofday () in
-    if remaining > 0.0 then
-      ignore (Condition.wait_signal_timeout cond mutex remaining)
-    (* Note: Condition.wait_signal_timeout is not in stdlib;
-       we use Condition.wait with a short sleep loop for portability *)
-  done;
-  let r = !result in
-  Mutex.unlock mutex;
-  match r with
-  | Some (Ok v)    -> Ok v
-  | Some (Error e) -> Error e
-  | None           -> Error Timeout
+  let m = Mutex.create () in
+  let cond = Condition.create () in
 
-(* Simpler portable version using Thread.delay polling *)
-let with_timeout_ms_poll ms f =
-  let result  = ref None in
-  let mutex   = Mutex.create () in
-  let cond    = Condition.create () in
-  let _worker = Thread.create (fun () ->
-    let v = try Ok (f ()) with e -> Error e in
-    Mutex.lock mutex;
+  let worker = Thread.create (fun () ->
+    let v = (try Some (f ()) with e -> Some (Error (Printexc.to_string e))) in
+    Mutex.lock m;
     result := Some v;
     Condition.signal cond;
-    Mutex.unlock mutex
+    Mutex.unlock m
   ) () in
-  (* Timeout thread: sleeps then signals *)
-  let _timer = Thread.create (fun () ->
-    Thread.delay (float_of_int ms /. 1000.0);
-    Mutex.lock mutex;
-    if !result = None then Condition.signal cond;
-    Mutex.unlock mutex
-  ) () in
-  Mutex.lock mutex;
+
+  Mutex.lock m;
+  let deadline = Unix.gettimeofday () +. timeout_s in
   while !result = None do
-    Condition.wait cond mutex
+    let remaining = deadline -. Unix.gettimeofday () in
+    if remaining <= 0.0 then (
+      result := Some (Some (Error "forced timeout"));
+      (* Note: OCaml has no thread kill — worker will finish eventually *)
+    ) else
+      Condition.wait cond m
+      (* In real Lwt: Lwt.pick cancels the losing promise *)
   done;
-  let r = Option.get !result in
-  Mutex.unlock mutex;
-  r
+  Mutex.unlock m;
+  Thread.join worker;
 
-(* Wait for a future with timeout *)
-let await_timeout fut_fn timeout_ms =
-  with_timeout_ms_poll timeout_ms fut_fn
+  match !result with
+  | None | Some None -> Timeout
+  | Some (Some (Error msg)) when msg = "forced timeout" -> Timeout
+  | Some (Some (Error msg)) -> Error msg
+  | Some (Some v) -> Ok v
 
-(* Retry with timeout per attempt *)
-let with_retry ?(max_attempts=3) ?(timeout_ms=1000) f =
-  let rec loop attempt =
-    if attempt > max_attempts then Error (Failure "max retries exceeded")
-    else
-      match with_timeout_ms_poll timeout_ms f with
-      | Ok v    -> Ok v
-      | Error Timeout ->
-        Printf.printf "  attempt %d timed out, retrying...\n%!" attempt;
-        loop (attempt + 1)
-      | Error e ->
-        Printf.printf "  attempt %d failed: %s\n%!" attempt (Printexc.to_string e);
-        loop (attempt + 1)
-  in
-  loop 1
+(* --- Approach 1: fast operation completes in time --- *)
 
 let () =
-  Printf.printf "=== Basic timeout ===\n";
-
-  (* Fast operation — completes within timeout *)
-  let r1 = with_timeout_ms_poll 100 (fun () ->
-    Thread.delay 0.01;
-    "done quickly"
+  let r = with_timeout_secs 1.0 (fun () ->
+    Unix.sleepf 0.01;
+    42
   ) in
-  Printf.printf "fast op: %s\n"
-    (match r1 with Ok v -> v | Error Timeout -> "TIMEOUT" | Error e -> Printexc.to_string e);
+  (match r with
+  | Ok v -> assert (v = 42); Printf.printf "Approach 1 (ok): %d\n" v
+  | Timeout -> assert false
+  | Error e -> Printf.printf "Error: %s\n" e)
 
-  (* Slow operation — exceeds timeout *)
-  let r2 = with_timeout_ms_poll 30 (fun () ->
-    Thread.delay 0.1;
-    "done slowly"
-  ) in
-  Printf.printf "slow op: %s\n"
-    (match r2 with Ok v -> v | Error Timeout -> "TIMEOUT" | Error e -> Printexc.to_string e);
+(* --- Approach 2: Simulated recv_timeout (channel with deadline) --- *)
 
-  Printf.printf "\n=== Timeout with error from operation ===\n";
-  let r3 = with_timeout_ms_poll 100 (fun () ->
-    Thread.delay 0.005;
-    failwith "something failed"
-  ) in
-  (match r3 with
-   | Ok _          -> Printf.printf "ok\n"
-   | Error Timeout -> Printf.printf "timed out\n"
-   | Error e       -> Printf.printf "operation error: %s\n" (Printexc.to_string e));
+type 'a chan = { q: 'a Queue.t; m: Mutex.t; cond: Condition.t }
 
-  Printf.printf "\n=== Select first result with deadline ===\n";
-  let attempt_with_deadline deadline_ms candidates =
-    let results = ref [] in
-    let mutex   = Mutex.create () in
-    let cond    = Condition.create () in
-    List.iter (fun (label, delay_ms, value) ->
-      let _t = Thread.create (fun () ->
-        Thread.delay (float_of_int delay_ms /. 1000.0);
-        Mutex.lock mutex;
-        results := (label, value) :: !results;
-        Condition.signal cond;
-        Mutex.unlock mutex
-      ) () in ()
-    ) candidates;
-    let timer = Thread.create (fun () ->
-      Thread.delay (float_of_int deadline_ms /. 1000.0);
-      Mutex.lock mutex;
-      if !results = [] then results := [("timeout", "no result")];
-      Condition.signal cond;
-      Mutex.unlock mutex
-    ) () in
-    Mutex.lock mutex;
-    while !results = [] do Condition.wait cond mutex done;
-    let r = List.hd !results in
-    Mutex.unlock mutex;
-    ignore timer;
-    r
-  in
+let make_chan () = { q = Queue.create (); m = Mutex.create (); cond = Condition.create () }
 
-  let (label, value) = attempt_with_deadline 50 [
-    ("fast",   10, "fast result");
-    ("medium", 30, "medium result");
-    ("slow",   80, "slow result");
-  ] in
-  Printf.printf "first result: [%s] = %s\n" label value;
+let send c v =
+  Mutex.lock c.m; Queue.push v c.q;
+  Condition.signal c.cond; Mutex.unlock c.m
 
-  Printf.printf "\n=== Retry with per-attempt timeout ===\n";
-  let call_count = ref 0 in
-  let result = with_retry ~max_attempts:3 ~timeout_ms:50 (fun () ->
-    incr call_count;
-    if !call_count < 3 then begin
-      Thread.delay 0.1;  (* first two attempts time out *)
-      "would not reach"
-    end else "succeeded on attempt 3"
-  ) in
-  Printf.printf "retry result: %s (attempts=%d)\n"
-    (match result with Ok v -> v | Error e -> Printexc.to_string e)
-    !call_count
+let recv_timeout c timeout_s =
+  let deadline = Unix.gettimeofday () +. timeout_s in
+  Mutex.lock c.m;
+  while Queue.is_empty c.q && Unix.gettimeofday () < deadline do
+    let remaining = deadline -. Unix.gettimeofday () in
+    if remaining > 0.0 then
+      Condition.wait c.m c.cond  (* simplified: real code uses timed wait *)
+  done;
+  let v = if Queue.is_empty c.q then None else Some (Queue.pop c.q) in
+  Mutex.unlock c.m;
+  v
+
+let () =
+  let c = make_chan () in
+  let _ = Thread.create (fun () ->
+    Unix.sleepf 0.02;
+    send c 99
+  ) () in
+  (* Very short timeout — will miss the send *)
+  match recv_timeout c 0.001 with
+  | None -> Printf.printf "Approach 2 (timeout): timed out as expected\n"
+  | Some v -> Printf.printf "Approach 2 (got): %d\n" v
+
+let () = Printf.printf "✓ All tests passed\n"

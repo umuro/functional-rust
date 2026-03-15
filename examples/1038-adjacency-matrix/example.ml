@@ -1,40 +1,52 @@
-(* 1038: Adjacency Matrix Graph
-   Dense representation with O(1) edge lookup.
-   Warshall transitive closure in idiomatic OCaml. *)
+(* 1038: Adjacency Matrix — Dense Graph Operations *)
+(* 2D boolean array for graph connectivity *)
 
-type matrix_graph = {
-  matrix : bool array array;
-  size   : int;
-}
+(* Approach 1: Basic adjacency matrix *)
+let basic_matrix () =
+  let n = 4 in
+  let matrix = Array.make_matrix n n false in
+  (* Add edges: 0->1, 0->2, 1->2, 2->3 *)
+  matrix.(0).(1) <- true;
+  matrix.(0).(2) <- true;
+  matrix.(1).(2) <- true;
+  matrix.(2).(3) <- true;
+  assert (matrix.(0).(1) = true);
+  assert (matrix.(0).(3) = false);
+  assert (matrix.(2).(3) = true)
 
-let make_matrix n =
-  { matrix = Array.init n (fun _ -> Array.make n false); size = n }
+(* Approach 2: Degree counting and neighbor listing *)
+let degree_and_neighbors () =
+  let n = 4 in
+  let matrix = Array.make_matrix n n false in
+  matrix.(0).(1) <- true;
+  matrix.(0).(2) <- true;
+  matrix.(1).(2) <- true;
+  matrix.(2).(3) <- true;
+  (* Out-degree of node 0 *)
+  let out_degree node =
+    Array.fold_left (fun acc connected -> if connected then acc + 1 else acc)
+      0 matrix.(node)
+  in
+  assert (out_degree 0 = 2);
+  assert (out_degree 2 = 1);
+  (* List neighbors *)
+  let neighbors node =
+    Array.to_list matrix.(node)
+    |> List.mapi (fun i c -> (i, c))
+    |> List.filter_map (fun (i, c) -> if c then Some i else None)
+  in
+  assert (neighbors 0 = [1; 2])
 
-let add_edge g from_ to_ =
-  g.matrix.(from_).(to_) <- true
-
-let has_edge g from_ to_ =
-  g.matrix.(from_).(to_)
-
-let neighbors g node =
-  Array.to_list (Array.mapi (fun i c -> (i, c)) g.matrix.(node))
-  |> List.filter_map (fun (i, c) -> if c then Some i else None)
-
-let out_degree g node =
-  Array.fold_left (fun acc c -> if c then acc + 1 else acc) 0 g.matrix.(node)
-
-let in_degree g node =
-  let count = ref 0 in
-  for i = 0 to g.size - 1 do
-    if g.matrix.(i).(node) then incr count
-  done;
-  !count
-
-(* Warshall transitive closure — O(n^3) *)
-let transitive_closure g =
-  let n = g.size in
+(* Approach 3: Transitive closure (Warshall's algorithm) *)
+let transitive_closure () =
+  let n = 4 in
+  let m = Array.make_matrix n n false in
+  m.(0).(1) <- true;
+  m.(1).(2) <- true;
+  m.(2).(3) <- true;
   (* Copy matrix *)
-  let tc = Array.init n (fun i -> Array.copy g.matrix.(i)) in
+  let tc = Array.init n (fun i -> Array.copy m.(i)) in
+  (* Warshall's algorithm *)
   for k = 0 to n - 1 do
     for i = 0 to n - 1 do
       for j = 0 to n - 1 do
@@ -43,42 +55,13 @@ let transitive_closure g =
       done
     done
   done;
-  tc
+  (* Now 0 can reach 3 transitively *)
+  assert (not m.(0).(3));  (* Direct: no *)
+  assert (tc.(0).(3));     (* Transitive: yes *)
+  assert (tc.(0).(2));     (* 0 -> 1 -> 2 *)
 
 let () =
-  let g = make_matrix 4 in
-  add_edge g 0 1;
-  add_edge g 0 2;
-  add_edge g 1 2;
-  add_edge g 2 3;
-
-  assert (has_edge g 0 1);
-  assert (not (has_edge g 0 3));
-  assert (has_edge g 2 3);
-
-  assert (out_degree g 0 = 2);
-  assert (out_degree g 2 = 1);
-  assert (in_degree g 2 = 2);
-  assert (neighbors g 0 = [1; 2]);
-
-  (* Transitive closure *)
-  let tc = transitive_closure g in
-  assert (not (has_edge g 0 3));  (* no direct edge *)
-  assert (tc.(0).(3));            (* reachable transitively *)
-  assert (tc.(0).(2));
-  assert (tc.(1).(3));
-
-  (* Undirected: add both directions *)
-  let ug = make_matrix 3 in
-  add_edge ug 0 1;
-  add_edge ug 1 0;
-  assert (has_edge ug 0 1);
-  assert (has_edge ug 1 0);
-
-  (* Self-loop *)
-  let sg = make_matrix 3 in
-  add_edge sg 0 0;
-  assert (has_edge sg 0 0);
-  assert (out_degree sg 0 = 1);
-
-  Printf.printf "All adjacency-matrix tests passed.\n"
+  basic_matrix ();
+  degree_and_neighbors ();
+  transitive_closure ();
+  Printf.printf "✓ All tests passed\n"

@@ -1,107 +1,75 @@
-(* 955: JSON Value Type
-
-   OCaml: algebraic data type — one variant per JSON kind.
-   This is the most natural encoding in OCaml and directly mirrors
-   the Rust enum translation. *)
-
-(* ── JSON ADT ────────────────────────────────────────────────────────────── *)
+(* 955: JSON Value Type *)
+(* Approach 1: Algebraic data type definition *)
 
 type json =
   | Null
-  | Bool   of bool
+  | Bool of bool
   | Number of float
-  | Str    of string
-  | Array  of json list
+  | Str of string
+  | Array of json list
   | Object of (string * json) list
 
-(* ── Type checks ─────────────────────────────────────────────────────────── *)
+(* Approach 2: Constructors and basic operations *)
 
-let is_null   = function Null     -> true | _ -> false
-let is_bool   = function Bool _   -> true | _ -> false
-let is_number = function Number _ -> true | _ -> false
-let is_string = function Str _    -> true | _ -> false
-let is_array  = function Array _  -> true | _ -> false
-let is_object = function Object _ -> true | _ -> false
-
-(* ── Simple single-line representation ──────────────────────────────────── *)
-
-let to_string_simple = function
-  | Null       -> "null"
-  | Bool true  -> "true"
+let to_string_simple j =
+  match j with
+  | Null -> "null"
+  | Bool true -> "true"
   | Bool false -> "false"
   | Number n ->
-    if Float.is_finite n && Float.rem n 1.0 = 0.0
-    then string_of_int (int_of_float n)
-    else string_of_float n
-  | Str s      -> Printf.sprintf "%S" s
-  | Array _    -> "[...]"
-  | Object _   -> "{...}"
+    if Float.is_integer n then string_of_int (int_of_float n)
+    else Printf.sprintf "%g" n
+  | Str s -> Printf.sprintf "\"%s\"" s
+  | Array _ -> "[...]"
+  | Object _ -> "{...}"
 
-(* ── Structural equality (built-in via = for ADTs) ──────────────────────── *)
-(* OCaml's polymorphic = handles structural equality on ADTs automatically *)
+let is_null = function Null -> true | _ -> false
+let is_bool = function Bool _ -> true | _ -> false
+let is_number = function Number _ -> true | _ -> false
+let is_string = function Str _ -> true | _ -> false
+let is_array = function Array _ -> true | _ -> false
+let is_object = function Object _ -> true | _ -> false
 
-(* ── Builder helpers ─────────────────────────────────────────────────────── *)
+(* Approach 3: Pattern matching and equality *)
 
-let json_object pairs = Object pairs
-let json_array  items = Array items
-let json_string s     = Str s
-let json_number n     = Number n
-let json_bool b       = Bool b
-let json_null         = Null
-
-(* ── Extraction helpers ──────────────────────────────────────────────────── *)
-
-let to_bool   = function Bool b   -> Some b | _ -> None
-let to_float  = function Number n -> Some n | _ -> None
-let to_string = function Str s    -> Some s | _ -> None
-let to_array  = function Array a  -> Some a | _ -> None
-let to_object = function Object o -> Some o | _ -> None
+let rec equal a b = match a, b with
+  | Null, Null -> true
+  | Bool x, Bool y -> x = y
+  | Number x, Number y -> x = y
+  | Str x, Str y -> x = y
+  | Array xs, Array ys ->
+    List.length xs = List.length ys &&
+    List.for_all2 equal xs ys
+  | Object xs, Object ys ->
+    List.length xs = List.length ys &&
+    List.for_all2 (fun (k1,v1) (k2,v2) -> k1 = k2 && equal v1 v2) xs ys
+  | _ -> false
 
 let () =
-  (* type checks *)
-  assert (is_null   Null);
-  assert (is_bool   (Bool true));
-  assert (is_number (Number 1.0));
-  assert (is_string (Str "x"));
-  assert (is_array  (Array []));
-  assert (is_object (Object []));
+  let j_null = Null in
+  let j_bool = Bool true in
+  let j_num = Number 42.0 in
+  let j_str = Str "hello" in
+  let j_arr = Array [Number 1.0; Number 2.0; Number 3.0] in
+  let j_obj = Object [("name", Str "Alice"); ("age", Number 30.0)] in
 
-  (* to_string_simple *)
-  assert (to_string_simple Null         = "null");
-  assert (to_string_simple (Bool true)  = "true");
-  assert (to_string_simple (Bool false) = "false");
-  assert (to_string_simple (Number 42.0) = "42");
-  assert (to_string_simple (Array [])   = "[...]");
-  assert (to_string_simple (Object [])  = "{...}");
+  assert (is_null j_null);
+  assert (is_bool j_bool);
+  assert (is_number j_num);
+  assert (is_string j_str);
+  assert (is_array j_arr);
+  assert (is_object j_obj);
 
-  (* structural equality — OCaml's = works on ADTs *)
-  assert (Null = Null);
-  assert (Bool true = Bool true);
-  assert (Bool true <> Bool false);
-  assert (Number 1.0 = Number 1.0);
+  assert (to_string_simple j_null = "null");
+  assert (to_string_simple j_bool = "true");
+  assert (to_string_simple j_num = "42");
+  assert (to_string_simple j_str = "\"hello\"");
 
-  let arr1 = Array [Null; Bool true] in
-  let arr2 = Array [Null; Bool true] in
-  assert (arr1 = arr2);
+  assert (equal Null Null);
+  assert (equal (Bool true) (Bool true));
+  assert (not (equal (Bool true) (Bool false)));
+  assert (equal (Number 1.0) (Number 1.0));
+  assert (equal (Array [Null; Bool true]) (Array [Null; Bool true]));
+  assert (not (equal (Array [Null]) (Array [Bool true])));
 
-  (* nested object *)
-  let obj = json_object [
-    ("name",   json_string "Alice");
-    ("age",    json_number 30.0);
-    ("active", json_bool true);
-  ] in
-  assert (is_object obj);
-  (match obj with
-   | Object pairs ->
-     assert (List.length pairs = 3);
-     assert (fst (List.hd pairs) = "name")
-   | _ -> failwith "expected Object");
-
-  (* extraction *)
-  assert (to_bool (Bool false) = Some false);
-  assert (to_float (Number 3.14) = Some 3.14);
-  assert (to_array (Array [Null]) = Some [Null]);
-  assert (to_string (Str "hi") = Some "hi");
-  assert (to_bool Null = None);
-
-  print_endline "955-json-value: all tests passed"
+  Printf.printf "✓ All tests passed\n"
