@@ -9,3 +9,6 @@ QUEUE.md
 CLAUDE.md
 FUNCTIONAL_SMELT.md
 skills/
+video/node_modules/
+video/logs/
+video/out/

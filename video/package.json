@@ -1,0 +1,14 @@
+{
+  "name": "rust-video",
+  "version": "1.0.0",
+  "description": "Functional Rust — LinkedIn short videos",
+  "scripts": {
+    "render": "node render.js"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.248",
+    "remotion": "4.0.248",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}
