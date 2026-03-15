@@ -852,11 +852,37 @@ def nav_html(active=""):
         )
         for label, href, key in items
     )
+    links_mobile = "\n".join(
+        '<a href="{}" class="block px-3 py-2 rounded-md text-base font-medium {}">{}</a>'.format(
+            href,
+            "bg-orange-50 dark:bg-gray-700 text-orange-600 dark:text-orange-400" if key == active
+            else "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800",
+            label,
+        )
+        for label, href, key in items
+    )
     logo = (
         '<a href="index.html" class="font-extrabold text-xl" '
         'style="background:linear-gradient(135deg,#CE422B,#f97316);'
         '-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'
         '🦀 Functional Rust</a>'
+    )
+    # Mobile scroll row — always visible, no JS dependency
+    mobile_scroll_row = (
+        '<div class="md:hidden border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">'
+        '<div class="flex overflow-x-auto scrollbar-none px-2 py-1 gap-1">'
+        + "".join(
+            '<a href="{}" class="flex-shrink-0 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap {}">{}</a>'.format(
+                href,
+                "bg-orange-50 dark:bg-gray-700 text-orange-600 dark:text-orange-400" if key == active
+                else "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800",
+                label,
+            )
+            for label, href, key in items
+        )
+        + '<a href="https://linkedin.com/in/umurozkul" target="_blank" rel="noopener"'
+        '   class="flex-shrink-0 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">LinkedIn</a>'
+        '</div></div>'
     )
     return (
         '\n  <nav class="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700">'
@@ -876,6 +902,7 @@ def nav_html(active=""):
         '\n        </div>'
         '\n      </div>'
         '\n    </div>'
+        f'\n    {mobile_scroll_row}'
         '\n  </nav>'
     )
 
@@ -954,6 +981,28 @@ PRISM_JS = (
     '  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ocaml.min.js"></script>'
 )
 
+MOBILE_MENU_JS = """<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  if (mobileMenuBtn && mobileMenu) {
+    mobileMenuBtn.addEventListener('click', function() {
+      const isExpanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
+      mobileMenuBtn.setAttribute('aria-expanded', String(!isExpanded));
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', function() {
+        mobileMenu.classList.add('hidden');
+        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+});
+</script>"""
+
 def render_page(*, title, description, content, url, extra_head="", back_link=False,
                 nav_active="", n_examples=0, keywords=None, og_type="website"):
     back = ("<div class='mb-6'><a href='index.html' class='text-orange-500 hover:underline font-medium'>"
@@ -982,6 +1031,7 @@ def render_page(*, title, description, content, url, extra_head="", back_link=Fa
         f'  {footer_html(n_examples)}\n'
         f'  {PRISM_JS}\n'
         f'  {THEME_INIT_JS}\n'
+        f'  {MOBILE_MENU_JS}\n'
         '</body>\n'
         '</html>'
     )
