@@ -867,23 +867,6 @@ def nav_html(active=""):
         '-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'
         '🦀 Functional Rust</a>'
     )
-    # Mobile scroll row — always visible, no JS dependency
-    mobile_scroll_row = (
-        '<div class="md:hidden border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">'
-        '<div class="flex overflow-x-auto scrollbar-none px-2 py-1 gap-1">'
-        + "".join(
-            '<a href="{}" class="flex-shrink-0 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap {}">{}</a>'.format(
-                href,
-                "bg-orange-50 dark:bg-gray-700 text-orange-600 dark:text-orange-400" if key == active
-                else "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800",
-                label,
-            )
-            for label, href, key in items
-        )
-        + '<a href="https://linkedin.com/in/umurozkul" target="_blank" rel="noopener"'
-        '   class="flex-shrink-0 px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">LinkedIn</a>'
-        '</div></div>'
-    )
     return (
         '\n  <nav class="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700">'
         '\n    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">'
@@ -902,7 +885,6 @@ def nav_html(active=""):
         '\n        </div>'
         '\n      </div>'
         '\n    </div>'
-        f'\n    {mobile_scroll_row}'
         '\n  </nav>'
     )
 

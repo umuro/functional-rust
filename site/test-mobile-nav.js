@@ -30,8 +30,8 @@ async function run() {
   let passed = 0, failed = 0;
 
   for (const label of NAV_LINKS) {
-    // Check specifically inside the mobile scroll row
-    const locator = page.locator(`.overflow-x-auto a:has-text("${label}")`).first();
+    // Check in-page pills (flex-wrap pill bar in <main>)
+    const locator = page.locator(`main a:has-text("${label}")`).first();
     const box = await locator.boundingBox().catch(() => null);
     const inViewport = box && box.y >= 0 && box.y < MOBILE.height && box.x < MOBILE.width;
 
@@ -44,11 +44,11 @@ async function run() {
     }
   }
 
-  // Check scroll row exists
-  const scrollRow = page.locator('.overflow-x-auto').first();
-  const scrollVisible = await scrollRow.isVisible().catch(() => false);
-  console.log(`\n  ${scrollVisible ? '✅' : '❌'} Scroll nav row present`);
-  scrollVisible ? passed++ : failed++;
+  // Check pill bar exists in main
+  const pillBar = page.locator('main .flex.flex-wrap').first();
+  const pillBarVisible = await pillBar.isVisible().catch(() => false);
+  console.log(`\n  ${pillBarVisible ? '✅' : '❌'} In-page pill bar present`);
+  pillBarVisible ? passed++ : failed++;
 
   await browser.close();
 
