@@ -22,15 +22,26 @@ Each example in `examples/NNN-name/` contains:
 | 4 | Expert | Category theory, Kan extensions, profunctors |
 | 5 | Master | Tagless final, effect systems, proof-carrying types |
 
-## Site Generation
+## Site Generation & Deployment
+
+All scripts are **inside this repo** — nothing lives outside it.
 
 ```bash
-cd ~/.openclaw/workspace/skills/typescript-builder/functional-rust-site
-npx tsx src/generate-site.ts
+# Generate + deploy HTML (no videos)
+cd /home/node/.openclaw/workspace/functional-rust
+bash site/deploy-rust-site.sh --no-videos
+
+# Generate HTML only
+python3 site/generate-rust-site.py
+
+# Render one video
+node video/render.js 001
+
+# Render all videos in parallel
+bash video/batch-render.sh
 ```
 
-## Deployment
-
-```bash
-bash ~/.openclaw/workspace/skills/functional-rust/scripts/deploy.sh
-```
+⚠️ **Wrong paths (stale, do not use):**
+- `skills/typescript-builder/functional-rust-site/src/generate-site.ts` — does not exist
+- `skills/functional-rust/scripts/deploy.sh` — stale, replaced by `site/deploy-rust-site.sh`
+- `workspace/examples/` — empty, examples are at `functional-rust/examples/`
