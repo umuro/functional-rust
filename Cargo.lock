@@ -1227,6 +1227,26 @@ name = "example-1120-currying-partial-application-and-sections"
 version = "0.1.0"
 
 [[package]]
+name = "example-1121-listmap-transform-every-element"
+version = "0.1.0"
+
+[[package]]
+name = "example-1122-leap-year"
+version = "0.1.0"
+
+[[package]]
+name = "example-1123-sorting-algorithmsquicksort"
+version = "0.1.0"
+
+[[package]]
+name = "example-1124-listfilter-select-elements-by-predicate"
+version = "0.1.0"
+
+[[package]]
+name = "example-1125-reverse-string"
+version = "0.1.0"
+
+[[package]]
 name = "example-113-string-str"
 version = "0.1.0"
 
