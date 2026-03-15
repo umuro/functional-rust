@@ -1247,7 +1247,27 @@ name = "example-1125-reverse-string"
 version = "0.1.0"
 
 [[package]]
+name = "example-1126-red-black-tree-balanced-insert"
+version = "0.1.0"
+
+[[package]]
+name = "example-1127-monoid-pattern-generic-combining"
+version = "0.1.0"
+
+[[package]]
+name = "example-1128-dijkstra-s-shortest-path-priority-queue"
+version = "0.1.0"
+
+[[package]]
+name = "example-1129-huffman-encoding-greedy-tree-building"
+version = "0.1.0"
+
+[[package]]
 name = "example-113-string-str"
+version = "0.1.0"
+
+[[package]]
+name = "example-1130-persistent-vector-functional-array"
 version = "0.1.0"
 
 [[package]]
