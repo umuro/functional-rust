@@ -1291,6 +1291,26 @@ name = "example-1130-persistent-vector-functional-array"
 version = "0.1.0"
 
 [[package]]
+name = "example-1131-monoid-pattern-generic-combining"
+version = "0.1.0"
+
+[[package]]
+name = "example-1132-dijkstras-shortest-path-priority-queue"
+version = "0.1.0"
+
+[[package]]
+name = "example-1133-huffman-encoding-greedy-tree-building"
+version = "0.1.0"
+
+[[package]]
+name = "example-1134-persistent-vector-functional-array"
+version = "0.1.0"
+
+[[package]]
+name = "example-1135-knapsack-problem-dynamic-programming-functional"
+version = "0.1.0"
+
+[[package]]
 name = "example-114-slice-patterns"
 version = "0.1.0"
 
