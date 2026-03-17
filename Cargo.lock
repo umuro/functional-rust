@@ -171,6 +171,14 @@ name = "example-024-lotto-draw"
 version = "0.1.0"
 
 [[package]]
+name = "example-025-leap-year"
+version = "0.1.0"
+
+[[package]]
+name = "example-025-list-map-transform-every-element"
+version = "0.1.0"
+
+[[package]]
 name = "example-025-random-permutation"
 version = "0.1.0"
 
