@@ -1355,6 +1355,14 @@ name = "example-1145-knapsack-problem--dynamic-programming-functional"
 version = "0.1.0"
 
 [[package]]
+name = "example-1146-dijkstra-shortest-path-priority-queue"
+version = "0.1.0"
+
+[[package]]
+name = "example-1147-dijkstras-shortest-path-priority-queue"
+version = "0.1.0"
+
+[[package]]
 name = "example-115-vec-patterns"
 version = "0.1.0"
 
