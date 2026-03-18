@@ -1371,7 +1371,27 @@ name = "example-1147-dijkstras-shortest-path-priority-queue"
 version = "0.1.0"
 
 [[package]]
+name = "example-1148-dijkstra-s-shortest-path-priority-queue"
+version = "0.1.0"
+
+[[package]]
+name = "example-1149-huffman-encoding-greedy-tree-building"
+version = "0.1.0"
+
+[[package]]
 name = "example-115-vec-patterns"
+version = "0.1.0"
+
+[[package]]
+name = "example-1150-persistent-vector-functional-array"
+version = "0.1.0"
+
+[[package]]
+name = "example-1151-knapsack-problem-dynamic-programming-functional"
+version = "0.1.0"
+
+[[package]]
+name = "example-1152-power-set-all-subsets"
 version = "0.1.0"
 
 [[package]]
