@@ -1,0 +1,7 @@
+{
+  "title": "### 024: Currying, Partial Application, and Sections",
+  "source": "Cornell CS3110 \u2014 https://cs3110.github.io/textbook/chapters/interp/substitution.html",
+  "topic": "Simple interpreter with environment-based evaluation",
+  "difficulty": "Advanced",
+  "category": "interpreters"
+}
