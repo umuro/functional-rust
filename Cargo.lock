@@ -1395,7 +1395,47 @@ name = "example-1152-power-set-all-subsets"
 version = "0.1.0"
 
 [[package]]
+name = "example-1153-currying-partial-application-and-sections"
+version = "0.1.0"
+
+[[package]]
+name = "example-1154-currying-partial-application-and-sections"
+version = "0.1.0"
+
+[[package]]
+name = "example-1155-dijkstras-shortest-path-priority-queue"
+version = "0.1.0"
+
+[[package]]
+name = "example-1156-huffman-encoding-greedy-tree-building"
+version = "0.1.0"
+
+[[package]]
+name = "example-1157-persistent-vector--functional-array"
+version = "0.1.0"
+
+[[package]]
+name = "example-1158-knapsack-problem--dynamic-programming-functional"
+version = "0.1.0"
+
+[[package]]
+name = "example-1159-power-set--all-subsets"
+version = "0.1.0"
+
+[[package]]
 name = "example-116-box-heap"
+version = "0.1.0"
+
+[[package]]
+name = "example-1160-dijkstras-shortest-path-priority-queue"
+version = "0.1.0"
+
+[[package]]
+name = "example-1161-dijkstras-shortest-path-priority-queue"
+version = "0.1.0"
+
+[[package]]
+name = "example-1162-hello-world"
 version = "0.1.0"
 
 [[package]]
