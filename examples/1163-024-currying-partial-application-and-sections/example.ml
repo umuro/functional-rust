@@ -1,6 +1,6 @@
-(* Curried: int -> int -> int *)
+(* Curried: int -> int -> int — all OCaml functions are curried by default *)
 let add x y = x + y
-let add5 = add 5             (* partial application *)
+let add5 = add 5             (* partial application — no syntax needed *)
 
 (* Tupled: NOT the OCaml default *)
 let add_tup (x, y) = x + y
@@ -12,17 +12,40 @@ let uncurry f (x, y) = f x y
 (* Operator sections via partial application *)
 let double    = ( * ) 2
 let increment = ( + ) 1
-let halve     = Fun.flip ( / ) 2   (* flip swaps argument order *)
+let halve     = Fun.flip ( / ) 2   (* flip swaps argument order: halve x = x / 2 *)
 
 (* Labeled arguments allow any-order partial application *)
 let scale_and_shift ~scale ~shift x = x * scale + shift
 let celsius_of_fahrenheit = scale_and_shift ~scale:5 ~shift:(-160)
 
 let () =
+  (* partial application *)
+  assert (add5 10 = 15);
+  assert (add5 0 = 5);
+
+  (* curry / uncurry roundtrip *)
+  assert (curry add_tup 3 4 = 7);
+  assert (uncurry add (3, 4) = 7);
+
+  (* operator sections *)
+  assert (double 7 = 14);
+  assert (increment 41 = 42);
+  assert (halve 20 = 10);
+  assert (halve 7 = 3);   (* integer division truncates *)
+
+  (* function pipeline via fold *)
+  let pipeline = [double; increment; halve] in
+  let result = List.fold_left (fun acc f -> f acc) 6 pipeline in
+  assert (result = 6);    (* 6 -> *2=12 -> +1=13 -> /2=6 *)
+
+  (* scale_and_shift partial application *)
+  (* formula: F*5 - 160; divide by 9 for actual °C *)
+  assert (celsius_of_fahrenheit 32  = 0);    (* 32*5-160=0  → 0/9=0°C  *)
+  assert (celsius_of_fahrenheit 212 = 900);  (* 212*5-160=900 → 900/9=100°C *)
+
   Printf.printf "add5 10   = %d\n" (add5 10);
   Printf.printf "double 7  = %d\n" (double 7);
   Printf.printf "halve 20  = %d\n" (halve 20);
-  let pipeline = [double; increment; halve] in
-  let result = List.fold_left (fun acc f -> f acc) 6 pipeline in
   Printf.printf "6 |> *2 |> +1 |> /2 = %d\n" result;
-  Printf.printf "212F in Celsius ≈ %d\n" (celsius_of_fahrenheit 212)
+  Printf.printf "212F in Celsius * 9 = %d\n" (celsius_of_fahrenheit 212);
+  print_endline "ok"
