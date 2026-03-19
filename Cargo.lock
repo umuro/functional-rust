@@ -1467,6 +1467,10 @@ name = "example-1168-generating-all-subsets-of-a-list-recursively"
 version = "0.1.0"
 
 [[package]]
+name = "example-1169-dijkstra-shortest-path-priority-queue"
+version = "0.1.0"
+
+[[package]]
 name = "example-117-recursive-types"
 version = "0.1.0"
 
