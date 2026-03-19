@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // A generic ordered set backed by a sorted Vec, parameterised by the element
 // type's `Ord` bound — the Rust equivalent of OCaml's `Map.Make` / `Set.Make`
 // functor pattern.

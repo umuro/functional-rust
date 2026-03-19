@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 086: Custom Iterator — Fibonacci and Range with Step
 
 // === Approach 1: Fibonacci iterator ===

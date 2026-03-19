@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Writer Monad — Logging Computation
 //!
 //! The Writer monad accumulates a log alongside a computation.

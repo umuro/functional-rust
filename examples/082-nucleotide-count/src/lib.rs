@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 use std::collections::HashMap;
 
 /// Nucleotide Count — counting character frequencies

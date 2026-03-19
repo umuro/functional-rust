@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 201: The Nested Update Problem — Why Lenses Exist
 
 // === The Problem: Deeply Nested Struct Updates === //

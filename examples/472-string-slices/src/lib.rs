@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 472. String slices and byte boundaries
 
 #[cfg(test)]

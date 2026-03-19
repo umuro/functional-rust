@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Identity monad — the simplest possible monad.
 // Wraps a value with zero extra effects.
 // Useful as a base case in monad transformers.

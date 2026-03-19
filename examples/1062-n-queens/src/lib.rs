@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1062: N-Queens — Backtracking
 
 // Approach 1: Backtracking with boolean arrays for columns/diagonals

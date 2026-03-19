@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! format_args! and Formatting
 //!
 //! Efficient string formatting.

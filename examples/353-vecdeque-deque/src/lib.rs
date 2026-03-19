@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # VecDeque
 //! Double-ended queue with O(1) push/pop on both ends.
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Advanced Splitting Patterns
 //!
 //! Split iterators into multiple collections in a single pass — unzip, partition, and multi-way categorization.

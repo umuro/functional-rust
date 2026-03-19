@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Currying and Partial Application: OCaml's default vs Rust's closures.
 ///
 /// In OCaml, ALL functions are curried by default. `let add a b = a + b` is

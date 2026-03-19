@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! env! and option_env! Macros
 //!
 //! Accessing environment variables at compile time.

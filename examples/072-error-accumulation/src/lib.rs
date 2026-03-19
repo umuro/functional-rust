@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Error accumulation: collect ALL errors, not just the first.
 // Unlike Result which short-circuits, Validation gathers a list of errors.
 // Models the Applicative Validation pattern from functional programming.

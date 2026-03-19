@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 263. Fixed-size chunks iteration
 //!
 //! `chunks(n)` splits a slice into non-overlapping sub-slices of at most n elements.

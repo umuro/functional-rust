@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 255: Lazy Fibonacci — Infinite stream using closures/iterators
 //
 // OCaml uses a recursive `stream` type with thunks (`unit -> 'a stream`) to

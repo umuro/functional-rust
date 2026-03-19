@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// 734: Typestate Basics — compile-time state machine
 /// Invalid transitions DO NOT compile. No runtime checks needed.
 use std::marker::PhantomData;

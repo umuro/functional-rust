@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Continuation-Passing Style (CPS)
 //!
 //! Transform direct-style functions to pass results to continuations.

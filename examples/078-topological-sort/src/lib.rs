@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 use std::collections::{HashMap, HashSet};
 
 /// Topological sort using DFS

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Test Fixtures
 //!
 //! RAII teardown, shared state, and per-test isolation patterns.

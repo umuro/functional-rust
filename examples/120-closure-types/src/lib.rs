@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 120: Fn, FnMut, FnOnce
 //
 // Rust closures implement one or more of three traits based on how they

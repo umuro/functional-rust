@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 077: Generic Bounds
 // OCaml type constraints → Rust <T: Trait> bounds
 

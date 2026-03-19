@@ -1,7 +1,8 @@
+#![allow(clippy::all)]
 // 458. Barrier for thread synchronization
+
 use std::sync::{Arc, Barrier};
 use std::thread;
-use std::time::Duration;
 
 #[cfg(test)]
 mod tests {

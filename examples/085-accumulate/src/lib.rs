@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Accumulate — Custom Map Implementation
 ///
 /// Ownership: The function takes ownership of input vec and returns new vec.

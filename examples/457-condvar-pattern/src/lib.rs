@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 457. Condvar for thread notification
 use std::sync::{Arc, Condvar, Mutex};
 use std::thread;

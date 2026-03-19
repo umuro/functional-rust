@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// # GCD and LCM — Euclidean Algorithm
 ///
 /// Classic recursive algorithm, beautifully concise in both OCaml and Rust.

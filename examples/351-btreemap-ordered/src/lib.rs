@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # BTreeMap Ordered
 //! Sorted key-value map with efficient range queries.
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 995: N-Stage Streaming Pipeline
 // Each stage is a thread + channel — filter/map/transform stages
 

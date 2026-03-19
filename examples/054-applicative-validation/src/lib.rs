@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 054: Applicative Validation
 // Collect all validation errors instead of stopping at the first
 

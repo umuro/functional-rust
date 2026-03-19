@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Example 121: Closure Capture Modes
 //!
 //! Rust closures capture variables from their enclosing scope in three ways:

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Red-Black Tree with Okasaki's functional balancing.
 ///
 /// Uses persistent, immutable nodes via `Box`. Each insert creates a new path
@@ -29,50 +30,48 @@ use RbTree::{Empty, Node};
 /// This is purely structural — no mutation, returns a new tree.
 fn balance<T: Clone>(color: Color, left: RbTree<T>, val: T, right: RbTree<T>) -> RbTree<T> {
     // Case 1: left-left red violation
-    if let (Black, Node(Red, ref ll, ref lv, ref lr), ref v, ref r) = (&color, &left, &val, &right)
-    {
-        if let Node(Red, ref a, ref x, ref b) = **ll {
+    // Ergonomics: ll,lr: &Box<RbTree<T>>; lv,v: &T; r: &RbTree<T>
+    if let (Black, Node(Red, ll, lv, lr), v, r) = (&color, &left, &val, &right) {
+        if let Node(Red, a, x, b) = ll.as_ref() {
             return Node(
                 Red,
-                Box::new(Node(Black, a.clone(), x.clone(), b.clone())), // clone: new path node
-                lv.clone(),
-                Box::new(Node(Black, lr.clone(), v.clone(), r.clone())), // clone: new path node
+                Box::new(Node(Black, a.clone(), (*x).clone(), b.clone())), // clone: new path node
+                (*lv).clone(),
+                Box::new(Node(Black, lr.clone(), (*v).clone(), Box::new(r.clone()))), // clone: new path node
             );
         }
     }
     // Case 2: left-right red violation
-    if let (Black, Node(Red, ref la, ref lv, ref lr), ref v, ref r) = (&color, &left, &val, &right)
-    {
-        if let Node(Red, ref b, ref y, ref c) = **lr {
+    if let (Black, Node(Red, la, lv, lr), v, r) = (&color, &left, &val, &right) {
+        if let Node(Red, b, y, c) = lr.as_ref() {
             return Node(
                 Red,
-                Box::new(Node(Black, la.clone(), lv.clone(), b.clone())), // clone: new path node
-                y.clone(),
-                Box::new(Node(Black, c.clone(), v.clone(), r.clone())), // clone: new path node
+                Box::new(Node(Black, la.clone(), (*lv).clone(), b.clone())), // clone: new path node
+                (*y).clone(),
+                Box::new(Node(Black, c.clone(), (*v).clone(), Box::new(r.clone()))), // clone: new path node
             );
         }
     }
     // Case 3: right-left red violation
-    if let (Black, ref l, ref v, Node(Red, ref rl, ref rv, ref rr)) = (&color, &left, &val, &right)
-    {
-        if let Node(Red, ref b, ref y, ref c) = **rl {
+    // Ergonomics: l: &RbTree<T>; rl,rr: &Box<RbTree<T>>; rv,v: &T
+    if let (Black, l, v, Node(Red, rl, rv, rr)) = (&color, &left, &val, &right) {
+        if let Node(Red, b, y, c) = rl.as_ref() {
             return Node(
                 Red,
-                Box::new(Node(Black, l.clone(), v.clone(), b.clone())), // clone: new path node
-                y.clone(),
-                Box::new(Node(Black, c.clone(), rv.clone(), rr.clone())), // clone: new path node
+                Box::new(Node(Black, Box::new(l.clone()), (*v).clone(), b.clone())), // clone: new path node
+                (*y).clone(),
+                Box::new(Node(Black, c.clone(), (*rv).clone(), rr.clone())), // clone: new path node
             );
         }
     }
     // Case 4: right-right red violation
-    if let (Black, ref l, ref v, Node(Red, ref rl, ref rv, ref rr)) = (&color, &left, &val, &right)
-    {
-        if let Node(Red, ref c, ref z, ref d) = **rr {
+    if let (Black, l, v, Node(Red, rl, rv, rr)) = (&color, &left, &val, &right) {
+        if let Node(Red, c, z, d) = rr.as_ref() {
             return Node(
                 Red,
-                Box::new(Node(Black, l.clone(), v.clone(), rl.clone())), // clone: new path node
-                rv.clone(),
-                Box::new(Node(Black, c.clone(), z.clone(), d.clone())), // clone: new path node
+                Box::new(Node(Black, Box::new(l.clone()), (*v).clone(), rl.clone())), // clone: new path node
+                (*rv).clone(),
+                Box::new(Node(Black, c.clone(), (*z).clone(), d.clone())), // clone: new path node
             );
         }
     }

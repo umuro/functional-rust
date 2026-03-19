@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1053: Coin Change — Minimum Coins for Amount
 
 use std::collections::HashMap;

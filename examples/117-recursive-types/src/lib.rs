@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 117: Recursive Types with Box
 //
 // Recursive types need Box in Rust because the compiler must know

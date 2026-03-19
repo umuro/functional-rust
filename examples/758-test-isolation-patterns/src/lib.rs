@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Test Isolation Patterns
 //!
 //! Ensuring tests don't interfere with each other.

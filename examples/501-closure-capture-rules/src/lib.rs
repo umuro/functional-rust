@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Closure Capture Rules — Borrowing and Moving
 
 pub fn capture_by_ref() {

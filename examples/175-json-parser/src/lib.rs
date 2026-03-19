@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 175: Complete JSON Parser
 // Full JSON parser: null, bool, number, string, array, object
 // This is the capstone example using all parser combinator primitives

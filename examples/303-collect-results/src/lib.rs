@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Collecting Iterator<Result<T>> into Result<Vec<T>>
 //!
 //! `collect::<Result<Vec<T>,E>>()` short-circuits on first Err.

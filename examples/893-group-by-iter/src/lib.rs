@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 099: Group By Iterator
 // Group consecutive equal (or same-key) elements without external crates.
 

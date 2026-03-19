@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1014: Recover from Panic
 // std::panic::catch_unwind for recovering from panics
 

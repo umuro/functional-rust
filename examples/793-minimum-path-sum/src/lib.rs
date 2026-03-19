@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Minimum Path Sum
 
 pub fn min_path_sum(grid: &[Vec<i32>]) -> i32 {

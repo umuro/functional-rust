@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Merge Sort — Functional Divide and Conquer
 ///
 /// Pure functional merge sort: split the list, sort each half, merge.

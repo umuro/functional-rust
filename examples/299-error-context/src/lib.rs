@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Adding Context to Errors
 //!
 //! Context wrapping adds layers of "where/why" around errors via the `source()` chain.

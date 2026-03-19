@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Const Assert Patterns
 //!
 //! Compile-time assertions and constraints.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Currying Pattern
 //!
 //! Explicit currying via nested closures returning closures.

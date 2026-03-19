@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Stack Allocation Patterns
 //!
 //! Demonstrates how to keep small, fixed-size data on the stack to avoid

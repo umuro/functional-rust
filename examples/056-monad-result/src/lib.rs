@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 056: Result as Monad
 // Chain fallible operations with and_then and ?
 

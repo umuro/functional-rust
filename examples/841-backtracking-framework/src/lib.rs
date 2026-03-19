@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Backtracking Framework
 pub fn generate_permutations<T: Clone>(items: &[T]) -> Vec<Vec<T>> {
     let mut result = vec![];

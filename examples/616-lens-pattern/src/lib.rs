@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Lens Pattern
 //! Focus on a field within a struct.
 

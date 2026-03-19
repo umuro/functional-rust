@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 268. Splitting pairs with unzip()
 //!
 //! `unzip()` splits an iterator of `(A, B)` tuples into two separate collections.

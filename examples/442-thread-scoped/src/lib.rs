@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Scoped Threads — Borrow Stack Data Across Threads
 //!
 //! Use `thread::scope` to spawn threads that borrow local data directly

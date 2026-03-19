@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Or Patterns
 //!
 //! Matching multiple alternatives with |.

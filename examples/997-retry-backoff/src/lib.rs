@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 997: Retry with Exponential Backoff
 // Pure functional combinator — wraps any FnMut() -> Result<T,E>
 

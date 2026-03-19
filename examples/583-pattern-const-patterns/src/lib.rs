@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Constant Patterns
 //!
 //! Use named constants in pattern matching for cleaner, more maintainable code.

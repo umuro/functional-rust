@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Find the k-th element of a list. The OCaml version uses 1-based indexing.
 // We provide both 1-based (matching OCaml) and 0-based (idiomatic Rust) versions.
 

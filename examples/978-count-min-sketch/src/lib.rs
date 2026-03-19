@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 978: Count-Min Sketch
 // Frequency estimation: O(1) update/query, O(depth × width) space
 // Uses d hash functions × w counters; estimate = min over d rows

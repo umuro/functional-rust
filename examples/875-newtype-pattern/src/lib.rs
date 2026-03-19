@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 081: Newtype Pattern
 // Rust tuple structs for type safety
 

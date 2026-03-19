@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Function-like Proc Macros
 //!
 //! Macros invoked like function calls.

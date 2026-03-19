@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 112: Cow<T> — Clone on Write
 //
 // Cow<'a, T> = either Borrowed(&'a T) or Owned(T).

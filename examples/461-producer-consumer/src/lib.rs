@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 461. Producer-consumer pattern
 use std::sync::{mpsc, Arc, Mutex};
 use std::thread;

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 082: Type Aliases
 // Shortening complex types with type aliases
 

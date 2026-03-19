@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Hylomorphism
 //! Unfold then fold - ana composed with cata.
 

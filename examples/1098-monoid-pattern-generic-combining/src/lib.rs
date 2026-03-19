@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// A monoid is a type with an associative binary operation and an identity element.
 ///
 /// This mirrors OCaml's `module type MONOID = sig type t val empty : t val combine : t -> t -> t end`

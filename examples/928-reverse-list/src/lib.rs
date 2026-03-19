@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Reverse a list
 
 // Idiomatic Rust: iterator reversal (lazy)

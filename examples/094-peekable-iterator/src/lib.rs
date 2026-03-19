@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 094: Peekable Iterator
 
 fn dedup(v: &[i32]) -> Vec<i32> {

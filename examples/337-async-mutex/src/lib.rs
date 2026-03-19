@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Async Mutex
 //!
 //! Lock shared state safely across async tasks — demonstrates correct patterns

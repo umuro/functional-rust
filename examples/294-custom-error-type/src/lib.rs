@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Custom Error Types
 //!
 //! Custom error enums document failure modes in the type system.

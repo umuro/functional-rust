@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Natural Transformations: structure-preserving maps between functors.
 //!
 //! A natural transformation η: F → G between functors F, G: C → D

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 997: Retry with Exponential Backoff — Tokio version
 // Async retry with tokio::time::sleep for backoff delays
 

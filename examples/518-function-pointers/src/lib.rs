@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Function Pointers vs Closures
 //!
 //! Comparing fn pointers and closures: size, capabilities, use cases.

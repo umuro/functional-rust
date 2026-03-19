@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 992: Actor Pattern
 // Rust: enum Message + thread + mpsc channel mailbox
 

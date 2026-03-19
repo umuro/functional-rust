@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 159: Map Parser
 // map: transform parser output functorially
 

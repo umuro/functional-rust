@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1022: Sentinel Values vs Result
 // Migrating sentinel values to Option/Result
 

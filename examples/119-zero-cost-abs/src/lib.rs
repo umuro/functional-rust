@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Example 119: Zero-Cost Abstractions
 //!
 //! Iterator chains, closures, and newtypes compile to the same machine code

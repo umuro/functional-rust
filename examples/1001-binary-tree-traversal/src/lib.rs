@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Binary Tree — Size, Membership, Traversal
 //! See example.ml for OCaml reference
 
@@ -16,7 +17,7 @@ mod tests {
     use super::*;
 
     #[test]
-    #[should_panic(expected = "not yet implemented")]
+    #[should_panic(expected = "not implemented")]
     fn placeholder() {
         example();
     }

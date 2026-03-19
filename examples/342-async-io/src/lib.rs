@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 342: Async I/O Concepts
 // Polling vs blocking, simulated with threads and channels
 

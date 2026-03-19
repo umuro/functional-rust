@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Multiple Lifetime Parameters
 //!
 //! Independent lifetimes for inputs with different validity scopes.

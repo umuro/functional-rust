@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Output Lifetime Patterns
 //!
 //! How output lifetimes relate to inputs.

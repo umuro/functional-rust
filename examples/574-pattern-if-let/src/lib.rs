@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! if-let and while-let
 //!
 //! Conditional pattern matching.

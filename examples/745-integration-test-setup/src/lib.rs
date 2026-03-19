@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Integration Test Structure
 //!
 //! Demonstrates the pattern for organizing integration tests in Rust projects.

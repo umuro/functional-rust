@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 056: Result Monad
 // Result monad: chain computations that may fail with error info
 

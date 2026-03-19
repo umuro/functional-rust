@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 991: Barrier Synchronization
 // Rust: std::sync::Barrier — wait until N threads all arrive
 

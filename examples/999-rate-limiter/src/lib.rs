@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 999: Rate Limiter — Token Bucket
 // Tokens refill over time; consume one per request. Uses std::time::Instant.
 

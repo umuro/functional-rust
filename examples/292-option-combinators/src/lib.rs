@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Option Combinators
 //!
 //! Work with optional values using `.map()`, `.filter()`, `.and_then()`, and `.unwrap_or()`.

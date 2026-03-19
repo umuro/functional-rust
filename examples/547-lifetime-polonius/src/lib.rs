@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Polonius Borrow Checker Concepts
 //!
 //! Patterns where current NLL is conservative; Polonius accepts.

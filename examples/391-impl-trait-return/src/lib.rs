@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! impl Trait in Return Position
 
 pub fn make_adder(n: i32) -> impl Fn(i32) -> i32 {

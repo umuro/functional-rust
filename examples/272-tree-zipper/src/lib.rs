@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// A binary tree — either a Leaf (empty) or a Node with left subtree, value, right subtree.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Tree<T> {

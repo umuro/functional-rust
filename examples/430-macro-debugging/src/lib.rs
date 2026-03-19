@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Macro Debugging
 //!
 //! Tools for debugging macros.

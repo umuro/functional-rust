@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Robot Simulator — State with Immutable Records
 ///
 /// Ownership: Robot is a small Copy type (all fields are Copy).

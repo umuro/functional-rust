@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Const Generics Basics
 //!
 //! Using compile-time constant parameters.

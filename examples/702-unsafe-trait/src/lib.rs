@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 702 — Unsafe Traits
 //! unsafe trait, unsafe impl, and Send/Sync marker traits.
 

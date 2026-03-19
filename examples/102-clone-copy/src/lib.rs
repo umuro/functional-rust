@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 102: Clone vs Copy
 // Copy = implicit bitwise copy (small stack types)
 // Clone = explicit deep copy (heap types)

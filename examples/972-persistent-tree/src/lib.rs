@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 972: Persistent Binary Search Tree
 // Functional update: insert/delete return new Rc-shared trees
 // Shared nodes between versions via Rc<BstNode<T>>

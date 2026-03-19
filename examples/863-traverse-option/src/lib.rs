@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 064: Traverse with Option
 // Apply a function returning Option to each element, collecting all or nothing
 

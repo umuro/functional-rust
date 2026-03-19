@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 079: Associated Types
 // OCaml module types → Rust associated types in traits
 

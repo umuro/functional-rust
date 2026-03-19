@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 713 — #[repr(C)] Structs for FFI Interop
 //!
 //! `#[repr(C)]` locks a Rust struct's memory layout to C ABI rules:

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Advanced Enum Patterns
 //!
 //! Complex enum usage with recursive variants, associated data, and nested matching.

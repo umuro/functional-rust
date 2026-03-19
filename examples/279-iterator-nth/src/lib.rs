@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 279. Random access with nth()
 //!
 //! `nth(n)` returns `Option<T>` at index n, consuming elements 0..n in the process.

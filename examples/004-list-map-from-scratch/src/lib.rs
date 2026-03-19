@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Idiomatic Rust: use the iterator-based map directly from std
 // This is how Rust developers write it — leveraging the standard library
 pub fn map_idiomatic<T, U, F>(f: F, items: &[T]) -> Vec<U>

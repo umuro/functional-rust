@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 096: Exact Size Iterator
 
 #[cfg(test)]

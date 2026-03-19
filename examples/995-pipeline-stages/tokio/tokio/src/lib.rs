@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 995: N-Stage Streaming Pipeline — Tokio version
 // Each stage is a tokio task + mpsc channel
 

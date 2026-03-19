@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Procedural Macro Introduction
 //!
 //! Understanding proc macros without implementing them.

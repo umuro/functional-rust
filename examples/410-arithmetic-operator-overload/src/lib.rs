@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Arithmetic Operator Overloading
 //!
 //! Using Add, Sub, Mul, Div, Neg traits for custom types.

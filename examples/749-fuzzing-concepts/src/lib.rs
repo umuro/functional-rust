@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Fuzzing Concepts
 //!
 //! Demonstrates code that is fuzz-safe (never panics on any input).

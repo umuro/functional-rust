@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Directed Acyclic Graph (DAG) and Topological Sort
 //!
 //! Kahn's algorithm for topological ordering.

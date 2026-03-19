@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Test Helper Macros
 //!
 //! Macros that simplify testing.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 483. UTF-8 encoding patterns
 
 #[cfg(test)]

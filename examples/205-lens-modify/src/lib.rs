@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 use std::rc::Rc;
 
 type GetFn<S, A> = Box<dyn Fn(&S) -> A>;

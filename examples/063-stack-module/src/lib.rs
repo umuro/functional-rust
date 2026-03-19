@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 063: Stack Module
 // Stack abstraction with struct + impl encapsulation
 

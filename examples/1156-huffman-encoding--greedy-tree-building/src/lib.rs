@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 

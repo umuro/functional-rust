@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 956: JSON Pretty Print
 // Recursive pretty-printer: OCaml uses Buffer, Rust builds String
 

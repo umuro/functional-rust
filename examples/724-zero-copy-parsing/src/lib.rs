@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 724. Zero-copy parsing with byte slices
 //
 // Returns &str / &[u8] slices into the input buffer — no allocation.

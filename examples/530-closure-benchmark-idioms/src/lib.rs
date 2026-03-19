@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Closures in Benchmarking
 //!
 //! Patterns for measuring performance with closures and black_box.

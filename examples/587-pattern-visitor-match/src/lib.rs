@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Visitor Pattern via Match
 //!
 //! Implement multiple traversal operations over a recursive data structure

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 464. Actor model in Rust
 use std::sync::mpsc;
 use std::thread;

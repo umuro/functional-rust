@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Range Minimum Query (Sparse Table)
 
 pub struct SparseTable {

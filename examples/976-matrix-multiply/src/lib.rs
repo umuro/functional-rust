@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 976: Matrix Multiplication
 // Naive O(n³) and Strassen 2x2 demo
 // OCaml: list-of-lists (functional) + arrays; Rust: Vec<Vec<f64>>

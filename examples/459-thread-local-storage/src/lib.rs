@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Thread-Local Storage — Per-Thread State
 //!
 //! Each thread gets its own copy of thread-local data.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Trait Bounds and Where Clauses
 
 use std::fmt::{Debug, Display};

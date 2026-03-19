@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Async Channels (mpsc)
 //!
 //! Multi-producer, single-consumer channels let multiple tasks send messages

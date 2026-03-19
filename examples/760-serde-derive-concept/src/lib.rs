@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Serde Derive Concept
 //!
 //! Understanding how derive macros generate serialization code.

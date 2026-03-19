@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Eulerian Path
 pub fn eulerian_path(n: usize, edges: &[(usize, usize)]) -> Option<Vec<usize>> {
     let mut adj: Vec<Vec<usize>> = vec![vec![]; n];

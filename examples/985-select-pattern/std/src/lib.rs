@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 985: Select Pattern — Poll Multiple Channels
 // Rust: try_recv loop for non-blocking select over multiple channels
 

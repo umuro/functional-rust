@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Lifetime Elision Rules
 //!
 //! When and how Rust infers lifetimes automatically.

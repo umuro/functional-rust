@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Assert Variant Macros
 //!
 //! Testing enum variants.

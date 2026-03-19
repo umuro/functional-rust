@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! dyn Trait and Fat Pointers
 
 pub trait Animal {

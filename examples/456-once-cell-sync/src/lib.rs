@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 456. OnceLock and OnceCell for lazy init
 use std::cell::OnceCell;
 use std::collections::HashMap;

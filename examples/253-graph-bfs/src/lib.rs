@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 use std::collections::{HashMap, HashSet, VecDeque};
 
 /// Idiomatic Rust BFS: uses HashMap for adjacency list, VecDeque as queue,

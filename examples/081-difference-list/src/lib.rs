@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Difference List — O(1) Append
 ///
 /// Ownership insight: A difference list is a function Vec<T> -> Vec<T>.

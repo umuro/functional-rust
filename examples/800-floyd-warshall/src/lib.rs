@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Floyd-Warshall Algorithm
 
 pub fn floyd_warshall(n: usize, edges: &[(usize, usize, i32)]) -> Vec<Vec<i32>> {

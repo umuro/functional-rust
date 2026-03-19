@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Isomorphism Pattern
 //! Bidirectional conversion between types.
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Association List — Functional Key-Value Store
 ///
 /// The simplest possible map: a list of (key, value) pairs.

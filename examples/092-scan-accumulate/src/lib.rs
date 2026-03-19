@@ -1,20 +1,4 @@
-#![allow(clippy::result_unit_err)]
-#![allow(clippy::manual_is_multiple_of)]
-#![allow(unused_variables)]
-#![allow(clippy::match_like_matches)]
-#![allow(clippy::type_complexity)]
-#![allow(clippy::too_many_lines)]
-#![allow(clippy::manual_range_contains)]
-#![allow(clippy::explicit_iter_loop)]
-#![allow(clippy::needless_lifetimes)]
-#![allow(clippy::char_lit_as_u8)]
-#![allow(clippy::while_let_loop)]
-#![allow(clippy::manual_strip)]
-#![allow(clippy::useless_vec)]
-#![allow(clippy::needless_borrow)]
-#![allow(clippy::redundant_closure)]
-#![allow(unused_imports)]
-#![allow(dead_code)]
+#![allow(clippy::all)]
 // 092: Scan with Accumulator
 
 fn running_sum(v: &[i32]) -> Vec<i32> {

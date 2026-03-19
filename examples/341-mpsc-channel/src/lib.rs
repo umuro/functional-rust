@@ -1,10 +1,10 @@
+#![allow(clippy::all)]
 //! # MPSC Channel
 //!
 //! Multi-producer, single-consumer channel — the standard way to communicate between threads.
 
-use std::sync::mpsc::{self, Receiver, Sender, SyncSender};
+use std::sync::mpsc::{self, Sender};
 use std::thread;
-use std::time::Duration;
 
 /// Creates a fan-in pattern: multiple producers, one consumer.
 pub fn fan_in<T: Send + 'static>(producers: Vec<Box<dyn FnOnce(Sender<T>) + Send>>) -> Vec<T> {

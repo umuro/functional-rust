@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 496. String diff / edit distance
 fn levenshtein(s: &str, t: &str) -> usize {
     let sv: Vec<char> = s.chars().collect();

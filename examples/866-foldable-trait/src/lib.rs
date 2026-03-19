@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 067: Foldable Trait
 // Custom fold over tree/list structures
 

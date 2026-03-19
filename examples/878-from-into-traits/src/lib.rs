@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 084: From/Into Traits
 // OCaml coercion → Rust explicit conversions
 

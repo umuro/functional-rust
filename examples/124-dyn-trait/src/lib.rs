@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Example 124: dyn Trait — Dynamic Dispatch
 //!
 //! Three strategies for polymorphism in Rust, shown side-by-side:

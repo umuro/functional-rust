@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Iterator collect()
 //!
 //! Materialize a lazy iterator into any `FromIterator<T>` type.

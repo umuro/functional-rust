@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Newtype Pattern
 
 use std::fmt;

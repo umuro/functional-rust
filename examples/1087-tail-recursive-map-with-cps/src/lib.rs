@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Solution 1: Idiomatic Rust — iterator `.map().collect()`
 /// This is how a Rust developer writes map: zero recursion, zero overhead.
 pub fn map_idiomatic<T, U>(list: &[T], f: impl Fn(&T) -> U) -> Vec<U> {

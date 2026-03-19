@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 970: Rope String
 // Tree-based string for O(log n) concat/split, O(log n) indexing
 // OCaml: recursive type; Rust: enum with Box for recursion

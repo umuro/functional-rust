@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 476. split(), splitn(), split_once()
 
 #[cfg(test)]

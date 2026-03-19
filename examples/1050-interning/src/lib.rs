@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1050: String Interning — Dedup Strings to IDs
 // Map strings to unique integer IDs for O(1) comparison
 
@@ -58,7 +59,7 @@ fn basic_interning() {
 
 fn fast_comparison() {
     let mut interner = Interner::new();
-    let words = vec!["the", "cat", "sat", "on", "the", "mat", "the", "cat"];
+    let words = ["the", "cat", "sat", "on", "the", "mat", "the", "cat"];
     let ids: Vec<Symbol> = words.iter().map(|w| interner.intern(w)).collect();
 
     // Compare IDs instead of strings: integer comparison is O(1)
@@ -76,7 +77,7 @@ fn fast_comparison() {
 
 fn symbol_table() {
     let mut interner = Interner::new();
-    let vars = vec!["x", "y", "x", "z", "y", "x"];
+    let vars = ["x", "y", "x", "z", "y", "x"];
     let interned: Vec<Symbol> = vars.iter().map(|v| interner.intern(v)).collect();
 
     // Only 3 unique symbols

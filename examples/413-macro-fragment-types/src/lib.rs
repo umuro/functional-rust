@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Macro Fragment Types
 //!
 //! Different designators: expr, ident, ty, pat, literal, block, tt.

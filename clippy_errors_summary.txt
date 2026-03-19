@@ -1,0 +1,98 @@
+error: empty line after doc comment
+error: empty line after doc comment
+error: empty line after doc comment
+error: function `head` is never used
+error: very complex type used. Consider factoring parts into `type` definitions
+error: enum `Maybe` is never used
+error: associated items `map` and `pure` are never used
+error: method `apply` is never used
+error: function `lift2` is never used
+error: function `lift2_simple` is never used
+error: function `lift3_simple` is never used
+error: function `option_applicative_example` is never used
+error: function `parse_int` is never used
+error: struct `SortedVec` is never constructed
+error: could not compile `example-869-continuation-monad` (lib) due to 2 previous errors
+error: function `knapsack_2d` is never used
+error: multiple associated items are never used
+error: function `basic_sorted_vec` is never used
+error: function `partition_point_demo` is never used
+error: function `range_query` is never used
+error: function `remove_test` is never used
+error: function `knapsack_1d` is never used
+error: function `knapsack_memo` is never used
+error: redundant closure
+error: useless use of `vec!`
+error: could not compile `example-065-association-list` (lib) due to 1 previous error
+error: method `add` can be confused for the standard trait method `std::ops::Add::add`
+error: could not compile `example-852-applicative-basics` (lib) due to 8 previous errors
+error: could not compile `example-1054-knapsack-01` (lib) due to 3 previous errors
+error: could not compile `example-1044-sorted-vec` (lib) due to 7 previous errors
+error: could not compile `example-934-church-numerals` (lib) due to 3 previous errors
+error: unused import: `std::pin::Pin`
+error: function `tail` is never used
+error: function `length` is never used
+error: function `append` is never used
+error: function `reverse` is never used
+error: function `rec_length` is never used
+error: function `rec_reverse` is never used
+error: function `rev_acc` is never used
+error: could not compile `example-002-list-operations` (lib) due to 8 previous errors
+error: unused variable: `words`
+error: function `find_index_sentinel` is never used
+error: function `get_config_sentinel` is never used
+error: function `find_index` is never used
+error: function `get_config` is never used
+error: function `find_index_result` is never used
+error: function `get_config_result` is never used
+error: unnecessary map of the identity function
+error: could not compile `example-1022-sentinel-vs-result` (lib) due to 6 previous errors
+error: could not compile `example-488-string-owning-ref` (lib) due to 2 previous errors
+error: could not compile `example-605-applicative-laws` (lib) due to 1 previous error
+error: enum `Selected` is never used
+error: function `select` is never used
+error: function `select_drain` is never used
+error: function `priority_recv` is never used
+error: function `shared_counter` is never used
+error: struct `BankAccount` is never constructed
+error: associated items `new`, `deposit`, and `withdraw` are never used
+error: function `bank_account_demo` is never used
+error: function `with_lock` is never used
+error: function `collect_to_vec` is never used
+error: could not compile `example-985-select-pattern` (lib) due to 4 previous errors
+error: type alias `ParseResult` is never used
+error: enum `Json` is never used
+error: function `parse_json_string` is never used
+error: function `parse_json_number` is never used
+error: function `parse_json` is never used
+error: function `parse_keyword` is never used
+error: function `parse_array` is never used
+error: function `parse_object` is never used
+error: function `parse` is never used
+error: could not compile `example-986-mutex-basics` (lib) due to 6 previous errors
+error: stripping a prefix manually
+error: stripping a prefix manually
+error: stripping a prefix manually
+error: stripping a prefix manually
+error: stripping a prefix manually
+error: stripping a prefix manually
+error: stripping a prefix manually
+error: hiding a lifetime that's elided elsewhere is confusing
+error: hiding a lifetime that's elided elsewhere is confusing
+error: hiding a lifetime that's elided elsewhere is confusing
+error: hiding a lifetime that's elided elsewhere is confusing
+error: hiding a lifetime that's elided elsewhere is confusing
+error: could not compile `example-175-json-parser` (lib) due to 21 previous errors
+error: type alias `ParseResult` is never used
+error: enum `Sexp` is never used
+error: function `is_atom_char` is never used
+error: function `parse_atom` is never used
+error: function `parse_string` is never used
+error: function `parse_sexp` is never used
+error: function `parse_list` is never used
+error: stripping a prefix manually
+error: hiding a lifetime that's elided elsewhere is confusing
+error: hiding a lifetime that's elided elsewhere is confusing
+error: hiding a lifetime that's elided elsewhere is confusing
+error: hiding a lifetime that's elided elsewhere is confusing
+error: could not compile `example-173-lisp-parser` (lib) due to 12 previous errors

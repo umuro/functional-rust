@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Async Trait Pattern
 //!
 //! Async methods in traits require boxing — `async fn` in traits isn't directly

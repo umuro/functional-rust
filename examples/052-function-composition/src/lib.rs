@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Function Composition
 //! OCaml CS3110 — Compose two functions into a pipeline: `compose f g x = f(g(x))`.
 

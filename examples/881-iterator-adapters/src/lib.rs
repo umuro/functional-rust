@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 087: Iterator Adapters
 // Chaining map/filter/flat_map/take/skip
 

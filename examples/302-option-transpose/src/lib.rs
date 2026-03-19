@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Option::transpose() — Collecting Optional Results
 //!
 //! Convert `Option<Result<T, E>>` into `Result<Option<T>, E>`.

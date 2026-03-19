@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Custom Deserialize Logic
 //!
 //! Parsing and validation during deserialization.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// # Phantom Types — Type-Safe Units
 ///
 /// Phantom type parameters exist only at the type level — they carry no runtime data

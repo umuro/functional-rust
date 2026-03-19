@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1001: Event Loop — Tokio version
 // Tokio IS an event loop — demonstrate async event dispatch
 

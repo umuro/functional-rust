@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 095: Double-Ended Iterator
 
 fn is_palindrome(v: &[i32]) -> bool {

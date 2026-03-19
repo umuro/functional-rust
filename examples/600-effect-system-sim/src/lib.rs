@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Effect System Simulation
 //!
 //! Simulate algebraic effects using Result and continuation passing.

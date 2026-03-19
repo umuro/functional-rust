@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 222: Histomorphism — Cata with Full History (Fibonacci in O(n))
 
 // histo: algebra sees all previous results via Cofree

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Red-Black Tree with Okasaki's Functional Balancing (Method Style)
 //
 // A purely functional red-black tree using Okasaki's four-case balance rule,

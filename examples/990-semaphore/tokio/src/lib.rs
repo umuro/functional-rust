@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 990: Semaphore — Tokio version
 // tokio::sync::Semaphore — async counting semaphore with permits
 

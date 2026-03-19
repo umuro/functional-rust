@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 080: Phantom Types
 // Compile-time safety with phantom type parameters
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Stack Module with Signature
 ///
 /// OCaml uses module types (signatures) to enforce abstraction.

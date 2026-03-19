@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Arena / Bump Allocation Pattern
 //!
 //! Allocate many objects into a single memory region and free them all at once.

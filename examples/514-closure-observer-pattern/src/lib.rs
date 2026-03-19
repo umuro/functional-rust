@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Observer/Callback Pattern
 //!
 //! Event system using FnMut closures as handlers.

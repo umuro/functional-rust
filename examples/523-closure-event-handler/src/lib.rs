@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Event Handler Pattern
 //!
 //! Typed events with priority-ordered handler chains and propagation control.

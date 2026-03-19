@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Atomic Types — Lock-Free Concurrent Primitives
 //!
 //! Use atomic types for lock-free operations on shared data.

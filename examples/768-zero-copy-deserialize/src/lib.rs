@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Zero-Copy Deserialize
 //!
 //! Borrowing from input data instead of copying.

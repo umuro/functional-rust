@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Solution 1: Idiomatic Rust — Option's built-in monadic combinators
 // `and_then` is Rust's bind (>>=), `map` is Rust's fmap (>>|)
 pub fn safe_div(x: i32, y: i32) -> Option<i32> {

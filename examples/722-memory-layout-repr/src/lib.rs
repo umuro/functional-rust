@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 722 — Memory Layout: repr(C), repr(packed), repr(align(N))
 //!
 //! Controls struct field order, padding, and alignment for FFI,

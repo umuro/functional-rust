@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Sublist classification: determine whether two lists are equal,
 //! one is a sublist of the other, or they are unequal.
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Catamorphism — Generalized Fold on ADTs
 ///
 /// Ownership insight: The catamorphism takes closures by reference (&dyn Fn).

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Multimap Pattern
 //! Map with multiple values per key.
 

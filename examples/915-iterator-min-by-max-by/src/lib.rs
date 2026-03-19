@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 276. Custom comparison min_by() and max_by()
 //!
 //! `min_by(cmp)` and `max_by(cmp)` take a `Fn(&A, &A) -> Ordering` comparator.

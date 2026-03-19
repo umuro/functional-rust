@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Type Ascription in Patterns
 //!
 //! Type annotations and runtime type dispatch in Rust.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Futumorphism
 //! Unfold that can produce multiple layers at once.
 

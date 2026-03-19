@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Clone-on-Write (Cow) Pattern
 //!
 //! Avoid allocation when data doesn't need to be modified.

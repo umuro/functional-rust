@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 267. Infinite cycling with cycle()
 //!
 //! `cycle()` repeats a finite iterator infinitely. Requires `Clone` on the inner iterator.

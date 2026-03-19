@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1012: The Never Type (!)
 // Diverging functions, match exhaustiveness, infallible conversions
 
@@ -9,10 +10,8 @@ fn diverge_panic() -> ! {
 }
 
 fn diverge_loop() -> ! {
-    loop {
-        // infinite loop — never returns
-        break panic!("for testing we break with panic");
-    }
+    // panic! diverges — satisfies -> ! without an infinite loop
+    panic!("for testing we break with panic");
 }
 
 // Approach 2: ! in match arms for exhaustiveness

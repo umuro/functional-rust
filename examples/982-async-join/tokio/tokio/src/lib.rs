@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 982: Join Parallel Async — Tokio version
 // tokio::join! and tokio::spawn for true concurrent async tasks
 

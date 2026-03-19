@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// # Church Numerals — Functions as Numbers
 ///
 /// Lambda calculus encoding of natural numbers using higher-order functions.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 use std::collections::HashMap;
 
 /// Count letter frequencies in a single string, ignoring non-alphabetic characters.

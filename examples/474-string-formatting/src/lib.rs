@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 474. format!, write!, writeln!
 use std::fmt::Write as FmtWrite;
 

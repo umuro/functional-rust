@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! SmallVec Pattern
 //!
 //! Store small collections inline, spill to heap when needed.

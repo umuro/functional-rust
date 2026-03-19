@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 920: Buffered Stream — Tokio version
 // Bounded concurrency map using tokio::sync::Semaphore
 

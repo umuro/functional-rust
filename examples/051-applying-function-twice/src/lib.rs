@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Applying a Function Twice
 //! OCaml CS3110 — Higher-order function that applies a function twice,
 //! demonstrating currying and partial application.

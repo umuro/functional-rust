@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Flatten Nested List
 //! OCaml 99 Problems #7 — Flatten an arbitrarily nested list structure.
 

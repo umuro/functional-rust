@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Yacht dice scoring categories.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Category {

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// 730: Small String Optimization
 /// Stores ≤23 bytes inline; falls back to `Box<str>` for longer strings.
 

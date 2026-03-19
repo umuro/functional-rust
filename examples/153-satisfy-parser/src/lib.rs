@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 153: Satisfy Parser
 // Parse a character matching a predicate
 

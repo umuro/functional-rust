@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 use std::collections::{HashMap, HashSet};
 
 /// Idiomatic Rust DFS: iterative with an explicit stack and HashSet for visited tracking.

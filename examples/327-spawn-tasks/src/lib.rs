@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Spawning Concurrent Tasks
 //!
 //! Demonstrates spawning tasks to run in the background independently.

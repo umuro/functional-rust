@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 006: Palindrome Check
 
 // Approach 1: Reverse and compare (allocating)

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 996: Timeout Pattern
 // Rust: mpsc::recv_timeout — like OCaml's Lwt.pick with sleep
 
@@ -67,7 +68,7 @@ where
 {
     for attempt in 0..max_attempts {
         let f = f.clone();
-        let result = with_timeout(timeout_per_attempt, move || f());
+        let result = with_timeout(timeout_per_attempt, f);
         match result {
             Some(Ok(v)) => return Ok(v),
             Some(Err(_)) | None => {

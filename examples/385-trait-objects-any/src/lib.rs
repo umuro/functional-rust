@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Any Trait for Runtime Type Information
 
 use std::any::{Any, TypeId};

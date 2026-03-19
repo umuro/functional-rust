@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Pin and Unpin
 //!
 //! `Pin<P>` prevents a value from moving in memory — required for

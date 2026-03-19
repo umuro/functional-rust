@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Let Chains (&&)
 //!
 //! Chain multiple pattern checks with `&&` — combine pattern matching

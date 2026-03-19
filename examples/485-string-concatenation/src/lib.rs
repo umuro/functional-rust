@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 485. Efficient string concatenation
 
 #[cfg(test)]

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Option Pattern Matching (Some/None)
 //!
 //! Handle optional values safely with pattern matching and combinators.

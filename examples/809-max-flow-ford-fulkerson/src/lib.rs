@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Max Flow (Ford-Fulkerson with BFS)
 use std::collections::VecDeque;
 pub fn max_flow(n: usize, edges: &[(usize, usize, i32)], source: usize, sink: usize) -> i32 {

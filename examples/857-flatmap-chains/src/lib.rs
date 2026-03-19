@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 058: FlatMap/Bind Chains
 // Long monadic chains for sequential computation with early exit
 

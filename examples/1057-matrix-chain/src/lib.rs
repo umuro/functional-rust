@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1057: Matrix Chain Multiplication — Optimal Parenthesization
 
 use std::collections::HashMap;

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 896: Clone and Copy Traits
 //
 // Copy: bitwise copy, implicit, for simple stack types (i32, f64, bool, tuples of Copy, etc.)

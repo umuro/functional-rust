@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 184: Introduction to Free Monads
 // Separate program description from interpretation
 

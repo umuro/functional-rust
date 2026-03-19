@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Versioned Data Format
 //!
 //! Forward and backward compatible data serialization.

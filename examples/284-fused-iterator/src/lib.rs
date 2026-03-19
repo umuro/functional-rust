@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # FusedIterator for Terminated Sequences
 //!
 //! `FusedIterator` guarantees: once `next()` returns `None`, all future calls also return `None`.

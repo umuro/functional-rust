@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Custom Serialize Logic
 //!
 //! When you need special serialization behavior.

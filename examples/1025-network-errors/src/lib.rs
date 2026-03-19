@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1025: Network Error Classification (Simulated)
 // Classifying and handling network-like errors
 

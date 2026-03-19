@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Lifetimes in Closures
 //!
 //! Captured references constrain closure lifetimes.

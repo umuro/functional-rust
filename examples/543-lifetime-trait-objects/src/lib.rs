@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Lifetimes in dyn Trait
 //!
 //! Lifetime bounds on trait objects.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # 500. String Compression — Run-Length Encoding
 //! Encode/decode strings using run-length encoding via iterator fold.
 

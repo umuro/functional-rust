@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 987: Read-Write Lock Pattern — Tokio version
 // tokio::sync::RwLock — async-aware: many readers OR one writer
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1048: Vec Zipper — Cursor (Left, Focus, Right)
 // A zipper provides O(1) local navigation and modification
 

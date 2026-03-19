@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Pack Consecutive Duplicates
 //! OCaml 99 Problems #9 — Pack consecutive duplicates into sublists.
 

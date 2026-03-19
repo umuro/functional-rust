@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 701 — Unsafe Functions
 //! unsafe fn declarations and the safe-wrapper idiom.
 

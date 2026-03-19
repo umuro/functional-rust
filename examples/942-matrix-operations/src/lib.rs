@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// # Matrix Operations — Functional 2D
 ///
 /// Matrix transpose and multiply using nested Vecs.

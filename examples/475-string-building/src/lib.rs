@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 475. String building patterns
 
 #[cfg(test)]

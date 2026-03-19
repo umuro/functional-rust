@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Documentation Tests
 //!
 //! Code examples in `///` doc comments are compiled and executed as tests.

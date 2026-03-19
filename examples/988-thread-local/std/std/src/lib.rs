@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 988: Thread-Local Storage
 // Rust: thread_local! macro — each thread gets its own instance
 

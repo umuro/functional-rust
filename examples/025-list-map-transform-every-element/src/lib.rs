@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 025: List.map — Transform Every Element
 // OCaml: List.map (fun x -> x * 2) numbers
 // Rust:  iter().map(...).collect()

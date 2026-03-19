@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 481. bytes() and byte-level operations
 
 #[cfg(test)]

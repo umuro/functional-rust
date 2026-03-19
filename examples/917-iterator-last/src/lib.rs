@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 278. Getting the last element
 //!
 //! `last()` consumes the iterator to return `Option<T>` with the final element.

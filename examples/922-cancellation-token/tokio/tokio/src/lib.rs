@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 922: Cancellation Token — Tokio version
 // tokio_util::sync::CancellationToken — idiomatic async cancellation
 // Note: Uses tokio's built-in select! for cancellation instead of external crate

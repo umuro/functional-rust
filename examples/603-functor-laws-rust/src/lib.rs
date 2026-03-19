@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Functor Laws
 //!
 //! Functors must satisfy identity and composition laws.

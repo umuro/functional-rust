@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Type alias for a boxed getter function.
 type GetFn<S, A> = Box<dyn Fn(&S) -> A>;
 /// Type alias for a boxed setter function.

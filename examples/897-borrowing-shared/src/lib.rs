@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 103: Shared References (&T)
 //
 // Shared borrows let multiple readers access data without transferring ownership.

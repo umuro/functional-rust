@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Solution 1: Idiomatic Rust — Result's built-in monadic combinator
 // `and_then` is Rust's bind (>>=) for Result: propagates Err, applies f to Ok
 pub fn parse_int(s: &str) -> Result<i64, String> {

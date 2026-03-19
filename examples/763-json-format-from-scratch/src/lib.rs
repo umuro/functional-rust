@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # JSON Format From Scratch
 //!
 //! Building a simple JSON serializer without serde.

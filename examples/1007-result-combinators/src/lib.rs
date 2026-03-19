@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1007: Result Combinators
 // and_then, or_else, map, map_err, unwrap_or_else
 

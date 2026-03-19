@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 921: Async I/O — Tokio version
 // Native async I/O using tokio::io, tokio::net, tokio::fs
 

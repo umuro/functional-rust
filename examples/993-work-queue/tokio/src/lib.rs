@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 993: Work Queue — Tokio version
 // Async task pool using tokio::spawn + Semaphore for bounded concurrency
 

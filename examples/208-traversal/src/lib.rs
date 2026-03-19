@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 208: Traversal — Focus on Zero or More Targets
 //
 // A Traversal generalises a Lens: instead of focusing on exactly one value

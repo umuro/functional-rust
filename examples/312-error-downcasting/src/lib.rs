@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Downcasting Boxed Errors
 //!
 //! `downcast_ref::<T>()` recovers the concrete type from `Box<dyn Error>`.

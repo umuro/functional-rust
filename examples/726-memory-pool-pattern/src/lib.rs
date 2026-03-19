@@ -1,10 +1,10 @@
+#![allow(clippy::all)]
 // 726. Memory pool / bump allocator pattern
 //
 // Implements a typed pool allocator and a lifetime-safe bump arena.
 
 use std::alloc::{alloc, dealloc, Layout};
 use std::cell::Cell;
-use std::marker::PhantomData;
 use std::ptr::NonNull;
 
 // ── Part 1: Fixed-size typed object pool ─────────────────────────────────────
@@ -16,6 +16,12 @@ pub struct Pool<T, const CAP: usize> {
     free_head: Option<usize>,
     next_free: [usize; CAP], // next pointer for free-list
     live: usize,
+}
+
+impl<T, const CAP: usize> Default for Pool<T, CAP> {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl<T, const CAP: usize> Pool<T, CAP> {
@@ -99,6 +105,7 @@ impl Arena {
 
     /// Allocate space for one `T`, returning a mutable reference with lifetime
     /// tied to this arena. Zero-initialises the slot.
+    #[allow(clippy::mut_from_ref)] // interior mutability via Cell; each alloc returns unique memory
     pub fn alloc<T: Default>(&self) -> &mut T {
         let layout = Layout::new::<T>();
         let offset = self.pos.get();
@@ -118,6 +125,7 @@ impl Arena {
     }
 
     /// Allocate a byte slice of `len` bytes.
+    #[allow(clippy::mut_from_ref)] // interior mutability via Cell; each alloc returns unique memory
     pub fn alloc_slice(&self, len: usize) -> &mut [u8] {
         let aligned = self.pos.get();
         let next = aligned + len;

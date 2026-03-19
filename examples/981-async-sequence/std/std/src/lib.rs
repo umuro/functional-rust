@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 981: Sequential Async Chain
 // Rust: sequential .await calls — like OCaml's let* x = ... in let* y = ...
 

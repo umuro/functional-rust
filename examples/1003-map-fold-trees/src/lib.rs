@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Map and Fold on Trees
 //! See example.ml for OCaml reference
 

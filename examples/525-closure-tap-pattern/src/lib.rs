@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Tap Pattern for Side Effects
 //!
 //! Inspect values in a pipeline without disrupting the data flow.

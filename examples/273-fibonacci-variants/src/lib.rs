@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Solution 1: Direct recursion — mirrors OCaml `fib_naive`
 // Exponential time; useful only for illustration and small n.
 pub fn fib_naive(n: u64) -> u64 {

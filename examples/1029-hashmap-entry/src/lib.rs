@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1029: HashMap Entry API
 // Rust's Entry API avoids double lookups for insert-or-update patterns
 
@@ -60,7 +61,7 @@ fn entry_ref_demo() {
     let word = "hello";
 
     for (i, ch) in word.chars().enumerate() {
-        m.entry(ch).or_insert_with(Vec::new).push(i);
+        m.entry(ch).or_default().push(i);
     }
 
     assert_eq!(m[&'l'], vec![2, 3]);

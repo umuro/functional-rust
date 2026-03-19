@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Const Where Bounds
 //!
 //! Constraining const generic parameters.

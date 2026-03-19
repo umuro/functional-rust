@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Closure as Argument — Higher-Order Functions
 
 pub fn apply<F: Fn(i32) -> i32>(f: F, x: i32) -> i32 {

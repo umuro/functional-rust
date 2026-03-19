@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1000: Reactive Stream — Tokio version
 // Push-based async streams using tokio::sync::mpsc
 

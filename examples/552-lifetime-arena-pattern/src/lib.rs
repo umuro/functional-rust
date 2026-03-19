@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Arena Allocation Pattern
 //!
 //! All allocations tied to arena lifetime.

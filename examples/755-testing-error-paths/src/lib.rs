@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Testing Error Paths
 //!
 //! Testing error cases and unwrap discipline.

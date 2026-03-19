@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 988: Task-Local Storage — Tokio version
 // tokio::task_local! — each spawned task gets its own value
 

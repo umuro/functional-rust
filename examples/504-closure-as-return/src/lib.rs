@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Closure as Return — Returning Closures
 
 /// Return closure with impl Trait

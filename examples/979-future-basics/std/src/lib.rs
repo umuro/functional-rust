@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 979: Future/Promise Basics
 // Rust async fn + await — showing the monad connection in pure std code
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Closure-to-fn-pointer Coercion
 //!
 //! Non-capturing closures coerce to fn pointers; capturing ones cannot.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 155: Many Parser
 // many0 and many1: parse zero or more / one or more
 

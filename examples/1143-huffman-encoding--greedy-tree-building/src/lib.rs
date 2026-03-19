@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Huffman encoding via greedy tree building.
 //!
 //! OCaml uses an algebraic type `htree` and repeatedly sorts a list to pick

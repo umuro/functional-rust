@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 985: Select Pattern — Tokio version
 // tokio::select! macro for non-blocking selection over multiple async branches
 

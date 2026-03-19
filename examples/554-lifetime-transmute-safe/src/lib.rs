@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Safe Transmute Patterns
 //!
 //! Converting between types with same representation.

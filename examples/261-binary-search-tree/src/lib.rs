@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Immutable Binary Search Tree
 //!
 //! OCaml uses `type 'a bst = Leaf | Node of 'a bst * 'a * 'a bst`.

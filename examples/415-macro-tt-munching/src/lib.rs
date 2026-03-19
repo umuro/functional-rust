@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Token Tree Munching
 //!
 //! Parsing complex syntax by consuming token trees one at a time.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Red-Black Tree — Balanced Insert
 //
 // A persistent (immutable) red-black tree following Okasaki's elegant

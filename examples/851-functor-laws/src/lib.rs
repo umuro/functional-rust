@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 052: Functor Laws
 // Law 1 (Identity): map(id, x) == x
 // Law 2 (Composition): map(f∘g, x) == map(f, map(g, x))

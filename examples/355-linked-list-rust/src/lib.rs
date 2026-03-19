@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # LinkedList in Rust
 //! Doubly-linked list (rarely needed, Vec is usually better).
 

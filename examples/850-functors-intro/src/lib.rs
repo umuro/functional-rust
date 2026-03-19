@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 051: Functors Introduction
 // A Functor is a type that supports mapping a function over its contents
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 097: Flatten Iterator
 // Collapse one level of nesting using .flatten() and .flat_map()
 

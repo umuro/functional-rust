@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # HashMap Patterns
 //! Common patterns: word count, grouping, frequency analysis.
 

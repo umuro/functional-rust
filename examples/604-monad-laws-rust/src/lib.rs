@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Monad Laws
 //!
 //! Monads must satisfy left identity, right identity, and associativity.

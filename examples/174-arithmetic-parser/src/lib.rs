@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 174: Arithmetic Expression Evaluator
 // Full arithmetic evaluator: +,-,*,/ with precedence, parens, unary minus
 

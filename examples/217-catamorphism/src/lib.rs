@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Example 217: Catamorphism — The Universal Fold
 //!
 //! A catamorphism (`cata`) is the single function that encodes *all* bottom-up

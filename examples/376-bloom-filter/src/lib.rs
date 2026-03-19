@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Bloom Filter
 //!
 //! Probabilistic data structure for set membership with no false negatives.
@@ -21,7 +22,7 @@ impl BloomFilter {
         let m = m.max(64);
         let k = k.max(1);
         Self {
-            bits: vec![0u64; (m + 63) / 64],
+            bits: vec![0u64; m.div_ceil(64)],
             m,
             k,
             count: 0,

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Test Doubles Taxonomy
 //!
 //! Stub, Mock, Fake, Spy patterns in Rust.

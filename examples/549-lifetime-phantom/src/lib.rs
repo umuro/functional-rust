@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! PhantomData for Lifetime Markers
 //!
 //! Using PhantomData to carry lifetime information.

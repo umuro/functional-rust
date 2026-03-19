@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Vec-like Collection Macros
 //!
 //! Creating collection literals with macros.

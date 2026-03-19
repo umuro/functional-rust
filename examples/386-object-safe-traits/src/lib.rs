@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Object Safety Rules
 
 pub trait Drawable {

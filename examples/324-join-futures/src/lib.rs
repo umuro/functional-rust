@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Running Futures Concurrently with join!
 //!
 //! Demonstrates concurrent execution where all tasks run simultaneously

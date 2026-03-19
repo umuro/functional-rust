@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 961: LRU Cache
 // OCaml: Hashtbl + Queue; Rust: HashMap + VecDeque
 // Both O(1) get/put amortized (with O(n) queue cleanup in this simplified version)

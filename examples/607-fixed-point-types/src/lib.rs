@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Fixed-Point Types
 //! Recursive types using fixed-point combinators.
 
@@ -13,7 +14,7 @@ pub enum ListF<A, R> {
 pub type FixList<A> = Fix<ListF<A, Fix<ListF<A, ()>>>>;
 
 pub fn fold_list<A: Clone, B>(list: &[A], init: B, f: impl Fn(B, &A) -> B) -> B {
-    list.iter().fold(init, |acc, x| f(acc, x))
+    list.iter().fold(init, f)
 }
 
 #[cfg(test)]

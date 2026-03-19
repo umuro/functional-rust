@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Tarjan's SCC Algorithm
 
 pub fn tarjan_scc(n: usize, edges: &[(usize, usize)]) -> Vec<Vec<usize>> {

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Compute the Hamming distance between two strings of equal length.
 ///
 /// The Hamming distance is the number of positions where the corresponding

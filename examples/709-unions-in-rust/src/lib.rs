@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 709 — Unions in Rust: C-style Tagged Unions
 //!
 //! Raw `union` + enum tag = safe tagged union.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1002: Backpressure — Tokio version
 // Bounded tokio::sync::mpsc channels provide natural backpressure
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Example 118: Deref Coercions
 //!
 //! The Rust compiler automatically dereferences smart pointers through the `Deref`

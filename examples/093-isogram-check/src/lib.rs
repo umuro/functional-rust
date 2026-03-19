@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Isogram Check
 //!
 //! A word is an isogram if no letter repeats. Compares sort-based,

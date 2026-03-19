@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1011: The ? (Try) Operator
 // Deep dive: early return, From conversion, desugaring
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Type Alias Impl Trait
 
 pub fn make_counter(start: i32, end: i32) -> impl Iterator<Item = i32> {

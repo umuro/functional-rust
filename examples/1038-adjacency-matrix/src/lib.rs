@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1038: Adjacency Matrix — Dense Graph Operations
 // Vec<Vec<bool>> for O(1) edge lookup
 

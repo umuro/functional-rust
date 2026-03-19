@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Recursive quicksort matching the OCaml functional style.
 ///
 /// This implementation closely mirrors the OCaml version:

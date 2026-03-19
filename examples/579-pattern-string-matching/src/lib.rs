@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # String Pattern Matching
 //!
 //! Match against string literals, with OR patterns and guards.

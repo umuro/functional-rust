@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Perfect Numbers — Classification
 ///
 /// Ownership: All values are Copy integers and enums. No heap allocation.
@@ -11,7 +12,7 @@ pub enum Classification {
 }
 
 pub fn sum_of_divisors(n: u64) -> u64 {
-    (1..n).filter(|&d| n % d == 0).sum()
+    (1..n).filter(|&d| n.is_multiple_of(d)).sum()
 }
 
 pub fn classify(n: u64) -> Classification {
@@ -34,7 +35,7 @@ pub fn sum_of_divisors_fast(n: u64) -> u64 {
     let mut sum = 1u64; // 1 is always a proper divisor for n > 1
     let mut i = 2;
     while i * i <= n {
-        if n % i == 0 {
+        if n.is_multiple_of(i) {
             sum += i;
             if i != n / i {
                 sum += n / i;
@@ -53,7 +54,7 @@ pub fn sum_of_divisors_iter(n: u64) -> u64 {
     (2..)
         .take_while(|&i| i * i <= n)
         .flat_map(|i| {
-            if n % i == 0 {
+            if n.is_multiple_of(i) {
                 if i == n / i {
                     vec![i]
                 } else {

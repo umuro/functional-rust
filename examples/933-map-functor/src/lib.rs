@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Map.Make Functor — String→Int Dictionary
 ///
 /// OCaml's `Map.Make(String)` creates a specialized balanced BST map.

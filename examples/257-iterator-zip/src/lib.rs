@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 257. Pairing elements with zip()
 //!
 //! `zip()` pairs elements from two iterators, stopping at the shorter one.

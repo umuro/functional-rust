@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 718 — Soundness, Undefined Behaviour, and Safety Invariants
 //!
 //! An `unsafe` block is not the end of the story — it is the beginning of a

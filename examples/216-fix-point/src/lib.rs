@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Example 216: Fix Point — How Recursive Types Work Under the Hood
 //!
 //! Separates the *shape* of a recursive type from the *mechanism* of recursion.

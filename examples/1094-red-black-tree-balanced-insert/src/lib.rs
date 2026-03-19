@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Red-Black Tree — Okasaki's Functional Balanced Insert
 //
 // A persistent (immutable) red-black tree following Okasaki's elegant

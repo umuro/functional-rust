@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 259. Flattening with flat_map()
 //!
 //! `flat_map(f)` = `map(f).flatten()` — the iterator monad's bind operation.

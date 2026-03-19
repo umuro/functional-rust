@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Balanced Parentheses
 //!
 //! Stack-based bracket matching. OCaml uses a list as a stack;

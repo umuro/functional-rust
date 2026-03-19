@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Example 135: Generic Newtype Patterns
 //!
 //! Wrap primitives and collections in named types to prevent mix-ups, add

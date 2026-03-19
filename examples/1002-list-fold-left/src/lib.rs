@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # List Fold Left
 //!
 //! Demonstrates reducing a list to a single value using left-to-right folding.

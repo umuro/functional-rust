@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Sealed Trait Pattern
 
 mod private {

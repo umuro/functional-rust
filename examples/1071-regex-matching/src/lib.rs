@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1071: Regex Matching — '.' and '*' — DP
 
 use std::collections::HashMap;

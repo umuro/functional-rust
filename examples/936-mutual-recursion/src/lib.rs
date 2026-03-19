@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Mutual Recursion with `and`
 ///
 /// OCaml uses `let rec ... and ...` for mutually recursive functions.

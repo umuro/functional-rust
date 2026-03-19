@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 984: Channel Pipeline
 // Chain of processing stages via mpsc channels
 

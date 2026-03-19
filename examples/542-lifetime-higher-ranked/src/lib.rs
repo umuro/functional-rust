@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Higher-Ranked Trait Bounds (for<'a>)
 //!
 //! Universal quantification over lifetimes for flexible callbacks.

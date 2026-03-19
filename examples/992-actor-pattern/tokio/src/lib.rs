@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 992: Actor Pattern — Tokio version
 // Actors using tokio::sync::mpsc channels and spawned tasks
 

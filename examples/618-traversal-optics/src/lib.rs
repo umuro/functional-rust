@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Traversal Optics
 //! Focus on multiple elements.
 

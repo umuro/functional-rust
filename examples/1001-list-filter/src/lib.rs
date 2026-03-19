@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! List filtering: keep only elements satisfying a condition.
 //!
 //! This module demonstrates two approaches to filtering lists in Rust:

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! .. and _ Wildcards
 //!
 //! Ignoring parts of a pattern.

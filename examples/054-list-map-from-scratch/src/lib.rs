@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # List Map from Scratch
 //! Deriving `List.map` from scratch — the Abstraction Principle.
 //!

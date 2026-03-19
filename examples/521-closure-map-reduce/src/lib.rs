@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Map-Reduce with Closures
 //!
 //! Transforming and aggregating data with iterator map and fold.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Variants — Days of the Week
 //!
 //! OCaml variants map cleanly to Rust enums. Both are algebraic data types

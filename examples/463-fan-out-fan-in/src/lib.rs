@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 463. Fan-out / fan-in
 use std::sync::{mpsc, Arc, Mutex};
 use std::thread;

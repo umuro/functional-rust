@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Splitting Ok/Err with partition()
 //!
 //! `partition(Result::is_ok)` collects ALL successes and ALL failures in one pass.

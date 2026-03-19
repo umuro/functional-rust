@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Example 892: Partition Iterator
 //! Split a collection into two groups by a predicate — single pass, two outputs.
 

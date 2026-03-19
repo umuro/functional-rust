@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Recursive Macro Patterns
 //!
 //! Macros that call themselves for compile-time computation.

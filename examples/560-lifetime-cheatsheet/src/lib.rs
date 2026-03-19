@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Lifetime Cheatsheet
 //!
 //! Quick reference for common lifetime patterns.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Graph - Adjacency List Representation
 //!
 //! Space-efficient graph representation with O(V+E) storage.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 085: Iterator Trait — implement from scratch
 
 // Approach 1: Range iterator

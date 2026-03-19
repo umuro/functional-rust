@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1046: Clone-on-Write: Cow<'_, [T]> for Read-Mostly Data
 // Avoid cloning until mutation is actually needed
 

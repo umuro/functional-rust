@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Dijkstra's shortest path algorithm using a BinaryHeap priority queue.
 //!
 //! OCaml uses a functional Set (ordered tree) as a priority queue.

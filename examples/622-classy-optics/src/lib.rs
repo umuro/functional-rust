@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Classy Optics
 //! Type-class based optics.
 

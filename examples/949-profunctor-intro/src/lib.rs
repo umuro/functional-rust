@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Profunctor: contravariant in input, covariant in output.
 //
 // A profunctor `p a b` supports:

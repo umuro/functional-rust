@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 224: Mutumorphism — Genuinely Mutual Recursion
 
 // mutu: two folds that depend on EACH OTHER

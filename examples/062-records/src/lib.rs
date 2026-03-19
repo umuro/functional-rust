@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 062: Records (Structs)
 // Named fields, creation, update syntax, pattern matching
 

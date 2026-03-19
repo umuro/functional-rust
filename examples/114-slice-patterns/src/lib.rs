@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 114: Slice Patterns
 //
 // Rust can pattern match on slices: [first, rest @ ..], [a, b], [head, .., tail]

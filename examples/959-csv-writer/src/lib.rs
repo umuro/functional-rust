@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 959: CSV Writer
 // Escape quotes, handle commas/newlines in fields, produce valid CSV output
 

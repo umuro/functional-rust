@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Continuation Monad — Delimited Continuations in Rust
 ///
 /// The continuation monad wraps computations that pass their result to a callback.

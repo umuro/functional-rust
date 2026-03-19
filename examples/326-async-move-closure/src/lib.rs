@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Capturing with async move
 //!
 //! Demonstrates how `move` closures capture their environment by value,

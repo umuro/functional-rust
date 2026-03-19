@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Parse Error Handling
 //!
 //! Custom FromStr implementation with detailed error types.

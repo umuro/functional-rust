@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 983: MPSC Channel Basics — Tokio version
 // tokio::sync::mpsc — async channels with backpressure
 

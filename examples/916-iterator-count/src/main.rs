@@ -4,7 +4,7 @@
 
 fn main() {
     let nums: Vec<i32> = (1..=10).collect();
-    println!("Count: {}", nums.iter().count());
+    println!("Count: {}", nums.len());
 
     let even_count = nums.iter().filter(|&&x| x % 2 == 0).count();
     println!("Even count: {}", even_count);

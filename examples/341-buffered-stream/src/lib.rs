@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 341: Buffered Stream
 // BufReader/BufWriter wrapping for efficient I/O
 

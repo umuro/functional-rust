@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1073: Burst Balloons — Interval DP
 
 use std::collections::HashMap;

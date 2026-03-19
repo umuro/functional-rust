@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 173: Lisp / S-expression Parser
 // S-expressions: atoms, numbers, strings, lists, quote
 

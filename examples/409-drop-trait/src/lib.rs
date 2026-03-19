@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Drop Trait and RAII
 //!
 //! Automatic resource cleanup when values go out of scope.

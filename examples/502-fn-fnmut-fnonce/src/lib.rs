@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Fn FnMut FnOnce — Closure Traits
 
 /// Fn: can be called multiple times, doesn't mutate state

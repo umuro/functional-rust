@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 pub fn series(n: usize, s: &str) -> Vec<String> {
     if n == 0 {
         return vec![String::new(); s.len() + 1];

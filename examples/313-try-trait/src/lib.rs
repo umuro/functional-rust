@@ -1,36 +1,5 @@
+#![allow(clippy::all)]
 //! # The Try Trait and Custom ? Behavior
-#![allow(clippy::manual_is_multiple_of)]
-n
-#![allow(unused_variables)]
-n
-#![allow(clippy::match_like_matches)]
-n
-#![allow(clippy::type_complexity)]
-n
-#![allow(clippy::too_many_lines)]
-n
-#![allow(clippy::manual_range_contains)]
-n
-#![allow(clippy::explicit_iter_loop)]
-n
-#![allow(clippy::needless_lifetimes)]
-n
-#![allow(clippy::char_lit_as_u8)]
-n
-#![allow(clippy::while_let_loop)]
-n
-#![allow(clippy::manual_strip)]
-n
-#![allow(clippy::useless_vec)]
-n
-#![allow(clippy::needless_borrow)]
-n
-#![allow(clippy::redundant_closure)]
-n
-#![allow(unused_imports)]
-n
-#![allow(dead_code)]
-n
 //!
 //! Validated type that accumulates errors instead of short-circuiting.
 
@@ -42,8 +11,12 @@ pub enum Validated<T, E> {
 }
 
 impl<T, E> Validated<T, E> {
-    pub fn ok(v: T) -> Self { Validated::Ok(v) }
-    pub fn err(e: E) -> Self { Validated::Err(vec![e]) }
+    pub fn ok(v: T) -> Self {
+        Validated::Ok(v)
+    }
+    pub fn err(e: E) -> Self {
+        Validated::Err(vec![e])
+    }
 
     pub fn map<U, F: FnOnce(T) -> U>(self, f: F) -> Validated<U, E> {
         match self {
@@ -63,17 +36,25 @@ impl<T, E> Validated<T, E> {
         }
     }
 
-    pub fn is_ok(&self) -> bool { matches!(self, Validated::Ok(_)) }
+    pub fn is_ok(&self) -> bool {
+        matches!(self, Validated::Ok(_))
+    }
 }
 
 pub fn validate_age(age: i32) -> Validated<i32, String> {
-    if age >= 0 && age <= 150 { Validated::ok(age) }
-    else { Validated::err(format!("age {} is out of range", age)) }
+    if age >= 0 && age <= 150 {
+        Validated::ok(age)
+    } else {
+        Validated::err(format!("age {} is out of range", age))
+    }
 }
 
 pub fn validate_name(name: &str) -> Validated<String, String> {
-    if name.len() >= 2 && name.len() <= 50 { Validated::ok(name.to_string()) }
-    else { Validated::err(format!("name '{}' is invalid", name)) }
+    if name.len() >= 2 && name.len() <= 50 {
+        Validated::ok(name.to_string())
+    } else {
+        Validated::err(format!("name '{}' is invalid", name))
+    }
 }
 
 #[cfg(test)]

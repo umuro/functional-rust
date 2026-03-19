@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Enum Variant Patterns
 //!
 //! Matching and destructuring enum variants.

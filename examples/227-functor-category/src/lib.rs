@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // In a functor category, objects are functors and morphisms are natural transformations.
 // Rust models functors as generic types with map-like operations (Vec, Option).
 // Natural transformations are polymorphic functions between two such types.

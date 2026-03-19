@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 703 — Raw Pointer Arithmetic
 //!
 //! Demonstrates `ptr.add()`, `ptr.sub()`, and `ptr.offset()` with safe wrappers.

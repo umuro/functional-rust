@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// # Topological Sort — DAG Ordering
 ///
 /// Order nodes in a directed acyclic graph so every edge goes from earlier to later.

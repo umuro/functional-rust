@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Example 212: Van Laarhoven Lenses
 //!
 //! The Van Laarhoven encoding collapses all lens operations into one function type:

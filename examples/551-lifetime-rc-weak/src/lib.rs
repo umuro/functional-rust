@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Rc and Weak for Shared Ownership
 //!
 //! Reference counting with weak references.

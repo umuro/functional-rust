@@ -1,5 +1,7 @@
+#![allow(clippy::all)]
 // 493. CString and CStr for FFI
-use std::ffi::{c_char, CStr, CString};
+
+use std::ffi::CString;
 
 #[cfg(test)]
 mod tests {

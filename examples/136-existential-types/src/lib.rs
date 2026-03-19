@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Example 136: Existential Types
 //!
 //! Rust encodes existential types in two complementary ways:

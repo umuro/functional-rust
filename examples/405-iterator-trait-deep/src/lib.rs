@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Iterator Trait Deep Dive
 //!
 //! Advanced iterator patterns, adapters, and custom iterators.

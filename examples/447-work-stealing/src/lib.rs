@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Work Stealing — Load Balancing Across Threads
 //!
 //! A pattern where idle workers "steal" tasks from busy workers'

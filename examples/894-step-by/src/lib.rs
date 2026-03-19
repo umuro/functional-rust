@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 894: Step By, Enumerate, Rev
 // Zero-cost iterator adapters for structured traversal
 

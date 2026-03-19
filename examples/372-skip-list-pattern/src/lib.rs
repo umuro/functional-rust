@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Skip List Pattern
 //!
 //! Probabilistic data structure with O(log n) search using express lanes.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Algorithm Complexity Guide
 //!
 //! Reference for common algorithm complexities.

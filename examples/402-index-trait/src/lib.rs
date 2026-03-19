@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Index and IndexMut Traits
 //!
 //! Implement `[]` indexing for your own types — with any index type, not just integers.

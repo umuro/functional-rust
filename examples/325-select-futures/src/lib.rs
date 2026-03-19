@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Racing Futures with select!
 //!
 //! Demonstrates racing multiple tasks where the first one to complete wins

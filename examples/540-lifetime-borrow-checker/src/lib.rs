@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Borrow Checker Internals
 //!
 //! Understanding why the borrow checker's rules exist.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Rayon Parallel Iterators — Data Parallelism Made Easy
 //!
 //! Demonstrates the parallel iterator pattern that Rayon provides,

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 172: INI File Parser
 // INI file parser: sections [name], key = value pairs
 

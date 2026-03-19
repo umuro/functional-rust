@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Modified Run-Length Encoding (99 Problems #11)
 ///
 /// Modify the RLE result so that elements without duplicates are simply

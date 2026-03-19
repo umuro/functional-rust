@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Rental Pattern
 //!
 //! Owning data and borrowing from it simultaneously.

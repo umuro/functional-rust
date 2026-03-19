@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1013: Panic vs Result
 // When to panic vs return Result: unwrap, expect, assertions
 

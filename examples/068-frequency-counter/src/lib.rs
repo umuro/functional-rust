@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// # Map Module — Frequency Counter
 ///
 /// Word frequency counting using HashMap — the Rust equivalent of OCaml's Map.Make.

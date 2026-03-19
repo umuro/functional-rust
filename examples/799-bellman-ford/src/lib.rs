@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Bellman-Ford Algorithm
 
 pub fn bellman_ford(n: usize, edges: &[(usize, usize, i32)], src: usize) -> Option<Vec<i32>> {

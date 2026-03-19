@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Async RwLock
 //!
 //! Multiple concurrent readers, one exclusive writer — the right lock for read-heavy shared state.

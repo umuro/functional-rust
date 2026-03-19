@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 use std::collections::{BTreeMap, HashMap};
 
 /// Solution 1: Idiomatic Rust — HashMap with fold

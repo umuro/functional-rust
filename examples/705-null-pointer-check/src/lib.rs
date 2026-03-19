@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 705 — Null Pointer Handling: NonNull<T>
 //!
 //! `NonNull<T>` is a `*mut T` guaranteed non-null at the type level.

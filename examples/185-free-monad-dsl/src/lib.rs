@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 185: Console DSL with Free Monad
 // Print, ReadLine, Exit operations as a domain-specific language
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Crossbeam Channels — Advanced Channel Patterns
 //!
 //! Demonstrates bounded channels and multi-consumer patterns

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Red-Black Tree with balanced insertion.
 //!
 //! A red-black tree is a self-balancing binary search tree where each node

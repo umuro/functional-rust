@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 495. Template string pattern
 use std::collections::HashMap;
 

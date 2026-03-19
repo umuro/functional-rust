@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 179: GADT Preventing Runtime Errors — Safe Head
 // Type-level guarantees that head can never be called on an empty list
 

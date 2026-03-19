@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 923: Thread Pool — Tokio version
 // Tokio IS a thread pool — multi-threaded runtime with work stealing
 

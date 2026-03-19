@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Example 129: Type-Level Natural Numbers — Peano Arithmetic
 //!
 //! Encode natural numbers as *types* using Peano arithmetic so that the length

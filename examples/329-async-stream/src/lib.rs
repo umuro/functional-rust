@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Async Streams
 //!
 //! An iterator that yields values one by one — with the ability to pause

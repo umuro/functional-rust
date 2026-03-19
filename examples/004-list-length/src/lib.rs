@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Compute the length of a list. OCaml shows naive vs tail-recursive versions.
 // In Rust, `.len()` is O(1) for slices/Vec — but we implement manual versions
 // for educational comparison.

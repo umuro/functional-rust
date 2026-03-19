@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 277. Counting with count()
 //!
 //! `count()` consumes an iterator and returns the total number of elements.

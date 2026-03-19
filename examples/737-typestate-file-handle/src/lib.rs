@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 use std::io::{self, Read, Write};
 /// 737: File Handle Typestate — Open / Closed / ReadOnly
 /// Demonstrates compile-time permission encoding for file handles.

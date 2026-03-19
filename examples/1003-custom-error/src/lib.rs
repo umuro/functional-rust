@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1003: Custom Error Types
 // Custom error type with Display + Error impl
 

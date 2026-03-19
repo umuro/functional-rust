@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Trie — Prefix Tree for Strings
 //!
 //! A trie stores strings with shared prefixes efficiently.
@@ -121,6 +122,12 @@ impl FunctionalTrie {
 pub struct ArrayTrie {
     is_word: bool,
     children: [Option<Box<ArrayTrie>>; 26],
+}
+
+impl Default for ArrayTrie {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl ArrayTrie {

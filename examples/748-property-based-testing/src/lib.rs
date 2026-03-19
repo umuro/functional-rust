@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Property-Based Testing
 //!
 //! std-only QuickCheck-style framework for property testing.

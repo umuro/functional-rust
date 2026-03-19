@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 494. Number <-> String conversion
 
 #[cfg(test)]

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Const Array Size
 //!
 //! Using const generics for array sizes.
@@ -77,7 +78,7 @@ impl<T: Copy + Default, const CAP: usize> Default for StackVec<T, CAP> {
 
 /// Create an array from a function
 pub fn array_from_fn<T: Copy, const N: usize>(f: impl Fn(usize) -> T) -> [T; N] {
-    std::array::from_fn(|i| f(i))
+    std::array::from_fn(f)
 }
 
 /// Sum of array elements

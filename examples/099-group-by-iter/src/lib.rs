@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 099: Group Consecutive Equal Elements
 
 fn group_by<T: PartialEq + Clone>(v: &[T]) -> Vec<Vec<T>> {

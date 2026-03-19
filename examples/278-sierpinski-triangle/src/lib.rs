@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Generate the lines of a Sierpinski triangle of given order.
 ///
 /// # Recursive approach (mirrors OCaml)

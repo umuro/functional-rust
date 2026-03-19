@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Newtype Derive Patterns
 //!
 //! Generating trait impls for newtypes.

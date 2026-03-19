@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Arc<RwLock<T>> — Multiple Readers, One Writer
 //!
 //! Allow many threads to read shared data simultaneously, while guaranteeing

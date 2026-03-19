@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Palindrome Check
 // Rust translation from OCaml 99 Problems #6
 

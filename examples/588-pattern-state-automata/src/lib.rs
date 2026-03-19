@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # State Automata with Pattern Matching
 //!
 //! Implement finite state machines using enum states and tuple matching

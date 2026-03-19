@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 151: Introduction to Parser Combinators
 // Defining the core Parser type and running basic parsers
 

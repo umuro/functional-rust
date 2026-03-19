@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # A* Pathfinding
 use std::cmp::Reverse;
 use std::collections::{BinaryHeap, HashMap};

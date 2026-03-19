@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Coherence and Orphan Rules
 
 // Can't impl Display for i32 (not our crate)

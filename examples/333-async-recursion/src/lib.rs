@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Async Recursion
 //!
 //! Recursive async functions need `Box::pin` — the future's size must be known at compile time.

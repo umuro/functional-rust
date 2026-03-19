@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Pipe Operator Simulation
 //!
 //! Simulating OCaml's |> operator with a Pipe extension trait.

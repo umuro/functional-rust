@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 989: One-Time Initialization — Tokio version
 // tokio::sync::OnceCell — async one-time init
 

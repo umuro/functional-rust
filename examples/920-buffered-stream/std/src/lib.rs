@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 use std::sync::{Arc, Mutex, Condvar};
 use std::thread;
 use std::time::Duration;

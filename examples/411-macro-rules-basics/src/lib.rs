@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! macro_rules! Basics
 //!
 //! Declarative macros for code generation at compile time.

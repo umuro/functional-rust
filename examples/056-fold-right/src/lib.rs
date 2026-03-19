@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # fold_right — Structural Recursion
 //!
 //! OCaml's `fold_right` processes a list from right to left:

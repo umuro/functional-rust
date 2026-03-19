@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 266. Striding with step_by()
 //!
 //! `step_by(n)` yields every nth element — the first, then skips n-1, and so on.

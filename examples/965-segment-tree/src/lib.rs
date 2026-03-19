@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 965: Segment Tree for Range Sum Queries
 // 1-indexed internal nodes; O(log n) point update and range sum
 

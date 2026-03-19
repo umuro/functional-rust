@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # CPS — Continuation-Passing Style
 //!
 //! Transform recursive functions to pass "what to do next" as a function argument.

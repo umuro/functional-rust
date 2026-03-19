@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Runtime Context
 //! Task-local storage and context propagation in async code.
 

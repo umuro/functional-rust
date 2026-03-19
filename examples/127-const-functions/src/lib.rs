@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 127: Const Functions — Compile-Time Computation
 // Rust's `const fn` enables true compile-time evaluation, unlike OCaml which
 // evaluates module-level expressions at program start (runtime initialization).

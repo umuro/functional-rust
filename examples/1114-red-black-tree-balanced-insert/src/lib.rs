@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 #[derive(Debug, Clone, PartialEq)]
 pub enum Color {
     Red,

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Async Blocks and Lazy Evaluation
 //!
 //! Demonstrates lazy evaluation with closures as a synchronous analogy

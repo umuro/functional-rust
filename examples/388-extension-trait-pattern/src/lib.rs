@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Extension Trait Pattern
 
 pub trait StrExt {

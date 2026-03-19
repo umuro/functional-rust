@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 130: Typestate Pattern — State Machines in Types
 //
 // The typestate pattern uses phantom type parameters to encode state in the type

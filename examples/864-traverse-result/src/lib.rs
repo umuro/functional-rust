@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 065: Traverse with Result
 // Turn Vec<Result<T,E>> into Result<Vec<T>,E>
 

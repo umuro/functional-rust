@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 924: Work Stealing — Tokio version
 // Tokio's multi-threaded runtime uses work-stealing by default
 

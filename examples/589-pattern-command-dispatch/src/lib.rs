@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Command Dispatch Pattern
 //!
 //! Use enums to represent commands and pattern matching for dispatch.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Recursive Closures (Y Combinator)
 //!
 //! Techniques for self-referential closures and the Y combinator in Rust.

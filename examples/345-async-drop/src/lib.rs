@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Async Drop
 //! Cleanup resources when async tasks are cancelled or complete.
 

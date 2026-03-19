@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 984: Channel Pipeline — Tokio version
 // Chain of async processing stages via tokio::sync::mpsc
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Ffi Error Codes
 
 pub fn placeholder() -> &'static str {

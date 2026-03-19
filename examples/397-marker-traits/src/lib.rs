@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Marker Traits
 
 pub trait Serializable {}

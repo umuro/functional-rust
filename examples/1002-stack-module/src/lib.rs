@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Stack Module with Signature
 //! See example.ml for OCaml reference
 

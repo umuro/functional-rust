@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 975: Sparse Matrix
 // Only store non-zero elements using HashMap<(usize,usize), f64>
 // OCaml uses custom Hashtbl.Make; Rust uses std HashMap with tuple keys

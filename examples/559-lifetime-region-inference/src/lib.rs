@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Region Inference
 //!
 //! How the compiler infers lifetime regions.

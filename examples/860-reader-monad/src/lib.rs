@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 061: Reader Monad
 // Dependency injection via implicit environment passing
 

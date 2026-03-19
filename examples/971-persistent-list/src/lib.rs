@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 971: Persistent/Immutable Linked List with Structural Sharing
 // OCaml lists are GC-managed with implicit sharing
 // Rust needs Rc<T> to share nodes between multiple list versions

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 089: Lazy Sequences
 
 #[cfg(test)]

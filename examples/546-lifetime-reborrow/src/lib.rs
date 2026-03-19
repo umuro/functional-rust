@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Reborrowing Patterns
 //!
 //! Creating sub-borrows from existing borrows.

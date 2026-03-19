@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1044: Sorted Vec — Binary Search Insert with partition_point
 // Maintain a sorted Vec with O(log n) search and O(n) insert
 

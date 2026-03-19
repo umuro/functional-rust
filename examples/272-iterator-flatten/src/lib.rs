@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 272. One-level flattening with flatten()
 //!
 //! `flatten()` removes exactly one level of iterator nesting.

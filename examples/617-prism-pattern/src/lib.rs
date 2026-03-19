@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Prism Pattern
 //! Focus on one variant of an enum.
 

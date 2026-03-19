@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Partial Application with Closures
 //!
 //! Fix some arguments of a function, producing a specialized version.

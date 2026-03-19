@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Macro-Generated Builder Pattern
 //!
 //! Using macros to reduce boilerplate in builder patterns.

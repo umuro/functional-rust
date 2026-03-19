@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 181: Type-Safe SQL-like Query Builder
 // Enforce SELECT before WHERE at compile time using phantom types
 

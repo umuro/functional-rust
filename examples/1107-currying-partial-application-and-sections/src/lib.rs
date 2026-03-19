@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Currying, partial application, and operator sections in Rust.
 //!
 //! OCaml functions are curried by default — `let add x y = x + y` accepts

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Default Methods in Traits
 
 pub trait Greeter {

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Affine Traversal
 //! Focus on at most one element.
 

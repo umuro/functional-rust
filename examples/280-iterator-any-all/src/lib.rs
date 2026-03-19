@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 280. Existential checks: any() and all()
 //!
 //! `any(pred)` is ∃, `all(pred)` is ∀ — both short-circuit.

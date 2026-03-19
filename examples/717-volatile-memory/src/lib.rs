@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 717 — Volatile Reads/Writes for Memory-Mapped I/O
 //!
 //! `read_volatile` / `write_volatile` prevent the compiler from eliding,

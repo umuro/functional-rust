@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 152: Character Parsers
 // Parse single characters: char_parser, any_char, none_of, one_of
 

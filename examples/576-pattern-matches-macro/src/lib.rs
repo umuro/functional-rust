@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # `matches!` Macro
 //!
 //! Test a value against a pattern and get a `bool` — without a full `match` expression.

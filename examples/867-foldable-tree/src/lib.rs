@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 068: Foldable for Binary Tree
 // Left/right fold, collect all values, various aggregations
 

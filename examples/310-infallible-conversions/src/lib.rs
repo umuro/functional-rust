@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Infallible Conversions with Into
 //!
 //! `Infallible` marks conversions that cannot fail.

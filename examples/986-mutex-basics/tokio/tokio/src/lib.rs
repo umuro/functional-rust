@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 986: Mutex-Protected State — Tokio version
 // tokio::sync::Mutex — async-aware mutex that can be held across .await
 

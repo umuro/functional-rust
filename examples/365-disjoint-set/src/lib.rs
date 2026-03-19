@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Union-Find (Disjoint Set) Data Structure
 //!
 //! Track which elements belong to the same group and merge groups in O(α(n)) amortized.

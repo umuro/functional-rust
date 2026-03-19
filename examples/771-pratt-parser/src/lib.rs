@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Pratt Parser
 //!
 //! Operator precedence parsing using the Pratt algorithm.

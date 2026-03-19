@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Persistent Data Structures
 //!
 //! Immutable data structures with structural sharing via Rc.

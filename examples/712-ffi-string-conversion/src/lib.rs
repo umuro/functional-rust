@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 712 — String / CString / CStr Conversion for FFI
 //!
 //! Rust strings (`&str`, `String`) are UTF-8 and length-prefixed.

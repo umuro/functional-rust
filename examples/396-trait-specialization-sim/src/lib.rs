@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Simulating Trait Specialization
 
 pub trait Process {

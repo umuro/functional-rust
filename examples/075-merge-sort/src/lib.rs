@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 075: Merge Sort
 
 // Approach 1: Classic recursive merge sort

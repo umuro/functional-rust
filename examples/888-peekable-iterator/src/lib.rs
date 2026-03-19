@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 094: Peekable Iterator
 // Lookahead parsing with .peekable() — inspect the next element without consuming it.
 

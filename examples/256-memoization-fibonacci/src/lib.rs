@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 256: Memoization — Fibonacci with Hashtable Cache
 //
 // OCaml uses a generic `memoize` HOF that wraps any function with a Hashtbl

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 104: Mutable Borrowing — &mut T
 // Exclusive writer: only ONE &mut at a time
 

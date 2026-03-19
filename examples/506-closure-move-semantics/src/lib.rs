@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Closure Move Semantics — Ownership Transfer
 
 use std::thread;

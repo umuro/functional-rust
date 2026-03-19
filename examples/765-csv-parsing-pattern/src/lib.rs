@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # CSV Parsing Pattern
 //!
 //! Simple CSV parser without external dependencies.

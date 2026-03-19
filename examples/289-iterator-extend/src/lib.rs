@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Extending Collections with extend()
 //!
 //! `extend()` appends elements from an iterator to an existing collection in place.

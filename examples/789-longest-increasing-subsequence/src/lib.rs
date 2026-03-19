@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Longest Increasing Subsequence
 
 pub fn lis(arr: &[i32]) -> usize {

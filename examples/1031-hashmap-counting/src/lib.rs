@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1031: Count Frequencies
 // The classic frequency counting pattern with Entry API
 

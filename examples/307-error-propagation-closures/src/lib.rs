@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Error Propagation in Closures
 //!
 //! `?` in closures requires the closure to return `Result`/`Option`.

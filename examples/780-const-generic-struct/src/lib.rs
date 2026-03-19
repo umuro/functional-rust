@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Const Generic Struct
 //!
 //! Structures parameterized by compile-time constants.

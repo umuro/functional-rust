@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 use std::collections::{BTreeMap, BTreeSet};
 
 /// Graph keyed by node name; each node maps to its (neighbour, weight) list.

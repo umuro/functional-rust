@@ -1,9 +1,10 @@
+#![allow(clippy::all)]
 pub trait Monoid {
     fn empty() -> Self;
     fn combine(self, other: Self) -> Self;
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Sum(pub i32);
 
 impl Monoid for Sum {
@@ -16,7 +17,7 @@ impl Monoid for Sum {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Product(pub i32);
 
 impl Monoid for Product {
@@ -30,7 +31,10 @@ impl Monoid for Product {
 }
 
 pub fn reduce_monoid<T: Monoid + Clone>(items: &[T]) -> T {
-    items.iter().cloned().fold(T::empty(), |acc, x| acc.combine(x))
+    items
+        .iter()
+        .cloned()
+        .fold(T::empty(), |acc, x| acc.combine(x))
 }
 
 #[cfg(test)]

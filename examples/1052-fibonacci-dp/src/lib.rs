@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1052: Fibonacci Bottom-Up DP with O(1) Space
 
 // Approach 1: Vec-based bottom-up DP

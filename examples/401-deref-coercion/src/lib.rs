@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Deref and Deref Coercions
 //!
 //! Automatic reference conversions that let smart pointers and owned types

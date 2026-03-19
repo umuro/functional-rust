@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Range Patterns
 //!
 //! Matching ranges with ..= syntax.

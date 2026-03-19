@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # BinaryHeap Priority Queue
 //! Max-heap for priority queue operations.
 

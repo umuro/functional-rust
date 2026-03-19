@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! From, Into, TryFrom, TryInto Traits
 //!
 //! Type conversion traits for infallible and fallible conversions.
@@ -137,7 +138,7 @@ impl TryFrom<u32> for Port {
     type Error = PortError;
 
     fn try_from(n: u32) -> Result<Self, Self::Error> {
-        if n >= 1024 && n <= 65535 {
+        if (1024..=65535).contains(&n) {
             Ok(Port(n as u16))
         } else if n < 1024 {
             Err(PortError::TooLow(n as u16))

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Red-Black Tree — Balanced Insert (Iterator + free-function style)
 //
 // A persistent red-black tree following Okasaki's functional balancing.

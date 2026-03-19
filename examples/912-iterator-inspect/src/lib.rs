@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 273. Debugging iterators with inspect()
 //!
 //! `inspect(f)` taps into an iterator pipeline with a side-effect closure,

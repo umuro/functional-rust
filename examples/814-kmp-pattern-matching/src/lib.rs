@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # KMP Pattern Matching
 pub fn compute_lps(pattern: &str) -> Vec<usize> {
     let p: Vec<char> = pattern.chars().collect();

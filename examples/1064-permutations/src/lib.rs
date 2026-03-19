@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1064: Generate All Permutations via Backtracking
 
 // Approach 1: Swap-based backtracking

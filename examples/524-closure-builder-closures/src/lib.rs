@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Builder Pattern with Closures
 //!
 //! Closure-based configuration in builder APIs.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Lifetime Annotations: 'a Basics
 //!
 //! Explicit lifetime parameters expressing reference validity constraints.

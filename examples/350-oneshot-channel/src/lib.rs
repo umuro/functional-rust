@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Oneshot Channel
 //! Send exactly one value from one task to another.
 

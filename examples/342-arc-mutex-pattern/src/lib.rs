@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Arc<Mutex<T>> Pattern
 //! Thread-safe shared mutable state: Arc gives shared ownership, Mutex ensures exclusive access.
 

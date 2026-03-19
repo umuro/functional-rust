@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Recursive Sequences with successors()
 //!
 //! `successors(first, f)` generates a sequence: first, f(first), f(f(first)), ...

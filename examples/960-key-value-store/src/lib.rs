@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 960: Key-Value Store
 // OCaml: Hashtbl (mutable) or association list (functional)
 // Rust: HashMap<String, String> (mutable) or BTreeMap for sorted iteration

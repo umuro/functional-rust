@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Struct Destructuring
 //!
 //! Extracting fields from structs in patterns.

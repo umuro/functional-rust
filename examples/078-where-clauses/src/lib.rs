@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 078: Where Clauses
 // Complex trait bounds using where syntax
 

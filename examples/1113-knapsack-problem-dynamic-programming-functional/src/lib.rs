@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 0/1 Knapsack problem solved with dynamic programming (functional style).
 
 /// Solves the 0/1 Knapsack problem using dynamic programming.
@@ -10,6 +11,7 @@
 ///
 /// # Example
 /// ```
+/// use example_1113_knapsack_problem_dynamic_programming_functional::knapsack;
 /// let weights = vec![1, 2, 3];
 /// let values = vec![10, 15, 40];
 /// let capacity = 6;
@@ -17,7 +19,7 @@
 /// ```
 pub fn knapsack(weights: &[usize], values: &[usize], capacity: usize) -> usize {
     let n = weights.len();
-    
+
     // dp table: dp[i][w] is max value using first i items and capacity w
     // Using a single row to optimize space, as dp[i] only depends on dp[i-1]
     let mut dp = vec![0; capacity + 1];

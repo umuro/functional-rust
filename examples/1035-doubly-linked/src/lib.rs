@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1035: Doubly-Linked List — Rc<RefCell<Node>> Approach
 // Safe doubly-linked list using reference counting + interior mutability
 

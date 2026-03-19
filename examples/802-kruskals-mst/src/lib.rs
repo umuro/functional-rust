@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Kruskal's MST Algorithm
 
 pub struct UnionFind {

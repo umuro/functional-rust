@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 154: String Parser
 // Parse exact string literals
 

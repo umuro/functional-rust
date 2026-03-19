@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Tagless Final: embed DSLs as trait methods — no intermediate AST.
 // Multiple interpreters share one program definition.
 

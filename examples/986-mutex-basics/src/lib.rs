@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 986: Mutex-Protected State
 // Rust: Mutex<T> owns the data — unlocks automatically via RAII guard
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// GCD using Euclidean algorithm
 ///
 /// Ownership insight: All values are Copy (integers), so ownership

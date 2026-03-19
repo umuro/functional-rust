@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Functional Builder Pattern
 //!
 //! Builder pattern using consuming methods that return Self for chaining.

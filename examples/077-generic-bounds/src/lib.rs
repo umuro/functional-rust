@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 077: Generic Bounds
 // Constraining generic types with trait bounds
 

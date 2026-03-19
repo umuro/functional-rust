@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Hamming Distance
 ///
 /// Count positional differences between two equal-length strings.

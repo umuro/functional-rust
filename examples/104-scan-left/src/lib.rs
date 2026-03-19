@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Scan Left — Running Accumulation
 //!
 //! `scan` returns all intermediate results of a fold.

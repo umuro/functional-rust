@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Example 134: Higher-Kinded Types Simulation
 //!
 //! Rust lacks native HKTs (`F<_>` type-level functions), but we can simulate

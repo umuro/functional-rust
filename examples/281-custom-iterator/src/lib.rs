@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Custom Iterator Implementation
 //!
 //! Demonstrates implementing the `Iterator` trait from scratch.

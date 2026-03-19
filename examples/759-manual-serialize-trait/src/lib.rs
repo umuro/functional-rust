@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Manual Serialize Trait
 //!
 //! Building a serialization trait from scratch.

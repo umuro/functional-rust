@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1063: Sudoku Solver — Backtracking + Constraints
 
 // Approach 1: Simple backtracking

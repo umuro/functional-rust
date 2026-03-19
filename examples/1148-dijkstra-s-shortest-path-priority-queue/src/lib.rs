@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 use std::cmp::Reverse;
 use std::collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap};
 

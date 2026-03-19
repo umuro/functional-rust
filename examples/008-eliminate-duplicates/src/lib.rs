@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Eliminate Consecutive Duplicates
 //! OCaml 99 Problems #8 — Remove consecutive duplicate elements from a list.
 

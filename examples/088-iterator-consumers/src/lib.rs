@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 088: Iterator Consumers
 // Terminal operations that drive the lazy chain
 

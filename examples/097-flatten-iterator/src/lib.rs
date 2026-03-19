@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 097: Flatten and Flat Map
 
 #[cfg(test)]

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// # Seq Module — Lazy Sequences
 ///
 /// Rust's iterator trait is inherently lazy — no need for a separate Seq module.

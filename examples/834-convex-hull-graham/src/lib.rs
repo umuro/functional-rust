@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Convex Hull (Graham Scan)
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Point {

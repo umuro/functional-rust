@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Waker and Context
 //!
 //! How the executor knows to re-poll a future — `cx.waker().wake()` schedules a re-poll.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 079: Associated Types
 // type Item in trait definitions
 

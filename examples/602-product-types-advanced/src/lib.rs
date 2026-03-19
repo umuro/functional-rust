@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Advanced Product Types
 //!
 //! Tuples, records, and heterogeneous collections.

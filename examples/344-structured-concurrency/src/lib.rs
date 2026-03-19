@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Structured Concurrency
 //! Spawn tasks that are guaranteed to complete before the scope exits.
 

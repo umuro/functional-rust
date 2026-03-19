@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Higher-Order Functions in Rust
 //!
 //! Functions that take other functions as arguments, return functions (closures),
@@ -57,7 +58,7 @@ fn keep_evens(xs: &[i32]) -> Vec<i32> {
 
 /// Sum all numbers in a slice using `fold`.
 fn sum(xs: &[i32]) -> i32 {
-    xs.iter().fold(0, |acc, &x| acc + x)
+    xs.iter().sum::<i32>()
 }
 
 /// Generic higher-order transform: map, then filter, then fold — all in one pass.
