@@ -1,0 +1,4 @@
+[package]
+name = "example-1164-shortest-path-algorithm-with-functional-priority-queue"
+version = "0.1.0"
+edition = "2021"

@@ -1,0 +1,4 @@
+[package]
+name = "example-1166-trie-based-persistent-vector-for-olog-n-random-acc"
+version = "0.1.0"
+edition = "2021"

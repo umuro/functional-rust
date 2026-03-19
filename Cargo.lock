@@ -1443,6 +1443,30 @@ name = "example-1163-024-currying-partial-application-and-sections"
 version = "0.1.0"
 
 [[package]]
+name = "example-1164-shortest-path-algorithm-with-functional-priority-queue"
+version = "0.1.0"
+
+[[package]]
+name = "example-1165-building-a-huffman-tree-from-character-frequencies"
+version = "0.1.0"
+
+[[package]]
+name = "example-1165-currying-partial-application-and-sections"
+version = "0.1.0"
+
+[[package]]
+name = "example-1166-trie-based-persistent-vector-for-olog-n-random-acc"
+version = "0.1.0"
+
+[[package]]
+name = "example-1167-01-knapsack-solved-with-memoized-recursion"
+version = "0.1.0"
+
+[[package]]
+name = "example-1168-generating-all-subsets-of-a-list-recursively"
+version = "0.1.0"
+
+[[package]]
 name = "example-117-recursive-types"
 version = "0.1.0"
 

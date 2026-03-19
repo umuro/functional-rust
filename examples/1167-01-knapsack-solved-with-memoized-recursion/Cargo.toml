@@ -1,0 +1,4 @@
+[package]
+name = "example-1167-01-knapsack-solved-with-memoized-recursion"
+version = "0.1.0"
+edition = "2021"

@@ -1,0 +1,4 @@
+[package]
+name = "example-1165-building-a-huffman-tree-from-character-frequencies"
+version = "0.1.0"
+edition = "2021"

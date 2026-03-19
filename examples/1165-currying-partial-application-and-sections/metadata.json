@@ -1,0 +1,8 @@
+{
+  "num": 24,
+  "title": "### 024: Currying, Partial Application, and Sections",
+  "topic": "Every OCaml function is curried by default; partial application produces specialised functions from general ones; labeled arguments enable keyword-style partial application",
+  "source": "https://cs3110.github.io/textbook/chapters/hop/higher_order.html",
+  "difficulty": "Beginner",
+  "category": "Higher-Order Functions"
+}
