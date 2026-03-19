@@ -1,3 +1,4 @@
+#![allow(clippy::result_unit_err)]
 #![allow(clippy::manual_is_multiple_of)]
 #![allow(unused_variables)]
 #![allow(clippy::match_like_matches)]
