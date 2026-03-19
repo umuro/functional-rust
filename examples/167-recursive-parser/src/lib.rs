@@ -20,9 +20,15 @@ fn parse_sexp(input: &str) -> ParseResult<Sexp> {
     // Try atom first
     if let Some(c) = input.chars().next() {
         if c.is_ascii_lowercase() {
-            let end = input.chars().take_while(|c| c.is_ascii_alphanumeric()).count();
+            let end = input
+                .chars()
+                .take_while(|c| c.is_ascii_alphanumeric())
+                .count();
             let byte_end: usize = input.chars().take(end).map(|c| c.len_utf8()).sum();
-            return Ok((Sexp::Atom(input[..byte_end].to_string()), &input[byte_end..]));
+            return Ok((
+                Sexp::Atom(input[..byte_end].to_string()),
+                &input[byte_end..],
+            ));
         }
     }
     // Try list
@@ -52,9 +58,7 @@ fn parse_sexp_list(input: &str) -> ParseResult<Sexp> {
 
 type RcParser<'a, T> = Rc<dyn Fn(&'a str) -> ParseResult<'a, T> + 'a>;
 
-fn rc_fix<'a, T: 'a>(
-    f: impl Fn(RcParser<'a, T>) -> RcParser<'a, T> + 'a,
-) -> RcParser<'a, T> {
+fn rc_fix<'a, T: 'a>(f: impl Fn(RcParser<'a, T>) -> RcParser<'a, T> + 'a) -> RcParser<'a, T> {
     use std::cell::RefCell;
     let parser: Rc<RefCell<Option<RcParser<'a, T>>>> = Rc::new(RefCell::new(None));
     let parser_clone = parser.clone();
@@ -97,20 +101,26 @@ mod tests {
     fn test_flat_list() {
         let (sexp, rest) = parse_sexp("(a b c)").unwrap();
         assert_eq!(rest, "");
-        assert_eq!(sexp, Sexp::List(vec![
-            Sexp::Atom("a".into()),
-            Sexp::Atom("b".into()),
-            Sexp::Atom("c".into()),
-        ]));
+        assert_eq!(
+            sexp,
+            Sexp::List(vec![
+                Sexp::Atom("a".into()),
+                Sexp::Atom("b".into()),
+                Sexp::Atom("c".into()),
+            ])
+        );
     }
 
     #[test]
     fn test_nested_list() {
         let (sexp, _) = parse_sexp("(a (b c))").unwrap();
-        assert_eq!(sexp, Sexp::List(vec![
-            Sexp::Atom("a".into()),
-            Sexp::List(vec![Sexp::Atom("b".into()), Sexp::Atom("c".into())]),
-        ]));
+        assert_eq!(
+            sexp,
+            Sexp::List(vec![
+                Sexp::Atom("a".into()),
+                Sexp::List(vec![Sexp::Atom("b".into()), Sexp::Atom("c".into())]),
+            ])
+        );
     }
 
     #[test]
@@ -139,26 +149,36 @@ mod tests {
             Rc::new(move |input: &str| {
                 if let Some(c) = input.chars().next() {
                     if c.is_ascii_lowercase() {
-                        let end: usize = input.chars()
+                        let end: usize = input
+                            .chars()
                             .take_while(|c| c.is_ascii_alphanumeric())
-                            .map(|c| c.len_utf8()).sum();
+                            .map(|c| c.len_utf8())
+                            .sum();
                         return Ok((Sexp::Atom(input[..end].to_string()), &input[end..]));
                     }
                 }
-                if !input.starts_with('(') { return Err("Expected".into()); }
+                if !input.starts_with('(') {
+                    return Err("Expected".into());
+                }
                 let mut rem = &input[1..];
                 let mut items = Vec::new();
                 loop {
                     rem = rem.trim_start();
-                    if rem.starts_with(')') { return Ok((Sexp::List(items), &rem[1..])); }
+                    if rem.starts_with(')') {
+                        return Ok((Sexp::List(items), &rem[1..]));
+                    }
                     let (item, rest) = self_p(rem)?;
                     items.push(item);
                     rem = rest;
                 }
             })
         });
-        assert_eq!(p("(a b)"), Ok((Sexp::List(vec![
-            Sexp::Atom("a".into()), Sexp::Atom("b".into())
-        ]), "")));
+        assert_eq!(
+            p("(a b)"),
+            Ok((
+                Sexp::List(vec![Sexp::Atom("a".into()), Sexp::Atom("b".into())]),
+                ""
+            ))
+        );
     }
 }

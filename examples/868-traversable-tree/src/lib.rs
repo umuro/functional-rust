@@ -60,26 +60,41 @@ impl<T> Tree<T> {
 }
 
 fn safe_double(x: &i32) -> Option<i32> {
-    if *x > 50 { None } else { Some(x * 2) }
+    if *x > 50 {
+        None
+    } else {
+        Some(x * 2)
+    }
 }
 
 fn parse_positive(x: &i32) -> Result<i32, String> {
-    if *x > 0 { Ok(*x) } else { Err(format!("Not positive: {}", x)) }
+    if *x > 0 {
+        Ok(*x)
+    } else {
+        Err(format!("Not positive: {}", x))
+    }
 }
-
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     fn sample() -> Tree<i32> {
-        Tree::node(Tree::node(Tree::Leaf, 1, Tree::Leaf), 2, Tree::node(Tree::Leaf, 3, Tree::Leaf))
+        Tree::node(
+            Tree::node(Tree::Leaf, 1, Tree::Leaf),
+            2,
+            Tree::node(Tree::Leaf, 3, Tree::Leaf),
+        )
     }
 
     #[test]
     fn test_traverse_option_success() {
         let result = sample().traverse_option(&safe_double);
-        let expected = Tree::node(Tree::node(Tree::Leaf, 2, Tree::Leaf), 4, Tree::node(Tree::Leaf, 6, Tree::Leaf));
+        let expected = Tree::node(
+            Tree::node(Tree::Leaf, 2, Tree::Leaf),
+            4,
+            Tree::node(Tree::Leaf, 6, Tree::Leaf),
+        );
         assert_eq!(result, Some(expected));
     }
 
@@ -97,7 +112,10 @@ mod tests {
     #[test]
     fn test_traverse_result_failure() {
         let tree = Tree::node(Tree::Leaf, -1, Tree::Leaf);
-        assert_eq!(tree.traverse_result(&parse_positive), Err("Not positive: -1".into()));
+        assert_eq!(
+            tree.traverse_result(&parse_positive),
+            Err("Not positive: -1".into())
+        );
     }
 
     #[test]
@@ -108,6 +126,9 @@ mod tests {
 
     #[test]
     fn test_traverse_leaf() {
-        assert_eq!(Tree::<i32>::Leaf.traverse_option(&safe_double), Some(Tree::Leaf));
+        assert_eq!(
+            Tree::<i32>::Leaf.traverse_option(&safe_double),
+            Some(Tree::Leaf)
+        );
     }
 }

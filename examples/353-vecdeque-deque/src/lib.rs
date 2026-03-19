@@ -8,7 +8,9 @@ pub fn sliding_window(data: &[i32], window_size: usize) -> Vec<Vec<i32>> {
     let mut window: VecDeque<i32> = VecDeque::new();
     for &item in data {
         window.push_back(item);
-        if window.len() > window_size { window.pop_front(); }
+        if window.len() > window_size {
+            window.pop_front();
+        }
         if window.len() == window_size {
             result.push(window.iter().cloned().collect());
         }
@@ -26,16 +28,21 @@ pub fn rotate_left<T: Clone>(items: &[T], n: usize) -> Vec<T> {
 mod tests {
     use super::*;
 
-    #[test] fn sliding_windows() {
+    #[test]
+    fn sliding_windows() {
         let windows = sliding_window(&[1, 2, 3, 4, 5], 3);
-        assert_eq!(windows, vec![vec![1,2,3], vec![2,3,4], vec![3,4,5]]);
+        assert_eq!(windows, vec![vec![1, 2, 3], vec![2, 3, 4], vec![3, 4, 5]]);
     }
-    #[test] fn rotation() {
+    #[test]
+    fn rotation() {
         assert_eq!(rotate_left(&[1, 2, 3, 4, 5], 2), vec![3, 4, 5, 1, 2]);
     }
-    #[test] fn deque_both_ends() {
+    #[test]
+    fn deque_both_ends() {
         let mut dq = VecDeque::new();
-        dq.push_back(2); dq.push_front(1); dq.push_back(3);
+        dq.push_back(2);
+        dq.push_front(1);
+        dq.push_back(3);
         assert_eq!(dq.pop_front(), Some(1));
         assert_eq!(dq.pop_back(), Some(3));
     }

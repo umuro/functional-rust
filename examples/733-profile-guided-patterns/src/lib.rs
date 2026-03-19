@@ -1,11 +1,10 @@
 /// 733: Profile-Guided Patterns — black_box, cold/hot paths, SoA vs AoS
-
 use std::hint::black_box;
 
 // ── black_box usage ───────────────────────────────────────────────────────────
 
 /// Without black_box, the compiler may constant-fold this entire call.
-#[inline(never)]   // ensures the function appears in profiler output
+#[inline(never)] // ensures the function appears in profiler output
 fn sum_squares(n: u64) -> u64 {
     (0..n).map(|i| i * i).sum()
 }
@@ -29,7 +28,11 @@ fn checked_add_hot(a: u64, b: u64) -> u64 {
 
 /// AoS: poor cache use when accessing only one field
 #[allow(dead_code)]
-struct PointAoS { x: f32, y: f32, z: f32 }
+struct PointAoS {
+    x: f32,
+    y: f32,
+    z: f32,
+}
 
 /// SoA: excellent cache use — each array is contiguous
 struct PointsSoA {
@@ -67,7 +70,6 @@ fn measure_ns<F: FnOnce() -> R, R>(f: F) -> (R, u128) {
     (result, elapsed)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -91,14 +93,18 @@ mod tests {
 
     #[test]
     fn soa_sum_x_correct() {
-        let soa = PointsSoA::new(5);  // x = [0,1,2,3,4]
+        let soa = PointsSoA::new(5); // x = [0,1,2,3,4]
         assert_eq!(soa.sum_x(), 10.0);
     }
 
     #[test]
     fn aos_sum_x_correct() {
         let aos: Vec<PointAoS> = (0..5u32)
-            .map(|i| PointAoS { x: i as f32, y: 0.0, z: 0.0 })
+            .map(|i| PointAoS {
+                x: i as f32,
+                y: 0.0,
+                z: 0.0,
+            })
             .collect();
         assert_eq!(aos_sum_x(&aos), 10.0);
     }

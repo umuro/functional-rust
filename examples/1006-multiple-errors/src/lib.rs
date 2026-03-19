@@ -42,7 +42,8 @@ fn do_net_boxed() -> Result<String, Box<dyn std::error::Error>> {
 fn process_boxed() -> Result<i64, Box<dyn std::error::Error>> {
     let data = do_io_boxed().or_else(|_| Ok::<_, Box<dyn std::error::Error>>("42".into()))?;
     let parsed = do_parse_boxed(&data)?;
-    let _response = do_net_boxed().or_else(|_| Ok::<String, Box<dyn std::error::Error>>("ok".into()))?;
+    let _response =
+        do_net_boxed().or_else(|_| Ok::<String, Box<dyn std::error::Error>>("ok".into()))?;
     Ok(parsed)
 }
 
@@ -66,13 +67,19 @@ impl fmt::Display for AppError {
 impl std::error::Error for AppError {}
 
 impl From<IoError> for AppError {
-    fn from(e: IoError) -> Self { AppError::Io(e) }
+    fn from(e: IoError) -> Self {
+        AppError::Io(e)
+    }
 }
 impl From<ParseIntError> for AppError {
-    fn from(e: ParseIntError) -> Self { AppError::Parse(e) }
+    fn from(e: ParseIntError) -> Self {
+        AppError::Parse(e)
+    }
 }
 impl From<NetError> for AppError {
-    fn from(e: NetError) -> Self { AppError::Net(e) }
+    fn from(e: NetError) -> Self {
+        AppError::Net(e)
+    }
 }
 
 fn do_io_typed() -> Result<String, IoError> {
@@ -84,11 +91,10 @@ fn do_parse_typed(s: &str) -> Result<i64, ParseIntError> {
 }
 
 fn process_typed() -> Result<i64, AppError> {
-    let data = do_io_typed()?;     // IoError -> AppError
+    let data = do_io_typed()?; // IoError -> AppError
     let parsed = do_parse_typed(&data)?; // ParseIntError -> AppError
     Ok(parsed)
 }
-
 
 #[cfg(test)]
 mod tests {

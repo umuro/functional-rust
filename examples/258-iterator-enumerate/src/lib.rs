@@ -14,7 +14,8 @@ mod tests {
     #[test]
     fn test_enumerate_values() {
         let v = [10i32, 20, 30];
-        let result: Vec<i32> = v.iter()
+        let result: Vec<i32> = v
+            .iter()
             .enumerate()
             .map(|(i, &val)| val + i as i32)
             .collect();
@@ -24,7 +25,8 @@ mod tests {
     #[test]
     fn test_enumerate_filter_even() {
         let v = ["a", "b", "c", "d"];
-        let even: Vec<_> = v.iter()
+        let even: Vec<_> = v
+            .iter()
             .enumerate()
             .filter(|(i, _)| i % 2 == 0)
             .map(|(_, v)| *v)

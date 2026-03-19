@@ -18,7 +18,11 @@ pub fn add(a: i64, b: i64) -> i64 {
 #[inline(always)]
 pub fn fast_abs(x: i64) -> i64 {
     // LLVM turns this into a branchless CMOV or bit-trick.
-    if x < 0 { -x } else { x }
+    if x < 0 {
+        -x
+    } else {
+        x
+    }
 }
 
 /// `#[inline(never)]` — prevent inlining. Useful when:
@@ -53,7 +57,7 @@ pub fn allocation_failed(size: usize) -> ! {
 /// The hot path (success) gets priority register allocation.
 pub fn parse_u64(s: &str) -> u64 {
     match s.parse::<u64>() {
-        Ok(v)  => v,
+        Ok(v) => v,
         Err(_) => {
             // #[cold] on the closure isn't possible, but we can call a cold fn.
             // In practice, marking this inline fn cold steers LLVM.
@@ -127,11 +131,11 @@ pub fn spin_until(flag: &AtomicBool) {
 /// On stable, structure code so the cold path calls a `#[cold]` function.
 pub fn classify(x: i32) -> &'static str {
     if x == 0 {
-        cold_zero()   // cold path — x == 0 is rare
+        cold_zero() // cold path — x == 0 is rare
     } else if x > 0 {
-        "positive"    // hot path — most common
+        "positive" // hot path — most common
     } else {
-        "negative"    // warm path
+        "negative" // warm path
     }
 }
 
@@ -141,7 +145,6 @@ fn cold_zero() -> &'static str {
 }
 
 // ── main ──────────────────────────────────────────────────────────────────────
-
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 

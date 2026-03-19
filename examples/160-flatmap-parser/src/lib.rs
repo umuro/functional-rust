@@ -5,7 +5,9 @@ type ParseResult<'a, T> = Result<(T, &'a str), String>;
 type Parser<'a, T> = Box<dyn Fn(&'a str) -> ParseResult<'a, T> + 'a>;
 
 fn satisfy<'a, F>(pred: F, desc: &str) -> Parser<'a, char>
-where F: Fn(char) -> bool + 'a {
+where
+    F: Fn(char) -> bool + 'a,
+{
     let desc = desc.to_string();
     Box::new(move |input: &'a str| match input.chars().next() {
         Some(c) if pred(c) => Ok((c, &input[c.len_utf8()..])),
@@ -17,13 +19,18 @@ fn many1<'a, T: 'a>(parser: Parser<'a, T>) -> Parser<'a, Vec<T>> {
     Box::new(move |input: &'a str| {
         let (first, mut rem) = parser(input)?;
         let mut results = vec![first];
-        while let Ok((v, rest)) = parser(rem) { results.push(v); rem = rest; }
+        while let Ok((v, rest)) = parser(rem) {
+            results.push(v);
+            rem = rest;
+        }
         Ok((results, rem))
     })
 }
 
 fn map<'a, A: 'a, B: 'a, F>(parser: Parser<'a, A>, f: F) -> Parser<'a, B>
-where F: Fn(A) -> B + 'a {
+where
+    F: Fn(A) -> B + 'a,
+{
     Box::new(move |input: &'a str| {
         let (v, rest) = parser(input)?;
         Ok((f(v), rest))
@@ -35,7 +42,9 @@ where F: Fn(A) -> B + 'a {
 // ============================================================
 
 fn and_then<'a, A: 'a, B: 'a, F>(parser: Parser<'a, A>, f: F) -> Parser<'a, B>
-where F: Fn(A) -> Parser<'a, B> + 'a {
+where
+    F: Fn(A) -> Parser<'a, B> + 'a,
+{
     Box::new(move |input: &'a str| {
         let (value, rest) = parser(input)?;
         (f(value))(rest)
@@ -47,10 +56,11 @@ where F: Fn(A) -> Parser<'a, B> + 'a {
 // ============================================================
 
 fn parse_nat<'a>() -> Parser<'a, usize> {
-    map(
-        many1(satisfy(|c| c.is_ascii_digit(), "digit")),
-        |digits| digits.iter().fold(0usize, |acc, &d| acc * 10 + (d as usize - '0' as usize)),
-    )
+    map(many1(satisfy(|c| c.is_ascii_digit(), "digit")), |digits| {
+        digits
+            .iter()
+            .fold(0usize, |acc, &d| acc * 10 + (d as usize - '0' as usize))
+    })
 }
 
 fn length_prefixed<'a>() -> Parser<'a, &'a str> {
@@ -75,22 +85,18 @@ fn length_prefixed<'a>() -> Parser<'a, &'a str> {
 // ============================================================
 
 fn conditional_parser<'a>() -> Parser<'a, String> {
-    and_then(
-        satisfy(|c| c == 'i' || c == 's', "type tag"),
-        |tag_char| {
-            if tag_char == 'i' {
-                map(
-                    many1(satisfy(|c| c.is_ascii_digit(), "digit")),
-                    |chars| chars.into_iter().collect(),
-                )
-            } else {
-                map(
-                    many1(satisfy(|c| c.is_ascii_lowercase(), "letter")),
-                    |chars| chars.into_iter().collect(),
-                )
-            }
-        },
-    )
+    and_then(satisfy(|c| c == 'i' || c == 's', "type tag"), |tag_char| {
+        if tag_char == 'i' {
+            map(many1(satisfy(|c| c.is_ascii_digit(), "digit")), |chars| {
+                chars.into_iter().collect()
+            })
+        } else {
+            map(
+                many1(satisfy(|c| c.is_ascii_lowercase(), "letter")),
+                |chars| chars.into_iter().collect(),
+            )
+        }
+    })
 }
 
 #[cfg(test)]
@@ -99,10 +105,11 @@ mod tests {
 
     #[test]
     fn test_and_then_basic() {
-        let p = and_then(
-            satisfy(|c| c.is_ascii_digit(), "digit"),
-            |d| map(satisfy(|c| c.is_ascii_digit(), "digit"), move |d2| format!("{}{}", d, d2)),
-        );
+        let p = and_then(satisfy(|c| c.is_ascii_digit(), "digit"), |d| {
+            map(satisfy(|c| c.is_ascii_digit(), "digit"), move |d2| {
+                format!("{}{}", d, d2)
+            })
+        });
         assert_eq!(p("12x"), Ok(("12".to_string(), "x")));
     }
 
@@ -144,10 +151,9 @@ mod tests {
 
     #[test]
     fn test_and_then_error_propagation() {
-        let p = and_then(
-            satisfy(|c| c.is_ascii_digit(), "digit"),
-            |_| satisfy(|c| c.is_ascii_uppercase(), "upper"),
-        );
+        let p = and_then(satisfy(|c| c.is_ascii_digit(), "digit"), |_| {
+            satisfy(|c| c.is_ascii_uppercase(), "upper")
+        });
         assert!(p("1a").is_err()); // second parser fails
     }
 }

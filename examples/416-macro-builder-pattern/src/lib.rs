@@ -195,9 +195,7 @@ mod tests {
 
     #[test]
     fn test_email_missing_required() {
-        let result = Email::builder()
-            .to("user@example.com".to_string())
-            .build();
+        let result = Email::builder().to("user@example.com".to_string()).build();
         assert!(result.is_err());
     }
 }

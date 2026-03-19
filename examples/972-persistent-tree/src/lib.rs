@@ -18,11 +18,7 @@ impl<T: Ord + Clone> Bst<T> {
     /// Insert returns a new tree sharing unchanged subtrees
     pub fn insert(&self, x: T) -> Self {
         match self {
-            Bst::Empty => Bst::Node(
-                Rc::new(Bst::Empty),
-                x,
-                Rc::new(Bst::Empty),
-            ),
+            Bst::Empty => Bst::Node(Rc::new(Bst::Empty), x, Rc::new(Bst::Empty)),
             Bst::Node(l, v, r) => {
                 if x < *v {
                     Bst::Node(Rc::new(l.insert(x)), v.clone(), Rc::clone(r))
@@ -99,7 +95,6 @@ impl<T: Ord + Clone> Bst<T> {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

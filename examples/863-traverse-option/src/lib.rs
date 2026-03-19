@@ -22,13 +22,16 @@ fn sequence_option<T: Clone>(xs: &[Option<T>]) -> Option<Vec<T>> {
 }
 
 fn safe_div10(x: &i32) -> Option<i32> {
-    if *x == 0 { None } else { Some(10 / x) }
+    if *x == 0 {
+        None
+    } else {
+        Some(10 / x)
+    }
 }
 
 fn parse_int(s: &&str) -> Option<i32> {
     s.parse().ok()
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -36,7 +39,10 @@ mod tests {
 
     #[test]
     fn test_traverse_all_succeed() {
-        assert_eq!(traverse_option(&[2, 5, 1], safe_div10), Some(vec![5, 2, 10]));
+        assert_eq!(
+            traverse_option(&[2, 5, 1], safe_div10),
+            Some(vec![5, 2, 10])
+        );
     }
 
     #[test]
@@ -51,7 +57,10 @@ mod tests {
 
     #[test]
     fn test_fold_version() {
-        assert_eq!(traverse_option_fold(&[2, 5, 1], safe_div10), Some(vec![5, 2, 10]));
+        assert_eq!(
+            traverse_option_fold(&[2, 5, 1], safe_div10),
+            Some(vec![5, 2, 10])
+        );
         assert_eq!(traverse_option_fold(&[2, 0, 1], safe_div10), None);
     }
 
@@ -65,16 +74,17 @@ mod tests {
 
     #[test]
     fn test_sequence() {
-        assert_eq!(sequence_option(&[Some(1), Some(2), Some(3)]), Some(vec![1, 2, 3]));
+        assert_eq!(
+            sequence_option(&[Some(1), Some(2), Some(3)]),
+            Some(vec![1, 2, 3])
+        );
         assert_eq!(sequence_option(&[Some(1), None, Some(3)]), None);
     }
 
     #[test]
     fn test_collect_is_traverse() {
         // Rust's collect() on Iterator<Item=Option<T>> IS traverse!
-        let result: Option<Vec<i32>> = vec![Some(1), Some(2), Some(3)]
-            .into_iter()
-            .collect();
+        let result: Option<Vec<i32>> = vec![Some(1), Some(2), Some(3)].into_iter().collect();
         assert_eq!(result, Some(vec![1, 2, 3]));
     }
 }

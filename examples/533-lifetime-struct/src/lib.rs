@@ -36,7 +36,10 @@ pub struct Words<'a> {
 
 impl<'a> Words<'a> {
     pub fn new(source: &'a str) -> Self {
-        Words { source, position: 0 }
+        Words {
+            source,
+            position: 0,
+        }
     }
 }
 

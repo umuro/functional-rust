@@ -46,8 +46,7 @@ pub fn collatz(n: u64) -> Vec<u64> {
 
 /// Iterator-based unfold using `std::iter::successors`
 pub fn fibs_iter() -> impl Iterator<Item = u64> {
-    std::iter::successors(Some((0u64, 1u64)), |&(a, b)| Some((b, a + b)))
-        .map(|(a, _)| a)
+    std::iter::successors(Some((0u64, 1u64)), |&(a, b)| Some((b, a + b))).map(|(a, _)| a)
 }
 
 #[cfg(test)]

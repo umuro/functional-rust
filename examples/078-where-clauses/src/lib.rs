@@ -23,7 +23,11 @@ where
     B: Clone,
     F: Fn(A, B) -> C,
 {
-    a.iter().cloned().zip(b.iter().cloned()).map(|(x, y)| f(x, y)).collect()
+    a.iter()
+        .cloned()
+        .zip(b.iter().cloned())
+        .map(|(x, y)| f(x, y))
+        .collect()
 }
 
 // Approach 3: Associated type bounds
@@ -39,7 +43,9 @@ fn dot_product<T>(a: &[T], b: &[T]) -> T
 where
     T: Add<Output = T> + Mul<Output = T> + Default + Copy,
 {
-    a.iter().zip(b.iter()).fold(T::default(), |acc, (&x, &y)| acc + x * y)
+    a.iter()
+        .zip(b.iter())
+        .fold(T::default(), |acc, (&x, &y)| acc + x * y)
 }
 
 // Complex: display collection of displayable items
@@ -51,7 +57,6 @@ where
     let items: Vec<String> = iter.into_iter().map(|x| format!("{}", x)).collect();
     format!("[{}]", items.join(", "))
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -65,7 +70,10 @@ mod tests {
 
     #[test]
     fn test_zip_with() {
-        assert_eq!(zip_with(&[1, 2, 3], &[4, 5, 6], |a, b| a + b), vec![5, 7, 9]);
+        assert_eq!(
+            zip_with(&[1, 2, 3], &[4, 5, 6], |a, b| a + b),
+            vec![5, 7, 9]
+        );
         assert_eq!(zip_with(&[1, 2], &[3, 4], |a, b| a * b), vec![3, 8]);
     }
 

@@ -25,7 +25,12 @@ fn permutations_flags(nums: &[i32]) -> Vec<Vec<i32>> {
     let mut used = vec![false; n];
     let mut current = Vec::with_capacity(n);
 
-    fn build(nums: &[i32], used: &mut Vec<bool>, current: &mut Vec<i32>, results: &mut Vec<Vec<i32>>) {
+    fn build(
+        nums: &[i32],
+        used: &mut Vec<bool>,
+        current: &mut Vec<i32>,
+        results: &mut Vec<Vec<i32>>,
+    ) {
         if current.len() == nums.len() {
             results.push(current.clone());
             return;

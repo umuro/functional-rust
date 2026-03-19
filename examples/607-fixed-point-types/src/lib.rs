@@ -1,9 +1,14 @@
 //! # Fixed-Point Types
 //! Recursive types using fixed-point combinators.
 
-pub enum Fix<F> { In(Box<F>) }
+pub enum Fix<F> {
+    In(Box<F>),
+}
 
-pub enum ListF<A, R> { Nil, Cons(A, R) }
+pub enum ListF<A, R> {
+    Nil,
+    Cons(A, R),
+}
 
 pub type FixList<A> = Fix<ListF<A, Fix<ListF<A, ()>>>>;
 

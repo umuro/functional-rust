@@ -29,7 +29,6 @@ fn reset() {
     println!("Counter reset to 0.");
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

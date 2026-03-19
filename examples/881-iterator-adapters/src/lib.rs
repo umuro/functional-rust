@@ -37,9 +37,7 @@ fn chain_demo(a: &[i32], b: &[i32]) -> Vec<i32> {
 
 // === Approach 3: Complex chained pipelines ===
 fn word_lengths(text: &str) -> Vec<usize> {
-    let mut lengths: Vec<usize> = text.split_whitespace()
-        .map(|w| w.len())
-        .collect();
+    let mut lengths: Vec<usize> = text.split_whitespace().map(|w| w.len()).collect();
     lengths.sort();
     lengths
 }
@@ -71,7 +69,6 @@ fn debug_pipeline(data: &[i32]) -> Vec<i32> {
         .collect()
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -95,12 +92,12 @@ mod tests {
 
     #[test]
     fn test_skip() {
-        assert_eq!(skip_demo(&[1,2,3,4,5], 3), vec![4, 5]);
+        assert_eq!(skip_demo(&[1, 2, 3, 4, 5], 3), vec![4, 5]);
     }
 
     #[test]
     fn test_chain() {
-        assert_eq!(chain_demo(&[1,2], &[3,4]), vec![1,2,3,4]);
+        assert_eq!(chain_demo(&[1, 2], &[3, 4]), vec![1, 2, 3, 4]);
     }
 
     #[test]
@@ -111,12 +108,15 @@ mod tests {
 
     #[test]
     fn test_top_n() {
-        assert_eq!(top_n(&[1,5,3,2,4], 3, |x| x * x), vec![25, 16, 9]);
+        assert_eq!(top_n(&[1, 5, 3, 2, 4], 3, |x| x * x), vec![25, 16, 9]);
     }
 
     #[test]
     fn test_indexed_evens() {
-        assert_eq!(indexed_evens(&[1,2,3,4,5,6]), vec![(1,2), (3,4), (5,6)]);
+        assert_eq!(
+            indexed_evens(&[1, 2, 3, 4, 5, 6]),
+            vec![(1, 2), (3, 4), (5, 6)]
+        );
     }
 
     #[test]

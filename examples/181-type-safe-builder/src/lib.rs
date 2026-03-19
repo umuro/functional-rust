@@ -23,7 +23,10 @@ struct Query<S, F, W> {
 impl Query<NoSelect, NoFrom, NoWhere> {
     fn new() -> Self {
         Query {
-            select: None, from: None, where_: None, order_by: None,
+            select: None,
+            from: None,
+            where_: None,
+            order_by: None,
             _s: PhantomData,
         }
     }
@@ -33,7 +36,9 @@ impl<F, W> Query<NoSelect, F, W> {
     fn select(self, cols: &str) -> Query<HasSelect, F, W> {
         Query {
             select: Some(cols.to_string()),
-            from: self.from, where_: self.where_, order_by: self.order_by,
+            from: self.from,
+            where_: self.where_,
+            order_by: self.order_by,
             _s: PhantomData,
         }
     }
@@ -44,7 +49,8 @@ impl<W> Query<HasSelect, NoFrom, W> {
         Query {
             select: self.select,
             from: Some(table.to_string()),
-            where_: self.where_, order_by: self.order_by,
+            where_: self.where_,
+            order_by: self.order_by,
             _s: PhantomData,
         }
     }
@@ -53,7 +59,8 @@ impl<W> Query<HasSelect, NoFrom, W> {
 impl Query<HasSelect, HasFrom, NoWhere> {
     fn where_(self, cond: &str) -> Query<HasSelect, HasFrom, HasWhere> {
         Query {
-            select: self.select, from: self.from,
+            select: self.select,
+            from: self.from,
             where_: Some(cond.to_string()),
             order_by: self.order_by,
             _s: PhantomData,
@@ -68,9 +75,11 @@ impl<W> Query<HasSelect, HasFrom, W> {
     }
 
     fn build(&self) -> String {
-        let mut sql = format!("SELECT {} FROM {}",
+        let mut sql = format!(
+            "SELECT {} FROM {}",
             self.select.as_ref().unwrap(),
-            self.from.as_ref().unwrap());
+            self.from.as_ref().unwrap()
+        );
         if let Some(w) = &self.where_ {
             sql.push_str(&format!(" WHERE {}", w));
         }
@@ -117,14 +126,20 @@ impl QueryBuilder<Selected> {
 impl<S: CanAddFrom> QueryBuilder<S> {
     fn from(mut self, table: &str) -> QueryBuilder<FromAdded> {
         self.parts.push(format!("FROM {}", table));
-        QueryBuilder { parts: self.parts, _state: PhantomData }
+        QueryBuilder {
+            parts: self.parts,
+            _state: PhantomData,
+        }
     }
 }
 
 impl<S: CanAddWhere> QueryBuilder<S> {
     fn where_clause(mut self, cond: &str) -> QueryBuilder<WhereAdded> {
         self.parts.push(format!("WHERE {}", cond));
-        QueryBuilder { parts: self.parts, _state: PhantomData }
+        QueryBuilder {
+            parts: self.parts,
+            _state: PhantomData,
+        }
     }
 }
 
@@ -144,15 +159,26 @@ struct FluentQuery {
 }
 
 impl FluentQuery {
-    fn select(mut self, cols: &str) -> Self { self.select = Some(cols.into()); self }
-    fn from(mut self, table: &str) -> Self { self.from = Some(table.into()); self }
-    fn where_(mut self, cond: &str) -> Self { self.where_ = Some(cond.into()); self }
+    fn select(mut self, cols: &str) -> Self {
+        self.select = Some(cols.into());
+        self
+    }
+    fn from(mut self, table: &str) -> Self {
+        self.from = Some(table.into());
+        self
+    }
+    fn where_(mut self, cond: &str) -> Self {
+        self.where_ = Some(cond.into());
+        self
+    }
 
     fn build(&self) -> Result<String, &'static str> {
         match (&self.select, &self.from) {
             (Some(s), Some(f)) => {
                 let mut sql = format!("SELECT {} FROM {}", s, f);
-                if let Some(w) = &self.where_ { sql.push_str(&format!(" WHERE {}", w)); }
+                if let Some(w) = &self.where_ {
+                    sql.push_str(&format!(" WHERE {}", w));
+                }
                 Ok(sql)
             }
             _ => Err("SELECT and FROM are required"),
@@ -172,13 +198,21 @@ mod tests {
 
     #[test]
     fn test_type_state_where() {
-        let sql = Query::new().select("name").from("users").where_("age > 18").build();
+        let sql = Query::new()
+            .select("name")
+            .from("users")
+            .where_("age > 18")
+            .build();
         assert_eq!(sql, "SELECT name FROM users WHERE age > 18");
     }
 
     #[test]
     fn test_type_state_order() {
-        let sql = Query::new().select("*").from("users").order_by("name").build();
+        let sql = Query::new()
+            .select("*")
+            .from("users")
+            .order_by("name")
+            .build();
         assert_eq!(sql, "SELECT * FROM users ORDER BY name");
     }
 
@@ -190,7 +224,10 @@ mod tests {
 
     #[test]
     fn test_trait_builder_where() {
-        let sql = QueryBuilder::select("a").from("b").where_clause("c=1").build();
+        let sql = QueryBuilder::select("a")
+            .from("b")
+            .where_clause("c=1")
+            .build();
         assert_eq!(sql, "SELECT a FROM b WHERE c=1");
     }
 

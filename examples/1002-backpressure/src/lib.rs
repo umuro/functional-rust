@@ -62,7 +62,9 @@ fn bounded_pipeline(items: Vec<i32>) -> Vec<i32> {
 
     // Stage 1: double
     thread::spawn(move || {
-        for item in rx1.iter() { tx2.send(item * 2).unwrap(); }
+        for item in rx1.iter() {
+            tx2.send(item * 2).unwrap();
+        }
     });
 
     // Stage 2: add 1 (slow)
@@ -75,7 +77,9 @@ fn bounded_pipeline(items: Vec<i32>) -> Vec<i32> {
 
     // Producer
     let producer = thread::spawn(move || {
-        for item in items { tx1.send(item).unwrap(); } // blocks when stage 1 full
+        for item in items {
+            tx1.send(item).unwrap();
+        } // blocks when stage 1 full
     });
 
     // Collect
@@ -87,12 +91,14 @@ fn bounded_pipeline(items: Vec<i32>) -> Vec<i32> {
 // --- Approach 4: Measure backpressure effect ---
 fn measure_backpressure_effect() -> bool {
     // With buffer=1: producer is slowed to consumer's pace
-    let (tx_fast, rx_fast) = mpsc::channel::<i32>();       // unbounded
+    let (tx_fast, rx_fast) = mpsc::channel::<i32>(); // unbounded
     let (tx_bounded, rx_bounded) = mpsc::sync_channel::<i32>(1); // bounded=1
 
     let fast_start = Instant::now();
     let h = thread::spawn(move || {
-        for i in 0..20 { tx_fast.send(i).unwrap(); }
+        for i in 0..20 {
+            tx_fast.send(i).unwrap();
+        }
     });
     h.join().unwrap();
     let fast_time = fast_start.elapsed();
@@ -100,7 +106,9 @@ fn measure_backpressure_effect() -> bool {
 
     let bounded_start = Instant::now();
     let h2 = thread::spawn(move || {
-        for i in 0..20 { tx_bounded.send(i).unwrap(); }
+        for i in 0..20 {
+            tx_bounded.send(i).unwrap();
+        }
     });
     // Slow consumer
     thread::spawn(move || {
@@ -114,7 +122,6 @@ fn measure_backpressure_effect() -> bool {
     // Bounded (backpressure) should be slower than unbounded
     bounded_time > fast_time
 }
-
 
 #[cfg(test)]
 mod tests {

@@ -153,10 +153,10 @@ mod tests {
     #[test]
     fn test_streaming_parser_complete() {
         let mut parser = StreamingParser::new();
-        
+
         parser.feed(b"5:hel");
         assert!(!parser.is_complete());
-        
+
         parser.feed(b"lo");
         assert!(parser.is_complete());
         assert_eq!(parser.take_body(), b"hello");
@@ -175,7 +175,7 @@ mod tests {
         let mut parser = StreamingParser::new();
         parser.feed(b"2:ok");
         assert!(parser.is_complete());
-        
+
         parser.reset();
         parser.feed(b"3:yes");
         assert!(parser.is_complete());
@@ -185,12 +185,12 @@ mod tests {
     #[test]
     fn test_line_reader() {
         let mut reader = LineReader::new();
-        
+
         reader.feed(b"hello\nwor");
         let lines = reader.take_lines();
         assert_eq!(lines, vec!["hello"]);
         assert!(reader.has_partial());
-        
+
         reader.feed(b"ld\n");
         let lines = reader.take_lines();
         assert_eq!(lines, vec!["world"]);

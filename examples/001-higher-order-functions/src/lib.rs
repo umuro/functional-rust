@@ -29,7 +29,11 @@ fn my_filter(pred: fn(i32) -> bool, slice: &[i32]) -> Vec<i32> {
     if slice.is_empty() {
         vec![]
     } else {
-        let mut result = if pred(slice[0]) { vec![slice[0]] } else { vec![] };
+        let mut result = if pred(slice[0]) {
+            vec![slice[0]]
+        } else {
+            vec![]
+        };
         result.extend(my_filter(pred, &slice[1..]));
         result
     }
@@ -45,12 +49,8 @@ fn my_fold(f: fn(i32, i32) -> i32, acc: i32, slice: &[i32]) -> i32 {
 
 // Approach 3: Chained iterators
 fn sum_of_doubled_evens(nums: &[i32]) -> i32 {
-    nums.iter()
-        .filter(|&&x| x % 2 == 0)
-        .map(|&x| x * 2)
-        .sum()
+    nums.iter().filter(|&&x| x % 2 == 0).map(|&x| x * 2).sum()
 }
-
 
 #[cfg(test)]
 mod tests {

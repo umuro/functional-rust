@@ -93,7 +93,10 @@ mod tests {
 
     #[test]
     fn test_percentage_invalid() {
-        assert!(matches!(parse_percentage("150"), Err(ParseError::OutOfRange { .. })));
+        assert!(matches!(
+            parse_percentage("150"),
+            Err(ParseError::OutOfRange { .. })
+        ));
     }
 
     #[test]

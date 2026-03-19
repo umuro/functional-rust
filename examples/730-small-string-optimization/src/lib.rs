@@ -15,7 +15,10 @@ impl SsoString {
         if s.len() <= INLINE_CAP {
             let mut buf = [0u8; INLINE_CAP];
             buf[..s.len()].copy_from_slice(s.as_bytes());
-            SsoString::Inline { buf, len: s.len() as u8 }
+            SsoString::Inline {
+                buf,
+                len: s.len() as u8,
+            }
         } else {
             SsoString::Heap(s.into())
         }
@@ -23,9 +26,7 @@ impl SsoString {
 
     pub fn as_str(&self) -> &str {
         match self {
-            SsoString::Inline { buf, len } => {
-                std::str::from_utf8(&buf[..*len as usize]).unwrap()
-            }
+            SsoString::Inline { buf, len } => std::str::from_utf8(&buf[..*len as usize]).unwrap(),
             SsoString::Heap(s) => s,
         }
     }
@@ -37,7 +38,9 @@ impl SsoString {
         }
     }
 
-    pub fn is_empty(&self) -> bool { self.len() == 0 }
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 
     pub fn is_inline(&self) -> bool {
         matches!(self, SsoString::Inline { .. })
@@ -49,7 +52,6 @@ impl std::fmt::Display for SsoString {
         f.write_str(self.as_str())
     }
 }
-
 
 #[cfg(test)]
 mod tests {

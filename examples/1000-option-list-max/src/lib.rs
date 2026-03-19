@@ -10,9 +10,7 @@ pub fn list_max_recursive(list: &[i32]) -> Option<i32> {
     match list {
         [] => None,
         [h] => Some(*h),
-        [h, ref rest @ ..] => {
-            list_max_recursive(rest).map(|m| (*h).max(m))
-        }
+        [h, ref rest @ ..] => list_max_recursive(rest).map(|m| (*h).max(m)),
     }
 }
 

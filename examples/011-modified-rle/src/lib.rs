@@ -109,8 +109,8 @@ mod tests {
 
     #[test]
     fn test_mixed() {
-        let input = vec!['a','a','a','b','c','c','d','d','d','d'];
-        let expected = vec![Many(3,'a'), One('b'), Many(2,'c'), Many(4,'d')];
+        let input = vec!['a', 'a', 'a', 'b', 'c', 'c', 'd', 'd', 'd', 'd'];
+        let expected = vec![Many(3, 'a'), One('b'), Many(2, 'c'), Many(4, 'd')];
         assert_eq!(encode_modified(&input), expected);
         assert_eq!(encode_modified_recursive(&input), expected);
         assert_eq!(encode_modified_chunks(&input), expected);
@@ -124,9 +124,6 @@ mod tests {
     #[test]
     fn test_strings() {
         let input = vec!["hi", "hi", "bye"];
-        assert_eq!(
-            encode_modified(&input),
-            vec![Many(2, "hi"), One("bye")]
-        );
+        assert_eq!(encode_modified(&input), vec![Many(2, "hi"), One("bye")]);
     }
 }

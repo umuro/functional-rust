@@ -85,7 +85,10 @@ pub struct WorkStealingPool {
 impl WorkStealingPool {
     pub fn new(num_workers: usize) -> Self {
         let queues = (0..num_workers).map(|_| new_queue()).collect();
-        Self { queues, num_workers }
+        Self {
+            queues,
+            num_workers,
+        }
     }
 
     /// Push work to a specific worker's queue
@@ -189,9 +192,12 @@ mod tests {
 
         for _ in 0..20 {
             let c = Arc::clone(&count);
-            pool.push(0, Box::new(move || {
-                c.fetch_add(1, Ordering::Relaxed);
-            }));
+            pool.push(
+                0,
+                Box::new(move || {
+                    c.fetch_add(1, Ordering::Relaxed);
+                }),
+            );
         }
 
         pool.run();

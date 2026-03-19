@@ -11,21 +11,41 @@ pub struct Deque<T> {
 
 impl<T> Deque<T> {
     pub fn new() -> Self {
-        Deque { inner: VecDeque::new() }
+        Deque {
+            inner: VecDeque::new(),
+        }
     }
 
-    pub fn push_front(&mut self, x: T) { self.inner.push_front(x); }
-    pub fn push_back(&mut self, x: T) { self.inner.push_back(x); }
-    pub fn pop_front(&mut self) -> Option<T> { self.inner.pop_front() }
-    pub fn pop_back(&mut self) -> Option<T> { self.inner.pop_back() }
-    pub fn peek_front(&self) -> Option<&T> { self.inner.front() }
-    pub fn peek_back(&self) -> Option<&T> { self.inner.back() }
-    pub fn size(&self) -> usize { self.inner.len() }
-    pub fn is_empty(&self) -> bool { self.inner.is_empty() }
+    pub fn push_front(&mut self, x: T) {
+        self.inner.push_front(x);
+    }
+    pub fn push_back(&mut self, x: T) {
+        self.inner.push_back(x);
+    }
+    pub fn pop_front(&mut self) -> Option<T> {
+        self.inner.pop_front()
+    }
+    pub fn pop_back(&mut self) -> Option<T> {
+        self.inner.pop_back()
+    }
+    pub fn peek_front(&self) -> Option<&T> {
+        self.inner.front()
+    }
+    pub fn peek_back(&self) -> Option<&T> {
+        self.inner.back()
+    }
+    pub fn size(&self) -> usize {
+        self.inner.len()
+    }
+    pub fn is_empty(&self) -> bool {
+        self.inner.is_empty()
+    }
 }
 
 impl<T> Default for Deque<T> {
-    fn default() -> Self { Self::new() }
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 // --- Approach 2: Functional two-stack deque (mirrors OCaml) ---
@@ -37,7 +57,10 @@ pub struct FunctionalDeque<T: Clone> {
 
 impl<T: Clone + PartialEq> FunctionalDeque<T> {
     pub fn new() -> Self {
-        FunctionalDeque { front: vec![], back: vec![] }
+        FunctionalDeque {
+            front: vec![],
+            back: vec![],
+        }
     }
 
     pub fn is_empty(&self) -> bool {
@@ -83,9 +106,10 @@ impl<T: Clone + PartialEq> FunctionalDeque<T> {
 }
 
 impl<T: Clone + PartialEq> Default for FunctionalDeque<T> {
-    fn default() -> Self { Self::new() }
+    fn default() -> Self {
+        Self::new()
+    }
 }
-
 
 #[cfg(test)]
 mod tests {

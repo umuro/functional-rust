@@ -21,7 +21,8 @@ pub fn safe_copy(src: &[u8], dst: &mut [u8]) -> Result<(), String> {
     if src.len() != dst.len() {
         return Err(format!(
             "length mismatch: src={} dst={}",
-            src.len(), dst.len()
+            src.len(),
+            dst.len()
         ));
     }
     unsafe {
@@ -52,7 +53,6 @@ pub fn safe_get<T: Copy>(slice: &[T], idx: usize) -> Option<T> {
         None
     }
 }
-
 
 #[cfg(test)]
 mod tests {

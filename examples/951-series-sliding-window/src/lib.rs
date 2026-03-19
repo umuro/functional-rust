@@ -31,11 +31,7 @@ pub fn largest_product(n: usize, s: &str) -> Result<u64, String> {
     }
     let max = series(n, s)
         .into_iter()
-        .map(|sub| {
-            sub.chars()
-                .map(|c| c as u64 - '0' as u64)
-                .product::<u64>()
-        })
+        .map(|sub| sub.chars().map(|c| c as u64 - '0' as u64).product::<u64>())
         .max()
         .unwrap_or(0);
     Ok(max)
@@ -61,7 +57,6 @@ pub fn largest_product_recursive(n: usize, s: &str) -> Result<u64, String> {
     }
     Ok(go(n, s, 0))
 }
-
 
 /* Output:
    series(3, "49142") = ["491", "914", "142"]

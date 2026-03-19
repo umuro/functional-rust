@@ -1,7 +1,6 @@
 /// # Map Module — Frequency Counter
 ///
 /// Word frequency counting using HashMap — the Rust equivalent of OCaml's Map.Make.
-
 use std::collections::HashMap;
 
 /// Idiomatic Rust: split, lowercase, count with entry API.

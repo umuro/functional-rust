@@ -12,18 +12,24 @@ pub trait Functor {
 impl<A> Functor for Option<A> {
     type Inner = A;
     type Mapped<B> = Option<B>;
-    fn fmap<B>(self, f: impl Fn(A) -> B) -> Option<B> { self.map(f) }
+    fn fmap<B>(self, f: impl Fn(A) -> B) -> Option<B> {
+        self.map(f)
+    }
 }
 
 impl<A> Functor for Vec<A> {
     type Inner = A;
     type Mapped<B> = Vec<B>;
-    fn fmap<B>(self, f: impl Fn(A) -> B) -> Vec<B> { self.into_iter().map(f).collect() }
+    fn fmap<B>(self, f: impl Fn(A) -> B) -> Vec<B> {
+        self.into_iter().map(f).collect()
+    }
 }
 
 /// Identity law: fmap id == id
 pub fn check_identity<F: Functor<Inner = A> + Clone + PartialEq, A: Clone>(fa: F) -> bool
-where F::Mapped<A>: PartialEq<F> {
+where
+    F::Mapped<A>: PartialEq<F>,
+{
     let mapped = fa.clone().fmap(|x| x);
     mapped == fa
 }

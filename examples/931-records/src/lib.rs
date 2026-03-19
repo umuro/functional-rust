@@ -95,7 +95,11 @@ mod tests {
 
     #[test]
     fn test_zero_size_rect() {
-        let r = Rect { origin: Point { x: 5.0, y: 5.0 }, width: 0.0, height: 0.0 };
+        let r = Rect {
+            origin: Point { x: 5.0, y: 5.0 },
+            width: 0.0,
+            height: 0.0,
+        };
         assert!((area(&r)).abs() < f64::EPSILON);
         assert!(contains_point(&r, &Point { x: 5.0, y: 5.0 }));
     }

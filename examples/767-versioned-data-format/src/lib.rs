@@ -72,25 +72,25 @@ impl Data {
 /// Simple binary serialization
 pub fn serialize_v3(data: &DataV3) -> Vec<u8> {
     let mut buf = Vec::new();
-    
+
     // Version header
     buf.push(3); // major
     buf.push(0); // minor
-    
+
     // Name (length-prefixed)
     buf.extend_from_slice(&(data.name.len() as u32).to_le_bytes());
     buf.extend_from_slice(data.name.as_bytes());
-    
+
     // Value (f64)
     buf.extend_from_slice(&data.value.to_le_bytes());
-    
+
     // Tags (count + items)
     buf.extend_from_slice(&(data.tags.len() as u32).to_le_bytes());
     for tag in &data.tags {
         buf.extend_from_slice(&(tag.len() as u32).to_le_bytes());
         buf.extend_from_slice(tag.as_bytes());
     }
-    
+
     // Metadata (count + pairs)
     buf.extend_from_slice(&(data.metadata.len() as u32).to_le_bytes());
     for (k, v) in &data.metadata {
@@ -99,7 +99,7 @@ pub fn serialize_v3(data: &DataV3) -> Vec<u8> {
         buf.extend_from_slice(&(v.len() as u32).to_le_bytes());
         buf.extend_from_slice(v.as_bytes());
     }
-    
+
     buf
 }
 
@@ -108,11 +108,11 @@ pub fn deserialize(bytes: &[u8]) -> Result<Data, String> {
     if bytes.len() < 2 {
         return Err("Too short".to_string());
     }
-    
+
     let major = bytes[0];
     let _minor = bytes[1];
     let rest = &bytes[2..];
-    
+
     match major {
         1 => deserialize_v1(rest).map(Data::V1),
         2 => deserialize_v2(rest).map(Data::V2),
@@ -125,13 +125,17 @@ fn read_string(bytes: &[u8], pos: &mut usize) -> Result<String, String> {
     if *pos + 4 > bytes.len() {
         return Err("Truncated".to_string());
     }
-    let len = u32::from_le_bytes([bytes[*pos], bytes[*pos + 1], bytes[*pos + 2], bytes[*pos + 3]]) as usize;
+    let len = u32::from_le_bytes([
+        bytes[*pos],
+        bytes[*pos + 1],
+        bytes[*pos + 2],
+        bytes[*pos + 3],
+    ]) as usize;
     *pos += 4;
     if *pos + len > bytes.len() {
         return Err("Truncated string".to_string());
     }
-    let s = String::from_utf8(bytes[*pos..*pos + len].to_vec())
-        .map_err(|_| "Invalid UTF-8")?;
+    let s = String::from_utf8(bytes[*pos..*pos + len].to_vec()).map_err(|_| "Invalid UTF-8")?;
     *pos += len;
     Ok(s)
 }
@@ -159,16 +163,22 @@ fn deserialize_v2(bytes: &[u8]) -> Result<DataV2, String> {
 fn deserialize_v3(bytes: &[u8]) -> Result<DataV3, String> {
     let mut pos = 0;
     let name = read_string(bytes, &mut pos)?;
-    
+
     if pos + 8 > bytes.len() {
         return Err("Truncated".to_string());
     }
     let value = f64::from_le_bytes([
-        bytes[pos], bytes[pos + 1], bytes[pos + 2], bytes[pos + 3],
-        bytes[pos + 4], bytes[pos + 5], bytes[pos + 6], bytes[pos + 7],
+        bytes[pos],
+        bytes[pos + 1],
+        bytes[pos + 2],
+        bytes[pos + 3],
+        bytes[pos + 4],
+        bytes[pos + 5],
+        bytes[pos + 6],
+        bytes[pos + 7],
     ]);
     pos += 8;
-    
+
     Ok(DataV3 {
         name,
         value,
@@ -186,7 +196,7 @@ mod tests {
         let v1 = Version::new(1, 0);
         let v1_1 = Version::new(1, 1);
         let v2 = Version::new(2, 0);
-        
+
         assert!(v1.is_compatible(&v1_1));
         assert!(!v1.is_compatible(&v2));
     }
@@ -225,7 +235,7 @@ mod tests {
         };
         let bytes = serialize_v3(&data);
         let parsed = deserialize(&bytes).unwrap();
-        
+
         if let Data::V3(d) = parsed {
             assert_eq!(d.name, "hello");
             assert!((d.value - 3.14).abs() < 0.001);

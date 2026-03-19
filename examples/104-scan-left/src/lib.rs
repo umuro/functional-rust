@@ -64,7 +64,10 @@ mod tests {
 
     #[test]
     fn test_running_max() {
-        assert_eq!(running_max(&[3, 1, 4, 1, 5, 9, 2, 6]), vec![3, 3, 4, 4, 5, 9, 9, 9]);
+        assert_eq!(
+            running_max(&[3, 1, 4, 1, 5, 9, 2, 6]),
+            vec![3, 3, 4, 4, 5, 9, 9, 9]
+        );
     }
 
     #[test]

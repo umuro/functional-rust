@@ -1,7 +1,7 @@
 // 341: Buffered Stream
 // BufReader/BufWriter wrapping for efficient I/O
 
-use std::io::{self, BufRead, BufWriter, Write, BufReader, Cursor};
+use std::io::{self, BufRead, BufReader, BufWriter, Cursor, Write};
 
 // Approach 1: BufReader for efficient reading
 fn count_lines(input: &[u8]) -> usize {
@@ -40,7 +40,6 @@ fn build_csv(headers: &[&str], rows: &[Vec<String>]) -> String {
     }
     String::from_utf8(buf).unwrap()
 }
-
 
 #[cfg(test)]
 mod tests {

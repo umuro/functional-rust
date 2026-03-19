@@ -6,7 +6,7 @@
 pub fn nll_basic() -> Vec<i32> {
     let mut v = vec![1, 2, 3, 4, 5];
     let first = v[0]; // borrow ends after this line
-    v.push(6);        // OK with NLL
+    v.push(6); // OK with NLL
     assert_eq!(first, 1);
     v
 }

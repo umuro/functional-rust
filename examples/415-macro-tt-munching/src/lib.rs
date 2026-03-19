@@ -136,11 +136,13 @@ macro_rules! count_tokens {
     };
 }
 
-define_config!(struct ServerConfig {
+define_config!(
+    struct ServerConfig {
     host: String = "localhost".to_string(),
     port: u16 = 8080,
     timeout_secs: u32 = 30,
-});
+}
+);
 
 #[cfg(test)]
 mod tests {

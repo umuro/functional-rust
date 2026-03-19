@@ -48,7 +48,10 @@ impl BuildInfo {
         BuildInfo {
             version: env!("CARGO_PKG_VERSION"),
             name: env!("CARGO_PKG_NAME"),
-            target: match option_env!("CARGO_CFG_TARGET_ARCH") { Some(v) => v, None => "unknown" },
+            target: match option_env!("CARGO_CFG_TARGET_ARCH") {
+                Some(v) => v,
+                None => "unknown",
+            },
         }
     }
 }

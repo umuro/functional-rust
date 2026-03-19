@@ -49,7 +49,11 @@ fn get_connection_string(config: &Config) -> String {
 }
 
 fn get_log_prefix(config: &Config) -> &str {
-    if config.debug { "[DEBUG] " } else { "[INFO] " }
+    if config.debug {
+        "[DEBUG] "
+    } else {
+        "[INFO] "
+    }
 }
 
 fn format_message(msg: &str, config: &Config) -> String {
@@ -78,21 +82,33 @@ impl HasDb for Config {
 
 impl HasLogger for Config {
     fn log_prefix(&self) -> &str {
-        if self.debug { "[DEBUG] " } else { "[INFO] " }
+        if self.debug {
+            "[DEBUG] "
+        } else {
+            "[INFO] "
+        }
     }
 }
 
 fn format_msg_generic<E: HasDb + HasLogger>(msg: &str, env: &E) -> String {
-    format!("{}{} (connected to {})", env.log_prefix(), msg, env.db_url())
+    format!(
+        "{}{} (connected to {})",
+        env.log_prefix(),
+        msg,
+        env.db_url()
+    )
 }
-
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     fn test_config(debug: bool) -> Config {
-        Config { db_host: "localhost".into(), db_port: 5432, debug }
+        Config {
+            db_host: "localhost".into(),
+            db_port: 5432,
+            debug,
+        }
     }
 
     #[test]

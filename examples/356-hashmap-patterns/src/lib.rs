@@ -12,9 +12,14 @@ pub fn word_count(text: &str) -> HashMap<String, usize> {
 }
 
 pub fn group_by<T, K, F>(items: Vec<T>, key: F) -> HashMap<K, Vec<T>>
-where K: Eq + std::hash::Hash, F: Fn(&T) -> K {
+where
+    K: Eq + std::hash::Hash,
+    F: Fn(&T) -> K,
+{
     let mut map: HashMap<K, Vec<T>> = HashMap::new();
-    for item in items { map.entry(key(&item)).or_default().push(item); }
+    for item in items {
+        map.entry(key(&item)).or_default().push(item);
+    }
     map
 }
 
@@ -28,17 +33,23 @@ pub fn frequency_top_n(map: &HashMap<String, usize>, n: usize) -> Vec<(&str, usi
 mod tests {
     use super::*;
 
-    #[test] fn count_words() {
+    #[test]
+    fn count_words() {
         let wc = word_count("the cat sat on the mat");
         assert_eq!(wc["the"], 2);
         assert_eq!(wc["cat"], 1);
     }
-    #[test] fn group_by_parity() {
-        let grouped = group_by(vec![1, 2, 3, 4, 5], |&x| if x % 2 == 0 { "even" } else { "odd" });
+    #[test]
+    fn group_by_parity() {
+        let grouped = group_by(
+            vec![1, 2, 3, 4, 5],
+            |&x| if x % 2 == 0 { "even" } else { "odd" },
+        );
         assert_eq!(grouped["even"].len(), 2);
         assert_eq!(grouped["odd"].len(), 3);
     }
-    #[test] fn top_n_frequency() {
+    #[test]
+    fn top_n_frequency() {
         let wc = word_count("a a a b b c");
         let top = frequency_top_n(&wc, 2);
         assert_eq!(top[0].0, "a");

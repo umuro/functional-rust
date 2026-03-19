@@ -12,23 +12,25 @@ use std::ptr::NonNull;
 /// A pool of `CAP` pre-allocated `T` slots.
 /// Allocation and deallocation are O(1) via a free-list.
 pub struct Pool<T, const CAP: usize> {
-    slots:     Box<[std::mem::MaybeUninit<T>; CAP]>,
+    slots: Box<[std::mem::MaybeUninit<T>; CAP]>,
     free_head: Option<usize>,
     next_free: [usize; CAP], // next pointer for free-list
-    live:      usize,
+    live: usize,
 }
 
 impl<T, const CAP: usize> Pool<T, CAP> {
     pub fn new() -> Self {
         // Build free list: 0 → 1 → 2 → … → CAP-1 → sentinel
         let mut next_free = [0usize; CAP];
-        for i in 0..CAP { next_free[i] = i + 1; }
+        for i in 0..CAP {
+            next_free[i] = i + 1;
+        }
         Self {
             // SAFETY: Array of MaybeUninit requires no initialisation.
-            slots:     Box::new(unsafe { std::mem::MaybeUninit::uninit().assume_init() }),
+            slots: Box::new(unsafe { std::mem::MaybeUninit::uninit().assume_init() }),
             free_head: Some(0),
             next_free,
-            live:      0,
+            live: 0,
         }
     }
 
@@ -57,13 +59,17 @@ impl<T, const CAP: usize> Pool<T, CAP> {
     pub unsafe fn dealloc(&mut self, idx: usize) {
         assert!(idx < CAP);
         // SAFETY: caller guarantees the slot is live.
-        unsafe { self.slots[idx].assume_init_drop(); }
+        unsafe {
+            self.slots[idx].assume_init_drop();
+        }
         self.next_free[idx] = self.free_head.map_or(CAP, |h| h);
         self.free_head = Some(idx);
         self.live -= 1;
     }
 
-    pub fn live(&self) -> usize { self.live }
+    pub fn live(&self) -> usize {
+        self.live
+    }
 }
 
 // ── Part 2: Lifetime-safe bump arena ─────────────────────────────────────────
@@ -84,16 +90,20 @@ impl Arena {
         // SAFETY: layout has non-zero size (we require capacity > 0).
         let ptr = unsafe { alloc(layout) };
         let ptr = NonNull::new(ptr).expect("allocation failed");
-        Self { ptr, cap: capacity, pos: Cell::new(0) }
+        Self {
+            ptr,
+            cap: capacity,
+            pos: Cell::new(0),
+        }
     }
 
     /// Allocate space for one `T`, returning a mutable reference with lifetime
     /// tied to this arena. Zero-initialises the slot.
     pub fn alloc<T: Default>(&self) -> &mut T {
         let layout = Layout::new::<T>();
-        let offset  = self.pos.get();
+        let offset = self.pos.get();
         let aligned = (offset + layout.align() - 1) & !(layout.align() - 1);
-        let next    = aligned + layout.size();
+        let next = aligned + layout.size();
         assert!(next <= self.cap, "Arena OOM");
         self.pos.set(next);
 
@@ -114,9 +124,7 @@ impl Arena {
         assert!(next <= self.cap, "Arena OOM");
         self.pos.set(next);
         // SAFETY: `aligned..next` is within the slab, not aliased.
-        unsafe {
-            std::slice::from_raw_parts_mut(self.ptr.as_ptr().add(aligned), len)
-        }
+        unsafe { std::slice::from_raw_parts_mut(self.ptr.as_ptr().add(aligned), len) }
     }
 
     /// Reset the bump pointer. All previous allocations become invalid.
@@ -127,15 +135,21 @@ impl Arena {
         self.pos.set(0);
     }
 
-    pub fn used(&self) -> usize { self.pos.get() }
-    pub fn capacity(&self) -> usize { self.cap }
+    pub fn used(&self) -> usize {
+        self.pos.get()
+    }
+    pub fn capacity(&self) -> usize {
+        self.cap
+    }
 }
 
 impl Drop for Arena {
     fn drop(&mut self) {
         let layout = Layout::from_size_align(self.cap, 16).unwrap();
         // SAFETY: `self.ptr` was allocated with this layout in `new()`.
-        unsafe { dealloc(self.ptr.as_ptr(), layout); }
+        unsafe {
+            dealloc(self.ptr.as_ptr(), layout);
+        }
     }
 }
 
@@ -158,34 +172,33 @@ impl<'a> Default for Expr<'a> {
 impl<'a> Expr<'a> {
     pub fn eval(&self) -> i64 {
         match self {
-            Expr::Num(n)   => *n,
-            Expr::Add(l,r) => l.eval() + r.eval(),
-            Expr::Mul(l,r) => l.eval() * r.eval(),
+            Expr::Num(n) => *n,
+            Expr::Add(l, r) => l.eval() + r.eval(),
+            Expr::Mul(l, r) => l.eval() * r.eval(),
         }
     }
 }
 
 /// Build `(1 + 2) * 3` in the arena — no separate heap allocations.
 fn build_ast(arena: &Arena) -> &Expr<'_> {
-    let one   = arena.alloc::<Expr>();
+    let one = arena.alloc::<Expr>();
     *one = Expr::Num(1);
 
-    let two   = arena.alloc::<Expr>();
+    let two = arena.alloc::<Expr>();
     *two = Expr::Num(2);
 
     let three = arena.alloc::<Expr>();
     *three = Expr::Num(3);
 
-    let add   = arena.alloc::<Expr>();
+    let add = arena.alloc::<Expr>();
     *add = Expr::Add(one, two);
 
-    let mul   = arena.alloc::<Expr>();
+    let mul = arena.alloc::<Expr>();
     *mul = Expr::Mul(add, three);
     mul
 }
 
 // ── main ──────────────────────────────────────────────────────────────────────
-
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
@@ -200,7 +213,9 @@ mod tests {
         assert_eq!(*p.get(h), 42);
         assert_eq!(p.live(), 1);
         // SAFETY: h just returned from alloc, not freed.
-        unsafe { p.dealloc(h); }
+        unsafe {
+            p.dealloc(h);
+        }
         assert_eq!(p.live(), 0);
     }
 
@@ -217,7 +232,9 @@ mod tests {
         let mut p = Pool::<u8, 2>::new();
         let h = p.alloc(1).unwrap();
         // SAFETY: h just returned from alloc.
-        unsafe { p.dealloc(h); }
+        unsafe {
+            p.dealloc(h);
+        }
         let h2 = p.alloc(99).unwrap();
         assert_eq!(*p.get(h2), 99);
     }
@@ -230,7 +247,9 @@ mod tests {
         assert_eq!(*x, 12345);
         assert!(arena.used() > 0);
         // SAFETY: no references live after this.
-        unsafe { arena.reset(); }
+        unsafe {
+            arena.reset();
+        }
         assert_eq!(arena.used(), 0);
     }
 
@@ -238,7 +257,7 @@ mod tests {
     fn arena_ast_eval() {
         let arena = Arena::new(1024);
         let expr = build_ast(&arena);
-        assert_eq!(expr.eval(), 9);  // (1+2)*3
+        assert_eq!(expr.eval(), 9); // (1+2)*3
     }
 
     #[test]

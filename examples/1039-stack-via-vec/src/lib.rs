@@ -97,9 +97,21 @@ fn is_balanced(s: &str) -> bool {
     for ch in s.chars() {
         match ch {
             '(' | '[' | '{' => stack.push(ch),
-            ')' => if stack.pop() != Some('(') { return false; },
-            ']' => if stack.pop() != Some('[') { return false; },
-            '}' => if stack.pop() != Some('{') { return false; },
+            ')' => {
+                if stack.pop() != Some('(') {
+                    return false;
+                }
+            }
+            ']' => {
+                if stack.pop() != Some('[') {
+                    return false;
+                }
+            }
+            '}' => {
+                if stack.pop() != Some('{') {
+                    return false;
+                }
+            }
             _ => {}
         }
     }
@@ -113,20 +125,27 @@ fn balance_test() {
     assert!(!is_balanced("(("));
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_basic() { basic_stack(); }
+    fn test_basic() {
+        basic_stack();
+    }
 
     #[test]
-    fn test_vec_stack() { vec_as_stack(); }
+    fn test_vec_stack() {
+        vec_as_stack();
+    }
 
     #[test]
-    fn test_rpn() { eval_test(); }
+    fn test_rpn() {
+        eval_test();
+    }
 
     #[test]
-    fn test_balanced() { balance_test(); }
+    fn test_balanced() {
+        balance_test();
+    }
 }

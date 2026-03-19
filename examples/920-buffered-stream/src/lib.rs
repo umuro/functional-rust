@@ -1,16 +1,24 @@
-use std::sync::{Arc, Mutex, Condvar};
+use std::sync::{Arc, Condvar, Mutex};
 use std::thread;
 use std::time::Duration;
 
-struct Semaphore { count: Mutex<usize>, cond: Condvar }
+struct Semaphore {
+    count: Mutex<usize>,
+    cond: Condvar,
+}
 
 impl Semaphore {
     fn new(n: usize) -> Arc<Self> {
-        Arc::new(Self { count: Mutex::new(n), cond: Condvar::new() })
+        Arc::new(Self {
+            count: Mutex::new(n),
+            cond: Condvar::new(),
+        })
     }
     fn acquire(&self) {
         let mut c = self.count.lock().unwrap();
-        while *c == 0 { c = self.cond.wait(c).unwrap(); }
+        while *c == 0 {
+            c = self.cond.wait(c).unwrap();
+        }
         *c -= 1;
     }
     fn release(&self) {
@@ -45,25 +53,26 @@ where
         })
         .collect();
 
-    for h in handles { h.join().unwrap(); }
+    for h in handles {
+        h.join().unwrap();
+    }
 
     let mut res = results.lock().unwrap().drain(..).collect::<Vec<_>>();
     res.sort_by_key(|(i, _)| *i);
     res.into_iter().map(|(_, v)| v).collect()
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
     #[test]
     fn buffered_map_all_results() {
-        let r = buffered_map(vec![1u64,2,3,4,5], 2, |x| x * 2);
-        assert_eq!(r, vec![2,4,6,8,10]);
+        let r = buffered_map(vec![1u64, 2, 3, 4, 5], 2, |x| x * 2);
+        assert_eq!(r, vec![2, 4, 6, 8, 10]);
     }
     #[test]
     fn concurrency_1_sequential() {
-        let r = buffered_map(vec![1,2,3], 1, |x: i32| x + 10);
-        assert_eq!(r, vec![11,12,13]);
+        let r = buffered_map(vec![1, 2, 3], 1, |x: i32| x + 10);
+        assert_eq!(r, vec![11, 12, 13]);
     }
 }

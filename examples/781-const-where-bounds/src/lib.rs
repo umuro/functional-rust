@@ -43,7 +43,10 @@ pub struct PowerOfTwoBuffer<const SIZE: usize> {
 
 impl<const SIZE: usize> PowerOfTwoBuffer<SIZE> {
     pub fn new() -> Self {
-        assert!(SIZE > 0 && (SIZE & (SIZE - 1)) == 0, "SIZE must be a power of 2");
+        assert!(
+            SIZE > 0 && (SIZE & (SIZE - 1)) == 0,
+            "SIZE must be a power of 2"
+        );
         PowerOfTwoBuffer { data: [0; SIZE] }
     }
 
@@ -67,7 +70,10 @@ pub struct AlignedChunks<T> {
 impl<T: Default + Clone> AlignedChunks<T> {
     pub fn new(chunk_size: usize, total: usize) -> Self {
         assert!(chunk_size > 0, "chunk_size must be > 0");
-        assert!(total % chunk_size == 0, "total must be divisible by chunk_size");
+        assert!(
+            total % chunk_size == 0,
+            "total must be divisible by chunk_size"
+        );
         let num_chunks = total / chunk_size;
         let data = vec![vec![T::default(); chunk_size]; num_chunks];
         AlignedChunks { data, chunk_size }

@@ -54,7 +54,9 @@ pub struct DatabaseBuilder {
 impl DatabaseBuilder {
     /// Create a new builder
     pub fn new() -> Self {
-        DatabaseBuilder { db: Database::new() }
+        DatabaseBuilder {
+            db: Database::new(),
+        }
     }
 
     /// Add a user entry

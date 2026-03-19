@@ -146,6 +146,9 @@ mod tests {
         let err = make_test_chain("data.json");
         assert_eq!(format!("{}", err), "application startup failed");
         assert_eq!(format!("{}", err.source), "failed to read configuration");
-        assert_eq!(format!("{}", err.source.source), "file 'data.json' not found");
+        assert_eq!(
+            format!("{}", err.source.source),
+            "file 'data.json' not found"
+        );
     }
 }

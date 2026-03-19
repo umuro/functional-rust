@@ -91,10 +91,7 @@ pub fn product<const N: usize>(arr: &[i32; N]) -> i32 {
 }
 
 /// Zip two arrays
-pub fn zip_arrays<T: Copy, U: Copy, const N: usize>(
-    a: &[T; N],
-    b: &[U; N],
-) -> [(T, U); N] {
+pub fn zip_arrays<T: Copy, U: Copy, const N: usize>(a: &[T; N], b: &[U; N]) -> [(T, U); N] {
     std::array::from_fn(|i| (a[i], b[i]))
 }
 

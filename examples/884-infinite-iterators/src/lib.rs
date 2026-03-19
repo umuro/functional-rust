@@ -17,7 +17,9 @@ fn repeat_with_demo() -> Vec<f64> {
         let v = n;
         n *= 2.0;
         v
-    }).take(5).collect()
+    })
+    .take(5)
+    .collect()
 }
 
 // === Approach 2: successors (like OCaml iterate) ===
@@ -52,19 +54,23 @@ fn fibonacci_unfold() -> impl Iterator<Item = u64> {
 }
 
 fn digits(mut n: u64) -> Vec<u64> {
-    if n == 0 { return vec![0]; }
-    let mut result: Vec<u64> = unfold(n, |&n| {
-        if n == 0 { None } else { Some((n % 10, n / 10)) }
-    }).collect();
+    if n == 0 {
+        return vec![0];
+    }
+    let mut result: Vec<u64> =
+        unfold(n, |&n| if n == 0 { None } else { Some((n % 10, n / 10)) }).collect();
     result.reverse();
     result
 }
 
 // Combine infinite iterators
-fn interleave<T>(a: impl Iterator<Item = T>, b: impl Iterator<Item = T>) -> impl Iterator<Item = T> {
-    a.zip(b).flat_map(|(x, y)| std::iter::once(x).chain(std::iter::once(y)))
+fn interleave<T>(
+    a: impl Iterator<Item = T>,
+    b: impl Iterator<Item = T>,
+) -> impl Iterator<Item = T> {
+    a.zip(b)
+        .flat_map(|(x, y)| std::iter::once(x).chain(std::iter::once(y)))
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -114,10 +120,15 @@ mod tests {
     #[test]
     fn test_successors_collatz() {
         let collatz: Vec<u64> = std::iter::successors(Some(6u64), |&n| {
-            if n == 1 { None }
-            else if n % 2 == 0 { Some(n / 2) }
-            else { Some(3 * n + 1) }
-        }).collect();
+            if n == 1 {
+                None
+            } else if n % 2 == 0 {
+                Some(n / 2)
+            } else {
+                Some(3 * n + 1)
+            }
+        })
+        .collect();
         assert_eq!(collatz, vec![6, 3, 10, 5, 16, 8, 4, 2, 1]);
     }
 }

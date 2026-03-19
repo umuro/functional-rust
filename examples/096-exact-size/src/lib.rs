@@ -1,6 +1,5 @@
 // 096: Exact Size Iterator
 
-
 #[cfg(test)]
 mod tests {
     #[test]
@@ -21,7 +20,7 @@ mod tests {
     fn test_chunks_exact() {
         let v = vec![1, 2, 3, 4, 5];
         let c: Vec<&[i32]> = v.chunks_exact(2).collect();
-        assert_eq!(c, vec![&[1,2][..], &[3,4][..]]);
+        assert_eq!(c, vec![&[1, 2][..], &[3, 4][..]]);
         assert_eq!(v.chunks_exact(2).remainder(), &[5]);
     }
 }

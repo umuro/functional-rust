@@ -69,10 +69,8 @@ pub fn parallel_sort(mut v: Vec<i64>) -> Vec<i64> {
     let right = v.split_off(v.len() / 2);
     let left = v;
 
-    let (sorted_left, sorted_right) = join(
-        move || parallel_sort(left),
-        move || parallel_sort(right),
-    );
+    let (sorted_left, sorted_right) =
+        join(move || parallel_sort(left), move || parallel_sort(right));
 
     merge(sorted_left, sorted_right)
 }
@@ -88,10 +86,7 @@ pub fn parallel_sum(data: &[i64]) -> i64 {
     let mid = data.len() / 2;
     let (left, right) = data.split_at(mid);
 
-    let (sum_left, sum_right) = scoped_join(
-        || parallel_sum(left),
-        || parallel_sum(right),
-    );
+    let (sum_left, sum_right) = scoped_join(|| parallel_sum(left), || parallel_sum(right));
 
     sum_left + sum_right
 }
@@ -119,10 +114,7 @@ mod tests {
     #[test]
     fn test_scoped_join() {
         let data = vec![1, 2, 3, 4, 5];
-        let (sum, len) = scoped_join(
-            || data.iter().sum::<i32>(),
-            || data.len(),
-        );
+        let (sum, len) = scoped_join(|| data.iter().sum::<i32>(), || data.len());
         assert_eq!(sum, 15);
         assert_eq!(len, 5);
     }

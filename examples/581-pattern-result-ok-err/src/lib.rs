@@ -26,7 +26,8 @@ impl std::error::Error for MyError {}
 
 /// Parse a string to i32, mapping the error.
 pub fn parse(s: &str) -> Result<i32, MyError> {
-    s.parse().map_err(|e: ParseIntError| MyError::Parse(e.to_string()))
+    s.parse()
+        .map_err(|e: ParseIntError| MyError::Parse(e.to_string()))
 }
 
 /// Validate that a number is in range [1, 100].

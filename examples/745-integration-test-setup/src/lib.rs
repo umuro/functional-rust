@@ -66,9 +66,7 @@ pub fn validate_config(c: &Config) -> Result<(), ConfigError> {
 
 /// Parse a port string into a u16
 pub fn parse_port(s: &str) -> Result<u16, String> {
-    let n: u32 = s
-        .parse()
-        .map_err(|_| format!("'{}' is not a number", s))?;
+    let n: u32 = s.parse().map_err(|_| format!("'{}' is not a number", s))?;
     if n == 0 || n > 65535 {
         return Err(format!("port {} out of range (1-65535)", n));
     }

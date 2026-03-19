@@ -14,7 +14,11 @@ pub fn is_pangram_hashset(s: &str) -> bool {
         .chars()
         .filter_map(|c| {
             let lc = c.to_ascii_lowercase();
-            if lc.is_ascii_lowercase() { Some(lc) } else { None }
+            if lc.is_ascii_lowercase() {
+                Some(lc)
+            } else {
+                None
+            }
         })
         .collect();
     chars.len() == 26
@@ -78,6 +82,8 @@ mod tests {
 
     #[test]
     fn test_missing_one() {
-        assert!(!is_pangram_bitset("The quick brown fox jumps over the lazy do"));
+        assert!(!is_pangram_bitset(
+            "The quick brown fox jumps over the lazy do"
+        ));
     }
 }

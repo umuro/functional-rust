@@ -98,7 +98,9 @@ pub fn escape_html(s: &str) -> Cow<str> {
 
 /// URL-encode a string, only allocating if needed
 pub fn url_encode(s: &str) -> Cow<str> {
-    let needs_encoding = s.chars().any(|c| !matches!(c, 'a'..='z' | 'A'..='Z' | '0'..='9' | '-' | '_' | '.' | '~'));
+    let needs_encoding = s
+        .chars()
+        .any(|c| !matches!(c, 'a'..='z' | 'A'..='Z' | '0'..='9' | '-' | '_' | '.' | '~'));
 
     if !needs_encoding {
         Cow::Borrowed(s)

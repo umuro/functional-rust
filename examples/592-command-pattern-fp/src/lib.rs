@@ -115,9 +115,18 @@ pub fn apply(state: DrawState, cmd: &DrawCmd) -> DrawState {
 
 /// Count different command types.
 pub fn count_commands(cmds: &[DrawCmd]) -> (usize, usize, usize) {
-    let moves = cmds.iter().filter(|c| matches!(c, DrawCmd::MoveTo(_, _))).count();
-    let lines = cmds.iter().filter(|c| matches!(c, DrawCmd::LineTo(_, _))).count();
-    let style = cmds.iter().filter(|c| matches!(c, DrawCmd::SetColor(_) | DrawCmd::SetWidth(_))).count();
+    let moves = cmds
+        .iter()
+        .filter(|c| matches!(c, DrawCmd::MoveTo(_, _)))
+        .count();
+    let lines = cmds
+        .iter()
+        .filter(|c| matches!(c, DrawCmd::LineTo(_, _)))
+        .count();
+    let style = cmds
+        .iter()
+        .filter(|c| matches!(c, DrawCmd::SetColor(_) | DrawCmd::SetWidth(_)))
+        .count();
     (moves, lines, style)
 }
 

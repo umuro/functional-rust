@@ -2,7 +2,6 @@
 //!
 //! `any(pred)` is ∃, `all(pred)` is ∀ — both short-circuit.
 
-
 #[cfg(test)]
 mod tests {
     #[test]

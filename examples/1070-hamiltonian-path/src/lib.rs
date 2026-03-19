@@ -10,19 +10,27 @@ fn hamiltonian_path(adj: &[Vec<i32>]) -> Option<Vec<usize>> {
 
     fn solve(pos: usize, adj: &[Vec<i32>], path: &mut Vec<usize>, visited: &mut Vec<bool>) -> bool {
         let n = adj.len();
-        if pos == n { return true; }
+        if pos == n {
+            return true;
+        }
         for v in 0..n {
             if !visited[v] && adj[path[pos - 1]][v] == 1 {
                 path[pos] = v;
                 visited[v] = true;
-                if solve(pos + 1, adj, path, visited) { return true; }
+                if solve(pos + 1, adj, path, visited) {
+                    return true;
+                }
                 visited[v] = false;
             }
         }
         false
     }
 
-    if solve(1, adj, &mut path, &mut visited) { Some(path) } else { None }
+    if solve(1, adj, &mut path, &mut visited) {
+        Some(path)
+    } else {
+        None
+    }
 }
 
 // Approach 2: Try all starting vertices
@@ -34,14 +42,23 @@ fn hamiltonian_path_any(adj: &[Vec<i32>]) -> Option<Vec<usize>> {
         path[0] = start;
         visited[start] = true;
 
-        fn solve(pos: usize, adj: &[Vec<i32>], path: &mut Vec<usize>, visited: &mut Vec<bool>) -> bool {
+        fn solve(
+            pos: usize,
+            adj: &[Vec<i32>],
+            path: &mut Vec<usize>,
+            visited: &mut Vec<bool>,
+        ) -> bool {
             let n = adj.len();
-            if pos == n { return true; }
+            if pos == n {
+                return true;
+            }
             for v in 0..n {
                 if !visited[v] && adj[path[pos - 1]][v] == 1 {
                     path[pos] = v;
                     visited[v] = true;
-                    if solve(pos + 1, adj, path, visited) { return true; }
+                    if solve(pos + 1, adj, path, visited) {
+                        return true;
+                    }
                     visited[v] = false;
                 }
             }
@@ -58,7 +75,9 @@ fn hamiltonian_path_any(adj: &[Vec<i32>]) -> Option<Vec<usize>> {
 // Approach 3: Bitmask DP for Hamiltonian path existence (O(2^n * n^2))
 fn hamiltonian_exists_dp(adj: &[Vec<i32>]) -> bool {
     let n = adj.len();
-    if n == 0 { return true; }
+    if n == 0 {
+        return true;
+    }
     // dp[mask][i] = can we reach node i having visited exactly the nodes in mask?
     let mut dp = vec![vec![false; n]; 1 << n];
     for i in 0..n {
@@ -66,8 +85,12 @@ fn hamiltonian_exists_dp(adj: &[Vec<i32>]) -> bool {
     }
     for mask in 1..(1 << n) {
         for u in 0..n {
-            if !dp[mask][u] { continue; }
-            if mask & (1 << u) == 0 { continue; }
+            if !dp[mask][u] {
+                continue;
+            }
+            if mask & (1 << u) == 0 {
+                continue;
+            }
             for v in 0..n {
                 if mask & (1 << v) == 0 && adj[u][v] == 1 {
                     dp[mask | (1 << v)][v] = true;
@@ -85,31 +108,51 @@ mod tests {
 
     #[test]
     fn test_complete_graph() {
-        let adj = vec![vec![0,1,1,1], vec![1,0,1,1], vec![1,1,0,1], vec![1,1,1,0]];
+        let adj = vec![
+            vec![0, 1, 1, 1],
+            vec![1, 0, 1, 1],
+            vec![1, 1, 0, 1],
+            vec![1, 1, 1, 0],
+        ];
         let path = hamiltonian_path(&adj).unwrap();
         assert_eq!(path.len(), 4);
     }
 
     #[test]
     fn test_path_graph() {
-        let adj = vec![vec![0,1,0,0], vec![1,0,1,0], vec![0,1,0,1], vec![0,0,1,0]];
+        let adj = vec![
+            vec![0, 1, 0, 0],
+            vec![1, 0, 1, 0],
+            vec![0, 1, 0, 1],
+            vec![0, 0, 1, 0],
+        ];
         let path = hamiltonian_path(&adj).unwrap();
         assert_eq!(path.len(), 4);
     }
 
     #[test]
     fn test_any_start() {
-        let adj = vec![vec![0,1,1,1], vec![1,0,1,1], vec![1,1,0,1], vec![1,1,1,0]];
+        let adj = vec![
+            vec![0, 1, 1, 1],
+            vec![1, 0, 1, 1],
+            vec![1, 1, 0, 1],
+            vec![1, 1, 1, 0],
+        ];
         assert!(hamiltonian_path_any(&adj).is_some());
     }
 
     #[test]
     fn test_bitmask_dp() {
-        let adj = vec![vec![0,1,1,1], vec![1,0,1,1], vec![1,1,0,1], vec![1,1,1,0]];
+        let adj = vec![
+            vec![0, 1, 1, 1],
+            vec![1, 0, 1, 1],
+            vec![1, 1, 0, 1],
+            vec![1, 1, 1, 0],
+        ];
         assert!(hamiltonian_exists_dp(&adj));
 
         // Disconnected graph
-        let adj2 = vec![vec![0,0,0], vec![0,0,0], vec![0,0,0]];
+        let adj2 = vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]];
         assert!(!hamiltonian_exists_dp(&adj2));
     }
 }

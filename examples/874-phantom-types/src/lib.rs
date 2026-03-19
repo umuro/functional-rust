@@ -16,7 +16,10 @@ struct Quantity<Unit> {
 
 impl<U> Quantity<U> {
     fn new(value: f64) -> Self {
-        Quantity { value, _unit: PhantomData }
+        Quantity {
+            value,
+            _unit: PhantomData,
+        }
     }
 
     fn scale(self, factor: f64) -> Self {
@@ -47,11 +50,17 @@ struct Door<State> {
 
 impl Door<Unlocked> {
     fn new(name: &str) -> Self {
-        Door { name: name.to_string(), _state: PhantomData }
+        Door {
+            name: name.to_string(),
+            _state: PhantomData,
+        }
     }
 
     fn lock(self) -> Door<Locked> {
-        Door { name: self.name, _state: PhantomData }
+        Door {
+            name: self.name,
+            _state: PhantomData,
+        }
     }
 
     fn walk_through(&self) -> String {
@@ -61,7 +70,10 @@ impl Door<Unlocked> {
 
 impl Door<Locked> {
     fn unlock(self) -> Door<Unlocked> {
-        Door { name: self.name, _state: PhantomData }
+        Door {
+            name: self.name,
+            _state: PhantomData,
+        }
     }
     // Cannot walk_through a locked door — method doesn't exist!
 }
@@ -77,12 +89,18 @@ struct Email<State> {
 
 impl Email<Unvalidated> {
     fn new(address: &str) -> Self {
-        Email { address: address.to_string(), _state: PhantomData }
+        Email {
+            address: address.to_string(),
+            _state: PhantomData,
+        }
     }
 
     fn validate(self) -> Result<Email<Validated>, String> {
         if self.address.contains('@') {
-            Ok(Email { address: self.address, _state: PhantomData })
+            Ok(Email {
+                address: self.address,
+                _state: PhantomData,
+            })
         } else {
             Err(format!("Invalid email: {}", self.address))
         }
@@ -94,7 +112,6 @@ impl Email<Validated> {
         format!("Sent to {}", self.address)
     }
 }
-
 
 #[cfg(test)]
 mod tests {

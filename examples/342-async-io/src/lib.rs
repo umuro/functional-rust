@@ -49,7 +49,6 @@ fn simulate_poll(counter: &mut u32) -> PollResult<&'static str> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -73,6 +72,9 @@ mod tests {
         assert!(matches!(simulate_poll(&mut counter), PollResult::Pending));
         assert!(matches!(simulate_poll(&mut counter), PollResult::Pending));
         assert!(matches!(simulate_poll(&mut counter), PollResult::Pending));
-        assert!(matches!(simulate_poll(&mut counter), PollResult::Ready("done")));
+        assert!(matches!(
+            simulate_poll(&mut counter),
+            PollResult::Ready("done")
+        ));
     }
 }

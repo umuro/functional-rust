@@ -7,9 +7,9 @@
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Shape {
-    Circle(f64),              // radius
-    Rectangle(f64, f64),      // width, height
-    Triangle(f64, f64, f64),  // three sides
+    Circle(f64),             // radius
+    Rectangle(f64, f64),     // width, height
+    Triangle(f64, f64, f64), // three sides
 }
 
 // ── Idiomatic Rust: match expressions ───────────────────────────────────────
@@ -35,8 +35,9 @@ pub fn describe(shape: &Shape) -> String {
             format!("Square with side {w}")
         }
         Shape::Rectangle(w, h) => format!("Rectangle {w}×{h}"),
-        Shape::Triangle(a, b, c) if (a - b).abs() < f64::EPSILON
-            && (b - c).abs() < f64::EPSILON => {
+        Shape::Triangle(a, b, c)
+            if (a - b).abs() < f64::EPSILON && (b - c).abs() < f64::EPSILON =>
+        {
             format!("Equilateral triangle with side {a}")
         }
         Shape::Triangle(a, b, c) => format!("Triangle with sides {a}, {b}, {c}"),
@@ -48,7 +49,8 @@ pub fn describe(shape: &Shape) -> String {
 /// Find the largest shape by area from an optional list
 pub fn largest_area(shapes: &[Shape]) -> Option<f64> {
     // Uses iterator + fold, but the interesting bit is Option handling
-    shapes.iter()
+    shapes
+        .iter()
         .map(|s| area(s))
         .fold(None, |max, a| match max {
             None => Some(a),
@@ -76,11 +78,14 @@ pub fn count_by_type(shapes: &[Shape]) -> (usize, usize, usize) {
 
 /// Scale all shapes by a factor — map with pattern matching inside
 pub fn scale_all(shapes: &[Shape], factor: f64) -> Vec<Shape> {
-    shapes.iter().map(|s| match s {
-        Shape::Circle(r) => Shape::Circle(r * factor),
-        Shape::Rectangle(w, h) => Shape::Rectangle(w * factor, h * factor),
-        Shape::Triangle(a, b, c) => Shape::Triangle(a * factor, b * factor, c * factor),
-    }).collect()
+    shapes
+        .iter()
+        .map(|s| match s {
+            Shape::Circle(r) => Shape::Circle(r * factor),
+            Shape::Rectangle(w, h) => Shape::Rectangle(w * factor, h * factor),
+            Shape::Triangle(a, b, c) => Shape::Triangle(a * factor, b * factor, c * factor),
+        })
+        .collect()
 }
 
 #[cfg(test)]
@@ -108,7 +113,10 @@ mod tests {
     #[test]
     fn test_describe_with_guards() {
         assert_eq!(describe(&Shape::Rectangle(5.0, 5.0)), "Square with side 5");
-        assert_eq!(describe(&Shape::Triangle(3.0, 3.0, 3.0)), "Equilateral triangle with side 3");
+        assert_eq!(
+            describe(&Shape::Triangle(3.0, 3.0, 3.0)),
+            "Equilateral triangle with side 3"
+        );
         assert!(describe(&Shape::Rectangle(3.0, 4.0)).contains("×"));
     }
 
@@ -126,7 +134,8 @@ mod tests {
     #[test]
     fn test_count_by_type() {
         let shapes = vec![
-            Shape::Circle(1.0), Shape::Circle(2.0),
+            Shape::Circle(1.0),
+            Shape::Circle(2.0),
             Shape::Rectangle(1.0, 2.0),
             Shape::Triangle(3.0, 4.0, 5.0),
         ];

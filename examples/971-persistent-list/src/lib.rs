@@ -66,7 +66,9 @@ pub enum FList<T> {
 }
 
 impl<T: Clone + PartialEq> FList<T> {
-    pub fn empty() -> Self { FList::Nil }
+    pub fn empty() -> Self {
+        FList::Nil
+    }
 
     pub fn cons(head: T, tail: FList<T>) -> Self {
         FList::Cons(head, Rc::new(tail))
@@ -103,7 +105,6 @@ impl<T: Clone + PartialEq> FList<T> {
         v
     }
 }
-
 
 #[cfg(test)]
 mod tests {

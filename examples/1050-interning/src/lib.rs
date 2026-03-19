@@ -49,8 +49,8 @@ fn basic_interning() {
     let id2 = interner.intern("world");
     let id3 = interner.intern("hello"); // Same as id1
 
-    assert_eq!(id1, id3);          // Same string → same ID
-    assert_ne!(id1, id2);          // Different strings → different IDs
+    assert_eq!(id1, id3); // Same string → same ID
+    assert_ne!(id1, id2); // Different strings → different IDs
     assert_eq!(interner.resolve(id1), Some("hello"));
     assert_eq!(interner.resolve(id2), Some("world"));
     assert_eq!(interner.len(), 2); // Only 2 unique strings
@@ -120,16 +120,24 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_basic() { basic_interning(); }
+    fn test_basic() {
+        basic_interning();
+    }
 
     #[test]
-    fn test_fast_compare() { fast_comparison(); }
+    fn test_fast_compare() {
+        fast_comparison();
+    }
 
     #[test]
-    fn test_symbols() { symbol_table(); }
+    fn test_symbols() {
+        symbol_table();
+    }
 
     #[test]
-    fn test_symbol_key() { symbol_as_key(); }
+    fn test_symbol_key() {
+        symbol_as_key();
+    }
 
     #[test]
     fn test_empty_string() {

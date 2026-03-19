@@ -2,8 +2,14 @@
 //!
 //! Extracting fields from structs in patterns.
 
-pub struct Point { pub x: i32, pub y: i32 }
-pub struct Person { pub name: String, pub age: u32 }
+pub struct Point {
+    pub x: i32,
+    pub y: i32,
+}
+pub struct Person {
+    pub name: String,
+    pub age: u32,
+}
 
 /// Basic destructuring.
 pub fn get_x(p: &Point) -> i32 {
@@ -53,7 +59,10 @@ mod tests {
 
     #[test]
     fn test_describe() {
-        let p = Person { name: "Alice".into(), age: 30 };
+        let p = Person {
+            name: "Alice".into(),
+            age: 30,
+        };
         assert!(describe_person(&p).contains("Alice"));
     }
 

@@ -8,7 +8,9 @@ use std::task::{Context, Poll, RawWaker, RawWakerVTable, Waker};
 fn block_on<F: Future>(mut fut: F) -> F::Output {
     let mut fut = unsafe { Pin::new_unchecked(&mut fut) };
     fn noop(_: *const ()) {}
-    fn clone(p: *const ()) -> RawWaker { RawWaker::new(p, &VT) }
+    fn clone(p: *const ()) -> RawWaker {
+        RawWaker::new(p, &VT)
+    }
     static VT: RawWakerVTable = RawWakerVTable::new(clone, noop, noop, noop);
     let waker = unsafe { Waker::from_raw(RawWaker::new(std::ptr::null(), &VT)) };
     let mut cx = Context::from_waker(&waker);
@@ -19,9 +21,15 @@ fn block_on<F: Future>(mut fut: F) -> F::Output {
 }
 
 // --- Simulated async data-fetch functions ---
-async fn fetch_user_id() -> u32 { 42 }
-async fn fetch_user_name(_id: u32) -> String { "Alice".to_string() }
-async fn fetch_user_email(_name: &str) -> String { "alice@example.com".to_string() }
+async fn fetch_user_id() -> u32 {
+    42
+}
+async fn fetch_user_name(_id: u32) -> String {
+    "Alice".to_string()
+}
+async fn fetch_user_email(_name: &str) -> String {
+    "alice@example.com".to_string()
+}
 
 // --- Approach 1: Sequential let-binding with await ---
 // Each .await = one let* step in OCaml
@@ -33,9 +41,15 @@ async fn full_lookup() -> (u32, String, String) {
 }
 
 // --- Approach 2: Accumulating through a pipeline ---
-async fn step1(x: i32) -> i32 { x + 10 }
-async fn step2(x: i32) -> i32 { x * 2 }
-async fn step3(x: i32) -> i32 { x - 5 }
+async fn step1(x: i32) -> i32 {
+    x + 10
+}
+async fn step2(x: i32) -> i32 {
+    x * 2
+}
+async fn step3(x: i32) -> i32 {
+    x - 5
+}
 
 async fn pipeline_seq(input: i32) -> (i32, i32, i32, i32) {
     let a = step1(input).await;
@@ -46,22 +60,25 @@ async fn pipeline_seq(input: i32) -> (i32, i32, i32, i32) {
 
 // --- Approach 3: Error-aware sequence with ? operator ---
 async fn guarded_div(a: i32, b: i32) -> Result<i32, &'static str> {
-    if b == 0 { Err("division by zero") } else { Ok(a / b) }
+    if b == 0 {
+        Err("division by zero")
+    } else {
+        Ok(a / b)
+    }
 }
 
 async fn safe_pipeline() -> Result<i32, &'static str> {
     let x = 100;
-    let y = guarded_div(x, 4).await?;   // let*? — short-circuits on Err
+    let y = guarded_div(x, 4).await?; // let*? — short-circuits on Err
     let z = guarded_div(y, 5).await?;
     Ok(z)
 }
 
 async fn bad_pipeline() -> Result<i32, &'static str> {
     let x = 100;
-    let _y = guarded_div(x, 0).await?;  // short-circuits here
+    let _y = guarded_div(x, 0).await?; // short-circuits here
     Ok(999)
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -79,9 +96,9 @@ mod tests {
     fn test_pipeline_seq() {
         let (orig, a, b, c) = block_on(pipeline_seq(5));
         assert_eq!(orig, 5);
-        assert_eq!(a, 15);   // 5+10
-        assert_eq!(b, 30);   // 15*2
-        assert_eq!(c, 25);   // 30-5
+        assert_eq!(a, 15); // 5+10
+        assert_eq!(b, 30); // 15*2
+        assert_eq!(c, 25); // 30-5
     }
 
     #[test]
@@ -98,9 +115,9 @@ mod tests {
     fn test_sequential_order() {
         // Values from earlier awaits are available in later ones
         let result = block_on(async {
-            let a = step1(10).await;  // 20
-            let b = step2(a).await;   // 40 — uses a
-            let c = step3(b).await;   // 35 — uses b
+            let a = step1(10).await; // 20
+            let b = step2(a).await; // 40 — uses a
+            let c = step3(b).await; // 35 — uses b
             c
         });
         assert_eq!(result, 35);

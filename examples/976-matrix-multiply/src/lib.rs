@@ -22,7 +22,9 @@ pub fn mat_multiply(a: &[Vec<f64>], b: &[Vec<f64>]) -> Vec<Vec<f64>> {
 
 // Transpose a matrix
 pub fn transpose(m: &[Vec<f64>]) -> Vec<Vec<f64>> {
-    if m.is_empty() { return vec![]; }
+    if m.is_empty() {
+        return vec![];
+    }
     let rows = m.len();
     let cols = m[0].len();
     let mut t = vec![vec![0.0f64; rows]; cols];
@@ -63,12 +65,8 @@ pub fn strassen_2x2(a: &[[f64; 2]; 2], b: &[[f64; 2]; 2]) -> [[f64; 2]; 2] {
     let m6 = (a21 - a11) * (b11 + b12);
     let m7 = (a12 - a22) * (b21 + b22);
 
-    [
-        [m1 + m4 - m5 + m7, m3 + m5],
-        [m2 + m4, m1 - m2 + m3 + m6],
-    ]
+    [[m1 + m4 - m5 + m7, m3 + m5], [m2 + m4, m1 - m2 + m3 + m6]]
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -87,15 +85,8 @@ mod tests {
 
     #[test]
     fn test_non_square() {
-        let m23 = vec![
-            vec![1.0, 2.0, 3.0],
-            vec![4.0, 5.0, 6.0],
-        ];
-        let m32 = vec![
-            vec![7.0, 8.0],
-            vec![9.0, 10.0],
-            vec![11.0, 12.0],
-        ];
+        let m23 = vec![vec![1.0, 2.0, 3.0], vec![4.0, 5.0, 6.0]];
+        let m32 = vec![vec![7.0, 8.0], vec![9.0, 10.0], vec![11.0, 12.0]];
         let result = mat_multiply(&m23, &m32);
         assert_eq!(result[0][0], 58.0);
         assert_eq!(result[0][1], 64.0);
@@ -106,11 +97,7 @@ mod tests {
     #[test]
     fn test_transposed_matches_naive() {
         let a = vec![vec![1.0, 2.0, 3.0], vec![4.0, 5.0, 6.0]];
-        let b = vec![
-            vec![7.0, 8.0],
-            vec![9.0, 10.0],
-            vec![11.0, 12.0],
-        ];
+        let b = vec![vec![7.0, 8.0], vec![9.0, 10.0], vec![11.0, 12.0]];
         let naive = mat_multiply(&a, &b);
         let transposed = mat_multiply_transposed(&a, &b);
         assert_eq!(naive, transposed);

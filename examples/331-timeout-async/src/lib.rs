@@ -52,7 +52,10 @@ where
 }
 
 /// Simplified timeout for operations that can't fail (except by timeout).
-pub fn with_timeout_simple<T>(timeout: Duration, f: impl FnOnce() -> T + Send + 'static) -> Option<T>
+pub fn with_timeout_simple<T>(
+    timeout: Duration,
+    f: impl FnOnce() -> T + Send + 'static,
+) -> Option<T>
 where
     T: Send + 'static,
 {

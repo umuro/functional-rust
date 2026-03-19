@@ -45,7 +45,6 @@ fn get_config_result(key: &str) -> Result<&str, String> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -101,7 +100,11 @@ mod tests {
     fn test_migration_pattern() {
         // Common migration: wrap sentinel check in Option
         fn migrate(val: i32) -> Option<i32> {
-            if val == -1 { None } else { Some(val) }
+            if val == -1 {
+                None
+            } else {
+                Some(val)
+            }
         }
         assert_eq!(migrate(find_index_sentinel(&[1, 2], 2)), Some(1));
         assert_eq!(migrate(find_index_sentinel(&[1, 2], 9)), None);

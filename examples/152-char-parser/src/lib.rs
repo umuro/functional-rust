@@ -9,12 +9,10 @@ type Parser<'a, T> = Box<dyn Fn(&'a str) -> ParseResult<'a, T> + 'a>;
 // ============================================================
 
 fn char_parser<'a>(expected: char) -> Parser<'a, char> {
-    Box::new(move |input: &'a str| {
-        match input.chars().next() {
-            Some(c) if c == expected => Ok((c, &input[c.len_utf8()..])),
-            Some(c) => Err(format!("Expected '{}', got '{}'", expected, c)),
-            None => Err(format!("Expected '{}', got EOF", expected)),
-        }
+    Box::new(move |input: &'a str| match input.chars().next() {
+        Some(c) if c == expected => Ok((c, &input[c.len_utf8()..])),
+        Some(c) => Err(format!("Expected '{}', got '{}'", expected, c)),
+        None => Err(format!("Expected '{}', got EOF", expected)),
     })
 }
 
@@ -23,11 +21,9 @@ fn char_parser<'a>(expected: char) -> Parser<'a, char> {
 // ============================================================
 
 fn any_char<'a>() -> Parser<'a, char> {
-    Box::new(|input: &'a str| {
-        match input.chars().next() {
-            Some(c) => Ok((c, &input[c.len_utf8()..])),
-            None => Err("Expected any character, got EOF".to_string()),
-        }
+    Box::new(|input: &'a str| match input.chars().next() {
+        Some(c) => Ok((c, &input[c.len_utf8()..])),
+        None => Err("Expected any character, got EOF".to_string()),
     })
 }
 
@@ -36,22 +32,18 @@ fn any_char<'a>() -> Parser<'a, char> {
 // ============================================================
 
 fn none_of<'a>(chars: Vec<char>) -> Parser<'a, char> {
-    Box::new(move |input: &'a str| {
-        match input.chars().next() {
-            Some(c) if !chars.contains(&c) => Ok((c, &input[c.len_utf8()..])),
-            Some(c) => Err(format!("Unexpected character '{}'", c)),
-            None => Err("Expected a character, got EOF".to_string()),
-        }
+    Box::new(move |input: &'a str| match input.chars().next() {
+        Some(c) if !chars.contains(&c) => Ok((c, &input[c.len_utf8()..])),
+        Some(c) => Err(format!("Unexpected character '{}'", c)),
+        None => Err("Expected a character, got EOF".to_string()),
     })
 }
 
 fn one_of<'a>(chars: Vec<char>) -> Parser<'a, char> {
-    Box::new(move |input: &'a str| {
-        match input.chars().next() {
-            Some(c) if chars.contains(&c) => Ok((c, &input[c.len_utf8()..])),
-            Some(c) => Err(format!("Character '{}' not in allowed set", c)),
-            None => Err("Expected a character, got EOF".to_string()),
-        }
+    Box::new(move |input: &'a str| match input.chars().next() {
+        Some(c) if chars.contains(&c) => Ok((c, &input[c.len_utf8()..])),
+        Some(c) => Err(format!("Character '{}' not in allowed set", c)),
+        None => Err("Expected a character, got EOF".to_string()),
     })
 }
 

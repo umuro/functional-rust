@@ -7,7 +7,9 @@ pub trait Container {
     type Item;
     fn empty() -> Self;
     fn add(&mut self, item: Self::Item);
-    fn to_vec(&self) -> Vec<Self::Item> where Self::Item: Clone;
+    fn to_vec(&self) -> Vec<Self::Item>
+    where
+        Self::Item: Clone;
 }
 
 /// Type parameter trait allows multiple impls
@@ -19,19 +21,29 @@ pub struct Stack<T>(Vec<T>);
 
 impl<T: Clone> Container for Stack<T> {
     type Item = T;
-    fn empty() -> Self { Stack(vec![]) }
-    fn add(&mut self, item: T) { self.0.push(item); }
-    fn to_vec(&self) -> Vec<T> { self.0.clone() }
+    fn empty() -> Self {
+        Stack(vec![])
+    }
+    fn add(&mut self, item: T) {
+        self.0.push(item);
+    }
+    fn to_vec(&self) -> Vec<T> {
+        self.0.clone()
+    }
 }
 
 pub struct Wrapper(pub i32);
 
 impl ConvertTo<String> for Wrapper {
-    fn convert(&self) -> String { self.0.to_string() }
+    fn convert(&self) -> String {
+        self.0.to_string()
+    }
 }
 
 impl ConvertTo<f64> for Wrapper {
-    fn convert(&self) -> f64 { self.0 as f64 }
+    fn convert(&self) -> f64 {
+        self.0 as f64
+    }
 }
 
 #[cfg(test)]
@@ -41,7 +53,9 @@ mod tests {
     #[test]
     fn test_container() {
         let mut s = Stack::<i32>::empty();
-        s.add(1); s.add(2); s.add(3);
+        s.add(1);
+        s.add(2);
+        s.add(3);
         assert_eq!(s.to_vec(), vec![1, 2, 3]);
     }
 

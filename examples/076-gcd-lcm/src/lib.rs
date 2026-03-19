@@ -3,12 +3,20 @@
 /// Ownership insight: All values are Copy (integers), so ownership
 /// is trivial here. The recursive structure mirrors OCaml exactly.
 pub fn gcd(a: u64, b: u64) -> u64 {
-    if b == 0 { a } else { gcd(b, a % b) }
+    if b == 0 {
+        a
+    } else {
+        gcd(b, a % b)
+    }
 }
 
 /// LCM using GCD
 pub fn lcm(a: u64, b: u64) -> u64 {
-    if a == 0 || b == 0 { 0 } else { a / gcd(a, b) * b }
+    if a == 0 || b == 0 {
+        0
+    } else {
+        a / gcd(a, b) * b
+    }
 }
 
 /// GCD of a slice — uses fold pattern like OCaml List.fold_left

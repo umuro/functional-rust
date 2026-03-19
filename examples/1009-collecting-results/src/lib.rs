@@ -27,7 +27,6 @@ fn parse_all_fold(inputs: &[&str]) -> Result<Vec<i64>, String> {
     })
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

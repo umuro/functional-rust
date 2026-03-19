@@ -14,13 +14,14 @@ pub fn unzip_pairs<A, B>(pairs: Vec<(A, B)>) -> (Vec<A>, Vec<B>) {
 
 /// Partition map pattern: split by parse success
 pub fn partition_parse(data: &[&str]) -> (Vec<i32>, Vec<String>) {
-    data.iter().fold((Vec::new(), Vec::new()), |(mut nums, mut words), s| {
-        match s.parse::<i32>() {
-            Ok(n) => nums.push(n),
-            Err(_) => words.push(s.to_string()),
-        }
-        (nums, words)
-    })
+    data.iter()
+        .fold((Vec::new(), Vec::new()), |(mut nums, mut words), s| {
+            match s.parse::<i32>() {
+                Ok(n) => nums.push(n),
+                Err(_) => words.push(s.to_string()),
+            }
+            (nums, words)
+        })
 }
 
 /// Trisect: split into negative, zero, positive

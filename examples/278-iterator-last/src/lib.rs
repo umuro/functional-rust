@@ -2,7 +2,6 @@
 //!
 //! `last()` consumes the iterator to return `Option<T>` with the final element.
 
-
 #[cfg(test)]
 mod tests {
     #[test]

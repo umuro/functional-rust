@@ -10,18 +10,21 @@ enum CalcError {
 }
 
 fn parse_int(s: &str) -> Result<i32, CalcError> {
-    s.parse::<i32>().map_err(|e| CalcError::Parse(e.to_string()))
+    s.parse::<i32>()
+        .map_err(|e| CalcError::Parse(e.to_string()))
 }
 
 fn safe_div(a: i32, b: i32) -> Result<i32, CalcError> {
-    if b == 0 { Err(CalcError::DivByZero) } else { Ok(a / b) }
+    if b == 0 {
+        Err(CalcError::DivByZero)
+    } else {
+        Ok(a / b)
+    }
 }
 
 // Approach 1: Using and_then (monadic bind)
 fn compute_bind(s1: &str, s2: &str) -> Result<i32, CalcError> {
-    parse_int(s1).and_then(|a| {
-        parse_int(s2).and_then(|b| safe_div(a, b))
-    })
+    parse_int(s1).and_then(|a| parse_int(s2).and_then(|b| safe_div(a, b)))
 }
 
 // Approach 2: Using ? operator (syntactic sugar for bind)
@@ -38,7 +41,6 @@ fn pipeline(s: &str) -> Result<i32, CalcError> {
         .map(|n| n + 1)
         .map(|n| n * 2)
 }
-
 
 #[cfg(test)]
 mod tests {

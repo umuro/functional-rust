@@ -25,10 +25,7 @@ fn word_frequency() {
 
     let mut counts: HashMap<&str, usize> = HashMap::new();
     for word in &words {
-        counts
-            .entry(word)
-            .and_modify(|c| *c += 1)
-            .or_insert(1);
+        counts.entry(word).and_modify(|c| *c += 1).or_insert(1);
     }
 
     assert_eq!(counts["the"], 3);
@@ -68,22 +65,29 @@ fn functional_counting() {
     assert_eq!(counts[&3], 3);
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_char_frequency() { char_frequency(); }
+    fn test_char_frequency() {
+        char_frequency();
+    }
 
     #[test]
-    fn test_word_frequency() { word_frequency(); }
+    fn test_word_frequency() {
+        word_frequency();
+    }
 
     #[test]
-    fn test_most_frequent() { most_frequent(); }
+    fn test_most_frequent() {
+        most_frequent();
+    }
 
     #[test]
-    fn test_functional_counting() { functional_counting(); }
+    fn test_functional_counting() {
+        functional_counting();
+    }
 
     #[test]
     fn test_empty_input() {

@@ -89,15 +89,25 @@ struct RetryConfig {
 }
 
 impl RetryConfig {
-    fn new() -> Self { RetryConfig { max_attempts: 3, base_delay_ms: 100 } }
-    fn attempts(mut self, n: usize) -> Self { self.max_attempts = n; self }
-    fn base_delay(mut self, ms: u64) -> Self { self.base_delay_ms = ms; self }
+    fn new() -> Self {
+        RetryConfig {
+            max_attempts: 3,
+            base_delay_ms: 100,
+        }
+    }
+    fn attempts(mut self, n: usize) -> Self {
+        self.max_attempts = n;
+        self
+    }
+    fn base_delay(mut self, ms: u64) -> Self {
+        self.base_delay_ms = ms;
+        self
+    }
 
     fn run<T, E, F: FnMut() -> Result<T, E>>(&self, f: F) -> Result<T, E> {
         retry(self.max_attempts, self.base_delay_ms, f)
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -108,7 +118,11 @@ mod tests {
         let mut count = 0;
         let result = retry(5, 1, || {
             count += 1;
-            if count < 3 { Err("fail") } else { Ok(count) }
+            if count < 3 {
+                Err("fail")
+            } else {
+                Ok(count)
+            }
         });
         assert_eq!(result, Ok(3));
         assert_eq!(count, 3);
@@ -135,7 +149,8 @@ mod tests {
     fn test_retry_if_stops_on_permanent() {
         let mut count = 0;
         let result: Result<i32, MyError> = retry_if(
-            5, 1,
+            5,
+            1,
             |e| matches!(e, MyError::Transient(_)),
             || {
                 count += 1;
@@ -150,11 +165,16 @@ mod tests {
     fn test_retry_if_retries_transient() {
         let mut count = 0;
         let result = retry_if(
-            5, 1,
+            5,
+            1,
             |e| matches!(e, MyError::Transient(_)),
             || {
                 count += 1;
-                if count < 3 { Err(MyError::Transient("temp".to_string())) } else { Ok(42) }
+                if count < 3 {
+                    Err(MyError::Transient("temp".to_string()))
+                } else {
+                    Ok(42)
+                }
             },
         );
         assert_eq!(result, Ok(42));
@@ -166,7 +186,11 @@ mod tests {
         let mut n = 0;
         let r = RetryConfig::new().attempts(4).base_delay(1).run(|| {
             n += 1;
-            if n < 2 { Err("x") } else { Ok(n) }
+            if n < 2 {
+                Err("x")
+            } else {
+                Ok(n)
+            }
         });
         assert_eq!(r, Ok(2));
     }

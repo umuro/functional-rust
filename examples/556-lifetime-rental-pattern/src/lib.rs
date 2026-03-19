@@ -9,7 +9,9 @@ pub struct Rental {
 
 impl Rental {
     pub fn new(data: &str) -> Self {
-        Rental { data: data.to_string() }
+        Rental {
+            data: data.to_string(),
+        }
     }
 
     pub fn rent(&self) -> &str {

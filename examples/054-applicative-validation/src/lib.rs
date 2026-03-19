@@ -53,9 +53,15 @@ fn validate_person(name: &str, age: i32, email: &str) -> Result<Person, Vec<Vali
     let age_result = validate_age(age);
     let email_result = validate_email(email);
 
-    if let Err(ref e) = name_result { errors.extend(e.iter().cloned()); }
-    if let Err(ref e) = age_result { errors.extend(e.iter().cloned()); }
-    if let Err(ref e) = email_result { errors.extend(e.iter().cloned()); }
+    if let Err(ref e) = name_result {
+        errors.extend(e.iter().cloned());
+    }
+    if let Err(ref e) = age_result {
+        errors.extend(e.iter().cloned());
+    }
+    if let Err(ref e) = email_result {
+        errors.extend(e.iter().cloned());
+    }
 
     if errors.is_empty() {
         Ok(Person {
@@ -82,7 +88,6 @@ impl<T> Validated<T> {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

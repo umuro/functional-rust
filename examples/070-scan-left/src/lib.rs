@@ -30,7 +30,9 @@ fn running_product(v: &[i32]) -> Vec<i32> {
 
 // Approach 3: Running max
 fn running_max(v: &[i32]) -> Vec<i32> {
-    if v.is_empty() { return vec![]; }
+    if v.is_empty() {
+        return vec![];
+    }
     let mut result = vec![v[0]];
     let mut current_max = v[0];
     for &x in &v[1..] {
@@ -39,7 +41,6 @@ fn running_max(v: &[i32]) -> Vec<i32> {
     }
     result
 }
-
 
 #[cfg(test)]
 mod tests {

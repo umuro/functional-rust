@@ -33,10 +33,7 @@ impl Category for FnCategoryI32 {
         Box::new(|x| x)
     }
 
-    fn compose(
-        f: Box<dyn Fn(i32) -> i32>,
-        g: Box<dyn Fn(i32) -> i32>,
-    ) -> Box<dyn Fn(i32) -> i32> {
+    fn compose(f: Box<dyn Fn(i32) -> i32>, g: Box<dyn Fn(i32) -> i32>) -> Box<dyn Fn(i32) -> i32> {
         Box::new(move |x| f(g(x)))
     }
 }
@@ -77,16 +74,17 @@ mod tests {
         let f = |x: i32| x + 1;
         let g = |x: i32| x * 2;
         let h = |x: i32| x - 3;
-        assert_eq!(
-            compose(compose(f, g), h)(7),
-            compose(f, compose(g, h))(7)
-        );
+        assert_eq!(compose(compose(f, g), h)(7), compose(f, compose(g, h))(7));
     }
 
     #[test]
     fn test_kleisli_compose() {
         let safe_div = |x: i32| -> Option<i32> {
-            if x == 0 { None } else { Some(100 / x) }
+            if x == 0 {
+                None
+            } else {
+                Some(100 / x)
+            }
         };
         let safe_succ = |x: i32| -> Option<i32> { Some(x + 1) };
         let k = kleisli_compose(safe_succ, safe_div);

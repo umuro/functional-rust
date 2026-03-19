@@ -2,7 +2,6 @@
 //!
 //! `nth(n)` returns `Option<T>` at index n, consuming elements 0..n in the process.
 
-
 #[cfg(test)]
 mod tests {
     #[test]

@@ -111,10 +111,7 @@ pub mod alloc_tracking {
     }
 
     pub fn get_stats() -> (usize, usize) {
-        (
-            ALLOCATIONS.with(|a| a.get()),
-            BYTES.with(|b| b.get()),
-        )
+        (ALLOCATIONS.with(|a| a.get()), BYTES.with(|b| b.get()))
     }
 
     pub fn reset() {

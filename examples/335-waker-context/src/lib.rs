@@ -55,9 +55,14 @@ impl<T> Resolver<T> {
 
 /// Create a linked future and resolver pair.
 pub fn make_future<T>() -> (ExternalFuture<T>, Resolver<T>) {
-    let state = Arc::new(Mutex::new(SharedState { value: None, waker: None }));
+    let state = Arc::new(Mutex::new(SharedState {
+        value: None,
+        waker: None,
+    }));
     (
-        ExternalFuture { state: Arc::clone(&state) },
+        ExternalFuture {
+            state: Arc::clone(&state),
+        },
         Resolver { state },
     )
 }

@@ -22,7 +22,10 @@ pub fn example_fn() -> i32 {
 
 pub fn example_fn_mut() -> i32 {
     let mut counter = 0;
-    call_fn_mut(|| { counter += 1; counter }) // Mutably borrows counter
+    call_fn_mut(|| {
+        counter += 1;
+        counter
+    }) // Mutably borrows counter
 }
 
 pub fn example_fn_once() -> String {
@@ -59,7 +62,9 @@ mod tests {
 
     #[test]
     fn test_fn_pointer() {
-        fn add_one(x: i32) -> i32 { x + 1 }
+        fn add_one(x: i32) -> i32 {
+            x + 1
+        }
         let fp: fn(i32) -> i32 = add_one;
         assert_eq!(fp(41), 42);
     }

@@ -82,14 +82,18 @@ mod tests {
     fn test_generic_partial() {
         let pow = |base: i64, exp: u32| base.pow(exp);
         let square = partial(pow, 2_i64); // partially apply base=2
-        // Note: this gives 2^exp, not x^2
+                                          // Note: this gives 2^exp, not x^2
         assert_eq!(square(10), 1024); // 2^10
     }
 
     #[test]
     fn test_greater_than_as_predicate() {
         let data = vec![1, 5, 3, 8, 2, 9];
-        let big: Vec<_> = data.iter().filter(|x| greater_than(4)(x)).copied().collect();
+        let big: Vec<_> = data
+            .iter()
+            .filter(|x| greater_than(4)(x))
+            .copied()
+            .collect();
         assert_eq!(big, vec![5, 8, 9]);
     }
 

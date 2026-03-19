@@ -47,10 +47,7 @@ where
     T: Send + 'static,
     F: FnOnce() -> T + Send + 'static,
 {
-    let handles: Vec<_> = tasks
-        .into_iter()
-        .map(|task| thread::spawn(task))
-        .collect();
+    let handles: Vec<_> = tasks.into_iter().map(|task| thread::spawn(task)).collect();
 
     handles
         .into_iter()

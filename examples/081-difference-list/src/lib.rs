@@ -15,13 +15,19 @@ impl<T: 'static> DList<T> {
 
     pub fn singleton(x: T) -> Self {
         DList {
-            f: Box::new(move |mut v| { v.insert(0, x); v }),
+            f: Box::new(move |mut v| {
+                v.insert(0, x);
+                v
+            }),
         }
     }
 
     pub fn from_vec(mut items: Vec<T>) -> Self {
         DList {
-            f: Box::new(move |mut v| { items.append(&mut v); items }),
+            f: Box::new(move |mut v| {
+                items.append(&mut v);
+                items
+            }),
         }
     }
 
@@ -44,14 +50,20 @@ pub struct VecBuilder<T> {
 }
 
 impl<T> VecBuilder<T> {
-    pub fn new() -> Self { VecBuilder { chunks: vec![] } }
+    pub fn new() -> Self {
+        VecBuilder { chunks: vec![] }
+    }
 
-    pub fn push_vec(&mut self, v: Vec<T>) { self.chunks.push(v); }
+    pub fn push_vec(&mut self, v: Vec<T>) {
+        self.chunks.push(v);
+    }
 
     pub fn build(self) -> Vec<T> {
         let total: usize = self.chunks.iter().map(|c| c.len()).sum();
         let mut result = Vec::with_capacity(total);
-        for mut chunk in self.chunks { result.append(&mut chunk); }
+        for mut chunk in self.chunks {
+            result.append(&mut chunk);
+        }
         result
     }
 }

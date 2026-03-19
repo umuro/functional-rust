@@ -95,7 +95,6 @@ fn compact(j: &JsonValue) -> String {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

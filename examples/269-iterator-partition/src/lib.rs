@@ -6,8 +6,7 @@
 mod tests {
     #[test]
     fn test_partition_even_odd() {
-        let (evens, odds): (Vec<i32>, Vec<i32>) =
-            (1..=6).partition(|&x| x % 2 == 0);
+        let (evens, odds): (Vec<i32>, Vec<i32>) = (1..=6).partition(|&x| x % 2 == 0);
         assert_eq!(evens, vec![2, 4, 6]);
         assert_eq!(odds, vec![1, 3, 5]);
     }
@@ -22,8 +21,7 @@ mod tests {
 
     #[test]
     fn test_partition_all_true() {
-        let (yes, no): (Vec<i32>, Vec<i32>) =
-            [2i32, 4, 6].iter().copied().partition(|&x| x > 0);
+        let (yes, no): (Vec<i32>, Vec<i32>) = [2i32, 4, 6].iter().copied().partition(|&x| x > 0);
         assert_eq!(yes.len(), 3);
         assert!(no.is_empty());
     }

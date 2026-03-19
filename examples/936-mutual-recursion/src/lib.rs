@@ -30,9 +30,15 @@ pub enum Expr {
 }
 
 impl Expr {
-    pub fn lit(n: i32) -> Self { Expr::Lit(n) }
-    pub fn add(l: Expr, r: Expr) -> Self { Expr::Add(Box::new(l), Box::new(r)) }
-    pub fn mul(l: Expr, r: Expr) -> Self { Expr::Mul(Box::new(l), Box::new(r)) }
+    pub fn lit(n: i32) -> Self {
+        Expr::Lit(n)
+    }
+    pub fn add(l: Expr, r: Expr) -> Self {
+        Expr::Add(Box::new(l), Box::new(r))
+    }
+    pub fn mul(l: Expr, r: Expr) -> Self {
+        Expr::Mul(Box::new(l), Box::new(r))
+    }
 }
 
 pub fn eval_expr(e: &Expr) -> i32 {

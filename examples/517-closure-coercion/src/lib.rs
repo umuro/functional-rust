@@ -60,7 +60,7 @@ pub fn store_capturing_closures() -> Vec<Box<dyn Fn(i32) -> i32>> {
     let a = 5;
     let b = 10;
     vec![
-        Box::new(|x| x + 1),    // non-capturing
+        Box::new(|x| x + 1),      // non-capturing
         Box::new(move |x| x + a), // capturing
         Box::new(move |x| x * b), // capturing
     ]

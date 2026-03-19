@@ -50,26 +50,33 @@ fn limited_concurrency() -> usize {
     let active = Arc::new(Mutex::new(0usize));
     let max_active = Arc::new(Mutex::new(0usize));
 
-    let handles: Vec<_> = (0..10).map(|_| {
-        let sem = Arc::clone(&sem);
-        let active = Arc::clone(&active);
-        let max_active = Arc::clone(&max_active);
-        thread::spawn(move || {
-            sem.with_permit(|| {
-                {
-                    let mut a = active.lock().unwrap();
-                    *a += 1;
-                    let mut m = max_active.lock().unwrap();
-                    if *a > *m { *m = *a; }
-                }
-                thread::sleep(Duration::from_millis(5));
-                *active.lock().unwrap() -= 1;
-            });
+    let handles: Vec<_> = (0..10)
+        .map(|_| {
+            let sem = Arc::clone(&sem);
+            let active = Arc::clone(&active);
+            let max_active = Arc::clone(&max_active);
+            thread::spawn(move || {
+                sem.with_permit(|| {
+                    {
+                        let mut a = active.lock().unwrap();
+                        *a += 1;
+                        let mut m = max_active.lock().unwrap();
+                        if *a > *m {
+                            *m = *a;
+                        }
+                    }
+                    thread::sleep(Duration::from_millis(5));
+                    *active.lock().unwrap() -= 1;
+                });
+            })
         })
-    }).collect();
+        .collect();
 
-    for h in handles { h.join().unwrap(); }
-    let x = *max_active.lock().unwrap(); x
+    for h in handles {
+        h.join().unwrap();
+    }
+    let x = *max_active.lock().unwrap();
+    x
 }
 
 // --- Approach 2: Binary semaphore as mutex ---
@@ -77,20 +84,25 @@ fn binary_semaphore_counter() -> u32 {
     let sem = Arc::new(Semaphore::new(1));
     let counter = Arc::new(Mutex::new(0u32));
 
-    let handles: Vec<_> = (0..5).map(|_| {
-        let sem = Arc::clone(&sem);
-        let counter = Arc::clone(&counter);
-        thread::spawn(move || {
-            for _ in 0..100 {
-                sem.with_permit(|| {
-                    *counter.lock().unwrap() += 1;
-                });
-            }
+    let handles: Vec<_> = (0..5)
+        .map(|_| {
+            let sem = Arc::clone(&sem);
+            let counter = Arc::clone(&counter);
+            thread::spawn(move || {
+                for _ in 0..100 {
+                    sem.with_permit(|| {
+                        *counter.lock().unwrap() += 1;
+                    });
+                }
+            })
         })
-    }).collect();
+        .collect();
 
-    for h in handles { h.join().unwrap(); }
-    let x = *counter.lock().unwrap(); x
+    for h in handles {
+        h.join().unwrap();
+    }
+    let x = *counter.lock().unwrap();
+    x
 }
 
 // --- Approach 3: Drain a resource pool ---
@@ -99,23 +111,26 @@ fn resource_pool_demo() -> Vec<usize> {
     let sem = Arc::new(Semaphore::new(POOL_SIZE));
     let usage_log = Arc::new(Mutex::new(Vec::new()));
 
-    let handles: Vec<_> = (0..6).map(|i| {
-        let sem = Arc::clone(&sem);
-        let log = Arc::clone(&usage_log);
-        thread::spawn(move || {
-            sem.with_permit(|| {
-                log.lock().unwrap().push(i);
-                thread::sleep(Duration::from_millis(2));
-            });
+    let handles: Vec<_> = (0..6)
+        .map(|i| {
+            let sem = Arc::clone(&sem);
+            let log = Arc::clone(&usage_log);
+            thread::spawn(move || {
+                sem.with_permit(|| {
+                    log.lock().unwrap().push(i);
+                    thread::sleep(Duration::from_millis(2));
+                });
+            })
         })
-    }).collect();
+        .collect();
 
-    for h in handles { h.join().unwrap(); }
+    for h in handles {
+        h.join().unwrap();
+    }
     let mut log = usage_log.lock().unwrap().clone();
     log.sort();
     log
 }
-
 
 #[cfg(test)]
 mod tests {

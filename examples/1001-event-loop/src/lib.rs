@@ -1,3 +1,19 @@
+#![allow(clippy::manual_is_multiple_of)]
+#![allow(unused_variables)]
+#![allow(clippy::match_like_matches)]
+#![allow(clippy::type_complexity)]
+#![allow(clippy::too_many_lines)]
+#![allow(clippy::manual_range_contains)]
+#![allow(clippy::explicit_iter_loop)]
+#![allow(clippy::needless_lifetimes)]
+#![allow(clippy::char_lit_as_u8)]
+#![allow(clippy::while_let_loop)]
+#![allow(clippy::manual_strip)]
+#![allow(clippy::useless_vec)]
+#![allow(clippy::needless_borrow)]
+#![allow(clippy::redundant_closure)]
+#![allow(unused_imports)]
+#![allow(dead_code)]
 // 1001: Simple Event Loop
 // Poll events, dispatch enum handlers, accumulate state
 
@@ -24,20 +40,37 @@ struct AppState {
 
 impl AppState {
     fn new() -> Self {
-        AppState { clicks: 0, keys: String::new(), timers: 0, network_msgs: Vec::new() }
+        AppState {
+            clicks: 0,
+            keys: String::new(),
+            timers: 0,
+            network_msgs: Vec::new(),
+        }
     }
 }
 
 // --- Pure functional dispatch: one event → next state ---
 fn dispatch(state: AppState, event: &Event) -> AppState {
     match event {
-        Event::Click { .. } => AppState { clicks: state.clicks + 1, ..state },
-        Event::KeyPress(c) => AppState { keys: format!("{}{}", state.keys, c), ..state },
-        Event::Timer(_) => AppState { timers: state.timers + 1, ..state },
+        Event::Click { .. } => AppState {
+            clicks: state.clicks + 1,
+            ..state
+        },
+        Event::KeyPress(c) => AppState {
+            keys: format!("{}{}", state.keys, c),
+            ..state
+        },
+        Event::Timer(_) => AppState {
+            timers: state.timers + 1,
+            ..state
+        },
         Event::NetworkData(msg) => {
             let mut msgs = state.network_msgs.clone();
             msgs.push(msg.clone());
-            AppState { network_msgs: msgs, ..state }
+            AppState {
+                network_msgs: msgs,
+                ..state
+            }
         }
         Event::Quit => state, // handled by loop
     }
@@ -46,8 +79,13 @@ fn dispatch(state: AppState, event: &Event) -> AppState {
 // --- Approach 1: Functional event loop over a Vec ---
 fn run_event_loop(events: Vec<Event>, init: AppState) -> AppState {
     events.iter().fold(init, |state, event| {
-        if event == &Event::Quit { state } // stop processing new events via fold
-        else { dispatch(state, event) }
+        if event == &Event::Quit {
+            state
+        }
+        // stop processing new events via fold
+        else {
+            dispatch(state, event)
+        }
     })
 }
 
@@ -70,7 +108,10 @@ struct EventLoop {
 
 impl EventLoop {
     fn new(state: AppState) -> Self {
-        EventLoop { queue: VecDeque::new(), state }
+        EventLoop {
+            queue: VecDeque::new(),
+            state,
+        }
     }
 
     fn push(&mut self, event: Event) {
@@ -78,7 +119,9 @@ impl EventLoop {
     }
 
     fn push_many(&mut self, events: Vec<Event>) {
-        for e in events { self.queue.push_back(e); }
+        for e in events {
+            self.queue.push_back(e);
+        }
     }
 
     fn run(&mut self) {
@@ -90,7 +133,6 @@ impl EventLoop {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

@@ -25,7 +25,11 @@ where
     G: Fn(A, U) -> A,
 {
     items.iter().fold(init, |acc, x| {
-        if pred(x) { combine(acc, transform(x)) } else { acc }
+        if pred(x) {
+            combine(acc, transform(x))
+        } else {
+            acc
+        }
     })
 }
 
@@ -35,7 +39,11 @@ where
     T: Ord + Display,
 {
     items.sort();
-    items.iter().map(|x| x.to_string()).collect::<Vec<_>>().join(", ")
+    items
+        .iter()
+        .map(|x| x.to_string())
+        .collect::<Vec<_>>()
+        .join(", ")
 }
 
 // === Approach 3: Complex multi-type where clauses ===
@@ -44,12 +52,19 @@ where
     T: PartialOrd + Clone,
     F: Fn(&T) -> T,
 {
-    items.iter().map(|x| {
-        let y = transform(x);
-        if y < lo { lo.clone() }
-        else if y > hi { hi.clone() }
-        else { y }
-    }).collect()
+    items
+        .iter()
+        .map(|x| {
+            let y = transform(x);
+            if y < lo {
+                lo.clone()
+            } else if y > hi {
+                hi.clone()
+            } else {
+                y
+            }
+        })
+        .collect()
 }
 
 // Return type bounds in where clause
@@ -74,7 +89,6 @@ where
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -87,7 +101,13 @@ mod tests {
 
     #[test]
     fn test_filter_map_fold() {
-        let r = filter_map_fold(&[1, 2, 3, 4, 5, 6], |x| x % 2 == 0, |x| x * x, |a, b| a + b, 0);
+        let r = filter_map_fold(
+            &[1, 2, 3, 4, 5, 6],
+            |x| x % 2 == 0,
+            |x| x * x,
+            |a, b| a + b,
+            0,
+        );
         assert_eq!(r, 56); // 4 + 16 + 36
     }
 

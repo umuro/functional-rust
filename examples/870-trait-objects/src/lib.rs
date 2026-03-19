@@ -93,7 +93,6 @@ impl ShapeEnum {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -106,21 +105,33 @@ mod tests {
 
     #[test]
     fn test_rectangle_area() {
-        let r = Rectangle { width: 3.0, height: 4.0 };
+        let r = Rectangle {
+            width: 3.0,
+            height: 4.0,
+        };
         assert!((r.area() - 12.0).abs() < 1e-10);
     }
 
     #[test]
     fn test_triangle_area() {
-        let t = Triangle { base: 6.0, height: 3.0 };
+        let t = Triangle {
+            base: 6.0,
+            height: 3.0,
+        };
         assert!((t.area() - 9.0).abs() < 1e-10);
     }
 
     #[test]
     fn test_dynamic_dispatch_total() {
         let c = Circle { radius: 5.0 };
-        let r = Rectangle { width: 3.0, height: 4.0 };
-        let t = Triangle { base: 6.0, height: 3.0 };
+        let r = Rectangle {
+            width: 3.0,
+            height: 4.0,
+        };
+        let t = Triangle {
+            base: 6.0,
+            height: 3.0,
+        };
         let shapes: Vec<&dyn Shape> = vec![&c, &r, &t];
         let total = total_area_dyn(&shapes);
         let expected = PI * 25.0 + 12.0 + 9.0;
@@ -145,7 +156,10 @@ mod tests {
     fn test_boxed_shapes() {
         let shapes: Vec<Box<dyn Shape>> = vec![
             Box::new(Circle { radius: 1.0 }),
-            Box::new(Rectangle { width: 2.0, height: 3.0 }),
+            Box::new(Rectangle {
+                width: 2.0,
+                height: 3.0,
+            }),
         ];
         let total = total_area_generic(&shapes);
         assert!((total - (PI + 6.0)).abs() < 1e-10);

@@ -8,9 +8,7 @@ pub struct Stack<T> {
 
 impl<T> Stack<T> {
     pub fn new() -> Self {
-        Stack {
-            items: Vec::new(),
-        }
+        Stack { items: Vec::new() }
     }
 
     // Placeholder - conversions will be completed via Claude Code agents

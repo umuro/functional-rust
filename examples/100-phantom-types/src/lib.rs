@@ -23,7 +23,10 @@ pub struct Seconds;
 
 impl<U> Quantity<U> {
     pub fn new(value: f64) -> Self {
-        Quantity { value, _unit: PhantomData }
+        Quantity {
+            value,
+            _unit: PhantomData,
+        }
     }
 
     pub fn value(&self) -> f64 {
@@ -42,8 +45,12 @@ impl<U> Add for Quantity<U> {
     }
 }
 
-pub fn meters(v: f64) -> Quantity<Meters> { Quantity::new(v) }
-pub fn seconds(v: f64) -> Quantity<Seconds> { Quantity::new(v) }
+pub fn meters(v: f64) -> Quantity<Meters> {
+    Quantity::new(v)
+}
+pub fn seconds(v: f64) -> Quantity<Seconds> {
+    Quantity::new(v)
+}
 
 // ---------------------------------------------------------------------------
 // Approach B: Newtype wrappers (simpler, no PhantomData)
@@ -57,12 +64,16 @@ pub struct SecondsVal(pub f64);
 
 impl Add for MetersVal {
     type Output = Self;
-    fn add(self, rhs: Self) -> Self { MetersVal(self.0 + rhs.0) }
+    fn add(self, rhs: Self) -> Self {
+        MetersVal(self.0 + rhs.0)
+    }
 }
 
 impl Add for SecondsVal {
     type Output = Self;
-    fn add(self, rhs: Self) -> Self { SecondsVal(self.0 + rhs.0) }
+    fn add(self, rhs: Self) -> Self {
+        SecondsVal(self.0 + rhs.0)
+    }
 }
 
 // ---------------------------------------------------------------------------

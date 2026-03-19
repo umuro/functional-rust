@@ -25,7 +25,9 @@ impl std::fmt::Display for Sexp {
             Sexp::List(items) => {
                 write!(f, "(")?;
                 for (i, item) in items.iter().enumerate() {
-                    if i > 0 { write!(f, " ")?; }
+                    if i > 0 {
+                        write!(f, " ")?;
+                    }
                     write!(f, "{}", item)?;
                 }
                 write!(f, ")")
@@ -84,11 +86,27 @@ fn parse_string(input: &str) -> ParseResult<Sexp> {
             Some('\\') => {
                 consumed += 1;
                 match chars.next() {
-                    Some('n') => { result.push('\n'); consumed += 1; }
-                    Some('t') => { result.push('\t'); consumed += 1; }
-                    Some('"') => { result.push('"'); consumed += 1; }
-                    Some('\\') => { result.push('\\'); consumed += 1; }
-                    Some(c) => { result.push('\\'); result.push(c); consumed += c.len_utf8(); }
+                    Some('n') => {
+                        result.push('\n');
+                        consumed += 1;
+                    }
+                    Some('t') => {
+                        result.push('\t');
+                        consumed += 1;
+                    }
+                    Some('"') => {
+                        result.push('"');
+                        consumed += 1;
+                    }
+                    Some('\\') => {
+                        result.push('\\');
+                        consumed += 1;
+                    }
+                    Some(c) => {
+                        result.push('\\');
+                        result.push(c);
+                        consumed += c.len_utf8();
+                    }
                     None => return Err("Unexpected EOF in escape".to_string()),
                 }
             }
@@ -181,9 +199,14 @@ mod tests {
     #[test]
     fn test_list() {
         let (sexp, _) = parse_sexp("(+ 1 2)").unwrap();
-        assert_eq!(sexp, Sexp::List(vec![
-            Sexp::Atom("+".into()), Sexp::Number(1.0), Sexp::Number(2.0),
-        ]));
+        assert_eq!(
+            sexp,
+            Sexp::List(vec![
+                Sexp::Atom("+".into()),
+                Sexp::Number(1.0),
+                Sexp::Number(2.0),
+            ])
+        );
     }
 
     #[test]
@@ -201,7 +224,10 @@ mod tests {
     #[test]
     fn test_quote() {
         let (sexp, _) = parse_sexp("'hello").unwrap();
-        assert_eq!(sexp, Sexp::List(vec![Sexp::Atom("quote".into()), Sexp::Atom("hello".into())]));
+        assert_eq!(
+            sexp,
+            Sexp::List(vec![Sexp::Atom("quote".into()), Sexp::Atom("hello".into())])
+        );
     }
 
     #[test]

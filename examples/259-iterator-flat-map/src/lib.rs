@@ -13,16 +13,15 @@ mod tests {
     #[test]
     fn test_flat_map_filter_parse() {
         let strings = ["1", "x", "2", "y", "3"];
-        let result: Vec<i32> = strings.iter()
-            .flat_map(|s| s.parse::<i32>())
-            .collect();
+        let result: Vec<i32> = strings.iter().flat_map(|s| s.parse::<i32>()).collect();
         assert_eq!(result, vec![1, 2, 3]);
     }
 
     #[test]
     fn test_flat_map_words() {
         let sentences = ["hello world", "foo bar"];
-        let words: Vec<&str> = sentences.iter()
+        let words: Vec<&str> = sentences
+            .iter()
             .flat_map(|s| s.split_whitespace())
             .collect();
         assert_eq!(words.len(), 4);

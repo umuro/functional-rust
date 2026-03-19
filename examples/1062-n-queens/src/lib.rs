@@ -9,9 +9,12 @@ fn solve_n_queens(n: usize) -> Vec<Vec<usize>> {
     let mut board = vec![0usize; n];
 
     fn place(
-        row: usize, n: usize,
+        row: usize,
+        n: usize,
         board: &mut Vec<usize>,
-        cols: &mut Vec<bool>, diag1: &mut Vec<bool>, diag2: &mut Vec<bool>,
+        cols: &mut Vec<bool>,
+        diag1: &mut Vec<bool>,
+        diag2: &mut Vec<bool>,
         solutions: &mut Vec<Vec<usize>>,
     ) {
         if row == n {
@@ -34,7 +37,15 @@ fn solve_n_queens(n: usize) -> Vec<Vec<usize>> {
         }
     }
 
-    place(0, n, &mut board, &mut cols, &mut diag1, &mut diag2, &mut solutions);
+    place(
+        0,
+        n,
+        &mut board,
+        &mut cols,
+        &mut diag1,
+        &mut diag2,
+        &mut solutions,
+    );
     solutions
 }
 
@@ -43,7 +54,9 @@ fn solve_n_queens_func(n: usize) -> Vec<Vec<usize>> {
     fn is_safe(queens: &[usize], col: usize) -> bool {
         let row = queens.len();
         queens.iter().enumerate().all(|(i, &c)| {
-            c != col && (row as i32 - i as i32).unsigned_abs() as usize != (col as i32 - c as i32).unsigned_abs() as usize
+            c != col
+                && (row as i32 - i as i32).unsigned_abs() as usize
+                    != (col as i32 - c as i32).unsigned_abs() as usize
         })
     }
 
@@ -70,13 +83,21 @@ fn solve_n_queens_func(n: usize) -> Vec<Vec<usize>> {
 // Approach 3: Bitmask-based (fastest)
 fn solve_n_queens_bits(n: usize) -> usize {
     fn count(row: usize, n: usize, cols: u32, diag1: u32, diag2: u32) -> usize {
-        if row == n { return 1; }
+        if row == n {
+            return 1;
+        }
         let mut total = 0;
         let available = ((1u32 << n) - 1) & !(cols | diag1 | diag2);
         let mut bits = available;
         while bits > 0 {
             let bit = bits & bits.wrapping_neg(); // lowest set bit
-            total += count(row + 1, n, cols | bit, (diag1 | bit) << 1, (diag2 | bit) >> 1);
+            total += count(
+                row + 1,
+                n,
+                cols | bit,
+                (diag1 | bit) << 1,
+                (diag2 | bit) >> 1,
+            );
             bits &= bits - 1;
         }
         total

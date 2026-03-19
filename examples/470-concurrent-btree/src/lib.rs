@@ -176,10 +176,7 @@ mod tests {
         }
 
         let range: Vec<_> = tree.range(3..7);
-        assert_eq!(
-            range,
-            vec![(3, 30), (4, 40), (5, 50), (6, 60)]
-        );
+        assert_eq!(range, vec![(3, 30), (4, 40), (5, 50), (6, 60)]);
     }
 
     #[test]

@@ -27,7 +27,7 @@ pub fn capture_by_move() {
 pub fn different_captures() -> impl Fn() {
     let a = 42; // Copy type
     let b = String::from("hello"); // Move type
-    
+
     move || {
         println!("{} {}", a, b); // a copied, b moved
     }

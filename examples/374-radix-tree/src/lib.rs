@@ -65,9 +65,9 @@ impl RadixTree {
 
                 let old_child = node.children.remove(&edge).unwrap();
                 let mut new_node = RadixNode::new();
-                
+
                 new_node.children.insert(edge_rest, old_child);
-                
+
                 if word_rest.is_empty() {
                     new_node.is_end = true;
                 } else {
@@ -75,7 +75,7 @@ impl RadixTree {
                     word_node.is_end = true;
                     new_node.children.insert(word_rest, word_node);
                 }
-                
+
                 node.children.insert(common, new_node);
             }
             None => {
@@ -138,7 +138,7 @@ mod tests {
         rt.insert("test");
         rt.insert("testing");
         rt.insert("team");
-        
+
         assert!(rt.search("test"));
         assert!(rt.search("testing"));
         assert!(rt.search("team"));
@@ -150,7 +150,7 @@ mod tests {
         let mut rt = RadixTree::new();
         rt.insert("rust");
         rt.insert("ruby");
-        
+
         assert!(rt.starts_with("ru"));
         assert!(rt.starts_with("rus"));
         assert!(!rt.starts_with("py"));
@@ -162,7 +162,7 @@ mod tests {
         rt.insert("romane");
         rt.insert("romanus");
         rt.insert("romulus");
-        
+
         assert!(rt.search("romane"));
         assert!(rt.search("romanus"));
         assert!(rt.search("romulus"));
@@ -174,7 +174,7 @@ mod tests {
         rt.insert("a");
         rt.insert("ab");
         rt.insert("abc");
-        
+
         assert!(rt.search("a"));
         assert!(rt.search("ab"));
         assert!(rt.search("abc"));

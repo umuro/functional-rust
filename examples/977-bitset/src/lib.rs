@@ -16,11 +16,20 @@ impl Bitset {
         }
     }
 
-    fn word(&self, i: usize) -> usize { i / 64 }
-    fn bit(&self, i: usize) -> u64 { 1u64 << (i % 64) }
+    fn word(&self, i: usize) -> usize {
+        i / 64
+    }
+    fn bit(&self, i: usize) -> u64 {
+        1u64 << (i % 64)
+    }
 
     pub fn set(&mut self, i: usize) {
-        assert!(i < self.size, "index {} out of range (size={})", i, self.size);
+        assert!(
+            i < self.size,
+            "index {} out of range (size={})",
+            i,
+            self.size
+        );
         let (w, b) = (self.word(i), self.bit(i));
         self.bits[w] |= b;
     }
@@ -38,7 +47,9 @@ impl Bitset {
     }
 
     pub fn test(&self, i: usize) -> bool {
-        if i >= self.size { return false; }
+        if i >= self.size {
+            return false;
+        }
         (self.bits[self.word(i)] >> (i % 64)) & 1 == 1
     }
 
@@ -50,29 +61,61 @@ impl Bitset {
     /// Union: returns new bitset with bits set in either
     pub fn union(&self, other: &Bitset) -> Bitset {
         assert_eq!(self.size, other.size);
-        let bits = self.bits.iter().zip(&other.bits).map(|(a, b)| a | b).collect();
-        Bitset { bits, size: self.size }
+        let bits = self
+            .bits
+            .iter()
+            .zip(&other.bits)
+            .map(|(a, b)| a | b)
+            .collect();
+        Bitset {
+            bits,
+            size: self.size,
+        }
     }
 
     /// Intersection: bits set in both
     pub fn intersect(&self, other: &Bitset) -> Bitset {
         assert_eq!(self.size, other.size);
-        let bits = self.bits.iter().zip(&other.bits).map(|(a, b)| a & b).collect();
-        Bitset { bits, size: self.size }
+        let bits = self
+            .bits
+            .iter()
+            .zip(&other.bits)
+            .map(|(a, b)| a & b)
+            .collect();
+        Bitset {
+            bits,
+            size: self.size,
+        }
     }
 
     /// Difference: bits in self but not other
     pub fn difference(&self, other: &Bitset) -> Bitset {
         assert_eq!(self.size, other.size);
-        let bits = self.bits.iter().zip(&other.bits).map(|(a, b)| a & !b).collect();
-        Bitset { bits, size: self.size }
+        let bits = self
+            .bits
+            .iter()
+            .zip(&other.bits)
+            .map(|(a, b)| a & !b)
+            .collect();
+        Bitset {
+            bits,
+            size: self.size,
+        }
     }
 
     /// Symmetric difference: bits in one but not both
     pub fn symmetric_difference(&self, other: &Bitset) -> Bitset {
         assert_eq!(self.size, other.size);
-        let bits = self.bits.iter().zip(&other.bits).map(|(a, b)| a ^ b).collect();
-        Bitset { bits, size: self.size }
+        let bits = self
+            .bits
+            .iter()
+            .zip(&other.bits)
+            .map(|(a, b)| a ^ b)
+            .collect();
+        Bitset {
+            bits,
+            size: self.size,
+        }
     }
 
     /// Iterate set bit indices
@@ -89,7 +132,6 @@ impl Bitset {
         result
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -130,8 +172,12 @@ mod tests {
     fn test_union() {
         let mut a = Bitset::new(64);
         let mut b = Bitset::new(64);
-        for i in 0..4 { a.set(i); }
-        for i in 2..6 { b.set(i); }
+        for i in 0..4 {
+            a.set(i);
+        }
+        for i in 2..6 {
+            b.set(i);
+        }
         let u = a.union(&b);
         assert_eq!(u.count(), 6);
         assert_eq!(u.iter_ones(), vec![0, 1, 2, 3, 4, 5]);
@@ -141,8 +187,12 @@ mod tests {
     fn test_intersect() {
         let mut a = Bitset::new(64);
         let mut b = Bitset::new(64);
-        for i in 0..4 { a.set(i); }
-        for i in 2..6 { b.set(i); }
+        for i in 0..4 {
+            a.set(i);
+        }
+        for i in 2..6 {
+            b.set(i);
+        }
         let i = a.intersect(&b);
         assert_eq!(i.count(), 2);
         assert!(i.test(2));
@@ -153,8 +203,12 @@ mod tests {
     fn test_difference() {
         let mut a = Bitset::new(64);
         let mut b = Bitset::new(64);
-        for i in 0..4 { a.set(i); }
-        for i in 2..6 { b.set(i); }
+        for i in 0..4 {
+            a.set(i);
+        }
+        for i in 2..6 {
+            b.set(i);
+        }
         let d = a.difference(&b);
         assert_eq!(d.count(), 2);
         assert_eq!(d.iter_ones(), vec![0, 1]);

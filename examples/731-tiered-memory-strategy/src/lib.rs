@@ -1,5 +1,4 @@
 /// 731: Tiered Memory — Stack → Arena Pool → Heap
-
 use std::cell::Cell;
 
 // ── Tier 2: Bump Arena ────────────────────────────────────────────────────────
@@ -23,28 +22,34 @@ impl<const CAP: usize> BumpArena<CAP> {
     fn alloc(&self, n: usize) -> Option<&mut [u8]> {
         let start = self.offset.get();
         let end = start.checked_add(n)?;
-        if end > CAP { return None; }
+        if end > CAP {
+            return None;
+        }
         self.offset.set(end);
         // SAFETY: we've verified bounds; slab lives as long as &self
-        let ptr = unsafe {
-            (self.slab.as_ptr() as *mut u8).add(start)
-        };
+        let ptr = unsafe { (self.slab.as_ptr() as *mut u8).add(start) };
         Some(unsafe { std::slice::from_raw_parts_mut(ptr, n) })
     }
 
     /// Reset the arena — O(1), no destructors called.
-    fn reset(&self) { self.offset.set(0); }
+    fn reset(&self) {
+        self.offset.set(0);
+    }
 
-    fn used(&self) -> usize { self.offset.get() }
-    fn remaining(&self) -> usize { CAP - self.used() }
+    fn used(&self) -> usize {
+        self.offset.get()
+    }
+    fn remaining(&self) -> usize {
+        CAP - self.used()
+    }
 }
 
 // ── Tier 3: Heap fallback ─────────────────────────────────────────────────────
 
 enum Allocation<'a> {
-    Stack(u8),                  // Tier 1: trivial value
-    Arena(&'a mut [u8]),        // Tier 2: pool
-    Heap(Box<[u8]>),            // Tier 3: heap
+    Stack(u8),           // Tier 1: trivial value
+    Arena(&'a mut [u8]), // Tier 2: pool
+    Heap(Box<[u8]>),     // Tier 3: heap
 }
 
 impl<'a> Allocation<'a> {
@@ -57,10 +62,7 @@ impl<'a> Allocation<'a> {
     }
 }
 
-fn tier_alloc<'a, const CAP: usize>(
-    arena: &'a BumpArena<CAP>,
-    size: usize,
-) -> Allocation<'a> {
+fn tier_alloc<'a, const CAP: usize>(arena: &'a BumpArena<CAP>, size: usize) -> Allocation<'a> {
     if size == 1 {
         return Allocation::Stack(0);
     }
@@ -69,7 +71,6 @@ fn tier_alloc<'a, const CAP: usize>(
     }
     Allocation::Heap(vec![0u8; size].into_boxed_slice())
 }
-
 
 #[cfg(test)]
 mod tests {

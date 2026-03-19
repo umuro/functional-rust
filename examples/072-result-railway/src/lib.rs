@@ -67,38 +67,60 @@ fn process_order(order: Order, discount: f64) -> Result<f64, String> {
     Ok(calculate_total(&o))
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_valid_order() {
-        let o = Order { item: "Widget".into(), quantity: 5, price: 10.0 };
+        let o = Order {
+            item: "Widget".into(),
+            quantity: 5,
+            price: 10.0,
+        };
         assert!(validate_order_chain(o).is_ok());
     }
 
     #[test]
     fn test_invalid_quantity() {
-        let o = Order { item: "Widget".into(), quantity: -1, price: 10.0 };
-        assert_eq!(validate_order_chain(o).unwrap_err(), "Quantity must be positive");
+        let o = Order {
+            item: "Widget".into(),
+            quantity: -1,
+            price: 10.0,
+        };
+        assert_eq!(
+            validate_order_chain(o).unwrap_err(),
+            "Quantity must be positive"
+        );
     }
 
     #[test]
     fn test_invalid_item() {
-        let o = Order { item: "".into(), quantity: 5, price: 10.0 };
+        let o = Order {
+            item: "".into(),
+            quantity: 5,
+            price: 10.0,
+        };
         assert_eq!(validate_order_chain(o).unwrap_err(), "Item name required");
     }
 
     #[test]
     fn test_process_order() {
-        let o = Order { item: "Widget".into(), quantity: 5, price: 10.0 };
+        let o = Order {
+            item: "Widget".into(),
+            quantity: 5,
+            price: 10.0,
+        };
         assert_eq!(process_order(o, 10.0), Ok(45.0));
     }
 
     #[test]
     fn test_bad_discount() {
-        let o = Order { item: "Widget".into(), quantity: 5, price: 10.0 };
+        let o = Order {
+            item: "Widget".into(),
+            quantity: 5,
+            price: 10.0,
+        };
         assert!(process_order(o, 200.0).is_err());
     }
 }

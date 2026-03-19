@@ -104,11 +104,7 @@ pub fn three_stage_pipeline(input: Vec<i32>) -> Vec<i32> {
 }
 
 /// Filter-map pipeline
-pub fn filter_map_pipeline<T, U, F, P>(
-    input: Vec<T>,
-    predicate: P,
-    mapper: F,
-) -> Vec<U>
+pub fn filter_map_pipeline<T, U, F, P>(input: Vec<T>, predicate: P, mapper: F) -> Vec<U>
 where
     T: Send + 'static,
     U: Send + 'static,

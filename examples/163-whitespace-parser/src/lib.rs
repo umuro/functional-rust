@@ -20,14 +20,12 @@ fn ws0<'a>() -> Parser<'a, ()> {
 // ============================================================
 
 fn ws1<'a>() -> Parser<'a, ()> {
-    Box::new(|input: &'a str| {
-        match input.chars().next() {
-            Some(c) if c.is_ascii_whitespace() => {
-                let trimmed = input.trim_start();
-                Ok(((), trimmed))
-            }
-            _ => Err("Expected whitespace".to_string()),
+    Box::new(|input: &'a str| match input.chars().next() {
+        Some(c) if c.is_ascii_whitespace() => {
+            let trimmed = input.trim_start();
+            Ok(((), trimmed))
         }
+        _ => Err("Expected whitespace".to_string()),
     })
 }
 

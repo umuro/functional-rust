@@ -8,7 +8,9 @@ use std::task::{Context, Poll, RawWaker, RawWakerVTable, Waker};
 fn block_on<F: Future>(mut fut: F) -> F::Output {
     let mut fut = unsafe { Pin::new_unchecked(&mut fut) };
     fn noop(_: *const ()) {}
-    fn clone(p: *const ()) -> RawWaker { RawWaker::new(p, &VT) }
+    fn clone(p: *const ()) -> RawWaker {
+        RawWaker::new(p, &VT)
+    }
     static VT: RawWakerVTable = RawWakerVTable::new(clone, noop, noop, noop);
     let waker = unsafe { Waker::from_raw(RawWaker::new(std::ptr::null(), &VT)) };
     let mut cx = Context::from_waker(&waker);
@@ -19,7 +21,9 @@ fn block_on<F: Future>(mut fut: F) -> F::Output {
 }
 
 // The base future
-async fn base_value() -> i32 { 5 }
+async fn base_value() -> i32 {
+    5
+}
 
 // --- map: transform the output of a future ---
 // Lwt.map (fun x -> x * 2) fut  ≡  async { fut.await * 2 }
@@ -33,9 +37,9 @@ async fn map_to_string(fut: impl Future<Output = i32>) -> String {
 
 // --- Functor-style: compose maps ---
 async fn map_chain() -> String {
-    let raw = base_value().await;          // 5
-    let doubled = raw * 2;                 // 10  (map)
-    let as_str = doubled.to_string();      // "10" (map)
+    let raw = base_value().await; // 5
+    let doubled = raw * 2; // 10  (map)
+    let as_str = doubled.to_string(); // "10" (map)
     as_str
 }
 
@@ -65,7 +69,6 @@ async fn composition_law() -> bool {
     let chained = async { f(async { g(base_value().await) }.await) }.await;
     composed == chained
 }
-
 
 #[cfg(test)]
 mod tests {

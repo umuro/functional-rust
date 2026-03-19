@@ -86,15 +86,33 @@ macro_rules! nested_tuple {
 /// Power of 2 at compile time (for small n).
 #[macro_export]
 macro_rules! pow2 {
-    (0) => { 1usize };
-    (1) => { 2usize };
-    (2) => { 4usize };
-    (3) => { 8usize };
-    (4) => { 16usize };
-    (5) => { 32usize };
-    (6) => { 64usize };
-    (7) => { 128usize };
-    (8) => { 256usize };
+    (0) => {
+        1usize
+    };
+    (1) => {
+        2usize
+    };
+    (2) => {
+        4usize
+    };
+    (3) => {
+        8usize
+    };
+    (4) => {
+        16usize
+    };
+    (5) => {
+        32usize
+    };
+    (6) => {
+        64usize
+    };
+    (7) => {
+        128usize
+    };
+    (8) => {
+        256usize
+    };
 }
 
 #[cfg(test)]

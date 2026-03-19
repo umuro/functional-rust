@@ -35,7 +35,7 @@ pub fn fib_memo(n: u64) -> u64 {
         cache.insert(n, result);
         result
     }
-    
+
     let mut cache = HashMap::new();
     helper(n, &mut cache)
 }
@@ -54,7 +54,7 @@ pub fn fib_memo_vec(n: usize) -> u64 {
         cache[n] = Some(result);
         result
     }
-    
+
     let mut cache = vec![None; n + 1];
     helper(n, &mut cache)
 }
@@ -71,14 +71,14 @@ pub fn fib_tabulation(n: u64) -> u64 {
     if n == 1 {
         return 1;
     }
-    
+
     let mut table = vec![0u64; (n + 1) as usize];
     table[1] = 1;
-    
+
     for i in 2..=n as usize {
         table[i] = table[i - 1] + table[i - 2];
     }
-    
+
     table[n as usize]
 }
 
@@ -87,16 +87,16 @@ pub fn fib_optimized(n: u64) -> u64 {
     if n == 0 {
         return 0;
     }
-    
+
     let mut a = 0u64;
     let mut b = 1u64;
-    
+
     for _ in 1..n {
         let temp = a + b;
         a = b;
         b = temp;
     }
-    
+
     b
 }
 
@@ -123,11 +123,11 @@ pub fn fib_matrix(n: u64) -> u64 {
     if n == 0 {
         return 0;
     }
-    
+
     let mut result = [[1u64, 0], [0, 1]]; // Identity
-    let mut base = [[1u64, 1], [1, 0]];   // Fibonacci matrix
+    let mut base = [[1u64, 1], [1, 0]]; // Fibonacci matrix
     let mut exp = n - 1;
-    
+
     while exp > 0 {
         if exp % 2 == 1 {
             result = matrix_mult(result, base);
@@ -135,7 +135,7 @@ pub fn fib_matrix(n: u64) -> u64 {
         base = matrix_mult(base, base);
         exp /= 2;
     }
-    
+
     result[0][0]
 }
 

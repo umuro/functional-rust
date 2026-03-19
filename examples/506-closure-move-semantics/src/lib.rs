@@ -13,19 +13,19 @@ pub fn spawn_with_data(data: Vec<i32>) -> thread::JoinHandle<i32> {
 pub fn move_multiple() -> impl FnOnce() -> (String, Vec<i32>) {
     let s = String::from("hello");
     let v = vec![1, 2, 3];
-    
+
     move || (s, v) // Both moved
 }
 
 /// Partial move
 pub fn partial_move() {
     let data = (String::from("hello"), 42);
-    
+
     let f = move || {
         let (s, n) = data; // Takes ownership of both
         println!("{} {}", s, n);
     };
-    
+
     f();
 }
 

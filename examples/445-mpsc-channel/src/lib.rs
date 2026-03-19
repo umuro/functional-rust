@@ -8,7 +8,10 @@ use std::thread;
 use std::time::Duration;
 
 /// Approach 1: Multiple producers, single consumer
-pub fn multi_producer_single_consumer(num_producers: usize, msgs_per_producer: usize) -> Vec<String> {
+pub fn multi_producer_single_consumer(
+    num_producers: usize,
+    msgs_per_producer: usize,
+) -> Vec<String> {
     let (tx, rx) = mpsc::channel::<String>();
 
     let handles: Vec<_> = (0..num_producers)

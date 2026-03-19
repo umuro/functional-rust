@@ -65,7 +65,6 @@ pub fn parse_csv(text: &str) -> Vec<Vec<String>> {
         .collect()
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

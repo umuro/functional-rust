@@ -5,13 +5,13 @@ type ParseResult<'a, T> = Result<(T, &'a str), String>;
 type Parser<'a, T> = Box<dyn Fn(&'a str) -> ParseResult<'a, T> + 'a>;
 
 fn satisfy<'a, F>(pred: F, desc: &str) -> Parser<'a, char>
-where F: Fn(char) -> bool + 'a {
+where
+    F: Fn(char) -> bool + 'a,
+{
     let desc = desc.to_string();
-    Box::new(move |input: &'a str| {
-        match input.chars().next() {
-            Some(c) if pred(c) => Ok((c, &input[c.len_utf8()..])),
-            _ => Err(format!("Expected {}", desc)),
-        }
+    Box::new(move |input: &'a str| match input.chars().next() {
+        Some(c) if pred(c) => Ok((c, &input[c.len_utf8()..])),
+        _ => Err(format!("Expected {}", desc)),
     })
 }
 

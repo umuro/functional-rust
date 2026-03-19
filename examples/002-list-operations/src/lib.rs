@@ -7,7 +7,11 @@ fn head(v: &[i32]) -> Option<&i32> {
 }
 
 fn tail(v: &[i32]) -> Option<&[i32]> {
-    if v.is_empty() { None } else { Some(&v[1..]) }
+    if v.is_empty() {
+        None
+    } else {
+        Some(&v[1..])
+    }
 }
 
 fn length(v: &[i32]) -> usize {
@@ -26,7 +30,11 @@ fn reverse(v: &[i32]) -> Vec<i32> {
 
 // Approach 2: Recursive (functional style)
 fn rec_length(v: &[i32]) -> usize {
-    if v.is_empty() { 0 } else { 1 + rec_length(&v[1..]) }
+    if v.is_empty() {
+        0
+    } else {
+        1 + rec_length(&v[1..])
+    }
 }
 
 fn rec_reverse(v: &[i32]) -> Vec<i32> {
@@ -52,7 +60,6 @@ fn rev_acc(v: &[i32]) -> Vec<i32> {
     }
     aux(v, vec![])
 }
-
 
 #[cfg(test)]
 mod tests {

@@ -10,8 +10,12 @@ pub enum Validated<T, E> {
 }
 
 impl<T, E> Validated<T, E> {
-    pub fn valid(v: T) -> Self { Validated::Valid(v) }
-    pub fn invalid(e: E) -> Self { Validated::Invalid(vec![e]) }
+    pub fn valid(v: T) -> Self {
+        Validated::Valid(v)
+    }
+    pub fn invalid(e: E) -> Self {
+        Validated::Invalid(vec![e])
+    }
 
     pub fn map<U, F: FnOnce(T) -> U>(self, f: F) -> Validated<U, E> {
         match self {
@@ -25,19 +29,24 @@ pub fn combine<A, B, E>(a: Validated<A, E>, b: Validated<B, E>) -> Validated<(A,
     match (a, b) {
         (Validated::Valid(a), Validated::Valid(b)) => Validated::Valid((a, b)),
         (Validated::Invalid(mut e1), Validated::Invalid(e2)) => {
-            e1.extend(e2); Validated::Invalid(e1)
+            e1.extend(e2);
+            Validated::Invalid(e1)
         }
         (Validated::Invalid(e), _) | (_, Validated::Invalid(e)) => Validated::Invalid(e),
     }
 }
 
 pub fn validate_name(name: &str) -> Validated<String, String> {
-    if name.is_empty() { return Validated::invalid("name cannot be empty".into()); }
+    if name.is_empty() {
+        return Validated::invalid("name cannot be empty".into());
+    }
     Validated::valid(name.to_string())
 }
 
 pub fn validate_email(email: &str) -> Validated<String, String> {
-    if !email.contains('@') { return Validated::invalid(format!("invalid email: {}", email)); }
+    if !email.contains('@') {
+        return Validated::invalid(format!("invalid email: {}", email));
+    }
     Validated::valid(email.to_string())
 }
 

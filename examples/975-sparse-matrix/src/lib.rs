@@ -37,8 +37,12 @@ impl SparseMatrix {
         self.data.len()
     }
 
-    pub fn rows(&self) -> usize { self.rows }
-    pub fn cols(&self) -> usize { self.cols }
+    pub fn rows(&self) -> usize {
+        self.rows
+    }
+    pub fn cols(&self) -> usize {
+        self.cols
+    }
 
     /// Matrix-vector multiply: result[i] = sum_j mat[i,j] * v[j]
     pub fn matvec(&self, v: &[f64]) -> Vec<f64> {
@@ -86,7 +90,6 @@ impl SparseMatrix {
         v
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -153,7 +156,7 @@ mod tests {
         let sum = m1.add(&m2);
         assert_eq!(sum.get(0, 0), 2.0); // 1+1
         assert_eq!(sum.get(1, 1), 0.0); // 3+(-3)=0, removed
-        // m1 had 6 entries, m2 adds (0,0) which merges, (1,1) cancels → 5 non-zero
+                                        // m1 had 6 entries, m2 adds (0,0) which merges, (1,1) cancels → 5 non-zero
         assert_eq!(sum.nnz(), 5);
     }
 }

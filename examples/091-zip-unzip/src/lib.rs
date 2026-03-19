@@ -1,6 +1,5 @@
 // 091: Zip and Unzip
 
-
 #[cfg(test)]
 mod tests {
     #[test]
@@ -24,7 +23,11 @@ mod tests {
 
     #[test]
     fn test_zip_with() {
-        let v: Vec<i32> = [1, 2, 3].iter().zip([10, 20, 30].iter()).map(|(a, b)| a + b).collect();
+        let v: Vec<i32> = [1, 2, 3]
+            .iter()
+            .zip([10, 20, 30].iter())
+            .map(|(a, b)| a + b)
+            .collect();
         assert_eq!(v, vec![11, 22, 33]);
     }
 }

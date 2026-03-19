@@ -21,10 +21,7 @@ impl<T, E> Validated<T, E> {
 }
 
 // Approach 1: Apply that accumulates errors
-fn apply<A, B, E, F: FnOnce(A) -> B>(
-    vf: Validated<F, E>,
-    va: Validated<A, E>,
-) -> Validated<B, E> {
+fn apply<A, B, E, F: FnOnce(A) -> B>(vf: Validated<F, E>, va: Validated<A, E>) -> Validated<B, E> {
     match (vf, va) {
         (Validated::Valid(f), Validated::Valid(a)) => Validated::Valid(f(a)),
         (Validated::Invalid(mut e1), Validated::Invalid(e2)) => {
@@ -58,9 +55,27 @@ fn lift3<A, B, C, D, E, F: FnOnce(A, B, C) -> D>(
     c: Validated<C, E>,
 ) -> Validated<D, E> {
     let mut errors = Vec::new();
-    let a = match a { Validated::Valid(v) => Some(v), Validated::Invalid(e) => { errors.extend(e); None } };
-    let b = match b { Validated::Valid(v) => Some(v), Validated::Invalid(e) => { errors.extend(e); None } };
-    let c = match c { Validated::Valid(v) => Some(v), Validated::Invalid(e) => { errors.extend(e); None } };
+    let a = match a {
+        Validated::Valid(v) => Some(v),
+        Validated::Invalid(e) => {
+            errors.extend(e);
+            None
+        }
+    };
+    let b = match b {
+        Validated::Valid(v) => Some(v),
+        Validated::Invalid(e) => {
+            errors.extend(e);
+            None
+        }
+    };
+    let c = match c {
+        Validated::Valid(v) => Some(v),
+        Validated::Invalid(e) => {
+            errors.extend(e);
+            None
+        }
+    };
     if errors.is_empty() {
         Validated::Valid(f(a.unwrap(), b.unwrap(), c.unwrap()))
     } else {
@@ -109,7 +124,6 @@ fn validate_user(name: &str, age: i32, email: &str) -> Validated<User, String> {
     )
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -117,9 +131,14 @@ mod tests {
     #[test]
     fn test_valid_user() {
         let u = validate_user("Alice", 30, "alice@example.com");
-        assert_eq!(u, Validated::Valid(User {
-            name: "Alice".into(), age: 30, email: "alice@example.com".into(),
-        }));
+        assert_eq!(
+            u,
+            Validated::Valid(User {
+                name: "Alice".into(),
+                age: 30,
+                email: "alice@example.com".into(),
+            })
+        );
     }
 
     #[test]
@@ -144,7 +163,11 @@ mod tests {
 
     #[test]
     fn test_lift2_both_valid() {
-        let r = lift2(|a, b| a + b, Validated::<i32, &str>::Valid(1), Validated::Valid(2));
+        let r = lift2(
+            |a, b| a + b,
+            Validated::<i32, &str>::Valid(1),
+            Validated::Valid(2),
+        );
         assert_eq!(r, Validated::Valid(3));
     }
 

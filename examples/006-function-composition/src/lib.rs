@@ -27,10 +27,7 @@ pub fn pipe<A, B, C>(
 
 /// Process a list: double, keep evens, sum. Demonstrates iterator composition.
 pub fn process(data: &[i64]) -> i64 {
-    data.iter()
-        .map(|x| x * 2)
-        .filter(|x| x % 2 == 0)
-        .sum()
+    data.iter().map(|x| x * 2).filter(|x| x % 2 == 0).sum()
 }
 
 /// Build a transformation pipeline using fold over functions
@@ -42,16 +39,12 @@ pub fn pipeline(value: i64, steps: &[&dyn Fn(i64) -> i64]) -> i64 {
 
 /// Compose a vector of functions into a single function (right-to-left)
 pub fn compose_all(funcs: Vec<Box<dyn Fn(i64) -> i64>>) -> Box<dyn Fn(i64) -> i64> {
-    Box::new(move |x| {
-        funcs.iter().rev().fold(x, |acc, f| f(acc))
-    })
+    Box::new(move |x| funcs.iter().rev().fold(x, |acc, f| f(acc)))
 }
 
 /// Pipe a vector of functions (left-to-right)
 pub fn pipe_all(funcs: Vec<Box<dyn Fn(i64) -> i64>>) -> Box<dyn Fn(i64) -> i64> {
-    Box::new(move |x| {
-        funcs.iter().fold(x, |acc, f| f(acc))
-    })
+    Box::new(move |x| funcs.iter().fold(x, |acc, f| f(acc)))
 }
 
 // ── Practical: string processing pipeline ───────────────────────────────────

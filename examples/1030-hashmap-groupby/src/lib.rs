@@ -55,19 +55,24 @@ fn test_generic_group_by() {
     assert_eq!(groups["Alice"][1].1, 92);
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_group_by_first_letter() { group_by_first_letter(); }
+    fn test_group_by_first_letter() {
+        group_by_first_letter();
+    }
 
     #[test]
-    fn test_group_by_parity() { group_by_parity(); }
+    fn test_group_by_parity() {
+        group_by_parity();
+    }
 
     #[test]
-    fn test_generic() { test_generic_group_by(); }
+    fn test_generic() {
+        test_generic_group_by();
+    }
 
     #[test]
     fn test_group_by_length() {

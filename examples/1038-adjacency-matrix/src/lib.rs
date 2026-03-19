@@ -96,19 +96,24 @@ fn transitive_closure() {
     assert!(tc[1][3]); // 1 -> 2 -> 3
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_basic() { basic_matrix(); }
+    fn test_basic() {
+        basic_matrix();
+    }
 
     #[test]
-    fn test_degree() { degree_and_neighbors(); }
+    fn test_degree() {
+        degree_and_neighbors();
+    }
 
     #[test]
-    fn test_transitive() { transitive_closure(); }
+    fn test_transitive() {
+        transitive_closure();
+    }
 
     #[test]
     fn test_undirected() {

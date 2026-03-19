@@ -71,7 +71,6 @@ fn load_config_ext(path: &str) -> Result<String, AppError> {
     read_file(path).with_context(|| format!("loading {}", path))
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

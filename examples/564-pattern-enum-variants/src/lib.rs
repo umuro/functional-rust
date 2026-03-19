@@ -53,7 +53,10 @@ mod tests {
 
     #[test]
     fn test_get_write() {
-        assert_eq!(get_write_text(&Message::Write("hello".into())), Some("hello"));
+        assert_eq!(
+            get_write_text(&Message::Write("hello".into())),
+            Some("hello")
+        );
         assert_eq!(get_write_text(&Message::Quit), None);
     }
 }

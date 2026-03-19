@@ -111,19 +111,24 @@ fn codec_test() {
     assert_eq!(bm.get_by_value(&0xFF0000u32), None);
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_basic() { basic_ops(); }
+    fn test_basic() {
+        basic_ops();
+    }
 
     #[test]
-    fn test_overwrite() { overwrite_test(); }
+    fn test_overwrite() {
+        overwrite_test();
+    }
 
     #[test]
-    fn test_codec() { codec_test(); }
+    fn test_codec() {
+        codec_test();
+    }
 
     #[test]
     fn test_remove_by_value() {

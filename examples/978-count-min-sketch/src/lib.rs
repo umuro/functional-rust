@@ -4,11 +4,13 @@
 
 // Approach 1: Count-Min Sketch with multiple hash seeds
 fn hash(seed: u64, s: &str) -> u64 {
-    s.bytes().fold(seed, |h, b| h.wrapping_mul(seed).wrapping_add(b as u64) ^ b as u64)
+    s.bytes().fold(seed, |h, b| {
+        h.wrapping_mul(seed).wrapping_add(b as u64) ^ b as u64
+    })
 }
 
 pub struct CountMinSketch {
-    table: Vec<Vec<u64>>,  // depth rows × width cols
+    table: Vec<Vec<u64>>, // depth rows × width cols
     seeds: Vec<u64>,
     width: usize,
     depth: usize,
@@ -87,7 +89,6 @@ impl FrequencyTracker {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -95,9 +96,15 @@ mod tests {
     #[test]
     fn test_no_underestimate() {
         let mut sk = CountMinSketch::new(100, 5);
-        for _ in 0..100 { sk.update("apple", 1); }
-        for _ in 0..50  { sk.update("banana", 1); }
-        for _ in 0..25  { sk.update("cherry", 1); }
+        for _ in 0..100 {
+            sk.update("apple", 1);
+        }
+        for _ in 0..50 {
+            sk.update("banana", 1);
+        }
+        for _ in 0..25 {
+            sk.update("cherry", 1);
+        }
 
         // Count-Min never underestimates
         assert!(sk.query("apple") >= 100);
@@ -108,7 +115,9 @@ mod tests {
     #[test]
     fn test_unseen_items_low() {
         let mut sk = CountMinSketch::new(1000, 5);
-        for i in 0..100 { sk.update(&format!("item_{}", i), 1); }
+        for i in 0..100 {
+            sk.update(&format!("item_{}", i), 1);
+        }
 
         // Unseen items should have very low count
         let unseen = sk.query("completely_unseen_item_xyz");
@@ -125,14 +134,26 @@ mod tests {
     #[test]
     fn test_frequency_tracker() {
         let mut tracker = FrequencyTracker::new(200, 4);
-        for _ in 0..900 { tracker.add("hot"); }
-        for _ in 0..100 { tracker.add("cold"); }
+        for _ in 0..900 {
+            tracker.add("hot");
+        }
+        for _ in 0..100 {
+            tracker.add("cold");
+        }
 
         assert_eq!(tracker.total(), 1000);
         let hot_freq = tracker.estimate_frequency("hot");
-        assert!(hot_freq >= 0.9, "hot frequency {:.3} should be >= 0.9", hot_freq);
+        assert!(
+            hot_freq >= 0.9,
+            "hot frequency {:.3} should be >= 0.9",
+            hot_freq
+        );
         let cold_freq = tracker.estimate_frequency("cold");
-        assert!(cold_freq >= 0.1, "cold frequency {:.3} should be >= 0.1", cold_freq);
+        assert!(
+            cold_freq >= 0.1,
+            "cold frequency {:.3} should be >= 0.1",
+            cold_freq
+        );
     }
 
     #[test]

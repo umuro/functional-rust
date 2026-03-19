@@ -33,10 +33,7 @@ fn multiplier(n: i32) -> impl Fn(i32) -> i32 {
 
 /// Compose two functions: `compose(f, g)(x)` = `f(g(x))`.
 /// OCaml: `let compose f g x = f (g x)`.
-fn compose<A, B, C>(
-    f: impl Fn(B) -> C,
-    g: impl Fn(A) -> B,
-) -> impl Fn(A) -> C {
+fn compose<A, B, C>(f: impl Fn(B) -> C, g: impl Fn(A) -> B) -> impl Fn(A) -> C {
     move |x| f(g(x))
 }
 
@@ -66,16 +63,15 @@ fn sum(xs: &[i32]) -> i32 {
 /// Generic higher-order transform: map, then filter, then fold — all in one pass.
 fn map_filter_fold<A, B>(
     xs: impl Iterator<Item = A>,
-    map_fn:    impl Fn(A) -> B,
+    map_fn: impl Fn(A) -> B,
     filter_fn: impl Fn(&B) -> bool,
-    init:      B,
-    fold_fn:   impl Fn(B, B) -> B,
+    init: B,
+    fold_fn: impl Fn(B, B) -> B,
 ) -> B {
     xs.map(map_fn).filter(filter_fn).fold(init, fold_fn)
 }
 
 // ── Entry point ───────────────────────────────────────────────────────────────
-
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
@@ -98,13 +94,13 @@ mod tests {
     #[test]
     fn test_compose() {
         let f = compose(|x: i32| x * 2, |x: i32| x + 1);
-        assert_eq!(f(5), 12);  // (5+1)*2
-        assert_eq!(f(0), 2);   // (0+1)*2
+        assert_eq!(f(5), 12); // (5+1)*2
+        assert_eq!(f(0), 2); // (0+1)*2
     }
 
     #[test]
     fn test_adder_and_multiplier() {
-        let add5  = adder(5);
+        let add5 = adder(5);
         let times3 = multiplier(3);
         assert_eq!(add5(10), 15);
         assert_eq!(times3(4), 12);
@@ -116,7 +112,7 @@ mod tests {
         let dbl = multiplier(2);
         assert_eq!(pipe(5, &[&inc, &dbl]), 12);
         assert_eq!(pipe(0, &[&inc, &dbl]), 2);
-        assert_eq!(pipe(5, &[]),           5); // identity
+        assert_eq!(pipe(5, &[]), 5); // identity
     }
 
     #[test]
@@ -130,13 +126,7 @@ mod tests {
     #[test]
     fn test_map_filter_fold() {
         // square [1..5], keep those > 10, sum → 16+25 = 41
-        let result = map_filter_fold(
-            1..=5,
-            |x| x * x,
-            |x| x > &10,
-            0,
-            |acc, x| acc + x,
-        );
+        let result = map_filter_fold(1..=5, |x| x * x, |x| x > &10, 0, |acc, x| acc + x);
         assert_eq!(result, 41);
     }
 }

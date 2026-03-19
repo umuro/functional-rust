@@ -6,7 +6,11 @@ struct NonEmptyString(String); // private field!
 
 impl NonEmptyString {
     fn new(s: &str) -> Option<Self> {
-        if s.is_empty() { None } else { Some(NonEmptyString(s.to_string())) }
+        if s.is_empty() {
+            None
+        } else {
+            Some(NonEmptyString(s.to_string()))
+        }
     }
 
     fn as_str(&self) -> &str {
@@ -24,7 +28,11 @@ struct PositiveInt(u32); // private field, always > 0
 
 impl PositiveInt {
     fn new(n: i32) -> Option<Self> {
-        if n <= 0 { None } else { Some(PositiveInt(n as u32)) }
+        if n <= 0 {
+            None
+        } else {
+            Some(PositiveInt(n as u32))
+        }
     }
 
     fn value(&self) -> u32 {
@@ -64,7 +72,6 @@ fn greet(name: &NonEmptyString) -> String {
 fn double_positive(n: PositiveInt) -> u32 {
     n.value() * 2
 }
-
 
 #[cfg(test)]
 mod tests {

@@ -8,16 +8,16 @@
 #[macro_export]
 macro_rules! hygienic_example {
     ($val:expr) => {{
-        let result = $val;  // 'result' is hygienic
+        let result = $val; // 'result' is hygienic
         result * 2
     }};
 }
 
 /// Demonstrate that macro vars don't leak.
 pub fn test_hygiene() -> i32 {
-    let result = 10;  // Outer 'result'
-    let doubled = hygienic_example!(5);  // Inner 'result' is separate
-    result + doubled  // 10 + 10 = 20
+    let result = 10; // Outer 'result'
+    let doubled = hygienic_example!(5); // Inner 'result' is separate
+    result + doubled // 10 + 10 = 20
 }
 
 /// Non-hygienic when you want shared names.
@@ -35,9 +35,9 @@ mod tests {
 
     #[test]
     fn test_hygienic_example() {
-        let result = 100;  // This 'result' is separate
+        let result = 100; // This 'result' is separate
         assert_eq!(hygienic_example!(5), 10);
-        assert_eq!(result, 100);  // Unchanged
+        assert_eq!(result, 100); // Unchanged
     }
 
     #[test]
@@ -48,7 +48,7 @@ mod tests {
     #[test]
     fn test_nested_hygiene() {
         let x = hygienic_example!(hygienic_example!(3));
-        assert_eq!(x, 12);  // ((3 * 2) * 2)
+        assert_eq!(x, 12); // ((3 * 2) * 2)
     }
 
     #[test]

@@ -57,10 +57,7 @@ where
 
     /// Get total length across all shards
     pub fn len(&self) -> usize {
-        self.shards
-            .iter()
-            .map(|s| s.read().unwrap().len())
-            .sum()
+        self.shards.iter().map(|s| s.read().unwrap().len()).sum()
     }
 
     pub fn is_empty(&self) -> bool {

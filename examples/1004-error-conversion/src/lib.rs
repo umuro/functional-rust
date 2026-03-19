@@ -71,11 +71,10 @@ fn read_config(path: &str) -> Result<String, IoError> {
 
 // The ? operator automatically calls From to convert errors
 fn load_config(path: &str) -> Result<i64, AppError> {
-    let content = read_config(path)?;  // IoError -> AppError via From
+    let content = read_config(path)?; // IoError -> AppError via From
     let value: i64 = content.parse()?; // ParseIntError -> AppError via From
     Ok(value)
 }
-
 
 #[cfg(test)]
 mod tests {

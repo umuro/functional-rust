@@ -37,13 +37,7 @@ impl<A, B> Y<A, B> {
 
 /// Create a Y combinator for factorial.
 pub fn y_factorial() -> Y<u64, u64> {
-    Y(Box::new(|y, n| {
-        if n <= 1 {
-            1
-        } else {
-            n * y.call(n - 1)
-        }
-    }))
+    Y(Box::new(|y, n| if n <= 1 { 1 } else { n * y.call(n - 1) }))
 }
 
 /// Fibonacci using open recursion.
@@ -100,13 +94,15 @@ mod tests {
     #[test]
     fn test_y_combinator_structure() {
         // Test that Y combinator works for custom function
-        let double_until_100 = Y(Box::new(|y: &Y<i32, i32>, n: i32| {
-            if n >= 100 {
-                n
-            } else {
-                y.call(n * 2)
-            }
-        }));
+        let double_until_100 = Y(Box::new(
+            |y: &Y<i32, i32>, n: i32| {
+                if n >= 100 {
+                    n
+                } else {
+                    y.call(n * 2)
+                }
+            },
+        ));
         assert_eq!(double_until_100.call(1), 128);
     }
 }

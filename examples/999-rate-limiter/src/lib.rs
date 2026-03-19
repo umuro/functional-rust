@@ -2,8 +2,8 @@
 // Tokens refill over time; consume one per request. Uses std::time::Instant.
 
 use std::sync::Mutex;
-use std::time::{Duration, Instant};
 use std::thread;
+use std::time::{Duration, Instant};
 
 struct TokenBucket {
     state: Mutex<BucketState>,
@@ -66,7 +66,11 @@ fn burst_then_deny() -> (usize, usize) {
     let mut denied = 0;
 
     for _ in 0..10 {
-        if bucket.try_acquire(1.0) { allowed += 1; } else { denied += 1; }
+        if bucket.try_acquire(1.0) {
+            allowed += 1;
+        } else {
+            denied += 1;
+        }
     }
     (allowed, denied)
 }
@@ -76,7 +80,9 @@ fn refill_over_time() -> usize {
     let bucket = TokenBucket::new(3.0, 1000.0); // 1000 tokens/sec
 
     // Drain all 3 tokens
-    for _ in 0..3 { assert!(bucket.try_acquire(1.0)); }
+    for _ in 0..3 {
+        assert!(bucket.try_acquire(1.0));
+    }
     assert!(!bucket.try_acquire(1.0)); // empty
 
     // Wait 10ms → should get ~10 tokens back, capped at 3
@@ -84,7 +90,9 @@ fn refill_over_time() -> usize {
 
     let mut refilled = 0;
     for _ in 0..5 {
-        if bucket.try_acquire(1.0) { refilled += 1; }
+        if bucket.try_acquire(1.0) {
+            refilled += 1;
+        }
     }
     refilled
 }
@@ -92,12 +100,14 @@ fn refill_over_time() -> usize {
 // --- Approach 3: Rate-limited batch processing ---
 fn rate_limited_processing(items: Vec<i32>, rps: f64) -> Vec<i32> {
     let bucket = TokenBucket::new(rps, rps); // allow rps/sec burst
-    items.into_iter().map(|item| {
-        bucket.acquire(1.0); // wait for token
-        item * 2
-    }).collect()
+    items
+        .into_iter()
+        .map(|item| {
+            bucket.acquire(1.0); // wait for token
+            item * 2
+        })
+        .collect()
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -113,7 +123,11 @@ mod tests {
     #[test]
     fn test_tokens_refill() {
         let refilled = refill_over_time();
-        assert!(refilled >= 3, "expected at least 3 tokens refilled, got {}", refilled);
+        assert!(
+            refilled >= 3,
+            "expected at least 3 tokens refilled, got {}",
+            refilled
+        );
     }
 
     #[test]

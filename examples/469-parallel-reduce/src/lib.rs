@@ -52,7 +52,11 @@ pub fn parallel_min<T: Send + Sync + Clone + Ord>(data: &[T]) -> Option<T> {
         return None;
     }
     Some(parallel_reduce(data, data[0].clone(), &|a, b| {
-        if a < b { a } else { b }
+        if a < b {
+            a
+        } else {
+            b
+        }
     }))
 }
 
@@ -62,7 +66,11 @@ pub fn parallel_max<T: Send + Sync + Clone + Ord>(data: &[T]) -> Option<T> {
         return None;
     }
     Some(parallel_reduce(data, data[0].clone(), &|a, b| {
-        if a > b { a } else { b }
+        if a > b {
+            a
+        } else {
+            b
+        }
     }))
 }
 

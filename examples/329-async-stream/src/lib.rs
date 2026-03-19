@@ -11,7 +11,10 @@ pub struct RangeStream {
 
 impl RangeStream {
     pub fn new(start: i64, end: i64) -> Self {
-        Self { current: start, end }
+        Self {
+            current: start,
+            end,
+        }
     }
 }
 
@@ -31,7 +34,11 @@ impl Iterator for RangeStream {
 
 /// A stateful stream that yields data in fixed-size chunks.
 pub enum ChunkedStream<T> {
-    Active { data: Vec<T>, position: usize, chunk_size: usize },
+    Active {
+        data: Vec<T>,
+        position: usize,
+        chunk_size: usize,
+    },
     Done,
 }
 

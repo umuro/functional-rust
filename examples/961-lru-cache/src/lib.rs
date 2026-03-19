@@ -54,7 +54,6 @@ impl<K: Eq + std::hash::Hash + Clone, V> LruCache<K, V> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

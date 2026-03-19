@@ -107,9 +107,16 @@ mod tests {
 
     #[test]
     fn test_classic_example() {
-        let input = vec!['a','a','a','a','b','c','c','a','a','d','e','e','e','e'];
+        let input = vec![
+            'a', 'a', 'a', 'a', 'b', 'c', 'c', 'a', 'a', 'd', 'e', 'e', 'e', 'e',
+        ];
         let expected = vec![
-            Many(4,'a'), One('b'), Many(2,'c'), Many(2,'a'), One('d'), Many(4,'e')
+            Many(4, 'a'),
+            One('b'),
+            Many(2, 'c'),
+            Many(2, 'a'),
+            One('d'),
+            Many(4, 'e'),
         ];
         assert_eq!(encode_direct(&input), expected);
         assert_eq!(encode_direct_recursive(&input), expected);

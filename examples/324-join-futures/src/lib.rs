@@ -133,10 +133,8 @@ mod tests {
 
     #[test]
     fn test_join_all_labeled() {
-        let tasks: Vec<(&'static str, Box<dyn FnOnce() -> i32 + Send>)> = vec![
-            ("first", Box::new(|| 10)),
-            ("second", Box::new(|| 20)),
-        ];
+        let tasks: Vec<(&'static str, Box<dyn FnOnce() -> i32 + Send>)> =
+            vec![("first", Box::new(|| 10)), ("second", Box::new(|| 20))];
         let results = join_all_labeled(tasks);
         assert_eq!(results, vec![("first", 10), ("second", 20)]);
     }

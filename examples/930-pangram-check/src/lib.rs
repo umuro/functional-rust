@@ -2,7 +2,6 @@
 ///
 /// A pangram is a sentence using every letter of the alphabet at least once.
 /// Demonstrates set-based string analysis.
-
 use std::collections::HashSet;
 
 /// Idiomatic Rust using HashSet and iterator chains.
@@ -74,18 +73,24 @@ mod tests {
 
     #[test]
     fn test_with_numbers_and_punctuation() {
-        assert!(is_pangram("The 1 quick brown fox jumps! over the 2 lazy dogs."));
+        assert!(is_pangram(
+            "The 1 quick brown fox jumps! over the 2 lazy dogs."
+        ));
     }
 
     #[test]
     fn test_bitflag_version() {
-        assert!(is_pangram_bitflag("The quick brown fox jumps over the lazy dog"));
+        assert!(is_pangram_bitflag(
+            "The quick brown fox jumps over the lazy dog"
+        ));
         assert!(!is_pangram_bitflag("Hello world"));
     }
 
     #[test]
     fn test_recursive_version() {
-        assert!(is_pangram_recursive("The quick brown fox jumps over the lazy dog"));
+        assert!(is_pangram_recursive(
+            "The quick brown fox jumps over the lazy dog"
+        ));
         assert!(!is_pangram_recursive("abc"));
     }
 }

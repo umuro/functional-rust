@@ -5,7 +5,11 @@ use std::fmt;
 
 // Approach 1: Simple Display
 #[derive(Debug)]
-enum Color { Red, Green, Blue }
+enum Color {
+    Red,
+    Green,
+    Blue,
+}
 
 impl fmt::Display for Color {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -18,7 +22,10 @@ impl fmt::Display for Color {
 }
 
 #[derive(Debug)]
-struct Point { x: f64, y: f64 }
+struct Point {
+    x: f64,
+    y: f64,
+}
 
 impl fmt::Display for Point {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -28,7 +35,11 @@ impl fmt::Display for Point {
 
 // Approach 2: Complex formatting
 #[derive(Debug)]
-struct Person { name: String, age: u32, email: String }
+struct Person {
+    name: String,
+    age: u32,
+    email: String,
+}
 
 impl fmt::Display for Person {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -38,7 +49,10 @@ impl fmt::Display for Person {
 
 // Approach 3: Recursive Display
 #[derive(Debug)]
-enum Tree<T> { Leaf, Node(Box<Tree<T>>, T, Box<Tree<T>>) }
+enum Tree<T> {
+    Leaf,
+    Node(Box<Tree<T>>, T, Box<Tree<T>>),
+}
 
 impl<T: fmt::Display> fmt::Display for Tree<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -48,7 +62,6 @@ impl<T: fmt::Display> fmt::Display for Tree<T> {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -67,7 +80,11 @@ mod tests {
 
     #[test]
     fn test_person_display() {
-        let p = Person { name: "Alice".into(), age: 30, email: "alice@ex.com".into() };
+        let p = Person {
+            name: "Alice".into(),
+            age: 30,
+            email: "alice@ex.com".into(),
+        };
         assert_eq!(format!("{}", p), "Alice (age 30, alice@ex.com)");
     }
 

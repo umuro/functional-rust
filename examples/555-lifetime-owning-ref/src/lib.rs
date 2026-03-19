@@ -12,7 +12,11 @@ pub struct OwnedSlice {
 impl OwnedSlice {
     pub fn new(data: Vec<u8>) -> Self {
         let end = data.len();
-        OwnedSlice { data, start: 0, end }
+        OwnedSlice {
+            data,
+            start: 0,
+            end,
+        }
     }
 
     pub fn slice(&self) -> &[u8] {
@@ -32,7 +36,9 @@ pub struct OwnedStr {
 
 impl OwnedStr {
     pub fn new(s: &str) -> Self {
-        OwnedStr { data: s.to_string() }
+        OwnedStr {
+            data: s.to_string(),
+        }
     }
 
     pub fn as_str(&self) -> &str {

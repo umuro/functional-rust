@@ -16,7 +16,9 @@ pub struct FingerTree<T> {
 
 impl<T: Clone> FingerTree<T> {
     pub fn empty() -> Self {
-        FingerTree { deque: VecDeque::new() }
+        FingerTree {
+            deque: VecDeque::new(),
+        }
     }
 
     pub fn push_front(mut self, x: T) -> Self {
@@ -59,7 +61,6 @@ impl<T: Clone> FingerTree<T> {
         self.deque.iter().cloned().collect()
     }
 }
-
 
 #[cfg(test)]
 mod tests {

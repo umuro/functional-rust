@@ -51,12 +51,7 @@ impl<'r, 'w> Context<'r, 'w> {
 }
 
 /// Three different lifetimes.
-pub fn select<'a, 'b, 'c>(
-    a: &'a str,
-    _b: &'b str,
-    _c: &'c str,
-    choice: usize,
-) -> &'a str {
+pub fn select<'a, 'b, 'c>(a: &'a str, _b: &'b str, _c: &'c str, choice: usize) -> &'a str {
     // Can only return 'a since that's what we promised
     match choice {
         _ => a,

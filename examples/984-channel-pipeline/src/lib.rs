@@ -13,7 +13,8 @@ where
 {
     let (tx_out, rx_out) = mpsc::channel();
     thread::spawn(move || {
-        for item in rx.iter() {      // iter() stops when channel closes
+        for item in rx.iter() {
+            // iter() stops when channel closes
             tx_out.send(f(item)).unwrap();
         }
         // tx_out drops here → closes next stage
@@ -47,7 +48,10 @@ fn run_pipeline(inputs: Vec<i32>) -> Vec<String> {
 }
 
 // --- Parameterised N-stage pipeline ---
-fn run_n_stages(inputs: Vec<i32>, stages: Vec<Box<dyn Fn(i32) -> i32 + Send + 'static>>) -> Vec<i32> {
+fn run_n_stages(
+    inputs: Vec<i32>,
+    stages: Vec<Box<dyn Fn(i32) -> i32 + Send + 'static>>,
+) -> Vec<i32> {
     let (tx_source, mut current_rx) = mpsc::channel::<i32>();
 
     for f in stages {
@@ -64,7 +68,6 @@ fn run_n_stages(inputs: Vec<i32>, stages: Vec<Box<dyn Fn(i32) -> i32 + Send + 's
     producer.join().unwrap();
     results
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -107,7 +110,9 @@ mod tests {
         let rx_out = pipeline_stage(rx, |x| x * x);
 
         let h = thread::spawn(move || {
-            for v in [2, 3, 4] { tx.send(v).unwrap(); }
+            for v in [2, 3, 4] {
+                tx.send(v).unwrap();
+            }
         });
         h.join().unwrap();
 

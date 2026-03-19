@@ -134,9 +134,7 @@ mod tests {
     use super::*;
 
     fn build_tree(values: &[i32]) -> Box<Tree> {
-        values
-            .iter()
-            .fold(Tree::leaf(), |acc, &v| insert(acc, v))
+        values.iter().fold(Tree::leaf(), |acc, &v| insert(acc, v))
     }
 
     #[test]

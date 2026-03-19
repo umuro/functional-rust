@@ -16,9 +16,9 @@ enum Expr {
 
 fn infix_binding_power(op: &str) -> Option<(u8, u8)> {
     match op {
-        "+" | "-" => Some((5, 6)),   // left-associative
-        "*" | "/" => Some((7, 8)),   // left-associative
-        "^" => Some((10, 9)),        // right-associative
+        "+" | "-" => Some((5, 6)), // left-associative
+        "*" | "/" => Some((7, 8)), // left-associative
+        "^" => Some((10, 9)),      // right-associative
         _ => None,
     }
 }
@@ -34,26 +34,32 @@ fn parse_number(input: &str) -> ParseResult<Expr> {
     let s = input.trim_start();
     let bytes = s.as_bytes();
     let mut pos = 0;
-    if pos < bytes.len() && bytes[pos] == b'-' { pos += 1; }
+    if pos < bytes.len() && bytes[pos] == b'-' {
+        pos += 1;
+    }
     let start = pos;
-    while pos < bytes.len() && bytes[pos].is_ascii_digit() { pos += 1; }
+    while pos < bytes.len() && bytes[pos].is_ascii_digit() {
+        pos += 1;
+    }
     if pos < bytes.len() && bytes[pos] == b'.' {
         pos += 1;
-        while pos < bytes.len() && bytes[pos].is_ascii_digit() { pos += 1; }
+        while pos < bytes.len() && bytes[pos].is_ascii_digit() {
+            pos += 1;
+        }
     }
     if pos == start || (pos == 1 && bytes[0] == b'-') {
         return Err("Expected number".to_string());
     }
-    let num: f64 = s[..pos].parse().map_err(|e: std::num::ParseFloatError| e.to_string())?;
+    let num: f64 = s[..pos]
+        .parse()
+        .map_err(|e: std::num::ParseFloatError| e.to_string())?;
     Ok((Expr::Num(num), &s[pos..]))
 }
 
 fn parse_op(input: &str) -> ParseResult<&str> {
     let s = input.trim_start();
     match s.chars().next() {
-        Some(c @ ('+' | '-' | '*' | '/' | '^')) => {
-            Ok((&s[..c.len_utf8()], &s[c.len_utf8()..]))
-        }
+        Some(c @ ('+' | '-' | '*' | '/' | '^')) => Ok((&s[..c.len_utf8()], &s[c.len_utf8()..])),
         _ => Err("Expected operator".to_string()),
     }
 }
@@ -91,7 +97,9 @@ fn pratt_expr(input: &str, min_bp: u8) -> ParseResult<Expr> {
             Some(bp) => bp,
             None => break,
         };
-        if lbp < min_bp { break; }
+        if lbp < min_bp {
+            break;
+        }
         let (_, after_op) = parse_op(rest)?;
         let (rhs, r) = pratt_expr(after_op, rbp)?;
         lhs = Expr::BinOp(op, Box::new(lhs), Box::new(rhs));
@@ -111,18 +119,31 @@ fn eval_expr(input: &str) -> ParseResult<f64> {
         let (mut lhs, mut rest) = if s.starts_with('(') {
             let (val, r) = eval_pratt(&s[1..], 0)?;
             let r = r.trim_start();
-            if r.starts_with(')') { (val, &r[1..]) }
-            else { return Err("Expected ')'".to_string()); }
-        } else if s.starts_with('-') && !s[1..].trim_start().starts_with(|c: char| c == '+' || c == '-' || c == '*' || c == '/') {
+            if r.starts_with(')') {
+                (val, &r[1..])
+            } else {
+                return Err("Expected ')'".to_string());
+            }
+        } else if s.starts_with('-')
+            && !s[1..]
+                .trim_start()
+                .starts_with(|c: char| c == '+' || c == '-' || c == '*' || c == '/')
+        {
             let (val, r) = eval_pratt(&s[1..], 9)?;
             (-val, r)
         } else {
             // parse number
             let bytes = s.as_bytes();
             let mut pos = 0;
-            while pos < bytes.len() && (bytes[pos].is_ascii_digit() || bytes[pos] == b'.') { pos += 1; }
-            if pos == 0 { return Err("Expected number".to_string()); }
-            let n: f64 = s[..pos].parse().map_err(|e: std::num::ParseFloatError| e.to_string())?;
+            while pos < bytes.len() && (bytes[pos].is_ascii_digit() || bytes[pos] == b'.') {
+                pos += 1;
+            }
+            if pos == 0 {
+                return Err("Expected number".to_string());
+            }
+            let n: f64 = s[..pos]
+                .parse()
+                .map_err(|e: std::num::ParseFloatError| e.to_string())?;
             (n, &s[pos..])
         };
 
@@ -137,7 +158,9 @@ fn eval_expr(input: &str) -> ParseResult<f64> {
                 Some(bp) => bp,
                 None => break,
             };
-            if lbp < min_bp { break; }
+            if lbp < min_bp {
+                break;
+            }
             let (rhs, r) = eval_pratt(&trimmed[1..], rbp)?;
             lhs = match op {
                 '+' => lhs + rhs,
@@ -161,7 +184,14 @@ mod tests {
     #[test]
     fn test_simple_add() {
         let (expr, _) = pratt_expr("1 + 2", 0).unwrap();
-        assert_eq!(expr, Expr::BinOp("+".into(), Box::new(Expr::Num(1.0)), Box::new(Expr::Num(2.0))));
+        assert_eq!(
+            expr,
+            Expr::BinOp(
+                "+".into(),
+                Box::new(Expr::Num(1.0)),
+                Box::new(Expr::Num(2.0))
+            )
+        );
     }
 
     #[test]

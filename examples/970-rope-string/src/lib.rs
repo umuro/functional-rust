@@ -86,7 +86,6 @@ impl Rope {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

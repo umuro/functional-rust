@@ -191,7 +191,10 @@ mod tests {
     fn test_priority_sort() {
         let mut priorities = vec![Priority::Medium, Priority::Critical, Priority::Low];
         priorities.sort();
-        assert_eq!(priorities, vec![Priority::Low, Priority::Medium, Priority::Critical]);
+        assert_eq!(
+            priorities,
+            vec![Priority::Low, Priority::Medium, Priority::Critical]
+        );
     }
 
     #[test]
@@ -222,7 +225,10 @@ mod tests {
             Task::new("C", Priority::High, 3),
         ];
         let groups = group_by_priority(&tasks);
-        assert_eq!(groups.get(&Priority::High), Some(&vec!["A".to_string(), "C".to_string()]));
+        assert_eq!(
+            groups.get(&Priority::High),
+            Some(&vec!["A".to_string(), "C".to_string()])
+        );
         assert_eq!(groups.get(&Priority::Low), Some(&vec!["B".to_string()]));
     }
 
@@ -248,6 +254,9 @@ mod tests {
         set.insert(Priority::Low);
         set.insert(Priority::Critical);
         let order: Vec<_> = set.into_iter().collect();
-        assert_eq!(order, vec![Priority::Low, Priority::High, Priority::Critical]);
+        assert_eq!(
+            order,
+            vec![Priority::Low, Priority::High, Priority::Critical]
+        );
     }
 }

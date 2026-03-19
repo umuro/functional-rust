@@ -1,7 +1,6 @@
 //! 699 — Raw Pointer Basics
 //! *const T and *mut T: creation, casting, and safe wrapping.
 
-
 /// Read `idx` from a slice via raw pointer, returning None for out-of-bounds.
 fn safe_read(slice: &[u32], idx: usize) -> Option<u32> {
     if idx >= slice.len() {

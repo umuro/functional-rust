@@ -16,30 +16,50 @@ fn coin_change_dp(coins: &[i32], amount: i32) -> i32 {
             }
         }
     }
-    if dp[amount] > amount { -1 } else { dp[amount] as i32 }
+    if dp[amount] > amount {
+        -1
+    } else {
+        dp[amount] as i32
+    }
 }
 
 // Approach 2: Recursive with HashMap memoization
 fn coin_change_memo(coins: &[i32], amount: i32) -> i32 {
     fn solve(coins: &[i32], amt: i32, cache: &mut HashMap<i32, i32>) -> i32 {
-        if amt == 0 { return 0; }
-        if amt < 0 { return i32::MAX; }
-        if let Some(&v) = cache.get(&amt) { return v; }
+        if amt == 0 {
+            return 0;
+        }
+        if amt < 0 {
+            return i32::MAX;
+        }
+        if let Some(&v) = cache.get(&amt) {
+            return v;
+        }
         let result = coins.iter().fold(i32::MAX, |best, &coin| {
             let sub = solve(coins, amt - coin, cache);
-            if sub < i32::MAX { best.min(sub + 1) } else { best }
+            if sub < i32::MAX {
+                best.min(sub + 1)
+            } else {
+                best
+            }
         });
         cache.insert(amt, result);
         result
     }
     let mut cache = HashMap::new();
     let r = solve(coins, amount, &mut cache);
-    if r == i32::MAX { -1 } else { r }
+    if r == i32::MAX {
+        -1
+    } else {
+        r
+    }
 }
 
 // Approach 3: BFS (shortest path interpretation)
 fn coin_change_bfs(coins: &[i32], amount: i32) -> i32 {
-    if amount == 0 { return 0; }
+    if amount == 0 {
+        return 0;
+    }
     let mut visited = vec![false; amount as usize + 1];
     let mut queue = std::collections::VecDeque::new();
     queue.push_back((0i32, 0i32));
@@ -47,7 +67,9 @@ fn coin_change_bfs(coins: &[i32], amount: i32) -> i32 {
     while let Some((current, steps)) = queue.pop_front() {
         for &coin in coins {
             let next = current + coin;
-            if next == amount { return steps + 1; }
+            if next == amount {
+                return steps + 1;
+            }
             if next < amount && !visited[next as usize] {
                 visited[next as usize] = true;
                 queue.push_back((next, steps + 1));

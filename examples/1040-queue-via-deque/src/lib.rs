@@ -10,7 +10,9 @@ struct Queue<T> {
 
 impl<T> Queue<T> {
     fn new() -> Self {
-        Queue { inner: VecDeque::new() }
+        Queue {
+            inner: VecDeque::new(),
+        }
     }
 
     fn enqueue(&mut self, value: T) {
@@ -102,19 +104,24 @@ fn bfs_test() {
     assert_eq!(levels[2], vec![3]);
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_basic() { basic_queue(); }
+    fn test_basic() {
+        basic_queue();
+    }
 
     #[test]
-    fn test_vecdeque() { vecdeque_as_queue(); }
+    fn test_vecdeque() {
+        vecdeque_as_queue();
+    }
 
     #[test]
-    fn test_bfs() { bfs_test(); }
+    fn test_bfs() {
+        bfs_test();
+    }
 
     #[test]
     fn test_empty_dequeue() {

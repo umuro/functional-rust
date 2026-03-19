@@ -70,8 +70,13 @@ pub fn encode_packet(p: &Packet) -> Vec<u8> {
 
 /// Parse a key=value string. Must not panic on any &str.
 pub fn parse_kv(s: &str) -> Option<(&str, &str)> {
-    s.split_once('=')
-        .and_then(|(k, v)| if k.is_empty() || v.is_empty() { None } else { Some((k, v)) })
+    s.split_once('=').and_then(|(k, v)| {
+        if k.is_empty() || v.is_empty() {
+            None
+        } else {
+            Some((k, v))
+        }
+    })
 }
 
 /// Validate that input is ASCII alphanumeric. Never panics.

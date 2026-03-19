@@ -33,11 +33,11 @@ pub const fn fib_matrix(n: u64) -> u64 {
     if n == 0 {
         return 0;
     }
-    
+
     // Matrix [[1,1],[1,0]]^n
     let (mut a, mut b, mut c, mut d) = (1u64, 1u64, 1u64, 0u64);
     let (mut ra, mut rb, mut rc, mut rd) = (1u64, 0u64, 0u64, 1u64); // Identity
-    
+
     let mut exp = n - 1;
     while exp > 0 {
         if exp % 2 == 1 {
@@ -60,7 +60,7 @@ pub const fn fib_matrix(n: u64) -> u64 {
         d = new_d;
         exp /= 2;
     }
-    
+
     ra
 }
 

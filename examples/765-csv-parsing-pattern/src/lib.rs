@@ -9,7 +9,11 @@ pub type Row = Vec<String>;
 #[derive(Debug, PartialEq)]
 pub enum CsvError {
     UnterminatedQuote(usize),
-    InconsistentColumns { expected: usize, got: usize, line: usize },
+    InconsistentColumns {
+        expected: usize,
+        got: usize,
+        line: usize,
+    },
 }
 
 /// Parse a CSV string into rows
@@ -22,7 +26,7 @@ pub fn parse_csv(input: &str) -> Result<Vec<Row>, CsvError> {
             continue;
         }
         let row = parse_row(line, line_num)?;
-        
+
         match expected_cols {
             None => expected_cols = Some(row.len()),
             Some(n) if row.len() != n => {
@@ -34,7 +38,7 @@ pub fn parse_csv(input: &str) -> Result<Vec<Row>, CsvError> {
             }
             _ => {}
         }
-        
+
         rows.push(row);
     }
 
@@ -156,10 +160,7 @@ mod tests {
     fn test_inconsistent_columns() {
         let input = "a,b,c\n1,2";
         let result = parse_csv(input);
-        assert!(matches!(
-            result,
-            Err(CsvError::InconsistentColumns { .. })
-        ));
+        assert!(matches!(result, Err(CsvError::InconsistentColumns { .. })));
     }
 
     #[test]

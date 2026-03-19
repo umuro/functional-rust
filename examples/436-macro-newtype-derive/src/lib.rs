@@ -26,7 +26,11 @@ pub struct PositiveInt(u32);
 
 impl PositiveInt {
     pub fn new(n: u32) -> Option<Self> {
-        if n > 0 { Some(PositiveInt(n)) } else { None }
+        if n > 0 {
+            Some(PositiveInt(n))
+        } else {
+            None
+        }
     }
 
     pub fn get(&self) -> u32 {

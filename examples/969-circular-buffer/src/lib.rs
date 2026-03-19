@@ -24,9 +24,15 @@ impl<T: Default + Clone> RingBuffer<T> {
 }
 
 impl<T: Clone> RingBuffer<T> {
-    pub fn is_full(&self) -> bool { self.count == self.capacity }
-    pub fn is_empty(&self) -> bool { self.count == 0 }
-    pub fn size(&self) -> usize { self.count }
+    pub fn is_full(&self) -> bool {
+        self.count == self.capacity
+    }
+    pub fn is_empty(&self) -> bool {
+        self.count == 0
+    }
+    pub fn size(&self) -> usize {
+        self.count
+    }
 
     /// Push: if full, overwrites oldest element
     pub fn push(&mut self, x: T) {
@@ -69,7 +75,6 @@ impl<T: Clone> RingBuffer<T> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -103,7 +108,9 @@ mod tests {
     #[test]
     fn test_pop_order() {
         let mut r: RingBuffer<i32> = RingBuffer::new(4);
-        for i in 1..=4 { r.push(i); }
+        for i in 1..=4 {
+            r.push(i);
+        }
         assert_eq!(r.pop(), Some(1));
         assert_eq!(r.pop(), Some(2));
         assert_eq!(r.size(), 2);
@@ -112,7 +119,9 @@ mod tests {
     #[test]
     fn test_wrap_around() {
         let mut r: RingBuffer<i32> = RingBuffer::new(4);
-        for i in 1..=4 { r.push(i); }
+        for i in 1..=4 {
+            r.push(i);
+        }
         r.pop();
         r.pop();
         r.push(5);

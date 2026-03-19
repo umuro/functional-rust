@@ -15,7 +15,9 @@ macro_rules! assert_approx {
         assert!(
             diff < $epsilon,
             "assertion failed: `{} ≈ {}` (diff: {})",
-            left, right, diff
+            left,
+            right,
+            diff
         );
     };
 }
@@ -37,8 +39,12 @@ macro_rules! test_cases {
     };
 }
 
-pub fn double(x: i32) -> i32 { x * 2 }
-pub fn square(x: i32) -> i32 { x * x }
+pub fn double(x: i32) -> i32 {
+    x * 2
+}
+pub fn square(x: i32) -> i32 {
+    x * x
+}
 
 #[cfg(test)]
 mod tests {

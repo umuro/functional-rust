@@ -78,7 +78,6 @@ fn init_system(path: &str) -> Result<i64, ErrorWithContext> {
     load_setting(path).context("system init")
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

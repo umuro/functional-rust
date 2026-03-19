@@ -11,7 +11,8 @@ pub fn crash(msg: &str) -> ! {
 
 /// ! coerces to any type
 pub fn parse_or_crash(s: &str) -> i32 {
-    s.parse::<i32>().unwrap_or_else(|e| crash(&format!("fatal: {}", e)))
+    s.parse::<i32>()
+        .unwrap_or_else(|e| crash(&format!("fatal: {}", e)))
 }
 
 /// Infallible conversion - can only be Ok

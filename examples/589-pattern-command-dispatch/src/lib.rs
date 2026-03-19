@@ -103,7 +103,11 @@ pub fn replay(commands: &[Cmd]) -> HashMap<String, i64> {
 /// Validate a command before execution.
 pub fn validate(cmd: &Cmd) -> Result<(), &'static str> {
     match cmd {
-        Cmd::Set(k, _) | Cmd::Remove(k) | Cmd::Increment(k, _) | Cmd::Decrement(k, _) | Cmd::Get(k) => {
+        Cmd::Set(k, _)
+        | Cmd::Remove(k)
+        | Cmd::Increment(k, _)
+        | Cmd::Decrement(k, _)
+        | Cmd::Get(k) => {
             if k.is_empty() {
                 Err("Key cannot be empty")
             } else {

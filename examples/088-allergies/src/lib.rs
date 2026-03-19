@@ -5,15 +5,26 @@
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Allergen {
-    Eggs, Peanuts, Shellfish, Strawberries,
-    Tomatoes, Chocolate, Pollen, Cats,
+    Eggs,
+    Peanuts,
+    Shellfish,
+    Strawberries,
+    Tomatoes,
+    Chocolate,
+    Pollen,
+    Cats,
 }
 
 impl Allergen {
     pub const ALL: [Allergen; 8] = [
-        Allergen::Eggs, Allergen::Peanuts, Allergen::Shellfish,
-        Allergen::Strawberries, Allergen::Tomatoes, Allergen::Chocolate,
-        Allergen::Pollen, Allergen::Cats,
+        Allergen::Eggs,
+        Allergen::Peanuts,
+        Allergen::Shellfish,
+        Allergen::Strawberries,
+        Allergen::Tomatoes,
+        Allergen::Chocolate,
+        Allergen::Pollen,
+        Allergen::Cats,
     ];
 
     pub fn score(self) -> u32 {

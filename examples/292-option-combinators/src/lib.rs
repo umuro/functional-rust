@@ -41,10 +41,7 @@ where
 
 /// Chain operations
 pub fn chain_operations(s: &str) -> Option<i32> {
-    s.parse::<i32>()
-        .ok()
-        .filter(|&x| x > 0)
-        .map(|x| x * x)
+    s.parse::<i32>().ok().filter(|&x| x > 0).map(|x| x * x)
 }
 
 /// Use or for fallback Option

@@ -9,10 +9,7 @@ pub fn first_char(s: &str) -> Option<&str> {
 
 /// Output tied to shortest input.
 pub fn common_prefix<'a>(a: &'a str, b: &'a str) -> &'a str {
-    let len = a.chars()
-        .zip(b.chars())
-        .take_while(|(x, y)| x == y)
-        .count();
+    let len = a.chars().zip(b.chars()).take_while(|(x, y)| x == y).count();
     &a[..a.chars().take(len).map(|c| c.len_utf8()).sum()]
 }
 

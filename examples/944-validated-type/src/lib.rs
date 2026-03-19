@@ -123,7 +123,6 @@ impl<T> Validated<T> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

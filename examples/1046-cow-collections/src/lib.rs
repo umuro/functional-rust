@@ -86,22 +86,29 @@ fn flexible_api() {
     assert_eq!(print_items(Cow::Borrowed(borrowed)), 3);
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_cow_borrow() { cow_borrow_vs_owned(); }
+    fn test_cow_borrow() {
+        cow_borrow_vs_owned();
+    }
 
     #[test]
-    fn test_cow_str() { cow_str_demo(); }
+    fn test_cow_str() {
+        cow_str_demo();
+    }
 
     #[test]
-    fn test_to_mut() { to_mut_demo(); }
+    fn test_to_mut() {
+        to_mut_demo();
+    }
 
     #[test]
-    fn test_flexible() { flexible_api(); }
+    fn test_flexible() {
+        flexible_api();
+    }
 
     #[test]
     fn test_into_owned() {

@@ -71,23 +71,20 @@ impl<A: 'static, B: 'static> Star<A, B> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_lmap() {
-        let m = Mapper::new(|s: String| s.len())
-            .lmap(|n: i32| n.to_string());
+        let m = Mapper::new(|s: String| s.len()).lmap(|n: i32| n.to_string());
         // 42.to_string() = "42", len = 2
         assert_eq!(m.apply(42), 2);
     }
 
     #[test]
     fn test_rmap() {
-        let m = Mapper::new(|s: String| s.to_uppercase())
-            .rmap(|s: String| s.len());
+        let m = Mapper::new(|s: String| s.to_uppercase()).rmap(|s: String| s.len());
         assert_eq!(m.apply("hello".to_string()), 5);
     }
 
@@ -110,8 +107,7 @@ mod tests {
 
     #[test]
     fn test_star_lmap_rmap() {
-        let parse = Star::new(|s: String| s.parse::<i32>().ok())
-            .rmap(|n| n + 10);
+        let parse = Star::new(|s: String| s.parse::<i32>().ok()).rmap(|n| n + 10);
         assert_eq!(parse.apply("5".to_string()), Some(15));
         assert_eq!(parse.apply("bad".to_string()), None);
     }

@@ -17,12 +17,7 @@ pub fn convert_safe() {
 
 /// Transmute alternative: use bytemuck-style.
 pub fn as_bytes<T: Copy>(val: &T) -> &[u8] {
-    unsafe {
-        std::slice::from_raw_parts(
-            val as *const T as *const u8,
-            std::mem::size_of::<T>(),
-        )
-    }
+    unsafe { std::slice::from_raw_parts(val as *const T as *const u8, std::mem::size_of::<T>()) }
 }
 
 #[cfg(test)]

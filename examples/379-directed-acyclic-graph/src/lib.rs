@@ -41,12 +41,7 @@ pub fn topological_sort_dfs(adj: &[Vec<usize>], n: usize) -> Option<Vec<usize>> 
     let mut visited = vec![0u8; n]; // 0=unvisited, 1=in progress, 2=done
     let mut result = Vec::new();
 
-    fn dfs(
-        u: usize,
-        adj: &[Vec<usize>],
-        visited: &mut [u8],
-        result: &mut Vec<usize>,
-    ) -> bool {
+    fn dfs(u: usize, adj: &[Vec<usize>], visited: &mut [u8], result: &mut Vec<usize>) -> bool {
         if visited[u] == 1 {
             return false;
         } // cycle

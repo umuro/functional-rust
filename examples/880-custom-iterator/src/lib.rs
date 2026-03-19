@@ -33,7 +33,11 @@ struct StepRange<T> {
 
 impl StepRange<i64> {
     fn new(start: i64, end_: i64, step: i64) -> Self {
-        StepRange { current: start, end_, step }
+        StepRange {
+            current: start,
+            end_,
+            step,
+        }
     }
 }
 
@@ -53,7 +57,11 @@ impl Iterator for StepRange<i64> {
 
 impl StepRange<f64> {
     fn new_float(start: f64, end_: f64, step: f64) -> Self {
-        StepRange { current: start, end_, step }
+        StepRange {
+            current: start,
+            end_,
+            step,
+        }
     }
 }
 
@@ -79,7 +87,10 @@ struct Collatz {
 
 impl Collatz {
     fn new(n: u64) -> Self {
-        Collatz { current: n, done_: false }
+        Collatz {
+            current: n,
+            done_: false,
+        }
     }
 }
 
@@ -101,7 +112,6 @@ impl Iterator for Collatz {
         Some(val)
     }
 }
-
 
 #[cfg(test)]
 mod tests {

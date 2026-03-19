@@ -79,11 +79,7 @@ pub fn drain_all<T>(receivers: &[Receiver<T>]) -> Vec<T> {
 }
 
 /// Approach 4: Select with stop signal
-pub fn select_with_stop<T>(
-    data_rx: Receiver<T>,
-    stop_rx: Receiver<()>,
-    timeout: Duration,
-) -> Vec<T>
+pub fn select_with_stop<T>(data_rx: Receiver<T>, stop_rx: Receiver<()>, timeout: Duration) -> Vec<T>
 where
     T: Send + 'static,
 {

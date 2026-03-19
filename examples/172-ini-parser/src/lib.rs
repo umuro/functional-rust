@@ -58,7 +58,12 @@ fn parse_section_header(input: &str) -> ParseResult<String> {
 
 fn parse_entry(input: &str) -> ParseResult<(String, String)> {
     let s = input.trim_start_matches(|c: char| c == ' ' || c == '\t');
-    if s.is_empty() || s.starts_with('[') || s.starts_with('#') || s.starts_with(';') || s.starts_with('\n') {
+    if s.is_empty()
+        || s.starts_with('[')
+        || s.starts_with('#')
+        || s.starts_with(';')
+        || s.starts_with('\n')
+    {
         return Err("Not a key=value entry".to_string());
     }
     let line_end = s.find('\n').unwrap_or(s.len());
@@ -74,7 +79,11 @@ fn parse_entry(input: &str) -> ParseResult<(String, String)> {
             if let Some(semi) = value.find(';') {
                 value = value[..semi].trim().to_string();
             }
-            let rest = if line_end < s.len() { &s[line_end + 1..] } else { "" };
+            let rest = if line_end < s.len() {
+                &s[line_end + 1..]
+            } else {
+                ""
+            };
             Ok(((key, value), rest))
         }
         None => Err("Expected '='".to_string()),
@@ -107,10 +116,13 @@ fn parse_ini(input: &str) -> ParseResult<IniFile> {
 
 /// Convert to HashMap for easy lookup
 fn ini_to_map(sections: &[IniSection]) -> HashMap<String, HashMap<String, String>> {
-    sections.iter().map(|s| {
-        let entries: HashMap<String, String> = s.entries.iter().cloned().collect();
-        (s.name.clone(), entries)
-    }).collect()
+    sections
+        .iter()
+        .map(|s| {
+            let entries: HashMap<String, String> = s.entries.iter().cloned().collect();
+            (s.name.clone(), entries)
+        })
+        .collect()
 }
 
 #[cfg(test)]

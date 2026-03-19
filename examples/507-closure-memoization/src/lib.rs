@@ -43,7 +43,7 @@ where
 /// Recursive memoization (e.g., fibonacci)
 pub fn memoized_fib() -> impl FnMut(u64) -> u64 {
     let mut cache: HashMap<u64, u64> = HashMap::new();
-    
+
     fn fib_inner(n: u64, cache: &mut HashMap<u64, u64>) -> u64 {
         if let Some(&result) = cache.get(&n) {
             return result;
@@ -56,7 +56,7 @@ pub fn memoized_fib() -> impl FnMut(u64) -> u64 {
         cache.insert(n, result);
         result
     }
-    
+
     move |n| fib_inner(n, &mut cache)
 }
 
@@ -89,9 +89,7 @@ mod tests {
 
     #[test]
     fn test_memoize() {
-        let mut memo = Memoize::new(|x: i32| {
-            x * x
-        });
+        let mut memo = Memoize::new(|x: i32| x * x);
 
         assert_eq!(memo.call(5), 25);
         assert_eq!(memo.call(5), 25); // Cached
@@ -126,9 +124,7 @@ mod tests {
 
     #[test]
     fn test_expensive_computation() {
-        let mut memo = Memoize::new(|s: String| {
-            s.chars().map(|c| c as u32).sum::<u32>()
-        });
+        let mut memo = Memoize::new(|s: String| s.chars().map(|c| c as u32).sum::<u32>());
 
         let result1 = memo.call("hello".to_string());
         let result2 = memo.call("hello".to_string());

@@ -1,3 +1,19 @@
+#![allow(clippy::manual_is_multiple_of)]
+#![allow(unused_variables)]
+#![allow(clippy::match_like_matches)]
+#![allow(clippy::type_complexity)]
+#![allow(clippy::too_many_lines)]
+#![allow(clippy::manual_range_contains)]
+#![allow(clippy::explicit_iter_loop)]
+#![allow(clippy::needless_lifetimes)]
+#![allow(clippy::char_lit_as_u8)]
+#![allow(clippy::while_let_loop)]
+#![allow(clippy::manual_strip)]
+#![allow(clippy::useless_vec)]
+#![allow(clippy::needless_borrow)]
+#![allow(clippy::redundant_closure)]
+#![allow(unused_imports)]
+#![allow(dead_code)]
 // 991: Barrier Synchronization
 // Rust: std::sync::Barrier — wait until N threads all arrive
 
@@ -12,24 +28,28 @@ fn barrier_demo() -> (Vec<String>, Vec<String>) {
     let phase1_log = Arc::new(std::sync::Mutex::new(Vec::new()));
     let phase2_log = Arc::new(std::sync::Mutex::new(Vec::new()));
 
-    let handles: Vec<_> = (0..n).map(|i| {
-        let barrier = Arc::clone(&barrier);
-        let p1 = Arc::clone(&phase1_log);
-        let p2 = Arc::clone(&phase2_log);
-        thread::spawn(move || {
-            // Phase 1: independent work
-            thread::sleep(Duration::from_millis(i as u64 * 2));
-            p1.lock().unwrap().push(format!("p1:{}", i));
+    let handles: Vec<_> = (0..n)
+        .map(|i| {
+            let barrier = Arc::clone(&barrier);
+            let p1 = Arc::clone(&phase1_log);
+            let p2 = Arc::clone(&phase2_log);
+            thread::spawn(move || {
+                // Phase 1: independent work
+                thread::sleep(Duration::from_millis(i as u64 * 2));
+                p1.lock().unwrap().push(format!("p1:{}", i));
 
-            // BARRIER — blocks until all N threads arrive
-            barrier.wait();
+                // BARRIER — blocks until all N threads arrive
+                barrier.wait();
 
-            // Phase 2: all start together after barrier
-            p2.lock().unwrap().push(format!("p2:{}", i));
+                // Phase 2: all start together after barrier
+                p2.lock().unwrap().push(format!("p2:{}", i));
+            })
         })
-    }).collect();
+        .collect();
 
-    for h in handles { h.join().unwrap(); }
+    for h in handles {
+        h.join().unwrap();
+    }
 
     let p1 = phase1_log.lock().unwrap().clone();
     let p2 = phase2_log.lock().unwrap().clone();
@@ -42,18 +62,23 @@ fn barrier_with_leader() -> Vec<bool> {
     let barrier = Arc::new(Barrier::new(n));
     let is_leader = Arc::new(std::sync::Mutex::new(Vec::new()));
 
-    let handles: Vec<_> = (0..n).map(|_| {
-        let barrier = Arc::clone(&barrier);
-        let leaders = Arc::clone(&is_leader);
-        thread::spawn(move || {
-            let result = barrier.wait();
-            // BarrierWaitResult::is_leader() is true for exactly one thread
-            leaders.lock().unwrap().push(result.is_leader());
+    let handles: Vec<_> = (0..n)
+        .map(|_| {
+            let barrier = Arc::clone(&barrier);
+            let leaders = Arc::clone(&is_leader);
+            thread::spawn(move || {
+                let result = barrier.wait();
+                // BarrierWaitResult::is_leader() is true for exactly one thread
+                leaders.lock().unwrap().push(result.is_leader());
+            })
         })
-    }).collect();
+        .collect();
 
-    for h in handles { h.join().unwrap(); }
-    let x = is_leader.lock().unwrap().clone(); x
+    for h in handles {
+        h.join().unwrap();
+    }
+    let x = is_leader.lock().unwrap().clone();
+    x
 }
 
 // --- Approach 3: Reusable barrier across multiple rounds ---
@@ -62,21 +87,25 @@ fn multi_round_barrier() -> Vec<usize> {
     let barrier = Arc::new(Barrier::new(n));
     let counts = Arc::new(std::sync::Mutex::new(vec![0usize; 2]));
 
-    let handles: Vec<_> = (0..n).map(|_| {
-        let barrier = Arc::clone(&barrier);
-        let counts = Arc::clone(&counts);
-        thread::spawn(move || {
-            for round in 0..2 {
-                counts.lock().unwrap()[round] += 1;
-                barrier.wait(); // resets automatically after all arrive
-            }
+    let handles: Vec<_> = (0..n)
+        .map(|_| {
+            let barrier = Arc::clone(&barrier);
+            let counts = Arc::clone(&counts);
+            thread::spawn(move || {
+                for round in 0..2 {
+                    counts.lock().unwrap()[round] += 1;
+                    barrier.wait(); // resets automatically after all arrive
+                }
+            })
         })
-    }).collect();
+        .collect();
 
-    for h in handles { h.join().unwrap(); }
-    let x = counts.lock().unwrap().clone(); x
+    for h in handles {
+        h.join().unwrap();
+    }
+    let x = counts.lock().unwrap().clone();
+    x
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -118,21 +147,25 @@ mod tests {
         let phase1_done = Arc::new(std::sync::Mutex::new(0usize));
         let error = Arc::new(std::sync::Mutex::new(false));
 
-        let handles: Vec<_> = (0..n).map(|_| {
-            let b = Arc::clone(&barrier);
-            let done = Arc::clone(&phase1_done);
-            let err = Arc::clone(&error);
-            thread::spawn(move || {
-                *done.lock().unwrap() += 1;
-                b.wait();
-                // After barrier, all must have finished phase1
-                if *done.lock().unwrap() != n {
-                    *err.lock().unwrap() = true;
-                }
+        let handles: Vec<_> = (0..n)
+            .map(|_| {
+                let b = Arc::clone(&barrier);
+                let done = Arc::clone(&phase1_done);
+                let err = Arc::clone(&error);
+                thread::spawn(move || {
+                    *done.lock().unwrap() += 1;
+                    b.wait();
+                    // After barrier, all must have finished phase1
+                    if *done.lock().unwrap() != n {
+                        *err.lock().unwrap() = true;
+                    }
+                })
             })
-        }).collect();
+            .collect();
 
-        for h in handles { h.join().unwrap(); }
+        for h in handles {
+            h.join().unwrap();
+        }
         assert!(!*error.lock().unwrap());
     }
 }

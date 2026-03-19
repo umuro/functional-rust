@@ -4,15 +4,11 @@
 /// Rust's `std::collections::BTreeMap` and `HashMap` serve the same role.
 /// The key difference: OCaml uses functors (module-level functions) to
 /// parameterize the map by key type; Rust uses generics with trait bounds.
-
 use std::collections::BTreeMap;
 
 /// Build a word-length map using BTreeMap (ordered, like OCaml's Map).
 pub fn word_lengths(words: &[&str]) -> BTreeMap<String, usize> {
-    words
-        .iter()
-        .map(|w| (w.to_string(), w.len()))
-        .collect()
+    words.iter().map(|w| (w.to_string(), w.len())).collect()
 }
 
 /// Filter entries by a predicate on values.
@@ -31,9 +27,7 @@ pub fn map_values<K: Ord + Clone, V, U>(
     map: &BTreeMap<K, V>,
     f: impl Fn(&V) -> U,
 ) -> BTreeMap<K, U> {
-    map.iter()
-        .map(|(k, v)| (k.clone(), f(v)))
-        .collect()
+    map.iter().map(|(k, v)| (k.clone(), f(v))).collect()
 }
 
 /// Using HashMap for O(1) average lookup (unordered).

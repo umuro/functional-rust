@@ -10,8 +10,7 @@ pub fn naturals(start: u64) -> impl Iterator<Item = u64> {
 
 /// Infinite Fibonacci sequence using `std::iter::successors`
 pub fn fibs() -> impl Iterator<Item = u64> {
-    std::iter::successors(Some((0u64, 1u64)), |&(a, b)| Some((b, a + b)))
-        .map(|(a, _)| a)
+    std::iter::successors(Some((0u64, 1u64)), |&(a, b)| Some((b, a + b))).map(|(a, _)| a)
 }
 
 /// Infinite primes using trial division (lazy — only computes as needed)

@@ -2,7 +2,6 @@
 ///
 /// An isogram is a word with no repeating letters (ignoring case, hyphens, spaces).
 /// Demonstrates set-based duplicate detection.
-
 use std::collections::HashSet;
 
 /// Idiomatic Rust: filter to alphabetic, lowercase, check uniqueness via set size.

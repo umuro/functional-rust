@@ -50,7 +50,11 @@ impl Summarize for Stats {
 }
 
 fn print_summaries<T: Summarize>(items: &[T]) -> String {
-    items.iter().map(|i| i.summary()).collect::<Vec<_>>().join(", ")
+    items
+        .iter()
+        .map(|i| i.summary())
+        .collect::<Vec<_>>()
+        .join(", ")
 }
 
 // Generic pair operations with bounds
@@ -62,7 +66,6 @@ fn pair_fold<T, A, F: Fn(A, T) -> A>(init: A, pair: (T, T), f: F) -> A {
     let acc = f(init, pair.0);
     f(acc, pair.1)
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -98,7 +101,10 @@ mod tests {
     #[test]
     fn test_pair_map() {
         assert_eq!(pair_map((3, 4), |x| x * 2), (6, 8));
-        assert_eq!(pair_map((1.0, 2.0), |x: f64| x.sqrt()), (1.0, std::f64::consts::SQRT_2));
+        assert_eq!(
+            pair_map((1.0, 2.0), |x: f64| x.sqrt()),
+            (1.0, std::f64::consts::SQRT_2)
+        );
     }
 
     #[test]
@@ -108,7 +114,10 @@ mod tests {
 
     #[test]
     fn test_summarize() {
-        let s = Stats { name: "x".into(), value: 1.0 };
+        let s = Stats {
+            name: "x".into(),
+            value: 1.0,
+        };
         assert_eq!(s.summary(), "[x=1.00]");
     }
 }

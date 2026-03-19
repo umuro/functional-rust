@@ -15,12 +15,18 @@ struct Connection<State> {
 
 impl Connection<Closed> {
     fn new(host: &str) -> Self {
-        Connection { host: host.to_string(), _state: PhantomData }
+        Connection {
+            host: host.to_string(),
+            _state: PhantomData,
+        }
     }
 
     fn open(self) -> Connection<Open> {
         println!("Connecting to {}...", self.host);
-        Connection { host: self.host, _state: PhantomData }
+        Connection {
+            host: self.host,
+            _state: PhantomData,
+        }
     }
 }
 
@@ -36,13 +42,18 @@ impl Connection<Open> {
 
     fn close(self) -> Connection<Closed> {
         println!("Closing {}", self.host);
-        Connection { host: self.host, _state: PhantomData }
+        Connection {
+            host: self.host,
+            _state: PhantomData,
+        }
     }
 }
 
 // host() available in any state
 impl<S> Connection<S> {
-    fn host(&self) -> &str { &self.host }
+    fn host(&self) -> &str {
+        &self.host
+    }
 }
 
 // === Approach 2: Builder pattern with type states ===
@@ -58,17 +69,26 @@ struct DbSession<State> {
 
 impl DbSession<Disconnected> {
     fn new(url: &str) -> Self {
-        DbSession { url: url.to_string(), _state: PhantomData }
+        DbSession {
+            url: url.to_string(),
+            _state: PhantomData,
+        }
     }
 
     fn connect(self) -> DbSession<Connected> {
-        DbSession { url: self.url, _state: PhantomData }
+        DbSession {
+            url: self.url,
+            _state: PhantomData,
+        }
     }
 }
 
 impl DbSession<Connected> {
     fn begin_transaction(self) -> DbSession<InTransaction> {
-        DbSession { url: self.url, _state: PhantomData }
+        DbSession {
+            url: self.url,
+            _state: PhantomData,
+        }
     }
 
     fn query(&self, sql: &str) -> String {
@@ -76,7 +96,10 @@ impl DbSession<Connected> {
     }
 
     fn disconnect(self) -> DbSession<Disconnected> {
-        DbSession { url: self.url, _state: PhantomData }
+        DbSession {
+            url: self.url,
+            _state: PhantomData,
+        }
     }
 }
 
@@ -87,12 +110,18 @@ impl DbSession<InTransaction> {
 
     fn commit(self) -> DbSession<Connected> {
         println!("COMMIT");
-        DbSession { url: self.url, _state: PhantomData }
+        DbSession {
+            url: self.url,
+            _state: PhantomData,
+        }
     }
 
     fn rollback(self) -> DbSession<Connected> {
         println!("ROLLBACK");
-        DbSession { url: self.url, _state: PhantomData }
+        DbSession {
+            url: self.url,
+            _state: PhantomData,
+        }
     }
 }
 
@@ -109,7 +138,11 @@ struct SafeFile<State> {
 
 impl SafeFile<Unopened> {
     fn new(path: &str) -> Self {
-        SafeFile { path: path.to_string(), content: None, _state: PhantomData }
+        SafeFile {
+            path: path.to_string(),
+            content: None,
+            _state: PhantomData,
+        }
     }
 
     fn open(self) -> SafeFile<Opened> {
@@ -133,7 +166,11 @@ impl SafeFile<Opened> {
     }
 
     fn close(self) -> SafeFile<Unopened> {
-        SafeFile { path: self.path, content: None, _state: PhantomData }
+        SafeFile {
+            path: self.path,
+            content: None,
+            _state: PhantomData,
+        }
     }
 }
 

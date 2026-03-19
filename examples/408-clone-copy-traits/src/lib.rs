@@ -162,7 +162,7 @@ mod tests {
     fn test_vector_operations() {
         let v = Vector2D::new(3.0, 4.0);
         assert_eq!(v.magnitude(), 5.0);
-        
+
         let sum = v.add(Vector2D::new(1.0, 1.0));
         assert_eq!(sum, Vector2D::new(4.0, 5.0));
         // v still valid after add (Copy)

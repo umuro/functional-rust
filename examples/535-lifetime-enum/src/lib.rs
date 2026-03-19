@@ -14,7 +14,7 @@ pub enum Token<'a> {
 /// Parse result that borrows from input.
 #[derive(Debug)]
 pub enum ParseResult<'a, T> {
-    Ok(T, &'a str), // value + remaining input
+    Ok(T, &'a str),       // value + remaining input
     Err(&'a str, String), // failing input + error message
 }
 
@@ -40,7 +40,11 @@ pub fn tokenize(input: &str) -> Vec<Token<'_>> {
             '.' | ',' | '!' | '?' => tokens.push(Token::Punctuation(c)),
             '0'..='9' => {
                 let start = i;
-                while chars.peek().map(|(_, c)| c.is_ascii_digit()).unwrap_or(false) {
+                while chars
+                    .peek()
+                    .map(|(_, c)| c.is_ascii_digit())
+                    .unwrap_or(false)
+                {
                     chars.next();
                 }
                 let end = chars.peek().map(|(i, _)| *i).unwrap_or(input.len());

@@ -20,9 +20,10 @@ fn keyword<'a>(kw: &str) -> Parser<'a, &'a str> {
         }
         let rest = &input[kw_owned.len()..];
         match rest.chars().next() {
-            Some(c) if is_ident_char(c) => {
-                Err(format!("\"{}\" not a complete keyword (followed by '{}')", kw_owned, c))
-            }
+            Some(c) if is_ident_char(c) => Err(format!(
+                "\"{}\" not a complete keyword (followed by '{}')",
+                kw_owned, c
+            )),
             _ => Ok((&input[..kw_owned.len()], rest)),
         }
     })
@@ -34,7 +35,12 @@ fn keyword<'a>(kw: &str) -> Parser<'a, &'a str> {
 
 #[derive(Debug, Clone, PartialEq)]
 enum Token {
-    If, Then, Else, Let, In, Fn,
+    If,
+    Then,
+    Else,
+    Let,
+    In,
+    Fn,
 }
 
 fn keyword_token<'a>(kw: &str, tok: Token) -> Parser<'a, Token> {
@@ -45,9 +51,7 @@ fn keyword_token<'a>(kw: &str, tok: Token) -> Parser<'a, Token> {
         }
         let rest = &input[kw_owned.len()..];
         match rest.chars().next() {
-            Some(c) if is_ident_char(c) => {
-                Err(format!("\"{}\" not a complete keyword", kw_owned))
-            }
+            Some(c) if is_ident_char(c) => Err(format!("\"{}\" not a complete keyword", kw_owned)),
             _ => Ok((tok.clone(), rest)),
         }
     })
@@ -105,13 +109,18 @@ mod tests {
 
     #[test]
     fn test_keyword_token() {
-        assert_eq!(keyword_token("let", Token::Let)("let x"), Ok((Token::Let, " x")));
+        assert_eq!(
+            keyword_token("let", Token::Let)("let x"),
+            Ok((Token::Let, " x"))
+        );
     }
 
     #[test]
     fn test_any_keyword() {
         let p = any_keyword(vec![
-            ("if", Token::If), ("in", Token::In), ("let", Token::Let),
+            ("if", Token::If),
+            ("in", Token::In),
+            ("let", Token::Let),
         ]);
         assert_eq!(p("let x"), Ok((Token::Let, " x")));
         assert_eq!(p("in "), Ok((Token::In, " ")));

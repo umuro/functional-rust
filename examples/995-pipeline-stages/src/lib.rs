@@ -68,7 +68,9 @@ fn pipeline_even_squares() -> Vec<String> {
 
     // Producer
     let h = thread::spawn(move || {
-        for i in 1..=10 { tx.send(i).unwrap(); }
+        for i in 1..=10 {
+            tx.send(i).unwrap();
+        }
     });
 
     let results: Vec<String> = rx3.iter().collect();
@@ -79,9 +81,7 @@ fn pipeline_even_squares() -> Vec<String> {
 // --- More complex: tokenize → filter stop words → count ---
 fn word_count_pipeline(text: &str) -> usize {
     let stop_words = vec!["the", "a", "an", "is", "in", "of", "to"];
-    let words: Vec<String> = text.split_whitespace()
-        .map(|w| w.to_lowercase())
-        .collect();
+    let words: Vec<String> = text.split_whitespace().map(|w| w.to_lowercase()).collect();
 
     let (tx, rx) = mpsc::channel::<String>();
 
@@ -93,14 +93,15 @@ fn word_count_pipeline(text: &str) -> usize {
     let rx3 = map_stage(rx2, |_: String| 1usize);
 
     let h = thread::spawn(move || {
-        for w in words { tx.send(w).unwrap(); }
+        for w in words {
+            tx.send(w).unwrap();
+        }
     });
 
     let count: usize = rx3.iter().sum();
     h.join().unwrap();
     count
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -118,7 +119,9 @@ mod tests {
     fn test_map_stage() {
         let (tx, rx) = mpsc::channel::<i32>();
         let out = map_stage(rx, |x| x * 2);
-        for i in [1, 2, 3] { tx.send(i).unwrap(); }
+        for i in [1, 2, 3] {
+            tx.send(i).unwrap();
+        }
         drop(tx);
         let results: Vec<i32> = out.iter().collect();
         assert_eq!(results, vec![2, 4, 6]);
@@ -128,7 +131,9 @@ mod tests {
     fn test_filter_stage() {
         let (tx, rx) = mpsc::channel::<i32>();
         let out = filter_stage(rx, |x| x % 2 == 0);
-        for i in 1..=6 { tx.send(i).unwrap(); }
+        for i in 1..=6 {
+            tx.send(i).unwrap();
+        }
         drop(tx);
         let results: Vec<i32> = out.iter().collect();
         assert_eq!(results, vec![2, 4, 6]);
@@ -138,7 +143,9 @@ mod tests {
     fn test_flat_map_stage() {
         let (tx, rx) = mpsc::channel::<i32>();
         let out = flat_map_stage(rx, |x| vec![x, x * 10]);
-        for i in [1, 2, 3] { tx.send(i).unwrap(); }
+        for i in [1, 2, 3] {
+            tx.send(i).unwrap();
+        }
         drop(tx);
         let results: Vec<i32> = out.iter().collect();
         assert_eq!(results, vec![1, 10, 2, 20, 3, 30]);

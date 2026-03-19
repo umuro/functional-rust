@@ -52,9 +52,7 @@ fn tick() -> State<i32, i32> {
 }
 
 fn count3() -> State<i32, (i32, i32, i32)> {
-    tick().and_then(|a|
-        tick().and_then(move |b|
-            tick().map(move |c| (a, b, c))))
+    tick().and_then(|a| tick().and_then(move |b| tick().map(move |c| (a, b, c))))
 }
 
 // Approach 2: Explicit state threading (no State monad — idiomatic Rust)
@@ -70,7 +68,10 @@ fn count3_explicit(state: i32) -> ((i32, i32, i32), i32) {
 
 // Approach 3: Stack operations
 fn push(x: i32) -> State<Vec<i32>, ()> {
-    modify(move |mut stack: Vec<i32>| { stack.push(x); stack })
+    modify(move |mut stack: Vec<i32>| {
+        stack.push(x);
+        stack
+    })
 }
 
 fn pop() -> State<Vec<i32>, Option<i32>> {
@@ -79,7 +80,6 @@ fn pop() -> State<Vec<i32>, Option<i32>> {
         (val, stack)
     })
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -109,9 +109,7 @@ mod tests {
 
     #[test]
     fn test_stack_push_pop() {
-        let ops = push(10)
-            .and_then(|()| push(20))
-            .and_then(|()| pop());
+        let ops = push(10).and_then(|()| push(20)).and_then(|()| pop());
         let (val, stack) = ops.run(vec![]);
         assert_eq!(val, Some(20));
         assert_eq!(stack, vec![10]);

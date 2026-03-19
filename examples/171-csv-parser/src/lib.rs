@@ -8,7 +8,9 @@ type ParseResult<'a, T> = Result<(T, &'a str), String>;
 // ============================================================
 
 fn unquoted_field(input: &str) -> ParseResult<String> {
-    let end = input.find(|c: char| c == ',' || c == '\n' || c == '\r').unwrap_or(input.len());
+    let end = input
+        .find(|c: char| c == ',' || c == '\n' || c == '\r')
+        .unwrap_or(input.len());
     Ok((input[..end].trim().to_string(), &input[end..]))
 }
 
@@ -101,22 +103,34 @@ mod tests {
 
     #[test]
     fn test_unquoted_field() {
-        assert_eq!(unquoted_field("hello,world"), Ok(("hello".into(), ",world")));
+        assert_eq!(
+            unquoted_field("hello,world"),
+            Ok(("hello".into(), ",world"))
+        );
     }
 
     #[test]
     fn test_quoted_field() {
-        assert_eq!(quoted_field("\"hello,world\""), Ok(("hello,world".into(), "")));
+        assert_eq!(
+            quoted_field("\"hello,world\""),
+            Ok(("hello,world".into(), ""))
+        );
     }
 
     #[test]
     fn test_escaped_quotes() {
-        assert_eq!(quoted_field("\"say \"\"hi\"\"\""), Ok(("say \"hi\"".into(), "")));
+        assert_eq!(
+            quoted_field("\"say \"\"hi\"\"\""),
+            Ok(("say \"hi\"".into(), ""))
+        );
     }
 
     #[test]
     fn test_quoted_with_newline() {
-        assert_eq!(quoted_field("\"line1\nline2\""), Ok(("line1\nline2".into(), "")));
+        assert_eq!(
+            quoted_field("\"line1\nline2\""),
+            Ok(("line1\nline2".into(), ""))
+        );
     }
 
     #[test]
@@ -134,11 +148,7 @@ mod tests {
     #[test]
     fn test_csv() {
         let (rows, _) = csv("a,b\n1,2\n3,4").unwrap();
-        assert_eq!(rows, vec![
-            vec!["a", "b"],
-            vec!["1", "2"],
-            vec!["3", "4"],
-        ]);
+        assert_eq!(rows, vec![vec!["a", "b"], vec!["1", "2"], vec!["3", "4"],]);
     }
 
     #[test]

@@ -24,7 +24,9 @@ pub struct Trie<V> {
 
 impl<V> Trie<V> {
     pub fn new() -> Self {
-        Trie { root: TrieNode::default() }
+        Trie {
+            root: TrieNode::default(),
+        }
     }
 
     pub fn insert(&mut self, key: &str, value: V) {
@@ -90,7 +92,6 @@ impl<V> Default for Trie<V> {
         Self::new()
     }
 }
-
 
 #[cfg(test)]
 mod tests {

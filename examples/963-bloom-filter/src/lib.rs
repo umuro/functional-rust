@@ -4,7 +4,9 @@
 
 // Approach 1: Three hash functions (djb2, sdbm, fnv-like)
 fn hash1(s: &str) -> usize {
-    s.bytes().fold(5381usize, |h, b| h.wrapping_mul(31).wrapping_add(b as usize))
+    s.bytes().fold(5381usize, |h, b| {
+        h.wrapping_mul(31).wrapping_add(b as usize)
+    })
 }
 
 fn hash2(s: &str) -> usize {
@@ -17,7 +19,8 @@ fn hash2(s: &str) -> usize {
 }
 
 fn hash3(s: &str) -> usize {
-    s.bytes().fold(0usize, |h, b| h.wrapping_mul(33) ^ (b as usize))
+    s.bytes()
+        .fold(0usize, |h, b| h.wrapping_mul(33) ^ (b as usize))
 }
 
 // Approach 2: Bloom filter with u64 bit array
@@ -70,7 +73,6 @@ impl BloomFilter {
         (1.0 - (-k * n as f64 / m).exp()).powf(k)
     }
 }
-
 
 #[cfg(test)]
 mod tests {

@@ -37,8 +37,7 @@ impl<E: EmailSender> NotificationService<E> {
     }
 
     pub fn notify_user(&self, email: &str, message: &str) -> Result<(), String> {
-        self.sender
-            .send(email, "Notification", message)
+        self.sender.send(email, "Notification", message)
     }
 
     pub fn send_welcome(&self, email: &str, name: &str) -> Result<(), String> {

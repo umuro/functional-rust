@@ -52,7 +52,9 @@ impl<T> Tree<T> {
 impl Tree<i32> {
     fn to_vec_inorder(&self) -> Vec<i32> {
         let mut result = Vec::new();
-        self.fold_inorder((), &mut |(), x| { result.push(*x); });
+        self.fold_inorder((), &mut |(), x| {
+            result.push(*x);
+        });
         result
     }
 
@@ -78,7 +80,6 @@ impl Tree<i32> {
         self.fold_inorder(0, &mut |acc, x| if pred(x) { acc + 1 } else { acc })
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -131,14 +132,18 @@ mod tests {
     #[test]
     fn test_preorder() {
         let mut result = Vec::new();
-        sample_tree().fold_preorder((), &mut |(), x| { result.push(*x); });
+        sample_tree().fold_preorder((), &mut |(), x| {
+            result.push(*x);
+        });
         assert_eq!(result, vec![2, 1, 4, 3, 5]);
     }
 
     #[test]
     fn test_postorder() {
         let mut result = Vec::new();
-        sample_tree().fold_postorder((), &mut |(), x| { result.push(*x); });
+        sample_tree().fold_postorder((), &mut |(), x| {
+            result.push(*x);
+        });
         assert_eq!(result, vec![1, 3, 5, 4, 2]);
     }
 

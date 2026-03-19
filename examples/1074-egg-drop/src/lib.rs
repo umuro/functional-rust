@@ -51,7 +51,9 @@ fn egg_drop_optimal(eggs: usize, floors: usize) -> usize {
         for k in 1..=eggs {
             dp[t][k] = 1 + dp[t - 1][k - 1] + dp[t - 1][k];
             if dp[t][k] >= floors {
-                if k == eggs { return t; }
+                if k == eggs {
+                    return t;
+                }
             }
         }
     }

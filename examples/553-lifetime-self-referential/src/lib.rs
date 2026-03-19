@@ -32,7 +32,9 @@ pub struct Owner {
 
 impl Owner {
     pub fn new(data: &str) -> Self {
-        Owner { data: data.to_string() }
+        Owner {
+            data: data.to_string(),
+        }
     }
 
     pub fn get(&self) -> &str {

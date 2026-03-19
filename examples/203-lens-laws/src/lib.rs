@@ -12,21 +12,27 @@ struct Lens<S, A> {
 }
 
 impl<S, A> Lens<S, A> {
-    fn new(
-        get: impl Fn(&S) -> A + 'static,
-        set: impl Fn(A, &S) -> S + 'static,
-    ) -> Self {
-        Lens { get: Box::new(get), set: Box::new(set) }
+    fn new(get: impl Fn(&S) -> A + 'static, set: impl Fn(A, &S) -> S + 'static) -> Self {
+        Lens {
+            get: Box::new(get),
+            set: Box::new(set),
+        }
     }
 }
 
 // Approach 1: Lawful lenses
 fn x_lens() -> Lens<Point, f64> {
-    Lens::new(|p: &Point| p.x, |x: f64, p: &Point| Point { x, ..p.clone() })
+    Lens::new(
+        |p: &Point| p.x,
+        |x: f64, p: &Point| Point { x, ..p.clone() },
+    )
 }
 
 fn y_lens() -> Lens<Point, f64> {
-    Lens::new(|p: &Point| p.y, |y: f64, p: &Point| Point { y, ..p.clone() })
+    Lens::new(
+        |p: &Point| p.y,
+        |y: f64, p: &Point| Point { y, ..p.clone() },
+    )
 }
 
 // Approach 2: An UNLAWFUL lens — set has a side effect
@@ -49,16 +55,18 @@ fn check_set_get<S: Clone, A: PartialEq + Clone>(lens: &Lens<S, A>, a: A, s: &S)
     result == a
 }
 
-fn check_set_set<S: PartialEq + Clone, A: Clone>(
-    lens: &Lens<S, A>, a: A, b: A, s: &S,
-) -> bool {
+fn check_set_set<S: PartialEq + Clone, A: Clone>(lens: &Lens<S, A>, a: A, b: A, s: &S) -> bool {
     let r1 = (lens.set)(b.clone(), &(lens.set)(a, s));
     let r2 = (lens.set)(b, s);
     r1 == r2
 }
 
 fn verify_laws<S: PartialEq + Clone, A: PartialEq + Clone>(
-    name: &str, lens: &Lens<S, A>, s: &S, a: A, b: A,
+    name: &str,
+    lens: &Lens<S, A>,
+    s: &S,
+    a: A,
+    b: A,
 ) -> (bool, bool, bool) {
     let gs = check_get_set(lens, s);
     let sg = check_set_get(lens, a.clone(), s);

@@ -25,10 +25,7 @@ mod option_t {
         }
     }
 
-    pub fn map<A, B, E>(
-        m: Result<Option<A>, E>,
-        f: impl FnOnce(A) -> B,
-    ) -> Result<Option<B>, E> {
+    pub fn map<A, B, E>(m: Result<Option<A>, E>, f: impl FnOnce(A) -> B) -> Result<Option<B>, E> {
         match m {
             Err(e) => Err(e),
             Ok(None) => Ok(None),
@@ -77,7 +74,6 @@ fn get_user_email_idiomatic(id: i32) -> Result<Option<String>, String> {
     find_email(&user)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -111,7 +107,10 @@ mod tests {
     #[test]
     fn test_lift_result() {
         assert_eq!(option_t::lift_result::<_, String>(Ok(42)), Ok(Some(42)));
-        assert_eq!(option_t::lift_result::<i32, _>(Err("e".to_string())), Err("e".to_string()));
+        assert_eq!(
+            option_t::lift_result::<i32, _>(Err("e".to_string())),
+            Err("e".to_string())
+        );
     }
 
     #[test]

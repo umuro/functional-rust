@@ -24,21 +24,18 @@ fn encode(s: &str) -> Vec<(usize, char)> {
 
 /// Decode (count, char) pairs back into a string.
 fn decode(pairs: &[(usize, char)]) -> String {
-    pairs
-        .iter()
-        .fold(String::new(), |mut s, &(n, c)| {
-            for _ in 0..n {
-                s.push(c);
-            }
-            s
-        })
+    pairs.iter().fold(String::new(), |mut s, &(n, c)| {
+        for _ in 0..n {
+            s.push(c);
+        }
+        s
+    })
 }
 
 /// Format encoded pairs as human-readable "2a3b2c"
 fn show_encoded(pairs: &[(usize, char)]) -> String {
     pairs.iter().map(|(n, c)| format!("{}{}", n, c)).collect()
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -56,7 +53,10 @@ mod tests {
 
     #[test]
     fn test_encode_no_repeats() {
-        assert_eq!(encode("abcde"), vec![(1,'a'),(1,'b'),(1,'c'),(1,'d'),(1,'e')]);
+        assert_eq!(
+            encode("abcde"),
+            vec![(1, 'a'), (1, 'b'), (1, 'c'), (1, 'd'), (1, 'e')]
+        );
     }
 
     #[test]

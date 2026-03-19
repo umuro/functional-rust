@@ -45,7 +45,6 @@ fn run_workers(n: usize) -> Vec<String> {
     handles.into_iter().map(|h| h.join().unwrap()).collect()
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

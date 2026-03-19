@@ -35,12 +35,10 @@ fn fail<'a, T: 'a>(msg: &str) -> Parser<'a, T> {
 
 /// Create a parser that matches a specific character
 fn char_p<'a>(expected: char) -> Parser<'a, char> {
-    Box::new(move |input: &'a str| {
-        match input.chars().next() {
-            Some(c) if c == expected => Ok((c, &input[c.len_utf8()..])),
-            Some(c) => Err(format!("Expected '{}', got '{}'", expected, c)),
-            None => Err(format!("Expected '{}', got end of input", expected)),
-        }
+    Box::new(move |input: &'a str| match input.chars().next() {
+        Some(c) if c == expected => Ok((c, &input[c.len_utf8()..])),
+        Some(c) => Err(format!("Expected '{}', got '{}'", expected, c)),
+        None => Err(format!("Expected '{}', got end of input", expected)),
     })
 }
 

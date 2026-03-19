@@ -11,10 +11,14 @@ pub struct IoError(pub String);
 pub struct DbError(pub String);
 
 impl fmt::Display for IoError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result { write!(f, "IO: {}", self.0) }
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "IO: {}", self.0)
+    }
 }
 impl fmt::Display for DbError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result { write!(f, "DB: {}", self.0) }
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "DB: {}", self.0)
+    }
 }
 impl std::error::Error for IoError {}
 impl std::error::Error for DbError {}
@@ -37,23 +41,35 @@ impl fmt::Display for AppError {
 }
 
 impl From<IoError> for AppError {
-    fn from(e: IoError) -> Self { AppError::Io(e) }
+    fn from(e: IoError) -> Self {
+        AppError::Io(e)
+    }
 }
 impl From<DbError> for AppError {
-    fn from(e: DbError) -> Self { AppError::Db(e) }
+    fn from(e: DbError) -> Self {
+        AppError::Db(e)
+    }
 }
 impl From<ParseIntError> for AppError {
-    fn from(e: ParseIntError) -> Self { AppError::Parse(e) }
+    fn from(e: ParseIntError) -> Self {
+        AppError::Parse(e)
+    }
 }
 
 pub fn read_file(path: &str) -> Result<String, IoError> {
-    if path == "missing" { Err(IoError(format!("{}: not found", path))) }
-    else { Ok("42".to_string()) }
+    if path == "missing" {
+        Err(IoError(format!("{}: not found", path)))
+    } else {
+        Ok("42".to_string())
+    }
 }
 
 pub fn query_db(n: i32) -> Result<Vec<i32>, DbError> {
-    if n < 0 { Err(DbError("negative input".to_string())) }
-    else { Ok(vec![n, n*2, n*3]) }
+    if n < 0 {
+        Err(DbError("negative input".to_string()))
+    } else {
+        Ok(vec![n, n * 2, n * 3])
+    }
 }
 
 pub fn pipeline(path: &str) -> Result<Vec<i32>, AppError> {

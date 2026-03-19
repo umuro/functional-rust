@@ -105,7 +105,11 @@ mod tests {
     #[test]
     fn test_fib_generic() {
         let mut memo = Memoize::new(|n, recurse: &mut dyn FnMut(u64) -> u64| {
-            if n <= 1 { n } else { recurse(n - 1) + recurse(n - 2) }
+            if n <= 1 {
+                n
+            } else {
+                recurse(n - 1) + recurse(n - 2)
+            }
         });
         assert_eq!(memo.call(0), 0);
         assert_eq!(memo.call(10), 55);

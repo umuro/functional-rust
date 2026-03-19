@@ -7,9 +7,7 @@ use std::thread;
 use std::time::Duration;
 
 /// Creates a fan-in pattern: multiple producers, one consumer.
-pub fn fan_in<T: Send + 'static>(
-    producers: Vec<Box<dyn FnOnce(Sender<T>) + Send>>,
-) -> Vec<T> {
+pub fn fan_in<T: Send + 'static>(producers: Vec<Box<dyn FnOnce(Sender<T>) + Send>>) -> Vec<T> {
     let (tx, rx) = mpsc::channel();
 
     for producer in producers {
@@ -60,8 +58,13 @@ mod tests {
     #[test]
     fn test_fan_in() {
         let producers: Vec<Box<dyn FnOnce(Sender<i32>) + Send>> = vec![
-            Box::new(|tx| { tx.send(1).unwrap(); tx.send(2).unwrap(); }),
-            Box::new(|tx| { tx.send(3).unwrap(); }),
+            Box::new(|tx| {
+                tx.send(1).unwrap();
+                tx.send(2).unwrap();
+            }),
+            Box::new(|tx| {
+                tx.send(3).unwrap();
+            }),
         ];
         let mut results = fan_in(producers);
         results.sort();

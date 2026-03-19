@@ -77,7 +77,10 @@ pub enum Shape {
 
 /// Count circles in a collection.
 pub fn count_circles(shapes: &[Shape]) -> usize {
-    shapes.iter().filter(|s| matches!(s, Shape::Circle(_))).count()
+    shapes
+        .iter()
+        .filter(|s| matches!(s, Shape::Circle(_)))
+        .count()
 }
 
 /// Count large shapes (radius/side > 1.0).
@@ -90,7 +93,10 @@ pub fn count_large(shapes: &[Shape]) -> usize {
 
 /// Check if a string matches known Rust keywords.
 pub fn is_keyword(word: &str) -> bool {
-    matches!(word, "fn" | "let" | "match" | "if" | "else" | "while" | "for" | "loop")
+    matches!(
+        word,
+        "fn" | "let" | "match" | "if" | "else" | "while" | "for" | "loop"
+    )
 }
 
 /// Filter keywords from a slice of words.
@@ -124,7 +130,12 @@ mod tests {
 
     #[test]
     fn test_approaches_equivalent() {
-        let statuses = [Status::Active, Status::Inactive, Status::Pending, Status::Banned];
+        let statuses = [
+            Status::Active,
+            Status::Inactive,
+            Status::Pending,
+            Status::Banned,
+        ];
         for s in &statuses {
             assert_eq!(is_active(s), is_active_match(s));
             assert_eq!(is_active(s), is_active_if_let(s));
@@ -159,7 +170,10 @@ mod tests {
     fn test_filter_even_small() {
         let nums = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         assert_eq!(filter_even_small(&nums), vec![2, 4, 6]);
-        assert_eq!(filter_even_small(&nums), filter_even_small_traditional(&nums));
+        assert_eq!(
+            filter_even_small(&nums),
+            filter_even_small_traditional(&nums)
+        );
     }
 
     #[test]

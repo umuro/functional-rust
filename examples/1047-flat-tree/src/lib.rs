@@ -10,9 +10,15 @@ impl<T: std::fmt::Debug + Clone + Ord> FlatTree<T> {
         FlatTree { data }
     }
 
-    fn left_child(i: usize) -> usize { 2 * i + 1 }
-    fn right_child(i: usize) -> usize { 2 * i + 2 }
-    fn parent(i: usize) -> usize { (i - 1) / 2 }
+    fn left_child(i: usize) -> usize {
+        2 * i + 1
+    }
+    fn right_child(i: usize) -> usize {
+        2 * i + 2
+    }
+    fn parent(i: usize) -> usize {
+        (i - 1) / 2
+    }
 
     fn get(&self, i: usize) -> Option<&T> {
         self.data.get(i)
@@ -124,25 +130,35 @@ fn heap_test() {
     // Heap property: parent >= children
     for i in 1..tree.data.len() {
         let p = FlatTree::<i32>::parent(i);
-        assert!(tree.data[p] >= tree.data[i],
+        assert!(
+            tree.data[p] >= tree.data[i],
             "Heap violation: parent[{}]={:?} < child[{}]={:?}",
-            p, tree.data[p], i, tree.data[i]);
+            p,
+            tree.data[p],
+            i,
+            tree.data[i]
+        );
     }
 }
-
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_basic() { basic_tree(); }
+    fn test_basic() {
+        basic_tree();
+    }
 
     #[test]
-    fn test_levels() { level_order_test(); }
+    fn test_levels() {
+        level_order_test();
+    }
 
     #[test]
-    fn test_heap() { heap_test(); }
+    fn test_heap() {
+        heap_test();
+    }
 
     #[test]
     fn test_depth() {

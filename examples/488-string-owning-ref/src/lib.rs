@@ -40,7 +40,9 @@ impl ParsedString {
     }
 
     pub fn get_word(&self, index: usize) -> Option<&str> {
-        self.words.get(index).map(|(start, end)| &self.source[*start..*end])
+        self.words
+            .get(index)
+            .map(|(start, end)| &self.source[*start..*end])
     }
 
     pub fn word_count(&self) -> usize {

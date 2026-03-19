@@ -66,7 +66,6 @@ impl SegmentTree {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -87,7 +86,7 @@ mod tests {
     #[test]
     fn test_range_queries() {
         let st = make_tree();
-        assert_eq!(st.query(0, 2), 9);  // 1+3+5
+        assert_eq!(st.query(0, 2), 9); // 1+3+5
         assert_eq!(st.query(2, 4), 21); // 5+7+9
         assert_eq!(st.query(1, 3), 15); // 3+5+7
         assert_eq!(st.query(5, 5), 11); // single element

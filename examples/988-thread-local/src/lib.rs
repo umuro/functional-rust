@@ -13,18 +13,22 @@ thread_local! {
 fn thread_local_counter() -> Vec<i32> {
     let results = Arc::new(Mutex::new(Vec::new()));
 
-    let handles: Vec<_> = (0..5i32).map(|i| {
-        let results = Arc::clone(&results);
-        thread::spawn(move || {
-            // Each thread has its own COUNTER — no sharing
-            COUNTER.with(|c| *c.borrow_mut() = i * 10);
-            thread::yield_now();
-            let v = COUNTER.with(|c| *c.borrow());
-            results.lock().unwrap().push(v);
+    let handles: Vec<_> = (0..5i32)
+        .map(|i| {
+            let results = Arc::clone(&results);
+            thread::spawn(move || {
+                // Each thread has its own COUNTER — no sharing
+                COUNTER.with(|c| *c.borrow_mut() = i * 10);
+                thread::yield_now();
+                let v = COUNTER.with(|c| *c.borrow());
+                results.lock().unwrap().push(v);
+            })
         })
-    }).collect();
+        .collect();
 
-    for h in handles { h.join().unwrap(); }
+    for h in handles {
+        h.join().unwrap();
+    }
     let mut v = results.lock().unwrap().clone();
     v.sort();
     v
@@ -48,16 +52,21 @@ fn thread_local_sum(id: i64) -> i64 {
 fn parallel_sums() -> i64 {
     let results = Arc::new(Mutex::new(Vec::new()));
 
-    let handles: Vec<_> = (0..4i64).map(|id| {
-        let results = Arc::clone(&results);
-        thread::spawn(move || {
-            let s = thread_local_sum(id);
-            results.lock().unwrap().push(s);
+    let handles: Vec<_> = (0..4i64)
+        .map(|id| {
+            let results = Arc::clone(&results);
+            thread::spawn(move || {
+                let s = thread_local_sum(id);
+                results.lock().unwrap().push(s);
+            })
         })
-    }).collect();
+        .collect();
 
-    for h in handles { h.join().unwrap(); }
-    let x = results.lock().unwrap().iter().sum(); x
+    for h in handles {
+        h.join().unwrap();
+    }
+    let x = results.lock().unwrap().iter().sum();
+    x
 }
 
 // --- Approach 3: Thread-local cache (computed once per thread) ---
@@ -74,7 +83,6 @@ fn get_thread_name(name: &str) -> String {
         c.clone().unwrap()
     })
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -97,7 +105,9 @@ mod tests {
         COUNTER.with(|c| *c.borrow_mut() = 999);
         let val_in_new_thread = thread::spawn(|| {
             COUNTER.with(|c| *c.borrow()) // should be 0, not 999
-        }).join().unwrap();
+        })
+        .join()
+        .unwrap();
         assert_eq!(val_in_new_thread, 0);
     }
 

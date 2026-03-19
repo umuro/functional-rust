@@ -4,7 +4,7 @@
 /// SmallVec: stores up to N elements on the stack, spills to heap
 enum SmallVec<T, const N: usize> {
     Inline {
-        data: [Option<T>; N],  // Using Option since we can't use MaybeUninit safely
+        data: [Option<T>; N], // Using Option since we can't use MaybeUninit safely
         len: usize,
     },
     Heap(Vec<T>),
@@ -67,12 +67,11 @@ impl<T: Clone + Default, const N: usize> SmallVec<T, N> {
 
     fn to_vec(&self) -> Vec<T> {
         match self {
-            SmallVec::Inline { data, len } => {
-                data.iter()
-                    .take(*len)
-                    .filter_map(|x| x.as_ref().cloned())
-                    .collect()
-            }
+            SmallVec::Inline { data, len } => data
+                .iter()
+                .take(*len)
+                .filter_map(|x| x.as_ref().cloned())
+                .collect(),
             SmallVec::Heap(vec) => vec.clone(),
         }
     }
@@ -118,19 +117,24 @@ fn spill_behavior() {
     assert_eq!(sv.get(2), Some(&30));
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_basic() { basic_small_vec(); }
+    fn test_basic() {
+        basic_small_vec();
+    }
 
     #[test]
-    fn test_indexed() { indexed_access(); }
+    fn test_indexed() {
+        indexed_access();
+    }
 
     #[test]
-    fn test_spill() { spill_behavior(); }
+    fn test_spill() {
+        spill_behavior();
+    }
 
     #[test]
     fn test_empty() {

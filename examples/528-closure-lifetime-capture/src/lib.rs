@@ -32,10 +32,7 @@ impl<'a, T> Filter<'a, T> {
 }
 
 /// Closure borrowing multiple fields from a struct.
-pub fn make_validator<'a>(
-    min: &'a i32,
-    max: &'a i32,
-) -> impl Fn(i32) -> bool + 'a {
+pub fn make_validator<'a>(min: &'a i32, max: &'a i32) -> impl Fn(i32) -> bool + 'a {
     move |x| x >= *min && x <= *max
 }
 

@@ -4,7 +4,6 @@
 
 use std::cmp::Ordering;
 
-
 #[cfg(test)]
 mod tests {
     use std::cmp::Ordering;
@@ -12,7 +11,9 @@ mod tests {
     #[test]
     fn test_min_by_float() {
         let floats = [3.0f64, 1.0, 2.0];
-        let min = floats.iter().copied()
+        let min = floats
+            .iter()
+            .copied()
             .min_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
         assert_eq!(min, Some(1.0));
     }
@@ -27,9 +28,9 @@ mod tests {
     #[test]
     fn test_min_by_multi_key() {
         let words = ["bb", "aa", "c"];
-        let min = words.iter().min_by(|a, b| {
-            a.len().cmp(&b.len()).then_with(|| a.cmp(b))
-        });
+        let min = words
+            .iter()
+            .min_by(|a, b| a.len().cmp(&b.len()).then_with(|| a.cmp(b)));
         assert_eq!(min, Some(&"c"));
     }
 }

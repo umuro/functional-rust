@@ -84,13 +84,19 @@ impl std::error::Error for AppError {
 }
 
 impl From<DbError> for AppError {
-    fn from(e: DbError) -> Self { AppError::Db(e) }
+    fn from(e: DbError) -> Self {
+        AppError::Db(e)
+    }
 }
 impl From<AuthError> for AppError {
-    fn from(e: AuthError) -> Self { AppError::Auth(e) }
+    fn from(e: AuthError) -> Self {
+        AppError::Auth(e)
+    }
 }
 impl From<ApiError> for AppError {
-    fn from(e: ApiError) -> Self { AppError::Api(e) }
+    fn from(e: ApiError) -> Self {
+        AppError::Api(e)
+    }
 }
 
 // Subsystem functions
@@ -114,11 +120,10 @@ fn auth_check(token: &str) -> Result<(), AuthError> {
 
 // App layer — ? auto-converts via From
 fn get_user(token: &str, user_id: &str) -> Result<String, AppError> {
-    auth_check(token)?;     // AuthError -> AppError
+    auth_check(token)?; // AuthError -> AppError
     let user = db_find_user(user_id)?; // DbError -> AppError
     Ok(user)
 }
-
 
 #[cfg(test)]
 mod tests {

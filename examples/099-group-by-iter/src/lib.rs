@@ -1,7 +1,9 @@
 // 099: Group Consecutive Equal Elements
 
 fn group_by<T: PartialEq + Clone>(v: &[T]) -> Vec<Vec<T>> {
-    if v.is_empty() { return vec![]; }
+    if v.is_empty() {
+        return vec![];
+    }
     let mut groups: Vec<Vec<T>> = vec![vec![v[0].clone()]];
     for item in &v[1..] {
         if item == groups.last().unwrap().last().unwrap() {
@@ -12,7 +14,6 @@ fn group_by<T: PartialEq + Clone>(v: &[T]) -> Vec<Vec<T>> {
     }
     groups
 }
-
 
 #[cfg(test)]
 mod tests {

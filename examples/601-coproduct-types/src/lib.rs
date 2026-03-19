@@ -10,31 +10,50 @@ pub enum Either<A, B> {
 }
 
 impl<A, B> Either<A, B> {
-    pub fn is_left(&self) -> bool { matches!(self, Either::Left(_)) }
-    pub fn is_right(&self) -> bool { matches!(self, Either::Right(_)) }
-    
-    pub fn map_left<C>(self, f: impl FnOnce(A) -> C) -> Either<C, B> {
-        match self { Either::Left(a) => Either::Left(f(a)), Either::Right(b) => Either::Right(b) }
+    pub fn is_left(&self) -> bool {
+        matches!(self, Either::Left(_))
     }
-    
+    pub fn is_right(&self) -> bool {
+        matches!(self, Either::Right(_))
+    }
+
+    pub fn map_left<C>(self, f: impl FnOnce(A) -> C) -> Either<C, B> {
+        match self {
+            Either::Left(a) => Either::Left(f(a)),
+            Either::Right(b) => Either::Right(b),
+        }
+    }
+
     pub fn map_right<C>(self, f: impl FnOnce(B) -> C) -> Either<A, C> {
-        match self { Either::Left(a) => Either::Left(a), Either::Right(b) => Either::Right(f(b)) }
+        match self {
+            Either::Left(a) => Either::Left(a),
+            Either::Right(b) => Either::Right(f(b)),
+        }
     }
 }
 
 /// Three-way coproduct.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Either3<A, B, C> {
-    First(A), Second(B), Third(C),
+    First(A),
+    Second(B),
+    Third(C),
 }
 
 /// Inject into coproduct.
-pub fn left<A, B>(a: A) -> Either<A, B> { Either::Left(a) }
-pub fn right<A, B>(b: B) -> Either<A, B> { Either::Right(b) }
+pub fn left<A, B>(a: A) -> Either<A, B> {
+    Either::Left(a)
+}
+pub fn right<A, B>(b: B) -> Either<A, B> {
+    Either::Right(b)
+}
 
 /// Eliminate coproduct.
 pub fn either<A, B, C>(e: Either<A, B>, f: impl FnOnce(A) -> C, g: impl FnOnce(B) -> C) -> C {
-    match e { Either::Left(a) => f(a), Either::Right(b) => g(b) }
+    match e {
+        Either::Left(a) => f(a),
+        Either::Right(b) => g(b),
+    }
 }
 
 #[cfg(test)]

@@ -15,13 +15,19 @@ struct SafeList<T, S> {
 
 impl<T> SafeList<T, Empty> {
     fn new() -> Self {
-        SafeList { data: Vec::new(), _state: PhantomData }
+        SafeList {
+            data: Vec::new(),
+            _state: PhantomData,
+        }
     }
 
     // Pushing to empty list transitions to NonEmpty
     fn push(mut self, val: T) -> SafeList<T, NonEmpty> {
         self.data.push(val);
-        SafeList { data: self.data, _state: PhantomData }
+        SafeList {
+            data: self.data,
+            _state: PhantomData,
+        }
     }
 }
 
@@ -50,7 +56,10 @@ fn from_vec<T>(v: Vec<T>) -> Option<SafeList<T, NonEmpty>> {
     if v.is_empty() {
         None
     } else {
-        Some(SafeList { data: v, _state: PhantomData })
+        Some(SafeList {
+            data: v,
+            _state: PhantomData,
+        })
     }
 }
 

@@ -30,29 +30,38 @@ pub struct User {
     pub id: u64,
     pub username: String,
     pub email: String,
-    pub password_hash: String, // Would have #[serde(skip)]
+    pub password_hash: String,        // Would have #[serde(skip)]
     pub display_name: Option<String>, // Would have #[serde(default)]
 }
 
 impl User {
     pub fn field_configs() -> HashMap<&'static str, FieldConfig> {
         let mut configs = HashMap::new();
-        
+
         configs.insert("id", FieldConfig::default());
-        configs.insert("username", FieldConfig {
-            rename: Some("user_name".to_string()),
-            ..Default::default()
-        });
+        configs.insert(
+            "username",
+            FieldConfig {
+                rename: Some("user_name".to_string()),
+                ..Default::default()
+            },
+        );
         configs.insert("email", FieldConfig::default());
-        configs.insert("password_hash", FieldConfig {
-            skip: true,
-            ..Default::default()
-        });
-        configs.insert("display_name", FieldConfig {
-            default: true,
-            ..Default::default()
-        });
-        
+        configs.insert(
+            "password_hash",
+            FieldConfig {
+                skip: true,
+                ..Default::default()
+            },
+        );
+        configs.insert(
+            "display_name",
+            FieldConfig {
+                default: true,
+                ..Default::default()
+            },
+        );
+
         configs
     }
 
@@ -119,7 +128,7 @@ impl Config {
 pub fn snake_to_camel(s: &str) -> String {
     let mut result = String::new();
     let mut capitalize_next = false;
-    
+
     for c in s.chars() {
         if c == '_' {
             capitalize_next = true;
@@ -130,7 +139,7 @@ pub fn snake_to_camel(s: &str) -> String {
             result.push(c);
         }
     }
-    
+
     result
 }
 
@@ -153,7 +162,7 @@ mod tests {
             display_name: Some("Alice".to_string()),
         };
         let json = user.to_json();
-        
+
         assert!(json.contains(r#""id": 1"#));
         assert!(json.contains(r#""user_name": "alice""#)); // renamed
         assert!(!json.contains("password")); // skipped
@@ -168,7 +177,7 @@ mod tests {
             max_connections: 100,
         };
         let json = config.to_camel_case_json();
-        
+
         assert!(json.contains("databaseHost"));
         assert!(json.contains("databasePort"));
         assert!(json.contains("maxConnections"));

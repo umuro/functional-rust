@@ -31,7 +31,10 @@ fn tag_no_case<'a>(expected: &str) -> Parser<'a, &'a str> {
         if input.len() >= len && input[..len].to_lowercase() == expected_lower {
             Ok((&input[..len], &input[len..]))
         } else {
-            Err(format!("Expected \"{}\" (case insensitive)", expected_lower))
+            Err(format!(
+                "Expected \"{}\" (case insensitive)",
+                expected_lower
+            ))
         }
     })
 }

@@ -74,7 +74,6 @@ impl<T> Tree<T> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -92,10 +91,7 @@ mod tests {
 
     #[test]
     fn test_maybe_map_type_change() {
-        assert_eq!(
-            Maybe::Just("hello").map(|s| s.len()),
-            Maybe::Just(5)
-        );
+        assert_eq!(Maybe::Just("hello").map(|s| s.len()), Maybe::Just(5));
     }
 
     #[test]

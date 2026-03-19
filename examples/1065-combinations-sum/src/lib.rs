@@ -7,15 +7,20 @@ fn combination_sum(candidates: &mut Vec<i32>, target: i32) -> Vec<Vec<i32>> {
     let mut current = Vec::new();
 
     fn backtrack(
-        start: usize, remaining: i32,
-        candidates: &[i32], current: &mut Vec<i32>, results: &mut Vec<Vec<i32>>,
+        start: usize,
+        remaining: i32,
+        candidates: &[i32],
+        current: &mut Vec<i32>,
+        results: &mut Vec<Vec<i32>>,
     ) {
         if remaining == 0 {
             results.push(current.clone());
             return;
         }
         for i in start..candidates.len() {
-            if candidates[i] > remaining { break; } // sorted, so prune
+            if candidates[i] > remaining {
+                break;
+            } // sorted, so prune
             current.push(candidates[i]);
             backtrack(i, remaining - candidates[i], candidates, current, results);
             current.pop();
@@ -32,11 +37,17 @@ fn combination_sum_func(candidates: &[i32], target: i32) -> Vec<Vec<i32>> {
     sorted.sort();
 
     fn solve(start: usize, remaining: i32, sorted: &[i32]) -> Vec<Vec<i32>> {
-        if remaining == 0 { return vec![vec![]]; }
-        if remaining < 0 { return vec![]; }
+        if remaining == 0 {
+            return vec![vec![]];
+        }
+        if remaining < 0 {
+            return vec![];
+        }
         let mut results = Vec::new();
         for i in start..sorted.len() {
-            if sorted[i] > remaining { break; }
+            if sorted[i] > remaining {
+                break;
+            }
             for mut combo in solve(i, remaining - sorted[i], sorted) {
                 combo.insert(0, sorted[i]);
                 results.push(combo);
@@ -55,18 +66,31 @@ fn combination_sum_unique(candidates: &mut Vec<i32>, target: i32) -> Vec<Vec<i32
     let mut current = Vec::new();
 
     fn backtrack(
-        start: usize, remaining: i32,
-        candidates: &[i32], current: &mut Vec<i32>, results: &mut Vec<Vec<i32>>,
+        start: usize,
+        remaining: i32,
+        candidates: &[i32],
+        current: &mut Vec<i32>,
+        results: &mut Vec<Vec<i32>>,
     ) {
         if remaining == 0 {
             results.push(current.clone());
             return;
         }
         for i in start..candidates.len() {
-            if candidates[i] > remaining { break; }
-            if i > start && candidates[i] == candidates[i - 1] { continue; } // skip dupes
+            if candidates[i] > remaining {
+                break;
+            }
+            if i > start && candidates[i] == candidates[i - 1] {
+                continue;
+            } // skip dupes
             current.push(candidates[i]);
-            backtrack(i + 1, remaining - candidates[i], candidates, current, results);
+            backtrack(
+                i + 1,
+                remaining - candidates[i],
+                candidates,
+                current,
+                results,
+            );
             current.pop();
         }
     }

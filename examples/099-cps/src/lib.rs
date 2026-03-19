@@ -8,7 +8,11 @@
 // ---------------------------------------------------------------------------
 
 pub fn factorial(n: u64) -> u64 {
-    if n == 0 { 1 } else { n * factorial(n - 1) }
+    if n == 0 {
+        1
+    } else {
+        n * factorial(n - 1)
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -55,9 +59,7 @@ pub fn tree_sum_cps(t: &Tree) -> i64 {
     fn go(t: &Tree, k: Box<dyn FnOnce(i64) -> i64 + '_>) -> i64 {
         match t {
             Tree::Leaf(x) => k(*x),
-            Tree::Node(l, r) => {
-                go(l, Box::new(move |sl| go(r, Box::new(move |sr| k(sl + sr)))))
-            }
+            Tree::Node(l, r) => go(l, Box::new(move |sl| go(r, Box::new(move |sr| k(sl + sr))))),
         }
     }
     go(t, Box::new(|x| x))

@@ -138,9 +138,7 @@ mod tests {
 
     #[test]
     fn test_compute_stats() {
-        let samples: Vec<Duration> = (1..=100)
-            .map(|i| Duration::from_nanos(i * 100))
-            .collect();
+        let samples: Vec<Duration> = (1..=100).map(|i| Duration::from_nanos(i * 100)).collect();
         let stats = compute_stats(samples);
         assert_eq!(stats.min, Duration::from_nanos(100));
         assert_eq!(stats.max, Duration::from_nanos(10000));

@@ -21,6 +21,15 @@ pub fn word_break(s: &str, dict: &[&str]) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[test] fn test_word_break() { assert!(word_break("leetcode", &["leet", "code"])); }
-    #[test] fn test_no_break() { assert!(!word_break("catsandog", &["cats", "dog", "sand", "and", "cat"])); }
+    #[test]
+    fn test_word_break() {
+        assert!(word_break("leetcode", &["leet", "code"]));
+    }
+    #[test]
+    fn test_no_break() {
+        assert!(!word_break(
+            "catsandog",
+            &["cats", "dog", "sand", "and", "cat"]
+        ));
+    }
 }

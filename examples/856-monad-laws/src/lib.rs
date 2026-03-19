@@ -4,12 +4,23 @@
 // Law 3 (Associativity):  (m >>= f) >>= g ≡ m >>= (|x| f(x) >>= g)
 
 // Approach 1: Verify for Option
-fn double(x: i32) -> Option<i32> { Some(x * 2) }
-fn inc(x: i32) -> Option<i32> { Some(x + 1) }
-fn safe_div10(x: i32) -> Option<i32> { if x == 0 { None } else { Some(10 / x) } }
+fn double(x: i32) -> Option<i32> {
+    Some(x * 2)
+}
+fn inc(x: i32) -> Option<i32> {
+    Some(x + 1)
+}
+fn safe_div10(x: i32) -> Option<i32> {
+    if x == 0 {
+        None
+    } else {
+        Some(10 / x)
+    }
+}
 
 fn verify_left_identity<A: Clone, B: PartialEq + std::fmt::Debug>(
-    a: A, f: fn(A) -> Option<B>
+    a: A,
+    f: fn(A) -> Option<B>,
 ) -> bool {
     Some(a.clone()).and_then(f) == f(a)
 }
@@ -30,13 +41,14 @@ fn verify_associativity<A: Clone + PartialEq + std::fmt::Debug>(
 
 // Approach 2: Verify for Result
 fn verify_result_left_identity<A: Clone, B: PartialEq + std::fmt::Debug>(
-    a: A, f: fn(A) -> Result<B, String>
+    a: A,
+    f: fn(A) -> Result<B, String>,
 ) -> bool {
     Ok::<A, String>(a.clone()).and_then(f) == f(a)
 }
 
 fn verify_result_right_identity<A: Clone + PartialEq + std::fmt::Debug>(
-    m: Result<A, String>
+    m: Result<A, String>,
 ) -> bool {
     m.clone().and_then(Ok) == m
 }
@@ -46,12 +58,15 @@ fn vec_bind<A, B>(xs: Vec<A>, f: fn(&A) -> Vec<B>) -> Vec<B> {
     xs.iter().flat_map(f).collect()
 }
 
-fn verify_vec_left_identity<A: Clone + PartialEq + std::fmt::Debug, B: PartialEq + std::fmt::Debug>(
-    a: A, f: fn(&A) -> Vec<B>
+fn verify_vec_left_identity<
+    A: Clone + PartialEq + std::fmt::Debug,
+    B: PartialEq + std::fmt::Debug,
+>(
+    a: A,
+    f: fn(&A) -> Vec<B>,
 ) -> bool {
     vec_bind(vec![a.clone()], f) == f(&a)
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -86,7 +101,9 @@ mod tests {
     #[test]
     fn test_result_right_identity() {
         assert!(verify_result_right_identity(Ok::<i32, String>(42)));
-        assert!(verify_result_right_identity(Err::<i32, String>("oops".into())));
+        assert!(verify_result_right_identity(Err::<i32, String>(
+            "oops".into()
+        )));
     }
 
     // Vec (list) monad laws
@@ -102,10 +119,13 @@ mod tests {
         let f = |x: &i32| vec![*x, x * 10];
         let g = |x: &i32| vec![-x, *x];
         let left: Vec<i32> = vec_bind(vec_bind(xs.clone(), f), g);
-        let right: Vec<i32> = xs.iter().flat_map(|x| {
-            let fx = f(x);
-            fx.iter().flat_map(g).collect::<Vec<_>>()
-        }).collect();
+        let right: Vec<i32> = xs
+            .iter()
+            .flat_map(|x| {
+                let fx = f(x);
+                fx.iter().flat_map(g).collect::<Vec<_>>()
+            })
+            .collect();
         assert_eq!(left, right);
     }
 }

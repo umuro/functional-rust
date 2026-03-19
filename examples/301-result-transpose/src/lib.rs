@@ -18,7 +18,9 @@ pub fn option_transpose<T, E>(o: Option<Result<T, E>>) -> Result<Option<T>, E> {
 }
 
 /// Practical: parse an optional config value
-pub fn parse_optional_config(config_val: Option<&str>) -> Result<Option<i32>, std::num::ParseIntError> {
+pub fn parse_optional_config(
+    config_val: Option<&str>,
+) -> Result<Option<i32>, std::num::ParseIntError> {
     config_val.map(|s| s.parse::<i32>()).transpose()
 }
 

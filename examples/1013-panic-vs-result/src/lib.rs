@@ -40,7 +40,6 @@ fn process_data(data: &[i64]) -> i64 {
     data.iter().sum()
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -9,19 +9,25 @@ pub trait Functor {
 impl<A> Functor for Option<A> {
     type Unwrapped = A;
     type Mapped<B> = Option<B>;
-    fn fmap<B, F: Fn(A) -> B>(self, f: F) -> Option<B> { self.map(f) }
+    fn fmap<B, F: Fn(A) -> B>(self, f: F) -> Option<B> {
+        self.map(f)
+    }
 }
 
 impl<A> Functor for Vec<A> {
     type Unwrapped = A;
     type Mapped<B> = Vec<B>;
-    fn fmap<B, F: Fn(A) -> B>(self, f: F) -> Vec<B> { self.into_iter().map(f).collect() }
+    fn fmap<B, F: Fn(A) -> B>(self, f: F) -> Vec<B> {
+        self.into_iter().map(f).collect()
+    }
 }
 
 impl<A, E> Functor for Result<A, E> {
     type Unwrapped = A;
     type Mapped<B> = Result<B, E>;
-    fn fmap<B, F: Fn(A) -> B>(self, f: F) -> Result<B, E> { self.map(f) }
+    fn fmap<B, F: Fn(A) -> B>(self, f: F) -> Result<B, E> {
+        self.map(f)
+    }
 }
 
 #[cfg(test)]

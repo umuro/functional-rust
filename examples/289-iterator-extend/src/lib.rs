@@ -28,13 +28,20 @@ pub fn extend_hashmap<'a>(
 }
 
 /// Extend a HashSet (duplicates are ignored)
-pub fn extend_hashset(mut set: HashSet<i32>, extras: impl IntoIterator<Item = i32>) -> HashSet<i32> {
+pub fn extend_hashset(
+    mut set: HashSet<i32>,
+    extras: impl IntoIterator<Item = i32>,
+) -> HashSet<i32> {
     set.extend(extras);
     set
 }
 
 /// Extend with filtered iterator
-pub fn extend_with_filter(base: &mut Vec<i32>, source: impl Iterator<Item = i32>, predicate: impl Fn(&i32) -> bool) {
+pub fn extend_with_filter(
+    base: &mut Vec<i32>,
+    source: impl Iterator<Item = i32>,
+    predicate: impl Fn(&i32) -> bool,
+) {
     base.extend(source.filter(predicate));
 }
 

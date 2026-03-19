@@ -1,6 +1,5 @@
 /// 736: TCP Connection modelled as typestate
 /// Send/recv only available on Connected; connect only on Disconnected.
-
 use std::marker::PhantomData;
 
 // ── State markers ─────────────────────────────────────────────────────────────
@@ -63,8 +62,10 @@ impl TcpConn<Connected> {
 
     /// Transition: Connected → Closed
     pub fn close(self) -> TcpConn<Closed> {
-        println!("Closing {}:{} (sent={}, recv={})",
-            self.host, self.port, self.bytes_sent, self.bytes_recv);
+        println!(
+            "Closing {}:{} (sent={}, recv={})",
+            self.host, self.port, self.bytes_sent, self.bytes_recv
+        );
         TcpConn {
             host: self.host,
             port: self.port,
@@ -80,10 +81,13 @@ impl TcpConn<Connected> {
 }
 
 impl TcpConn<Closed> {
-    pub fn bytes_sent(&self) -> usize { self.bytes_sent }
-    pub fn bytes_recv(&self) -> usize { self.bytes_recv }
+    pub fn bytes_sent(&self) -> usize {
+        self.bytes_sent
+    }
+    pub fn bytes_recv(&self) -> usize {
+        self.bytes_recv
+    }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -101,7 +105,8 @@ mod tests {
     #[test]
     fn send_recv_accumulates_bytes() {
         let conn = TcpConn::<Disconnected>::new("localhost", 8080)
-            .connect().unwrap();
+            .connect()
+            .unwrap();
         let conn = conn.send(b"hello world").unwrap();
         let (_data, conn) = conn.recv().unwrap();
         let closed = conn.close();
@@ -112,7 +117,8 @@ mod tests {
     #[test]
     fn peer_returns_host_and_port() {
         let conn = TcpConn::<Disconnected>::new("example.com", 443)
-            .connect().unwrap();
+            .connect()
+            .unwrap();
         assert_eq!(conn.peer(), "example.com:443");
         conn.close();
     }

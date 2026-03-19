@@ -107,7 +107,9 @@ mod tests {
     #[test]
     fn test_process_config() {
         let temp = TempDir::new("config").unwrap();
-        let path = temp.create_file("config.ini", "key1=value1\nkey2=value2\n").unwrap();
+        let path = temp
+            .create_file("config.ini", "key1=value1\nkey2=value2\n")
+            .unwrap();
         let pairs = process_config(&path).unwrap();
         assert_eq!(pairs.len(), 2);
         assert_eq!(pairs[0], ("key1".to_string(), "value1".to_string()));

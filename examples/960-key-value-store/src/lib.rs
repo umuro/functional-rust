@@ -11,7 +11,9 @@ pub struct KvStore {
 
 impl KvStore {
     pub fn new() -> Self {
-        KvStore { data: HashMap::new() }
+        KvStore {
+            data: HashMap::new(),
+        }
     }
 
     pub fn set(&mut self, key: impl Into<String>, value: impl Into<String>) {
@@ -68,7 +70,9 @@ impl<V: Clone> FunctionalStore<V> {
 
     pub fn set(&self, key: impl Into<String>, value: V) -> Self {
         let key = key.into();
-        let mut data: Vec<(String, V)> = self.data.iter()
+        let mut data: Vec<(String, V)> = self
+            .data
+            .iter()
             .filter(|(k, _)| k != &key)
             .cloned()
             .collect();
@@ -81,7 +85,12 @@ impl<V: Clone> FunctionalStore<V> {
     }
 
     pub fn delete(&self, key: &str) -> Self {
-        let data = self.data.iter().filter(|(k, _)| k != key).cloned().collect();
+        let data = self
+            .data
+            .iter()
+            .filter(|(k, _)| k != key)
+            .cloned()
+            .collect();
         FunctionalStore { data }
     }
 
@@ -95,7 +104,6 @@ impl<V: Clone> Default for FunctionalStore<V> {
         Self::new()
     }
 }
-
 
 #[cfg(test)]
 mod tests {

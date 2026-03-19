@@ -83,10 +83,7 @@ mod tests {
 
     #[test]
     fn test_pipeline_builder() {
-        let p = Pipeline::new()
-            .then(|x: i32| x + 1)
-            .then(|x| x * 3)
-            .run();
+        let p = Pipeline::new().then(|x: i32| x + 1).then(|x| x * 3).run();
         assert_eq!(p(4), 15); // (4+1)*3 = 15
     }
 

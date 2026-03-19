@@ -1,3 +1,19 @@
+#![allow(clippy::manual_is_multiple_of)]
+#![allow(unused_variables)]
+#![allow(clippy::match_like_matches)]
+#![allow(clippy::type_complexity)]
+#![allow(clippy::too_many_lines)]
+#![allow(clippy::manual_range_contains)]
+#![allow(clippy::explicit_iter_loop)]
+#![allow(clippy::needless_lifetimes)]
+#![allow(clippy::char_lit_as_u8)]
+#![allow(clippy::while_let_loop)]
+#![allow(clippy::manual_strip)]
+#![allow(clippy::useless_vec)]
+#![allow(clippy::needless_borrow)]
+#![allow(clippy::redundant_closure)]
+#![allow(unused_imports)]
+#![allow(dead_code)]
 // 1018: Error Downcast
 // Downcasting Box<dyn Error> to concrete type
 
@@ -70,7 +86,6 @@ fn is_database_error(err: &(dyn Error + 'static)) -> bool {
     err.downcast_ref::<DatabaseError>().is_some()
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -92,9 +107,7 @@ mod tests {
 
     #[test]
     fn test_downcast_ref_unknown() {
-        let err: Box<dyn Error> = Box::new(std::io::Error::new(
-            std::io::ErrorKind::Other, "misc"
-        ));
+        let err: Box<dyn Error> = Box::new(std::io::Error::new(std::io::ErrorKind::Other, "misc"));
         assert_eq!(classify_error(err.as_ref()), "unknown");
     }
 

@@ -4,11 +4,17 @@
 
 // Copy types: integers, floats, bool, char, tuples of Copy types
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct Point { x: f64, y: f64 }
+struct Point {
+    x: f64,
+    y: f64,
+}
 
 // Clone-only types: anything with heap allocation
 #[derive(Debug, Clone, PartialEq)]
-struct Person { name: String, age: u32 }
+struct Person {
+    name: String,
+    age: u32,
+}
 
 fn demonstrate_copy() {
     let p1 = Point { x: 1.0, y: 2.0 };
@@ -19,14 +25,17 @@ fn demonstrate_copy() {
 }
 
 fn demonstrate_clone() {
-    let p1 = Person { name: "Alice".into(), age: 30 };
+    let p1 = Person {
+        name: "Alice".into(),
+        age: 30,
+    };
     let p2 = p1.clone(); // explicit deep copy
-    // p1 is still valid because we cloned
+                         // p1 is still valid because we cloned
     assert_eq!(p1, p2);
     println!("p1: {:?}", p1);
 
     let p3 = p1; // move — p1 no longer valid
-    // println!("{:?}", p1); // ERROR!
+                 // println!("{:?}", p1); // ERROR!
     println!("p3: {:?}", p3);
 }
 
@@ -36,7 +45,6 @@ fn demonstrate_vec_clone() {
     assert_eq!(v1, v2);
     // v1 still valid because we cloned
 }
-
 
 #[cfg(test)]
 mod tests {

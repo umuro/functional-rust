@@ -4,7 +4,7 @@
 /// A zipper over a sequence: left (reversed), focus, right
 #[derive(Debug, Clone)]
 struct Zipper<T> {
-    left: Vec<T>,   // reversed: closest to focus is last
+    left: Vec<T>, // reversed: closest to focus is last
     focus: T,
     right: Vec<T>,
 }
@@ -134,19 +134,24 @@ fn editor_test() {
     assert_eq!(z.to_vec(), vec!['h', 'e', 'l', 'l', 'o']);
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_navigation() { navigation_test(); }
+    fn test_navigation() {
+        navigation_test();
+    }
 
     #[test]
-    fn test_modification() { modification_test(); }
+    fn test_modification() {
+        modification_test();
+    }
 
     #[test]
-    fn test_editor() { editor_test(); }
+    fn test_editor() {
+        editor_test();
+    }
 
     #[test]
     fn test_boundaries() {

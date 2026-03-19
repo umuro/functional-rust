@@ -34,27 +34,25 @@ pub fn is_balanced(s: &str) -> bool {
 // ---------------------------------------------------------------------------
 
 pub fn is_balanced_fold(s: &str) -> bool {
-    let result = s.chars().try_fold(Vec::new(), |mut stack, c| {
-        match c {
-            '(' | '[' | '{' => {
-                stack.push(c);
-                Some(stack)
-            }
-            ')' | ']' | '}' => {
-                let expected = match c {
-                    ')' => '(',
-                    ']' => '[',
-                    '}' => '{',
-                    _ => unreachable!(),
-                };
-                if stack.pop() == Some(expected) {
-                    Some(stack)
-                } else {
-                    None
-                }
-            }
-            _ => Some(stack),
+    let result = s.chars().try_fold(Vec::new(), |mut stack, c| match c {
+        '(' | '[' | '{' => {
+            stack.push(c);
+            Some(stack)
         }
+        ')' | ']' | '}' => {
+            let expected = match c {
+                ')' => '(',
+                ']' => '[',
+                '}' => '{',
+                _ => unreachable!(),
+            };
+            if stack.pop() == Some(expected) {
+                Some(stack)
+            } else {
+                None
+            }
+        }
+        _ => Some(stack),
     });
     matches!(result, Some(s) if s.is_empty())
 }
@@ -76,7 +74,10 @@ pub fn is_balanced_recursive(s: &str) -> bool {
             }
             ')' | ']' | '}' => {
                 let expected = match chars[i] {
-                    ')' => '(', ']' => '[', '}' => '{', _ => unreachable!(),
+                    ')' => '(',
+                    ']' => '[',
+                    '}' => '{',
+                    _ => unreachable!(),
                 };
                 match stack.last() {
                     Some(&top) if top == expected => {

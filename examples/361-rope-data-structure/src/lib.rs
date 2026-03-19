@@ -168,20 +168,17 @@ mod tests {
     fn test_concat_empty() {
         let empty = Rope::leaf("");
         let nonempty = Rope::leaf("test");
-        
+
         let r1 = Rope::concat(empty.clone(), nonempty.clone());
         assert_eq!(r1.to_string(), "test");
-        
+
         let r2 = Rope::concat(nonempty, empty);
         assert_eq!(r2.to_string(), "test");
     }
 
     #[test]
     fn test_char_at() {
-        let r = Rope::concat(
-            Rope::leaf("abc"),
-            Rope::leaf("def"),
-        );
+        let r = Rope::concat(Rope::leaf("abc"), Rope::leaf("def"));
         assert_eq!(r.char_at(0), Some('a'));
         assert_eq!(r.char_at(2), Some('c'));
         assert_eq!(r.char_at(3), Some('d'));
@@ -199,10 +196,7 @@ mod tests {
 
     #[test]
     fn test_split_at_node() {
-        let r = Rope::concat(
-            Rope::leaf("hello"),
-            Rope::leaf(" world"),
-        );
+        let r = Rope::concat(Rope::leaf("hello"), Rope::leaf(" world"));
         let (left, right) = r.split_at(5);
         assert_eq!(left.to_string(), "hello");
         assert_eq!(right.to_string(), " world");
@@ -224,10 +218,7 @@ mod tests {
 
     #[test]
     fn test_substring() {
-        let r = Rope::concat(
-            Rope::leaf("Hello, "),
-            Rope::leaf("World!"),
-        );
+        let r = Rope::concat(Rope::leaf("Hello, "), Rope::leaf("World!"));
         let sub = r.substring(7, 12);
         assert_eq!(sub.to_string(), "World");
     }

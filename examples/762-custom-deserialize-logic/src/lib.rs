@@ -194,7 +194,9 @@ mod tests {
 
     #[test]
     fn test_email_valid() {
-        let data = [11, 0, 0, 0, b't', b'e', b's', b't', b'@', b'm', b'a', b'i', b'l', b'.', b'x'];
+        let data = [
+            11, 0, 0, 0, b't', b'e', b's', b't', b'@', b'm', b'a', b'i', b'l', b'.', b'x',
+        ];
         let mut input = Input::new(&data);
         let email = Email::deserialize(&mut input).unwrap();
         assert_eq!(email.as_str(), "test@mail.x");

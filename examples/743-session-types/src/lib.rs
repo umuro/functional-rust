@@ -1,9 +1,8 @@
+use std::collections::VecDeque;
 /// 743: Session Types — protocol safety via typestate
 /// The protocol: Connect → SendRequest → RecvResponse → Close
 /// Violating the order is a COMPILE ERROR.
-
 use std::marker::PhantomData;
-use std::collections::VecDeque;
 
 // ── Protocol state markers ─────────────────────────────────────────────────────
 
@@ -16,14 +15,14 @@ pub struct Closed;
 
 struct Channel {
     outbox: VecDeque<Vec<u8>>,
-    inbox:  VecDeque<Vec<u8>>,
+    inbox: VecDeque<Vec<u8>>,
 }
 
 impl Channel {
     fn new() -> Self {
         Channel {
             outbox: VecDeque::new(),
-            inbox:  VecDeque::new(),
+            inbox: VecDeque::new(),
         }
     }
 
@@ -43,8 +42,8 @@ impl Channel {
 
 pub struct Session<State> {
     channel: Channel,
-    log:     Vec<String>,
-    _state:  PhantomData<State>,
+    log: Vec<String>,
+    _state: PhantomData<State>,
 }
 
 /// Create a new session — starts in `Connected` state.
@@ -52,8 +51,8 @@ pub fn open_session() -> Session<Connected> {
     println!("[Session] Connected");
     Session {
         channel: Channel::new(),
-        log:     Vec::new(),
-        _state:  PhantomData,
+        log: Vec::new(),
+        _state: PhantomData,
     }
 }
 
@@ -66,8 +65,8 @@ impl Session<Connected> {
         self.log.push(format!("SENT: {} {}", method, path));
         Session {
             channel: self.channel,
-            log:     self.log,
-            _state:  PhantomData,
+            log: self.log,
+            _state: PhantomData,
         }
     }
 }
@@ -81,8 +80,8 @@ impl Session<RequestSent> {
         self.log.push(format!("RECV: {}", response));
         let sess = Session {
             channel: self.channel,
-            log:     self.log,
-            _state:  PhantomData,
+            log: self.log,
+            _state: PhantomData,
         };
         (response, sess)
     }
@@ -94,8 +93,8 @@ impl Session<ResponseReceived> {
         println!("[Session] Closed. {} log entries.", self.log.len());
         Session {
             channel: self.channel,
-            log:     self.log,
-            _state:  PhantomData,
+            log: self.log,
+            _state: PhantomData,
         }
     }
 
@@ -107,16 +106,17 @@ impl Session<ResponseReceived> {
         self.log.push(format!("SENT: {} {}", method, path));
         Session {
             channel: self.channel,
-            log:     self.log,
-            _state:  PhantomData,
+            log: self.log,
+            _state: PhantomData,
         }
     }
 }
 
 impl Session<Closed> {
-    pub fn log_entries(&self) -> &[String] { &self.log }
+    pub fn log_entries(&self) -> &[String] {
+        &self.log
+    }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -144,9 +144,11 @@ mod tests {
     fn pipeline_two_requests() {
         let s = open_session()
             .send_request("GET", "/a")
-            .receive_response().1
+            .receive_response()
+            .1
             .send_next_request("GET", "/b")
-            .receive_response().1
+            .receive_response()
+            .1
             .close();
         assert_eq!(s.log_entries().len(), 4);
     }

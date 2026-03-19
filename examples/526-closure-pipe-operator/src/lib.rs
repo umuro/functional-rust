@@ -102,9 +102,7 @@ mod tests {
 
     #[test]
     fn test_pipe_with_methods() {
-        let result = "  hello  "
-            .pipe(|s| s.trim())
-            .pipe(|s| s.to_uppercase());
+        let result = "  hello  ".pipe(|s| s.trim()).pipe(|s| s.to_uppercase());
         assert_eq!(result, "HELLO");
     }
 

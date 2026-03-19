@@ -25,7 +25,7 @@ fn demonstrate_copy() {
 fn demonstrate_vec_move() {
     let v1 = vec![1, 2, 3];
     let v2 = v1; // v1 is moved to v2
-    // println!("{:?}", v1); // ERROR: v1 has been moved
+                 // println!("{:?}", v1); // ERROR: v1 has been moved
     assert_eq!(v2, vec![1, 2, 3]);
 }
 
@@ -34,7 +34,6 @@ fn create_string() -> String {
     let s = String::from("created");
     s // ownership transferred to caller
 }
-
 
 #[cfg(test)]
 mod tests {

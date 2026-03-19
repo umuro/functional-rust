@@ -7,7 +7,10 @@ use std::io::{self, ErrorKind};
 /// Validate a port number
 pub fn validate_port(port: u16) -> io::Result<u16> {
     if port == 0 {
-        return Err(io::Error::new(ErrorKind::InvalidInput, "port cannot be zero"));
+        return Err(io::Error::new(
+            ErrorKind::InvalidInput,
+            "port cannot be zero",
+        ));
     }
     if port < 1024 {
         return Err(io::Error::new(
@@ -21,7 +24,10 @@ pub fn validate_port(port: u16) -> io::Result<u16> {
 /// Check path validity
 pub fn check_path(path: &str) -> io::Result<()> {
     if path.is_empty() {
-        return Err(io::Error::new(ErrorKind::InvalidInput, "path cannot be empty"));
+        return Err(io::Error::new(
+            ErrorKind::InvalidInput,
+            "path cannot be empty",
+        ));
     }
     Ok(())
 }

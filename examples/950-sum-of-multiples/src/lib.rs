@@ -25,7 +25,11 @@ pub fn sum_of_multiples_fold(factors: &[u64], limit: u64) -> u64 {
 }
 
 fn gcd(a: u64, b: u64) -> u64 {
-    if b == 0 { a } else { gcd(b, a % b) }
+    if b == 0 {
+        a
+    } else {
+        gcd(b, a % b)
+    }
 }
 
 fn lcm_pair(a: u64, b: u64) -> u64 {
@@ -34,7 +38,9 @@ fn lcm_pair(a: u64, b: u64) -> u64 {
 
 pub fn sum_of_multiples_math(factors: &[u64], limit: u64) -> u64 {
     fn sum_divisible(k: u64, limit: u64) -> u64 {
-        if k == 0 { return 0; }
+        if k == 0 {
+            return 0;
+        }
         let n = (limit - 1) / k;
         k * n * (n + 1) / 2
     }
@@ -57,15 +63,20 @@ pub fn sum_of_multiples_math(factors: &[u64], limit: u64) -> u64 {
                 if mask & (1 << i) != 0 {
                     bits += 1;
                     lcm = lcm_pair(lcm, val);
-                    if lcm >= limit { return 0i64; }
+                    if lcm >= limit {
+                        return 0i64;
+                    }
                 }
             }
             let s = sum_divisible(lcm, limit) as i64;
-            if bits % 2 == 1 { s } else { -s }
+            if bits % 2 == 1 {
+                s
+            } else {
+                -s
+            }
         })
         .sum::<i64>() as u64
 }
-
 
 /* Output:
    sum_of_multiples([3, 5], 1000)          = 233168

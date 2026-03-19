@@ -15,12 +15,24 @@ pub enum JsonValue {
 
 // Approach 2: Type checks and simple display
 impl JsonValue {
-    pub fn is_null(&self) -> bool { matches!(self, JsonValue::Null) }
-    pub fn is_bool(&self) -> bool { matches!(self, JsonValue::Bool(_)) }
-    pub fn is_number(&self) -> bool { matches!(self, JsonValue::Number(_)) }
-    pub fn is_string(&self) -> bool { matches!(self, JsonValue::Str(_)) }
-    pub fn is_array(&self) -> bool { matches!(self, JsonValue::Array(_)) }
-    pub fn is_object(&self) -> bool { matches!(self, JsonValue::Object(_)) }
+    pub fn is_null(&self) -> bool {
+        matches!(self, JsonValue::Null)
+    }
+    pub fn is_bool(&self) -> bool {
+        matches!(self, JsonValue::Bool(_))
+    }
+    pub fn is_number(&self) -> bool {
+        matches!(self, JsonValue::Number(_))
+    }
+    pub fn is_string(&self) -> bool {
+        matches!(self, JsonValue::Str(_))
+    }
+    pub fn is_array(&self) -> bool {
+        matches!(self, JsonValue::Array(_))
+    }
+    pub fn is_object(&self) -> bool {
+        matches!(self, JsonValue::Object(_))
+    }
 
     pub fn to_string_simple(&self) -> String {
         match self {
@@ -44,14 +56,18 @@ impl JsonValue {
 // Approach 3: Builder helpers
 impl JsonValue {
     pub fn object(pairs: &[(&str, JsonValue)]) -> Self {
-        JsonValue::Object(pairs.iter().map(|(k, v)| (k.to_string(), v.clone())).collect())
+        JsonValue::Object(
+            pairs
+                .iter()
+                .map(|(k, v)| (k.to_string(), v.clone()))
+                .collect(),
+        )
     }
 
     pub fn array(items: Vec<JsonValue>) -> Self {
         JsonValue::Array(items)
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -73,7 +89,10 @@ mod tests {
         assert_eq!(JsonValue::Bool(true).to_string_simple(), "true");
         assert_eq!(JsonValue::Bool(false).to_string_simple(), "false");
         assert_eq!(JsonValue::Number(42.0).to_string_simple(), "42");
-        assert_eq!(JsonValue::Str("hello".into()).to_string_simple(), "\"hello\"");
+        assert_eq!(
+            JsonValue::Str("hello".into()).to_string_simple(),
+            "\"hello\""
+        );
         assert_eq!(JsonValue::Array(vec![]).to_string_simple(), "[...]");
         assert_eq!(JsonValue::Object(vec![]).to_string_simple(), "{...}");
     }

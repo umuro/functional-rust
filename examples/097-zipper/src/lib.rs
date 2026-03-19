@@ -9,7 +9,7 @@
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Zipper<T> {
-    left: Vec<T>,  // reversed — top is nearest to focus
+    left: Vec<T>, // reversed — top is nearest to focus
     focus: T,
     right: Vec<T>,
 }
@@ -37,7 +37,11 @@ impl<T: Clone> Zipper<T> {
         let new_focus = right.remove(0);
         let mut left = self.left.clone();
         left.push(self.focus.clone());
-        Some(Zipper { left, focus: new_focus, right })
+        Some(Zipper {
+            left,
+            focus: new_focus,
+            right,
+        })
     }
 
     pub fn go_left(&self) -> Option<Self> {
@@ -45,7 +49,11 @@ impl<T: Clone> Zipper<T> {
         let new_focus = left.pop()?;
         let mut right = self.right.clone();
         right.insert(0, self.focus.clone());
-        Some(Zipper { left, focus: new_focus, right })
+        Some(Zipper {
+            left,
+            focus: new_focus,
+            right,
+        })
     }
 
     pub fn update<F: FnOnce(&T) -> T>(&self, f: F) -> Self {
@@ -81,7 +89,11 @@ impl<T: Clone> ZipperDeque<T> {
     pub fn from_vec(v: Vec<T>) -> Option<Self> {
         let mut dq: VecDeque<T> = v.into();
         let focus = dq.pop_front()?;
-        Some(ZipperDeque { left: vec![], focus, right: dq })
+        Some(ZipperDeque {
+            left: vec![],
+            focus,
+            right: dq,
+        })
     }
 
     pub fn go_right(&mut self) -> bool {

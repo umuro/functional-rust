@@ -10,13 +10,19 @@ pub fn is_balanced(s: &str) -> bool {
         match c {
             '(' | '[' | '{' => stack.push(c),
             ')' => {
-                if stack.pop() != Some('(') { return false; }
+                if stack.pop() != Some('(') {
+                    return false;
+                }
             }
             ']' => {
-                if stack.pop() != Some('[') { return false; }
+                if stack.pop() != Some('[') {
+                    return false;
+                }
             }
             '}' => {
-                if stack.pop() != Some('{') { return false; }
+                if stack.pop() != Some('{') {
+                    return false;
+                }
             }
             _ => {} // ignore other characters
         }
@@ -44,17 +50,15 @@ pub fn is_balanced_recursive(s: &str) -> bool {
                     new_stack.push(c);
                     check(&chars[1..], &new_stack)
                 }
-                ')' | ']' | '}' => {
-                    match stack.last() {
-                        Some(&top) if top == matching(c) => {
-                            let new_stack = &stack[..stack.len() - 1];
-                            check(&chars[1..], new_stack)
-                        }
-                        _ => false,
+                ')' | ']' | '}' => match stack.last() {
+                    Some(&top) if top == matching(c) => {
+                        let new_stack = &stack[..stack.len() - 1];
+                        check(&chars[1..], new_stack)
                     }
-                }
+                    _ => false,
+                },
                 _ => check(&chars[1..], stack),
-            }
+            },
         }
     }
 

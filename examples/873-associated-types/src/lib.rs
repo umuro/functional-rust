@@ -98,7 +98,6 @@ fn apply_transform<T: Transformer>(t: &T, input: T::Input) -> T::Output {
     t.transform(input)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

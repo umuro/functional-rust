@@ -22,16 +22,23 @@ pub enum Token {
 pub enum Expr {
     Number(f64),
     Ident(String),
-    Prefix { op: char, expr: Box<Expr> },
-    Infix { op: char, left: Box<Expr>, right: Box<Expr> },
+    Prefix {
+        op: char,
+        expr: Box<Expr>,
+    },
+    Infix {
+        op: char,
+        left: Box<Expr>,
+        right: Box<Expr>,
+    },
 }
 
 /// Get binding power (precedence) for infix operators
 fn infix_binding_power(op: char) -> Option<(u8, u8)> {
     match op {
-        '+' | '-' => Some((1, 2)),      // left associative
-        '*' | '/' => Some((3, 4)),      // left associative
-        '^' => Some((6, 5)),            // right associative
+        '+' | '-' => Some((1, 2)), // left associative
+        '*' | '/' => Some((3, 4)), // left associative
+        '^' => Some((6, 5)),       // right associative
         _ => None,
     }
 }
@@ -80,13 +87,34 @@ impl<'a> Lexer<'a> {
 
         match self.peek_char() {
             None => Token::Eof,
-            Some('+') => { self.advance(); Token::Plus }
-            Some('-') => { self.advance(); Token::Minus }
-            Some('*') => { self.advance(); Token::Star }
-            Some('/') => { self.advance(); Token::Slash }
-            Some('^') => { self.advance(); Token::Caret }
-            Some('(') => { self.advance(); Token::LParen }
-            Some(')') => { self.advance(); Token::RParen }
+            Some('+') => {
+                self.advance();
+                Token::Plus
+            }
+            Some('-') => {
+                self.advance();
+                Token::Minus
+            }
+            Some('*') => {
+                self.advance();
+                Token::Star
+            }
+            Some('/') => {
+                self.advance();
+                Token::Slash
+            }
+            Some('^') => {
+                self.advance();
+                Token::Caret
+            }
+            Some('(') => {
+                self.advance();
+                Token::LParen
+            }
+            Some(')') => {
+                self.advance();
+                Token::RParen
+            }
             Some(c) if c.is_ascii_digit() => {
                 let start = self.pos;
                 while let Some(c) = self.peek_char() {
@@ -170,7 +198,10 @@ impl<'a> Parser<'a> {
                 self.advance();
                 let bp = prefix_binding_power(op).unwrap();
                 let rhs = self.parse_expr(bp)?;
-                Expr::Prefix { op, expr: Box::new(rhs) }
+                Expr::Prefix {
+                    op,
+                    expr: Box::new(rhs),
+                }
             }
             _ => return Err(format!("Unexpected token: {:?}", self.current)),
         };

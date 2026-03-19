@@ -77,7 +77,10 @@ mod tests {
 
     #[test]
     fn test_rectangle_area() {
-        let s = Shape::Rectangle { width: 3.0, height: 4.0 };
+        let s = Shape::Rectangle {
+            width: 3.0,
+            height: 4.0,
+        };
         assert_eq!(s.area(), 12.0);
     }
 }

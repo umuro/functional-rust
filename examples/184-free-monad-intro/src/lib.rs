@@ -10,8 +10,9 @@ enum Console<A> {
 }
 
 impl<A> Console<A> {
-    fn pure(a: A) -> Self { Console::Pure(a) }
-
+    fn pure(a: A) -> Self {
+        Console::Pure(a)
+    }
 }
 
 fn console_print(msg: &str) -> Console<()> {
@@ -29,12 +30,8 @@ fn bind<A: 'static, B: 'static>(
 ) -> Console<B> {
     match ma {
         Console::Pure(a) => f(a),
-        Console::Print(msg, next) => {
-            Console::Print(msg, Box::new(bind(*next, f)))
-        }
-        Console::GetLine(k) => {
-            Console::GetLine(Box::new(move |s| bind(k(s), f)))
-        }
+        Console::Print(msg, next) => Console::Print(msg, Box::new(bind(*next, f))),
+        Console::GetLine(k) => Console::GetLine(Box::new(move |s| bind(k(s), f))),
     }
 }
 

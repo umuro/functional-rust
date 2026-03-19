@@ -11,14 +11,17 @@ fn count(data: &[i32]) -> usize {
 
 fn average(data: &[i32]) -> f64 {
     // Multiple shared borrows simultaneously — perfectly safe
-    let s = sum(data);   // &data borrow 1
+    let s = sum(data); // &data borrow 1
     let c = count(data); // &data borrow 2 — fine!
     s as f64 / c as f64
 }
 
 fn first_and_last(data: &[i32]) -> Option<(i32, i32)> {
-    if data.is_empty() { None }
-    else { Some((data[0], data[data.len() - 1])) }
+    if data.is_empty() {
+        None
+    } else {
+        Some((data[0], data[data.len() - 1]))
+    }
 }
 
 // Multiple shared references can coexist
@@ -30,7 +33,6 @@ fn demonstrate_multiple_borrows() {
     // All three references valid simultaneously
     println!("r1={:?}, r2={:?}, r3={:?}", r1[0], r2[1], r3[2]);
 }
-
 
 #[cfg(test)]
 mod tests {

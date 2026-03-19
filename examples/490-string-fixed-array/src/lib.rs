@@ -138,6 +138,9 @@ mod tests {
     fn test_stack_allocated() {
         // Verify it fits on stack
         let s = String256::from_str("stack allocated").unwrap();
-        assert_eq!(std::mem::size_of_val(&s), 256 + std::mem::size_of::<usize>());
+        assert_eq!(
+            std::mem::size_of_val(&s),
+            256 + std::mem::size_of::<usize>()
+        );
     }
 }

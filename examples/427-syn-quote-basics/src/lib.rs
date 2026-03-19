@@ -34,7 +34,10 @@ mod tests {
 
     #[test]
     fn test_generate_getter() {
-        let f = FieldInfo { name: "x".into(), ty: "i32".into() };
+        let f = FieldInfo {
+            name: "x".into(),
+            ty: "i32".into(),
+        };
         let code = generate_getter(&f);
         assert!(code.contains("fn x(&self)"));
         assert!(code.contains("&i32"));
@@ -42,7 +45,10 @@ mod tests {
 
     #[test]
     fn test_generate_setter() {
-        let f = FieldInfo { name: "y".into(), ty: "String".into() };
+        let f = FieldInfo {
+            name: "y".into(),
+            ty: "String".into(),
+        };
         let code = generate_setter(&f);
         assert!(code.contains("set_y"));
         assert!(code.contains("value: String"));
@@ -50,21 +56,30 @@ mod tests {
 
     #[test]
     fn test_field_info() {
-        let f = FieldInfo { name: "age".into(), ty: "u32".into() };
+        let f = FieldInfo {
+            name: "age".into(),
+            ty: "u32".into(),
+        };
         assert_eq!(f.name, "age");
         assert_eq!(f.ty, "u32");
     }
 
     #[test]
     fn test_getter_contains_self() {
-        let f = FieldInfo { name: "data".into(), ty: "Vec<u8>".into() };
+        let f = FieldInfo {
+            name: "data".into(),
+            ty: "Vec<u8>".into(),
+        };
         let code = generate_getter(&f);
         assert!(code.contains("&self"));
     }
 
     #[test]
     fn test_setter_contains_mut() {
-        let f = FieldInfo { name: "count".into(), ty: "usize".into() };
+        let f = FieldInfo {
+            name: "count".into(),
+            ty: "usize".into(),
+        };
         let code = generate_setter(&f);
         assert!(code.contains("&mut self"));
     }

@@ -2,7 +2,11 @@
 //!
 //! Ignoring parts of a pattern.
 
-pub struct Point { pub x: i32, pub y: i32, pub z: i32 }
+pub struct Point {
+    pub x: i32,
+    pub y: i32,
+    pub z: i32,
+}
 
 /// Ignore with _.
 pub fn get_x(p: &Point) -> i32 {

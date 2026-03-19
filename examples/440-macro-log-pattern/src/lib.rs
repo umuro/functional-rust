@@ -71,9 +71,7 @@ mod tests {
 
     #[test]
     fn test_nested_trace() {
-        let result = trace_fn!("outer", {
-            trace_fn!("inner", { 10 })
-        });
+        let result = trace_fn!("outer", { trace_fn!("inner", { 10 }) });
         assert_eq!(result, 10);
     }
 }

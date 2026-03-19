@@ -8,19 +8,24 @@ use std::thread;
 fn shared_counter() -> i32 {
     let counter = Arc::new(Mutex::new(0i32));
 
-    let handles: Vec<_> = (0..10).map(|_| {
-        let counter = Arc::clone(&counter);
-        thread::spawn(move || {
-            for _ in 0..100 {
-                let mut n = counter.lock().unwrap();
-                *n += 1;
-                // Lock released here when `n` drops
-            }
+    let handles: Vec<_> = (0..10)
+        .map(|_| {
+            let counter = Arc::clone(&counter);
+            thread::spawn(move || {
+                for _ in 0..100 {
+                    let mut n = counter.lock().unwrap();
+                    *n += 1;
+                    // Lock released here when `n` drops
+                }
+            })
         })
-    }).collect();
+        .collect();
 
-    for h in handles { h.join().unwrap(); }
-    let x = *counter.lock().unwrap(); x
+    for h in handles {
+        h.join().unwrap();
+    }
+    let x = *counter.lock().unwrap();
+    x
 }
 
 // --- Approach 2: Mutex around structured state ---
@@ -31,7 +36,12 @@ struct BankAccount {
 }
 
 impl BankAccount {
-    fn new() -> Self { BankAccount { balance: 0, transactions: 0 } }
+    fn new() -> Self {
+        BankAccount {
+            balance: 0,
+            transactions: 0,
+        }
+    }
 
     fn deposit(&mut self, amount: i64) {
         self.balance += amount;
@@ -52,14 +62,18 @@ impl BankAccount {
 fn bank_account_demo() -> (i64, u32) {
     let account = Arc::new(Mutex::new(BankAccount::new()));
 
-    let handles: Vec<_> = (0..5).map(|_| {
-        let acct = Arc::clone(&account);
-        thread::spawn(move || {
-            acct.lock().unwrap().deposit(100);
+    let handles: Vec<_> = (0..5)
+        .map(|_| {
+            let acct = Arc::clone(&account);
+            thread::spawn(move || {
+                acct.lock().unwrap().deposit(100);
+            })
         })
-    }).collect();
+        .collect();
 
-    for h in handles { h.join().unwrap(); }
+    for h in handles {
+        h.join().unwrap();
+    }
 
     let mut acct = account.lock().unwrap();
     acct.withdraw(200);
@@ -76,20 +90,23 @@ fn with_lock<T, R, F: FnOnce(&mut T) -> R>(m: &Mutex<T>, f: F) -> R {
 fn collect_to_vec() -> Vec<i32> {
     let shared = Arc::new(Mutex::new(Vec::<i32>::new()));
 
-    let handles: Vec<_> = (0..5i32).map(|i| {
-        let shared = Arc::clone(&shared);
-        thread::spawn(move || {
-            with_lock(&shared, |v| v.push(i));
+    let handles: Vec<_> = (0..5i32)
+        .map(|i| {
+            let shared = Arc::clone(&shared);
+            thread::spawn(move || {
+                with_lock(&shared, |v| v.push(i));
+            })
         })
-    }).collect();
+        .collect();
 
-    for h in handles { h.join().unwrap(); }
+    for h in handles {
+        h.join().unwrap();
+    }
 
     let mut v = shared.lock().unwrap().clone();
     v.sort();
     v
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -103,8 +120,8 @@ mod tests {
     #[test]
     fn test_bank_account() {
         let (balance, txns) = bank_account_demo();
-        assert_eq!(balance, 300);  // 5*100 - 200
-        assert_eq!(txns, 6);       // 5 deposits + 1 withdrawal
+        assert_eq!(balance, 300); // 5*100 - 200
+        assert_eq!(txns, 6); // 5 deposits + 1 withdrawal
     }
 
     #[test]

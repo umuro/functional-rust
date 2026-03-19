@@ -108,9 +108,7 @@ impl UnionFind {
 
     /// Get all roots (one per component)
     pub fn roots(&self) -> Vec<usize> {
-        (0..self.len())
-            .filter(|&i| self.parent[i] == i)
-            .collect()
+        (0..self.len()).filter(|&i| self.parent[i] == i).collect()
     }
 }
 

@@ -2,7 +2,9 @@
 
 // Approach 1: O(n^2) DP
 fn lis_dp(arr: &[i32]) -> usize {
-    if arr.is_empty() { return 0; }
+    if arr.is_empty() {
+        return 0;
+    }
     let n = arr.len();
     let mut dp = vec![1usize; n];
     for i in 1..n {
@@ -35,19 +37,21 @@ fn lis_patience(arr: &[i32]) -> usize {
 
 // Approach 3: Iterator-based with fold
 fn lis_fold(arr: &[i32]) -> usize {
-    arr.iter().fold(Vec::new(), |mut tails: Vec<i32>, &x| {
-        match tails.binary_search(&x) {
-            Ok(pos) => tails[pos] = x,
-            Err(pos) => {
-                if pos == tails.len() {
-                    tails.push(x);
-                } else {
-                    tails[pos] = x;
+    arr.iter()
+        .fold(Vec::new(), |mut tails: Vec<i32>, &x| {
+            match tails.binary_search(&x) {
+                Ok(pos) => tails[pos] = x,
+                Err(pos) => {
+                    if pos == tails.len() {
+                        tails.push(x);
+                    } else {
+                        tails[pos] = x;
+                    }
                 }
             }
-        }
-        tails
-    }).len()
+            tails
+        })
+        .len()
 }
 
 #[cfg(test)]

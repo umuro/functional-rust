@@ -50,7 +50,6 @@ pub fn write_csv(rows: &[Vec<&str>]) -> String {
         .join("\n")
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

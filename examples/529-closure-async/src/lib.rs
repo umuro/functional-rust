@@ -87,9 +87,7 @@ mod tests {
     #[test]
     fn test_pattern_demonstration() {
         // This demonstrates the closure-returning-future pattern
-        let make_doubler = || {
-            |x: i32| async move { x * 2 }
-        };
+        let make_doubler = || |x: i32| async move { x * 2 };
         let doubler = make_doubler();
         let _fut = doubler(21);
         // With runtime: assert_eq!(fut.await, 42);

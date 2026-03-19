@@ -105,7 +105,6 @@ pub fn classify_functional(ranks: &[u8], is_flush: bool) -> HandType {
     }
 }
 
-
 /* Output:
    Idiomatic  classify:
      Royal straight flush      → Straight Flush

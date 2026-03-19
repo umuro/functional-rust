@@ -67,7 +67,6 @@ fn validate_field(field: &str, value: &str) -> Result<(), DetailedError> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -84,7 +83,10 @@ mod tests {
 
     #[test]
     fn test_unreasonable_age() {
-        assert_eq!(validate_age(200), Err(ValidationError::UnreasonableAge(200)));
+        assert_eq!(
+            validate_age(200),
+            Err(ValidationError::UnreasonableAge(200))
+        );
     }
 
     #[test]
@@ -112,6 +114,9 @@ mod tests {
     fn test_detailed_error() {
         let result = validate_field("email", "");
         assert!(result.is_err());
-        assert_eq!(result.unwrap_err().to_string(), "field 'email': cannot be empty");
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "field 'email': cannot be empty"
+        );
     }
 }

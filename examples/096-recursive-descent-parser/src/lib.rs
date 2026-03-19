@@ -46,7 +46,9 @@ fn parse_term<'a>(tokens: &'a [&'a str]) -> Result<(Expr, &'a [&'a str]), String
 fn parse_atom<'a>(tokens: &'a [&'a str]) -> Result<(Expr, &'a [&'a str]), String> {
     match tokens.split_first() {
         Some((token, rest)) => {
-            let n: i64 = token.parse().map_err(|_| format!("not a number: {}", token))?;
+            let n: i64 = token
+                .parse()
+                .map_err(|_| format!("not a number: {}", token))?;
             Ok((Expr::Num(n), rest))
         }
         None => Err("unexpected end of input".to_string()),

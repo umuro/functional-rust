@@ -52,7 +52,6 @@ pub fn encode_recursive(input: &str) -> String {
     group(&chars).join(" ")
 }
 
-
 /* Output:
    encode("Testing, 1 2 3, testing.") = "gvhgr mt123 gvhgr mt"
    decode("gvhgr mt123 gvhgr mt") = "testing123testing"

@@ -17,12 +17,20 @@ pub const fn const_hash(s: &str) -> u64 {
 
 /// Compile-time max of two values
 pub const fn const_max(a: usize, b: usize) -> usize {
-    if a > b { a } else { b }
+    if a > b {
+        a
+    } else {
+        b
+    }
 }
 
 /// Compile-time min
 pub const fn const_min(a: usize, b: usize) -> usize {
-    if a < b { a } else { b }
+    if a < b {
+        a
+    } else {
+        b
+    }
 }
 
 /// Compile-time clamp

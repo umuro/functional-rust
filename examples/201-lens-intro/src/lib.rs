@@ -66,10 +66,7 @@ struct Lens<S, A> {
 }
 
 impl<S: 'static, A: 'static> Lens<S, A> {
-    fn new(
-        get: impl Fn(&S) -> A + 'static,
-        set: impl Fn(A, &S) -> S + 'static,
-    ) -> Self {
+    fn new(get: impl Fn(&S) -> A + 'static, set: impl Fn(A, &S) -> S + 'static) -> Self {
         Lens {
             get: Box::new(get),
             set: Box::new(set),
@@ -102,7 +99,10 @@ impl<S: 'static, A: 'static> Lens<S, A> {
 fn server_lens() -> Lens<AppConfig, ServerConfig> {
     Lens::new(
         |c: &AppConfig| c.server.clone(),
-        |s: ServerConfig, c: &AppConfig| AppConfig { server: s, ..c.clone() },
+        |s: ServerConfig, c: &AppConfig| AppConfig {
+            server: s,
+            ..c.clone()
+        },
     )
 }
 
@@ -116,7 +116,10 @@ fn db_lens() -> Lens<ServerConfig, DbConfig> {
 fn port_lens() -> Lens<DbConfig, u16> {
     Lens::new(
         |d: &DbConfig| d.port,
-        |p: u16, d: &DbConfig| DbConfig { port: p, ..d.clone() },
+        |p: u16, d: &DbConfig| DbConfig {
+            port: p,
+            ..d.clone()
+        },
     )
 }
 

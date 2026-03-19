@@ -7,7 +7,9 @@ fn stone_game_dp(piles: &[i32]) -> bool {
     let n = piles.len();
     // dp[i][j] = max score difference (current player - opponent) for piles[i..=j]
     let mut dp = vec![vec![0i32; n]; n];
-    for i in 0..n { dp[i][i] = piles[i]; }
+    for i in 0..n {
+        dp[i][i] = piles[i];
+    }
     for len in 2..=n {
         for i in 0..=n - len {
             let j = i + len - 1;
@@ -20,9 +22,15 @@ fn stone_game_dp(piles: &[i32]) -> bool {
 // Approach 2: Recursive with memoization
 fn stone_game_memo(piles: &[i32]) -> bool {
     fn solve(i: usize, j: usize, piles: &[i32], cache: &mut HashMap<(usize, usize), i32>) -> i32 {
-        if i > j { return 0; }
-        if i == j { return piles[i]; }
-        if let Some(&v) = cache.get(&(i, j)) { return v; }
+        if i > j {
+            return 0;
+        }
+        if i == j {
+            return piles[i];
+        }
+        if let Some(&v) = cache.get(&(i, j)) {
+            return v;
+        }
         let v = (piles[i] - solve(i + 1, j, piles, cache))
             .max(piles[j] - solve(i, j - 1, piles, cache));
         cache.insert((i, j), v);
@@ -45,7 +53,9 @@ fn stone_game_scores(piles: &[i32]) -> (i32, i32) {
     let n = piles.len();
     let total: i32 = piles.iter().sum();
     let mut dp = vec![vec![0i32; n]; n];
-    for i in 0..n { dp[i][i] = piles[i]; }
+    for i in 0..n {
+        dp[i][i] = piles[i];
+    }
     for len in 2..=n {
         for i in 0..=n - len {
             let j = i + len - 1;

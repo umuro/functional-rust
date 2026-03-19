@@ -6,10 +6,7 @@ use std::collections::HashMap;
 
 /// Classic Polonius example: get-or-insert.
 /// NLL-friendly workaround using contains_key.
-pub fn get_or_insert<'a>(
-    map: &'a mut HashMap<String, String>,
-    key: String,
-) -> &'a str {
+pub fn get_or_insert<'a>(map: &'a mut HashMap<String, String>, key: String) -> &'a str {
     if !map.contains_key(&key) {
         map.insert(key.clone(), format!("default_{}", key));
     }
@@ -17,10 +14,7 @@ pub fn get_or_insert<'a>(
 }
 
 /// Another workaround: use entry API.
-pub fn get_or_insert_entry<'a>(
-    map: &'a mut HashMap<String, String>,
-    key: String,
-) -> &'a str {
+pub fn get_or_insert_entry<'a>(map: &'a mut HashMap<String, String>, key: String) -> &'a str {
     map.entry(key.clone())
         .or_insert_with(|| format!("default_{}", key))
 }

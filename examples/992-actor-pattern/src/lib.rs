@@ -26,7 +26,9 @@ impl CounterActor {
                 match msg {
                     CounterMsg::Increment(n) => state += n,
                     CounterMsg::Decrement(n) => state -= n,
-                    CounterMsg::GetValue(reply) => { reply.send(state).ok(); }
+                    CounterMsg::GetValue(reply) => {
+                        reply.send(state).ok();
+                    }
                     CounterMsg::Shutdown => break,
                 }
             }
@@ -34,8 +36,12 @@ impl CounterActor {
         CounterActor { tx }
     }
 
-    fn increment(&self, n: i64) { self.tx.send(CounterMsg::Increment(n)).unwrap(); }
-    fn decrement(&self, n: i64) { self.tx.send(CounterMsg::Decrement(n)).unwrap(); }
+    fn increment(&self, n: i64) {
+        self.tx.send(CounterMsg::Increment(n)).unwrap();
+    }
+    fn decrement(&self, n: i64) {
+        self.tx.send(CounterMsg::Decrement(n)).unwrap();
+    }
 
     fn get_value(&self) -> i64 {
         let (reply_tx, reply_rx) = mpsc::channel();
@@ -43,13 +49,19 @@ impl CounterActor {
         reply_rx.recv().unwrap()
     }
 
-    fn shutdown(self) { self.tx.send(CounterMsg::Shutdown).ok(); }
+    fn shutdown(self) {
+        self.tx.send(CounterMsg::Shutdown).ok();
+    }
 }
 
 // --- Approach 2: Generic actor with request-response ---
 #[derive(Debug)]
 enum AdderMsg {
-    Add { a: i32, b: i32, reply: mpsc::Sender<i32> },
+    Add {
+        a: i32,
+        b: i32,
+        reply: mpsc::Sender<i32>,
+    },
     Stop,
 }
 
@@ -63,7 +75,9 @@ impl AdderActor {
         thread::spawn(move || {
             for msg in rx.iter() {
                 match msg {
-                    AdderMsg::Add { a, b, reply } => { reply.send(a + b).ok(); }
+                    AdderMsg::Add { a, b, reply } => {
+                        reply.send(a + b).ok();
+                    }
                     AdderMsg::Stop => break,
                 }
             }
@@ -73,16 +87,28 @@ impl AdderActor {
 
     fn add(&self, a: i32, b: i32) -> i32 {
         let (reply_tx, reply_rx) = mpsc::channel();
-        self.tx.send(AdderMsg::Add { a, b, reply: reply_tx }).unwrap();
+        self.tx
+            .send(AdderMsg::Add {
+                a,
+                b,
+                reply: reply_tx,
+            })
+            .unwrap();
         reply_rx.recv().unwrap()
     }
 
-    fn stop(self) { self.tx.send(AdderMsg::Stop).ok(); }
+    fn stop(self) {
+        self.tx.send(AdderMsg::Stop).ok();
+    }
 }
 
 // --- Approach 3: State machine actor ---
 #[derive(Debug, PartialEq, Clone)]
-enum TrafficLight { Red, Yellow, Green }
+enum TrafficLight {
+    Red,
+    Yellow,
+    Green,
+}
 
 #[derive(Debug)]
 enum TrafficMsg {
@@ -91,7 +117,9 @@ enum TrafficMsg {
     Stop,
 }
 
-struct TrafficActor { tx: mpsc::Sender<TrafficMsg> }
+struct TrafficActor {
+    tx: mpsc::Sender<TrafficMsg>,
+}
 
 impl TrafficActor {
     fn spawn() -> Self {
@@ -107,7 +135,9 @@ impl TrafficActor {
                             TrafficLight::Yellow => TrafficLight::Red,
                         };
                     }
-                    TrafficMsg::GetState(reply) => { reply.send(state.clone()).ok(); }
+                    TrafficMsg::GetState(reply) => {
+                        reply.send(state.clone()).ok();
+                    }
                     TrafficMsg::Stop => break,
                 }
             }
@@ -115,7 +145,9 @@ impl TrafficActor {
         TrafficActor { tx }
     }
 
-    fn next(&self) { self.tx.send(TrafficMsg::Next).unwrap(); }
+    fn next(&self) {
+        self.tx.send(TrafficMsg::Next).unwrap();
+    }
 
     fn state(&self) -> TrafficLight {
         let (r, rx) = mpsc::channel();
@@ -123,9 +155,10 @@ impl TrafficActor {
         rx.recv().unwrap()
     }
 
-    fn stop(self) { self.tx.send(TrafficMsg::Stop).ok(); }
+    fn stop(self) {
+        self.tx.send(TrafficMsg::Stop).ok();
+    }
 }
-
 
 #[cfg(test)]
 mod tests {

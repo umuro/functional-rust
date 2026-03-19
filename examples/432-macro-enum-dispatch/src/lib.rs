@@ -19,7 +19,12 @@ macro_rules! dispatch_enum {
     };
 }
 
-dispatch_enum!(Action { Start, Stop, Pause, Resume });
+dispatch_enum!(Action {
+    Start,
+    Stop,
+    Pause,
+    Resume
+});
 
 /// Command pattern with enum.
 pub enum Command {

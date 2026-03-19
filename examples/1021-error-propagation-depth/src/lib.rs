@@ -60,13 +60,12 @@ fn connect(_host: &str, port: u16) -> Result<String, AppError> {
 
 // Level 5: Application layer — chains all with ?
 fn start_service(key: &str, host: &str) -> Result<String, AppError> {
-    let raw = read_config(key)?;         // Level 1
-    let port = parse_port(&raw)?;        // Level 2
-    let valid = validate_port(port)?;    // Level 3
-    let conn = connect(host, valid)?;    // Level 4
-    Ok(conn)                             // Level 5 success
+    let raw = read_config(key)?; // Level 1
+    let port = parse_port(&raw)?; // Level 2
+    let valid = validate_port(port)?; // Level 3
+    let conn = connect(host, valid)?; // Level 4
+    Ok(conn) // Level 5 success
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -74,7 +73,10 @@ mod tests {
 
     #[test]
     fn test_full_success() {
-        assert_eq!(start_service("port", "localhost"), Ok("connected:8080".into()));
+        assert_eq!(
+            start_service("port", "localhost"),
+            Ok("connected:8080".into())
+        );
     }
 
     #[test]

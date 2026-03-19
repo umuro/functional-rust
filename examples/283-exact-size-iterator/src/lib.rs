@@ -10,7 +10,10 @@ pub struct FixedRange {
 
 impl FixedRange {
     pub fn new(start: usize, end: usize) -> Self {
-        FixedRange { current: start, end }
+        FixedRange {
+            current: start,
+            end,
+        }
     }
 }
 

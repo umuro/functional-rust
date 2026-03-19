@@ -17,10 +17,16 @@ impl std::fmt::Display for FieldError {
 fn validate_name(name: &str) -> Vec<FieldError> {
     let mut errors = Vec::new();
     if name.is_empty() {
-        errors.push(FieldError { field: "name".into(), message: "required".into() });
+        errors.push(FieldError {
+            field: "name".into(),
+            message: "required".into(),
+        });
     }
     if name.len() > 50 {
-        errors.push(FieldError { field: "name".into(), message: "too long".into() });
+        errors.push(FieldError {
+            field: "name".into(),
+            message: "too long".into(),
+        });
     }
     errors
 }
@@ -28,10 +34,16 @@ fn validate_name(name: &str) -> Vec<FieldError> {
 fn validate_age(age: i32) -> Vec<FieldError> {
     let mut errors = Vec::new();
     if age < 0 {
-        errors.push(FieldError { field: "age".into(), message: "negative".into() });
+        errors.push(FieldError {
+            field: "age".into(),
+            message: "negative".into(),
+        });
     }
     if age > 150 {
-        errors.push(FieldError { field: "age".into(), message: "unreasonable".into() });
+        errors.push(FieldError {
+            field: "age".into(),
+            message: "unreasonable".into(),
+        });
     }
     errors
 }
@@ -39,10 +51,16 @@ fn validate_age(age: i32) -> Vec<FieldError> {
 fn validate_email(email: &str) -> Vec<FieldError> {
     let mut errors = Vec::new();
     if email.is_empty() {
-        errors.push(FieldError { field: "email".into(), message: "required".into() });
+        errors.push(FieldError {
+            field: "email".into(),
+            message: "required".into(),
+        });
     }
     if !email.contains('@') {
-        errors.push(FieldError { field: "email".into(), message: "missing @".into() });
+        errors.push(FieldError {
+            field: "email".into(),
+            message: "missing @".into(),
+        });
     }
     errors
 }
@@ -83,7 +101,11 @@ fn validate_field<T>(field: &str, value: &T, checks: &[(fn(&T) -> bool, &str)]) 
         .collect()
 }
 
-fn validate_form_functional(name: &str, age: i32, email: &str) -> Result<ValidForm, Vec<FieldError>> {
+fn validate_form_functional(
+    name: &str,
+    age: i32,
+    email: &str,
+) -> Result<ValidForm, Vec<FieldError>> {
     let name_checks: Vec<(fn(&&str) -> bool, &str)> = vec![
         (|s: &&str| !s.is_empty(), "required"),
         (|s: &&str| s.len() <= 50, "too long"),
@@ -101,12 +123,15 @@ fn validate_form_functional(name: &str, age: i32, email: &str) -> Result<ValidFo
     .concat();
 
     if errors.is_empty() {
-        Ok(ValidForm { name: name.into(), age, email: email.into() })
+        Ok(ValidForm {
+            name: name.into(),
+            age,
+            email: email.into(),
+        })
     } else {
         Err(errors)
     }
 }
-
 
 #[cfg(test)]
 mod tests {

@@ -4,13 +4,16 @@
 
 /// Generate powers of 2 up to a maximum
 pub fn powers_of_2(max: u32) -> impl Iterator<Item = u32> {
-    std::iter::successors(Some(1u32), move |&n| {
-        if n < max {
-            Some(n * 2)
-        } else {
-            None
-        }
-    })
+    std::iter::successors(
+        Some(1u32),
+        move |&n| {
+            if n < max {
+                Some(n * 2)
+            } else {
+                None
+            }
+        },
+    )
 }
 
 /// Generate the Collatz sequence from a starting number
@@ -108,7 +111,12 @@ mod tests {
         let result: Vec<String> = shrinking_string("abc".to_string()).collect();
         assert_eq!(
             result,
-            vec!["abc".to_string(), "bc".to_string(), "c".to_string(), "".to_string()]
+            vec![
+                "abc".to_string(),
+                "bc".to_string(),
+                "c".to_string(),
+                "".to_string()
+            ]
         );
     }
 

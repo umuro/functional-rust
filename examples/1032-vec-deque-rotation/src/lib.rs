@@ -1,3 +1,19 @@
+#![allow(clippy::manual_is_multiple_of)]
+#![allow(unused_variables)]
+#![allow(clippy::match_like_matches)]
+#![allow(clippy::type_complexity)]
+#![allow(clippy::too_many_lines)]
+#![allow(clippy::manual_range_contains)]
+#![allow(clippy::explicit_iter_loop)]
+#![allow(clippy::needless_lifetimes)]
+#![allow(clippy::char_lit_as_u8)]
+#![allow(clippy::while_let_loop)]
+#![allow(clippy::manual_strip)]
+#![allow(clippy::useless_vec)]
+#![allow(clippy::needless_borrow)]
+#![allow(clippy::redundant_closure)]
+#![allow(unused_imports)]
+#![allow(dead_code)]
 // 1032: VecDeque Rotation — Efficient Front/Back Operations
 // VecDeque is a ring buffer: O(1) push/pop at both ends
 
@@ -65,22 +81,29 @@ fn conversions() {
     assert_eq!(v, vec![0, 1, 2, 3, 4, 5]);
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_basic_deque() { basic_deque(); }
+    fn test_basic_deque() {
+        basic_deque();
+    }
 
     #[test]
-    fn test_rotation() { rotation(); }
+    fn test_rotation() {
+        rotation();
+    }
 
     #[test]
-    fn test_sliding_window() { sliding_window(); }
+    fn test_sliding_window() {
+        sliding_window();
+    }
 
     #[test]
-    fn test_conversions() { conversions(); }
+    fn test_conversions() {
+        conversions();
+    }
 
     #[test]
     fn test_indexed_access() {

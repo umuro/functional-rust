@@ -9,7 +9,10 @@ struct Range {
 
 impl Range {
     fn new(start: i32, end_: i32) -> Self {
-        Range { current: start, end_ }
+        Range {
+            current: start,
+            end_,
+        }
     }
 }
 
@@ -56,7 +59,10 @@ struct Repeat<T: Clone> {
 
 impl<T: Clone> Repeat<T> {
     fn new(value: T, count: usize) -> Self {
-        Repeat { value, remaining: count }
+        Repeat {
+            value,
+            remaining: count,
+        }
     }
 }
 
@@ -85,7 +91,6 @@ where
 {
     iter.map(f).collect()
 }
-
 
 #[cfg(test)]
 mod tests {

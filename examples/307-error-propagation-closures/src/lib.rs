@@ -4,7 +4,9 @@
 
 /// Parse number from string
 pub fn parse_number(s: &str) -> Result<i32, String> {
-    s.trim().parse::<i32>().map_err(|_| format!("not a number: '{}'", s))
+    s.trim()
+        .parse::<i32>()
+        .map_err(|_| format!("not a number: '{}'", s))
 }
 
 /// Collect results - short-circuits on first error
@@ -14,14 +16,17 @@ pub fn parse_all(inputs: &[&str]) -> Result<Vec<i32>, String> {
 
 /// Filter and keep only valid parses (drops errors)
 pub fn parse_valid(inputs: &[&str]) -> Vec<i32> {
-    inputs.iter().filter_map(|s| s.parse::<i32>().ok()).collect()
+    inputs
+        .iter()
+        .filter_map(|s| s.parse::<i32>().ok())
+        .collect()
 }
 
 /// Try fold for short-circuit accumulation
 pub fn sum_all(inputs: &[&str]) -> Result<i32, String> {
-    inputs.iter().try_fold(0i32, |acc, s| {
-        Ok(acc + parse_number(s)?)
-    })
+    inputs
+        .iter()
+        .try_fold(0i32, |acc, s| Ok(acc + parse_number(s)?))
 }
 
 #[cfg(test)]

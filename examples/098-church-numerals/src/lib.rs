@@ -15,9 +15,7 @@ pub fn zero() -> Church {
 }
 
 pub fn one() -> Church {
-    Box::new(|f: Box<dyn Fn(i64) -> i64>| {
-        Box::new(move |x| f(x))
-    })
+    Box::new(|f: Box<dyn Fn(i64) -> i64>| Box::new(move |x| f(x)))
 }
 
 pub fn succ(n: &dyn Fn(Box<dyn Fn(i64) -> i64>) -> Box<dyn Fn(i64) -> i64>) -> Church {
@@ -57,11 +55,21 @@ pub fn from_int(n: usize) -> Church {
 pub struct ChurchNum(pub usize);
 
 impl ChurchNum {
-    pub fn zero() -> Self { ChurchNum(0) }
-    pub fn one() -> Self { ChurchNum(1) }
-    pub fn succ(self) -> Self { ChurchNum(self.0 + 1) }
-    pub fn add(self, other: Self) -> Self { ChurchNum(self.0 + other.0) }
-    pub fn mul(self, other: Self) -> Self { ChurchNum(self.0 * other.0) }
+    pub fn zero() -> Self {
+        ChurchNum(0)
+    }
+    pub fn one() -> Self {
+        ChurchNum(1)
+    }
+    pub fn succ(self) -> Self {
+        ChurchNum(self.0 + 1)
+    }
+    pub fn add(self, other: Self) -> Self {
+        ChurchNum(self.0 + other.0)
+    }
+    pub fn mul(self, other: Self) -> Self {
+        ChurchNum(self.0 * other.0)
+    }
 
     pub fn apply<T>(&self, f: impl Fn(T) -> T, x: T) -> T {
         let mut result = x;

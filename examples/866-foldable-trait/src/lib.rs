@@ -8,8 +8,14 @@ trait Foldable {
     fn fold_right<B, F: FnMut(&Self::Item, B) -> B>(&self, init: B, f: F) -> B;
 
     // Derived operations
-    fn to_vec(&self) -> Vec<Self::Item> where Self::Item: Clone {
-        self.fold_right(Vec::new(), |x, mut acc| { acc.insert(0, x.clone()); acc })
+    fn to_vec(&self) -> Vec<Self::Item>
+    where
+        Self::Item: Clone,
+    {
+        self.fold_right(Vec::new(), |x, mut acc| {
+            acc.insert(0, x.clone());
+            acc
+        })
     }
 
     fn length(&self) -> usize {
@@ -135,7 +141,6 @@ fn sum<F: Foldable<Item = i32>>(foldable: &F) -> i32 {
     foldable.fold_left(0, |acc, x| acc + x)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -145,7 +150,11 @@ mod tests {
     }
 
     fn sample_tree() -> Tree<i32> {
-        Tree::node(Tree::node(Tree::Leaf, 1, Tree::Leaf), 2, Tree::node(Tree::Leaf, 3, Tree::Leaf))
+        Tree::node(
+            Tree::node(Tree::Leaf, 1, Tree::Leaf),
+            2,
+            Tree::node(Tree::Leaf, 3, Tree::Leaf),
+        )
     }
 
     #[test]

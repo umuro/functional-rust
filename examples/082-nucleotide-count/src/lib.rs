@@ -6,8 +6,7 @@ use std::collections::HashMap;
 /// Result HashMap is owned by the caller.
 
 pub fn nucleotide_count(dna: &str) -> Result<HashMap<char, usize>, char> {
-    let mut counts: HashMap<char, usize> =
-        [('A', 0), ('C', 0), ('G', 0), ('T', 0)].into();
+    let mut counts: HashMap<char, usize> = [('A', 0), ('C', 0), ('G', 0), ('T', 0)].into();
 
     for c in dna.chars() {
         match counts.get_mut(&c) {
@@ -21,7 +20,9 @@ pub fn nucleotide_count(dna: &str) -> Result<HashMap<char, usize>, char> {
 /// Version 2: Using fold
 pub fn nucleotide_count_fold(dna: &str) -> Result<HashMap<char, usize>, char> {
     dna.chars().try_fold(
-        [('A', 0), ('C', 0), ('G', 0), ('T', 0)].into_iter().collect::<HashMap<_, _>>(),
+        [('A', 0), ('C', 0), ('G', 0), ('T', 0)]
+            .into_iter()
+            .collect::<HashMap<_, _>>(),
         |mut acc, c| {
             *acc.get_mut(&c).ok_or(c)? += 1;
             Ok(acc)

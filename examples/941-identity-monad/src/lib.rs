@@ -27,7 +27,6 @@ impl<A> Identity<A> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

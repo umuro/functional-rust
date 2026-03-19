@@ -18,18 +18,16 @@ pub fn bench<T, F: FnMut() -> T>(name: &str, iterations: usize, mut f: F) -> Dur
     }
     let elapsed = start.elapsed();
     let per_iter = elapsed / iterations as u32;
-    println!("{}: {:?} per iteration ({} iters)", name, per_iter, iterations);
+    println!(
+        "{}: {:?} per iteration ({} iters)",
+        name, per_iter, iterations
+    );
     elapsed
 }
 
 /// Compare two implementations.
-pub fn bench_compare<T, F1, F2>(
-    name1: &str,
-    f1: F1,
-    name2: &str,
-    f2: F2,
-    iterations: usize,
-) where
+pub fn bench_compare<T, F1, F2>(name1: &str, f1: F1, name2: &str, f2: F2, iterations: usize)
+where
     F1: FnMut() -> T,
     F2: FnMut() -> T,
 {

@@ -22,9 +22,18 @@ fn word_break(s: &str, words: &[&str]) -> bool {
 // Approach 2: Recursive with memoization
 fn word_break_memo(s: &str, words: &[&str]) -> bool {
     let dict: HashSet<&str> = words.iter().copied().collect();
-    fn solve<'a>(s: &'a str, start: usize, dict: &HashSet<&str>, cache: &mut HashMap<usize, bool>) -> bool {
-        if start == s.len() { return true; }
-        if let Some(&v) = cache.get(&start) { return v; }
+    fn solve<'a>(
+        s: &'a str,
+        start: usize,
+        dict: &HashSet<&str>,
+        cache: &mut HashMap<usize, bool>,
+    ) -> bool {
+        if start == s.len() {
+            return true;
+        }
+        if let Some(&v) = cache.get(&start) {
+            return v;
+        }
         let mut result = false;
         for end_ in (start + 1)..=s.len() {
             if dict.contains(&s[start..end_]) && solve(s, end_, dict, cache) {
@@ -50,7 +59,9 @@ fn word_break_bfs(s: &str, words: &[&str]) -> bool {
     while let Some(start) = queue.pop_front() {
         for end_ in (start + 1)..=n {
             if !visited[end_] && dict.contains(&s[start..end_]) {
-                if end_ == n { return true; }
+                if end_ == n {
+                    return true;
+                }
                 visited[end_] = true;
                 queue.push_back(end_);
             }
@@ -67,18 +78,27 @@ mod tests {
     fn test_word_break() {
         assert!(word_break("leetcode", &["leet", "code"]));
         assert!(word_break("applepenapple", &["apple", "pen"]));
-        assert!(!word_break("catsandog", &["cats", "dog", "sand", "and", "cat"]));
+        assert!(!word_break(
+            "catsandog",
+            &["cats", "dog", "sand", "and", "cat"]
+        ));
     }
 
     #[test]
     fn test_word_break_memo() {
         assert!(word_break_memo("leetcode", &["leet", "code"]));
-        assert!(!word_break_memo("catsandog", &["cats", "dog", "sand", "and", "cat"]));
+        assert!(!word_break_memo(
+            "catsandog",
+            &["cats", "dog", "sand", "and", "cat"]
+        ));
     }
 
     #[test]
     fn test_word_break_bfs() {
         assert!(word_break_bfs("leetcode", &["leet", "code"]));
-        assert!(!word_break_bfs("catsandog", &["cats", "dog", "sand", "and", "cat"]));
+        assert!(!word_break_bfs(
+            "catsandog",
+            &["cats", "dog", "sand", "and", "cat"]
+        ));
     }
 }

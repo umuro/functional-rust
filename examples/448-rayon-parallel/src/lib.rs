@@ -104,9 +104,7 @@ where
             .map(|chunk| {
                 let op = &op;
                 let id = identity.clone();
-                s.spawn(move || {
-                    chunk.iter().cloned().fold(id, |acc, x| op(acc, x))
-                })
+                s.spawn(move || chunk.iter().cloned().fold(id, |acc, x| op(acc, x)))
             })
             .collect::<Vec<_>>()
             .into_iter()

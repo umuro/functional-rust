@@ -18,11 +18,7 @@ impl<T> Tree<T> {
 
 /// The catamorphism: replace Leaf with `leaf` value, Node with `node` function.
 /// This is the most general way to fold over a tree.
-pub fn cata<T, R>(
-    tree: &Tree<T>,
-    leaf: R,
-    node: &dyn Fn(R, &T, R) -> R,
-) -> R
+pub fn cata<T, R>(tree: &Tree<T>, leaf: R, node: &dyn Fn(R, &T, R) -> R) -> R
 where
     R: Clone,
 {
@@ -114,8 +110,8 @@ mod tests {
         // Any tree computation can be expressed as a cata
         let product = cata(&sample_tree(), 1i64, &|l, v, r| l * v * r);
         assert_eq!(product, 6); // 1 * 1 * 2 * 1 * 3 * 1 = 6... wait
-        // Actually: Node(Node(Leaf,1,Leaf), 2, Node(Leaf,3,Leaf))
-        // = node(node(1, 1, 1), 2, node(1, 3, 1)) = node(1, 2, 3) = 1*2*3 = 6
+                                // Actually: Node(Node(Leaf,1,Leaf), 2, Node(Leaf,3,Leaf))
+                                // = node(node(1, 1, 1), 2, node(1, 3, 1)) = node(1, 2, 3) = 1*2*3 = 6
         assert_eq!(product, 6);
     }
 }

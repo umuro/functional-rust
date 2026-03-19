@@ -13,7 +13,7 @@ pub struct Message<'a> {
 pub fn parse_message(input: &str) -> Option<Message<'_>> {
     let input = input.trim();
     let newline_pos = input.find('\n')?;
-    
+
     Some(Message {
         header: &input[..newline_pos],
         body: &input[newline_pos + 1..],
@@ -101,17 +101,17 @@ pub struct HttpLikeMessage<'a> {
 /// Parse HTTP-like message
 pub fn parse_http_like(input: &str) -> Option<HttpLikeMessage<'_>> {
     let mut lines = input.lines();
-    
+
     // Request line
     let request_line = lines.next()?;
     let mut parts = request_line.split_whitespace();
     let method = parts.next()?;
     let path = parts.next()?;
-    
+
     // Headers
     let mut headers = Vec::new();
     let mut body_start = request_line.len() + 1;
-    
+
     for line in lines.by_ref() {
         body_start += line.len() + 1;
         if line.is_empty() {
@@ -121,14 +121,14 @@ pub fn parse_http_like(input: &str) -> Option<HttpLikeMessage<'_>> {
             headers.push((key.trim(), value.trim()));
         }
     }
-    
+
     // Body is rest
     let body = if body_start < input.len() {
         &input[body_start..]
     } else {
         ""
     };
-    
+
     Some(HttpLikeMessage {
         method,
         path,

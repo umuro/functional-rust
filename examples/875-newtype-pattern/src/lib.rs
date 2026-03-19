@@ -12,16 +12,28 @@ struct OrderId(u64);
 
 impl UserId {
     fn new(id: u64) -> Option<Self> {
-        if id > 0 { Some(UserId(id)) } else { None }
+        if id > 0 {
+            Some(UserId(id))
+        } else {
+            None
+        }
     }
-    fn value(self) -> u64 { self.0 }
+    fn value(self) -> u64 {
+        self.0
+    }
 }
 
 impl OrderId {
     fn new(id: u64) -> Option<Self> {
-        if id > 0 { Some(OrderId(id)) } else { None }
+        if id > 0 {
+            Some(OrderId(id))
+        } else {
+            None
+        }
     }
-    fn value(self) -> u64 { self.0 }
+    fn value(self) -> u64 {
+        self.0
+    }
 }
 
 impl fmt::Display for UserId {
@@ -47,9 +59,15 @@ struct Email(String);
 
 impl Email {
     fn new(s: &str) -> Option<Self> {
-        if s.contains('@') { Some(Email(s.to_string())) } else { None }
+        if s.contains('@') {
+            Some(Email(s.to_string()))
+        } else {
+            None
+        }
     }
-    fn as_str(&self) -> &str { &self.0 }
+    fn as_str(&self) -> &str {
+        &self.0
+    }
 }
 
 // === Approach 3: Newtype for unit safety ===
@@ -60,19 +78,27 @@ struct Celsius(f64);
 struct Fahrenheit(f64);
 
 impl Celsius {
-    fn new(v: f64) -> Self { Celsius(v) }
+    fn new(v: f64) -> Self {
+        Celsius(v)
+    }
     fn to_fahrenheit(self) -> Fahrenheit {
         Fahrenheit(self.0 * 9.0 / 5.0 + 32.0)
     }
-    fn value(self) -> f64 { self.0 }
+    fn value(self) -> f64 {
+        self.0
+    }
 }
 
 impl Fahrenheit {
-    fn new(v: f64) -> Self { Fahrenheit(v) }
+    fn new(v: f64) -> Self {
+        Fahrenheit(v)
+    }
     fn to_celsius(self) -> Celsius {
         Celsius((self.0 - 32.0) * 5.0 / 9.0)
     }
-    fn value(self) -> f64 { self.0 }
+    fn value(self) -> f64 {
+        self.0
+    }
 }
 
 // Implement Deref for transparent access when appropriate
@@ -83,15 +109,20 @@ struct NonEmptyString(String);
 
 impl NonEmptyString {
     fn new(s: &str) -> Option<Self> {
-        if s.is_empty() { None } else { Some(NonEmptyString(s.to_string())) }
+        if s.is_empty() {
+            None
+        } else {
+            Some(NonEmptyString(s.to_string()))
+        }
     }
 }
 
 impl Deref for NonEmptyString {
     type Target = str;
-    fn deref(&self) -> &str { &self.0 }
+    fn deref(&self) -> &str {
+        &self.0
+    }
 }
-
 
 #[cfg(test)]
 mod tests {

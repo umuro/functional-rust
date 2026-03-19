@@ -1,11 +1,13 @@
 // 097: Flatten and Flat Map
 
-
 #[cfg(test)]
 mod tests {
     #[test]
     fn test_flatten() {
-        let v: Vec<i32> = vec![vec![1,2], vec![3,4], vec![5]].into_iter().flatten().collect();
+        let v: Vec<i32> = vec![vec![1, 2], vec![3, 4], vec![5]]
+            .into_iter()
+            .flatten()
+            .collect();
         assert_eq!(v, vec![1, 2, 3, 4, 5]);
     }
 
@@ -17,7 +19,10 @@ mod tests {
 
     #[test]
     fn test_flatten_empty() {
-        let v: Vec<i32> = vec![vec![], vec![1], vec![], vec![2,3]].into_iter().flatten().collect();
+        let v: Vec<i32> = vec![vec![], vec![1], vec![], vec![2, 3]]
+            .into_iter()
+            .flatten()
+            .collect();
         assert_eq!(v, vec![1, 2, 3]);
     }
 

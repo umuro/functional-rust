@@ -15,12 +15,10 @@ where
 
 /// Word frequency count via map-reduce.
 pub fn word_count<'a>(words: &[&'a str]) -> HashMap<&'a str, usize> {
-    words
-        .iter()
-        .fold(HashMap::new(), |mut acc, &word| {
-            *acc.entry(word).or_insert(0) += 1;
-            acc
-        })
+    words.iter().fold(HashMap::new(), |mut acc, &word| {
+        *acc.entry(word).or_insert(0) += 1;
+        acc
+    })
 }
 
 /// Sum of squares via map-reduce.
@@ -38,13 +36,16 @@ pub fn join_strings(strings: &[&str], sep: &str) -> String {
     if strings.is_empty() {
         return String::new();
     }
-    strings[1..]
-        .iter()
-        .fold(strings[0].to_string(), |acc, &s| format!("{}{}{}", acc, sep, s))
+    strings[1..].iter().fold(strings[0].to_string(), |acc, &s| {
+        format!("{}{}{}", acc, sep, s)
+    })
 }
 
 /// Group by key function.
-pub fn group_by_key<T: Clone, K: std::hash::Hash + Eq, F>(items: &[T], key_fn: F) -> HashMap<K, Vec<T>>
+pub fn group_by_key<T: Clone, K: std::hash::Hash + Eq, F>(
+    items: &[T],
+    key_fn: F,
+) -> HashMap<K, Vec<T>>
 where
     F: Fn(&T) -> K,
 {

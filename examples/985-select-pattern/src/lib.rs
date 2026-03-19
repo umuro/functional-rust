@@ -13,10 +13,7 @@ enum Selected<A, B> {
 }
 
 // --- Non-blocking select over two channels ---
-fn select<A, B>(
-    rx1: &mpsc::Receiver<A>,
-    rx2: &mpsc::Receiver<B>,
-) -> Selected<A, B> {
+fn select<A, B>(rx1: &mpsc::Receiver<A>, rx2: &mpsc::Receiver<B>) -> Selected<A, B> {
     let mut r1_closed = false;
     let mut r2_closed = false;
     loop {
@@ -65,7 +62,6 @@ fn priority_recv<T>(high: &mpsc::Receiver<T>, low: &mpsc::Receiver<T>) -> Option
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -75,9 +71,14 @@ mod tests {
         let (tx1, rx1) = mpsc::channel::<i32>();
         let (tx2, rx2) = mpsc::channel::<String>();
 
-        for i in [1, 2, 3] { tx1.send(i).unwrap(); }
-        for s in ["a", "b", "c"] { tx2.send(s.to_string()).unwrap(); }
-        drop(tx1); drop(tx2);
+        for i in [1, 2, 3] {
+            tx1.send(i).unwrap();
+        }
+        for s in ["a", "b", "c"] {
+            tx2.send(s.to_string()).unwrap();
+        }
+        drop(tx1);
+        drop(tx2);
 
         let (mut lefts, mut rights) = select_drain(rx1, rx2);
         lefts.sort();
@@ -90,7 +91,8 @@ mod tests {
     fn test_both_closed() {
         let (tx1, rx1) = mpsc::channel::<i32>();
         let (tx2, rx2) = mpsc::channel::<i32>();
-        drop(tx1); drop(tx2);
+        drop(tx1);
+        drop(tx2);
         assert_eq!(select(&rx1, &rx2), Selected::BothClosed);
     }
 

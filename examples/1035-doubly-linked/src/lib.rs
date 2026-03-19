@@ -165,16 +165,19 @@ fn bidirectional_traversal() {
     assert_eq!(backward, vec![5, 4, 3, 2, 1]);
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_basic() { basic_operations(); }
+    fn test_basic() {
+        basic_operations();
+    }
 
     #[test]
-    fn test_bidirectional() { bidirectional_traversal(); }
+    fn test_bidirectional() {
+        bidirectional_traversal();
+    }
 
     #[test]
     fn test_empty() {

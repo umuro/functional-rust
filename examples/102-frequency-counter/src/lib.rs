@@ -3,8 +3,8 @@
 //! Count word frequencies using a map. OCaml's `Map.Make(String)` creates
 //! an immutable tree map; Rust's `HashMap` is the standard mutable map.
 
-use std::collections::HashMap;
 use std::collections::BTreeMap;
+use std::collections::HashMap;
 
 // ---------------------------------------------------------------------------
 // Approach A: HashMap (idiomatic Rust)
@@ -37,10 +37,7 @@ pub fn word_freq_btree(text: &str) -> BTreeMap<String, usize> {
 // ---------------------------------------------------------------------------
 
 pub fn word_freq_functional(text: &str) -> BTreeMap<String, usize> {
-    let words: Vec<String> = text
-        .split_whitespace()
-        .map(|w| w.to_lowercase())
-        .collect();
+    let words: Vec<String> = text.split_whitespace().map(|w| w.to_lowercase()).collect();
 
     let mut sorted = words.clone();
     sorted.sort();

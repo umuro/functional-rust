@@ -12,7 +12,11 @@ struct Seconds(f64);
 struct MetersPerSecond(f64);
 
 fn speed(distance: Meters, time: Seconds) -> Option<MetersPerSecond> {
-    if time.0 == 0.0 { None } else { Some(MetersPerSecond(distance.0 / time.0)) }
+    if time.0 == 0.0 {
+        None
+    } else {
+        Some(MetersPerSecond(distance.0 / time.0))
+    }
 }
 
 // Approach 2: Distinct ID types
@@ -23,8 +27,12 @@ struct UserId(u64);
 struct OrderId(u64);
 
 // These are different types — can't mix them!
-fn find_user(id: UserId) -> String { format!("User #{}", id.0) }
-fn find_order(id: OrderId) -> String { format!("Order #{}", id.0) }
+fn find_user(id: UserId) -> String {
+    format!("User #{}", id.0)
+}
+fn find_order(id: OrderId) -> String {
+    format!("Order #{}", id.0)
+}
 
 // Approach 3: Newtype with conversions
 #[derive(Debug, Clone, Copy)]
@@ -34,13 +42,16 @@ struct Celsius(f64);
 struct Fahrenheit(f64);
 
 impl From<Celsius> for Fahrenheit {
-    fn from(c: Celsius) -> Self { Fahrenheit(c.0 * 9.0 / 5.0 + 32.0) }
+    fn from(c: Celsius) -> Self {
+        Fahrenheit(c.0 * 9.0 / 5.0 + 32.0)
+    }
 }
 
 impl From<Fahrenheit> for Celsius {
-    fn from(f: Fahrenheit) -> Self { Celsius((f.0 - 32.0) * 5.0 / 9.0) }
+    fn from(f: Fahrenheit) -> Self {
+        Celsius((f.0 - 32.0) * 5.0 / 9.0)
+    }
 }
-
 
 #[cfg(test)]
 mod tests {

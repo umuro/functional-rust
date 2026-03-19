@@ -3,12 +3,18 @@
 
 // Approach 1: Recursive vs loop-based sum
 fn sum_recursive(v: &[i32]) -> i32 {
-    if v.is_empty() { 0 } else { v[0] + sum_recursive(&v[1..]) }
+    if v.is_empty() {
+        0
+    } else {
+        v[0] + sum_recursive(&v[1..])
+    }
 }
 
 fn sum_loop(v: &[i32]) -> i32 {
     let mut acc = 0;
-    for &x in v { acc += x; }
+    for &x in v {
+        acc += x;
+    }
     acc
 }
 
@@ -18,7 +24,11 @@ fn sum_fold(v: &[i32]) -> i32 {
 
 // Approach 2: Factorial
 fn fact_recursive(n: u64) -> u64 {
-    if n <= 1 { 1 } else { n * fact_recursive(n - 1) }
+    if n <= 1 {
+        1
+    } else {
+        n * fact_recursive(n - 1)
+    }
 }
 
 fn fact_loop(n: u64) -> u64 {
@@ -49,7 +59,6 @@ fn fib_loop(n: u64) -> u64 {
 fn fib_fold(n: u64) -> u64 {
     (0..n).fold((0u64, 1u64), |(a, b), _| (b, a + b)).0
 }
-
 
 #[cfg(test)]
 mod tests {

@@ -1,7 +1,6 @@
 // 088: Iterator Consumers
 // Terminal operations that drive the lazy chain
 
-
 #[cfg(test)]
 mod tests {
     #[test]

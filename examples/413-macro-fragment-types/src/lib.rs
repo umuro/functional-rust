@@ -94,7 +94,11 @@ macro_rules! make_enum {
 }
 
 make_enum!(Color { Red, Green, Blue });
-make_enum!(Status { Active, Inactive, Pending });
+make_enum!(Status {
+    Active,
+    Inactive,
+    Pending
+});
 
 /// A demo struct to show getter generation.
 pub struct Person {
@@ -162,9 +166,7 @@ mod tests {
 
     #[test]
     fn test_timed() {
-        let (result, _elapsed) = timed!("sum", {
-            (1..=100).sum::<i32>()
-        });
+        let (result, _elapsed) = timed!("sum", { (1..=100).sum::<i32>() });
         assert_eq!(result, 5050);
     }
 

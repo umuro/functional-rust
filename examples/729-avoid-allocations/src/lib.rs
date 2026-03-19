@@ -5,7 +5,7 @@
 /// Write a formatted record into a pre-allocated `String` buffer.
 /// Caller owns the buffer and can reuse it across many calls.
 fn format_record_into(buf: &mut String, name: &str, score: u32) {
-    buf.clear();               // reset without freeing heap memory
+    buf.clear(); // reset without freeing heap memory
     buf.push_str(name);
     buf.push(':');
     // itoa-style: write integer without allocating a temporary String
@@ -32,14 +32,11 @@ fn u32_to_str(mut n: u32, buf: &mut [u8; 20]) -> &str {
 // ── Technique 2: Iterator chains — zero intermediate allocations ──────────────
 
 fn sum_squares(n: u64) -> u64 {
-    (0..n).map(|i| i * i).sum()   // no Vec created; purely lazy
+    (0..n).map(|i| i * i).sum() // no Vec created; purely lazy
 }
 
 fn hot_filter_sum(data: &[i32]) -> i32 {
-    data.iter()
-        .filter(|&&x| x > 0)
-        .map(|&x| x * 2)
-        .sum()                     // single pass, zero allocs
+    data.iter().filter(|&&x| x > 0).map(|&x| x * 2).sum() // single pass, zero allocs
 }
 
 // ── Technique 3: Reuse a Vec by clearing, not dropping ───────────────────────
@@ -50,11 +47,13 @@ struct Pipeline {
 
 impl Pipeline {
     fn new() -> Self {
-        Pipeline { scratch: Vec::with_capacity(1024) }
+        Pipeline {
+            scratch: Vec::with_capacity(1024),
+        }
     }
 
     fn process(&mut self, input: &[i32]) -> &[i32] {
-        self.scratch.clear();                // keeps allocated capacity
+        self.scratch.clear(); // keeps allocated capacity
         for &x in input {
             if x.rem_euclid(2) == 0 {
                 self.scratch.push(x * 3);
@@ -73,14 +72,18 @@ fn count_words_no_alloc(s: &str) -> usize {
     let mut count = 0usize;
     for &b in bytes {
         match (in_word, b == b' ' || b == b'\t' || b == b'\n') {
-            (false, false) => { in_word = true; count += 1; }
-            (true, true)   => { in_word = false; }
-            _              => {}
+            (false, false) => {
+                in_word = true;
+                count += 1;
+            }
+            (true, true) => {
+                in_word = false;
+            }
+            _ => {}
         }
     }
     count
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -111,7 +114,7 @@ mod tests {
     fn test_pipeline_reuse() {
         let mut p = Pipeline::new();
         let r1 = p.process(&[2, 3, 4]);
-        assert_eq!(r1, &[6, 12]);   // evens * 3
+        assert_eq!(r1, &[6, 12]); // evens * 3
         let r2 = p.process(&[10]);
         assert_eq!(r2, &[30]);
     }

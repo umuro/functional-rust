@@ -118,9 +118,18 @@ fn weighted_arena() {
     }
 
     let nodes = vec![
-        WNode { label: "A", edges: vec![(1, 1.0), (2, 4.0)] },
-        WNode { label: "B", edges: vec![(2, 2.0)] },
-        WNode { label: "C", edges: vec![] },
+        WNode {
+            label: "A",
+            edges: vec![(1, 1.0), (2, 4.0)],
+        },
+        WNode {
+            label: "B",
+            edges: vec![(2, 2.0)],
+        },
+        WNode {
+            label: "C",
+            edges: vec![],
+        },
     ];
 
     let total: f64 = nodes[0].edges.iter().map(|(_, w)| w).sum();
@@ -128,19 +137,24 @@ fn weighted_arena() {
     assert_eq!(nodes[0].label, "A");
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_basic() { basic_arena_graph(); }
+    fn test_basic() {
+        basic_arena_graph();
+    }
 
     #[test]
-    fn test_bfs() { bfs_test(); }
+    fn test_bfs() {
+        bfs_test();
+    }
 
     #[test]
-    fn test_weighted() { weighted_arena(); }
+    fn test_weighted() {
+        weighted_arena();
+    }
 
     #[test]
     fn test_dfs() {

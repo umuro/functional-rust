@@ -9,8 +9,12 @@ pub trait OptionMonad<A> {
 }
 
 impl<A> OptionMonad<A> for Option<A> {
-    fn pure(a: A) -> Self { Some(a) }
-    fn bind<B>(self, f: impl FnOnce(A) -> Option<B>) -> Option<B> { self.and_then(f) }
+    fn pure(a: A) -> Self {
+        Some(a)
+    }
+    fn bind<B>(self, f: impl FnOnce(A) -> Option<B>) -> Option<B> {
+        self.and_then(f)
+    }
 }
 
 /// Left identity: pure(a).bind(f) == f(a)
@@ -62,9 +66,7 @@ mod tests {
 
     #[test]
     fn test_bind_chain() {
-        let result = Some(5)
-            .bind(|x| Some(x + 1))
-            .bind(|x| Some(x * 2));
+        let result = Some(5).bind(|x| Some(x + 1)).bind(|x| Some(x * 2));
         assert_eq!(result, Some(12));
     }
 }

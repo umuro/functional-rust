@@ -1,6 +1,5 @@
 /// 734: Typestate Basics — compile-time state machine
 /// Invalid transitions DO NOT compile. No runtime checks needed.
-
 use std::marker::PhantomData;
 
 // ── State marker types (zero-sized) ──────────────────────────────────────────
@@ -21,13 +20,17 @@ impl Light<Red> {
     /// Only way to create a light — must start Red.
     pub fn new() -> Self {
         println!("Light: Red");
-        Light { _state: PhantomData }
+        Light {
+            _state: PhantomData,
+        }
     }
 
     /// Red → Green (consumes self, returns different type)
     pub fn go(self) -> Light<Green> {
         println!("Light: Green");
-        Light { _state: PhantomData }
+        Light {
+            _state: PhantomData,
+        }
     }
 }
 
@@ -35,7 +38,9 @@ impl Light<Green> {
     /// Green → Yellow
     pub fn slow(self) -> Light<Yellow> {
         println!("Light: Yellow");
-        Light { _state: PhantomData }
+        Light {
+            _state: PhantomData,
+        }
     }
 }
 
@@ -43,12 +48,13 @@ impl Light<Yellow> {
     /// Yellow → Red
     pub fn stop(self) -> Light<Red> {
         println!("Light: Red");
-        Light { _state: PhantomData }
+        Light {
+            _state: PhantomData,
+        }
     }
 }
 
 // ── Size check ────────────────────────────────────────────────────────────────
-
 
 #[cfg(test)]
 mod tests {
@@ -56,10 +62,10 @@ mod tests {
 
     #[test]
     fn full_cycle_compiles() {
-        let red    = Light::<Red>::new();
-        let green  = red.go();
+        let red = Light::<Red>::new();
+        let green = red.go();
         let yellow = green.slow();
-        let _red2  = yellow.stop();
+        let _red2 = yellow.stop();
     }
 
     #[test]

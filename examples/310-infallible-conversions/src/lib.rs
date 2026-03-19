@@ -14,7 +14,11 @@ pub struct ZeroError;
 impl TryFrom<u32> for NonZeroU32 {
     type Error = ZeroError;
     fn try_from(n: u32) -> Result<Self, ZeroError> {
-        if n == 0 { Err(ZeroError) } else { Ok(NonZeroU32(n)) }
+        if n == 0 {
+            Err(ZeroError)
+        } else {
+            Ok(NonZeroU32(n))
+        }
     }
 }
 

@@ -67,7 +67,6 @@ pub fn get_or(default: JsonValue, path: &[&str], json: &JsonValue) -> JsonValue 
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

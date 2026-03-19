@@ -6,7 +6,9 @@ use std::collections::HashMap;
 
 /// Lookup with descriptive error
 pub fn lookup<'a>(map: &'a HashMap<&str, &str>, key: &str) -> Result<&'a str, String> {
-    map.get(key).copied().ok_or_else(|| format!("key '{}' not found", key))
+    map.get(key)
+        .copied()
+        .ok_or_else(|| format!("key '{}' not found", key))
 }
 
 /// Get port from config
@@ -37,7 +39,10 @@ mod tests {
     #[test]
     fn test_ok_or_else_lazy() {
         let mut called = false;
-        let _: Result<i32, &str> = Some(5).ok_or_else(|| { called = true; "err" });
+        let _: Result<i32, &str> = Some(5).ok_or_else(|| {
+            called = true;
+            "err"
+        });
         assert!(!called);
     }
 

@@ -104,22 +104,29 @@ fn remove_test() {
     assert!(!sv.remove(&3)); // Already removed
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_basic() { basic_sorted_vec(); }
+    fn test_basic() {
+        basic_sorted_vec();
+    }
 
     #[test]
-    fn test_partition_point() { partition_point_demo(); }
+    fn test_partition_point() {
+        partition_point_demo();
+    }
 
     #[test]
-    fn test_range() { range_query(); }
+    fn test_range() {
+        range_query();
+    }
 
     #[test]
-    fn test_remove() { remove_test(); }
+    fn test_remove() {
+        remove_test();
+    }
 
     #[test]
     fn test_duplicates() {

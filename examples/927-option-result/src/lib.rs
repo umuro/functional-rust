@@ -12,7 +12,11 @@ pub fn find_first<T>(list: &[T], pred: impl Fn(&T) -> bool) -> Option<&T> {
 
 /// Safe division — returns None on divide-by-zero
 pub fn safe_div(a: f64, b: f64) -> Option<f64> {
-    if b == 0.0 { None } else { Some(a / b) }
+    if b == 0.0 {
+        None
+    } else {
+        Some(a / b)
+    }
 }
 
 /// Safe head of list
@@ -130,7 +134,10 @@ mod tests {
         let r = sqrt_of_division(16.0, 4.0).unwrap();
         assert!((r - 2.0).abs() < 1e-10);
         assert_eq!(sqrt_of_division(16.0, 0.0), Err(MathError::DivisionByZero));
-        assert_eq!(sqrt_of_division(-16.0, 1.0), Err(MathError::NegativeSquareRoot));
+        assert_eq!(
+            sqrt_of_division(-16.0, 1.0),
+            Err(MathError::NegativeSquareRoot)
+        );
     }
 
     #[test]

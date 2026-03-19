@@ -32,7 +32,11 @@ impl<'a> Parser<'a> {
 /// Multiple inputs: cannot elide output lifetime.
 /// Must be explicit: fn longer<'a>(x: &'a str, y: &'a str) -> &'a str
 pub fn longer<'a>(x: &'a str, y: &'a str) -> &'a str {
-    if x.len() >= y.len() { x } else { y }
+    if x.len() >= y.len() {
+        x
+    } else {
+        y
+    }
 }
 
 /// No elision needed for non-reference returns.
@@ -57,7 +61,9 @@ mod tests {
 
     #[test]
     fn test_parser_remaining() {
-        let parser = Parser { input: "test input" };
+        let parser = Parser {
+            input: "test input",
+        };
         assert_eq!(parser.remaining(), "test input");
     }
 

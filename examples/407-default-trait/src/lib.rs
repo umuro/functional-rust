@@ -209,7 +209,7 @@ mod tests {
     fn test_unwrap_or_default() {
         let some_vec: Option<Vec<i32>> = Some(vec![1, 2, 3]);
         let none_vec: Option<Vec<i32>> = None;
-        
+
         assert_eq!(get_or_default(some_vec), vec![1, 2, 3]);
         assert_eq!(get_or_default(none_vec), Vec::<i32>::new());
     }
@@ -221,10 +221,13 @@ mod tests {
             .url("https://api.example.com")
             .header("Content-Type", "application/json")
             .timeout(10000);
-        
+
         assert_eq!(req.method, "POST");
         assert_eq!(req.url, "https://api.example.com");
-        assert_eq!(req.headers.get("Content-Type"), Some(&"application/json".to_string()));
+        assert_eq!(
+            req.headers.get("Content-Type"),
+            Some(&"application/json".to_string())
+        );
         assert_eq!(req.timeout_ms, 10000);
     }
 

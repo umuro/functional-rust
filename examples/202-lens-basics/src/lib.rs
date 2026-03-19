@@ -8,11 +8,11 @@ struct Lens<S, A> {
 }
 
 impl<S: 'static, A: 'static> Lens<S, A> {
-    fn new(
-        get: impl Fn(&S) -> A + 'static,
-        set: impl Fn(A, &S) -> S + 'static,
-    ) -> Self {
-        Lens { get: Box::new(get), set: Box::new(set) }
+    fn new(get: impl Fn(&S) -> A + 'static, set: impl Fn(A, &S) -> S + 'static) -> Self {
+        Lens {
+            get: Box::new(get),
+            set: Box::new(set),
+        }
     }
 
     fn view(&self, s: &S) -> A {
@@ -47,7 +47,9 @@ macro_rules! make_lens {
     ($lens_name:ident, $struct:ty, $field:ident, $field_ty:ty) => {
         struct $lens_name;
         impl LensLike<$struct, $field_ty> for $lens_name {
-            fn get(s: &$struct) -> $field_ty { s.$field.clone() }
+            fn get(s: &$struct) -> $field_ty {
+                s.$field.clone()
+            }
             fn set(a: $field_ty, s: &$struct) -> $struct {
                 let mut new = s.clone();
                 new.$field = a;
@@ -83,11 +85,23 @@ make_lens!(EmpAddress, Employee, address, Address);
 make_lens!(AddrCity, Address, city, String);
 
 fn name_lens() -> Lens<Person, String> {
-    Lens::new(|p: &Person| p.name.clone(), |n: String, p: &Person| Person { name: n, ..p.clone() })
+    Lens::new(
+        |p: &Person| p.name.clone(),
+        |n: String, p: &Person| Person {
+            name: n,
+            ..p.clone()
+        },
+    )
 }
 
 fn age_lens() -> Lens<Person, u32> {
-    Lens::new(|p: &Person| p.age, |a: u32, p: &Person| Person { age: a, ..p.clone() })
+    Lens::new(
+        |p: &Person| p.age,
+        |a: u32, p: &Person| Person {
+            age: a,
+            ..p.clone()
+        },
+    )
 }
 
 #[cfg(test)]
@@ -96,7 +110,10 @@ mod tests {
 
     #[test]
     fn test_closure_lens_get_set() {
-        let p = Person { name: "Bob".into(), age: 25 };
+        let p = Person {
+            name: "Bob".into(),
+            age: 25,
+        };
         let nl = name_lens();
         assert_eq!(nl.view(&p), "Bob");
         let p2 = nl.set("Robert".into(), &p);
@@ -106,7 +123,10 @@ mod tests {
 
     #[test]
     fn test_trait_lens() {
-        let p = Person { name: "Eve".into(), age: 40 };
+        let p = Person {
+            name: "Eve".into(),
+            age: 40,
+        };
         assert_eq!(PersonAge::get(&p), 40);
         let p2 = PersonAge::set(41, &p);
         assert_eq!(PersonAge::get(&p2), 41);
@@ -114,7 +134,10 @@ mod tests {
 
     #[test]
     fn test_over_modify() {
-        let p = Person { name: "X".into(), age: 10 };
+        let p = Person {
+            name: "X".into(),
+            age: 10,
+        };
         let p2 = PersonAge::over(|a| a * 2, &p);
         assert_eq!(PersonAge::get(&p2), 20);
     }
@@ -123,7 +146,11 @@ mod tests {
     fn test_macro_lens_for_nested() {
         let emp = Employee {
             emp_name: "Charlie".into(),
-            address: Address { street: "1st".into(), city: "NYC".into(), zip: "10001".into() },
+            address: Address {
+                street: "1st".into(),
+                city: "NYC".into(),
+                zip: "10001".into(),
+            },
         };
         let addr = EmpAddress::get(&emp);
         assert_eq!(AddrCity::get(&addr), "NYC");

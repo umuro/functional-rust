@@ -102,7 +102,6 @@ fn make_error() -> AppError {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

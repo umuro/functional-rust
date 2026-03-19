@@ -26,9 +26,7 @@ pub fn sqrt_safe(x: i32) -> Result<f64, String> {
 
 /// Pipeline using `and_then` (equivalent to OCaml's `>>=` bind).
 pub fn process_bind(s: &str) -> Result<f64, String> {
-    parse_int(s)
-        .and_then(positive)
-        .and_then(sqrt_safe)
+    parse_int(s).and_then(positive).and_then(sqrt_safe)
 }
 
 /// Pipeline using the `?` operator — idiomatic Rust.

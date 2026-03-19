@@ -10,7 +10,9 @@ fn is_match_dp(s: &str, p: &str) -> bool {
     let mut dp = vec![vec![false; n + 1]; m + 1];
     dp[0][0] = true;
     for j in 1..=n {
-        if p[j - 1] == '*' { dp[0][j] = dp[0][j - 1]; }
+        if p[j - 1] == '*' {
+            dp[0][j] = dp[0][j - 1];
+        }
     }
     for i in 1..=m {
         for j in 1..=n {
@@ -29,10 +31,22 @@ fn is_match_memo(s: &str, p: &str) -> bool {
     let s: Vec<char> = s.chars().collect();
     let p: Vec<char> = p.chars().collect();
 
-    fn solve(i: usize, j: usize, s: &[char], p: &[char], cache: &mut HashMap<(usize, usize), bool>) -> bool {
-        if j == p.len() { return i == s.len(); }
-        if i == s.len() { return p[j..].iter().all(|&c| c == '*'); }
-        if let Some(&v) = cache.get(&(i, j)) { return v; }
+    fn solve(
+        i: usize,
+        j: usize,
+        s: &[char],
+        p: &[char],
+        cache: &mut HashMap<(usize, usize), bool>,
+    ) -> bool {
+        if j == p.len() {
+            return i == s.len();
+        }
+        if i == s.len() {
+            return p[j..].iter().all(|&c| c == '*');
+        }
+        if let Some(&v) = cache.get(&(i, j)) {
+            return v;
+        }
         let v = if p[j] == '*' {
             solve(i, j + 1, s, p, cache) || solve(i + 1, j, s, p, cache)
         } else if p[j] == '?' || p[j] == s[i] {
@@ -74,7 +88,9 @@ fn is_match_greedy(s: &str, p: &str) -> bool {
         }
     }
 
-    while pi < n && p[pi] == '*' { pi += 1; }
+    while pi < n && p[pi] == '*' {
+        pi += 1;
+    }
     pi == n
 }
 

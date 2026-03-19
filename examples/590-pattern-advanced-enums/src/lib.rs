@@ -160,7 +160,10 @@ mod tests {
         Json::object(vec![
             ("name", Json::string("Alice")),
             ("age", Json::number(30.0)),
-            ("scores", Json::array(vec![Json::number(95.0), Json::number(87.0)])),
+            (
+                "scores",
+                Json::array(vec![Json::number(95.0), Json::number(87.0)]),
+            ),
             ("active", Json::Bool(true)),
             ("notes", Json::Null),
         ])

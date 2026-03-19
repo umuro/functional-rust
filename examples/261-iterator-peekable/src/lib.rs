@@ -21,10 +21,12 @@ mod tests {
         let mut groups: Vec<Vec<i32>> = Vec::new();
         while let Some(&val) = iter.peek() {
             let mut g = Vec::new();
-            while iter.peek() == Some(&val) { g.push(*iter.next().unwrap()); }
+            while iter.peek() == Some(&val) {
+                g.push(*iter.next().unwrap());
+            }
             groups.push(g);
         }
-        assert_eq!(groups, vec![vec![1,1], vec![2], vec![3,3]]);
+        assert_eq!(groups, vec![vec![1, 1], vec![2], vec![3, 3]]);
     }
 
     #[test]

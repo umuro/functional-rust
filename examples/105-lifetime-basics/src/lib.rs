@@ -4,7 +4,11 @@
 // Approach 1: Lifetime in function signature
 // 'a means: the returned reference lives as long as the inputs
 fn longest<'a>(s1: &'a str, s2: &'a str) -> &'a str {
-    if s1.len() >= s2.len() { s1 } else { s2 }
+    if s1.len() >= s2.len() {
+        s1
+    } else {
+        s2
+    }
 }
 
 fn first_element<'a>(v: &'a [i32]) -> Option<&'a i32> {
@@ -30,7 +34,9 @@ impl<'a> Important<'a> {
 fn first_word<'a>(s: &'a str) -> &'a str {
     let bytes = s.as_bytes();
     for (i, &byte) in bytes.iter().enumerate() {
-        if byte == b' ' { return &s[..i]; }
+        if byte == b' ' {
+            return &s[..i];
+        }
     }
     s
 }

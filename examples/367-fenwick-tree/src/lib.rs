@@ -83,7 +83,7 @@ impl FenwickTree {
         }
         let mut pos = 0;
         let mut bit = 1usize << (63 - self.n.leading_zeros());
-        
+
         while bit > 0 {
             if pos + bit <= self.n && self.tree[pos + bit] < target {
                 target -= self.tree[pos + bit];
@@ -140,9 +140,7 @@ impl FenwickTree2D {
 
     /// Get sum of rectangle [(r1,c1), (r2,c2)]
     pub fn range_sum(&self, r1: usize, c1: usize, r2: usize, c2: usize) -> i64 {
-        self.prefix_sum(r2, c2)
-            - self.prefix_sum(r1 - 1, c2)
-            - self.prefix_sum(r2, c1 - 1)
+        self.prefix_sum(r2, c2) - self.prefix_sum(r1 - 1, c2) - self.prefix_sum(r2, c1 - 1)
             + self.prefix_sum(r1 - 1, c1 - 1)
     }
 }

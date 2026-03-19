@@ -8,17 +8,30 @@ trait Shape {
     fn name(&self) -> &str;
 }
 
-struct Circle { radius: f64 }
-struct Rectangle { width: f64, height: f64 }
+struct Circle {
+    radius: f64,
+}
+struct Rectangle {
+    width: f64,
+    height: f64,
+}
 
 impl Shape for Circle {
-    fn area(&self) -> f64 { PI * self.radius * self.radius }
-    fn name(&self) -> &str { "circle" }
+    fn area(&self) -> f64 {
+        PI * self.radius * self.radius
+    }
+    fn name(&self) -> &str {
+        "circle"
+    }
 }
 
 impl Shape for Rectangle {
-    fn area(&self) -> f64 { self.width * self.height }
-    fn name(&self) -> &str { "rectangle" }
+    fn area(&self) -> f64 {
+        self.width * self.height
+    }
+    fn name(&self) -> &str {
+        "rectangle"
+    }
 }
 
 // Approach 2: Using dyn Trait for polymorphism
@@ -34,11 +47,13 @@ fn total_area(shapes: &[Box<dyn Shape>]) -> f64 {
 fn make_shape(kind: &str) -> Box<dyn Shape> {
     match kind {
         "circle" => Box::new(Circle { radius: 5.0 }),
-        "rectangle" => Box::new(Rectangle { width: 3.0, height: 4.0 }),
+        "rectangle" => Box::new(Rectangle {
+            width: 3.0,
+            height: 4.0,
+        }),
         _ => Box::new(Circle { radius: 1.0 }),
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -53,7 +68,10 @@ mod tests {
 
     #[test]
     fn test_rectangle() {
-        let r = Rectangle { width: 3.0, height: 4.0 };
+        let r = Rectangle {
+            width: 3.0,
+            height: 4.0,
+        };
         assert_eq!(r.area(), 12.0);
     }
 
@@ -61,7 +79,10 @@ mod tests {
     fn test_dyn_dispatch() {
         let shapes: Vec<Box<dyn Shape>> = vec![
             Box::new(Circle { radius: 5.0 }),
-            Box::new(Rectangle { width: 3.0, height: 4.0 }),
+            Box::new(Rectangle {
+                width: 3.0,
+                height: 4.0,
+            }),
         ];
         assert!((total_area(&shapes) - 90.54).abs() < 0.01);
     }

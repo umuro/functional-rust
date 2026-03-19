@@ -21,7 +21,9 @@ type ResultWithMsg<T> = Option<(T, String)>;
 type Validator<T> = fn(&T) -> bool;
 type Transform<A, B> = fn(A) -> B;
 
-fn validate_positive(x: &i32) -> bool { *x > 0 }
+fn validate_positive(x: &i32) -> bool {
+    *x > 0
+}
 
 // === Approach 3: Complex type aliases for readability ===
 type Point = (f64, f64);
@@ -33,7 +35,9 @@ fn distance(a: Point, b: Point) -> f64 {
 }
 
 fn perimeter(poly: &[Point]) -> f64 {
-    if poly.len() < 2 { return 0.0; }
+    if poly.len() < 2 {
+        return 0.0;
+    }
     let mut total = 0.0;
     for i in 0..poly.len() {
         let next = (i + 1) % poly.len();
@@ -53,14 +57,13 @@ fn parse_age(s: &str) -> AppResult<Age> {
 // UserId and u64 are interchangeable — no type safety
 fn demonstrate_alias_transparency() -> bool {
     let id: UserId = 42;
-    let raw: u64 = id;  // No error — same type!
+    let raw: u64 = id; // No error — same type!
     raw == 42
 }
 
 fn filter_with<'a, T>(items: &'a [T], pred: &dyn Fn(&T) -> bool) -> Vec<&'a T> {
     items.iter().filter(|x| pred(x)).collect()
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -97,7 +100,7 @@ mod tests {
 
     #[test]
     fn test_perimeter() {
-        let square: Polygon = vec![(0.0,0.0), (1.0,0.0), (1.0,1.0), (0.0,1.0)];
+        let square: Polygon = vec![(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)];
         assert!((perimeter(&square) - 4.0).abs() < 1e-10);
     }
 

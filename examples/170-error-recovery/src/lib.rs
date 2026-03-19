@@ -19,22 +19,38 @@ struct ParseError {
 
 impl std::fmt::Display for ParseError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Error at line {}, col {}: expected {}, got {}",
-            self.pos.line, self.pos.col,
+        write!(
+            f,
+            "Error at line {}, col {}: expected {}, got {}",
+            self.pos.line,
+            self.pos.col,
             self.expected.join(" or "),
-            self.got)
+            self.got
+        )
     }
 }
 
 fn init_pos() -> Position {
-    Position { offset: 0, line: 1, col: 1 }
+    Position {
+        offset: 0,
+        line: 1,
+        col: 1,
+    }
 }
 
 fn advance_pos(pos: &Position, c: char) -> Position {
     if c == '\n' {
-        Position { offset: pos.offset + 1, line: pos.line + 1, col: 1 }
+        Position {
+            offset: pos.offset + 1,
+            line: pos.line + 1,
+            col: 1,
+        }
     } else {
-        Position { offset: pos.offset + 1, line: pos.line, col: pos.col + 1 }
+        Position {
+            offset: pos.offset + 1,
+            line: pos.line,
+            col: pos.col + 1,
+        }
     }
 }
 
@@ -49,9 +65,7 @@ fn satisfy_pos<'a>(
     pos: &Position,
 ) -> ParseResult<'a, char> {
     match input.chars().next() {
-        Some(c) if pred(c) => {
-            Ok((c, &input[c.len_utf8()..], advance_pos(pos, c)))
-        }
+        Some(c) if pred(c) => Ok((c, &input[c.len_utf8()..], advance_pos(pos, c))),
         Some(c) => Err(ParseError {
             pos: pos.clone(),
             expected: vec![desc.to_string()],
@@ -98,14 +112,18 @@ fn alt_pos<'a, T>(
                 if e1.pos.offset == e2.pos.offset {
                     let mut expected = e1.expected;
                     expected.extend(e2.expected);
-                    Err(ParseError { pos: e1.pos, expected, got: e1.got })
+                    Err(ParseError {
+                        pos: e1.pos,
+                        expected,
+                        got: e1.got,
+                    })
                 } else if e1.pos.offset > e2.pos.offset {
                     Err(e1)
                 } else {
                     Err(e2)
                 }
             }
-        }
+        },
     }
 }
 
@@ -154,7 +172,10 @@ mod tests {
     fn test_error_merge() {
         let pos = init_pos();
         let r1 = satisfy_pos(|c| c.is_ascii_digit(), "digit", "!", &pos);
-        let err = alt_pos(r1, || satisfy_pos(|c| c.is_ascii_alphabetic(), "letter", "!", &pos)).unwrap_err();
+        let err = alt_pos(r1, || {
+            satisfy_pos(|c| c.is_ascii_alphabetic(), "letter", "!", &pos)
+        })
+        .unwrap_err();
         assert_eq!(err.expected.len(), 2);
         assert!(err.expected.contains(&"digit".to_string()));
         assert!(err.expected.contains(&"letter".to_string()));
@@ -189,10 +210,17 @@ mod tests {
     #[test]
     fn test_display_error() {
         let err = ParseError {
-            pos: Position { offset: 5, line: 2, col: 3 },
+            pos: Position {
+                offset: 5,
+                line: 2,
+                col: 3,
+            },
             expected: vec!["digit".into(), "letter".into()],
             got: "'!'".into(),
         };
-        assert_eq!(format!("{}", err), "Error at line 2, col 3: expected digit or letter, got '!'");
+        assert_eq!(
+            format!("{}", err),
+            "Error at line 2, col 3: expected digit or letter, got '!'"
+        );
     }
 }

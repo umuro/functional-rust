@@ -136,10 +136,7 @@ pub fn format_aligned(s: &str, width: usize) -> (String, String, String) {
 
 /// Demonstrates numeric formatting.
 pub fn format_number(n: u32) -> String {
-    format!(
-        "dec:{} hex:{:#x} oct:{:#o} bin:{:#b}",
-        n, n, n, n
-    )
+    format!("dec:{} hex:{:#x} oct:{:#o} bin:{:#b}", n, n, n, n)
 }
 
 #[cfg(test)]
@@ -203,10 +200,7 @@ mod tests {
     fn test_person_display_vs_debug() {
         let p = Person::new("Alice", 30);
         assert_eq!(format!("{}", p), "Alice (30 years old)");
-        assert_eq!(
-            format!("{:?}", p),
-            "Person { name: \"Alice\", age: 30 }"
-        );
+        assert_eq!(format!("{:?}", p), "Person { name: \"Alice\", age: 30 }");
     }
 
     #[test]

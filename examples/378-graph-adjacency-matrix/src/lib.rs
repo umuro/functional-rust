@@ -30,9 +30,7 @@ impl Graph {
     }
 
     pub fn neighbors(&self, u: usize) -> Vec<usize> {
-        (0..self.vertices)
-            .filter(|&v| self.matrix[u][v])
-            .collect()
+        (0..self.vertices).filter(|&v| self.matrix[u][v]).collect()
     }
 
     pub fn degree(&self, u: usize) -> usize {

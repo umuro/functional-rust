@@ -20,7 +20,7 @@ fn handle_infallible(r: Result<i64, std::convert::Infallible>) -> i64 {
     match r {
         Ok(n) => n,
         // Err branch is unreachable — Infallible can't be constructed
-        Err(e) => match e {},  // empty match on uninhabited type
+        Err(e) => match e {}, // empty match on uninhabited type
     }
 }
 
@@ -59,7 +59,6 @@ impl fmt::Display for ParseOrNever {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

@@ -5,7 +5,9 @@ type ParseResult<'a, T> = Result<(T, &'a str), String>;
 type Parser<'a, T> = Box<dyn Fn(&'a str) -> ParseResult<'a, T> + 'a>;
 
 fn satisfy<'a, F>(pred: F, desc: &str) -> Parser<'a, char>
-where F: Fn(char) -> bool + 'a {
+where
+    F: Fn(char) -> bool + 'a,
+{
     let desc = desc.to_string();
     Box::new(move |input: &'a str| match input.chars().next() {
         Some(c) if pred(c) => Ok((c, &input[c.len_utf8()..])),
@@ -17,7 +19,10 @@ fn many1<'a, T: 'a>(p: Parser<'a, T>) -> Parser<'a, Vec<T>> {
     Box::new(move |input: &'a str| {
         let (first, mut rem) = p(input)?;
         let mut v = vec![first];
-        while let Ok((val, r)) = p(rem) { v.push(val); rem = r; }
+        while let Ok((val, r)) = p(rem) {
+            v.push(val);
+            rem = r;
+        }
         Ok((v, rem))
     })
 }
@@ -42,7 +47,10 @@ fn separated_list0<'a, T: 'a, S: 'a>(
                 Ok((_, r)) => r,
             };
             match item(after_sep) {
-                Ok((val, rest)) => { results.push(val); remaining = rest; }
+                Ok((val, rest)) => {
+                    results.push(val);
+                    remaining = rest;
+                }
                 Err(_) => break, // backtrack: don't consume trailing sep
             }
         }
@@ -84,7 +92,10 @@ fn separated_list0_inner<'a, T, S>(
             Ok((_, r)) => r,
         };
         match item(after_sep) {
-            Ok((val, rest)) => { results.push(val); remaining = rest; }
+            Ok((val, rest)) => {
+                results.push(val);
+                remaining = rest;
+            }
             Err(_) => break,
         }
     }
@@ -111,8 +122,14 @@ fn separated_list_trailing<'a, T: 'a, S: 'a>(
                 Ok((_, r)) => r,
             };
             match item(after_sep) {
-                Ok((val, rest)) => { results.push(val); remaining = rest; }
-                Err(_) => { remaining = after_sep; break; } // consume trailing sep
+                Ok((val, rest)) => {
+                    results.push(val);
+                    remaining = rest;
+                }
+                Err(_) => {
+                    remaining = after_sep;
+                    break;
+                } // consume trailing sep
             }
         }
         Ok((results, remaining))

@@ -86,9 +86,18 @@ mod tests {
     #[test]
     fn test_min_max_by_key_struct() {
         let students = vec![
-            Student { name: "Alice", score: 95 },
-            Student { name: "Bob", score: 72 },
-            Student { name: "Carol", score: 88 },
+            Student {
+                name: "Alice",
+                score: 95,
+            },
+            Student {
+                name: "Bob",
+                score: 72,
+            },
+            Student {
+                name: "Carol",
+                score: 88,
+            },
         ];
         assert_eq!(top_student(&students).map(|s| s.name), Some("Alice"));
         assert_eq!(bottom_student(&students).map(|s| s.name), Some("Bob"));

@@ -1,10 +1,14 @@
 // 1067: Phone Keypad Letter Combinations
 
-const PHONE_MAP: &[&str] = &["", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"];
+const PHONE_MAP: &[&str] = &[
+    "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz",
+];
 
 // Approach 1: Backtracking
 fn letter_combos(digits: &str) -> Vec<String> {
-    if digits.is_empty() { return vec![]; }
+    if digits.is_empty() {
+        return vec![];
+    }
     let mut results = Vec::new();
     let mut current = String::new();
     let digits: Vec<usize> = digits.bytes().map(|b| (b - b'0') as usize).collect();
@@ -27,7 +31,9 @@ fn letter_combos(digits: &str) -> Vec<String> {
 
 // Approach 2: Iterative with queue
 fn letter_combos_iter(digits: &str) -> Vec<String> {
-    if digits.is_empty() { return vec![]; }
+    if digits.is_empty() {
+        return vec![];
+    }
     let mut queue = vec![String::new()];
     for b in digits.bytes() {
         let letters = PHONE_MAP[(b - b'0') as usize];
@@ -46,7 +52,9 @@ fn letter_combos_iter(digits: &str) -> Vec<String> {
 
 // Approach 3: Functional with fold
 fn letter_combos_fold(digits: &str) -> Vec<String> {
-    if digits.is_empty() { return vec![]; }
+    if digits.is_empty() {
+        return vec![];
+    }
     digits.bytes().fold(vec![String::new()], |acc, b| {
         let letters = PHONE_MAP[(b - b'0') as usize];
         acc.iter()

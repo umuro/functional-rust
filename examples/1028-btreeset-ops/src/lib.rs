@@ -49,19 +49,24 @@ fn iter_ops() {
     assert_eq!(range, vec![2, 3, 4]);
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_basic_ops() { basic_ops(); }
+    fn test_basic_ops() {
+        basic_ops();
+    }
 
     #[test]
-    fn test_subset_checks() { subset_checks(); }
+    fn test_subset_checks() {
+        subset_checks();
+    }
 
     #[test]
-    fn test_iter_ops() { iter_ops(); }
+    fn test_iter_ops() {
+        iter_ops();
+    }
 
     #[test]
     fn test_operator_style() {

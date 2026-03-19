@@ -2,7 +2,6 @@
 ///
 /// Demonstrates how Rust's ownership model naturally prevents the aliasing bugs
 /// that plague mutable graph algorithms in imperative languages.
-
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap};
 
@@ -23,7 +22,9 @@ struct State {
 impl Ord for State {
     fn cmp(&self, other: &Self) -> Ordering {
         // Reverse ordering for min-heap
-        other.cost.cmp(&self.cost)
+        other
+            .cost
+            .cmp(&self.cost)
             .then_with(|| self.node.cmp(&other.node))
     }
 }
@@ -40,10 +41,12 @@ pub type Graph = HashMap<usize, Vec<Edge>>;
 /// Build a graph from a list of (from, to, weight) tuples.
 /// Functional style: fold over edges to construct the adjacency map.
 pub fn build_graph(edges: &[(usize, usize, u64)]) -> Graph {
-    edges.iter().fold(HashMap::new(), |mut graph, &(from, to, weight)| {
-        graph.entry(from).or_default().push(Edge { to, weight });
-        graph
-    })
+    edges
+        .iter()
+        .fold(HashMap::new(), |mut graph, &(from, to, weight)| {
+            graph.entry(from).or_default().push(Edge { to, weight });
+            graph
+        })
 }
 
 /// Compute shortest distances from `source` to all reachable nodes.
@@ -60,7 +63,10 @@ pub fn dijkstra(graph: &Graph, source: usize) -> HashMap<usize, u64> {
     let mut heap = BinaryHeap::new();
 
     dist.insert(source, 0);
-    heap.push(State { cost: 0, node: source });
+    heap.push(State {
+        cost: 0,
+        node: source,
+    });
 
     while let Some(State { cost, node }) = heap.pop() {
         // Skip stale entries — functional equivalent of "already visited"
@@ -76,7 +82,10 @@ pub fn dijkstra(graph: &Graph, source: usize) -> HashMap<usize, u64> {
 
                 if new_dist < current {
                     dist.insert(edge.to, new_dist);
-                    heap.push(State { cost: new_dist, node: edge.to });
+                    heap.push(State {
+                        cost: new_dist,
+                        node: edge.to,
+                    });
                 }
             }
         }
@@ -96,14 +105,17 @@ pub fn shortest_path(graph: &Graph, source: usize, target: usize) -> Option<(u64
     let mut current = target;
 
     while current != source {
-        let prev = graph.iter()
+        let prev = graph
+            .iter()
             .flat_map(|(&from, edges)| {
-                edges.iter()
+                edges
+                    .iter()
                     .filter(move |e| e.to == current)
                     .map(move |e| (from, e.weight))
             })
             .filter(|&(from, weight)| {
-                dist.get(&from).map_or(false, |&d| d + weight == *dist.get(&current).unwrap())
+                dist.get(&from)
+                    .map_or(false, |&d| d + weight == *dist.get(&current).unwrap())
             })
             .map(|(from, _)| from)
             .next()?;
@@ -126,13 +138,7 @@ mod tests {
         //  4              1
         //  |              |
         //  3 ------3----- 4
-        build_graph(&[
-            (0, 1, 1),
-            (1, 2, 2),
-            (0, 3, 4),
-            (2, 4, 1),
-            (3, 4, 3),
-        ])
+        build_graph(&[(0, 1, 1), (1, 2, 2), (0, 3, 4), (2, 4, 1), (3, 4, 3)])
     }
 
     #[test]
@@ -210,13 +216,7 @@ mod tests {
 }
 
 fn main() {
-    let graph = build_graph(&[
-        (0, 1, 1),
-        (1, 2, 2),
-        (0, 3, 4),
-        (2, 4, 1),
-        (3, 4, 3),
-    ]);
+    let graph = build_graph(&[(0, 1, 1), (1, 2, 2), (0, 3, 4), (2, 4, 1), (3, 4, 3)]);
 
     let dist = dijkstra(&graph, 0);
     println!("Shortest distances from node 0:");
@@ -228,7 +228,11 @@ fn main() {
 
     if let Some((cost, path)) = shortest_path(&graph, 0, 4) {
         let path_str: Vec<String> = path.iter().map(|n| n.to_string()).collect();
-        println!("Shortest path 0→4: {} (cost {})", path_str.join(" → "), cost);
+        println!(
+            "Shortest path 0→4: {} (cost {})",
+            path_str.join(" → "),
+            cost
+        );
     }
 }
 

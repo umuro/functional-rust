@@ -1,8 +1,7 @@
+use std::io::{self, Read, Write};
 /// 737: File Handle Typestate — Open / Closed / ReadOnly
 /// Demonstrates compile-time permission encoding for file handles.
-
 use std::marker::PhantomData;
-use std::io::{self, Read, Write};
 
 // ── Permission markers ────────────────────────────────────────────────────────
 
@@ -13,20 +12,20 @@ pub struct ReadOnly;
 // ── File Handle ────────────────────────────────────────────────────────────────
 
 pub struct FileHandle<Mode> {
-    path:    String,
-    content: Vec<u8>,   // simulates in-memory file for this example
-    pos:     usize,
-    _mode:   PhantomData<Mode>,
+    path: String,
+    content: Vec<u8>, // simulates in-memory file for this example
+    pos: usize,
+    _mode: PhantomData<Mode>,
 }
 
 impl FileHandle<Closed> {
     /// Create a new closed handle.
     pub fn new(path: impl Into<String>) -> Self {
         FileHandle {
-            path:    path.into(),
+            path: path.into(),
             content: Vec::new(),
-            pos:     0,
-            _mode:   PhantomData,
+            pos: 0,
+            _mode: PhantomData,
         }
     }
 
@@ -34,10 +33,10 @@ impl FileHandle<Closed> {
     pub fn open_rw(self) -> io::Result<FileHandle<ReadWrite>> {
         println!("Opening '{}' read-write", self.path);
         Ok(FileHandle {
-            path:    self.path,
+            path: self.path,
             content: self.content,
-            pos:     0,
-            _mode:   PhantomData,
+            pos: 0,
+            _mode: PhantomData,
         })
     }
 
@@ -45,10 +44,10 @@ impl FileHandle<Closed> {
     pub fn open_ro(self, initial: Vec<u8>) -> io::Result<FileHandle<ReadOnly>> {
         println!("Opening '{}' read-only", self.path);
         Ok(FileHandle {
-            path:    self.path,
+            path: self.path,
             content: initial,
-            pos:     0,
-            _mode:   PhantomData,
+            pos: 0,
+            _mode: PhantomData,
         })
     }
 }
@@ -70,10 +69,10 @@ impl FileHandle<ReadWrite> {
     pub fn into_readonly(self) -> FileHandle<ReadOnly> {
         println!("Downgrading '{}' to read-only", self.path);
         FileHandle {
-            path:    self.path,
+            path: self.path,
             content: self.content,
-            pos:     self.pos,
-            _mode:   PhantomData,
+            pos: self.pos,
+            _mode: PhantomData,
         }
     }
 
@@ -81,10 +80,10 @@ impl FileHandle<ReadWrite> {
     pub fn close(self) -> FileHandle<Closed> {
         println!("Closing '{}'", self.path);
         FileHandle {
-            path:    self.path,
+            path: self.path,
             content: Vec::new(),
-            pos:     0,
-            _mode:   PhantomData,
+            pos: 0,
+            _mode: PhantomData,
         }
     }
 }
@@ -99,14 +98,13 @@ impl FileHandle<ReadOnly> {
     pub fn close(self) -> FileHandle<Closed> {
         println!("Closing '{}' (read-only)", self.path);
         FileHandle {
-            path:    self.path,
+            path: self.path,
             content: Vec::new(),
-            pos:     0,
-            _mode:   PhantomData,
+            pos: 0,
+            _mode: PhantomData,
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

@@ -13,7 +13,8 @@ mod tests {
     #[test]
     fn test_windows_moving_avg() {
         let data = [1i32, 2, 3, 4, 5];
-        let avgs: Vec<f64> = data.windows(2)
+        let avgs: Vec<f64> = data
+            .windows(2)
             .map(|w| w.iter().sum::<i32>() as f64 / 2.0)
             .collect();
         assert_eq!(avgs, vec![1.5, 2.5, 3.5, 4.5]);

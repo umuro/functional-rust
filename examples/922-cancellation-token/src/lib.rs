@@ -10,7 +10,9 @@ struct CancellationToken {
 
 impl CancellationToken {
     fn new() -> Self {
-        Self { cancelled: Arc::new(AtomicBool::new(false)) }
+        Self {
+            cancelled: Arc::new(AtomicBool::new(false)),
+        }
     }
 
     fn cancel(&self) {
@@ -44,7 +46,6 @@ fn cancellable_sum(token: CancellationToken, data: &[i64]) -> Option<i64> {
     }
     Some(sum)
 }
-
 
 #[cfg(test)]
 mod tests {

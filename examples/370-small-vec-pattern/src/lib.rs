@@ -109,9 +109,7 @@ impl<T: Clone + Default, const N: usize> SmallVec<T, N> {
     /// Convert to Vec
     pub fn to_vec(&self) -> Vec<T> {
         match self {
-            Self::Inline { data, len } => {
-                data[..*len].iter().filter_map(|x| x.clone()).collect()
-            }
+            Self::Inline { data, len } => data[..*len].iter().filter_map(|x| x.clone()).collect(),
             Self::Heap(v) => v.clone(),
         }
     }
@@ -119,9 +117,11 @@ impl<T: Clone + Default, const N: usize> SmallVec<T, N> {
     /// Iterate over elements
     pub fn iter(&self) -> impl Iterator<Item = &T> {
         match self {
-            Self::Inline { data, len } => {
-                data[..*len].iter().filter_map(|x| x.as_ref()).collect::<Vec<_>>().into_iter()
-            }
+            Self::Inline { data, len } => data[..*len]
+                .iter()
+                .filter_map(|x| x.as_ref())
+                .collect::<Vec<_>>()
+                .into_iter(),
             Self::Heap(v) => v.iter().collect::<Vec<_>>().into_iter(),
         }
     }

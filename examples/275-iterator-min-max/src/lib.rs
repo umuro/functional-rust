@@ -2,7 +2,6 @@
 //!
 //! `min()` and `max()` return `Option<T>` — None for empty, requires `Ord`.
 
-
 #[cfg(test)]
 mod tests {
     #[test]

@@ -2,7 +2,6 @@
 ///
 /// Phantom type parameters exist only at the type level — they carry no runtime data
 /// but prevent mixing incompatible values (e.g., meters + seconds) at compile time.
-
 use std::marker::PhantomData;
 use std::ops::Add;
 

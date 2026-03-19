@@ -148,9 +148,15 @@ mod tests {
         let email_err = validate_email("bad-email");
 
         let mut all_errors: Vec<String> = vec![];
-        if let Validation::Errors(es) = name_err { all_errors.extend(es); }
-        if let Validation::Errors(es) = age_err { all_errors.extend(es); }
-        if let Validation::Errors(es) = email_err { all_errors.extend(es); }
+        if let Validation::Errors(es) = name_err {
+            all_errors.extend(es);
+        }
+        if let Validation::Errors(es) = age_err {
+            all_errors.extend(es);
+        }
+        if let Validation::Errors(es) = email_err {
+            all_errors.extend(es);
+        }
 
         assert_eq!(all_errors.len(), 3);
         assert!(all_errors[0].contains("name"));

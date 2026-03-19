@@ -28,24 +28,49 @@ struct Expr<T: sealed::ExprType> {
 
 impl Expr<i64> {
     fn int(n: i64) -> Self {
-        Expr { inner: ExprInner::Int(n), _phantom: PhantomData }
+        Expr {
+            inner: ExprInner::Int(n),
+            _phantom: PhantomData,
+        }
     }
     fn add(a: Expr<i64>, b: Expr<i64>) -> Self {
-        Expr { inner: ExprInner::Add(Box::new(a.inner), Box::new(b.inner)), _phantom: PhantomData }
+        Expr {
+            inner: ExprInner::Add(Box::new(a.inner), Box::new(b.inner)),
+            _phantom: PhantomData,
+        }
     }
     fn eval(&self) -> i64 {
         match &self.inner {
             ExprInner::Int(n) => *n,
             ExprInner::Add(a, b) => {
-                let a = Expr::<i64> { inner: *a.clone(), _phantom: PhantomData };
-                let b = Expr::<i64> { inner: *b.clone(), _phantom: PhantomData };
+                let a = Expr::<i64> {
+                    inner: *a.clone(),
+                    _phantom: PhantomData,
+                };
+                let b = Expr::<i64> {
+                    inner: *b.clone(),
+                    _phantom: PhantomData,
+                };
                 a.eval() + b.eval()
             }
             ExprInner::If(c, t, f) => {
-                let c = Expr::<bool> { inner: *c.clone(), _phantom: PhantomData };
-                let t = Expr::<i64> { inner: *t.clone(), _phantom: PhantomData };
-                let f = Expr::<i64> { inner: *f.clone(), _phantom: PhantomData };
-                if c.eval() { t.eval() } else { f.eval() }
+                let c = Expr::<bool> {
+                    inner: *c.clone(),
+                    _phantom: PhantomData,
+                };
+                let t = Expr::<i64> {
+                    inner: *t.clone(),
+                    _phantom: PhantomData,
+                };
+                let f = Expr::<i64> {
+                    inner: *f.clone(),
+                    _phantom: PhantomData,
+                };
+                if c.eval() {
+                    t.eval()
+                } else {
+                    f.eval()
+                }
             }
             _ => unreachable!(),
         }
@@ -54,7 +79,10 @@ impl Expr<i64> {
 
 impl Expr<bool> {
     fn bool_val(b: bool) -> Self {
-        Expr { inner: ExprInner::Bool(b), _phantom: PhantomData }
+        Expr {
+            inner: ExprInner::Bool(b),
+            _phantom: PhantomData,
+        }
     }
     fn eval(&self) -> bool {
         match &self.inner {
@@ -69,15 +97,25 @@ impl Clone for ExprInner {
         match self {
             ExprInner::Int(n) => ExprInner::Int(*n),
             ExprInner::Bool(b) => ExprInner::Bool(*b),
-            ExprInner::Add(a, b) => ExprInner::Add(Box::new((**a).clone()), Box::new((**b).clone())),
-            ExprInner::If(a, b, c) => ExprInner::If(Box::new((**a).clone()), Box::new((**b).clone()), Box::new((**c).clone())),
+            ExprInner::Add(a, b) => {
+                ExprInner::Add(Box::new((**a).clone()), Box::new((**b).clone()))
+            }
+            ExprInner::If(a, b, c) => ExprInner::If(
+                Box::new((**a).clone()),
+                Box::new((**b).clone()),
+                Box::new((**c).clone()),
+            ),
         }
     }
 }
 
 fn if_expr(cond: Expr<bool>, then: Expr<i64>, else_: Expr<i64>) -> Expr<i64> {
     Expr {
-        inner: ExprInner::If(Box::new(cond.inner), Box::new(then.inner), Box::new(else_.inner)),
+        inner: ExprInner::If(
+            Box::new(cond.inner),
+            Box::new(then.inner),
+            Box::new(else_.inner),
+        ),
         _phantom: PhantomData,
     }
 }
@@ -95,17 +133,23 @@ struct AddExpr(Box<dyn Eval<Output = i64>>, Box<dyn Eval<Output = i64>>);
 
 impl Eval for IntLit {
     type Output = i64;
-    fn eval(&self) -> i64 { self.0 }
+    fn eval(&self) -> i64 {
+        self.0
+    }
 }
 
 impl Eval for BoolLit {
     type Output = bool;
-    fn eval(&self) -> bool { self.0 }
+    fn eval(&self) -> bool {
+        self.0
+    }
 }
 
 impl Eval for AddExpr {
     type Output = i64;
-    fn eval(&self) -> i64 { self.0.eval() + self.1.eval() }
+    fn eval(&self) -> i64 {
+        self.0.eval() + self.1.eval()
+    }
 }
 
 // === Approach 3: Type-safe heterogeneous list with tuples ===
@@ -124,7 +168,9 @@ trait Head {
 
 impl<H, T: HList> Head for (H, T) {
     type Item = H;
-    fn head(&self) -> &H { &self.0 }
+    fn head(&self) -> &H {
+        &self.0
+    }
 }
 
 #[cfg(test)]

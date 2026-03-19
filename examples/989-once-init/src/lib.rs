@@ -20,7 +20,9 @@ static PRIMES: OnceLock<Vec<u32>> = OnceLock::new();
 fn sieve(limit: usize) -> Vec<u32> {
     let mut is_prime = vec![true; limit + 1];
     is_prime[0] = false;
-    if limit > 0 { is_prime[1] = false; }
+    if limit > 0 {
+        is_prime[1] = false;
+    }
     for i in 2..=limit {
         if is_prime[i] {
             let mut j = i * i;
@@ -30,7 +32,9 @@ fn sieve(limit: usize) -> Vec<u32> {
             }
         }
     }
-    (2..=limit as u32).filter(|&n| is_prime[n as usize]).collect()
+    (2..=limit as u32)
+        .filter(|&n| is_prime[n as usize])
+        .collect()
 }
 
 fn get_primes() -> &'static [u32] {
@@ -52,9 +56,8 @@ impl LazyConfig {
     }
 
     fn get(&self) -> &str {
-        self.inner.get_or_init(|| {
-            format!("{}-initialized", self.prefix)
-        })
+        self.inner
+            .get_or_init(|| format!("{}-initialized", self.prefix))
     }
 }
 
@@ -63,20 +66,24 @@ fn concurrent_once_init() -> usize {
     static INIT_COUNT: OnceLock<usize> = OnceLock::new();
     let call_count = Arc::new(Mutex::new(0usize));
 
-    let handles: Vec<_> = (0..10).map(|_| {
-        let count = Arc::clone(&call_count);
-        thread::spawn(move || {
-            INIT_COUNT.get_or_init(|| {
-                *count.lock().unwrap() += 1;
-                42
-            });
+    let handles: Vec<_> = (0..10)
+        .map(|_| {
+            let count = Arc::clone(&call_count);
+            thread::spawn(move || {
+                INIT_COUNT.get_or_init(|| {
+                    *count.lock().unwrap() += 1;
+                    42
+                });
+            })
         })
-    }).collect();
+        .collect();
 
-    for h in handles { h.join().unwrap(); }
-    let x = *call_count.lock().unwrap(); x // should be 1 — init ran only once
+    for h in handles {
+        h.join().unwrap();
+    }
+    let x = *call_count.lock().unwrap();
+    x // should be 1 — init ran only once
 }
-
 
 #[cfg(test)]
 mod tests {

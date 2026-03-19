@@ -10,7 +10,9 @@ struct MultiMap<K, V> {
 
 impl<K: std::hash::Hash + Eq, V> MultiMap<K, V> {
     fn new() -> Self {
-        MultiMap { inner: HashMap::new() }
+        MultiMap {
+            inner: HashMap::new(),
+        }
     }
 
     fn insert(&mut self, key: K, value: V) {
@@ -90,8 +92,11 @@ fn remove_ops() {
 
 fn build_index() {
     let data = vec![
-        ("lang", "Rust"), ("lang", "OCaml"), ("lang", "Haskell"),
-        ("paradigm", "functional"), ("paradigm", "imperative"),
+        ("lang", "Rust"),
+        ("lang", "OCaml"),
+        ("lang", "Haskell"),
+        ("paradigm", "functional"),
+        ("paradigm", "imperative"),
     ];
 
     let mut mm = MultiMap::new();
@@ -105,19 +110,24 @@ fn build_index() {
     assert!(!mm.contains_value(&"lang", &"Python"));
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_basic() { basic_ops(); }
+    fn test_basic() {
+        basic_ops();
+    }
 
     #[test]
-    fn test_remove() { remove_ops(); }
+    fn test_remove() {
+        remove_ops();
+    }
 
     #[test]
-    fn test_index() { build_index(); }
+    fn test_index() {
+        build_index();
+    }
 
     #[test]
     fn test_empty_get() {

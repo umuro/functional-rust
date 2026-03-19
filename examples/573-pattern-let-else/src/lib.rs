@@ -27,7 +27,9 @@ pub fn process_result(res: Result<i32, &str>) -> i32 {
 }
 
 /// let-else with struct destructure.
-pub struct Config { pub value: Option<i32> }
+pub struct Config {
+    pub value: Option<i32>,
+}
 
 pub fn get_config_value(c: &Config) -> i32 {
     let Some(v) = c.value else {

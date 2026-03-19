@@ -11,7 +11,9 @@ struct HeteroVec {
 }
 
 impl HeteroVec {
-    fn new() -> Self { HeteroVec { items: Vec::new() } }
+    fn new() -> Self {
+        HeteroVec { items: Vec::new() }
+    }
 
     fn push<T: 'static>(&mut self, val: T) {
         self.items.push(Box::new(val));
@@ -21,7 +23,9 @@ impl HeteroVec {
         self.items.get(index)?.downcast_ref::<T>()
     }
 
-    fn len(&self) -> usize { self.items.len() }
+    fn len(&self) -> usize {
+        self.items.len()
+    }
 }
 
 // === Approach 2: Custom trait object with Display + Any ===
@@ -31,7 +35,9 @@ trait AnyDisplay: fmt::Display {
 }
 
 impl<T: 'static + fmt::Display> AnyDisplay for T {
-    fn as_any(&self) -> &dyn Any { self }
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
 }
 
 struct DisplayVec {
@@ -39,7 +45,9 @@ struct DisplayVec {
 }
 
 impl DisplayVec {
-    fn new() -> Self { DisplayVec { items: Vec::new() } }
+    fn new() -> Self {
+        DisplayVec { items: Vec::new() }
+    }
 
     fn push<T: 'static + fmt::Display + Clone>(&mut self, val: T) {
         self.items.push((Box::new(val.clone()), Box::new(val)));
@@ -66,13 +74,22 @@ enum Value {
 
 impl Value {
     fn as_int(&self) -> Option<i64> {
-        match self { Value::Int(n) => Some(*n), _ => None }
+        match self {
+            Value::Int(n) => Some(*n),
+            _ => None,
+        }
     }
     fn as_str(&self) -> Option<&str> {
-        match self { Value::Str(s) => Some(s), _ => None }
+        match self {
+            Value::Str(s) => Some(s),
+            _ => None,
+        }
     }
     fn as_bool(&self) -> Option<bool> {
-        match self { Value::Bool(b) => Some(*b), _ => None }
+        match self {
+            Value::Bool(b) => Some(*b),
+            _ => None,
+        }
     }
 }
 

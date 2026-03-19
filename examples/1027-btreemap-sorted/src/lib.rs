@@ -47,7 +47,6 @@ fn min_max() {
     assert_eq!(max_k, 10);
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

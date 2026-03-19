@@ -95,11 +95,7 @@ pub fn safe_div_k<R>(a: f64, b: f64, ok: impl FnOnce(f64) -> R, err: impl FnOnce
 }
 
 /// Parse integer with continuation for success/failure.
-pub fn parse_int_k<R>(
-    s: &str,
-    ok: impl FnOnce(i64) -> R,
-    err: impl FnOnce(&str) -> R,
-) -> R {
+pub fn parse_int_k<R>(s: &str, ok: impl FnOnce(i64) -> R, err: impl FnOnce(&str) -> R) -> R {
     match s.parse::<i64>() {
         Ok(n) => ok(n),
         Err(_) => err(s),
@@ -155,28 +151,46 @@ mod tests {
 
     #[test]
     fn test_map_k() {
-        map_k(vec![1, 2, 3], |x| x * 2, |result| {
-            assert_eq!(result, vec![2, 4, 6]);
-        });
+        map_k(
+            vec![1, 2, 3],
+            |x| x * 2,
+            |result| {
+                assert_eq!(result, vec![2, 4, 6]);
+            },
+        );
     }
 
     #[test]
     fn test_map_k_empty() {
-        map_k(Vec::<i32>::new(), |x| x * 2, |result| {
-            assert!(result.is_empty());
-        });
+        map_k(
+            Vec::<i32>::new(),
+            |x| x * 2,
+            |result| {
+                assert!(result.is_empty());
+            },
+        );
     }
 
     #[test]
     fn test_fold_k() {
-        fold_k(vec![1, 2, 3, 4], 0, |acc, x| acc + x, |sum| {
-            assert_eq!(sum, 10);
-        });
+        fold_k(
+            vec![1, 2, 3, 4],
+            0,
+            |acc, x| acc + x,
+            |sum| {
+                assert_eq!(sum, 10);
+            },
+        );
     }
 
     #[test]
     fn test_safe_div_ok() {
-        safe_div_k(10.0, 2.0, |r| assert_eq!(r, 5.0), |_| panic!("unexpected error"));
+        safe_div_k(
+            10.0,
+            2.0,
+            |r| assert_eq!(r, 5.0),
+            |_| panic!("unexpected error"),
+        );
     }
 
     #[test]
@@ -199,24 +213,28 @@ mod tests {
     #[test]
     fn test_parse_int_err() {
         let mut got_error = false;
-        parse_int_k("abc", |_| panic!("unexpected success"), |_| got_error = true);
+        parse_int_k(
+            "abc",
+            |_| panic!("unexpected success"),
+            |_| got_error = true,
+        );
         assert!(got_error);
     }
 
     #[test]
     fn test_chain() {
         // "10" -> parse to 10 -> 100/10 = 10.0
-        chain_example("10", |r| assert_eq!(r, 10.0), |_| panic!("unexpected error"));
+        chain_example(
+            "10",
+            |r| assert_eq!(r, 10.0),
+            |_| panic!("unexpected error"),
+        );
     }
 
     #[test]
     fn test_chain_div_zero() {
         let mut got_error = false;
-        chain_example(
-            "0",
-            |_| panic!("unexpected success"),
-            |_| got_error = true,
-        );
+        chain_example("0", |_| panic!("unexpected success"), |_| got_error = true);
         assert!(got_error);
     }
 

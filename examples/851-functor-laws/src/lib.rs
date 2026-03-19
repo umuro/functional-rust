@@ -18,17 +18,15 @@ impl<T> Maybe<T> {
 }
 
 // Approach 1: Verify laws for Maybe
-fn identity<T>(x: T) -> T { x }
+fn identity<T>(x: T) -> T {
+    x
+}
 
 fn verify_identity_law(x: Maybe<i32>) -> bool {
     x.clone().map(identity) == x
 }
 
-fn verify_composition_law(
-    f: fn(i32) -> i32,
-    g: fn(i32) -> i32,
-    x: Maybe<i32>,
-) -> bool {
+fn verify_composition_law(f: fn(i32) -> i32, g: fn(i32) -> i32, x: Maybe<i32>) -> bool {
     let composed = x.clone().map(|v| f(g(v)));
     let chained = x.map(g).map(f);
     composed == chained
@@ -56,7 +54,10 @@ struct BadFunctor<T> {
 
 impl<T> BadFunctor<T> {
     fn new(value: T) -> Self {
-        BadFunctor { value, map_count: 0 }
+        BadFunctor {
+            value,
+            map_count: 0,
+        }
     }
 
     fn map<U, F: FnOnce(T) -> U>(self, f: F) -> BadFunctor<U> {
@@ -66,7 +67,6 @@ impl<T> BadFunctor<T> {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

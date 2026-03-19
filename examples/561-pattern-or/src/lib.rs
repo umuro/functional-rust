@@ -20,7 +20,14 @@ pub fn describe_number(n: i32) -> &'static str {
 
 /// Or in enum matching.
 #[derive(Debug)]
-pub enum Color { Red, Green, Blue, Yellow, Cyan, Magenta }
+pub enum Color {
+    Red,
+    Green,
+    Blue,
+    Yellow,
+    Cyan,
+    Magenta,
+}
 
 pub fn is_primary(c: &Color) -> bool {
     matches!(c, Color::Red | Color::Green | Color::Blue)

@@ -128,7 +128,10 @@ pub struct FixedString<const N: usize> {
 
 impl<const N: usize> FixedString<N> {
     pub const fn new() -> Self {
-        FixedString { data: [0; N], len: 0 }
+        FixedString {
+            data: [0; N],
+            len: 0,
+        }
     }
 
     pub const fn capacity(&self) -> usize {
@@ -173,7 +176,7 @@ mod tests {
     fn test_ring_buffer() {
         let mut rb: RingBuffer<i32, 4> = RingBuffer::new();
         assert_eq!(rb.capacity(), 4);
-        
+
         rb.push(1).unwrap();
         rb.push(2).unwrap();
         assert_eq!(rb.pop(), Some(1));
@@ -187,7 +190,7 @@ mod tests {
         rb.push(2).unwrap();
         rb.push(3).unwrap();
         assert!(rb.push(4).is_err()); // Full
-        
+
         assert_eq!(rb.pop(), Some(1));
         rb.push(4).unwrap(); // Now there's room
         assert_eq!(rb.pop(), Some(2));
@@ -198,11 +201,11 @@ mod tests {
         // BitSet<100, 2> means 100 bits stored in 2 u64 words (128 bits capacity)
         let mut bs: BitSet<100, 2> = BitSet::new();
         assert_eq!(bs.bits(), 100);
-        
+
         bs.set(0);
         bs.set(50);
         bs.set(99);
-        
+
         assert!(bs.get(0));
         assert!(bs.get(50));
         assert!(bs.get(99));

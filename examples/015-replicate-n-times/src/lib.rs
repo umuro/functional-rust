@@ -27,8 +27,9 @@ pub fn replicate_prealloc<T: Clone>(list: &[T], n: usize) -> Vec<T> {
 
 pub fn replicate_recursive<T: Clone>(list: &[T], n: usize) -> Vec<T> {
     fn repeat_elem<T: Clone>(x: &T, n: usize) -> Vec<T> {
-        if n == 0 { vec![] }
-        else {
+        if n == 0 {
+            vec![]
+        } else {
             let mut rest = repeat_elem(x, n - 1);
             rest.insert(0, x.clone());
             rest
@@ -68,15 +69,15 @@ mod tests {
     fn test_three_times() {
         assert_eq!(
             replicate(&['a', 'b', 'c'], 3),
-            vec!['a','a','a','b','b','b','c','c','c']
+            vec!['a', 'a', 'a', 'b', 'b', 'b', 'c', 'c', 'c']
         );
         assert_eq!(
             replicate_prealloc(&['a', 'b', 'c'], 3),
-            vec!['a','a','a','b','b','b','c','c','c']
+            vec!['a', 'a', 'a', 'b', 'b', 'b', 'c', 'c', 'c']
         );
         assert_eq!(
             replicate_recursive(&['a', 'b', 'c'], 3),
-            vec!['a','a','a','b','b','b','c','c','c']
+            vec!['a', 'a', 'a', 'b', 'b', 'b', 'c', 'c', 'c']
         );
     }
 

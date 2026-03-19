@@ -12,7 +12,11 @@ pub fn logged_function(x: i32) -> i32 {
 
 /// Example: what #[test_case] might expand to
 pub fn factorial(n: u64) -> u64 {
-    if n <= 1 { 1 } else { n * factorial(n - 1) }
+    if n <= 1 {
+        1
+    } else {
+        n * factorial(n - 1)
+    }
 }
 
 /// Simulating #[timed] attribute

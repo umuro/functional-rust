@@ -67,22 +67,29 @@ fn entry_ref_demo() {
     assert_eq!(m[&'h'], vec![0]);
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_or_insert() { or_insert_demo(); }
+    fn test_or_insert() {
+        or_insert_demo();
+    }
 
     #[test]
-    fn test_or_insert_with() { or_insert_with_demo(); }
+    fn test_or_insert_with() {
+        or_insert_with_demo();
+    }
 
     #[test]
-    fn test_and_modify() { and_modify_demo(); }
+    fn test_and_modify() {
+        and_modify_demo();
+    }
 
     #[test]
-    fn test_entry_ref() { entry_ref_demo(); }
+    fn test_entry_ref() {
+        entry_ref_demo();
+    }
 
     #[test]
     fn test_or_default() {

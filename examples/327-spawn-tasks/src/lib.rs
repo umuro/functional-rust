@@ -63,10 +63,7 @@ where
         })
         .collect();
 
-    handles
-        .into_iter()
-        .map(|h| h.join().unwrap())
-        .collect()
+    handles.into_iter().map(|h| h.join().unwrap()).collect()
 }
 
 #[cfg(test)]

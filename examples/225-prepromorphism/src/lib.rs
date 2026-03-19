@@ -50,7 +50,9 @@ fn prepro<A>(
 }
 
 impl<A: Clone> Clone for ExprF<A> {
-    fn clone(&self) -> Self { self.map_ref(|a| a.clone()) }
+    fn clone(&self) -> Self {
+        self.map_ref(|a| a.clone())
+    }
 }
 
 fn eval_alg(e: ExprF<i64>) -> i64 {
@@ -86,12 +88,22 @@ fn remove_neg(e: ExprF<Fix>) -> ExprF<Fix> {
     }
 }
 
-fn identity_nat(e: ExprF<Fix>) -> ExprF<Fix> { e }
+fn identity_nat(e: ExprF<Fix>) -> ExprF<Fix> {
+    e
+}
 
-fn lit(n: i64) -> Fix { Fix(Box::new(ExprF::LitF(n))) }
-fn add(a: Fix, b: Fix) -> Fix { Fix(Box::new(ExprF::AddF(a, b))) }
-fn mul(a: Fix, b: Fix) -> Fix { Fix(Box::new(ExprF::MulF(a, b))) }
-fn neg(a: Fix) -> Fix { Fix(Box::new(ExprF::NegF(a))) }
+fn lit(n: i64) -> Fix {
+    Fix(Box::new(ExprF::LitF(n)))
+}
+fn add(a: Fix, b: Fix) -> Fix {
+    Fix(Box::new(ExprF::AddF(a, b)))
+}
+fn mul(a: Fix, b: Fix) -> Fix {
+    Fix(Box::new(ExprF::MulF(a, b)))
+}
+fn neg(a: Fix) -> Fix {
+    Fix(Box::new(ExprF::NegF(a)))
+}
 
 #[cfg(test)]
 mod tests {

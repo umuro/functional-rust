@@ -42,7 +42,10 @@ pub fn topo_sort(edges: &[(&str, &str)]) -> Vec<String> {
 
 /// Version using owned Strings
 pub fn topo_sort_owned(edges: Vec<(String, String)>) -> Vec<String> {
-    let str_edges: Vec<(&str, &str)> = edges.iter().map(|(a, b)| (a.as_str(), b.as_str())).collect();
+    let str_edges: Vec<(&str, &str)> = edges
+        .iter()
+        .map(|(a, b)| (a.as_str(), b.as_str()))
+        .collect();
     topo_sort(&str_edges)
 }
 

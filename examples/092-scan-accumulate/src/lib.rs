@@ -2,12 +2,17 @@
 
 fn running_sum(v: &[i32]) -> Vec<i32> {
     let mut result = vec![0];
-    result.extend(v.iter().scan(0, |acc, &x| { *acc += x; Some(*acc) }));
+    result.extend(v.iter().scan(0, |acc, &x| {
+        *acc += x;
+        Some(*acc)
+    }));
     result
 }
 
 fn running_max(v: &[i32]) -> Vec<i32> {
-    if v.is_empty() { return vec![]; }
+    if v.is_empty() {
+        return vec![];
+    }
     let mut max_val = v[0];
     let mut result = vec![max_val];
     for &x in &v[1..] {
@@ -16,7 +21,6 @@ fn running_max(v: &[i32]) -> Vec<i32> {
     }
     result
 }
-
 
 #[cfg(test)]
 mod tests {

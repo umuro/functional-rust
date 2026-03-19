@@ -53,10 +53,7 @@ pub fn spawn_with_delays(count: usize, delay_ms: u64) -> Vec<usize> {
         })
         .collect();
 
-    handles
-        .into_iter()
-        .map(|h| h.join().unwrap())
-        .collect()
+    handles.into_iter().map(|h| h.join().unwrap()).collect()
 }
 
 /// Check if a thread panic is safely contained
@@ -90,9 +87,7 @@ mod tests {
 
     #[test]
     fn test_multiple_threads() {
-        let handles: Vec<_> = (0..8u32)
-            .map(|i| thread::spawn(move || i * 2))
-            .collect();
+        let handles: Vec<_> = (0..8u32).map(|i| thread::spawn(move || i * 2)).collect();
 
         let results: Vec<u32> = handles.into_iter().map(|h| h.join().unwrap()).collect();
 

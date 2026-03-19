@@ -55,9 +55,7 @@ impl<T> Default for BoundedChannel<T> {
 }
 
 /// Fan-in pattern: multiple sources, one collector.
-pub fn fan_in<T: Send + 'static>(
-    sources: Vec<Box<dyn FnOnce(Sender<T>) + Send>>,
-) -> Vec<T> {
+pub fn fan_in<T: Send + 'static>(sources: Vec<Box<dyn FnOnce(Sender<T>) + Send>>) -> Vec<T> {
     let (tx, rx) = mpsc::channel();
 
     for source in sources {

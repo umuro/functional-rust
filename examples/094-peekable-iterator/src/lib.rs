@@ -5,11 +5,12 @@ fn dedup(v: &[i32]) -> Vec<i32> {
     let mut iter = v.iter().peekable();
     while let Some(&val) = iter.next() {
         result.push(val);
-        while iter.peek() == Some(&&val) { iter.next(); }
+        while iter.peek() == Some(&&val) {
+            iter.next();
+        }
     }
     result
 }
-
 
 #[cfg(test)]
 mod tests {

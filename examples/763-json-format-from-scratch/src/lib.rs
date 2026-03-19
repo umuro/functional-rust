@@ -181,10 +181,7 @@ mod tests {
             JsonValue::String("a\"b".to_string()).to_json(),
             "\"a\\\"b\""
         );
-        assert_eq!(
-            JsonValue::String("a\nb".to_string()).to_json(),
-            "\"a\\nb\""
-        );
+        assert_eq!(JsonValue::String("a\nb".to_string()).to_json(), "\"a\\nb\"");
     }
 
     #[test]

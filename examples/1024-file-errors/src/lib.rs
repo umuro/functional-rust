@@ -63,7 +63,6 @@ fn read_if_exists(path: &str) -> Result<Option<String>, io::Error> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

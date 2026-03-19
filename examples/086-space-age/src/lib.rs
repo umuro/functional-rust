@@ -4,7 +4,14 @@
 
 #[derive(Debug, Clone, Copy)]
 pub enum Planet {
-    Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune,
+    Mercury,
+    Venus,
+    Earth,
+    Mars,
+    Jupiter,
+    Saturn,
+    Uranus,
+    Neptune,
 }
 
 impl Planet {
@@ -22,8 +29,14 @@ impl Planet {
     }
 
     pub const ALL: [Planet; 8] = [
-        Planet::Mercury, Planet::Venus, Planet::Earth, Planet::Mars,
-        Planet::Jupiter, Planet::Saturn, Planet::Uranus, Planet::Neptune,
+        Planet::Mercury,
+        Planet::Venus,
+        Planet::Earth,
+        Planet::Mars,
+        Planet::Jupiter,
+        Planet::Saturn,
+        Planet::Uranus,
+        Planet::Neptune,
     ];
 }
 
@@ -36,8 +49,7 @@ pub fn age_on(planet: Planet, seconds: f64) -> f64 {
 /// Version 2: Using a lookup table instead of match
 pub fn age_on_table(planet_index: usize, seconds: f64) -> f64 {
     const PERIODS: [f64; 8] = [
-        0.2408467, 0.61519726, 1.0, 1.8808158,
-        11.862615, 29.447498, 84.016846, 164.79132,
+        0.2408467, 0.61519726, 1.0, 1.8808158, 11.862615, 29.447498, 84.016846, 164.79132,
     ];
     seconds / (EARTH_YEAR_SECONDS * PERIODS[planet_index])
 }
@@ -46,7 +58,9 @@ pub fn age_on_table(planet_index: usize, seconds: f64) -> f64 {
 mod tests {
     use super::*;
 
-    fn approx(a: f64, b: f64) -> bool { (a - b).abs() < 0.01 }
+    fn approx(a: f64, b: f64) -> bool {
+        (a - b).abs() < 0.01
+    }
 
     #[test]
     fn test_earth() {

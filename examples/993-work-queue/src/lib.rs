@@ -18,22 +18,24 @@ impl ThreadPool {
         // Wrap receiver in Arc<Mutex> so all workers can share it
         let receiver = Arc::new(Mutex::new(receiver));
 
-        let workers = (0..size).map(|_| {
-            let rx = Arc::clone(&receiver);
-            thread::spawn(move || {
-                // Each worker loops: lock, get task, unlock, run task
-                loop {
-                    let task = {
-                        let lock = rx.lock().unwrap();
-                        lock.recv() // blocks until task arrives or channel closes
-                    };
-                    match task {
-                        Ok(f) => f(),
-                        Err(_) => break, // channel closed → exit
+        let workers = (0..size)
+            .map(|_| {
+                let rx = Arc::clone(&receiver);
+                thread::spawn(move || {
+                    // Each worker loops: lock, get task, unlock, run task
+                    loop {
+                        let task = {
+                            let lock = rx.lock().unwrap();
+                            lock.recv() // blocks until task arrives or channel closes
+                        };
+                        match task {
+                            Ok(f) => f(),
+                            Err(_) => break, // channel closed → exit
+                        }
                     }
-                }
+                })
             })
-        }).collect();
+            .collect();
 
         ThreadPool { sender, workers }
     }
@@ -44,7 +46,9 @@ impl ThreadPool {
 
     fn shutdown(self) {
         drop(self.sender); // close channel → workers see Err and break
-        for w in self.workers { w.join().unwrap(); }
+        for w in self.workers {
+            w.join().unwrap();
+        }
     }
 }
 
@@ -87,7 +91,6 @@ fn pool_with_results(inputs: Vec<i32>) -> Vec<i32> {
     results.sort();
     results
 }
-
 
 #[cfg(test)]
 mod tests {

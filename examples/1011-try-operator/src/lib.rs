@@ -50,9 +50,9 @@ fn validate(n: i64) -> Result<i64, AppError> {
 
 // Approach 1: The ? operator — what it looks like
 fn process_try(key: &str) -> Result<i64, AppError> {
-    let s = read_data(key)?;        // early return if Err
-    let n = parse_data(&s)?;        // ParseIntError -> AppError via From
-    let v = validate(n)?;           // early return if Err
+    let s = read_data(key)?; // early return if Err
+    let n = parse_data(&s)?; // ParseIntError -> AppError via From
+    let v = validate(n)?; // early return if Err
     Ok(v)
 }
 
@@ -77,7 +77,6 @@ fn process_desugared(key: &str) -> Result<i64, AppError> {
 fn process_inline(key: &str) -> Result<i64, AppError> {
     validate(parse_data(&read_data(key)?)?)
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -127,7 +126,9 @@ mod tests {
     fn test_too_large() {
         // If we had data "200", validate would fail
         fn process_large() -> Result<i64, AppError> {
-            let n: i64 = "200".parse().map_err(|e: ParseIntError| AppError::ParseFailed(e.to_string()))?;
+            let n: i64 = "200"
+                .parse()
+                .map_err(|e: ParseIntError| AppError::ParseFailed(e.to_string()))?;
             validate(n)
         }
         assert_eq!(process_large(), Err(AppError::TooLarge(200)));

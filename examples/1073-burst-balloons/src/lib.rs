@@ -6,7 +6,9 @@ use std::collections::HashMap;
 fn max_coins_dp(nums: &[i32]) -> i32 {
     let n = nums.len();
     let mut balloons = vec![1i32; n + 2];
-    for i in 0..n { balloons[i + 1] = nums[i]; }
+    for i in 0..n {
+        balloons[i + 1] = nums[i];
+    }
     let len = n + 2;
     let mut dp = vec![vec![0i32; len]; len];
 
@@ -26,15 +28,27 @@ fn max_coins_dp(nums: &[i32]) -> i32 {
 fn max_coins_memo(nums: &[i32]) -> i32 {
     let n = nums.len();
     let mut balloons = vec![1i32; n + 2];
-    for i in 0..n { balloons[i + 1] = nums[i]; }
+    for i in 0..n {
+        balloons[i + 1] = nums[i];
+    }
     let len = n + 2;
 
-    fn solve(left: usize, right: usize, balloons: &[i32], cache: &mut HashMap<(usize, usize), i32>) -> i32 {
-        if right.saturating_sub(left) < 2 { return 0; }
-        if let Some(&v) = cache.get(&(left, right)) { return v; }
+    fn solve(
+        left: usize,
+        right: usize,
+        balloons: &[i32],
+        cache: &mut HashMap<(usize, usize), i32>,
+    ) -> i32 {
+        if right.saturating_sub(left) < 2 {
+            return 0;
+        }
+        if let Some(&v) = cache.get(&(left, right)) {
+            return v;
+        }
         let mut best = 0;
         for k in (left + 1)..right {
-            let coins = solve(left, k, balloons, cache) + solve(k, right, balloons, cache)
+            let coins = solve(left, k, balloons, cache)
+                + solve(k, right, balloons, cache)
                 + balloons[left] * balloons[k] * balloons[right];
             best = best.max(coins);
         }
@@ -50,16 +64,23 @@ fn max_coins_memo(nums: &[i32]) -> i32 {
 fn max_coins_dc(nums: &[i32]) -> i32 {
     let n = nums.len();
     let mut balloons = vec![1i32; n + 2];
-    for i in 0..n { balloons[i + 1] = nums[i]; }
+    for i in 0..n {
+        balloons[i + 1] = nums[i];
+    }
     let len = n + 2;
     let mut memo = vec![vec![-1i32; len]; len];
 
     fn solve(l: usize, r: usize, balloons: &[i32], memo: &mut Vec<Vec<i32>>) -> i32 {
-        if r.saturating_sub(l) < 2 { return 0; }
-        if memo[l][r] >= 0 { return memo[l][r]; }
+        if r.saturating_sub(l) < 2 {
+            return 0;
+        }
+        if memo[l][r] >= 0 {
+            return memo[l][r];
+        }
         let mut best = 0;
         for k in (l + 1)..r {
-            let coins = solve(l, k, balloons, memo) + solve(k, r, balloons, memo)
+            let coins = solve(l, k, balloons, memo)
+                + solve(k, r, balloons, memo)
                 + balloons[l] * balloons[k] * balloons[r];
             best = best.max(coins);
         }

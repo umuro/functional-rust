@@ -14,9 +14,13 @@ pub fn describe_option(opt: Option<i32>) -> String {
 /// if-let with else-if-let.
 pub fn categorize(opt: Option<i32>) -> &'static str {
     if let Some(n) = opt {
-        if n > 0 { "positive" }
-        else if n < 0 { "negative" }
-        else { "zero" }
+        if n > 0 {
+            "positive"
+        } else if n < 0 {
+            "negative"
+        } else {
+            "zero"
+        }
     } else {
         "none"
     }
@@ -50,8 +54,11 @@ pub fn sum_stack(mut stack: Vec<i32>) -> i32 {
 /// Combining if-let with guards.
 pub fn check_value(opt: Option<i32>) -> &'static str {
     if let Some(n) = opt {
-        if n > 100 { "large" }
-        else { "small" }
+        if n > 100 {
+            "large"
+        } else {
+            "small"
+        }
     } else {
         "none"
     }

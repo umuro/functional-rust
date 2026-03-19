@@ -4,7 +4,12 @@
 /// Methods return new robots (functional style) rather than mutating.
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub enum Direction { North, East, South, West }
+pub enum Direction {
+    North,
+    East,
+    South,
+    West,
+}
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Robot {
@@ -14,7 +19,11 @@ pub struct Robot {
 }
 
 #[derive(Debug, Clone, Copy)]
-pub enum Instruction { TurnLeft, TurnRight, Advance }
+pub enum Instruction {
+    TurnLeft,
+    TurnRight,
+    Advance,
+}
 
 impl Direction {
     pub fn turn_right(self) -> Self {
@@ -44,17 +53,35 @@ impl Robot {
     /// Returns a new Robot — functional update (like OCaml { r with ... })
     pub fn advance(self) -> Self {
         match self.dir {
-            Direction::North => Robot { y: self.y + 1, ..self },
-            Direction::East => Robot { x: self.x + 1, ..self },
-            Direction::South => Robot { y: self.y - 1, ..self },
-            Direction::West => Robot { x: self.x - 1, ..self },
+            Direction::North => Robot {
+                y: self.y + 1,
+                ..self
+            },
+            Direction::East => Robot {
+                x: self.x + 1,
+                ..self
+            },
+            Direction::South => Robot {
+                y: self.y - 1,
+                ..self
+            },
+            Direction::West => Robot {
+                x: self.x - 1,
+                ..self
+            },
         }
     }
 
     pub fn execute(self, instr: Instruction) -> Self {
         match instr {
-            Instruction::TurnLeft => Robot { dir: self.dir.turn_left(), ..self },
-            Instruction::TurnRight => Robot { dir: self.dir.turn_right(), ..self },
+            Instruction::TurnLeft => Robot {
+                dir: self.dir.turn_left(),
+                ..self
+            },
+            Instruction::TurnRight => Robot {
+                dir: self.dir.turn_right(),
+                ..self
+            },
             Instruction::Advance => self.advance(),
         }
     }
@@ -90,9 +117,14 @@ mod tests {
     #[test]
     fn test_turn_sequence() {
         let r = Robot::new(0, 0, Direction::North);
-        let r = r.run(&[Instruction::Advance, Instruction::TurnRight,
-                        Instruction::Advance, Instruction::Advance,
-                        Instruction::TurnLeft, Instruction::Advance]);
+        let r = r.run(&[
+            Instruction::Advance,
+            Instruction::TurnRight,
+            Instruction::Advance,
+            Instruction::Advance,
+            Instruction::TurnLeft,
+            Instruction::Advance,
+        ]);
         assert_eq!((r.x, r.y), (2, 2));
     }
 

@@ -53,7 +53,10 @@ fn lift2_simple<A, B, C, F: FnOnce(A, B) -> C>(f: F, a: Maybe<A>, b: Maybe<B>) -
 }
 
 fn lift3_simple<A, B, C, D, F: FnOnce(A, B, C) -> D>(
-    f: F, a: Maybe<A>, b: Maybe<B>, c: Maybe<C>,
+    f: F,
+    a: Maybe<A>,
+    b: Maybe<B>,
+    c: Maybe<C>,
 ) -> Maybe<D> {
     match (a, b, c) {
         (Maybe::Just(a), Maybe::Just(b), Maybe::Just(c)) => Maybe::Just(f(a, b, c)),
@@ -74,7 +77,6 @@ fn parse_int(s: &str) -> Maybe<i32> {
         Err(_) => Maybe::Nothing,
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -100,19 +102,27 @@ mod tests {
 
     #[test]
     fn test_lift2_both_just() {
-        assert_eq!(lift2_simple(|a: i32, b: i32| a + b, Maybe::Just(10), Maybe::Just(20)), Maybe::Just(30));
+        assert_eq!(
+            lift2_simple(|a: i32, b: i32| a + b, Maybe::Just(10), Maybe::Just(20)),
+            Maybe::Just(30)
+        );
     }
 
     #[test]
     fn test_lift2_one_nothing() {
-        assert_eq!(lift2_simple(|a: i32, b: i32| a + b, Maybe::Nothing, Maybe::Just(20)), Maybe::Nothing);
+        assert_eq!(
+            lift2_simple(|a: i32, b: i32| a + b, Maybe::Nothing, Maybe::Just(20)),
+            Maybe::Nothing
+        );
     }
 
     #[test]
     fn test_lift3() {
         let result = lift3_simple(
             |a: &str, b: &str, c: &str| format!("{}{}{}", a, b, c),
-            Maybe::Just("x"), Maybe::Just("y"), Maybe::Just("z"),
+            Maybe::Just("x"),
+            Maybe::Just("y"),
+            Maybe::Just("z"),
         );
         assert_eq!(result, Maybe::Just("xyz".to_string()));
     }

@@ -10,7 +10,9 @@ const P: f64 = 0.5;
 // Simple deterministic PRNG for reproducible tests (xorshift)
 struct Rng(u64);
 impl Rng {
-    fn new(seed: u64) -> Self { Rng(seed) }
+    fn new(seed: u64) -> Self {
+        Rng(seed)
+    }
     fn next_f64(&mut self) -> f64 {
         self.0 ^= self.0 << 13;
         self.0 ^= self.0 >> 7;
@@ -53,8 +55,7 @@ impl SkipList {
     }
 
     fn is_nil(&self, idx: usize) -> bool {
-        idx == 0 && self.nodes[0].forward[0] == 0
-            || (idx == 0 && self.level == 0)
+        idx == 0 && self.nodes[0].forward[0] == 0 || (idx == 0 && self.level == 0)
     }
 
     pub fn search(&self, target: i64) -> bool {
@@ -124,9 +125,10 @@ impl SkipList {
 }
 
 impl Default for SkipList {
-    fn default() -> Self { Self::new() }
+    fn default() -> Self {
+        Self::new()
+    }
 }
-
 
 #[cfg(test)]
 mod tests {

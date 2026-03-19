@@ -120,10 +120,7 @@ mod tests {
 
     #[test]
     fn test_fibonacci_filter() {
-        let even_fibs: Vec<u64> = Fibonacci::new()
-            .take(10)
-            .filter(|x| x % 2 == 0)
-            .collect();
+        let even_fibs: Vec<u64> = Fibonacci::new().take(10).filter(|x| x % 2 == 0).collect();
         assert_eq!(even_fibs, vec![0, 2, 8, 34]);
     }
 
@@ -142,9 +139,6 @@ mod tests {
     #[test]
     fn test_zip_custom_iterators() {
         let zipped: Vec<(u32, u64)> = Squares::new(5).zip(Fibonacci::new()).collect();
-        assert_eq!(
-            zipped,
-            vec![(0, 0), (1, 1), (4, 1), (9, 2), (16, 3)]
-        );
+        assert_eq!(zipped, vec![(0, 0), (1, 1), (4, 1), (9, 2), (16, 3)]);
     }
 }

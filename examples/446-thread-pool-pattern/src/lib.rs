@@ -81,7 +81,8 @@ where
     let mut results = vec![R::default(); data.len()];
 
     thread::scope(|s| {
-        for (chunk_data, chunk_results) in data.chunks(chunk_size).zip(results.chunks_mut(chunk_size))
+        for (chunk_data, chunk_results) in
+            data.chunks(chunk_size).zip(results.chunks_mut(chunk_size))
         {
             s.spawn(|| {
                 for (input, output) in chunk_data.iter().zip(chunk_results.iter_mut()) {

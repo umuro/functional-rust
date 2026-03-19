@@ -10,7 +10,10 @@
 /// Uses let chains to combine parsing, positivity check, and evenness check
 /// in a single flat condition.
 pub fn process(s: &str) -> Option<i32> {
-    if let Ok(n) = s.parse::<i32>() && n > 0 && n % 2 == 0 {
+    if let Ok(n) = s.parse::<i32>()
+        && n > 0
+        && n % 2 == 0
+    {
         Some(n * 2)
     } else {
         None
@@ -78,7 +81,10 @@ pub fn make_addr_combinators(cfg: &Config) -> Option<String> {
 /// Find the first positive even number in a slice of string representations.
 pub fn first_positive_even(data: &[&str]) -> Option<i32> {
     for &s in data {
-        if let Ok(n) = s.parse::<i32>() && n > 0 && n % 2 == 0 {
+        if let Ok(n) = s.parse::<i32>()
+            && n > 0
+            && n % 2 == 0
+        {
             return Some(n);
         }
     }
@@ -126,12 +132,7 @@ mod tests {
     fn test_process_approaches_equivalent() {
         let test_cases = ["4", "-2", "3", "abc", "8", "0", "10"];
         for s in test_cases {
-            assert_eq!(
-                process(s),
-                process_nested(s),
-                "Mismatch for input: {}",
-                s
-            );
+            assert_eq!(process(s), process_nested(s), "Mismatch for input: {}", s);
             assert_eq!(
                 process(s),
                 process_combinators(s),

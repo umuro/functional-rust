@@ -11,10 +11,14 @@ fn squares() -> impl Iterator<Item = u64> {
 }
 
 fn is_prime(n: u64) -> bool {
-    if n < 2 { return false; }
+    if n < 2 {
+        return false;
+    }
     let mut d = 2;
     while d * d <= n {
-        if n % d == 0 { return false; }
+        if n % d == 0 {
+            return false;
+        }
         d += 1;
     }
     true
@@ -44,7 +48,6 @@ fn primes_below(limit: u64) -> Vec<u64> {
 fn first_prime_over(threshold: u64) -> Option<u64> {
     primes().find(|&p| p > threshold)
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -98,10 +101,7 @@ mod tests {
 
     #[test]
     fn test_lazy_composition() {
-        let count = naturals()
-            .filter(|n| n % 2 == 0)
-            .take(100)
-            .count();
+        let count = naturals().filter(|n| n % 2 == 0).take(100).count();
         assert_eq!(count, 100);
     }
 }

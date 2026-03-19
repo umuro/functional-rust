@@ -76,7 +76,6 @@ fn fetch_with_retry(url: &str, max_retries: u32) -> Result<String, NetError> {
     Err(last_error.unwrap())
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -144,7 +143,10 @@ mod tests {
         let err = NetError::Timeout { seconds: 5.0 };
         assert_eq!(err.to_string(), "timeout after 5.0s");
 
-        let err = NetError::HttpError { status: 503, body: "Unavailable".into() };
+        let err = NetError::HttpError {
+            status: 503,
+            body: "Unavailable".into(),
+        };
         assert_eq!(err.to_string(), "HTTP 503: Unavailable");
     }
 }

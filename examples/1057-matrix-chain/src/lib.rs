@@ -41,7 +41,11 @@ fn matrix_chain_parens(dims: &[usize]) -> (usize, String) {
         if i == j {
             format!("A{}", i + 1)
         } else {
-            format!("({}*{})", build(i, split[i][j], split), build(split[i][j] + 1, j, split))
+            format!(
+                "({}*{})",
+                build(i, split[i][j], split),
+                build(split[i][j] + 1, j, split)
+            )
         }
     }
     (dp[0][n - 1], build(0, n - 1, &split))
@@ -49,12 +53,22 @@ fn matrix_chain_parens(dims: &[usize]) -> (usize, String) {
 
 // Approach 3: Recursive with memoization
 fn matrix_chain_memo(dims: &[usize]) -> usize {
-    fn solve(i: usize, j: usize, dims: &[usize], cache: &mut HashMap<(usize, usize), usize>) -> usize {
-        if i == j { return 0; }
-        if let Some(&v) = cache.get(&(i, j)) { return v; }
+    fn solve(
+        i: usize,
+        j: usize,
+        dims: &[usize],
+        cache: &mut HashMap<(usize, usize), usize>,
+    ) -> usize {
+        if i == j {
+            return 0;
+        }
+        if let Some(&v) = cache.get(&(i, j)) {
+            return v;
+        }
         let mut best = usize::MAX;
         for k in i..j {
-            let cost = solve(i, k, dims, cache) + solve(k + 1, j, dims, cache)
+            let cost = solve(i, k, dims, cache)
+                + solve(k + 1, j, dims, cache)
                 + dims[i] * dims[k + 1] * dims[j + 1];
             best = best.min(cost);
         }

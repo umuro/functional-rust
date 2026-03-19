@@ -5,29 +5,49 @@ use std::collections::VecDeque;
 const DIRS: [(i32, i32); 4] = [(0, 1), (1, 0), (0, -1), (-1, 0)];
 
 // Approach 1: DFS backtracking
-fn solve_maze(maze: &[Vec<i32>], start: (usize, usize), end_: (usize, usize)) -> Option<Vec<(usize, usize)>> {
+fn solve_maze(
+    maze: &[Vec<i32>],
+    start: (usize, usize),
+    end_: (usize, usize),
+) -> Option<Vec<(usize, usize)>> {
     let rows = maze.len();
     let cols = maze[0].len();
     let mut visited = vec![vec![false; cols]; rows];
     let mut path = Vec::new();
 
     fn dfs(
-        r: usize, c: usize, end_: (usize, usize),
-        maze: &[Vec<i32>], visited: &mut Vec<Vec<bool>>, path: &mut Vec<(usize, usize)>,
-        rows: usize, cols: usize,
+        r: usize,
+        c: usize,
+        end_: (usize, usize),
+        maze: &[Vec<i32>],
+        visited: &mut Vec<Vec<bool>>,
+        path: &mut Vec<(usize, usize)>,
+        rows: usize,
+        cols: usize,
     ) -> bool {
         if (r, c) == end_ {
             path.push((r, c));
             return true;
         }
-        if maze[r][c] == 1 || visited[r][c] { return false; }
+        if maze[r][c] == 1 || visited[r][c] {
+            return false;
+        }
         visited[r][c] = true;
         path.push((r, c));
         for &(dr, dc) in &DIRS {
             let nr = r as i32 + dr;
             let nc = c as i32 + dc;
             if nr >= 0 && nr < rows as i32 && nc >= 0 && nc < cols as i32 {
-                if dfs(nr as usize, nc as usize, end_, maze, visited, path, rows, cols) {
+                if dfs(
+                    nr as usize,
+                    nc as usize,
+                    end_,
+                    maze,
+                    visited,
+                    path,
+                    rows,
+                    cols,
+                ) {
                     return true;
                 }
             }
@@ -36,7 +56,16 @@ fn solve_maze(maze: &[Vec<i32>], start: (usize, usize), end_: (usize, usize)) ->
         false
     }
 
-    if dfs(start.0, start.1, end_, maze, &mut visited, &mut path, rows, cols) {
+    if dfs(
+        start.0,
+        start.1,
+        end_,
+        maze,
+        &mut visited,
+        &mut path,
+        rows,
+        cols,
+    ) {
         Some(path)
     } else {
         None
@@ -44,7 +73,11 @@ fn solve_maze(maze: &[Vec<i32>], start: (usize, usize), end_: (usize, usize)) ->
 }
 
 // Approach 2: BFS for shortest path
-fn solve_maze_bfs(maze: &[Vec<i32>], start: (usize, usize), end_: (usize, usize)) -> Option<Vec<(usize, usize)>> {
+fn solve_maze_bfs(
+    maze: &[Vec<i32>],
+    start: (usize, usize),
+    end_: (usize, usize),
+) -> Option<Vec<(usize, usize)>> {
     let rows = maze.len();
     let cols = maze[0].len();
     let mut visited = vec![vec![false; cols]; rows];
@@ -55,7 +88,10 @@ fn solve_maze_bfs(maze: &[Vec<i32>], start: (usize, usize), end_: (usize, usize)
 
     let mut found = false;
     while let Some((r, c)) = queue.pop_front() {
-        if (r, c) == end_ { found = true; break; }
+        if (r, c) == end_ {
+            found = true;
+            break;
+        }
         for &(dr, dc) in &DIRS {
             let nr = r as i32 + dr;
             let nc = c as i32 + dc;
@@ -70,7 +106,9 @@ fn solve_maze_bfs(maze: &[Vec<i32>], start: (usize, usize), end_: (usize, usize)
         }
     }
 
-    if !found { return None; }
+    if !found {
+        return None;
+    }
     let mut path = vec![end_];
     let (mut r, mut c) = end_;
     while (r, c) != start {

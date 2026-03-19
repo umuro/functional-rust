@@ -31,7 +31,6 @@ fn product_no_overflow(numbers: &[i64]) -> Result<i64, String> {
     })
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -85,7 +84,11 @@ mod tests {
         let mut count = 0;
         let result = [1, -2, 3, 4, 5].iter().try_fold(0, |acc, &n| {
             count += 1;
-            if n < 0 { Err("negative") } else { Ok(acc + n) }
+            if n < 0 {
+                Err("negative")
+            } else {
+                Ok(acc + n)
+            }
         });
         assert!(result.is_err());
         assert_eq!(count, 2); // only processed [1, -2], stopped
@@ -99,7 +102,11 @@ mod tests {
 
         // try_fold can bail early
         let result = [1, 2, 3].iter().try_fold(0, |acc, &n| {
-            if acc + n > 4 { Err("too big") } else { Ok(acc + n) }
+            if acc + n > 4 {
+                Err("too big")
+            } else {
+                Ok(acc + n)
+            }
         });
         assert!(result.is_err());
     }

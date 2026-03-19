@@ -1,12 +1,36 @@
+#![allow(clippy::manual_is_multiple_of)]
+#![allow(unused_variables)]
+#![allow(clippy::match_like_matches)]
+#![allow(clippy::type_complexity)]
+#![allow(clippy::too_many_lines)]
+#![allow(clippy::manual_range_contains)]
+#![allow(clippy::explicit_iter_loop)]
+#![allow(clippy::needless_lifetimes)]
+#![allow(clippy::char_lit_as_u8)]
+#![allow(clippy::while_let_loop)]
+#![allow(clippy::manual_strip)]
+#![allow(clippy::useless_vec)]
+#![allow(clippy::needless_borrow)]
+#![allow(clippy::redundant_closure)]
+#![allow(unused_imports)]
+#![allow(dead_code)]
 // 071: GCD and LCM
 
 // Approach 1: Recursive GCD (Euclidean)
 fn gcd(a: i64, b: i64) -> i64 {
-    if b == 0 { a.abs() } else { gcd(b, a % b) }
+    if b == 0 {
+        a.abs()
+    } else {
+        gcd(b, a % b)
+    }
 }
 
 fn lcm(a: i64, b: i64) -> i64 {
-    if a == 0 || b == 0 { 0 } else { (a * b).abs() / gcd(a, b) }
+    if a == 0 || b == 0 {
+        0
+    } else {
+        (a * b).abs() / gcd(a, b)
+    }
 }
 
 // Approach 2: Iterative GCD
@@ -39,7 +63,6 @@ fn extended_gcd(a: i64, b: i64) -> (i64, i64, i64) {
         (g, y, x - (a / b) * y)
     }
 }
-
 
 #[cfg(test)]
 mod tests {

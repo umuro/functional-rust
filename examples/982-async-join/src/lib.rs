@@ -26,19 +26,20 @@ where
     F: FnOnce() -> T + Send + 'static,
 {
     let handles: Vec<_> = tasks.into_iter().map(thread::spawn).collect();
-    handles.into_iter().map(|h| h.join().expect("task panicked")).collect()
+    handles
+        .into_iter()
+        .map(|h| h.join().expect("task panicked"))
+        .collect()
 }
 
 // --- Approach 3: Parallel sum ---
 fn parallel_sum(ns: Vec<i32>) -> i32 {
-    let handles: Vec<_> = ns.into_iter()
+    let handles: Vec<_> = ns
+        .into_iter()
         .map(|n| thread::spawn(move || n * n))
         .collect();
-    handles.into_iter()
-        .map(|h| h.join().unwrap())
-        .sum()
+    handles.into_iter().map(|h| h.join().unwrap()).sum()
 }
-
 
 #[cfg(test)]
 mod tests {

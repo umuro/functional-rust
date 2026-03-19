@@ -127,11 +127,7 @@ mod tests {
         let result = from_both_ends(Counter::new(5));
         assert_eq!(
             result,
-            vec![
-                (Some(1), Some(5)),
-                (Some(2), Some(4)),
-                (Some(3), None),
-            ]
+            vec![(Some(1), Some(5)), (Some(2), Some(4)), (Some(3), None),]
         );
     }
 

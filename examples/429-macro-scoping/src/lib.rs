@@ -7,12 +7,16 @@
 
 #[macro_export]
 macro_rules! public_macro {
-    () => { "public" };
+    () => {
+        "public"
+    };
 }
 
 /// Not exported - only usable in this crate.
 macro_rules! private_macro {
-    () => { "private" };
+    () => {
+        "private"
+    };
 }
 
 /// Use private macro.
@@ -28,7 +32,9 @@ pub fn use_public() -> &'static str {
 /// Module with local macro.
 mod inner {
     macro_rules! local_macro {
-        () => { "local" };
+        () => {
+            "local"
+        };
     }
 
     pub fn use_local() -> &'static str {

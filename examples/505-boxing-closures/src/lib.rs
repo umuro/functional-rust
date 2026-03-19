@@ -42,7 +42,9 @@ pub struct ClosureVec {
 
 impl ClosureVec {
     pub fn new() -> Self {
-        Self { closures: Vec::new() }
+        Self {
+            closures: Vec::new(),
+        }
     }
 
     pub fn add<F: Fn(i32) -> i32 + 'static>(&mut self, f: F) {

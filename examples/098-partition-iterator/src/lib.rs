@@ -1,6 +1,5 @@
 // 098: Partition Iterator
 
-
 #[cfg(test)]
 mod tests {
     #[test]

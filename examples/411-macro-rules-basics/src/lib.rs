@@ -205,7 +205,7 @@ mod tests {
     fn test_with_default() {
         let some_val: Option<i32> = Some(42);
         let none_val: Option<i32> = None;
-        
+
         assert_eq!(with_default!(some_val, 0), 42);
         assert_eq!(with_default!(none_val, 0), 0);
     }
@@ -213,7 +213,9 @@ mod tests {
     #[test]
     fn test_repeat() {
         let mut count = 0;
-        repeat!(5, { count += 1; });
+        repeat!(5, {
+            count += 1;
+        });
         assert_eq!(count, 5);
     }
 

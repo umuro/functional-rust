@@ -16,8 +16,12 @@ fn rod_cut_dp(prices: &[i64], n: usize) -> i64 {
 // Approach 2: Top-down with memoization
 fn rod_cut_memo(prices: &[i64], n: usize) -> i64 {
     fn solve(len: usize, prices: &[i64], cache: &mut HashMap<usize, i64>) -> i64 {
-        if len == 0 { return 0; }
-        if let Some(&v) = cache.get(&len) { return v; }
+        if len == 0 {
+            return 0;
+        }
+        if let Some(&v) = cache.get(&len) {
+            return v;
+        }
         let mut best = 0;
         for j in 1..=len.min(prices.len()) {
             best = best.max(prices[j - 1] + solve(len - j, prices, cache));

@@ -39,10 +39,7 @@ impl<const N: usize> Vec3<N> {
 }
 
 /// Concatenate two vectors — returns a Vec since { A + B } requires nightly.
-pub fn concat_vec<const A: usize, const B: usize>(
-    a: &Vec3<A>,
-    b: &Vec3<B>,
-) -> Vec<f64> {
+pub fn concat_vec<const A: usize, const B: usize>(a: &Vec3<A>, b: &Vec3<B>) -> Vec<f64> {
     let mut result = Vec::with_capacity(A + B);
     result.extend_from_slice(a.as_slice());
     result.extend_from_slice(b.as_slice());

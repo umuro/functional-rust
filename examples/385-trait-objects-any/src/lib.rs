@@ -22,23 +22,46 @@ pub struct TypeMap {
 }
 
 impl TypeMap {
-    pub fn new() -> Self { Self { map: HashMap::new() } }
-    pub fn insert<T: Any>(&mut self, value: T) { self.map.insert(TypeId::of::<T>(), Box::new(value)); }
-    pub fn get<T: Any>(&self) -> Option<&T> { self.map.get(&TypeId::of::<T>())?.downcast_ref::<T>() }
+    pub fn new() -> Self {
+        Self {
+            map: HashMap::new(),
+        }
+    }
+    pub fn insert<T: Any>(&mut self, value: T) {
+        self.map.insert(TypeId::of::<T>(), Box::new(value));
+    }
+    pub fn get<T: Any>(&self) -> Option<&T> {
+        self.map.get(&TypeId::of::<T>())?.downcast_ref::<T>()
+    }
 }
 
-impl Default for TypeMap { fn default() -> Self { Self::new() } }
+impl Default for TypeMap {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    #[test] fn test_describe_i32() { assert_eq!(describe(&42i32), "i32: 42"); }
-    #[test] fn test_describe_string() { assert_eq!(describe(&String::from("hi")), "String: hi"); }
-    #[test] fn test_describe_bool() { assert_eq!(describe(&true), "bool: true"); }
-    #[test] fn test_typemap() {
+    #[test]
+    fn test_describe_i32() {
+        assert_eq!(describe(&42i32), "i32: 42");
+    }
+    #[test]
+    fn test_describe_string() {
+        assert_eq!(describe(&String::from("hi")), "String: hi");
+    }
+    #[test]
+    fn test_describe_bool() {
+        assert_eq!(describe(&true), "bool: true");
+    }
+    #[test]
+    fn test_typemap() {
         let mut m = TypeMap::new();
-        m.insert(42i32); m.insert("hello".to_string());
+        m.insert(42i32);
+        m.insert("hello".to_string());
         assert_eq!(m.get::<i32>(), Some(&42));
         assert_eq!(m.get::<String>(), Some(&"hello".to_string()));
     }

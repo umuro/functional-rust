@@ -106,7 +106,11 @@ mod tests {
         //    2   5
         //   / \
         //  1   3
-        Tree::node(4, Tree::node(2, Tree::node(1, Leaf, Leaf), Tree::node(3, Leaf, Leaf)), Tree::node(5, Leaf, Leaf))
+        Tree::node(
+            4,
+            Tree::node(2, Tree::node(1, Leaf, Leaf), Tree::node(3, Leaf, Leaf)),
+            Tree::node(5, Leaf, Leaf),
+        )
     }
 
     #[test]

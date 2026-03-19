@@ -9,7 +9,9 @@ struct Stack<T> {
 
 impl<T> Stack<T> {
     fn new() -> Self {
-        Stack { elements: Vec::new() }
+        Stack {
+            elements: Vec::new(),
+        }
     }
 
     fn is_empty(&self) -> bool {
@@ -41,7 +43,9 @@ enum FnStack<T: Clone> {
 }
 
 impl<T: Clone> FnStack<T> {
-    fn empty() -> Self { FnStack::Empty }
+    fn empty() -> Self {
+        FnStack::Empty
+    }
 
     fn is_empty(&self) -> bool {
         matches!(self, FnStack::Empty)
@@ -69,10 +73,11 @@ impl<T: Clone> FnStack<T> {
 // Approach 3: From iterator
 impl<T> FromIterator<T> for Stack<T> {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
-        Stack { elements: iter.into_iter().collect() }
+        Stack {
+            elements: iter.into_iter().collect(),
+        }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

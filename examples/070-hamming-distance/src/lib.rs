@@ -64,7 +64,10 @@ mod tests {
 
     #[test]
     fn test_fold_variant() {
-        assert_eq!(hamming_fold("GAGCCTACTAACGGGAT", "CATCGTAATGACGGCCT"), Ok(7));
+        assert_eq!(
+            hamming_fold("GAGCCTACTAACGGGAT", "CATCGTAATGACGGCCT"),
+            Ok(7)
+        );
     }
 
     #[test]

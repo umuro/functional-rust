@@ -32,9 +32,13 @@ pub fn countdown(n: i32) -> Vec<i32> {
 
 pub fn collatz(n: u64) -> Vec<u64> {
     unfold(n, |x| {
-        if x == 0 { None }
-        else if x == 1 { Some((1, 0)) }
-        else { Some((x, if x % 2 == 0 { x / 2 } else { 3 * x + 1 })) }
+        if x == 0 {
+            None
+        } else if x == 1 {
+            Some((1, 0))
+        } else {
+            Some((x, if x % 2 == 0 { x / 2 } else { 3 * x + 1 }))
+        }
     })
 }
 
@@ -42,10 +46,7 @@ pub fn collatz(n: u64) -> Vec<u64> {
 // Approach B: Lazy unfold — returns an iterator
 // ---------------------------------------------------------------------------
 
-pub fn unfold_iter<S, T>(
-    seed: S,
-    f: impl Fn(&S) -> Option<(T, S)>,
-) -> impl Iterator<Item = T> {
+pub fn unfold_iter<S, T>(seed: S, f: impl Fn(&S) -> Option<(T, S)>) -> impl Iterator<Item = T> {
     let mut state = Some(seed);
     std::iter::from_fn(move || {
         let s = state.take()?;
@@ -61,9 +62,13 @@ pub fn unfold_iter<S, T>(
 
 pub fn collatz_iter(n: u64) -> impl Iterator<Item = u64> {
     std::iter::successors(Some(n), |&x| {
-        if x <= 1 { None }
-        else if x % 2 == 0 { Some(x / 2) }
-        else { Some(3 * x + 1) }
+        if x <= 1 {
+            None
+        } else if x % 2 == 0 {
+            Some(x / 2)
+        } else {
+            Some(3 * x + 1)
+        }
     })
 }
 

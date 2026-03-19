@@ -2,7 +2,6 @@
 ///
 /// Order nodes in a directed acyclic graph so every edge goes from earlier to later.
 /// Uses DFS-based algorithm.
-
 use std::collections::{HashMap, HashSet};
 
 /// DFS-based topological sort.

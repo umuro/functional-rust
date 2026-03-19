@@ -57,11 +57,21 @@ pub fn eval(env: &Env, expr: &Expr) -> Result<Value, String> {
 mod tests {
     use super::*;
 
-    fn int(n: i64) -> Expr { Expr::Int(n) }
-    fn var(s: &str) -> Expr { Expr::Var(s.into()) }
-    fn lam(s: &str, body: Expr) -> Expr { Expr::Lam(s.into(), Box::new(body)) }
-    fn app(f: Expr, a: Expr) -> Expr { Expr::App(Box::new(f), Box::new(a)) }
-    fn add(a: Expr, b: Expr) -> Expr { Expr::Add(Box::new(a), Box::new(b)) }
+    fn int(n: i64) -> Expr {
+        Expr::Int(n)
+    }
+    fn var(s: &str) -> Expr {
+        Expr::Var(s.into())
+    }
+    fn lam(s: &str, body: Expr) -> Expr {
+        Expr::Lam(s.into(), Box::new(body))
+    }
+    fn app(f: Expr, a: Expr) -> Expr {
+        Expr::App(Box::new(f), Box::new(a))
+    }
+    fn add(a: Expr, b: Expr) -> Expr {
+        Expr::Add(Box::new(a), Box::new(b))
+    }
 
     #[test]
     fn test_integer() {
@@ -85,7 +95,10 @@ mod tests {
     #[test]
     fn test_nested_lambda() {
         // (\x -> \y -> x + y) 10 32
-        let e = app(app(lam("x", lam("y", add(var("x"), var("y")))), int(10)), int(32));
+        let e = app(
+            app(lam("x", lam("y", add(var("x"), var("y")))), int(10)),
+            int(32),
+        );
         assert_eq!(eval(&vec![], &e), Ok(Value::VInt(42)));
     }
 

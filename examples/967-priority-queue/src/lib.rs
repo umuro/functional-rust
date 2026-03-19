@@ -97,7 +97,6 @@ pub fn heap_sort(mut values: Vec<i32>) -> Vec<i32> {
     sorted
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

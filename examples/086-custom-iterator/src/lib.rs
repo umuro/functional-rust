@@ -8,7 +8,10 @@ struct Counter {
 
 impl Counter {
     fn new(start: i32, step: i32) -> Self {
-        Counter { current: start, step }
+        Counter {
+            current: start,
+            step,
+        }
     }
 }
 
@@ -21,10 +24,15 @@ impl Iterator for Counter {
 }
 
 // Approach 2: Fibonacci iterator
-struct Fib { a: u64, b: u64 }
+struct Fib {
+    a: u64,
+    b: u64,
+}
 
 impl Fib {
-    fn new() -> Self { Fib { a: 0, b: 1 } }
+    fn new() -> Self {
+        Fib { a: 0, b: 1 }
+    }
 }
 
 impl Iterator for Fib {
@@ -39,16 +47,26 @@ impl Iterator for Fib {
 }
 
 // Approach 3: Collatz sequence (finite)
-struct Collatz { n: u64, done_: bool }
+struct Collatz {
+    n: u64,
+    done_: bool,
+}
 
 impl Collatz {
-    fn new(start: u64) -> Self { Collatz { n: start, done_: false } }
+    fn new(start: u64) -> Self {
+        Collatz {
+            n: start,
+            done_: false,
+        }
+    }
 }
 
 impl Iterator for Collatz {
     type Item = u64;
     fn next(&mut self) -> Option<u64> {
-        if self.done_ { return None; }
+        if self.done_ {
+            return None;
+        }
         let val = self.n;
         if self.n == 1 {
             self.done_ = true;
@@ -60,7 +78,6 @@ impl Iterator for Collatz {
         Some(val)
     }
 }
-
 
 #[cfg(test)]
 mod tests {

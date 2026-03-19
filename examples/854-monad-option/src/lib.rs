@@ -18,17 +18,23 @@ fn find_user_docs(env: &HashMap<&str, &str>, paths: &HashMap<&str, Vec<&str>>) -
 
 // Approach 2: Safe arithmetic chain
 fn safe_div(x: i32, y: i32) -> Option<i32> {
-    if y == 0 { None } else { Some(x / y) }
+    if y == 0 {
+        None
+    } else {
+        Some(x / y)
+    }
 }
 
 fn safe_sqrt(x: i32) -> Option<f64> {
-    if x < 0 { None } else { Some((x as f64).sqrt()) }
+    if x < 0 {
+        None
+    } else {
+        Some((x as f64).sqrt())
+    }
 }
 
 fn compute(a: i32, b: i32) -> Option<i32> {
-    safe_div(a, b)
-        .and_then(|q| safe_sqrt(q))
-        .map(|r| r as i32)
+    safe_div(a, b).and_then(|q| safe_sqrt(q)).map(|r| r as i32)
 }
 
 // Approach 3: Using ? operator (Rust's monadic sugar for Option)
@@ -38,12 +44,14 @@ fn compute_question_mark(a: i32, b: i32) -> Option<i32> {
     Some(r as i32)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    fn setup() -> (HashMap<&'static str, &'static str>, HashMap<&'static str, Vec<&'static str>>) {
+    fn setup() -> (
+        HashMap<&'static str, &'static str>,
+        HashMap<&'static str, Vec<&'static str>>,
+    ) {
         let mut env = HashMap::new();
         env.insert("HOME", "/home/user");
         let mut paths = HashMap::new();
@@ -54,7 +62,10 @@ mod tests {
     #[test]
     fn test_lookup_chain_success() {
         let (env, paths) = setup();
-        assert_eq!(find_user_docs(&env, &paths), Some("documents found".to_string()));
+        assert_eq!(
+            find_user_docs(&env, &paths),
+            Some("documents found".to_string())
+        );
     }
 
     #[test]

@@ -22,15 +22,24 @@ impl<T: Ord + Clone> Sorted<T> {
         loop {
             match (a.peek(), b.peek()) {
                 (Some(av), Some(bv)) => {
-                    if av <= bv { result.push(a.next().unwrap()); }
-                    else        { result.push(b.next().unwrap()); }
+                    if av <= bv {
+                        result.push(a.next().unwrap());
+                    } else {
+                        result.push(b.next().unwrap());
+                    }
                 }
-                (Some(_), None) => { result.extend(a); break; }
-                (None, Some(_)) => { result.extend(b); break; }
-                (None, None)    => break,
+                (Some(_), None) => {
+                    result.extend(a);
+                    break;
+                }
+                (None, Some(_)) => {
+                    result.extend(b);
+                    break;
+                }
+                (None, None) => break,
             }
         }
-        Sorted(result)   // safe: merge of two sorted = sorted
+        Sorted(result) // safe: merge of two sorted = sorted
     }
 
     /// Binary search — safe to use because we KNOW it's sorted.
@@ -38,9 +47,15 @@ impl<T: Ord + Clone> Sorted<T> {
         self.0.binary_search(target).is_ok()
     }
 
-    pub fn as_slice(&self) -> &[T] { &self.0 }
-    pub fn len(&self) -> usize { self.0.len() }
-    pub fn is_empty(&self) -> bool { self.0.is_empty() }
+    pub fn as_slice(&self) -> &[T] {
+        &self.0
+    }
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
 }
 
 // ── NonZero witness ────────────────────────────────────────────────────────────
@@ -51,14 +66,20 @@ pub struct NonZeroU64(u64);
 
 impl NonZeroU64 {
     pub fn new(n: u64) -> Option<Self> {
-        if n == 0 { None } else { Some(NonZeroU64(n)) }
+        if n == 0 {
+            None
+        } else {
+            Some(NonZeroU64(n))
+        }
     }
 
-    pub fn get(self) -> u64 { self.0 }
+    pub fn get(self) -> u64 {
+        self.0
+    }
 
     /// Division by non-zero — never panics (no division-by-zero possible).
     pub fn divide(self, dividend: u64) -> u64 {
-        dividend / self.0   // safe: self.0 guaranteed ≠ 0
+        dividend / self.0 // safe: self.0 guaranteed ≠ 0
     }
 }
 
@@ -75,22 +96,31 @@ pub struct Session<Auth> {
 }
 
 impl Session<Unauthenticated> {
-    pub fn new() -> Self { Session { user_id: 0, _auth: PhantomData } }
+    pub fn new() -> Self {
+        Session {
+            user_id: 0,
+            _auth: PhantomData,
+        }
+    }
 
     pub fn authenticate(self, user_id: u64, _password: &str) -> Session<Authenticated> {
         // In reality: verify password hash
-        Session { user_id, _auth: PhantomData }
+        Session {
+            user_id,
+            _auth: PhantomData,
+        }
     }
 }
 
 impl Session<Authenticated> {
-    pub fn user_id(&self) -> u64 { self.user_id }
+    pub fn user_id(&self) -> u64 {
+        self.user_id
+    }
     // Only authenticated sessions can access protected resources
     pub fn access_profile(&self) -> String {
         format!("Profile for user {}", self.user_id)
     }
 }
-
 
 #[cfg(test)]
 mod tests {

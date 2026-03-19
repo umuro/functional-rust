@@ -56,8 +56,12 @@ impl TryFrom<&str> for Point {
         if parts.len() != 2 {
             return Err("Expected (x, y)".to_string());
         }
-        let x = parts[0].parse().map_err(|e: std::num::ParseIntError| e.to_string())?;
-        let y = parts[1].parse().map_err(|e: std::num::ParseIntError| e.to_string())?;
+        let x = parts[0]
+            .parse()
+            .map_err(|e: std::num::ParseIntError| e.to_string())?;
+        let y = parts[1]
+            .parse()
+            .map_err(|e: std::num::ParseIntError| e.to_string())?;
         Ok(Point { x, y })
     }
 }
@@ -83,7 +87,9 @@ fn print_temperature<T: Into<Celsius>>(temp: T) {
 
 // From/Into chain
 fn fahrenheit_string_to_celsius(s: &str) -> Result<String, String> {
-    let val: f64 = s.parse().map_err(|e: std::num::ParseFloatError| e.to_string())?;
+    let val: f64 = s
+        .parse()
+        .map_err(|e: std::num::ParseFloatError| e.to_string())?;
     let c: Celsius = Fahrenheit(val).into(); // Into comes free from From
     Ok(format!("{}", c))
 }
@@ -92,7 +98,6 @@ fn fahrenheit_string_to_celsius(s: &str) -> Result<String, String> {
 fn strings_to_points(data: &[(i32, i32)]) -> Vec<Point> {
     data.iter().copied().map(Point::from).collect()
 }
-
 
 #[cfg(test)]
 mod tests {

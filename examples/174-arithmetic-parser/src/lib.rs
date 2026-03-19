@@ -17,7 +17,9 @@ fn parse_number(input: &str) -> ParseResult<f64> {
     if pos == 0 {
         return Err("Expected number".to_string());
     }
-    let n: f64 = s[..pos].parse().map_err(|e: std::num::ParseFloatError| e.to_string())?;
+    let n: f64 = s[..pos]
+        .parse()
+        .map_err(|e: std::num::ParseFloatError| e.to_string())?;
     Ok((n, &s[pos..]))
 }
 

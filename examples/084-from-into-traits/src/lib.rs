@@ -8,16 +8,24 @@ struct Celsius(f64);
 struct Fahrenheit(f64);
 
 impl From<Celsius> for Fahrenheit {
-    fn from(c: Celsius) -> Self { Fahrenheit(c.0 * 9.0 / 5.0 + 32.0) }
+    fn from(c: Celsius) -> Self {
+        Fahrenheit(c.0 * 9.0 / 5.0 + 32.0)
+    }
 }
 
 impl From<Fahrenheit> for Celsius {
-    fn from(f: Fahrenheit) -> Self { Celsius((f.0 - 32.0) * 5.0 / 9.0) }
+    fn from(f: Fahrenheit) -> Self {
+        Celsius((f.0 - 32.0) * 5.0 / 9.0)
+    }
 }
 
 // Approach 2: Enum from string (TryFrom)
 #[derive(Debug, PartialEq)]
-enum Color { Red, Green, Blue }
+enum Color {
+    Red,
+    Green,
+    Blue,
+}
 
 impl TryFrom<&str> for Color {
     type Error = String;
@@ -33,24 +41,39 @@ impl TryFrom<&str> for Color {
 
 impl From<Color> for &str {
     fn from(c: Color) -> Self {
-        match c { Color::Red => "red", Color::Green => "green", Color::Blue => "blue" }
+        match c {
+            Color::Red => "red",
+            Color::Green => "green",
+            Color::Blue => "blue",
+        }
     }
 }
 
 // Approach 3: From for complex types
-struct RawUser { name: String, age: String, email: String }
+struct RawUser {
+    name: String,
+    age: String,
+    email: String,
+}
 
 #[derive(Debug, PartialEq)]
-struct User { name: String, age: u32, email: String }
+struct User {
+    name: String,
+    age: u32,
+    email: String,
+}
 
 impl TryFrom<RawUser> for User {
     type Error = String;
     fn try_from(raw: RawUser) -> Result<Self, Self::Error> {
         let age = raw.age.parse().map_err(|_| "Invalid age".to_string())?;
-        Ok(User { name: raw.name, age, email: raw.email })
+        Ok(User {
+            name: raw.name,
+            age,
+            email: raw.email,
+        })
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -76,14 +99,22 @@ mod tests {
 
     #[test]
     fn test_user_try_from() {
-        let raw = RawUser { name: "Alice".into(), age: "30".into(), email: "a@b.com".into() };
+        let raw = RawUser {
+            name: "Alice".into(),
+            age: "30".into(),
+            email: "a@b.com".into(),
+        };
         let user = User::try_from(raw).unwrap();
         assert_eq!(user.age, 30);
     }
 
     #[test]
     fn test_user_invalid() {
-        let raw = RawUser { name: "Bob".into(), age: "xyz".into(), email: "b@c.com".into() };
+        let raw = RawUser {
+            name: "Bob".into(),
+            age: "xyz".into(),
+            email: "b@c.com".into(),
+        };
         assert!(User::try_from(raw).is_err());
     }
 }

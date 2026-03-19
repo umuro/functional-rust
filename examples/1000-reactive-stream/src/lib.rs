@@ -32,9 +32,13 @@ impl<T> FnObserver<T> {
 }
 
 impl<T> Observer<T> for FnObserver<T> {
-    fn on_next(&mut self, value: T) { (self.on_next_fn)(value); }
+    fn on_next(&mut self, value: T) {
+        (self.on_next_fn)(value);
+    }
     fn on_error(&mut self, _err: &str) {}
-    fn on_complete(&mut self) { (self.on_complete_fn)(); }
+    fn on_complete(&mut self) {
+        (self.on_complete_fn)();
+    }
 }
 
 // --- Observable: a lazy push source ---
@@ -44,7 +48,9 @@ struct Observable<T> {
 
 impl<T: Clone + 'static> Observable<T> {
     fn new(f: impl Fn(&mut dyn Observer<T>) + 'static) -> Self {
-        Observable { subscribe_fn: Box::new(f) }
+        Observable {
+            subscribe_fn: Box::new(f),
+        }
     }
 
     fn subscribe(&self, observer: &mut dyn Observer<T>) {
@@ -70,9 +76,15 @@ struct MapAdapter<'a, U, F> {
 }
 
 impl<'a, T, U, F: Fn(T) -> U> Observer<T> for MapAdapter<'a, U, F> {
-    fn on_next(&mut self, value: T) { self.inner.on_next((self.f)(value)); }
-    fn on_error(&mut self, err: &str) { self.inner.on_error(err); }
-    fn on_complete(&mut self) { self.inner.on_complete(); }
+    fn on_next(&mut self, value: T) {
+        self.inner.on_next((self.f)(value));
+    }
+    fn on_error(&mut self, err: &str) {
+        self.inner.on_error(err);
+    }
+    fn on_complete(&mut self) {
+        self.inner.on_complete();
+    }
 }
 
 fn obs_map<T: Clone + 'static, U: Clone + 'static>(
@@ -80,7 +92,10 @@ fn obs_map<T: Clone + 'static, U: Clone + 'static>(
     f: impl Fn(T) -> U + 'static,
 ) -> Observable<U> {
     Observable::new(move |observer| {
-        let mut adapter = MapAdapter { inner: observer, f: &f };
+        let mut adapter = MapAdapter {
+            inner: observer,
+            f: &f,
+        };
         source.subscribe(&mut adapter);
     })
 }
@@ -92,10 +107,16 @@ struct FilterAdapter<'a, T, P> {
 
 impl<'a, T, P: Fn(&T) -> bool> Observer<T> for FilterAdapter<'a, T, P> {
     fn on_next(&mut self, value: T) {
-        if (self.pred)(&value) { self.inner.on_next(value); }
+        if (self.pred)(&value) {
+            self.inner.on_next(value);
+        }
     }
-    fn on_error(&mut self, err: &str) { self.inner.on_error(err); }
-    fn on_complete(&mut self) { self.inner.on_complete(); }
+    fn on_error(&mut self, err: &str) {
+        self.inner.on_error(err);
+    }
+    fn on_complete(&mut self) {
+        self.inner.on_complete();
+    }
 }
 
 fn obs_filter<T: Clone + 'static>(
@@ -103,7 +124,10 @@ fn obs_filter<T: Clone + 'static>(
     pred: impl Fn(&T) -> bool + 'static,
 ) -> Observable<T> {
     Observable::new(move |observer| {
-        let mut adapter = FilterAdapter { inner: observer, pred: &pred };
+        let mut adapter = FilterAdapter {
+            inner: observer,
+            pred: &pred,
+        };
         source.subscribe(&mut adapter);
     })
 }
@@ -120,13 +144,20 @@ impl<'a, T> Observer<T> for TakeAdapter<'a, T> {
             self.inner.on_next(value);
         }
     }
-    fn on_error(&mut self, err: &str) { self.inner.on_error(err); }
-    fn on_complete(&mut self) { self.inner.on_complete(); }
+    fn on_error(&mut self, err: &str) {
+        self.inner.on_error(err);
+    }
+    fn on_complete(&mut self) {
+        self.inner.on_complete();
+    }
 }
 
 fn obs_take<T: Clone + 'static>(source: Observable<T>, n: usize) -> Observable<T> {
     Observable::new(move |observer| {
-        let mut adapter = TakeAdapter { inner: observer, remaining: n };
+        let mut adapter = TakeAdapter {
+            inner: observer,
+            remaining: n,
+        };
         source.subscribe(&mut adapter);
     })
 }
@@ -139,9 +170,9 @@ fn collect<T: Clone + 'static>(source: Observable<T>) -> Vec<T> {
         results2.borrow_mut().push(v);
     });
     source.subscribe(&mut observer);
-    let x = results.borrow().clone(); x
+    let x = results.borrow().clone();
+    x
 }
-
 
 #[cfg(test)]
 mod tests {

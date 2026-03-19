@@ -75,7 +75,13 @@ pub fn encode_fold(s: &str) -> String {
             acc
         })
         .iter()
-        .map(|&(c, n)| if n > 1 { format!("{}{}", n, c) } else { c.to_string() })
+        .map(|&(c, n)| {
+            if n > 1 {
+                format!("{}{}", n, c)
+            } else {
+                c.to_string()
+            }
+        })
         .collect()
 }
 

@@ -29,11 +29,14 @@ fn parse_positive(s: &&str) -> Result<i32, String> {
 }
 
 fn validate_username(s: &&str) -> Result<String, String> {
-    if s.len() < 3 { Err("Too short".into()) }
-    else if s.len() > 20 { Err("Too long".into()) }
-    else { Ok(s.to_string()) }
+    if s.len() < 3 {
+        Err("Too short".into())
+    } else if s.len() > 20 {
+        Err("Too long".into())
+    } else {
+        Ok(s.to_string())
+    }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -41,17 +44,26 @@ mod tests {
 
     #[test]
     fn test_traverse_all_ok() {
-        assert_eq!(traverse_result(&["1", "2", "3"], parse_positive), Ok(vec![1, 2, 3]));
+        assert_eq!(
+            traverse_result(&["1", "2", "3"], parse_positive),
+            Ok(vec![1, 2, 3])
+        );
     }
 
     #[test]
     fn test_traverse_parse_error() {
-        assert_eq!(traverse_result(&["1", "bad", "3"], parse_positive), Err("Not a number: bad".into()));
+        assert_eq!(
+            traverse_result(&["1", "bad", "3"], parse_positive),
+            Err("Not a number: bad".into())
+        );
     }
 
     #[test]
     fn test_traverse_validation_error() {
-        assert_eq!(traverse_result(&["1", "-2", "3"], parse_positive), Err("Not positive: -2".into()));
+        assert_eq!(
+            traverse_result(&["1", "-2", "3"], parse_positive),
+            Err("Not positive: -2".into())
+        );
     }
 
     #[test]
@@ -62,13 +74,22 @@ mod tests {
 
     #[test]
     fn test_fold_version() {
-        assert_eq!(traverse_result_fold(&["1", "2"], parse_positive), Ok(vec![1, 2]));
-        assert_eq!(traverse_result_fold(&["1", "bad"], parse_positive), Err("Not a number: bad".into()));
+        assert_eq!(
+            traverse_result_fold(&["1", "2"], parse_positive),
+            Ok(vec![1, 2])
+        );
+        assert_eq!(
+            traverse_result_fold(&["1", "bad"], parse_positive),
+            Err("Not a number: bad".into())
+        );
     }
 
     #[test]
     fn test_sequence_ok() {
-        assert_eq!(sequence_result::<i32, String>(vec![Ok(1), Ok(2), Ok(3)]), Ok(vec![1, 2, 3]));
+        assert_eq!(
+            sequence_result::<i32, String>(vec![Ok(1), Ok(2), Ok(3)]),
+            Ok(vec![1, 2, 3])
+        );
     }
 
     #[test]
@@ -79,7 +100,13 @@ mod tests {
 
     #[test]
     fn test_validate_usernames() {
-        assert_eq!(traverse_result(&["alice", "bob"], validate_username), Ok(vec!["alice".into(), "bob".into()]));
-        assert_eq!(traverse_result(&["alice", "ab"], validate_username), Err("Too short".into()));
+        assert_eq!(
+            traverse_result(&["alice", "bob"], validate_username),
+            Ok(vec!["alice".into(), "bob".into()])
+        );
+        assert_eq!(
+            traverse_result(&["alice", "ab"], validate_username),
+            Err("Too short".into())
+        );
     }
 }

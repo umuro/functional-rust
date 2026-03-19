@@ -16,8 +16,7 @@ mod tests {
     fn test_unzip_roundtrip() {
         let a = vec![1i32, 2, 3];
         let b = vec![4i32, 5, 6];
-        let (a2, b2): (Vec<i32>, Vec<i32>) =
-            a.iter().copied().zip(b.iter().copied()).unzip();
+        let (a2, b2): (Vec<i32>, Vec<i32>) = a.iter().copied().zip(b.iter().copied()).unzip();
         assert_eq!(a, a2);
         assert_eq!(b, b2);
     }

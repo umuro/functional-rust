@@ -1,8 +1,8 @@
 //! Auto Traits: Send, Sync, Unpin
 
+use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
-use std::cell::RefCell;
 
 pub fn is_send<T: Send>() {}
 pub fn is_sync<T: Sync>() {}
@@ -19,7 +19,9 @@ pub fn check_auto_traits() {
     // is_sync::<RefCell<i32>>(); // Would fail - RefCell is !Sync
 }
 
-pub struct MySendSync { pub data: Arc<String> }
+pub struct MySendSync {
+    pub data: Arc<String>,
+}
 unsafe impl Send for MySendSync {}
 unsafe impl Sync for MySendSync {}
 
@@ -27,8 +29,24 @@ unsafe impl Sync for MySendSync {}
 mod tests {
     use super::*;
 
-    #[test] fn test_i32_send() { fn assert_send<T: Send>() {} assert_send::<i32>(); }
-    #[test] fn test_i32_sync() { fn assert_sync<T: Sync>() {} assert_sync::<i32>(); }
-    #[test] fn test_arc_send_sync() { fn assert_both<T: Send+Sync>() {} assert_both::<Arc<i32>>(); }
-    #[test] fn test_string_send() { fn assert_send<T: Send>() {} assert_send::<String>(); }
+    #[test]
+    fn test_i32_send() {
+        fn assert_send<T: Send>() {}
+        assert_send::<i32>();
+    }
+    #[test]
+    fn test_i32_sync() {
+        fn assert_sync<T: Sync>() {}
+        assert_sync::<i32>();
+    }
+    #[test]
+    fn test_arc_send_sync() {
+        fn assert_both<T: Send + Sync>() {}
+        assert_both::<Arc<i32>>();
+    }
+    #[test]
+    fn test_string_send() {
+        fn assert_send<T: Send>() {}
+        assert_send::<String>();
+    }
 }

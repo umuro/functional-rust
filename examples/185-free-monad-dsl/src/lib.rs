@@ -10,7 +10,9 @@ enum Console<A> {
     Exit(i32),
 }
 
-fn pure<A>(a: A) -> Console<A> { Console::Pure(a) }
+fn pure<A>(a: A) -> Console<A> {
+    Console::Pure(a)
+}
 
 fn print_line(msg: &str) -> Console<()> {
     let msg = msg.to_string();
@@ -21,7 +23,9 @@ fn read_line_dsl() -> Console<String> {
     Console::ReadLine(Box::new(|s| Console::Pure(s)))
 }
 
-fn exit_prog<A>(code: i32) -> Console<A> { Console::Exit(code) }
+fn exit_prog<A>(code: i32) -> Console<A> {
+    Console::Exit(code)
+}
 
 fn bind<A: 'static, B: 'static>(
     ma: Console<A>,
@@ -39,22 +43,26 @@ fn bind<A: 'static, B: 'static>(
 
 fn menu_program() -> Console<String> {
     bind(print_line("=== Menu ==="), move |()| {
-    bind(print_line("1. Greet"), move |()| {
-    bind(print_line("2. Exit"), move |()| {
-    bind(print_line("Choose: "), move |()| {
-    bind(read_line_dsl(), move |choice: String| {
-        match choice.as_str() {
-            "1" => bind(print_line("Enter name: "), move |()| {
-                bind(read_line_dsl(), move |name: String| {
-                    bind(print_line(&format!("Hello, {}!", name)), move |()| {
-                        pure(format!("greeted {}", name))
+        bind(print_line("1. Greet"), move |()| {
+            bind(print_line("2. Exit"), move |()| {
+                bind(print_line("Choose: "), move |()| {
+                    bind(read_line_dsl(), move |choice: String| {
+                        match choice.as_str() {
+                            "1" => bind(print_line("Enter name: "), move |()| {
+                                bind(read_line_dsl(), move |name: String| {
+                                    bind(print_line(&format!("Hello, {}!", name)), move |()| {
+                                        pure(format!("greeted {}", name))
+                                    })
+                                })
+                            }),
+                            "2" => exit_prog(0),
+                            _ => bind(print_line("Invalid choice"), |()| pure("error".to_string())),
+                        }
                     })
                 })
-            }),
-            "2" => exit_prog(0),
-            _ => bind(print_line("Invalid choice"), |()| pure("error".to_string())),
-        }
-    })})})})})
+            })
+        })
+    })
 }
 
 // === Approach 3: Pure test interpreter ===
@@ -94,10 +102,17 @@ mod tests {
     #[test]
     fn test_greet_path() {
         let (out, result) = interpret_pure(&["1", "Alice"], menu_program());
-        assert_eq!(out, vec![
-            "=== Menu ===", "1. Greet", "2. Exit", "Choose: ",
-            "Enter name: ", "Hello, Alice!"
-        ]);
+        assert_eq!(
+            out,
+            vec![
+                "=== Menu ===",
+                "1. Greet",
+                "2. Exit",
+                "Choose: ",
+                "Enter name: ",
+                "Hello, Alice!"
+            ]
+        );
         assert_eq!(result, ProgramResult::Ok("greeted Alice".to_string()));
     }
 

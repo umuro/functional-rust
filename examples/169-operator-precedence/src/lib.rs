@@ -10,7 +10,10 @@ enum Expr {
 }
 
 #[derive(Debug, Clone, Copy)]
-enum Assoc { Left, Right }
+enum Assoc {
+    Left,
+    Right,
+}
 
 #[derive(Debug, Clone)]
 struct OpInfo {
@@ -24,20 +27,76 @@ struct OpInfo {
 // ============================================================
 
 const OPERATORS: &[OpInfo] = &[
-    OpInfo { symbol: "||", precedence: 1, associativity: Assoc::Left },
-    OpInfo { symbol: "&&", precedence: 2, associativity: Assoc::Left },
-    OpInfo { symbol: "==", precedence: 3, associativity: Assoc::Left },
-    OpInfo { symbol: "!=", precedence: 3, associativity: Assoc::Left },
-    OpInfo { symbol: "<=", precedence: 4, associativity: Assoc::Left },
-    OpInfo { symbol: ">=", precedence: 4, associativity: Assoc::Left },
-    OpInfo { symbol: "<",  precedence: 4, associativity: Assoc::Left },
-    OpInfo { symbol: ">",  precedence: 4, associativity: Assoc::Left },
-    OpInfo { symbol: "+",  precedence: 5, associativity: Assoc::Left },
-    OpInfo { symbol: "-",  precedence: 5, associativity: Assoc::Left },
-    OpInfo { symbol: "*",  precedence: 6, associativity: Assoc::Left },
-    OpInfo { symbol: "/",  precedence: 6, associativity: Assoc::Left },
-    OpInfo { symbol: "%",  precedence: 6, associativity: Assoc::Left },
-    OpInfo { symbol: "^",  precedence: 7, associativity: Assoc::Right },
+    OpInfo {
+        symbol: "||",
+        precedence: 1,
+        associativity: Assoc::Left,
+    },
+    OpInfo {
+        symbol: "&&",
+        precedence: 2,
+        associativity: Assoc::Left,
+    },
+    OpInfo {
+        symbol: "==",
+        precedence: 3,
+        associativity: Assoc::Left,
+    },
+    OpInfo {
+        symbol: "!=",
+        precedence: 3,
+        associativity: Assoc::Left,
+    },
+    OpInfo {
+        symbol: "<=",
+        precedence: 4,
+        associativity: Assoc::Left,
+    },
+    OpInfo {
+        symbol: ">=",
+        precedence: 4,
+        associativity: Assoc::Left,
+    },
+    OpInfo {
+        symbol: "<",
+        precedence: 4,
+        associativity: Assoc::Left,
+    },
+    OpInfo {
+        symbol: ">",
+        precedence: 4,
+        associativity: Assoc::Left,
+    },
+    OpInfo {
+        symbol: "+",
+        precedence: 5,
+        associativity: Assoc::Left,
+    },
+    OpInfo {
+        symbol: "-",
+        precedence: 5,
+        associativity: Assoc::Left,
+    },
+    OpInfo {
+        symbol: "*",
+        precedence: 6,
+        associativity: Assoc::Left,
+    },
+    OpInfo {
+        symbol: "/",
+        precedence: 6,
+        associativity: Assoc::Left,
+    },
+    OpInfo {
+        symbol: "%",
+        precedence: 6,
+        associativity: Assoc::Left,
+    },
+    OpInfo {
+        symbol: "^",
+        precedence: 7,
+        associativity: Assoc::Right,
+    },
 ];
 
 fn find_op(input: &str) -> Option<(&OpInfo, &str)> {
@@ -68,13 +127,21 @@ fn parse_number(input: &str) -> ParseResult<Expr> {
     let s = input.trim_start();
     let bytes = s.as_bytes();
     let mut pos = 0;
-    while pos < bytes.len() && bytes[pos].is_ascii_digit() { pos += 1; }
+    while pos < bytes.len() && bytes[pos].is_ascii_digit() {
+        pos += 1;
+    }
     if pos < bytes.len() && bytes[pos] == b'.' {
         pos += 1;
-        while pos < bytes.len() && bytes[pos].is_ascii_digit() { pos += 1; }
+        while pos < bytes.len() && bytes[pos].is_ascii_digit() {
+            pos += 1;
+        }
     }
-    if pos == 0 { return Err("Expected number".to_string()); }
-    let n: f64 = s[..pos].parse().map_err(|e: std::num::ParseFloatError| e.to_string())?;
+    if pos == 0 {
+        return Err("Expected number".to_string());
+    }
+    let n: f64 = s[..pos]
+        .parse()
+        .map_err(|e: std::num::ParseFloatError| e.to_string())?;
     Ok((Expr::Num(n), &s[pos..]))
 }
 
@@ -87,8 +154,11 @@ fn pratt_expr(input: &str, min_bp: u8) -> ParseResult<Expr> {
     let (mut lhs, mut rest) = if s.starts_with('(') {
         let (e, r) = pratt_expr(&s[1..], 0)?;
         let r = r.trim_start();
-        if r.starts_with(')') { (e, &r[1..]) }
-        else { return Err("Expected ')'".to_string()); }
+        if r.starts_with(')') {
+            (e, &r[1..])
+        } else {
+            return Err("Expected ')'".to_string());
+        }
     } else {
         parse_number(s)?
     };
@@ -99,7 +169,9 @@ fn pratt_expr(input: &str, min_bp: u8) -> ParseResult<Expr> {
             None => break,
         };
         let (lbp, rbp) = binding_power(op);
-        if lbp < min_bp { break; }
+        if lbp < min_bp {
+            break;
+        }
         let (rhs, r) = pratt_expr(after_op, rbp)?;
         lhs = Expr::BinOp(op.symbol.to_string(), Box::new(lhs), Box::new(rhs));
         rest = r;
@@ -120,7 +192,9 @@ fn climb_expr(input: &str, min_prec: u8) -> ParseResult<Expr> {
             Some(r) => r,
             None => break,
         };
-        if op.precedence < min_prec { break; }
+        if op.precedence < min_prec {
+            break;
+        }
         let next_min = match op.associativity {
             Assoc::Left => op.precedence + 1,
             Assoc::Right => op.precedence,

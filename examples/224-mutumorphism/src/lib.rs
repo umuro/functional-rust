@@ -3,20 +3,32 @@
 // mutu: two folds that depend on EACH OTHER
 
 #[derive(Debug)]
-enum NatF<A> { ZeroF, SuccF(A) }
+enum NatF<A> {
+    ZeroF,
+    SuccF(A),
+}
 
 impl<A> NatF<A> {
     fn map_ref<B>(&self, f: impl Fn(&A) -> B) -> NatF<B> {
-        match self { NatF::ZeroF => NatF::ZeroF, NatF::SuccF(a) => NatF::SuccF(f(a)) }
+        match self {
+            NatF::ZeroF => NatF::ZeroF,
+            NatF::SuccF(a) => NatF::SuccF(f(a)),
+        }
     }
 }
 
 #[derive(Debug, Clone)]
 struct FixNat(Box<NatF<FixNat>>);
 
-fn zero() -> FixNat { FixNat(Box::new(NatF::ZeroF)) }
-fn succ(n: FixNat) -> FixNat { FixNat(Box::new(NatF::SuccF(n))) }
-fn nat(n: u32) -> FixNat { (0..n).fold(zero(), |acc, _| succ(acc)) }
+fn zero() -> FixNat {
+    FixNat(Box::new(NatF::ZeroF))
+}
+fn succ(n: FixNat) -> FixNat {
+    FixNat(Box::new(NatF::SuccF(n)))
+}
+fn nat(n: u32) -> FixNat {
+    (0..n).fold(zero(), |acc, _| succ(acc))
+}
 
 fn mutu<A: Clone, B: Clone>(
     alg_a: &dyn Fn(NatF<(A, B)>) -> A,
@@ -28,24 +40,42 @@ fn mutu<A: Clone, B: Clone>(
 }
 
 impl<A: Clone> Clone for NatF<A> {
-    fn clone(&self) -> Self { self.map_ref(|a| a.clone()) }
+    fn clone(&self) -> Self {
+        self.map_ref(|a| a.clone())
+    }
 }
 
 // Approach 1: isEven / isOdd
 fn is_even_alg(n: NatF<(bool, bool)>) -> bool {
-    match n { NatF::ZeroF => true, NatF::SuccF((_even, odd)) => odd }
+    match n {
+        NatF::ZeroF => true,
+        NatF::SuccF((_even, odd)) => odd,
+    }
 }
 
 fn is_odd_alg(n: NatF<(bool, bool)>) -> bool {
-    match n { NatF::ZeroF => false, NatF::SuccF((even, _odd)) => even }
+    match n {
+        NatF::ZeroF => false,
+        NatF::SuccF((even, _odd)) => even,
+    }
 }
 
-fn is_even(n: u32) -> bool { mutu(&is_even_alg, &is_odd_alg, &nat(n)).0 }
-fn is_odd(n: u32) -> bool { mutu(&is_even_alg, &is_odd_alg, &nat(n)).1 }
+fn is_even(n: u32) -> bool {
+    mutu(&is_even_alg, &is_odd_alg, &nat(n)).0
+}
+fn is_odd(n: u32) -> bool {
+    mutu(&is_even_alg, &is_odd_alg, &nat(n)).1
+}
 
 // Approach 2: Typed expression evaluation — value AND type simultaneously
 #[derive(Debug, PartialEq)]
-enum ExprF<A> { IntLit(i64), BoolLit(bool), Add(A, A), Eq(A, A), If(A, A, A) }
+enum ExprF<A> {
+    IntLit(i64),
+    BoolLit(bool),
+    Add(A, A),
+    Eq(A, A),
+    If(A, A, A),
+}
 
 impl<A> ExprF<A> {
     fn map_ref<B>(&self, f: impl Fn(&A) -> B) -> ExprF<B> {
@@ -60,17 +90,27 @@ impl<A> ExprF<A> {
 }
 
 impl<A: Clone> Clone for ExprF<A> {
-    fn clone(&self) -> Self { self.map_ref(|a| a.clone()) }
+    fn clone(&self) -> Self {
+        self.map_ref(|a| a.clone())
+    }
 }
 
 #[derive(Debug, Clone)]
 struct FixExpr(Box<ExprF<FixExpr>>);
 
 #[derive(Debug, Clone, PartialEq)]
-enum Value { VInt(i64), VBool(bool), VError }
+enum Value {
+    VInt(i64),
+    VBool(bool),
+    VError,
+}
 
 #[derive(Debug, Clone, PartialEq)]
-enum Typ { TInt, TBool, TError }
+enum Typ {
+    TInt,
+    TBool,
+    TError,
+}
 
 fn mutu_expr<A: Clone, B: Clone>(
     alg_a: &dyn Fn(ExprF<(A, B)>) -> A,
@@ -104,28 +144,43 @@ fn typ_alg(e: ExprF<(Value, Typ)>) -> Typ {
     }
 }
 
-fn int_lit(n: i64) -> FixExpr { FixExpr(Box::new(ExprF::IntLit(n))) }
-fn bool_lit(b: bool) -> FixExpr { FixExpr(Box::new(ExprF::BoolLit(b))) }
-fn add_e(a: FixExpr, b: FixExpr) -> FixExpr { FixExpr(Box::new(ExprF::Add(a, b))) }
-fn eq_e(a: FixExpr, b: FixExpr) -> FixExpr { FixExpr(Box::new(ExprF::Eq(a, b))) }
-fn if_e(c: FixExpr, t: FixExpr, e: FixExpr) -> FixExpr { FixExpr(Box::new(ExprF::If(c, t, e))) }
+fn int_lit(n: i64) -> FixExpr {
+    FixExpr(Box::new(ExprF::IntLit(n)))
+}
+fn bool_lit(b: bool) -> FixExpr {
+    FixExpr(Box::new(ExprF::BoolLit(b)))
+}
+fn add_e(a: FixExpr, b: FixExpr) -> FixExpr {
+    FixExpr(Box::new(ExprF::Add(a, b)))
+}
+fn eq_e(a: FixExpr, b: FixExpr) -> FixExpr {
+    FixExpr(Box::new(ExprF::Eq(a, b)))
+}
+fn if_e(c: FixExpr, t: FixExpr, e: FixExpr) -> FixExpr {
+    FixExpr(Box::new(ExprF::If(c, t, e)))
+}
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    #[test] fn test_even_odd() {
-        for i in 0..10 { assert_eq!(is_even(i), i % 2 == 0); }
+    #[test]
+    fn test_even_odd() {
+        for i in 0..10 {
+            assert_eq!(is_even(i), i % 2 == 0);
+        }
     }
 
-    #[test] fn test_type_check_ok() {
+    #[test]
+    fn test_type_check_ok() {
         let e = eq_e(int_lit(1), int_lit(2));
         let (v, t) = mutu_expr(&val_alg, &typ_alg, &e);
         assert_eq!(v, Value::VBool(false));
         assert_eq!(t, Typ::TBool);
     }
 
-    #[test] fn test_type_error() {
+    #[test]
+    fn test_type_error() {
         let e = eq_e(int_lit(1), bool_lit(true));
         assert_eq!(mutu_expr(&val_alg, &typ_alg, &e).1, Typ::TError);
     }

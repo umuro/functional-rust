@@ -12,7 +12,9 @@ fn block_on<F: Future>(mut fut: F) -> F::Output {
 
     // Create a no-op waker
     fn noop(_: *const ()) {}
-    fn noop_clone(p: *const ()) -> RawWaker { RawWaker::new(p, &VTABLE) }
+    fn noop_clone(p: *const ()) -> RawWaker {
+        RawWaker::new(p, &VTABLE)
+    }
     static VTABLE: RawWakerVTable = RawWakerVTable::new(noop_clone, noop, noop, noop);
     let raw = RawWaker::new(std::ptr::null(), &VTABLE);
     let waker = unsafe { Waker::from_raw(raw) };
@@ -31,16 +33,16 @@ async fn compute_value() -> i32 {
 }
 
 async fn compute_and_add() -> i32 {
-    let x = compute_value().await;  // bind: unwrap the future
+    let x = compute_value().await; // bind: unwrap the future
     x + 1
 }
 
 async fn double_result() -> i32 {
     let x = compute_and_add().await;
-    x * 2  // map: transform the value
+    x * 2 // map: transform the value
 }
 
-// --- Approach 2: async block as lambda --- 
+// --- Approach 2: async block as lambda ---
 async fn pipeline(input: i32) -> i32 {
     // Sequential monadic chain via .await
     let step1 = async { input * 2 }.await;
@@ -66,7 +68,6 @@ fn immediate<T>(val: T) -> ImmediateFuture<T> {
 async fn use_manual_future() -> i32 {
     immediate(100).await + immediate(23).await
 }
-
 
 #[cfg(test)]
 mod tests {

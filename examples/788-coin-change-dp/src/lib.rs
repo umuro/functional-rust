@@ -10,7 +10,11 @@ pub fn coin_change(coins: &[usize], amount: usize) -> Option<usize> {
             }
         }
     }
-    if dp[amount] == usize::MAX { None } else { Some(dp[amount]) }
+    if dp[amount] == usize::MAX {
+        None
+    } else {
+        Some(dp[amount])
+    }
 }
 
 pub fn coin_change_ways(coins: &[usize], amount: usize) -> usize {
@@ -27,8 +31,17 @@ pub fn coin_change_ways(coins: &[usize], amount: usize) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
-    #[test] fn test_change() { assert_eq!(coin_change(&[1, 2, 5], 11), Some(3)); }
-    #[test] fn test_ways() { assert_eq!(coin_change_ways(&[1, 2, 5], 5), 4); }
-    #[test] fn test_impossible() { assert_eq!(coin_change(&[2], 3), None); }
+
+    #[test]
+    fn test_change() {
+        assert_eq!(coin_change(&[1, 2, 5], 11), Some(3));
+    }
+    #[test]
+    fn test_ways() {
+        assert_eq!(coin_change_ways(&[1, 2, 5], 5), 4);
+    }
+    #[test]
+    fn test_impossible() {
+        assert_eq!(coin_change(&[2], 3), None);
+    }
 }

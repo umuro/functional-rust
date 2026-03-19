@@ -17,11 +17,7 @@ impl<T> Tree<T> {
 
 /// Catamorphism: replaces constructors with functions
 /// leaf_fn replaces Leaf, node_fn replaces Node
-pub fn cata<T, R>(
-    tree: &Tree<T>,
-    leaf_val: R,
-    node_fn: &dyn Fn(R, &T, R) -> R,
-) -> R
+pub fn cata<T, R>(tree: &Tree<T>, leaf_val: R, node_fn: &dyn Fn(R, &T, R) -> R) -> R
 where
     R: Clone,
 {
@@ -81,13 +77,19 @@ mod tests {
     }
 
     #[test]
-    fn test_size() { assert_eq!(size(&sample()), 3); }
+    fn test_size() {
+        assert_eq!(size(&sample()), 3);
+    }
 
     #[test]
-    fn test_sum() { assert_eq!(sum(&sample()), 6); }
+    fn test_sum() {
+        assert_eq!(sum(&sample()), 6);
+    }
 
     #[test]
-    fn test_height() { assert_eq!(height(&sample()), 2); }
+    fn test_height() {
+        assert_eq!(height(&sample()), 2);
+    }
 
     #[test]
     fn test_mirror() {

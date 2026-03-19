@@ -67,21 +67,12 @@ impl ExactSizeIterator for Countdown {}
 
 /// Approach 1: Using standard combinators for sum of squares of evens.
 pub fn sum_of_squares_of_evens(n: i32) -> i32 {
-    (1..=n)
-        .filter(|x| x % 2 == 0)
-        .map(|x| x * x)
-        .sum()
+    (1..=n).filter(|x| x % 2 == 0).map(|x| x * x).sum()
 }
 
 /// Approach 2: Using fold for more control.
 pub fn sum_of_squares_of_evens_fold(n: i32) -> i32 {
-    (1..=n).fold(0, |acc, x| {
-        if x % 2 == 0 {
-            acc + x * x
-        } else {
-            acc
-        }
-    })
+    (1..=n).fold(0, |acc, x| if x % 2 == 0 { acc + x * x } else { acc })
 }
 
 /// Demonstrates flat_map for Cartesian product.
@@ -105,11 +96,7 @@ pub fn running_sum(values: &[i32]) -> Vec<i32> {
 
 /// Demonstrates take_while.
 pub fn take_while_positive(values: &[i32]) -> Vec<i32> {
-    values
-        .iter()
-        .take_while(|&&x| x > 0)
-        .copied()
-        .collect()
+    values.iter().take_while(|&&x| x > 0).copied().collect()
 }
 
 /// Demonstrates skip_while.
@@ -122,7 +109,10 @@ pub fn skip_while_small(values: &[i32], threshold: i32) -> Vec<i32> {
 }
 
 /// Demonstrates chain for concatenation.
-pub fn chain_ranges(a: std::ops::RangeInclusive<i32>, b: std::ops::RangeInclusive<i32>) -> Vec<i32> {
+pub fn chain_ranges(
+    a: std::ops::RangeInclusive<i32>,
+    b: std::ops::RangeInclusive<i32>,
+) -> Vec<i32> {
     a.chain(b).collect()
 }
 

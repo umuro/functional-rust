@@ -11,13 +11,21 @@ fn build_users() -> HashMap<String, (String, u32)> {
 }
 
 // Approach 1: ok_or — eager error value
-fn find_user_eager<'a>(users: &'a HashMap<String, (String, u32)>, name: &str) -> Result<&'a (String, u32), String> {
+fn find_user_eager<'a>(
+    users: &'a HashMap<String, (String, u32)>,
+    name: &str,
+) -> Result<&'a (String, u32), String> {
     users.get(name).ok_or(format!("user not found: {}", name))
 }
 
 // Approach 2: ok_or_else — lazy error (avoids allocation if Some)
-fn find_user_lazy<'a>(users: &'a HashMap<String, (String, u32)>, name: &str) -> Result<&'a (String, u32), String> {
-    users.get(name).ok_or_else(|| format!("user not found: {}", name))
+fn find_user_lazy<'a>(
+    users: &'a HashMap<String, (String, u32)>,
+    name: &str,
+) -> Result<&'a (String, u32), String> {
+    users
+        .get(name)
+        .ok_or_else(|| format!("user not found: {}", name))
 }
 
 // Approach 3: Chaining Option->Result in a pipeline
@@ -37,7 +45,6 @@ fn find_and_validate(
             }
         })
 }
-
 
 #[cfg(test)]
 mod tests {

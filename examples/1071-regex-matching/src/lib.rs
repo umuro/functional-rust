@@ -12,7 +12,9 @@ fn is_match_dp(s: &str, p: &str) -> bool {
 
     // Pattern like a*, a*b* can match empty string
     for j in 2..=n {
-        if p[j - 1] == '*' { dp[0][j] = dp[0][j - 2]; }
+        if p[j - 1] == '*' {
+            dp[0][j] = dp[0][j - 2];
+        }
     }
 
     for i in 1..=m {
@@ -35,9 +37,19 @@ fn is_match_memo(s: &str, p: &str) -> bool {
     let s: Vec<char> = s.chars().collect();
     let p: Vec<char> = p.chars().collect();
 
-    fn solve(i: usize, j: usize, s: &[char], p: &[char], cache: &mut HashMap<(usize, usize), bool>) -> bool {
-        if j == p.len() { return i == s.len(); }
-        if let Some(&v) = cache.get(&(i, j)) { return v; }
+    fn solve(
+        i: usize,
+        j: usize,
+        s: &[char],
+        p: &[char],
+        cache: &mut HashMap<(usize, usize), bool>,
+    ) -> bool {
+        if j == p.len() {
+            return i == s.len();
+        }
+        if let Some(&v) = cache.get(&(i, j)) {
+            return v;
+        }
         let first_match = i < s.len() && (p[j] == '.' || p[j] == s[i]);
         let v = if j + 1 < p.len() && p[j + 1] == '*' {
             solve(i, j + 2, s, p, cache) || (first_match && solve(i + 1, j, s, p, cache))
@@ -93,7 +105,7 @@ fn is_match_nfa(s: &str, p: &str) -> bool {
                 // Also handle: if current is 'x' and next is '*', and we're matching via '*'
                 if st + 1 < n && p[st + 1] == '*' && (p[st] == '.' || p[st] == ch) {
                     next.insert(st + 2); // consume and move past *
-                    next.insert(st);     // consume and stay
+                    next.insert(st); // consume and stay
                 }
             }
         }

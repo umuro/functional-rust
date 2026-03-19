@@ -7,12 +7,24 @@
 pub struct Pair<A, B>(pub A, pub B);
 
 impl<A, B> Pair<A, B> {
-    pub fn new(a: A, b: B) -> Self { Pair(a, b) }
-    pub fn fst(&self) -> &A { &self.0 }
-    pub fn snd(&self) -> &B { &self.1 }
-    pub fn swap(self) -> Pair<B, A> { Pair(self.1, self.0) }
-    pub fn map_fst<C>(self, f: impl FnOnce(A) -> C) -> Pair<C, B> { Pair(f(self.0), self.1) }
-    pub fn map_snd<C>(self, f: impl FnOnce(B) -> C) -> Pair<A, C> { Pair(self.0, f(self.1)) }
+    pub fn new(a: A, b: B) -> Self {
+        Pair(a, b)
+    }
+    pub fn fst(&self) -> &A {
+        &self.0
+    }
+    pub fn snd(&self) -> &B {
+        &self.1
+    }
+    pub fn swap(self) -> Pair<B, A> {
+        Pair(self.1, self.0)
+    }
+    pub fn map_fst<C>(self, f: impl FnOnce(A) -> C) -> Pair<C, B> {
+        Pair(f(self.0), self.1)
+    }
+    pub fn map_snd<C>(self, f: impl FnOnce(B) -> C) -> Pair<A, C> {
+        Pair(self.0, f(self.1))
+    }
 }
 
 /// Triple type.
@@ -20,10 +32,18 @@ impl<A, B> Pair<A, B> {
 pub struct Triple<A, B, C>(pub A, pub B, pub C);
 
 impl<A, B, C> Triple<A, B, C> {
-    pub fn new(a: A, b: B, c: C) -> Self { Triple(a, b, c) }
-    pub fn first(&self) -> &A { &self.0 }
-    pub fn second(&self) -> &B { &self.1 }
-    pub fn third(&self) -> &C { &self.2 }
+    pub fn new(a: A, b: B, c: C) -> Self {
+        Triple(a, b, c)
+    }
+    pub fn first(&self) -> &A {
+        &self.0
+    }
+    pub fn second(&self) -> &B {
+        &self.1
+    }
+    pub fn third(&self) -> &C {
+        &self.2
+    }
 }
 
 /// Zip two vectors into pairs.

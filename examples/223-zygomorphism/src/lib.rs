@@ -1,7 +1,12 @@
 // Example 223: Zygomorphism — Two Mutually Dependent Folds
 
 #[derive(Debug, Clone)]
-enum ExprF<A> { LitF(i64), AddF(A, A), MulF(A, A), NegF(A) }
+enum ExprF<A> {
+    LitF(i64),
+    AddF(A, A),
+    MulF(A, A),
+    NegF(A),
+}
 
 impl<A> ExprF<A> {
     fn map<B>(self, f: impl Fn(A) -> B) -> ExprF<B> {
@@ -21,7 +26,9 @@ impl<A> ExprF<A> {
         }
     }
     fn map_snd<X, Y, B>(&self, f: impl Fn(&(X, Y)) -> B) -> ExprF<B>
-    where A: AsRef<(X, Y)> {
+    where
+        A: AsRef<(X, Y)>,
+    {
         self.map_ref(|a| f(a.as_ref()))
     }
 }
@@ -98,10 +105,18 @@ fn show_main(e: ExprF<(String, u32)>) -> String {
     }
 }
 
-fn lit(n: i64) -> Fix { Fix(Box::new(ExprF::LitF(n))) }
-fn add(a: Fix, b: Fix) -> Fix { Fix(Box::new(ExprF::AddF(a, b))) }
-fn mul(a: Fix, b: Fix) -> Fix { Fix(Box::new(ExprF::MulF(a, b))) }
-fn neg(a: Fix) -> Fix { Fix(Box::new(ExprF::NegF(a))) }
+fn lit(n: i64) -> Fix {
+    Fix(Box::new(ExprF::LitF(n)))
+}
+fn add(a: Fix, b: Fix) -> Fix {
+    Fix(Box::new(ExprF::AddF(a, b)))
+}
+fn mul(a: Fix, b: Fix) -> Fix {
+    Fix(Box::new(ExprF::MulF(a, b)))
+}
+fn neg(a: Fix) -> Fix {
+    Fix(Box::new(ExprF::NegF(a)))
+}
 
 #[cfg(test)]
 mod tests {

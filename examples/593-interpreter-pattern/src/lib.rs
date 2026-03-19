@@ -113,7 +113,12 @@ pub fn pretty(e: &Expr) -> String {
             format!("let {} = {} in {}", name, pretty(value), pretty(body))
         }
         Expr::If { cond, then_, else_ } => {
-            format!("if {} then {} else {}", pretty(cond), pretty(then_), pretty(else_))
+            format!(
+                "if {} then {} else {}",
+                pretty(cond),
+                pretty(then_),
+                pretty(else_)
+            )
         }
     }
 }
@@ -203,7 +208,11 @@ mod tests {
         let e = let_(
             "x",
             lit(3.0),
-            let_("y", lit(4.0), add(mul(var("x"), var("x")), mul(var("y"), var("y")))),
+            let_(
+                "y",
+                lit(4.0),
+                add(mul(var("x"), var("x")), mul(var("y"), var("y"))),
+            ),
         );
         assert_eq!(eval(&HashMap::new(), &e).unwrap(), 25.0);
     }

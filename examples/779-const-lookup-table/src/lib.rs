@@ -26,13 +26,13 @@ const fn const_sin(x: f64) -> f64 {
     while x < -std::f64::consts::PI {
         x += 2.0 * std::f64::consts::PI;
     }
-    
+
     // Taylor: sin(x) ≈ x - x³/3! + x⁵/5! - x⁷/7! + ...
     let x2 = x * x;
     let x3 = x2 * x;
     let x5 = x3 * x2;
     let x7 = x5 * x2;
-    
+
     x - x3 / 6.0 + x5 / 120.0 - x7 / 5040.0
 }
 

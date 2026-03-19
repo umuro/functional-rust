@@ -80,7 +80,6 @@ where
     Err("max attempts exceeded")
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -118,9 +117,18 @@ mod tests {
     #[test]
     fn test_race_fastest_wins() {
         let tasks: Vec<Box<dyn FnOnce() -> u32 + Send + 'static>> = vec![
-            Box::new(|| { thread::sleep(Duration::from_millis(50)); 1 }),
-            Box::new(|| { thread::sleep(Duration::from_millis(5)); 2 }),
-            Box::new(|| { thread::sleep(Duration::from_millis(30)); 3 }),
+            Box::new(|| {
+                thread::sleep(Duration::from_millis(50));
+                1
+            }),
+            Box::new(|| {
+                thread::sleep(Duration::from_millis(5));
+                2
+            }),
+            Box::new(|| {
+                thread::sleep(Duration::from_millis(30));
+                3
+            }),
         ];
         let winner = race(tasks, Duration::from_millis(200));
         assert_eq!(winner, Some(2)); // fastest thread wins

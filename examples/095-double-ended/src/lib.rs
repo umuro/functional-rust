@@ -11,7 +11,6 @@ fn take_from_both(v: &[i32]) -> (Vec<i32>, Vec<i32>) {
     (front, back)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

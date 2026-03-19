@@ -19,7 +19,11 @@ fn concat_strs(data: &[&str]) -> String {
 // fold for custom accumulation
 fn running_average(data: &[f64]) -> f64 {
     let (sum, count) = data.iter().fold((0.0, 0usize), |(s, c), &x| (s + x, c + 1));
-    if count == 0 { 0.0 } else { sum / count as f64 }
+    if count == 0 {
+        0.0
+    } else {
+        sum / count as f64
+    }
 }
 
 // === Approach 2: Specific consumers ===
@@ -82,26 +86,35 @@ fn collect_examples() {
 
     let _vec: Vec<i32> = data.iter().copied().collect();
     let _set: std::collections::HashSet<i32> = data.iter().copied().collect();
-    let _string: String = data.iter().map(|x| x.to_string()).collect::<Vec<_>>().join(", ");
+    let _string: String = data
+        .iter()
+        .map(|x| x.to_string())
+        .collect::<Vec<_>>()
+        .join(", ");
 
     // Collect Result<T, E> — stops at first error
     let results: Vec<Result<i32, _>> = vec![Ok(1), Ok(2), Ok(3)];
     let _all: Result<Vec<i32>, String> = results.into_iter().collect();
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_sum() { assert_eq!(sum(&[1,2,3,4,5]), 15); }
+    fn test_sum() {
+        assert_eq!(sum(&[1, 2, 3, 4, 5]), 15);
+    }
 
     #[test]
-    fn test_product() { assert_eq!(product(&[1,2,3,4,5]), 120); }
+    fn test_product() {
+        assert_eq!(product(&[1, 2, 3, 4, 5]), 120);
+    }
 
     #[test]
-    fn test_concat() { assert_eq!(concat_strs(&["a","b","c"]), "abc"); }
+    fn test_concat() {
+        assert_eq!(concat_strs(&["a", "b", "c"]), "abc");
+    }
 
     #[test]
     fn test_average() {
@@ -111,38 +124,38 @@ mod tests {
 
     #[test]
     fn test_find() {
-        assert_eq!(find_first(&[1,2,3,4,5], |x| *x > 3), Some(&4));
-        assert_eq!(find_first(&[1,2,3], |x| *x > 10), None);
+        assert_eq!(find_first(&[1, 2, 3, 4, 5], |x| *x > 3), Some(&4));
+        assert_eq!(find_first(&[1, 2, 3], |x| *x > 10), None);
     }
 
     #[test]
     fn test_position() {
-        assert_eq!(find_position(&[1,2,3,4,5], |x| *x > 3), Some(3));
-        assert_eq!(find_position(&[1,2,3], |x| *x > 10), None);
+        assert_eq!(find_position(&[1, 2, 3, 4, 5], |x| *x > 3), Some(3));
+        assert_eq!(find_position(&[1, 2, 3], |x| *x > 10), None);
     }
 
     #[test]
     fn test_max_min() {
-        assert_eq!(max_of(&[3,1,4,1,5,9]), Some(&9));
-        assert_eq!(min_of(&[3,1,4,1,5,9]), Some(&1));
+        assert_eq!(max_of(&[3, 1, 4, 1, 5, 9]), Some(&9));
+        assert_eq!(min_of(&[3, 1, 4, 1, 5, 9]), Some(&1));
         assert_eq!(max_of(&[]), None);
     }
 
     #[test]
     fn test_count() {
-        assert_eq!(count_matching(&[1,2,3,4,5,6], |x| x % 2 == 0), 3);
+        assert_eq!(count_matching(&[1, 2, 3, 4, 5, 6], |x| x % 2 == 0), 3);
     }
 
     #[test]
     fn test_any_all() {
-        assert!(any_match(&[1,2,3,4,5,6], |x| *x > 5));
-        assert!(all_match(&[1,2,3], |x| *x > 0));
-        assert!(!all_match(&[1,-2,3], |x| *x > 0));
+        assert!(any_match(&[1, 2, 3, 4, 5, 6], |x| *x > 5));
+        assert!(all_match(&[1, 2, 3], |x| *x > 0));
+        assert!(!all_match(&[1, -2, 3], |x| *x > 0));
     }
 
     #[test]
     fn test_frequencies() {
-        let f = frequencies(&[1,2,1,3,2,1]);
+        let f = frequencies(&[1, 2, 1, 3, 2, 1]);
         assert_eq!(f[&1], 3);
         assert_eq!(f[&2], 2);
         assert_eq!(f[&3], 1);
@@ -150,7 +163,7 @@ mod tests {
 
     #[test]
     fn test_frequencies_fold() {
-        let f = frequencies_fold(&[1,2,1,3,2,1]);
+        let f = frequencies_fold(&[1, 2, 1, 3, 2, 1]);
         assert_eq!(f[&1], 3);
     }
 

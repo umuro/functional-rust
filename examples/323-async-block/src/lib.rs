@@ -103,13 +103,8 @@ mod tests {
     #[test]
     fn test_lazy_filter_map() {
         let items = vec![1, 2, 3, 4, 5, 6];
-        let evens_doubled = lazy_filter_map(items, |&x| {
-            if x % 2 == 0 {
-                Some(x * 2)
-            } else {
-                None
-            }
-        });
+        let evens_doubled =
+            lazy_filter_map(items, |&x| if x % 2 == 0 { Some(x * 2) } else { None });
         assert_eq!(evens_doubled, vec![4, 8, 12]);
     }
 

@@ -23,28 +23,40 @@ const LANES: usize = 8;
 pub struct F32x8([f32; LANES]);
 
 impl F32x8 {
-    pub fn splat(v: f32) -> Self { Self([v; LANES]) }
-    pub fn from_array(a: [f32; LANES]) -> Self { Self(a) }
-    pub fn to_array(self) -> [f32; LANES] { self.0 }
+    pub fn splat(v: f32) -> Self {
+        Self([v; LANES])
+    }
+    pub fn from_array(a: [f32; LANES]) -> Self {
+        Self(a)
+    }
+    pub fn to_array(self) -> [f32; LANES] {
+        self.0
+    }
 
     /// Lane-wise addition — compiles to VADDPS ymm on AVX2.
     pub fn add(self, rhs: Self) -> Self {
         let mut r = [0.0f32; LANES];
-        for i in 0..LANES { r[i] = self.0[i] + rhs.0[i]; }
+        for i in 0..LANES {
+            r[i] = self.0[i] + rhs.0[i];
+        }
         Self(r)
     }
 
     /// Lane-wise multiplication — compiles to VMULPS ymm on AVX2.
     pub fn mul(self, rhs: Self) -> Self {
         let mut r = [0.0f32; LANES];
-        for i in 0..LANES { r[i] = self.0[i] * rhs.0[i]; }
+        for i in 0..LANES {
+            r[i] = self.0[i] * rhs.0[i];
+        }
         Self(r)
     }
 
     /// Fused multiply-add: self * a + b — compiles to VFMADD213PS on AVX2+FMA.
     pub fn mul_add(self, a: Self, b: Self) -> Self {
         let mut r = [0.0f32; LANES];
-        for i in 0..LANES { r[i] = self.0[i].mul_add(a.0[i], b.0[i]); }
+        for i in 0..LANES {
+            r[i] = self.0[i].mul_add(a.0[i], b.0[i]);
+        }
         Self(r)
     }
 
@@ -56,14 +68,18 @@ impl F32x8 {
     /// Lane-wise max — compiles to VMAXPS ymm.
     pub fn max(self, rhs: Self) -> Self {
         let mut r = [0.0f32; LANES];
-        for i in 0..LANES { r[i] = self.0[i].max(rhs.0[i]); }
+        for i in 0..LANES {
+            r[i] = self.0[i].max(rhs.0[i]);
+        }
         Self(r)
     }
 
     /// Lane-wise min — compiles to VMINPS ymm.
     pub fn min(self, rhs: Self) -> Self {
         let mut r = [0.0f32; LANES];
-        for i in 0..LANES { r[i] = self.0[i].min(rhs.0[i]); }
+        for i in 0..LANES {
+            r[i] = self.0[i].min(rhs.0[i]);
+        }
         Self(r)
     }
 
@@ -72,7 +88,11 @@ impl F32x8 {
     pub fn select(mask: &MaskF32x8, on_true: Self, on_false: Self) -> Self {
         let mut r = [0.0f32; LANES];
         for i in 0..LANES {
-            r[i] = if mask.0[i] { on_true.0[i] } else { on_false.0[i] };
+            r[i] = if mask.0[i] {
+                on_true.0[i]
+            } else {
+                on_false.0[i]
+            };
         }
         Self(r)
     }
@@ -80,7 +100,9 @@ impl F32x8 {
     /// Compare greater-than, producing a mask.
     pub fn gt(self, rhs: Self) -> MaskF32x8 {
         let mut m = [false; LANES];
-        for i in 0..LANES { m[i] = self.0[i] > rhs.0[i]; }
+        for i in 0..LANES {
+            m[i] = self.0[i] > rhs.0[i];
+        }
         MaskF32x8(m)
     }
 }
@@ -90,8 +112,12 @@ impl F32x8 {
 pub struct MaskF32x8([bool; LANES]);
 
 impl MaskF32x8 {
-    pub fn any(self) -> bool { self.0.iter().any(|&b| b) }
-    pub fn all(self) -> bool { self.0.iter().all(|&b| b) }
+    pub fn any(self) -> bool {
+        self.0.iter().any(|&b| b)
+    }
+    pub fn all(self) -> bool {
+        self.0.iter().all(|&b| b)
+    }
 }
 
 // ── Vectorised algorithms ─────────────────────────────────────────────────────
@@ -106,8 +132,8 @@ pub fn dot_product_simd(a: &[f32], b: &[f32]) -> f32 {
     let mut acc = F32x8::splat(0.0);
     for i in 0..full_chunks {
         let off = i * LANES;
-        let va = F32x8::from_array(a[off..off+LANES].try_into().unwrap());
-        let vb = F32x8::from_array(b[off..off+LANES].try_into().unwrap());
+        let va = F32x8::from_array(a[off..off + LANES].try_into().unwrap());
+        let vb = F32x8::from_array(b[off..off + LANES].try_into().unwrap());
         // acc = va * vb + acc  (FMA)
         acc = va.mul_add(vb, acc);
     }
@@ -129,9 +155,9 @@ pub fn clamp_simd(data: &mut [f32], lo: f32, hi: f32) {
 
     for i in 0..full {
         let off = i * LANES;
-        let v = F32x8::from_array(data[off..off+LANES].try_into().unwrap());
+        let v = F32x8::from_array(data[off..off + LANES].try_into().unwrap());
         let clamped = v.max(vlo).min(vhi);
-        data[off..off+LANES].copy_from_slice(&clamped.to_array());
+        data[off..off + LANES].copy_from_slice(&clamped.to_array());
     }
     // Scalar tail
     for v in &mut data[full * LANES..] {
@@ -150,11 +176,13 @@ pub fn sum_simd(data: &[f32]) -> f32 {
     let mut acc = F32x8::splat(0.0);
     for i in 0..full {
         let off = i * LANES;
-        let v = F32x8::from_array(data[off..off+LANES].try_into().unwrap());
+        let v = F32x8::from_array(data[off..off + LANES].try_into().unwrap());
         acc = acc.add(v);
     }
     let mut result = acc.reduce_sum();
-    for &v in &data[full * LANES..] { result += v; }
+    for &v in &data[full * LANES..] {
+        result += v;
+    }
     result
 }
 
@@ -165,7 +193,6 @@ pub fn dot_scalar(a: &[f32], b: &[f32]) -> f32 {
 }
 
 // ── main ──────────────────────────────────────────────────────────────────────
-
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
@@ -206,7 +233,9 @@ mod tests {
     fn clamp_bounds() {
         let mut v = vec![-5.0f32, 0.0, 5.0, 10.0, 15.0, 3.0, -1.0, 8.0];
         clamp_simd(&mut v, 0.0, 10.0);
-        for &x in &v { assert!(x >= 0.0 && x <= 10.0); }
+        for &x in &v {
+            assert!(x >= 0.0 && x <= 10.0);
+        }
     }
 
     #[test]

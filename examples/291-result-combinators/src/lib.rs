@@ -4,8 +4,7 @@
 
 /// Parse a string into an integer with a custom error message
 pub fn parse_int(s: &str) -> Result<i32, String> {
-    s.parse::<i32>()
-        .map_err(|e| format!("parse error: {}", e))
+    s.parse::<i32>().map_err(|e| format!("parse error: {}", e))
 }
 
 /// Divide two numbers, returning an error for division by zero

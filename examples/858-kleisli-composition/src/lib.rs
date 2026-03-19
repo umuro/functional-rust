@@ -14,11 +14,19 @@ fn parse_int(s: &str) -> Option<i32> {
 }
 
 fn check_positive(n: i32) -> Option<i32> {
-    if n > 0 { Some(n) } else { None }
+    if n > 0 {
+        Some(n)
+    } else {
+        None
+    }
 }
 
 fn safe_half(n: i32) -> Option<i32> {
-    if n % 2 == 0 { Some(n / 2) } else { None }
+    if n % 2 == 0 {
+        Some(n / 2)
+    } else {
+        None
+    }
 }
 
 // Approach 2: Kleisli for Result
@@ -34,18 +42,25 @@ fn parse_r(s: &str) -> Result<i32, String> {
 }
 
 fn positive_r(n: i32) -> Result<i32, String> {
-    if n > 0 { Ok(n) } else { Err("not positive".into()) }
+    if n > 0 {
+        Ok(n)
+    } else {
+        Err("not positive".into())
+    }
 }
 
 fn even_r(n: i32) -> Result<i32, String> {
-    if n % 2 == 0 { Ok(n) } else { Err("not even".into()) }
+    if n % 2 == 0 {
+        Ok(n)
+    } else {
+        Err("not even".into())
+    }
 }
 
 // Approach 3: Dynamic pipeline from Vec of Kleisli arrows
 fn pipeline(steps: &[fn(i32) -> Option<i32>], x: i32) -> Option<i32> {
     steps.iter().fold(Some(x), |acc, step| acc.and_then(step))
 }
-
 
 #[cfg(test)]
 mod tests {

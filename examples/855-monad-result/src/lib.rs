@@ -3,21 +3,28 @@
 
 // Approach 1: and_then chains
 fn parse_int(s: &str) -> Result<i32, String> {
-    s.parse::<i32>().map_err(|_| format!("Not an integer: {}", s))
+    s.parse::<i32>()
+        .map_err(|_| format!("Not an integer: {}", s))
 }
 
 fn check_positive(n: i32) -> Result<i32, String> {
-    if n > 0 { Ok(n) } else { Err(format!("Not positive: {}", n)) }
+    if n > 0 {
+        Ok(n)
+    } else {
+        Err(format!("Not positive: {}", n))
+    }
 }
 
 fn check_even(n: i32) -> Result<i32, String> {
-    if n % 2 == 0 { Ok(n) } else { Err(format!("Not even: {}", n)) }
+    if n % 2 == 0 {
+        Ok(n)
+    } else {
+        Err(format!("Not even: {}", n))
+    }
 }
 
 fn validate_input(s: &str) -> Result<i32, String> {
-    parse_int(s)
-        .and_then(check_positive)
-        .and_then(check_even)
+    parse_int(s).and_then(check_positive).and_then(check_even)
 }
 
 // Approach 2: Using ? operator (Rust's monadic do-notation)
@@ -42,15 +49,24 @@ enum ValidationError {
 }
 
 fn parse_int_typed(s: &str) -> Result<i32, ValidationError> {
-    s.parse::<i32>().map_err(|_| ValidationError::ParseError(s.to_string()))
+    s.parse::<i32>()
+        .map_err(|_| ValidationError::ParseError(s.to_string()))
 }
 
 fn check_positive_typed(n: i32) -> Result<i32, ValidationError> {
-    if n > 0 { Ok(n) } else { Err(ValidationError::NotPositive(n)) }
+    if n > 0 {
+        Ok(n)
+    } else {
+        Err(ValidationError::NotPositive(n))
+    }
 }
 
 fn check_even_typed(n: i32) -> Result<i32, ValidationError> {
-    if n % 2 == 0 { Ok(n) } else { Err(ValidationError::NotEven(n)) }
+    if n % 2 == 0 {
+        Ok(n)
+    } else {
+        Err(ValidationError::NotEven(n))
+    }
 }
 
 fn validate_typed(s: &str) -> Result<i32, ValidationError> {
@@ -58,7 +74,6 @@ fn validate_typed(s: &str) -> Result<i32, ValidationError> {
     let n = check_positive_typed(n)?;
     check_even_typed(n)
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -99,7 +114,10 @@ mod tests {
     #[test]
     fn test_typed_errors() {
         assert_eq!(validate_typed("42"), Ok(42));
-        assert_eq!(validate_typed("bad"), Err(ValidationError::ParseError("bad".into())));
+        assert_eq!(
+            validate_typed("bad"),
+            Err(ValidationError::ParseError("bad".into()))
+        );
         assert_eq!(validate_typed("-2"), Err(ValidationError::NotPositive(-2)));
         assert_eq!(validate_typed("3"), Err(ValidationError::NotEven(3)));
     }

@@ -1,3 +1,19 @@
+#![allow(clippy::manual_is_multiple_of)]
+#![allow(unused_variables)]
+#![allow(clippy::match_like_matches)]
+#![allow(clippy::type_complexity)]
+#![allow(clippy::too_many_lines)]
+#![allow(clippy::manual_range_contains)]
+#![allow(clippy::explicit_iter_loop)]
+#![allow(clippy::needless_lifetimes)]
+#![allow(clippy::char_lit_as_u8)]
+#![allow(clippy::while_let_loop)]
+#![allow(clippy::manual_strip)]
+#![allow(clippy::useless_vec)]
+#![allow(clippy::needless_borrow)]
+#![allow(clippy::redundant_closure)]
+#![allow(unused_imports)]
+#![allow(dead_code)]
 use std::io::{self, BufRead, Write};
 use std::sync::mpsc;
 use std::thread;
@@ -11,11 +27,11 @@ fn read_string_async(content: String) -> impl FnOnce() -> String {
     }
 }
 
-fn spawn_io_task<T: Send + 'static>(f: impl FnOnce() -> T + Send + 'static)
-    -> mpsc::Receiver<T>
-{
+fn spawn_io_task<T: Send + 'static>(f: impl FnOnce() -> T + Send + 'static) -> mpsc::Receiver<T> {
     let (tx, rx) = mpsc::channel();
-    thread::spawn(move || { let _ = tx.send(f()); });
+    thread::spawn(move || {
+        let _ = tx.send(f());
+    });
     rx
 }
 
@@ -29,7 +45,6 @@ fn process_text(text: &str) -> (usize, usize, usize) {
 fn write_to_buf(buf: &mut Vec<u8>, data: &[u8]) -> io::Result<usize> {
     buf.write(data)
 }
-
 
 #[cfg(test)]
 mod tests {

@@ -8,7 +8,10 @@ struct MyRange {
 
 impl MyRange {
     fn new(start: i32, end_: i32) -> Self {
-        MyRange { current: start, end_ }
+        MyRange {
+            current: start,
+            end_,
+        }
     }
 }
 
@@ -32,7 +35,9 @@ struct Fibonacci {
 }
 
 impl Fibonacci {
-    fn new() -> Self { Fibonacci { a: 0, b: 1 } }
+    fn new() -> Self {
+        Fibonacci { a: 0, b: 1 }
+    }
 }
 
 impl Iterator for Fibonacci {
@@ -53,7 +58,6 @@ fn demo_free_methods() -> Vec<i32> {
         .map(|x| x * x)
         .collect()
 }
-
 
 #[cfg(test)]
 mod tests {

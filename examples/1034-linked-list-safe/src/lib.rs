@@ -123,19 +123,24 @@ fn from_vec() {
     assert_eq!(items, vec![1, 2, 3, 4, 5]);
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_basic() { basic_operations(); }
+    fn test_basic() {
+        basic_operations();
+    }
 
     #[test]
-    fn test_iterator() { iterator_demo(); }
+    fn test_iterator() {
+        iterator_demo();
+    }
 
     #[test]
-    fn test_from_vec() { from_vec(); }
+    fn test_from_vec() {
+        from_vec();
+    }
 
     #[test]
     fn test_empty() {

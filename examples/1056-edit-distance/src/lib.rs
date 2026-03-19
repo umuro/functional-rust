@@ -8,8 +8,12 @@ fn edit_distance(s1: &str, s2: &str) -> usize {
     let b: Vec<char> = s2.chars().collect();
     let (m, n) = (a.len(), b.len());
     let mut dp = vec![vec![0; n + 1]; m + 1];
-    for i in 0..=m { dp[i][0] = i; }
-    for j in 0..=n { dp[0][j] = j; }
+    for i in 0..=m {
+        dp[i][0] = i;
+    }
+    for j in 0..=n {
+        dp[0][j] = j;
+    }
     for i in 1..=m {
         for j in 1..=n {
             dp[i][j] = if a[i - 1] == b[j - 1] {
@@ -47,10 +51,22 @@ fn edit_distance_opt(s1: &str, s2: &str) -> usize {
 fn edit_distance_memo(s1: &str, s2: &str) -> usize {
     let a: Vec<char> = s1.chars().collect();
     let b: Vec<char> = s2.chars().collect();
-    fn solve(i: usize, j: usize, a: &[char], b: &[char], cache: &mut HashMap<(usize, usize), usize>) -> usize {
-        if i == 0 { return j; }
-        if j == 0 { return i; }
-        if let Some(&v) = cache.get(&(i, j)) { return v; }
+    fn solve(
+        i: usize,
+        j: usize,
+        a: &[char],
+        b: &[char],
+        cache: &mut HashMap<(usize, usize), usize>,
+    ) -> usize {
+        if i == 0 {
+            return j;
+        }
+        if j == 0 {
+            return i;
+        }
+        if let Some(&v) = cache.get(&(i, j)) {
+            return v;
+        }
         let v = if a[i - 1] == b[j - 1] {
             solve(i - 1, j - 1, a, b, cache)
         } else {

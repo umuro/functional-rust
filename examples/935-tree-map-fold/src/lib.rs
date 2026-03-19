@@ -26,11 +26,7 @@ pub fn map_tree<T, U>(tree: &Tree<T>, f: &impl Fn(&T) -> U) -> Tree<U> {
 
 /// Fold (catamorphism) on a tree. The function `f` receives the node value
 /// and the results of folding the left and right subtrees.
-pub fn fold_tree<T, A>(
-    tree: &Tree<T>,
-    acc: A,
-    f: &impl Fn(&T, A, A) -> A,
-) -> A
+pub fn fold_tree<T, A>(tree: &Tree<T>, acc: A, f: &impl Fn(&T, A, A) -> A) -> A
 where
     A: Clone,
 {
@@ -86,7 +82,11 @@ mod tests {
         //    2   6
         //   / \
         //  1   3
-        Tree::node(4, Tree::node(2, Tree::node(1, Leaf, Leaf), Tree::node(3, Leaf, Leaf)), Tree::node(6, Leaf, Leaf))
+        Tree::node(
+            4,
+            Tree::node(2, Tree::node(1, Leaf, Leaf), Tree::node(3, Leaf, Leaf)),
+            Tree::node(6, Leaf, Leaf),
+        )
     }
 
     #[test]

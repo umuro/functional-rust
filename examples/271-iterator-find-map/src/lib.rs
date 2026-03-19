@@ -21,7 +21,9 @@ mod tests {
     #[test]
     fn test_find_map_first_match() {
         let nums = [1i32, 2, 3, 4, 5];
-        let result = nums.iter().find_map(|&x| if x > 3 { Some(x * 10) } else { None });
+        let result = nums
+            .iter()
+            .find_map(|&x| if x > 3 { Some(x * 10) } else { None });
         assert_eq!(result, Some(40));
     }
 }

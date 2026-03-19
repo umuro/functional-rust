@@ -39,7 +39,6 @@ fn only_errors(inputs: &[&str]) -> Vec<String> {
     inputs.iter().filter_map(|s| parse_int(s).err()).collect()
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

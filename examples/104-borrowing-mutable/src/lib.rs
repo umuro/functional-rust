@@ -33,7 +33,6 @@ fn swap_first_last(v: &mut [i32]) {
 //     println!("{:?}", r1);
 // }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

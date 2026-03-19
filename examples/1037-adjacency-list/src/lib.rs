@@ -10,7 +10,9 @@ struct Graph {
 
 impl Graph {
     fn new() -> Self {
-        Graph { adj: HashMap::new() }
+        Graph {
+            adj: HashMap::new(),
+        }
     }
 
     fn add_edge(&mut self, from: usize, to: usize) {
@@ -127,16 +129,19 @@ fn test_path_finding() {
     assert!(g.find_path(4, 0).is_none()); // No path back (directed)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_bfs() { test_bfs_dfs(); }
+    fn test_bfs() {
+        test_bfs_dfs();
+    }
 
     #[test]
-    fn test_paths() { test_path_finding(); }
+    fn test_paths() {
+        test_path_finding();
+    }
 
     #[test]
     fn test_disconnected() {

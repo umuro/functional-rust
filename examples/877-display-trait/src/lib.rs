@@ -54,7 +54,9 @@ impl fmt::Display for Matrix {
         for (i, row) in self.data.iter().enumerate() {
             write!(f, "| ")?;
             for (j, val) in row.iter().enumerate() {
-                if j > 0 { write!(f, " ")?; }
+                if j > 0 {
+                    write!(f, " ")?;
+                }
                 write!(f, "{:6.2}", val)?;
             }
             write!(f, " |")?;
@@ -89,12 +91,12 @@ impl<T: fmt::Display> fmt::Display for Tree<T> {
 
 // Display enables .to_string() automatically
 fn print_all<T: fmt::Display>(items: &[T]) -> String {
-    items.iter()
+    items
+        .iter()
         .map(|i| i.to_string())
         .collect::<Vec<_>>()
         .join(", ")
 }
-
 
 #[cfg(test)]
 mod tests {

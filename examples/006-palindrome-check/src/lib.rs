@@ -21,7 +21,6 @@ fn is_palindrome_clean(s: &str) -> bool {
     clean.iter().eq(clean.iter().rev())
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

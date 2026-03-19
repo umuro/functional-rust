@@ -49,7 +49,9 @@ impl Nat for Zero {}
 impl<N: Nat> Nat for Succ<N> {}
 
 trait TypeVec<T> {
-    fn to_vec(&self) -> std::vec::Vec<T> where T: Clone;
+    fn to_vec(&self) -> std::vec::Vec<T>
+    where
+        T: Clone;
 }
 
 #[derive(Debug)]
@@ -59,7 +61,9 @@ struct VNil;
 struct VCons<T, N: Nat, Rest: TypeVec<T>>(T, Rest, std::marker::PhantomData<N>);
 
 impl<T: Clone> TypeVec<T> for VNil {
-    fn to_vec(&self) -> std::vec::Vec<T> { vec![] }
+    fn to_vec(&self) -> std::vec::Vec<T> {
+        vec![]
+    }
 }
 
 impl<T: Clone, N: Nat, Rest: TypeVec<T>> TypeVec<T> for VCons<T, N, Rest> {
@@ -71,14 +75,21 @@ impl<T: Clone, N: Nat, Rest: TypeVec<T>> TypeVec<T> for VCons<T, N, Rest> {
 }
 
 impl<T, N: Nat, Rest: TypeVec<T>> VCons<T, N, Rest> {
-    fn head(&self) -> &T { &self.0 }
-    fn tail(&self) -> &Rest { &self.1 }
+    fn head(&self) -> &T {
+        &self.0
+    }
+    fn tail(&self) -> &Rest {
+        &self.1
+    }
 }
 
-fn vnil() -> VNil { VNil }
+fn vnil() -> VNil {
+    VNil
+}
 
 fn vcons<T, N: Nat, R: TypeVec<T>>(x: T, rest: R) -> VCons<T, Succ<N>, R>
-where R: TypeVec<T>
+where
+    R: TypeVec<T>,
 {
     VCons(x, rest, std::marker::PhantomData)
 }
@@ -88,7 +99,9 @@ where R: TypeVec<T>
 trait SizedList {
     type Elem;
     const LEN: usize;
-    fn to_vec(&self) -> std::vec::Vec<Self::Elem> where Self::Elem: Clone;
+    fn to_vec(&self) -> std::vec::Vec<Self::Elem>
+    where
+        Self::Elem: Clone;
 }
 
 struct LNil<T>(std::marker::PhantomData<T>);
@@ -97,13 +110,21 @@ struct LCons<T, Tail: SizedList<Elem = T>>(T, Tail);
 impl<T> SizedList for LNil<T> {
     type Elem = T;
     const LEN: usize = 0;
-    fn to_vec(&self) -> std::vec::Vec<T> where T: Clone { vec![] }
+    fn to_vec(&self) -> std::vec::Vec<T>
+    where
+        T: Clone,
+    {
+        vec![]
+    }
 }
 
 impl<T, Tail: SizedList<Elem = T>> SizedList for LCons<T, Tail> {
     type Elem = T;
     const LEN: usize = 1 + Tail::LEN;
-    fn to_vec(&self) -> std::vec::Vec<T> where T: Clone {
+    fn to_vec(&self) -> std::vec::Vec<T>
+    where
+        T: Clone,
+    {
         let mut v = vec![self.0.clone()];
         v.extend(self.1.to_vec());
         v
@@ -111,7 +132,9 @@ impl<T, Tail: SizedList<Elem = T>> SizedList for LCons<T, Tail> {
 }
 
 impl<T, Tail: SizedList<Elem = T>> LCons<T, Tail> {
-    fn head(&self) -> &T { &self.0 }
+    fn head(&self) -> &T {
+        &self.0
+    }
 }
 
 #[cfg(test)]

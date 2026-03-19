@@ -19,7 +19,10 @@ fn print_and_clone<T: Display + Clone>(item: &T) -> (String, T) {
 }
 
 fn find_max<T: PartialOrd + Clone>(items: &[T]) -> Option<T> {
-    items.iter().cloned().reduce(|a, b| if a >= b { a } else { b })
+    items
+        .iter()
+        .cloned()
+        .reduce(|a, b| if a >= b { a } else { b })
 }
 
 // Approach 3: Bounds for arithmetic
@@ -33,9 +36,12 @@ fn contains<T: PartialEq>(items: &[T], target: &T) -> bool {
 
 // Generic pair with bounds
 fn larger<T: PartialOrd>(a: T, b: T) -> T {
-    if a >= b { a } else { b }
+    if a >= b {
+        a
+    } else {
+        b
+    }
 }
-
 
 #[cfg(test)]
 mod tests {

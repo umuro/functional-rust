@@ -17,11 +17,7 @@ pub enum StateEffect<S> {
 }
 
 /// Simple effect handler using callbacks.
-pub fn handle_io<T>(
-    effect: IoEffect,
-    on_print: impl Fn(&str) -> T,
-    on_read: impl Fn() -> T,
-) -> T {
+pub fn handle_io<T>(effect: IoEffect, on_print: impl Fn(&str) -> T, on_read: impl Fn() -> T) -> T {
     match effect {
         IoEffect::Print(s) => on_print(&s),
         IoEffect::Read => on_read(),
@@ -45,10 +41,7 @@ pub fn handle_state<S: Clone, T>(
 }
 
 /// Run a stateful computation.
-pub fn run_state<S: Clone, T>(
-    init: S,
-    f: impl FnOnce(&mut S) -> T,
-) -> (T, S) {
+pub fn run_state<S: Clone, T>(init: S, f: impl FnOnce(&mut S) -> T) -> (T, S) {
     let mut state = init;
     let result = f(&mut state);
     (result, state)

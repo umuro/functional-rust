@@ -19,15 +19,16 @@ pub fn parse_best_effort(inputs: &[&str]) -> Vec<i64> {
 
 /// Parse with fallback value for errors
 pub fn parse_with_default(inputs: &[&str], default: i64) -> Vec<i64> {
-    inputs.iter().map(|s| parse_int(s).unwrap_or(default)).collect()
+    inputs
+        .iter()
+        .map(|s| parse_int(s).unwrap_or(default))
+        .collect()
 }
 
 /// Partition into successes and failures
 pub fn parse_partition(inputs: &[&str]) -> (Vec<i64>, Vec<String>) {
-    let (oks, errs): (Vec<_>, Vec<_>) = inputs
-        .iter()
-        .map(|s| parse_int(s))
-        .partition(Result::is_ok);
+    let (oks, errs): (Vec<_>, Vec<_>) =
+        inputs.iter().map(|s| parse_int(s)).partition(Result::is_ok);
     let nums: Vec<i64> = oks.into_iter().map(Result::unwrap).collect();
     let errors: Vec<String> = errs.into_iter().map(Result::unwrap_err).collect();
     (nums, errors)

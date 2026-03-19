@@ -8,13 +8,15 @@ use std::thread;
 fn concurrent_readers() -> Vec<i32> {
     let data = Arc::new(RwLock::new(42i32));
 
-    let handles: Vec<_> = (0..5).map(|_| {
-        let data = Arc::clone(&data);
-        thread::spawn(move || {
-            let guard = data.read().unwrap(); // shared read lock
-            *guard // all 5 can hold read lock simultaneously
+    let handles: Vec<_> = (0..5)
+        .map(|_| {
+            let data = Arc::clone(&data);
+            thread::spawn(move || {
+                let guard = data.read().unwrap(); // shared read lock
+                *guard // all 5 can hold read lock simultaneously
+            })
         })
-    }).collect();
+        .collect();
 
     handles.into_iter().map(|h| h.join().unwrap()).collect()
 }
@@ -47,13 +49,15 @@ fn config_pattern() -> (String, i32) {
     }));
 
     // Many readers
-    let readers: Vec<_> = (0..4).map(|_| {
-        let config = Arc::clone(&config);
-        thread::spawn(move || {
-            let c = config.read().unwrap();
-            (c.name.clone(), c.threshold)
+    let readers: Vec<_> = (0..4)
+        .map(|_| {
+            let config = Arc::clone(&config);
+            thread::spawn(move || {
+                let c = config.read().unwrap();
+                (c.name.clone(), c.threshold)
+            })
         })
-    }).collect();
+        .collect();
 
     // One writer updates the config
     {
@@ -66,12 +70,13 @@ fn config_pattern() -> (String, i32) {
         writer.join().unwrap();
     }
 
-    for h in readers { h.join().unwrap(); } // let readers finish
+    for h in readers {
+        h.join().unwrap();
+    } // let readers finish
 
     let c = config.read().unwrap();
     (c.name.clone(), c.threshold)
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -101,7 +106,7 @@ mod tests {
         let rw = RwLock::new(0i32);
         let _r1 = rw.read().unwrap();
         let _r2 = rw.read().unwrap(); // multiple reads OK
-        // rw.try_write() would fail here (readers active)
+                                      // rw.try_write() would fail here (readers active)
         assert!(rw.try_write().is_err());
     }
 

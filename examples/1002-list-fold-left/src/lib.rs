@@ -123,7 +123,10 @@ mod tests {
     #[test]
     fn test_fold_left_iter_max() {
         let numbers = vec![1, 5, 3, 2, 4];
-        assert_eq!(fold_left_iter(i32::MIN, &numbers, |acc, x| if x > &acc { *x } else { acc }), 5);
+        assert_eq!(
+            fold_left_iter(i32::MIN, &numbers, |acc, x| if x > &acc { *x } else { acc }),
+            5
+        );
     }
 
     #[test]

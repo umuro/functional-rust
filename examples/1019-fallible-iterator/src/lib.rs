@@ -34,9 +34,7 @@ impl Iterator for LineParser {
 }
 
 // Approach 2: Adaptor that stops at first error
-fn take_while_ok<T, E>(
-    iter: impl Iterator<Item = Result<T, E>>,
-) -> Result<Vec<T>, E> {
+fn take_while_ok<T, E>(iter: impl Iterator<Item = Result<T, E>>) -> Result<Vec<T>, E> {
     let mut results = Vec::new();
     for item in iter {
         results.push(item?);
@@ -45,9 +43,7 @@ fn take_while_ok<T, E>(
 }
 
 // Approach 3: Process all, keeping partial results
-fn process_all<T, E>(
-    iter: impl Iterator<Item = Result<T, E>>,
-) -> (Vec<T>, Vec<E>) {
+fn process_all<T, E>(iter: impl Iterator<Item = Result<T, E>>) -> (Vec<T>, Vec<E>) {
     let mut oks = Vec::new();
     let mut errs = Vec::new();
     for item in iter {
@@ -58,7 +54,6 @@ fn process_all<T, E>(
     }
     (oks, errs)
 }
-
 
 #[cfg(test)]
 mod tests {

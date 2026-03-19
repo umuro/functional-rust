@@ -11,7 +11,9 @@ struct IntervalMap<V> {
 
 impl<V: Clone> IntervalMap<V> {
     fn new() -> Self {
-        IntervalMap { map: BTreeMap::new() }
+        IntervalMap {
+            map: BTreeMap::new(),
+        }
     }
 
     /// Insert interval [lo, hi) -> value, removing overlapping intervals
@@ -19,7 +21,9 @@ impl<V: Clone> IntervalMap<V> {
         assert!(lo < hi, "interval must be non-empty");
 
         // Remove all intervals that overlap with [lo, hi)
-        let overlapping: Vec<i64> = self.map.range(..hi)
+        let overlapping: Vec<i64> = self
+            .map
+            .range(..hi)
             .filter(|(_, (end, _))| *end > lo)
             .map(|(&start, _)| start)
             .collect();
@@ -34,11 +38,15 @@ impl<V: Clone> IntervalMap<V> {
     /// Query: find value at a point
     fn query(&self, point: i64) -> Option<&V> {
         // Find the interval whose start <= point
-        self.map.range(..=point)
-            .next_back()
-            .and_then(|(_, (hi, v))| {
-                if point < *hi { Some(v) } else { None }
-            })
+        self.map.range(..=point).next_back().and_then(
+            |(_, (hi, v))| {
+                if point < *hi {
+                    Some(v)
+                } else {
+                    None
+                }
+            },
+        )
     }
 
     /// List all intervals as (start, end, value) triples
@@ -86,19 +94,24 @@ fn intervals_listing() {
     assert_eq!(intervals[1], (10, 20, &"y"));
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_basic() { basic_ops(); }
+    fn test_basic() {
+        basic_ops();
+    }
 
     #[test]
-    fn test_overlap() { overlap_test(); }
+    fn test_overlap() {
+        overlap_test();
+    }
 
     #[test]
-    fn test_listing() { intervals_listing(); }
+    fn test_listing() {
+        intervals_listing();
+    }
 
     #[test]
     fn test_boundary() {

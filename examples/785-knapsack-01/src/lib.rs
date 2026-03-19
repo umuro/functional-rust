@@ -6,7 +6,7 @@
 pub fn knapsack(weights: &[usize], values: &[usize], capacity: usize) -> usize {
     let n = weights.len();
     let mut dp = vec![vec![0; capacity + 1]; n + 1];
-    
+
     for i in 1..=n {
         for w in 0..=capacity {
             if weights[i - 1] <= w {

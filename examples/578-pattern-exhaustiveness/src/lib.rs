@@ -125,7 +125,10 @@ mod tests {
         assert_eq!(status_text(StatusCode::Ok), "OK");
         assert_eq!(status_text(StatusCode::NotFound), "Not Found");
         assert_eq!(status_text(StatusCode::Unauthorized), "Unauthorized");
-        assert_eq!(status_text(StatusCode::ServerError), "Internal Server Error");
+        assert_eq!(
+            status_text(StatusCode::ServerError),
+            "Internal Server Error"
+        );
     }
 
     #[test]

@@ -13,7 +13,9 @@ struct PersistentMap<K, V> {
 
 impl<K: std::hash::Hash + Eq + Clone, V: Clone> PersistentMap<K, V> {
     fn new() -> Self {
-        PersistentMap { data: HashMap::new() }
+        PersistentMap {
+            data: HashMap::new(),
+        }
     }
 
     /// Insert returns a new version (old version unchanged)
@@ -49,8 +51,8 @@ fn persistence_demo() {
         .insert("b", 2)
         .insert("c", 3);
 
-    let v2 = v1.insert("d", 4);        // v2 has a,b,c,d
-    let v3 = v1.insert("b", 99);       // v3 updates b in v1
+    let v2 = v1.insert("d", 4); // v2 has a,b,c,d
+    let v3 = v1.insert("b", 99); // v3 updates b in v1
 
     // All versions coexist
     assert_eq!(v1.get(&"b"), Some(&2));
@@ -64,7 +66,10 @@ fn persistence_demo() {
 fn version_history() {
     let mut versions: Vec<Rc<PersistentMap<&str, i32>>> = vec![Rc::new(PersistentMap::new())];
 
-    fn update(versions: &mut Vec<Rc<PersistentMap<&'static str, i32>>>, f: fn(&PersistentMap<&'static str, i32>) -> PersistentMap<&'static str, i32>) {
+    fn update(
+        versions: &mut Vec<Rc<PersistentMap<&'static str, i32>>>,
+        f: fn(&PersistentMap<&'static str, i32>) -> PersistentMap<&'static str, i32>,
+    ) {
         let current = versions.last().unwrap().clone();
         versions.push(Rc::new(f(&current)));
     }
@@ -151,13 +156,19 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_persistence() { persistence_demo(); }
+    fn test_persistence() {
+        persistence_demo();
+    }
 
     #[test]
-    fn test_versions() { version_history(); }
+    fn test_versions() {
+        version_history();
+    }
 
     #[test]
-    fn test_undo_redo() { undo_redo_test(); }
+    fn test_undo_redo() {
+        undo_redo_test();
+    }
 
     #[test]
     fn test_empty_undo() {

@@ -8,7 +8,7 @@ pub fn rule_shared_vs_mutable() -> Vec<i32> {
     let r1 = &v;
     let r2 = &v; // multiple shared OK
     let _ = (r1.len(), r2.len()); // use borrows
-    // r1, r2 end here (NLL)
+                                  // r1, r2 end here (NLL)
     v.push(4); // mutable borrow OK now
     v
 }

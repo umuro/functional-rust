@@ -3,7 +3,11 @@
 
 // Approach 1: Option basics
 fn safe_div(a: i32, b: i32) -> Option<i32> {
-    if b == 0 { None } else { Some(a / b) }
+    if b == 0 {
+        None
+    } else {
+        Some(a / b)
+    }
 }
 
 fn safe_head(v: &[i32]) -> Option<i32> {
@@ -36,11 +40,19 @@ enum MyError {
 }
 
 fn safe_div_r(a: i32, b: i32) -> Result<i32, MyError> {
-    if b == 0 { Err(MyError::DivByZero) } else { Ok(a / b) }
+    if b == 0 {
+        Err(MyError::DivByZero)
+    } else {
+        Ok(a / b)
+    }
 }
 
 fn safe_sqrt(x: f64) -> Result<f64, MyError> {
-    if x < 0.0 { Err(MyError::NegativeInput) } else { Ok(x.sqrt()) }
+    if x < 0.0 {
+        Err(MyError::NegativeInput)
+    } else {
+        Ok(x.sqrt())
+    }
 }
 
 fn safe_head_r(v: &[i32]) -> Result<i32, MyError> {
@@ -51,7 +63,6 @@ fn compute(v: &[i32]) -> Result<i32, MyError> {
     let x = safe_head_r(v)?;
     safe_div_r(x * 10, 3)
 }
-
 
 #[cfg(test)]
 mod tests {

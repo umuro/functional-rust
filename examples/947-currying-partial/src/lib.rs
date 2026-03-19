@@ -103,7 +103,7 @@ mod tests {
     #[test]
     fn test_celsius() {
         assert_eq!(celsius_of_fahrenheit(212), 900); // 212*5 - 160 = 900
-        // Note: integer arithmetic, not actual Celsius conversion
+                                                     // Note: integer arithmetic, not actual Celsius conversion
     }
 
     #[test]

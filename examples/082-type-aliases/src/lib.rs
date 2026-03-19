@@ -19,11 +19,16 @@ enum AppError {
 type AppResult<T> = Result<T, AppError>;
 
 fn parse_int(s: &str) -> AppResult<i32> {
-    s.parse().map_err(|_| AppError::ParseError(format!("Not a number: {}", s)))
+    s.parse()
+        .map_err(|_| AppError::ParseError(format!("Not a number: {}", s)))
 }
 
 fn safe_div(a: i32, b: i32) -> AppResult<i32> {
-    if b == 0 { Err(AppError::DivByZero) } else { Ok(a / b) }
+    if b == 0 {
+        Err(AppError::DivByZero)
+    } else {
+        Ok(a / b)
+    }
 }
 
 // Approach 3: Complex type aliases
@@ -35,12 +40,15 @@ fn filter_map_custom<T: Clone, U>(
     pred: &dyn Fn(&T) -> bool,
     f: &dyn Fn(T) -> U,
 ) -> Vec<U> {
-    items.iter().filter(|x| pred(x)).map(|x| f(x.clone())).collect()
+    items
+        .iter()
+        .filter(|x| pred(x))
+        .map(|x| f(x.clone()))
+        .collect()
 }
 
 // io::Result pattern
 type IoResult<T> = std::io::Result<T>;
-
 
 #[cfg(test)]
 mod tests {
@@ -65,11 +73,7 @@ mod tests {
 
     #[test]
     fn test_filter_map() {
-        let result = filter_map_custom(
-            &[1, 2, 3, 4, 5, 6],
-            &|x: &i32| x % 2 == 0,
-            &|x: i32| x * 2,
-        );
+        let result = filter_map_custom(&[1, 2, 3, 4, 5, 6], &|x: &i32| x % 2 == 0, &|x: i32| x * 2);
         assert_eq!(result, vec![4, 8, 12]);
     }
 }

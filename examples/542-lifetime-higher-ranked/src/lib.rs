@@ -61,10 +61,7 @@ mod tests {
 
     #[test]
     fn test_transform_all() {
-        let items = vec![
-            String::from("  a  "),
-            String::from("  b  "),
-        ];
+        let items = vec![String::from("  a  "), String::from("  b  ")];
         let result = transform_all(&items, trim);
         assert_eq!(result, vec!["a", "b"]);
     }

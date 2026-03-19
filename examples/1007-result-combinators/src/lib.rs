@@ -2,7 +2,8 @@
 // and_then, or_else, map, map_err, unwrap_or_else
 
 fn parse_int(s: &str) -> Result<i64, String> {
-    s.parse::<i64>().map_err(|e| format!("not an int: {} ({})", s, e))
+    s.parse::<i64>()
+        .map_err(|e| format!("not an int: {} ({})", s, e))
 }
 
 fn double_if_positive(n: i64) -> Result<i64, String> {
@@ -30,11 +31,8 @@ fn process_with_fallback(s: &str) -> String {
 }
 
 fn process_or_else(s: &str) -> Result<i64, String> {
-    parse_int(s)
-        .and_then(double_if_positive)
-        .or_else(|_| Ok(0)) // fallback to 0 on any error
+    parse_int(s).and_then(double_if_positive).or_else(|_| Ok(0)) // fallback to 0 on any error
 }
-
 
 #[cfg(test)]
 mod tests {

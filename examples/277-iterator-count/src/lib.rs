@@ -2,7 +2,6 @@
 //!
 //! `count()` consumes an iterator and returns the total number of elements.
 
-
 #[cfg(test)]
 mod tests {
     #[test]

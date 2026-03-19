@@ -13,7 +13,9 @@ mod tests {
     #[test]
     fn test_inspect_side_effect() {
         let mut seen = Vec::new();
-        let _result: Vec<i32> = [1, 2, 3].iter().copied()
+        let _result: Vec<i32> = [1, 2, 3]
+            .iter()
+            .copied()
             .inspect(|&x| seen.push(x))
             .collect();
         assert_eq!(seen, vec![1, 2, 3]);

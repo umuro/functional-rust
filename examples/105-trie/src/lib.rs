@@ -3,8 +3,8 @@
 //! A trie stores strings with shared prefixes efficiently.
 //! OCaml's `Map.Make(Char)` for children maps to Rust's `HashMap<char, Trie>`.
 
-use std::collections::HashMap;
 use std::collections::BTreeMap;
+use std::collections::HashMap;
 
 // ---------------------------------------------------------------------------
 // Approach A: HashMap-based trie (idiomatic Rust)
@@ -64,7 +64,10 @@ pub struct FunctionalTrie {
 
 impl FunctionalTrie {
     pub fn empty() -> Self {
-        FunctionalTrie { is_word: false, children: BTreeMap::new() }
+        FunctionalTrie {
+            is_word: false,
+            children: BTreeMap::new(),
+        }
     }
 
     pub fn insert(&self, word: &str) -> Self {
@@ -73,16 +76,24 @@ impl FunctionalTrie {
 
     fn insert_chars(&self, chars: &[char], i: usize) -> Self {
         if i == chars.len() {
-            FunctionalTrie { is_word: true, children: self.children.clone() }
+            FunctionalTrie {
+                is_word: true,
+                children: self.children.clone(),
+            }
         } else {
             let c = chars[i];
-            let child = self.children.get(&c)
+            let child = self
+                .children
+                .get(&c)
                 .cloned()
                 .unwrap_or_else(FunctionalTrie::empty);
             let new_child = child.insert_chars(chars, i + 1);
             let mut new_children = self.children.clone();
             new_children.insert(c, new_child);
-            FunctionalTrie { is_word: self.is_word, children: new_children }
+            FunctionalTrie {
+                is_word: self.is_word,
+                children: new_children,
+            }
         }
     }
 

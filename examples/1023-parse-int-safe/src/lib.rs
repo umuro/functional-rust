@@ -40,7 +40,6 @@ fn parse_or_default(s: &str, default: i64) -> i64 {
     s.parse::<i64>().unwrap_or(default)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

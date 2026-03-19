@@ -25,7 +25,11 @@ pub enum ScottOption<A, T> {
 
 /// Simple Scott-like pattern matching simulation.
 pub fn scott_match_bool<T>(b: bool, on_true: impl Fn() -> T, on_false: impl Fn() -> T) -> T {
-    if b { on_true() } else { on_false() }
+    if b {
+        on_true()
+    } else {
+        on_false()
+    }
 }
 
 /// Scott-like Option matching.

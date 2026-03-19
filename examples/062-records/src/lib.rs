@@ -58,14 +58,15 @@ fn prod_config() -> Config {
 
 // Approach 3: Destructuring
 fn describe_config(config: &Config) -> String {
-    let Config { host, port, debug, .. } = config;
+    let Config {
+        host, port, debug, ..
+    } = config;
     format!("{}:{}{}", host, port, if *debug { " [DEBUG]" } else { "" })
 }
 
 fn is_local(config: &Config) -> bool {
     config.host == "localhost" || config.host == "127.0.0.1"
 }
-
 
 #[cfg(test)]
 mod tests {

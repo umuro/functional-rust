@@ -24,9 +24,7 @@ pub fn parse_or_default(s: &str, default: i32) -> i32 {
 
 /// Config-style loading with default
 pub fn load_port(env_val: Option<String>) -> u16 {
-    env_val
-        .and_then(|s| s.parse().ok())
-        .unwrap_or(8080)
+    env_val.and_then(|s| s.parse().ok()).unwrap_or(8080)
 }
 
 #[cfg(test)]

@@ -10,8 +10,15 @@ pub struct Tagged<T, Tag> {
 }
 
 impl<T, Tag> Tagged<T, Tag> {
-    pub fn new(value: T) -> Self { Tagged { value, _tag: PhantomData } }
-    pub fn into_inner(self) -> T { self.value }
+    pub fn new(value: T) -> Self {
+        Tagged {
+            value,
+            _tag: PhantomData,
+        }
+    }
+    pub fn into_inner(self) -> T {
+        self.value
+    }
 }
 
 /// Type-level markers
@@ -22,14 +29,22 @@ pub struct Unvalidated;
 pub struct UserId<State>(u64, PhantomData<State>);
 
 impl UserId<Unvalidated> {
-    pub fn new(id: u64) -> Self { UserId(id, PhantomData) }
+    pub fn new(id: u64) -> Self {
+        UserId(id, PhantomData)
+    }
     pub fn validate(self) -> Option<UserId<Validated>> {
-        if self.0 > 0 { Some(UserId(self.0, PhantomData)) } else { None }
+        if self.0 > 0 {
+            Some(UserId(self.0, PhantomData))
+        } else {
+            None
+        }
     }
 }
 
 impl UserId<Validated> {
-    pub fn get(&self) -> u64 { self.0 }
+    pub fn get(&self) -> u64 {
+        self.0
+    }
 }
 
 #[cfg(test)]

@@ -27,7 +27,9 @@ pub fn append_exclaim(opt: &mut Option<String>) {
 }
 
 /// Ref in struct destructuring.
-pub struct Container { pub data: String }
+pub struct Container {
+    pub data: String,
+}
 
 pub fn peek(c: &Container) -> &str {
     let Container { ref data } = c;
@@ -72,7 +74,9 @@ mod tests {
 
     #[test]
     fn test_peek() {
-        let c = Container { data: "test".into() };
+        let c = Container {
+            data: "test".into(),
+        };
         assert_eq!(peek(&c), "test");
     }
 }

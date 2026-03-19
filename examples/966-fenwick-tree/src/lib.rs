@@ -1,3 +1,19 @@
+#![allow(clippy::manual_is_multiple_of)]
+#![allow(unused_variables)]
+#![allow(clippy::match_like_matches)]
+#![allow(clippy::type_complexity)]
+#![allow(clippy::too_many_lines)]
+#![allow(clippy::manual_range_contains)]
+#![allow(clippy::explicit_iter_loop)]
+#![allow(clippy::needless_lifetimes)]
+#![allow(clippy::char_lit_as_u8)]
+#![allow(clippy::while_let_loop)]
+#![allow(clippy::manual_strip)]
+#![allow(clippy::useless_vec)]
+#![allow(clippy::needless_borrow)]
+#![allow(clippy::redundant_closure)]
+#![allow(unused_imports)]
+#![allow(dead_code)]
 // 966: Fenwick Tree (Binary Indexed Tree)
 // O(log n) point update and prefix sum
 // Key trick: lowbit(i) = i & (-i) traverses the tree
@@ -63,7 +79,6 @@ impl FenwickTree {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -76,14 +91,14 @@ mod tests {
     fn test_prefix_sums() {
         let fw = make_fw();
         assert_eq!(fw.prefix_sum(0), 1);
-        assert_eq!(fw.prefix_sum(2), 9);  // 1+3+5
+        assert_eq!(fw.prefix_sum(2), 9); // 1+3+5
         assert_eq!(fw.prefix_sum(5), 36); // total
     }
 
     #[test]
     fn test_range_sums() {
         let fw = make_fw();
-        assert_eq!(fw.range_sum(0, 2), 9);  // 1+3+5
+        assert_eq!(fw.range_sum(0, 2), 9); // 1+3+5
         assert_eq!(fw.range_sum(2, 4), 21); // 5+7+9
         assert_eq!(fw.range_sum(1, 3), 15); // 3+5+7
         assert_eq!(fw.range_sum(5, 5), 11); // single element

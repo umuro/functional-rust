@@ -149,10 +149,7 @@ pub fn sum_array<const N: usize>(arr: &[i32; N]) -> i32 {
 }
 
 /// Compare array lengths at compile time
-pub fn arrays_same_size<T, U, const N: usize, const M: usize>(
-    _a: &[T; N],
-    _b: &[U; M],
-) -> bool {
+pub fn arrays_same_size<T, U, const N: usize, const M: usize>(_a: &[T; N], _b: &[U; M]) -> bool {
     N == M
 }
 
@@ -172,7 +169,7 @@ mod tests {
     fn test_buffer() {
         let mut buf: Buffer<16> = Buffer::new();
         assert_eq!(buf.capacity(), 16);
-        
+
         buf.push(b'H');
         buf.push(b'i');
         assert_eq!(buf.as_slice(), b"Hi");
@@ -191,7 +188,7 @@ mod tests {
         let mut m: Matrix<i32, 3, 4> = Matrix::new();
         assert_eq!(m.rows(), 3);
         assert_eq!(m.cols(), 4);
-        
+
         m.set(1, 2, 42);
         assert_eq!(m.get(1, 2), Some(&42));
     }
@@ -213,7 +210,7 @@ mod tests {
         let a = [1, 2, 3];
         let b = ['a', 'b', 'c'];
         let c = [1.0, 2.0];
-        
+
         assert!(arrays_same_size(&a, &b));
         assert!(!arrays_same_size(&a, &c));
     }

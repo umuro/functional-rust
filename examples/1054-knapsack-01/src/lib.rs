@@ -31,12 +31,18 @@ fn knapsack_1d(weights: &[usize], values: &[i64], capacity: usize) -> i64 {
 // Approach 3: Recursive with HashMap memoization
 fn knapsack_memo(weights: &[usize], values: &[i64], capacity: usize) -> i64 {
     fn solve(
-        i: usize, w: usize,
-        weights: &[usize], values: &[i64],
+        i: usize,
+        w: usize,
+        weights: &[usize],
+        values: &[i64],
         cache: &mut HashMap<(usize, usize), i64>,
     ) -> i64 {
-        if i == 0 || w == 0 { return 0; }
-        if let Some(&v) = cache.get(&(i, w)) { return v; }
+        if i == 0 || w == 0 {
+            return 0;
+        }
+        if let Some(&v) = cache.get(&(i, w)) {
+            return v;
+        }
         let skip = solve(i - 1, w, weights, values, cache);
         let take = if weights[i - 1] <= w {
             solve(i - 1, w - weights[i - 1], weights, values, cache) + values[i - 1]

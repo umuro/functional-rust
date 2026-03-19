@@ -42,7 +42,11 @@ macro_rules! string_enum {
 }
 
 string_enum!(Color { Red, Green, Blue });
-string_enum!(Status { Active, Inactive, Pending });
+string_enum!(Status {
+    Active,
+    Inactive,
+    Pending
+});
 
 /// Build a path-like string from segments.
 #[macro_export]
@@ -69,12 +73,7 @@ macro_rules! fn_name {
 #[macro_export]
 macro_rules! log_here {
     ($msg:expr) => {
-        println!(
-            "[{}:{}] {}",
-            file!(),
-            line!(),
-            $msg
-        );
+        println!("[{}:{}] {}", file!(), line!(), $msg);
     };
 }
 
@@ -82,11 +81,7 @@ macro_rules! log_here {
 #[macro_export]
 macro_rules! version_str {
     () => {
-        concat!(
-            env!("CARGO_PKG_NAME"),
-            " v",
-            env!("CARGO_PKG_VERSION")
-        )
+        concat!(env!("CARGO_PKG_NAME"), " v", env!("CARGO_PKG_VERSION"))
     };
 }
 

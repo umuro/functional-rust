@@ -23,7 +23,9 @@ pub struct AtomicCounter {
 
 impl AtomicCounter {
     pub fn new(v: i64) -> Self {
-        Self { value: std::sync::atomic::AtomicI64::new(v) }
+        Self {
+            value: std::sync::atomic::AtomicI64::new(v),
+        }
     }
     pub fn get(&self) -> i64 {
         self.value.load(std::sync::atomic::Ordering::SeqCst)
@@ -44,7 +46,7 @@ unsafe impl ThreadSafe for AtomicCounter {
 // ── Type that is NOT Send (contains *mut T) ───────────────────────────────
 
 pub struct NotSend {
-    _ptr: *mut i32,  // *mut T is !Send by default
+    _ptr: *mut i32, // *mut T is !Send by default
 }
 
 // fn use_not_send_in_thread(x: NotSend) {
@@ -60,7 +62,6 @@ fn run_in_thread<T: ThreadSafe + 'static>(val: Arc<T>) {
         .unwrap();
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -68,7 +69,7 @@ mod tests {
     #[test]
     fn test_atomic_counter_send_sync() {
         fn assert_send_sync<T: Send + Sync>() {}
-        assert_send_sync::<AtomicCounter>();  // won't compile if wrong
+        assert_send_sync::<AtomicCounter>(); // won't compile if wrong
     }
 
     #[test]
@@ -80,11 +81,15 @@ mod tests {
     #[test]
     fn test_concurrent_increment() {
         let c = Arc::new(AtomicCounter::new(0));
-        let handles: Vec<_> = (0..10).map(|_| {
-            let cc = Arc::clone(&c);
-            thread::spawn(move || cc.increment())
-        }).collect();
-        for h in handles { h.join().unwrap(); }
+        let handles: Vec<_> = (0..10)
+            .map(|_| {
+                let cc = Arc::clone(&c);
+                thread::spawn(move || cc.increment())
+            })
+            .collect();
+        for h in handles {
+            h.join().unwrap();
+        }
         assert_eq!(c.get(), 10);
     }
 }

@@ -34,7 +34,7 @@ mod tests {
 
     #[test]
     fn test_edge_cases() {
-        assert!(is_leap_year(4));     // Year 4 is a leap year
-        assert!(is_leap_year(2));     // Year 2 is NOT a leap year
+        assert!(is_leap_year(4)); // Year 4 is a leap year
+        assert!(is_leap_year(2)); // Year 2 is NOT a leap year
     }
 }

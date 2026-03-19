@@ -76,19 +76,24 @@ fn test_top_k_by() {
     assert_eq!(*longest3[1], "hello");
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_top_k_basic() { test_top_k(); }
+    fn test_top_k_basic() {
+        test_top_k();
+    }
 
     #[test]
-    fn test_max_heap() { max_heap_demo(); }
+    fn test_max_heap() {
+        max_heap_demo();
+    }
 
     #[test]
-    fn test_custom_key() { test_top_k_by(); }
+    fn test_custom_key() {
+        test_top_k_by();
+    }
 
     #[test]
     fn test_from_vec() {

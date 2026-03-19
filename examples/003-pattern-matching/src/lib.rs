@@ -61,7 +61,6 @@ fn classify_number(n: i32) -> &'static str {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

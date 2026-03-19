@@ -234,11 +234,13 @@ mod tests {
 
     #[test]
     fn test_request_json_body() {
-        let req = Request::post("https://api.example.com/users")
-            .json_body(r#"{"name": "Alice"}"#);
+        let req = Request::post("https://api.example.com/users").json_body(r#"{"name": "Alice"}"#);
 
         assert_eq!(req.method, "POST");
-        assert!(req.headers.iter().any(|(k, v)| k == "Content-Type" && v == "application/json"));
+        assert!(req
+            .headers
+            .iter()
+            .any(|(k, v)| k == "Content-Type" && v == "application/json"));
         assert!(req.body.is_some());
     }
 
@@ -251,7 +253,10 @@ mod tests {
             .limit(10)
             .to_sql();
 
-        assert_eq!(sql, "SELECT id, name, email FROM users WHERE active = true ORDER BY name LIMIT 10");
+        assert_eq!(
+            sql,
+            "SELECT id, name, email FROM users WHERE active = true ORDER BY name LIMIT 10"
+        );
     }
 
     #[test]

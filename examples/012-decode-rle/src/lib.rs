@@ -12,22 +12,28 @@ pub enum RleItem<T> {
 // ── Idiomatic Rust: flat_map with repeat ────────────────────────────────────
 
 pub fn decode<T: Clone>(encoded: &[RleItem<T>]) -> Vec<T> {
-    encoded.iter().flat_map(|item| match item {
-        RleItem::One(x) => vec![x.clone()],
-        RleItem::Many(n, x) => vec![x.clone(); *n],
-    }).collect()
+    encoded
+        .iter()
+        .flat_map(|item| match item {
+            RleItem::One(x) => vec![x.clone()],
+            RleItem::Many(n, x) => vec![x.clone(); *n],
+        })
+        .collect()
 }
 
 // ── Iterator-based with std::iter::repeat ───────────────────────────────────
 
 pub fn decode_iter<T: Clone>(encoded: &[RleItem<T>]) -> Vec<T> {
-    encoded.iter().flat_map(|item| {
-        let (count, value) = match item {
-            RleItem::One(x) => (1, x),
-            RleItem::Many(n, x) => (*n, x),
-        };
-        std::iter::repeat(value.clone()).take(count)
-    }).collect()
+    encoded
+        .iter()
+        .flat_map(|item| {
+            let (count, value) = match item {
+                RleItem::One(x) => (1, x),
+                RleItem::Many(n, x) => (*n, x),
+            };
+            std::iter::repeat(value.clone()).take(count)
+        })
+        .collect()
 }
 
 // ── Recursive style ─────────────────────────────────────────────────────────
@@ -38,8 +44,9 @@ pub fn decode_recursive<T: Clone>(encoded: &[RleItem<T>]) -> Vec<T> {
             RleItem::One(x) => vec![x.clone()],
             RleItem::Many(n, x) => {
                 // Recursive expansion (functional style)
-                if *n == 0 { vec![] }
-                else {
+                if *n == 0 {
+                    vec![]
+                } else {
                     let mut rest = expand(&RleItem::Many(n - 1, x.clone()));
                     rest.insert(0, x.clone());
                     rest
@@ -83,7 +90,7 @@ mod tests {
     #[test]
     fn test_mixed() {
         let encoded = vec![Many(3, 'a'), One('b'), Many(2, 'c'), Many(4, 'd')];
-        let expected = vec!['a','a','a','b','c','c','d','d','d','d'];
+        let expected = vec!['a', 'a', 'a', 'b', 'c', 'c', 'd', 'd', 'd', 'd'];
         assert_eq!(decode(&encoded), expected);
         assert_eq!(decode_iter(&encoded), expected);
         assert_eq!(decode_recursive(&encoded), expected);

@@ -14,25 +14,37 @@ fn float_string<'a>() -> Parser<'a, &'a str> {
         let len = bytes.len();
         let mut pos = 0;
         // optional sign
-        if pos < len && (bytes[pos] == b'+' || bytes[pos] == b'-') { pos += 1; }
+        if pos < len && (bytes[pos] == b'+' || bytes[pos] == b'-') {
+            pos += 1;
+        }
         let start_digits = pos;
         // integer part
-        while pos < len && bytes[pos].is_ascii_digit() { pos += 1; }
+        while pos < len && bytes[pos].is_ascii_digit() {
+            pos += 1;
+        }
         // decimal part
         if pos < len && bytes[pos] == b'.' {
             pos += 1;
-            while pos < len && bytes[pos].is_ascii_digit() { pos += 1; }
+            while pos < len && bytes[pos].is_ascii_digit() {
+                pos += 1;
+            }
         }
         // exponent
         if pos < len && (bytes[pos] == b'e' || bytes[pos] == b'E') {
             pos += 1;
-            if pos < len && (bytes[pos] == b'+' || bytes[pos] == b'-') { pos += 1; }
-            while pos < len && bytes[pos].is_ascii_digit() { pos += 1; }
+            if pos < len && (bytes[pos] == b'+' || bytes[pos] == b'-') {
+                pos += 1;
+            }
+            while pos < len && bytes[pos].is_ascii_digit() {
+                pos += 1;
+            }
         }
         if pos == start_digits && (pos == 0 || bytes[pos - 1] != b'.') {
             return Err("Expected number".to_string());
         }
-        if pos == 0 { return Err("Expected number".to_string()); }
+        if pos == 0 {
+            return Err("Expected number".to_string());
+        }
         Ok((&input[..pos], &input[pos..]))
     })
 }
@@ -62,11 +74,15 @@ fn number_combinator<'a>() -> Parser<'a, f64> {
         let len = chars.len();
 
         // optional sign
-        if pos < len && (chars[pos] == '+' || chars[pos] == '-') { pos += 1; }
+        if pos < len && (chars[pos] == '+' || chars[pos] == '-') {
+            pos += 1;
+        }
 
         let digit_start = pos;
         // integer part
-        while pos < len && chars[pos].is_ascii_digit() { pos += 1; }
+        while pos < len && chars[pos].is_ascii_digit() {
+            pos += 1;
+        }
         let has_int = pos > digit_start;
 
         // decimal part
@@ -74,7 +90,9 @@ fn number_combinator<'a>() -> Parser<'a, f64> {
         if pos < len && chars[pos] == '.' {
             pos += 1;
             let frac_start = pos;
-            while pos < len && chars[pos].is_ascii_digit() { pos += 1; }
+            while pos < len && chars[pos].is_ascii_digit() {
+                pos += 1;
+            }
             has_frac = pos > frac_start;
         }
 
@@ -85,8 +103,12 @@ fn number_combinator<'a>() -> Parser<'a, f64> {
         // exponent
         if pos < len && (chars[pos] == 'e' || chars[pos] == 'E') {
             pos += 1;
-            if pos < len && (chars[pos] == '+' || chars[pos] == '-') { pos += 1; }
-            while pos < len && chars[pos].is_ascii_digit() { pos += 1; }
+            if pos < len && (chars[pos] == '+' || chars[pos] == '-') {
+                pos += 1;
+            }
+            while pos < len && chars[pos].is_ascii_digit() {
+                pos += 1;
+            }
         }
 
         let byte_len: usize = chars[..pos].iter().map(|c| c.len_utf8()).sum();

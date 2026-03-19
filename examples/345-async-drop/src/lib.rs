@@ -12,9 +12,17 @@ pub struct Resource {
 impl Resource {
     pub fn new(id: usize) -> (Self, Arc<AtomicBool>) {
         let flag = Arc::new(AtomicBool::new(false));
-        (Self { id, cleaned_up: Arc::clone(&flag) }, flag)
+        (
+            Self {
+                id,
+                cleaned_up: Arc::clone(&flag),
+            },
+            flag,
+        )
     }
-    pub fn id(&self) -> usize { self.id }
+    pub fn id(&self) -> usize {
+        self.id
+    }
 }
 
 impl Drop for Resource {
@@ -23,29 +31,49 @@ impl Drop for Resource {
     }
 }
 
-pub struct Guard<F: FnOnce()> { cleanup: Option<F> }
+pub struct Guard<F: FnOnce()> {
+    cleanup: Option<F>,
+}
 
 impl<F: FnOnce()> Guard<F> {
-    pub fn new(cleanup: F) -> Self { Self { cleanup: Some(cleanup) } }
-    pub fn disarm(mut self) { self.cleanup = None; }
+    pub fn new(cleanup: F) -> Self {
+        Self {
+            cleanup: Some(cleanup),
+        }
+    }
+    pub fn disarm(mut self) {
+        self.cleanup = None;
+    }
 }
 
 impl<F: FnOnce()> Drop for Guard<F> {
-    fn drop(&mut self) { if let Some(f) = self.cleanup.take() { f(); } }
+    fn drop(&mut self) {
+        if let Some(f) = self.cleanup.take() {
+            f();
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[test] fn resource_cleanup_on_drop() {
+    #[test]
+    fn resource_cleanup_on_drop() {
         let flag;
-        { let (r, f) = Resource::new(1); flag = f; assert_eq!(r.id(), 1); }
+        {
+            let (r, f) = Resource::new(1);
+            flag = f;
+            assert_eq!(r.id(), 1);
+        }
         assert!(flag.load(Ordering::SeqCst));
     }
-    #[test] fn guard_runs_cleanup() {
+    #[test]
+    fn guard_runs_cleanup() {
         let called = Arc::new(AtomicBool::new(false));
         let c = Arc::clone(&called);
-        { let _g = Guard::new(move || c.store(true, Ordering::SeqCst)); }
+        {
+            let _g = Guard::new(move || c.store(true, Ordering::SeqCst));
+        }
         assert!(called.load(Ordering::SeqCst));
     }
 }

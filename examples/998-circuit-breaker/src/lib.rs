@@ -90,7 +90,6 @@ impl CircuitBreaker {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -138,7 +137,7 @@ mod tests {
         let cb = CircuitBreaker::new(3, Duration::from_secs(1));
         cb.call(|| Err::<i32, &str>("e"));
         cb.call(|| Err::<i32, &str>("e")); // 2 failures
-        cb.call(|| Ok::<i32, &str>(1));    // success — reset
+        cb.call(|| Ok::<i32, &str>(1)); // success — reset
         cb.call(|| Err::<i32, &str>("e")); // 1 failure — not open yet
         assert_eq!(cb.state_name(), "Closed");
     }

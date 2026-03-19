@@ -1,8 +1,12 @@
 // 074: Currying and Partial Application
 
 // Approach 1: Closures for partial application
-fn add(x: i32, y: i32) -> i32 { x + y }
-fn multiply(x: i32, y: i32) -> i32 { x * y }
+fn add(x: i32, y: i32) -> i32 {
+    x + y
+}
+fn multiply(x: i32, y: i32) -> i32 {
+    x * y
+}
 
 fn make_adder(x: i32) -> impl Fn(i32) -> i32 {
     move |y| x + y
@@ -34,7 +38,6 @@ fn apply_twice(f: impl Fn(i32) -> i32, x: i32) -> i32 {
 fn compose<A, B, C>(f: impl Fn(B) -> C, g: impl Fn(A) -> B) -> impl Fn(A) -> C {
     move |x| f(g(x))
 }
-
 
 #[cfg(test)]
 mod tests {

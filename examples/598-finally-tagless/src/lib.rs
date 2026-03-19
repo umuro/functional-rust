@@ -15,9 +15,15 @@ pub struct Eval;
 
 impl ExprAlg for Eval {
     type Repr = i32;
-    fn lit(&self, n: i32) -> i32 { n }
-    fn add(&self, a: i32, b: i32) -> i32 { a + b }
-    fn mul(&self, a: i32, b: i32) -> i32 { a * b }
+    fn lit(&self, n: i32) -> i32 {
+        n
+    }
+    fn add(&self, a: i32, b: i32) -> i32 {
+        a + b
+    }
+    fn mul(&self, a: i32, b: i32) -> i32 {
+        a * b
+    }
 }
 
 /// Pretty printer interpretation - expressions become strings.
@@ -25,9 +31,15 @@ pub struct Pretty;
 
 impl ExprAlg for Pretty {
     type Repr = String;
-    fn lit(&self, n: i32) -> String { n.to_string() }
-    fn add(&self, a: String, b: String) -> String { format!("({} + {})", a, b) }
-    fn mul(&self, a: String, b: String) -> String { format!("({} * {})", a, b) }
+    fn lit(&self, n: i32) -> String {
+        n.to_string()
+    }
+    fn add(&self, a: String, b: String) -> String {
+        format!("({} + {})", a, b)
+    }
+    fn mul(&self, a: String, b: String) -> String {
+        format!("({} * {})", a, b)
+    }
 }
 
 /// Generic expression builder.
@@ -42,11 +54,15 @@ pub trait ExprAlgExt: ExprAlg {
 }
 
 impl ExprAlgExt for Eval {
-    fn sub(&self, a: i32, b: i32) -> i32 { a - b }
+    fn sub(&self, a: i32, b: i32) -> i32 {
+        a - b
+    }
 }
 
 impl ExprAlgExt for Pretty {
-    fn sub(&self, a: String, b: String) -> String { format!("({} - {})", a, b) }
+    fn sub(&self, a: String, b: String) -> String {
+        format!("({} - {})", a, b)
+    }
 }
 
 #[cfg(test)]

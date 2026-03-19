@@ -8,7 +8,10 @@ pub struct Iso<A, B> {
 
 impl<A, B> Iso<A, B> {
     pub fn new(to: impl Fn(A) -> B + 'static, from: impl Fn(B) -> A + 'static) -> Self {
-        Iso { to: Box::new(to), from: Box::new(from) }
+        Iso {
+            to: Box::new(to),
+            from: Box::new(from),
+        }
     }
 }
 
@@ -19,7 +22,8 @@ pub fn celsius_fahrenheit() -> Iso<f64, f64> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[test] fn test_iso() {
+    #[test]
+    fn test_iso() {
         let iso = celsius_fahrenheit();
         let f = (iso.to)(100.0);
         assert!((f - 212.0).abs() < 0.001);

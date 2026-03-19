@@ -1,3 +1,19 @@
+#![allow(clippy::manual_is_multiple_of)]
+#![allow(unused_variables)]
+#![allow(clippy::match_like_matches)]
+#![allow(clippy::type_complexity)]
+#![allow(clippy::too_many_lines)]
+#![allow(clippy::manual_range_contains)]
+#![allow(clippy::explicit_iter_loop)]
+#![allow(clippy::needless_lifetimes)]
+#![allow(clippy::char_lit_as_u8)]
+#![allow(clippy::while_let_loop)]
+#![allow(clippy::manual_strip)]
+#![allow(clippy::useless_vec)]
+#![allow(clippy::needless_borrow)]
+#![allow(clippy::redundant_closure)]
+#![allow(unused_imports)]
+#![allow(dead_code)]
 // 1055: Longest Common Subsequence — 2D DP + Backtrack
 
 use std::collections::HashMap;
@@ -54,9 +70,19 @@ fn lcs_string(s1: &str, s2: &str) -> String {
 // Approach 3: Recursive with memoization
 fn lcs_memo(s1: &str, s2: &str) -> usize {
     let (a, b): (Vec<char>, Vec<char>) = (s1.chars().collect(), s2.chars().collect());
-    fn solve(i: usize, j: usize, a: &[char], b: &[char], cache: &mut HashMap<(usize, usize), usize>) -> usize {
-        if i == 0 || j == 0 { return 0; }
-        if let Some(&v) = cache.get(&(i, j)) { return v; }
+    fn solve(
+        i: usize,
+        j: usize,
+        a: &[char],
+        b: &[char],
+        cache: &mut HashMap<(usize, usize), usize>,
+    ) -> usize {
+        if i == 0 || j == 0 {
+            return 0;
+        }
+        if let Some(&v) = cache.get(&(i, j)) {
+            return v;
+        }
         let v = if a[i - 1] == b[j - 1] {
             solve(i - 1, j - 1, a, b, cache) + 1
         } else {

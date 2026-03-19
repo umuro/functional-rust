@@ -1,10 +1,9 @@
+use std::collections::BTreeMap;
 /// Word Count with Map
 ///
 /// Building a word-frequency map from text. Demonstrates string
 /// normalization, splitting, and folding into a map.
-
 use std::collections::HashMap;
-use std::collections::BTreeMap;
 
 /// Tokenize: lowercase and extract alphanumeric words.
 pub fn tokenize(s: &str) -> Vec<String> {

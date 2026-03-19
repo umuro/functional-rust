@@ -3,14 +3,20 @@
 //! Matching deeply nested structures.
 
 #[derive(Debug)]
-pub struct Outer { pub inner: Inner }
+pub struct Outer {
+    pub inner: Inner,
+}
 #[derive(Debug)]
-pub struct Inner { pub value: i32 }
+pub struct Inner {
+    pub value: i32,
+}
 
 /// Match nested struct.
 pub fn get_value(o: &Outer) -> i32 {
     match o {
-        Outer { inner: Inner { value } } => *value,
+        Outer {
+            inner: Inner { value },
+        } => *value,
     }
 }
 
@@ -47,7 +53,9 @@ mod tests {
 
     #[test]
     fn test_get_value() {
-        let o = Outer { inner: Inner { value: 42 } };
+        let o = Outer {
+            inner: Inner { value: 42 },
+        };
         assert_eq!(get_value(&o), 42);
     }
 

@@ -28,7 +28,10 @@ pub enum KvDsl {
 pub fn interpret(dsl: &KvDsl, store: &mut std::collections::HashMap<String, String>) -> String {
     match dsl {
         KvDsl::Get(k) => store.get(k).cloned().unwrap_or_default(),
-        KvDsl::Put(k, v) => { store.insert(k.clone(), v.clone()); String::new() }
+        KvDsl::Put(k, v) => {
+            store.insert(k.clone(), v.clone());
+            String::new()
+        }
         KvDsl::Pure(v) => v.clone(),
         KvDsl::Bind(inner, _) => interpret(inner, store),
     }

@@ -5,7 +5,9 @@ type ParseResult<'a, T> = Result<(T, &'a str), String>;
 type Parser<'a, T> = Box<dyn Fn(&'a str) -> ParseResult<'a, T> + 'a>;
 
 fn satisfy<'a, F>(pred: F, desc: &str) -> Parser<'a, char>
-where F: Fn(char) -> bool + 'a {
+where
+    F: Fn(char) -> bool + 'a,
+{
     let desc = desc.to_string();
     Box::new(move |input: &'a str| match input.chars().next() {
         Some(c) if pred(c) => Ok((c, &input[c.len_utf8()..])),
@@ -41,7 +43,9 @@ fn tag<'a>(expected: &str) -> Parser<'a, &'a str> {
 // ============================================================
 
 fn map<'a, A: 'a, B: 'a, F>(parser: Parser<'a, A>, f: F) -> Parser<'a, B>
-where F: Fn(A) -> B + 'a {
+where
+    F: Fn(A) -> B + 'a,
+{
     Box::new(move |input: &'a str| {
         let (value, rest) = parser(input)?;
         Ok((f(value), rest))
@@ -52,10 +56,10 @@ where F: Fn(A) -> B + 'a {
 // Approach 2: map2 — combine two parser results
 // ============================================================
 
-fn map2<'a, A: 'a, B: 'a, C: 'a, F>(
-    p1: Parser<'a, A>, p2: Parser<'a, B>, f: F,
-) -> Parser<'a, C>
-where F: Fn(A, B) -> C + 'a {
+fn map2<'a, A: 'a, B: 'a, C: 'a, F>(p1: Parser<'a, A>, p2: Parser<'a, B>, f: F) -> Parser<'a, C>
+where
+    F: Fn(A, B) -> C + 'a,
+{
     Box::new(move |input: &'a str| {
         let (v1, rest) = p1(input)?;
         let (v2, rem) = p2(rest)?;
@@ -76,10 +80,11 @@ fn map_const<'a, A: 'a, B: Clone + 'a>(parser: Parser<'a, A>, value: B) -> Parse
 
 /// Parse natural number: one or more digits → u64
 fn parse_nat<'a>() -> Parser<'a, u64> {
-    map(
-        many1(satisfy(|c| c.is_ascii_digit(), "digit")),
-        |digits| digits.iter().fold(0u64, |acc, &d| acc * 10 + (d as u64 - '0' as u64)),
-    )
+    map(many1(satisfy(|c| c.is_ascii_digit(), "digit")), |digits| {
+        digits
+            .iter()
+            .fold(0u64, |acc, &d| acc * 10 + (d as u64 - '0' as u64))
+    })
 }
 
 #[cfg(test)]
@@ -88,7 +93,9 @@ mod tests {
 
     #[test]
     fn test_map_uppercase() {
-        let p = map(satisfy(|c| c.is_ascii_lowercase(), "lower"), |c| c.to_ascii_uppercase());
+        let p = map(satisfy(|c| c.is_ascii_lowercase(), "lower"), |c| {
+            c.to_ascii_uppercase()
+        });
         assert_eq!(p("abc"), Ok(('A', "bc")));
     }
 
@@ -142,7 +149,9 @@ mod tests {
     fn test_map_chain() {
         // map(map(p, f), g) == map(p, |x| g(f(x)))
         let p = map(
-            map(satisfy(|c| c.is_ascii_digit(), "digit"), |c| c as u32 - '0' as u32),
+            map(satisfy(|c| c.is_ascii_digit(), "digit"), |c| {
+                c as u32 - '0' as u32
+            }),
             |n| n * 2,
         );
         assert_eq!(p("5"), Ok((10, "")));

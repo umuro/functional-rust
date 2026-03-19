@@ -7,7 +7,11 @@ pub fn clamp(lo: i32, hi: i32, x: i32) -> i32 {
 }
 
 pub fn divide_checked(a: i64, b: i64) -> Option<i64> {
-    if b == 0 { None } else { Some(a / b) }
+    if b == 0 {
+        None
+    } else {
+        Some(a / b)
+    }
 }
 
 pub fn is_palindrome(s: &str) -> bool {
@@ -21,10 +25,9 @@ pub fn fizzbuzz(n: u32) -> String {
         (0, 0) => "FizzBuzz".into(),
         (0, _) => "Fizz".into(),
         (_, 0) => "Buzz".into(),
-        _      => n.to_string(),
+        _ => n.to_string(),
     }
 }
-
 
 // ── Test helpers ──────────────────────────────────────────────────────────────
 
@@ -32,9 +35,14 @@ pub fn fizzbuzz(n: u32) -> String {
 mod helpers {
     /// Assert that two f64 values are equal within epsilon.
     pub fn assert_approx_eq(a: f64, b: f64, eps: f64) {
-        assert!((a - b).abs() < eps,
+        assert!(
+            (a - b).abs() < eps,
             "assert_approx_eq failed: |{} - {}| = {} >= {}",
-            a, b, (a - b).abs(), eps);
+            a,
+            b,
+            (a - b).abs(),
+            eps
+        );
     }
 
     /// Assert that a slice is sorted ascending.

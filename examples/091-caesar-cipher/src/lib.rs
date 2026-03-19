@@ -28,10 +28,11 @@ pub fn decrypt(n: u8, s: &str) -> String {
 // ---------------------------------------------------------------------------
 
 pub fn caesar_fold(n: u8, s: &str) -> String {
-    s.chars().fold(String::with_capacity(s.len()), |mut acc, c| {
-        acc.push(shift_char(n, c));
-        acc
-    })
+    s.chars()
+        .fold(String::with_capacity(s.len()), |mut acc, c| {
+            acc.push(shift_char(n, c));
+            acc
+        })
 }
 
 // ---------------------------------------------------------------------------

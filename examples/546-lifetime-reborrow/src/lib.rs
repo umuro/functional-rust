@@ -19,7 +19,7 @@ pub fn implicit_reborrow_demo() -> i32 {
 
     // &mut T coerces to &T (implicit reborrow)
     let val = read_value(r); // r reborrowed as &i32
-    // r still valid — reborrow ended
+                             // r still valid — reborrow ended
 
     *r += 1; // can still use r
     val

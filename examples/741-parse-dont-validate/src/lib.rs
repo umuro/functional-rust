@@ -16,8 +16,9 @@ impl std::fmt::Display for ParseError {
         match self {
             ParseError::EmptyString => write!(f, "string is empty"),
             ParseError::InvalidEmail(s) => write!(f, "'{}' is not a valid email", s),
-            ParseError::OutOfRange { value, lo, hi } =>
-                write!(f, "{} not in range [{}, {}]", value, lo, hi),
+            ParseError::OutOfRange { value, lo, hi } => {
+                write!(f, "{} not in range [{}, {}]", value, lo, hi)
+            }
             ParseError::InvalidChar(c) => write!(f, "invalid character '{}'", c),
         }
     }
@@ -37,8 +38,12 @@ impl NonEmptyString {
         Ok(NonEmptyString(s.to_owned()))
     }
 
-    pub fn as_str(&self) -> &str { &self.0 }
-    pub fn len(&self) -> usize { self.0.len() }
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
 }
 
 impl std::fmt::Display for NonEmptyString {
@@ -55,7 +60,9 @@ pub struct Email(String);
 
 impl Email {
     pub fn parse(s: &str) -> Result<Self, ParseError> {
-        let at = s.find('@').ok_or_else(|| ParseError::InvalidEmail(s.to_owned()))?;
+        let at = s
+            .find('@')
+            .ok_or_else(|| ParseError::InvalidEmail(s.to_owned()))?;
         let (local, domain) = s.split_at(at);
         let domain = &domain[1..]; // skip '@'
         if local.is_empty() || !domain.contains('.') || domain.starts_with('.') {
@@ -64,9 +71,15 @@ impl Email {
         Ok(Email(s.to_ascii_lowercase()))
     }
 
-    pub fn as_str(&self) -> &str { &self.0 }
-    pub fn local_part(&self) -> &str { self.0.split('@').next().unwrap() }
-    pub fn domain(&self) -> &str { self.0.split('@').nth(1).unwrap() }
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+    pub fn local_part(&self) -> &str {
+        self.0.split('@').next().unwrap()
+    }
+    pub fn domain(&self) -> &str {
+        self.0.split('@').nth(1).unwrap()
+    }
 }
 
 impl std::fmt::Display for Email {
@@ -84,12 +97,18 @@ pub struct BoundedInt<const LO: i64, const HI: i64>(i64);
 impl<const LO: i64, const HI: i64> BoundedInt<LO, HI> {
     pub fn parse(n: i64) -> Result<Self, ParseError> {
         if n < LO || n > HI {
-            return Err(ParseError::OutOfRange { value: n, lo: LO, hi: HI });
+            return Err(ParseError::OutOfRange {
+                value: n,
+                lo: LO,
+                hi: HI,
+            });
         }
         Ok(BoundedInt(n))
     }
 
-    pub fn value(self) -> i64 { self.0 }
+    pub fn value(self) -> i64 {
+        self.0
+    }
 }
 
 // ── Functions that REQUIRE parsed types ───────────────────────────────────────
@@ -103,7 +122,6 @@ fn send_welcome(email: &Email) -> String {
 fn create_account(username: &NonEmptyString, email: &Email) -> String {
     format!("Account '{}' created with email {}", username, email)
 }
-
 
 #[cfg(test)]
 mod tests {

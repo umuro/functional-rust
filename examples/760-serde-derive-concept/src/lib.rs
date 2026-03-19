@@ -3,13 +3,13 @@
 //! Understanding how derive macros generate serialization code.
 
 /// Simulated derive output for a struct
-/// 
+///
 /// Given:
 /// ```ignore
 /// #[derive(Serialize)]
 /// struct Point { x: i32, y: i32 }
 /// ```
-/// 
+///
 /// The derive macro generates something like this implementation.
 
 // Manual implementation showing what #[derive(Serialize)] would generate

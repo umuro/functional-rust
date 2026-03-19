@@ -76,11 +76,7 @@ pub fn parse_config(input: &str) -> Result<Config, ParseError> {
 
             match &current_section {
                 Some(section) => {
-                    config
-                        .sections
-                        .get_mut(section)
-                        .unwrap()
-                        .insert(key, value);
+                    config.sections.get_mut(section).unwrap().insert(key, value);
                 }
                 None => {
                     config.global.insert(key, value);

@@ -6,7 +6,9 @@
 // ── Idiomatic Rust: flat_map ────────────────────────────────────────────────
 
 pub fn duplicate<T: Clone>(list: &[T]) -> Vec<T> {
-    list.iter().flat_map(|x| vec![x.clone(), x.clone()]).collect()
+    list.iter()
+        .flat_map(|x| vec![x.clone(), x.clone()])
+        .collect()
 }
 
 // ── Using iterators more efficiently ────────────────────────────────────────
@@ -36,11 +38,12 @@ pub fn duplicate_recursive<T: Clone>(list: &[T]) -> Vec<T> {
 // ── Fold-based ──────────────────────────────────────────────────────────────
 
 pub fn duplicate_fold<T: Clone>(list: &[T]) -> Vec<T> {
-    list.iter().fold(Vec::with_capacity(list.len() * 2), |mut acc, x| {
-        acc.push(x.clone());
-        acc.push(x.clone());
-        acc
-    })
+    list.iter()
+        .fold(Vec::with_capacity(list.len() * 2), |mut acc, x| {
+            acc.push(x.clone());
+            acc.push(x.clone());
+            acc
+        })
 }
 
 #[cfg(test)]
@@ -68,10 +71,7 @@ mod tests {
 
     #[test]
     fn test_strings() {
-        assert_eq!(
-            duplicate(&["a", "b"]),
-            vec!["a", "a", "b", "b"]
-        );
+        assert_eq!(duplicate(&["a", "b"]), vec!["a", "a", "b", "b"]);
     }
 
     #[test]

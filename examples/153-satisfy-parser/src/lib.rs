@@ -13,12 +13,10 @@ where
     F: Fn(char) -> bool + 'a,
 {
     let desc = desc.to_string();
-    Box::new(move |input: &'a str| {
-        match input.chars().next() {
-            Some(c) if pred(c) => Ok((c, &input[c.len_utf8()..])),
-            Some(c) => Err(format!("'{}' does not satisfy {}", c, desc)),
-            None => Err(format!("Expected {}, got EOF", desc)),
-        }
+    Box::new(move |input: &'a str| match input.chars().next() {
+        Some(c) if pred(c) => Ok((c, &input[c.len_utf8()..])),
+        Some(c) => Err(format!("'{}' does not satisfy {}", c, desc)),
+        None => Err(format!("Expected {}, got EOF", desc)),
     })
 }
 
@@ -59,12 +57,10 @@ where
     F: Fn(char) -> bool + 'a,
     E: Fn(char) -> String + 'a,
 {
-    Box::new(move |input: &'a str| {
-        match input.chars().next() {
-            Some(c) if pred(c) => Ok((c, &input[c.len_utf8()..])),
-            Some(c) => Err(on_fail(c)),
-            None => Err("Unexpected EOF".to_string()),
-        }
+    Box::new(move |input: &'a str| match input.chars().next() {
+        Some(c) if pred(c) => Ok((c, &input[c.len_utf8()..])),
+        Some(c) => Err(on_fail(c)),
+        None => Err("Unexpected EOF".to_string()),
     })
 }
 
@@ -135,10 +131,7 @@ mod tests {
 
     #[test]
     fn test_satisfy_or_custom_error() {
-        let p = satisfy_or(
-            |c| c == '@',
-            |c| format!("Expected '@', found '{}'", c),
-        );
+        let p = satisfy_or(|c| c == '@', |c| format!("Expected '@', found '{}'", c));
         assert_eq!(p("@hello"), Ok(('@', "hello")));
         assert_eq!(p("hello"), Err("Expected '@', found 'h'".to_string()));
     }

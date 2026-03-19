@@ -22,7 +22,6 @@ pub fn cont_return<R: 'static, A: Clone + 'static>(a: A) -> Cont<R, A> {
     Cont::new(move |k: Box<dyn Fn(A) -> R>| k(a.clone()))
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -36,7 +35,11 @@ mod tests {
     #[test]
     fn test_factorial_cps() {
         fn fact(n: i32, k: &dyn Fn(i32) -> i32) -> i32 {
-            if n <= 1 { k(1) } else { fact(n - 1, &|r| k(n * r)) }
+            if n <= 1 {
+                k(1)
+            } else {
+                fact(n - 1, &|r| k(n * r))
+            }
         }
         assert_eq!(fact(5, &|x| x), 120);
     }

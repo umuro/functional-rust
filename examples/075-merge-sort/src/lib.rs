@@ -33,7 +33,9 @@ fn merge_sort_by<T: Clone, F>(v: &[T], cmp: &F) -> Vec<T>
 where
     F: Fn(&T, &T) -> std::cmp::Ordering,
 {
-    if v.len() <= 1 { return v.to_vec(); }
+    if v.len() <= 1 {
+        return v.to_vec();
+    }
     let mid = v.len() / 2;
     let left = merge_sort_by(&v[..mid], cmp);
     let right = merge_sort_by(&v[mid..], cmp);
@@ -41,9 +43,11 @@ where
     let (mut i, mut j) = (0, 0);
     while i < left.len() && j < right.len() {
         if cmp(&left[i], &right[j]) != std::cmp::Ordering::Greater {
-            result.push(left[i].clone()); i += 1;
+            result.push(left[i].clone());
+            i += 1;
         } else {
-            result.push(right[j].clone()); j += 1;
+            result.push(right[j].clone());
+            j += 1;
         }
     }
     result.extend_from_slice(&left[i..]);
@@ -53,11 +57,12 @@ where
 
 // Approach 3: Functional style with iterators
 fn merge_sort_fn(v: &[i32]) -> Vec<i32> {
-    if v.len() <= 1 { return v.to_vec(); }
+    if v.len() <= 1 {
+        return v.to_vec();
+    }
     let mid = v.len() / 2;
     merge(&merge_sort_fn(&v[..mid]), &merge_sort_fn(&v[mid..]))
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -65,7 +70,10 @@ mod tests {
 
     #[test]
     fn test_merge_sort() {
-        assert_eq!(merge_sort(&[5, 3, 8, 1, 9, 2, 7]), vec![1, 2, 3, 5, 7, 8, 9]);
+        assert_eq!(
+            merge_sort(&[5, 3, 8, 1, 9, 2, 7]),
+            vec![1, 2, 3, 5, 7, 8, 9]
+        );
         assert_eq!(merge_sort(&[]), Vec::<i32>::new());
         assert_eq!(merge_sort(&[1]), vec![1]);
         assert_eq!(merge_sort(&[2, 1]), vec![1, 2]);
@@ -74,12 +82,21 @@ mod tests {
     #[test]
     fn test_merge_sort_by() {
         let v = vec![5, 3, 8, 1];
-        assert_eq!(merge_sort_by(&v, &|a: &i32, b: &i32| a.cmp(b)), vec![1, 3, 5, 8]);
-        assert_eq!(merge_sort_by(&v, &|a: &i32, b: &i32| b.cmp(a)), vec![8, 5, 3, 1]);
+        assert_eq!(
+            merge_sort_by(&v, &|a: &i32, b: &i32| a.cmp(b)),
+            vec![1, 3, 5, 8]
+        );
+        assert_eq!(
+            merge_sort_by(&v, &|a: &i32, b: &i32| b.cmp(a)),
+            vec![8, 5, 3, 1]
+        );
     }
 
     #[test]
     fn test_merge_sort_fn() {
-        assert_eq!(merge_sort_fn(&[5, 3, 8, 1, 9, 2, 7]), vec![1, 2, 3, 5, 7, 8, 9]);
+        assert_eq!(
+            merge_sort_fn(&[5, 3, 8, 1, 9, 2, 7]),
+            vec![1, 2, 3, 5, 7, 8, 9]
+        );
     }
 }

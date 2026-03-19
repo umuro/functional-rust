@@ -57,9 +57,7 @@ pub fn is_active(s: &State) -> bool {
 
 /// Run a sequence of events.
 pub fn run_sequence(events: &[Event]) -> State {
-    events
-        .iter()
-        .fold(State::Idle, |s, &e| transition(s, e))
+    events.iter().fold(State::Idle, |s, &e| transition(s, e))
 }
 
 /// Traffic light state machine.
@@ -90,11 +88,11 @@ pub enum TrafficTimed {
 /// Tick traffic light timer.
 pub fn tick_traffic(t: TrafficTimed) -> TrafficTimed {
     match t {
-        TrafficTimed::Red(0) => TrafficTimed::Green(30),    // Green for 30 ticks
+        TrafficTimed::Red(0) => TrafficTimed::Green(30), // Green for 30 ticks
         TrafficTimed::Red(n) => TrafficTimed::Red(n - 1),
-        TrafficTimed::Green(0) => TrafficTimed::Yellow(5),  // Yellow for 5 ticks
+        TrafficTimed::Green(0) => TrafficTimed::Yellow(5), // Yellow for 5 ticks
         TrafficTimed::Green(n) => TrafficTimed::Green(n - 1),
-        TrafficTimed::Yellow(0) => TrafficTimed::Red(30),   // Red for 30 ticks
+        TrafficTimed::Yellow(0) => TrafficTimed::Red(30), // Red for 30 ticks
         TrafficTimed::Yellow(n) => TrafficTimed::Yellow(n - 1),
     }
 }

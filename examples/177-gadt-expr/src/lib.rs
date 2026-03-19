@@ -38,51 +38,85 @@ struct IfExpr<C: Expr<Value = bool>, T: Expr, F: Expr<Value = T::Value>>(C, T, F
 
 impl Expr for Lit {
     type Value = i64;
-    fn eval(&self) -> i64 { self.0 }
-    fn to_expr_string(&self) -> String { self.0.to_string() }
+    fn eval(&self) -> i64 {
+        self.0
+    }
+    fn to_expr_string(&self) -> String {
+        self.0.to_string()
+    }
 }
 
 impl Expr for BLit {
     type Value = bool;
-    fn eval(&self) -> bool { self.0 }
-    fn to_expr_string(&self) -> String { self.0.to_string() }
+    fn eval(&self) -> bool {
+        self.0
+    }
+    fn to_expr_string(&self) -> String {
+        self.0.to_string()
+    }
 }
 
 impl<A: Expr<Value = i64>, B: Expr<Value = i64>> Expr for Add<A, B> {
     type Value = i64;
-    fn eval(&self) -> i64 { self.0.eval() + self.1.eval() }
+    fn eval(&self) -> i64 {
+        self.0.eval() + self.1.eval()
+    }
     fn to_expr_string(&self) -> String {
-        format!("({} + {})", self.0.to_expr_string(), self.1.to_expr_string())
+        format!(
+            "({} + {})",
+            self.0.to_expr_string(),
+            self.1.to_expr_string()
+        )
     }
 }
 
 impl<A: Expr<Value = i64>, B: Expr<Value = i64>> Expr for Mul<A, B> {
     type Value = i64;
-    fn eval(&self) -> i64 { self.0.eval() * self.1.eval() }
+    fn eval(&self) -> i64 {
+        self.0.eval() * self.1.eval()
+    }
     fn to_expr_string(&self) -> String {
-        format!("({} * {})", self.0.to_expr_string(), self.1.to_expr_string())
+        format!(
+            "({} * {})",
+            self.0.to_expr_string(),
+            self.1.to_expr_string()
+        )
     }
 }
 
 impl<A: Expr<Value = i64>, B: Expr<Value = i64>> Expr for Eq<A, B> {
     type Value = bool;
-    fn eval(&self) -> bool { self.0.eval() == self.1.eval() }
+    fn eval(&self) -> bool {
+        self.0.eval() == self.1.eval()
+    }
     fn to_expr_string(&self) -> String {
-        format!("({} = {})", self.0.to_expr_string(), self.1.to_expr_string())
+        format!(
+            "({} = {})",
+            self.0.to_expr_string(),
+            self.1.to_expr_string()
+        )
     }
 }
 
 impl<A: Expr<Value = bool>, B: Expr<Value = bool>> Expr for And<A, B> {
     type Value = bool;
-    fn eval(&self) -> bool { self.0.eval() && self.1.eval() }
+    fn eval(&self) -> bool {
+        self.0.eval() && self.1.eval()
+    }
     fn to_expr_string(&self) -> String {
-        format!("({} && {})", self.0.to_expr_string(), self.1.to_expr_string())
+        format!(
+            "({} && {})",
+            self.0.to_expr_string(),
+            self.1.to_expr_string()
+        )
     }
 }
 
 impl<A: Expr<Value = bool>> Expr for Not<A> {
     type Value = bool;
-    fn eval(&self) -> bool { !self.0.eval() }
+    fn eval(&self) -> bool {
+        !self.0.eval()
+    }
     fn to_expr_string(&self) -> String {
         format!("not({})", self.0.to_expr_string())
     }
@@ -90,9 +124,20 @@ impl<A: Expr<Value = bool>> Expr for Not<A> {
 
 impl<C: Expr<Value = bool>, T: Expr, F: Expr<Value = T::Value>> Expr for IfExpr<C, T, F> {
     type Value = T::Value;
-    fn eval(&self) -> T::Value { if self.0.eval() { self.1.eval() } else { self.2.eval() } }
+    fn eval(&self) -> T::Value {
+        if self.0.eval() {
+            self.1.eval()
+        } else {
+            self.2.eval()
+        }
+    }
     fn to_expr_string(&self) -> String {
-        format!("if {} then {} else {}", self.0.to_expr_string(), self.1.to_expr_string(), self.2.to_expr_string())
+        format!(
+            "if {} then {} else {}",
+            self.0.to_expr_string(),
+            self.1.to_expr_string(),
+            self.2.to_expr_string()
+        )
     }
 }
 
@@ -103,12 +148,28 @@ trait DynExprI64: fmt::Debug {
 }
 
 struct DynLit(i64);
-impl fmt::Debug for DynLit { fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result { write!(f, "{}", self.0) } }
-impl DynExprI64 for DynLit { fn eval(&self) -> i64 { self.0 } }
+impl fmt::Debug for DynLit {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+impl DynExprI64 for DynLit {
+    fn eval(&self) -> i64 {
+        self.0
+    }
+}
 
 struct DynAdd(Box<dyn DynExprI64>, Box<dyn DynExprI64>);
-impl fmt::Debug for DynAdd { fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result { write!(f, "({:?} + {:?})", self.0, self.1) } }
-impl DynExprI64 for DynAdd { fn eval(&self) -> i64 { self.0.eval() + self.1.eval() } }
+impl fmt::Debug for DynAdd {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "({:?} + {:?})", self.0, self.1)
+    }
+}
+impl DynExprI64 for DynAdd {
+    fn eval(&self) -> i64 {
+        self.0.eval() + self.1.eval()
+    }
+}
 
 // === Approach 3: Enum-based with optimization pass ===
 
@@ -134,7 +195,13 @@ impl IntExpr {
             IntExpr::Lit(n) => *n,
             IntExpr::Add(a, b) => a.eval() + b.eval(),
             IntExpr::Mul(a, b) => a.eval() * b.eval(),
-            IntExpr::IfB(c, t, f) => if c.eval() { t.eval() } else { f.eval() },
+            IntExpr::IfB(c, t, f) => {
+                if c.eval() {
+                    t.eval()
+                } else {
+                    f.eval()
+                }
+            }
         }
     }
 

@@ -25,21 +25,25 @@ fn single_producer_consumer() -> Vec<i32> {
 fn multi_producer_consumer() -> Vec<i32> {
     let (tx, rx) = mpsc::channel::<i32>();
 
-    let handles: Vec<_> = (0..3).map(|batch| {
-        let tx = tx.clone(); // each producer gets its own sender
-        thread::spawn(move || {
-            let start = batch * 10 + 1;
-            for i in start..=start + 2 {
-                tx.send(i).unwrap();
-            }
-            // tx drops when thread exits
+    let handles: Vec<_> = (0..3)
+        .map(|batch| {
+            let tx = tx.clone(); // each producer gets its own sender
+            thread::spawn(move || {
+                let start = batch * 10 + 1;
+                for i in start..=start + 2 {
+                    tx.send(i).unwrap();
+                }
+                // tx drops when thread exits
+            })
         })
-    }).collect();
+        .collect();
 
     drop(tx); // drop original so channel closes when all clones drop
 
     let mut results: Vec<i32> = rx.iter().collect();
-    for h in handles { h.join().unwrap(); }
+    for h in handles {
+        h.join().unwrap();
+    }
     results.sort();
     results
 }
@@ -71,7 +75,6 @@ fn typed_channel() -> Vec<String> {
     producer.join().unwrap();
     results
 }
-
 
 #[cfg(test)]
 mod tests {

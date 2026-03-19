@@ -13,7 +13,9 @@ pub fn lookup_and_parse(
 }
 
 /// Filter and parse optional values
-pub fn parse_optional_values(inputs: Vec<Option<&str>>) -> Result<Vec<i32>, std::num::ParseIntError> {
+pub fn parse_optional_values(
+    inputs: Vec<Option<&str>>,
+) -> Result<Vec<i32>, std::num::ParseIntError> {
     inputs
         .into_iter()
         .filter_map(|opt| opt.map(|s| s.parse::<i32>()))

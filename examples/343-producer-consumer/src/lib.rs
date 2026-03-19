@@ -1,9 +1,9 @@
 //! # Producer-Consumer Pattern
 //! Classic concurrent pattern with bounded buffer.
 
-use std::sync::{mpsc, Arc, Mutex, Condvar};
-use std::thread;
 use std::collections::VecDeque;
+use std::sync::{mpsc, Arc, Condvar, Mutex};
+use std::thread;
 
 pub struct BoundedBuffer<T> {
     data: Mutex<VecDeque<T>>,
@@ -51,10 +51,14 @@ mod tests {
         let buffer = BoundedBuffer::new(2);
         let b1 = Arc::clone(&buffer);
         let producer = thread::spawn(move || {
-            for i in 0..5 { b1.put(i); }
+            for i in 0..5 {
+                b1.put(i);
+            }
         });
         let mut results = Vec::new();
-        for _ in 0..5 { results.push(buffer.take()); }
+        for _ in 0..5 {
+            results.push(buffer.take());
+        }
         producer.join().unwrap();
         assert_eq!(results, vec![0, 1, 2, 3, 4]);
     }

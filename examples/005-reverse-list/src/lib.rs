@@ -29,7 +29,6 @@ fn reverse_recursive(v: &[i32]) -> Vec<i32> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

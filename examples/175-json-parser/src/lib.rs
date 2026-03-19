@@ -30,7 +30,9 @@ impl std::fmt::Display for Json {
             Json::Array(items) => {
                 write!(f, "[")?;
                 for (i, item) in items.iter().enumerate() {
-                    if i > 0 { write!(f, ", ")?; }
+                    if i > 0 {
+                        write!(f, ", ")?;
+                    }
                     write!(f, "{}", item)?;
                 }
                 write!(f, "]")
@@ -38,7 +40,9 @@ impl std::fmt::Display for Json {
             Json::Object(entries) => {
                 write!(f, "{{")?;
                 for (i, (k, v)) in entries.iter().enumerate() {
-                    if i > 0 { write!(f, ", ")?; }
+                    if i > 0 {
+                        write!(f, ", ")?;
+                    }
                     write!(f, "\"{}\": {}", k, v)?;
                 }
                 write!(f, "}}")
@@ -69,12 +73,30 @@ fn parse_json_string(input: &str) -> ParseResult<String> {
             Some('\\') => {
                 consumed += 1;
                 match chars.next() {
-                    Some('n') => { result.push('\n'); consumed += 1; }
-                    Some('t') => { result.push('\t'); consumed += 1; }
-                    Some('r') => { result.push('\r'); consumed += 1; }
-                    Some('"') => { result.push('"'); consumed += 1; }
-                    Some('\\') => { result.push('\\'); consumed += 1; }
-                    Some('/') => { result.push('/'); consumed += 1; }
+                    Some('n') => {
+                        result.push('\n');
+                        consumed += 1;
+                    }
+                    Some('t') => {
+                        result.push('\t');
+                        consumed += 1;
+                    }
+                    Some('r') => {
+                        result.push('\r');
+                        consumed += 1;
+                    }
+                    Some('"') => {
+                        result.push('"');
+                        consumed += 1;
+                    }
+                    Some('\\') => {
+                        result.push('\\');
+                        consumed += 1;
+                    }
+                    Some('/') => {
+                        result.push('/');
+                        consumed += 1;
+                    }
                     Some('u') => {
                         // Unicode escape \uXXXX
                         let mut hex = String::new();
@@ -94,7 +116,11 @@ fn parse_json_string(input: &str) -> ParseResult<String> {
                             }
                         }
                     }
-                    Some(c) => { result.push('\\'); result.push(c); consumed += c.len_utf8(); }
+                    Some(c) => {
+                        result.push('\\');
+                        result.push(c);
+                        consumed += c.len_utf8();
+                    }
                     None => return Err("Unexpected end of escape".to_string()),
                 }
             }
@@ -116,14 +142,19 @@ fn parse_json_number(input: &str) -> ParseResult<Json> {
     let len = bytes.len();
     let mut pos = 0;
     // optional minus
-    if pos < len && bytes[pos] == b'-' { pos += 1; }
+    if pos < len && bytes[pos] == b'-' {
+        pos += 1;
+    }
     // integer part
-    if pos < len && bytes[pos] == b'0' { pos += 1; }
-    else {
+    if pos < len && bytes[pos] == b'0' {
+        pos += 1;
+    } else {
         if pos >= len || !bytes[pos].is_ascii_digit() {
             return Err("Expected digit".to_string());
         }
-        while pos < len && bytes[pos].is_ascii_digit() { pos += 1; }
+        while pos < len && bytes[pos].is_ascii_digit() {
+            pos += 1;
+        }
     }
     // fractional part
     if pos < len && bytes[pos] == b'.' {
@@ -131,18 +162,26 @@ fn parse_json_number(input: &str) -> ParseResult<Json> {
         if pos >= len || !bytes[pos].is_ascii_digit() {
             return Err("Expected digit after '.'".to_string());
         }
-        while pos < len && bytes[pos].is_ascii_digit() { pos += 1; }
+        while pos < len && bytes[pos].is_ascii_digit() {
+            pos += 1;
+        }
     }
     // exponent
     if pos < len && (bytes[pos] == b'e' || bytes[pos] == b'E') {
         pos += 1;
-        if pos < len && (bytes[pos] == b'+' || bytes[pos] == b'-') { pos += 1; }
+        if pos < len && (bytes[pos] == b'+' || bytes[pos] == b'-') {
+            pos += 1;
+        }
         if pos >= len || !bytes[pos].is_ascii_digit() {
             return Err("Expected digit in exponent".to_string());
         }
-        while pos < len && bytes[pos].is_ascii_digit() { pos += 1; }
+        while pos < len && bytes[pos].is_ascii_digit() {
+            pos += 1;
+        }
     }
-    let n: f64 = s[..pos].parse().map_err(|e: std::num::ParseFloatError| e.to_string())?;
+    let n: f64 = s[..pos]
+        .parse()
+        .map_err(|e: std::num::ParseFloatError| e.to_string())?;
     Ok((Json::Number(n), &s[pos..]))
 }
 
@@ -277,7 +316,10 @@ mod tests {
 
     #[test]
     fn test_string_escapes() {
-        assert_eq!(parse("\"hello\\nworld\""), Ok(Json::Str("hello\nworld".into())));
+        assert_eq!(
+            parse("\"hello\\nworld\""),
+            Ok(Json::Str("hello\nworld".into()))
+        );
     }
 
     #[test]
@@ -292,17 +334,25 @@ mod tests {
 
     #[test]
     fn test_array() {
-        assert_eq!(parse("[1, 2, 3]"), Ok(Json::Array(vec![
-            Json::Number(1.0), Json::Number(2.0), Json::Number(3.0),
-        ])));
+        assert_eq!(
+            parse("[1, 2, 3]"),
+            Ok(Json::Array(vec![
+                Json::Number(1.0),
+                Json::Number(2.0),
+                Json::Number(3.0),
+            ]))
+        );
     }
 
     #[test]
     fn test_nested_array() {
-        assert_eq!(parse("[[1], [2]]"), Ok(Json::Array(vec![
-            Json::Array(vec![Json::Number(1.0)]),
-            Json::Array(vec![Json::Number(2.0)]),
-        ])));
+        assert_eq!(
+            parse("[[1], [2]]"),
+            Ok(Json::Array(vec![
+                Json::Array(vec![Json::Number(1.0)]),
+                Json::Array(vec![Json::Number(2.0)]),
+            ]))
+        );
     }
 
     #[test]
@@ -312,27 +362,35 @@ mod tests {
 
     #[test]
     fn test_object() {
-        assert_eq!(parse("{\"a\": 1, \"b\": true}"), Ok(Json::Object(vec![
-            ("a".into(), Json::Number(1.0)),
-            ("b".into(), Json::Bool(true)),
-        ])));
+        assert_eq!(
+            parse("{\"a\": 1, \"b\": true}"),
+            Ok(Json::Object(vec![
+                ("a".into(), Json::Number(1.0)),
+                ("b".into(), Json::Bool(true)),
+            ]))
+        );
     }
 
     #[test]
     fn test_nested() {
-        assert_eq!(parse("{\"data\": [1, {\"x\": null}]}"), Ok(Json::Object(vec![
-            ("data".into(), Json::Array(vec![
-                Json::Number(1.0),
-                Json::Object(vec![("x".into(), Json::Null)]),
-            ])),
-        ])));
+        assert_eq!(
+            parse("{\"data\": [1, {\"x\": null}]}"),
+            Ok(Json::Object(vec![(
+                "data".into(),
+                Json::Array(vec![
+                    Json::Number(1.0),
+                    Json::Object(vec![("x".into(), Json::Null)]),
+                ])
+            ),]))
+        );
     }
 
     #[test]
     fn test_whitespace() {
-        assert_eq!(parse("  {  \"a\"  :  1  }  "), Ok(Json::Object(vec![
-            ("a".into(), Json::Number(1.0)),
-        ])));
+        assert_eq!(
+            parse("  {  \"a\"  :  1  }  "),
+            Ok(Json::Object(vec![("a".into(), Json::Number(1.0)),]))
+        );
     }
 
     #[test]

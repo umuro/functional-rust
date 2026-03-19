@@ -44,7 +44,10 @@ mod tests {
 
     #[test]
     fn test_squares() {
-        assert_eq!(accumulate(&[1, 2, 3, 4, 5], |x| x * x), vec![1, 4, 9, 16, 25]);
+        assert_eq!(
+            accumulate(&[1, 2, 3, 4, 5], |x| x * x),
+            vec![1, 4, 9, 16, 25]
+        );
     }
 
     #[test]
@@ -73,6 +76,9 @@ mod tests {
 
     #[test]
     fn test_type_change() {
-        assert_eq!(accumulate(&[1, 2, 3], |x| x.to_string()), vec!["1", "2", "3"]);
+        assert_eq!(
+            accumulate(&[1, 2, 3], |x| x.to_string()),
+            vec!["1", "2", "3"]
+        );
     }
 }

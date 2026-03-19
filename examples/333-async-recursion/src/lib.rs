@@ -40,7 +40,11 @@ impl Tree<i32> {
         //   4   5   6
         Self::node(
             1,
-            Self::node(2, Self::node(4, Self::leaf(), Self::leaf()), Self::node(5, Self::leaf(), Self::leaf())),
+            Self::node(
+                2,
+                Self::node(4, Self::leaf(), Self::leaf()),
+                Self::node(5, Self::leaf(), Self::leaf()),
+            ),
             Self::node(3, Self::node(6, Self::leaf(), Self::leaf()), Self::leaf()),
         )
     }
@@ -139,7 +143,11 @@ mod tests {
 
     #[test]
     fn test_left_skewed_tree() {
-        let tree = Tree::node(1, Tree::node(2, Tree::node(3, Tree::leaf(), Tree::leaf()), Tree::leaf()), Tree::leaf());
+        let tree = Tree::node(
+            1,
+            Tree::node(2, Tree::node(3, Tree::leaf(), Tree::leaf()), Tree::leaf()),
+            Tree::leaf(),
+        );
         assert_eq!(block_on(async_depth(&tree)), 3);
         assert_eq!(block_on(async_sum(&tree)), 6);
     }
