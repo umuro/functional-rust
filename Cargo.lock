@@ -1519,6 +1519,26 @@ name = "example-1180-dijkstras-shortest-path-priority-queue"
 version = "0.1.0"
 
 [[package]]
+name = "example-1181-listpartition-divide-list-by-predicate"
+version = "0.1.0"
+
+[[package]]
+name = "example-1182-listflatten-flatten-nested-lists"
+version = "0.1.0"
+
+[[package]]
+name = "example-1183-arrayblit-copy-subarray"
+version = "0.1.0"
+
+[[package]]
+name = "example-1184-arraymake-and-arraymake_matrix-multi-dimensional-arrays"
+version = "0.1.0"
+
+[[package]]
+name = "example-1185-stringsplit_on_char-tokenize-a-string"
+version = "0.1.0"
+
+[[package]]
 name = "example-119-zero-cost-abs"
 version = "0.1.0"
 
