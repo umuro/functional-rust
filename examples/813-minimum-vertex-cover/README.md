@@ -2,110 +2,37 @@
 
 ---
 
-# 813: Minimum Vertex Cover (2-Approximation)
+# 813-minimum-vertex-cover — Minimum Vertex Cover (Trees)
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Find a near-minimal set of vertices that touches every edge — with a provable 2× approximation guarantee plus an optional exact backtracking solver.
+A vertex cover is a set of vertices such that every edge has at least one endpoint in the set. The minimum vertex cover finds the smallest such set. For general graphs this is NP-hard (equivalent to maximum independent set), but for trees it is solvable in O(n) by DP on the tree structure. Applications: network security (placing sensors to monitor all links), database index optimization, and approximation algorithms for general graphs.
 
-## The Problem This Solves
+## Learning Outcomes
 
-A vertex cover is a set S of vertices such that every edge in the graph has at least one endpoint in S. The minimum vertex cover (MVC) is the smallest such set. MVC is NP-hard in general graphs, but a simple greedy algorithm gives a 2-approximation: the result is at most twice the optimal size.
+- Implement tree DP with two states per vertex: `dp[v][0]` (v not in cover) and `dp[v][1]` (v in cover)
+- Apply the recurrence: if v not in cover, all children must be covered
+- If v in cover, children may or may not be covered (take minimum)
+- Run DFS from the root, computing dp values bottom-up
+- Understand König's theorem: in bipartite graphs, max matching = min vertex cover
 
-MVC appears in network security (place monitors on a minimal set of routers to observe all traffic), VLSI testing (select minimal probe points to test all connections), and computational biology (identify minimal gene sets that interact with all observed pathways). By König's theorem, MVC equals maximum matching size in bipartite graphs — making it polynomial in that special case.
+## Rust Application
 
-This example implements both: the O(V+E) 2-approximation (practical for large graphs) and an exact backtracking solver (correct but exponential) so you can see the approximation ratio empirically.
+`min_vertex_cover_tree(n, edges)` builds an adjacency list. DFS computes `dp[v][0]` (v excluded: all children must be included) and `dp[v][1]` (v included: each child takes min of included/excluded). Returns `min(dp[0][0], dp[0][1])`. Tests: a star graph with center node (cover = {center}, size 1) and a path.
 
-## The Intuition
+## OCaml Approach
 
-**2-approximation**: pick any uncovered edge (u, v). Add both u and v to the cover. Remove all edges incident to u or v. Repeat until no edges remain. This is the "maximal matching" greedy: every edge you pick is in some maximum matching (since you can't reuse vertices), and OPT must cover each matching edge with at least one vertex. So |cover| = 2 × |matching| ≤ 2 × OPT.
-
-**Exact backtracking**: for each uncovered edge (u, v), branch: include u OR include v. Recurse on the reduced graph. Prune when current cover size exceeds best known. This is the standard FPT algorithm parameterized by the solution size k — runs in O(2^k · (V+E)).
-
-O(V+E) for the approximation. O(2^k · n) for exact, where k is the optimal cover size.
-
-## How It Works in Rust
-
-```rust
-use std::collections::HashSet;
-
-// 2-approximation: maximal matching → both endpoints
-fn approx_vertex_cover(adj: &[Vec<usize>]) -> HashSet<usize> {
-    let n = adj.len();
-    let mut cover = HashSet::new();
-    let mut matched = vec![false; n]; // vertices already in cover
-
-    for u in 0..n {
-        if matched[u] { continue; }
-        for &v in &adj[u] {
-            if !matched[v] {
-                // Edge (u,v) not yet covered — add both endpoints
-                cover.insert(u);
-                cover.insert(v);
-                matched[u] = true;
-                matched[v] = true;
-                break; // move to next u
-            }
-        }
-    }
-    cover
-}
-
-// Exact solver: branch on uncovered edge (u,v) — try u alone, then v alone
-fn exact_vertex_cover(adj: &[Vec<usize>]) -> HashSet<usize> {
-    let mut best = HashSet::new();
-    // Seed with approximation so pruning is tight from the start
-    best = approx_vertex_cover(adj);
-    let mut current = HashSet::new();
-    backtrack_cover(adj, &mut current, &mut best);
-    best
-}
-
-fn backtrack_cover(
-    adj: &[Vec<usize>],
-    current: &mut HashSet<usize>,
-    best: &mut HashSet<usize>,
-) {
-    // Find first uncovered edge
-    let uncovered = (0..adj.len()).flat_map(|u| {
-        adj[u].iter().map(move |&v| (u, v))
-    }).find(|&(u, v)| !current.contains(&u) && !current.contains(&v));
-
-    match uncovered {
-        None => {
-            // All edges covered — update best if smaller
-            if current.len() < best.len() { *best = current.clone(); }
-        }
-        Some((u, v)) => {
-            // Pruning: if current already ≥ best, abandon
-            if current.len() >= best.len() { return; }
-            // Branch: include u
-            current.insert(u);
-            backtrack_cover(adj, current, best);
-            current.remove(&u);
-            // Branch: include v
-            current.insert(v);
-            backtrack_cover(adj, current, best);
-            current.remove(&v);
-        }
-    }
-}
-```
-
-`HashSet` operations (insert, remove, contains) are O(1) average. The `flat_map` iterator finds the first uncovered edge lazily — it stops as soon as it finds one, which is efficient. Seeding `best` with the approximation ensures tight pruning from the first branch.
-
-## What This Unlocks
-
-- **Network monitoring**: place the minimum number of IDS sensors on routers to observe every link in the network.
-- **Bipartite matching duality**: on bipartite graphs, MVC = maximum matching (König's theorem) — solvable in polynomial time via max-flow.
-- **Approximation algorithm study**: this is the canonical example of a polynomial-time constant-factor approximation for an NP-hard problem.
+OCaml implements tree DP with `Array.make n [|0; 0|]` and recursive DFS. `let rec dfs v parent = ... List.iter (fun u -> if u <> parent then (dfs u v; ...)) adj.(v)`. The DP update is: `dp.(v).(0) <- dp.(v).(0) + dp.(u).(1)` and `dp.(v).(1) <- dp.(v).(1) + min dp.(u).(0) dp.(u).(1)`. OCaml's pattern matching makes the two cases readable.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Mutable set | `Hashtbl` or `Set` with functional threading | `HashSet<usize>` with insert/remove |
-| Backtrack undo | Functional — pass new set without vertex | Imperative — `insert` then `remove` after recursion |
-| Iterator over edges | `Array.fold` + `List.iter` | `flat_map` over adjacency list — lazy, zero-copy |
-| Pruning condition | Guard clause before recursive call | `if current.len() >= best.len() { return; }` |
-| Approximation seeding | Same technique | Clone approx result into `best` before backtracking |
+1. **Tree DP structure**: Both languages implement the same O(n) tree DP; the recursion pattern is nearly identical.
+2. **Parent tracking**: Both need to avoid revisiting the parent edge; Rust uses `vis` array, OCaml passes `parent` explicitly.
+3. **General graphs**: For general graphs, minimum vertex cover is NP-hard; the 2-approximation (take both endpoints of each maximal matching edge) works in both languages.
+4. **König's theorem**: In bipartite graphs, the minimum vertex cover equals maximum matching size — a deep connection enabling polynomial solutions for bipartite instances.
+
+## Exercises
+
+1. Implement `min_vertex_cover_reconstruct(n, edges) -> Vec<usize>` that returns the actual vertices in the cover, not just the count.
+2. Implement the 2-approximation for general graphs: find a maximal matching and include both endpoints of each matched edge. Verify the result is a valid cover.
+3. Implement maximum independent set for trees: since `MIS = n - MVC`, use the tree DP to compute both. Verify `MVC + MIS = n`.

@@ -2,96 +2,42 @@
 
 ---
 
-# 168: Expression Parser
+# Expression Parser
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Parse `1 + 2 * 3` correctly — the Pratt parser, used in every real language implementation.
+Mathematical expressions like `1 + 2 * 3` must parse according to operator precedence — the result should be `7` (multiply before add), not `9`. Encoding precedence in recursive descent requires separate functions for each precedence level, which is verbose. Pratt parsing (top-down operator precedence) solves this elegantly with a single loop and a binding power table, making it easy to add new operators and adjust precedence without restructuring the grammar.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Expression parsing looks simple until operator precedence enters the picture. `1 + 2 * 3` must parse as `1 + (2 * 3)` = 7, not `(1 + 2) * 3` = 9. `a ^ b ^ c` must parse as `a ^ (b ^ c)` (right-associative). Unary minus in `-x + y` must bind tightly.
+- Understand Pratt parsing (top-down operator precedence) as an elegant precedence solution
+- Learn how binding power encodes both precedence and associativity in a single number
+- See how prefix operators (unary minus) integrate naturally into Pratt parsing
+- Appreciate why Pratt parsers are used in production compilers (Rust's `rustc`, V8, Clang)
 
-Naive recursive descent needs one grammar rule per precedence level: `expr → additive`, `additive → multiplicative +/- multiplicative`, `multiplicative → unary */÷ unary`, and so on. That's a lot of boilerplate — and adding a new operator means rewriting the grammar.
+## Rust Application
 
-The Pratt parser solves this elegantly with *binding powers*. Every operator gets a left binding power and a right binding power. The parser loops, consuming operators whose left binding power is strong enough to "pull in" what's already been parsed. It's compact, extensible, and handles any associativity naturally.
+The Pratt parser maintains a `min_bp` (minimum binding power). `parse_expr(input, min_bp)` parses a "nud" (null denotation, i.e., prefix expression), then loops: peek at the next operator, look up its binding power, stop if the left binding power is less than `min_bp`, otherwise parse the right operand with the right binding power. Binary operators like `*` have higher binding power than `+`, causing multiplication to bind tighter.
 
-## The Intuition
+## OCaml Approach
 
-Give each operator a "stickiness" number. Higher stickiness = binds more tightly. `*` has stickiness 30, `+` has stickiness 20. When parsing `1 + 2 * 3`: parse `1`, see `+` (stickiness 20), parse the right side — but the right side sees `2 * 3` and `*` is stickier than `+`, so it grabs both `2` and `3` first, giving `1 + (2 * 3)`.
-
-Right-associativity (`^`) is a trick: give the right binding power one less than the left. That makes the parser "prefer" to recurse right.
-
-## How It Works in Rust
-
-```rust
-#[derive(Debug)]
-enum Expr {
-    Num(f64),
-    BinOp { op: char, left: Box<Expr>, right: Box<Expr> },
-    Unary { op: char, operand: Box<Expr> },
-}
-
-// Returns (left_bp, right_bp) for infix operators
-fn infix_binding_power(op: char) -> Option<(u8, u8)> {
-    match op {
-        '+' | '-' => Some((20, 21)),   // left-assoc: left < right
-        '*' | '/' => Some((30, 31)),   // left-assoc, higher precedence
-        '^'       => Some((40, 39)),   // right-assoc: right < left (!)
-        _         => None,
-    }
-}
-
-fn pratt_expr(input: &str, min_bp: u8) -> ParseResult<Expr> {
-    let input = input.trim_start();
-
-    // Parse prefix: unary minus or atom
-    let (mut lhs, mut remaining) = if input.starts_with('-') {
-        let (operand, rest) = pratt_expr(&input[1..], 50)?; // tight unary bind
-        (Expr::Unary { op: '-', operand: Box::new(operand) }, rest)
-    } else if input.starts_with('(') {
-        let (inner, rest) = pratt_expr(&input[1..], 0)?;
-        let rest = rest.trim_start().strip_prefix(')').ok_or("expected ')'")?;
-        (inner, rest)
-    } else {
-        // parse number
-        let (n, rest) = parse_number(input)?;
-        (Expr::Num(n), rest)
-    };
-
-    // Infix loop: keep consuming operators that bind tightly enough
-    loop {
-        let rest = remaining.trim_start();
-        let op = match rest.chars().next() {
-            Some(c) => c,
-            None => break,
-        };
-        let (left_bp, right_bp) = match infix_binding_power(op) {
-            Some(bp) => bp,
-            None => break,
-        };
-        if left_bp < min_bp { break; }  // operator doesn't bind tightly enough
-
-        let (rhs, rest) = pratt_expr(&rest[op.len_utf8()..], right_bp)?;
-        lhs = Expr::BinOp { op, left: Box::new(lhs), right: Box::new(rhs) };
-        remaining = rest;
-    }
-
-    Ok((lhs, remaining))
-}
+OCaml's Menhir parser generator handles precedence declaratively:
+```ocaml
+%left PLUS MINUS
+%left TIMES DIV
+%nonassoc UMINUS
 ```
-
-## What This Unlocks
-
-- **Any expression language** — arithmetic, boolean, bitwise, comparison — all handled by one table.
-- **Correct operator precedence** — `1 + 2 * 3 == 7`, not 9, with zero extra grammar rules.
-- **Right-associativity** — `a ^ b ^ c == a ^ (b ^ c)` with a one-number tweak.
+Menhir generates an LALR(1) parser that handles precedence automatically. For hand-written parsers, OCaml uses the same recursive descent or Pratt approach as Rust, often expressed more concisely via `let rec` mutual recursion.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| AST type | `type expr = Num of float \| BinOp of char * expr * expr` | `enum Expr { Num(f64), BinOp { op: char, ... } }` |
-| Heap allocation | Automatic (GC) | `Box::new(...)` required for recursive variants |
-| Mutual recursion | `let rec pratt_expr ... and pratt_loop ...` | Two regular functions — no `rec` needed |
-| Binding powers | `(int * int)` tuples | `(u8, u8)` tuples — same idea |
+1. **Generator vs. hand-written**: OCaml commonly uses Menhir for expression grammars; Rust typically hand-writes Pratt parsers or uses the `pratt` crate.
+2. **Binding power table**: Pratt parsers use a table lookup for operator binding powers; recursive descent encodes this in the function call structure.
+3. **Extensibility**: Pratt parsers support adding operators at runtime (for DSLs); recursive descent parsers are fixed at compile time.
+4. **Error recovery**: Pratt parsers integrate error recovery naturally by adjusting `min_bp`; recursive descent recovery is more ad hoc.
+
+## Exercises
+
+1. Add the `^` (power) operator with right-associativity (binding power: left=6, right=5) — verify `2^3^2` = `512`.
+2. Implement the ternary operator `a ? b : c` using Pratt parsing.
+3. Add a prefix `+` (unary plus, identity) operator alongside the existing unary minus.

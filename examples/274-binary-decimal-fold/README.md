@@ -33,3 +33,9 @@ Rust's `chars().try_fold()` is the direct equivalent of `String.fold_left` with 
 2. **Fold with fallibility:** OCaml `fold_left` has no built-in short-circuit; Rust `try_fold` stops on `Err` immediately.
 3. **String building:** OCaml uses `^` (string concatenation) in recursion; Rust uses `format!` or `Vec<u8>` + `collect`.
 4. **Integer types:** OCaml uses polymorphic `int`; Rust uses explicit `u64`, preventing negative inputs by type.
+
+## Exercises
+
+1. Generalize the fold-based conversion to support arbitrary base conversions (not just binary↔decimal): implement `to_base_n` and `from_base_n` for any base 2–36.
+2. Implement big-integer addition by representing numbers as little-endian `Vec<u8>` digits and using a fold to add digit-by-digit with carry propagation.
+3. Write a fold-based parser for simple integer literals that handles decimal, hexadecimal (`0x` prefix), and binary (`0b` prefix) notation, returning `Result<u64, ParseError>`.

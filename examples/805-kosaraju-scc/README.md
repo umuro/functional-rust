@@ -2,102 +2,37 @@
 
 ---
 
-# 805: Kosaraju's Two-Pass SCC Algorithm
+# 805-kosaraju-scc — Kosaraju's Strongly Connected Components
 
-**Difficulty:** 5  **Level:** Master
+## Problem Statement
 
-Find all strongly connected components in a directed graph using two iterative DFS passes in O(V+E).
+Kosaraju's algorithm (1978, independently by Sharir 1981) finds SCCs using two DFS passes: first on the original graph to compute finish-time order, then on the reversed graph in reverse finish order. Each DFS tree in the second pass is exactly one SCC. While Tarjan's uses one pass, Kosaraju's is conceptually simpler and easier to implement correctly. Both run in O(V+E) time.
 
-## The Problem This Solves
+## Learning Outcomes
 
-A strongly connected component (SCC) is a maximal set of vertices such that every vertex is reachable from every other vertex in the set. SCCs partition any directed graph into clusters of mutual reachability — the building blocks of dependency analysis, deadlock detection, and compiler data-flow.
+- Understand the two-pass approach: finish order DFS + reversed graph DFS
+- Build the reversed graph `radj` by swapping edge directions
+- Use a `finish_order: Vec<usize>` stack populated during the first DFS
+- Each `dfs2` call on an unvisited vertex in reverse finish order yields exactly one SCC
+- Compare with Tarjan's: same asymptotic complexity, different implementation approach
 
-Use Kosaraju's algorithm when you need to decompose a directed graph into its SCCs, condense it into a DAG, or analyze cyclic dependencies. It applies directly to module dependency graphs (finding circular imports), web link analysis (finding clusters of mutually-linked pages), and program analysis (detecting loops and reachable code).
+## Rust Application
 
-The output is a list of SCCs, each containing the vertex indices belonging to that component. After condensation, the resulting DAG gives you a topological order over the component structure.
+`kosaraju(n, edges)` builds `adj` and `radj` simultaneously. First DFS (`dfs1`) populates `order` with vertices in finish order. After reversing `visited`, the second DFS (`dfs2`) processes vertices from `order.rev()`, collecting reachable vertices in the reversed graph. Each such collection is an SCC. Nested `fn dfs1` and `fn dfs2` are defined inside the main function.
 
-## The Intuition
+## OCaml Approach
 
-The core insight: finish order in DFS reveals the SCC structure. In a DFS of the original graph, a vertex in a "sink" SCC (no outgoing cross-SCC edges) finishes last. If you then DFS the *transposed* graph starting from the highest-finish-order vertex, you stay within that SCC — because the transposed edges can't escape it.
-
-Two passes:
-1. **Pass 1** on original graph: run DFS, push each vertex to a stack on finish. Stack top = vertex that finished last.
-2. **Pass 2** on reversed graph: pop from stack, DFS from each unvisited vertex. Each DFS tree = one SCC.
-
-Time: O(V+E). Space: O(V+E) for the reversed adjacency list.
-
-In OCaml you'd use recursive DFS naturally. In Rust, recursion risks stack overflow on large graphs, so iterative DFS with an explicit stack and a `returning` flag to distinguish pre/post-visit is the idiomatic approach.
-
-## How It Works in Rust
-
-```rust
-fn kosaraju(adj: &[Vec<usize>]) -> Vec<Vec<usize>> {
-    let n = adj.len();
-    let mut visited = vec![false; n];
-    let mut order = Vec::with_capacity(n); // finish order
-
-    // Pass 1: iterative DFS on original graph, collect finish order
-    for start in 0..n {
-        if visited[start] { continue; }
-        let mut stack = vec![(start, false)]; // (node, returning)
-        while let Some((v, ret)) = stack.pop() {
-            if ret {
-                order.push(v); // finished — push to order
-                continue;
-            }
-            if visited[v] { continue; }
-            visited[v] = true;
-            stack.push((v, true)); // push return marker
-            for &w in &adj[v] {
-                if !visited[w] { stack.push((w, false)); }
-            }
-        }
-    }
-
-    // Build reversed graph
-    let mut radj = vec![vec![]; n];
-    for v in 0..n {
-        for &w in &adj[v] { radj[w].push(v); }
-    }
-
-    // Pass 2: DFS on reversed graph in reverse finish order
-    let mut comp = vec![usize::MAX; n];
-    let mut sccs: Vec<Vec<usize>> = Vec::new();
-    let mut visited2 = vec![false; n];
-
-    for start in order.into_iter().rev() {
-        if visited2[start] { continue; }
-        let scc_id = sccs.len();
-        sccs.push(vec![]);
-        let mut stack = vec![start];
-        while let Some(v) = stack.pop() {
-            if visited2[v] { continue; }
-            visited2[v] = true;
-            comp[v] = scc_id;
-            sccs[scc_id].push(v);
-            for &w in &radj[v] {
-                if !visited2[w] { stack.push(w); }
-            }
-        }
-    }
-    sccs
-}
-```
-
-Key Rust detail: the `(node, returning)` tuple in the stack replaces the implicit call-stack frame that recursive DFS uses. When `returning = true`, the node has been fully explored — equivalent to code after the recursive call returns.
-
-## What This Unlocks
-
-- **Circular dependency detection** in build systems, package managers, and module graphs — each SCC with >1 node is a cycle.
-- **DAG condensation** for topological scheduling: condense SCCs into single nodes, then topo-sort the resulting DAG.
-- **2-SAT solving**: SCCs in the implication graph directly encode satisfiability — a variable and its negation in the same SCC means UNSAT.
+OCaml's two-function pattern mirrors the two-pass algorithm naturally. `let rec dfs1 v = ... order := v :: !order` and `let rec dfs2 v = comp := v :: !comp`. The reversed graph uses `Hashtbl` for edge storage. OCaml's `List.iter (fun v -> if not vis.(v) then ...) (List.rev !order)` drives the second pass. The `Ocamlgraph` library offers Kosaraju's as an alternative to Tarjan's.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| DFS implementation | Natural recursion (risk: stack overflow on large graphs) | Iterative with explicit `(node, returning)` stack |
-| Visited tracking | `Hashtbl` or mutable array via `ref` | `vec![false; n]` — direct indexed access |
-| Graph representation | `Array.make n []` with `List` adjacency | `Vec<Vec<usize>>` — owned, cache-friendly |
-| Reversed graph | Functional map/fold to build transpose | Imperative loop building `radj: Vec<Vec<usize>>` |
-| SCC output | List of lists | `Vec<Vec<usize>>` with component id array |
+1. **Code simplicity**: Kosaraju's two-pass DFS is more straightforward to reason about than Tarjan's single-pass with low-link values.
+2. **Memory**: Kosaraju's requires storing the reversed graph; Tarjan's uses only the original graph with additional O(V) arrays.
+3. **Cache behavior**: Kosaraju's second DFS on the reversed graph has worse cache behavior than Tarjan's single pass; in practice the difference is small.
+4. **Correctness proof**: Kosaraju's correctness is easier to prove: finish order captures the "reachability hierarchy" of SCCs.
+
+## Exercises
+
+1. Implement an iterative version of both DFS passes to avoid stack overflow on graphs with millions of vertices.
+2. Time Kosaraju's vs Tarjan's on a graph with 100,000 nodes and 500,000 edges — do they produce the same SCCs (verify by comparing sorted SCC sets)?
+3. Use Kosaraju's to identify "sink SCCs" in a dependency graph: SCCs with no outgoing edges to other SCCs are safe to process first in a topological order.

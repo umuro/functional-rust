@@ -29,3 +29,9 @@ Rust uses `enum RBTree<T>` with `Box` for recursive children. The `balance` func
 2. **Memory management:** OCaml's GC handles sharing automatically; Rust uses `Box<T>` with explicit heap allocation and move semantics for path copying
 3. **Polymorphism:** OCaml uses `'a` with structural equality; Rust uses `T: Ord` trait bound for ordered comparisons
 4. **Conciseness:** The OCaml `balance` is ~6 lines; Rust's is ~80 lines due to explicit destructuring — but both encode the same four-case logic
+
+## Exercises
+
+1. Implement `contains` for the red-black tree that searches for a value without modifying the tree structure.
+2. Add an `in_order` method that returns all elements of the red-black tree as a sorted `Vec<T>` by performing an in-order traversal.
+3. Implement `delete` for the red-black tree (the hardest operation) and verify that red-black invariants are maintained after each deletion using a property-based test.

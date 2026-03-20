@@ -2,109 +2,41 @@
 
 ---
 
-# 172: INI File Parser
+# INI File Parser
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Parse `.ini` config files with sections, key-value pairs, and comments — a complete real-world config format.
+INI files are used for configuration in Windows, Python's `configparser`, Git's `.gitconfig`, and countless other tools. The format has sections `[name]`, key-value pairs `key = value`, comments `; ...` or `# ...`, and optional whitespace. Building an INI parser demonstrates real-world parsing with multiple line types requiring different handling, and produces a structured result (`HashMap<String, HashMap<String, String>>`) directly usable by applications.
 
-## The Problem This Solves
+## Learning Outcomes
 
-INI files are everywhere: Git's `.gitconfig`, Python's `setup.cfg`, Windows registry exports, game configs, application settings. The format seems simple — `key = value` — but has enough structure to be interesting: sections group related keys, comments can appear on any line, inline comments trail after values, and blank lines should be ignored.
+- Parse a multi-line format with heterogeneous line types (section headers, key-value pairs, comments, blanks)
+- Learn how `choice` selects the correct parser for each line type
+- See how parsing produces structured output: a map of section names to key-value maps
+- Practice combining all previously learned combinators into a complete, useful parser
 
-Building an INI parser from scratch is a clean exercise in *line-oriented parsing* — a common real-world pattern where the top-level structure is rows, and each row has internal structure. It's simpler than CSV (no quoting), but introduces the two-level hierarchy: sections contain entries.
+## Rust Application
 
-This is one of the "payoff" examples: you're using `tag`, `take_while`, and whitespace combinators from earlier to build something you could actually ship.
+The parser handles four line types: `[section_name]` (section header), `key = value` (assignment), `; comment` or `# comment` (comment, discarded), and blank lines (ignored). Each line type has its own parser. The top-level parser applies `many0(choice([section_parser, comment_parser, blank_parser, key_value_parser]))` and builds a `Vec<IniSection>`. Whitespace is trimmed from keys and values. The result converts to `HashMap<String, HashMap<String, String>>`.
 
-## The Intuition
+## OCaml Approach
 
-Process line by line. Each line is one of: blank, comment, section header `[name]`, or key-value pair `key = value`. Group consecutive key-value pairs under the most recently seen section header.
-
+OCaml's `Str` module provides regex-based line parsing — a simpler approach:
+```ocaml
+let section_re = Str.regexp "\\[\\([^]]+\\)\\]"
+let kv_re = Str.regexp "\\([^=]+\\)=\\(.*\\)"
 ```
-[database]       ← section
-host = localhost  ← key-value under [database]
-port = 5432       ← key-value under [database]
-# Primary DB      ← comment, skip
-
-[cache]          ← new section
-ttl = 300        ← key-value under [cache]
-```
-
-## How It Works in Rust
-
-```rust
-#[derive(Debug)]
-struct IniSection {
-    name: String,
-    entries: Vec<(String, String)>,
-}
-
-fn parse_ini(input: &str) -> ParseResult<Vec<IniSection>> {
-    let mut sections: Vec<IniSection> = Vec::new();
-    let mut remaining = input;
-
-    while !remaining.is_empty() {
-        let line_end = remaining.find('\n').unwrap_or(remaining.len());
-        let line = remaining[..line_end].trim();
-        remaining = if line_end < remaining.len() {
-            &remaining[line_end + 1..]  // skip the '\n'
-        } else {
-            ""
-        };
-
-        if line.is_empty() || line.starts_with('#') || line.starts_with(';') {
-            continue;  // blank or comment
-        }
-
-        if line.starts_with('[') {
-            // Section header: [name]
-            let name = line.strip_prefix('[')
-                .and_then(|s| s.strip_suffix(']'))
-                .ok_or("invalid section header")?
-                .trim()
-                .to_string();
-            sections.push(IniSection { name, entries: Vec::new() });
-        } else if let Some(eq_pos) = line.find('=') {
-            // Key-value pair
-            let key = line[..eq_pos].trim().to_string();
-            let value_raw = line[eq_pos + 1..].trim();
-
-            // Strip inline comment (# or ;)
-            let value = value_raw
-                .find(|c| c == '#' || c == ';')
-                .map(|i| value_raw[..i].trim())
-                .unwrap_or(value_raw)
-                .to_string();
-
-            // Append to the current section (or a default unnamed section)
-            if sections.is_empty() {
-                sections.push(IniSection { name: "".to_string(), entries: Vec::new() });
-            }
-            sections.last_mut().unwrap().entries.push((key, value));
-        }
-    }
-
-    Ok((sections, ""))
-}
-
-// Convenience: convert to HashMap for easy lookup
-use std::collections::HashMap;
-fn section_map(section: &IniSection) -> HashMap<&str, &str> {
-    section.entries.iter().map(|(k, v)| (k.as_str(), v.as_str())).collect()
-}
-```
-
-## What This Unlocks
-
-- **Real config parsing** — read `.gitconfig`, `setup.cfg`, application settings without a dependency.
-- **Line-oriented parsing pattern** — works for log files, `.env` files, and many other formats.
-- **Two-level structure** — sections containing entries is a pattern that generalizes (e.g., TOML is similar).
+This is less composable but practical for simple INI files. Combinator-based OCaml INI parsers exist but are less common than regex-based approaches for configuration file parsing.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Lookup | `List.assoc "key" entries` | `HashMap` or linear `find` on `Vec` |
-| Section record | `{ name: string; entries: (string * string) list }` | `struct IniSection { name: String, entries: Vec<(String, String)> }` |
-| String trimming | `String.trim` | `str::trim()` |
-| Inline comment | `String.index_opt '#' s` | `str::find('#')` or `find(&#124;c&#124; c == '#' \|\| c == ';')` |
+1. **Line-oriented vs. token-oriented**: INI files are fundamentally line-oriented; the combinator approach handles this by including newline matching in each line parser.
+2. **Comments**: Both discard comment lines; combining comment skipping with whitespace skipping produces a clean value stream.
+3. **Multi-line values**: Some INI variants support continuation lines (`value = ...\n  continuation`); neither basic parser handles this.
+4. **Encoding**: Both parse UTF-8; section names and keys with non-ASCII characters require explicit allowance in the character predicates.
+
+## Exercises
+
+1. Add support for `#`-prefixed comments in addition to `;`-prefixed ones.
+2. Handle inline comments: `key = value  ; this is a comment` where the value is everything before the `;`.
+3. Implement a global section for key-value pairs before the first `[section]` header.

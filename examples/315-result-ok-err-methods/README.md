@@ -4,63 +4,63 @@
 
 # 315: Result ok() and err() Methods
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-`.ok()` and `.err()` convert `Result` into `Option` — use them when you only care about one side of an outcome.
+The full `Result<T, E>` method surface is large — over 20 methods covering query, transformation, combination, and extraction. Many Rust developers use only `?`, `unwrap()`, and `map()`, missing more specialized tools like `ok()` (discard error, get `Option<T>`), `err()` (discard success, get `Option<E>`), `map_or()`, and `and()`/`or()`. This reference covers the complete method set and their appropriate use cases.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Sometimes you have a `Result<T, E>` but only care about whether it succeeded, not why it failed. Or you're building a collection and want to skip errors silently. Or you have a function returning `Option<T>` that you need to feed from a `Result`-based API. The `match` pattern for these conversions is repetitive and verbose.
+- Use `ok()` to convert `Result<T, E>` to `Option<T>` discarding the error
+- Use `err()` to convert `Result<T, E>` to `Option<E>` discarding the success
+- Understand `map_or(default, f)` and `map_or_else(err_f, ok_f)` for default values
+- Use `and(other)` and `or(other)` for boolean-like result chaining
 
-`Result` has two "projection" methods that collapse it into an `Option`: `.ok()` keeps the success value and discards the error; `.err()` keeps the error and discards the success. They're conceptually symmetric and often used together with `filter_map` on iterators.
+## Rust Application
 
-Understanding these alongside the full `Result` and `Option` method families — `map`, `and_then`, `or_else`, `flatten`, `zip` — eliminates most `match` expressions in favor of clean, chainable code. This example surveys the API that makes Rust's error handling feel like functional programming.
-
-## The Intuition
-
-`.ok()` and `.err()` are "I only care about one outcome" methods. When you call `.ok()`, you're saying "give me the value if it worked, or `None` if it didn't — I don't care about the error details." When you call `.err()`, you're saying "give me the error if it failed, or `None` if it succeeded."
-
-The rest of the `Result` API follows a consistent algebra: `map` transforms the value, `map_err` transforms the error, `and_then` chains operations (like `flatMap`), `or_else` provides fallbacks, `and`/`or` combine results logically.
-
-## How It Works in Rust
+Selected methods from the `Result` API:
 
 ```rust
-let ok: Result<i32, &str> = Ok(42);
-let err: Result<i32, &str> = Err("oops");
+let ok: Result<i32, &str> = Ok(5);
+let err: Result<i32, &str> = Err("bad");
 
-// .ok() → Option<T>: keeps value, discards error
-ok.ok()   // → Some(42)
-err.ok()  // → None
+// Query
+ok.is_ok();   // true
+err.is_err(); // true
 
-// .err() → Option<E>: keeps error, discards value
-ok.err()  // → None
-err.err() // → Some("oops")
+// Convert to Option
+ok.ok();   // Some(5) — error discarded
+err.err(); // Some("bad") — success discarded
+ok.err();  // None
 
-// Common use: filter_map to skip errors
-let results = vec![Ok(1), Err("bad"), Ok(3)];
-let values: Vec<i32> = results.into_iter().filter_map(|r| r.ok()).collect();
-// → [1, 3]
+// Transform
+ok.map(|x| x * 2);                   // Ok(10)
+err.map_err(|e| format!("err: {}", e)); // Err("err: bad")
+ok.map_or(0, |x| x + 1);             // 6
 
-// Chaining combinators
-Ok(5_i32)
-    .map(|x| x * 2)          // Ok(10)
-    .and_then(|x| if x > 5 { Ok(x) } else { Err("too small") })
-    .unwrap_or(0);            // → 10
+// Combine
+ok.and(Ok::<i32, &str>(10));          // Ok(10) — ok.and(x) = x if ok is Ok
+err.or(Ok::<i32, &str>(42));          // Ok(42) — err.or(x) = x if self is Err
 ```
 
-## What This Unlocks
+## OCaml Approach
 
-- **Seamless integration** between Result-producing APIs and Option-consuming ones — no boilerplate match expressions at the boundary
-- **Clean iterator pipelines** — `.filter_map(|r| r.ok())` is the idiomatic "skip failures, collect successes" pattern
-- **Chainable transformations** — the full `Result` and `Option` method algebra replaces nested `match` with readable combinator chains
+OCaml's `Result` module provides `Result.is_ok`, `Result.is_error`, `Result.map`, `Result.map_error`, and `Result.fold` — a subset of Rust's methods. `Result.ok` (convert to `Option`) exists as `Result.to_option`:
+
+```ocaml
+Result.is_ok (Ok 5)                   (* true *)
+Result.to_option (Ok 5)               (* Some 5 *)
+Result.fold ~ok:(fun x -> x+1) ~error:(fun _ -> 0) (Ok 5)  (* 6 *)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Result → Option (value) | `Option.of_result` / pattern match | `result.ok()` |
-| Result → Option (error) | Pattern match | `result.err()` |
-| Transform value | `Result.map` | `result.map(f)` |
-| Transform error | `Result.map_error` | `result.map_err(f)` |
-| Chain operations | `Result.bind` / `let*` | `result.and_then(f)` |
-| Fallback on error | Manual match | `result.or_else(f)` |
+1. **Method surface**: Rust has ~20+ methods on `Result`; OCaml's standard `Result` module has fewer, with `Base.Result` providing more.
+2. **`ok()` as filter**: `result.ok()` is the idiomatic way to silently drop errors when only the success case matters — used extensively in `filter_map`.
+3. **`and`/`or` logic**: `and(other)` propagates `Err` from self; `or(other)` propagates `Ok` from self — they model error "and"/"or" logic.
+4. **Exhaustive coverage**: Knowing all methods prevents reinventing them with `match` — a `map_or` is cleaner than a `match` with two branches.
+
+## Exercises
+
+1. Use `ok()` and `filter_map()` together to collect only successfully parsed values from a `Vec<Result<i32, _>>`.
+2. Use `and()` to chain two `Result` values: only proceed if both are `Ok`, return the first `Err` otherwise.
+3. Use `map_or_else(|e| log_and_default(e), |v| v)` to log errors and provide fallback values in a single expression.

@@ -37,3 +37,9 @@ OCaml variants are lightweight — declare the type, write functions with `match
 3. **Display:** Rust needs explicit `Display` impl; OCaml can derive `show` via ppx or manually print
 4. **Copy semantics:** `Copy` must be opted into in Rust; OCaml values are always copyable
 5. **Exhaustiveness:** Both compilers warn on non-exhaustive matches — this is a shared strength
+
+## Exercises
+
+1. Add a method `is_weekend` to the `Day` enum using `match`, and implement `working_days_until` that counts weekdays between two days of the week.
+2. Extend the `Day` enum to a `WorkDay { day: Day, hours: f32 }` struct and implement `total_hours` for a slice of `WorkDay` values using an iterator fold.
+3. Define a `Month` enum with all 12 months and implement `days_in_month` that accounts for leap years, then write a `calendar_days` iterator that yields every `(Month, u8)` day pair for a given year.

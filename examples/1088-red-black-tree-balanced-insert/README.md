@@ -29,3 +29,9 @@ Rust uses `enum RBTree<T> { Empty, Node(Color, Box<RBTree<T>>, T, Box<RBTree<T>>
 2. **Pattern matching depth:** OCaml's or-patterns (`| case1 | case2 -> result`) merge four rotation cases into one arm; Rust needs separate arms with guards since or-patterns can't bind different variables
 3. **Ownership in rotations:** OCaml freely shares subtrees between old and new nodes via GC; Rust must `clone()` shared subtrees or carefully move ownership through destructuring
 4. **Persistence cost:** OCaml's GC makes persistent trees nearly free; Rust's `Clone`-based persistence has explicit allocation cost but predictable performance
+
+## Exercises
+
+1. Implement an `iter` method on the red-black tree that yields elements in sorted order using an explicit stack-based in-order traversal.
+2. Add a `len` method that returns the number of elements in the tree, maintaining a count field updated on each insert (handle duplicate inserts as no-ops).
+3. Implement `from_sorted_iter` that constructs a balanced red-black tree directly from a sorted iterator without repeated single-element insertions.

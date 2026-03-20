@@ -33,3 +33,9 @@ Rust's `Option<T>` has `and_then` (monadic bind) and `map` (functor map) built i
 2. **`?` operator:** Rust's `?` is a unique construct with no OCaml equivalent — it makes monadic short-circuiting look like imperative early return.
 3. **`Option::bind` in stdlib:** OCaml 4.08+ added `Option.bind`; before that, developers always defined `>>=` manually. Rust has had `and_then` from day one.
 4. **Ownership:** Rust's `and_then` and `map` consume the `Option` by value; closures receive owned `T`, not a reference, matching OCaml's value semantics.
+
+## Exercises
+
+1. Rewrite the same computation chain using the `?` operator instead of explicit `and_then` calls and verify the results are identical.
+2. Implement `option_all` that takes a `Vec<Option<T>>` and returns `Some(Vec<T>)` only if every element is `Some`, using a fold over the sequence.
+3. Build a small JSON-like path traversal: given a nested `HashMap<String, Value>` structure, write a function `get_path(&self, path: &[&str]) -> Option<&Value>` using monadic chaining.

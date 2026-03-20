@@ -2,145 +2,49 @@
 
 ---
 
-# 618: Traversal for Collection Optics
+# Optics: traversal optics
 
-**Difficulty:** 5  **Level:** Master
+## Problem Statement
 
-Traverse a collection with an effectful function — short-circuit on `None`/`Err`, collect all results into `Option<Vec<T>>` or `Result<Vec<T>, E>`.
+Optics are composable data accessors originating from Haskell's lens library (Edward Kmett, 2012). They solve the deeply-nested update problem in immutable data: updating a field three levels deep requires rebuilding all intermediate values. Optics compose — a lens into a struct field composed with a prism for an enum variant gives a combined accessor that can get, set, and modify deeply nested optional values. The optic hierarchy includes Lens (exactly one focus), Prism (zero or one focus on enum variants), Traversal (zero or more foci), and Iso (lossless bidirectional conversion).
 
-## The Problem This Solves
+## Learning Outcomes
 
-You have a `Vec<String>` that represents user-provided input. You want to parse every element into `i32`. If *any* element fails to parse, the whole operation should fail. You want a `Vec<i32>` on success, or `None` / an error on failure.
+- The specific optic demonstrated in this example and what it focuses on
+- How to implement the optic manually using closures or structs in Rust
+- How this optic composes with others in the hierarchy
+- The laws the optic must satisfy for correct behavior
+- Where optics are used: state management, config manipulation, nested data transformation
 
-The naive approach: iterate, collect errors separately, handle them after:
+## Rust Application
 
-```rust
-let mut results = Vec::new();
-let mut failed = false;
-for s in &strs {
-    match s.parse::<i32>() {
-        Ok(n)  => results.push(n),
-        Err(_) => { failed = true; break; }
-    }
-}
-if failed { return None; }
-// results is Vec<i32> if we made it here
+The source implements the optic concept using Rust's closure system. Due to lack of higher-kinded types, Rust uses explicit struct wrappers with Box<dyn Fn> fields or monomorphized versions with generic parameters. The examples show: the core get/set/preview/review operations, composition of two optics, and the laws verified in tests.
+
+Key patterns:
+- Core optic struct with closure fields
+- Composition: combining optics for deeper focus
+- Laws verification: identity, roundtrip, idempotence
+- Practical example: modifying nested struct/enum data
+
+## OCaml Approach
+
+OCaml optics use the same record-with-function approach:
+
+```ocaml
+type ('s, 'a) lens = { get: 's -> 'a; set: 's -> 'a -> 's }
+let name_lens = { get = (fun u -> u.name); set = (fun u n -> { u with name = n }) }
+let compose l1 l2 = { get = (fun s -> l2.get (l1.get s)); set = (fun s a -> l1.set s (l2.set (l1.get s) a)) }
 ```
-
-Or with nested iterators:
-
-```rust
-let parsed: Vec<Option<i32>> = strs.iter().map(|s| s.parse().ok()).collect();
-// Now you have Vec<Option<i32>> — you need to flip it to Option<Vec<i32>>
-// How? Another pass, more boilerplate
-let result: Option<Vec<i32>> = if parsed.iter().all(|x| x.is_some()) {
-    Some(parsed.into_iter().map(|x| x.unwrap()).collect())
-} else {
-    None
-};
-```
-
-This pattern — apply a fallible function to every element, short-circuit on first failure, collect results — is exactly what **traversal** is. It appears constantly in data validation, parsing pipelines, and batch processing. This exists to solve exactly that pain.
-
-## The Intuition
-
-A **Traversal** is a Lens that focuses on *multiple* targets at once. Where a Lens reaches one field, a Traversal reaches all elements of a `Vec`, or all `Some` values in a `Vec<Option<T>>`, or all leaves of a tree.
-
-The key operation is **`traverse`**: apply an *effectful* function to each target and collect results. "Effectful" means the function returns a wrapper type — `Option<B>`, `Result<B, E>`, `Vec<B>`.
-
-The magic is in how results are collected:
-
-- **`traverse` with `Option`**: `Vec<A>` + `fn(A) → Option<B>` → `Option<Vec<B>>`
-  - All succeed → `Some(Vec<B>)` with all results
-  - Any fail → `None` immediately (short-circuit)
-  
-- **`traverse` with `Result`**: `Vec<A>` + `fn(A) → Result<B, E>` → `Result<Vec<B>, E>`
-  - All succeed → `Ok(Vec<B>)`
-  - First error → `Err(e)` (short-circuit)
-
-This is the "flip" operation: `Vec<Option<T>>` → `Option<Vec<T>>`. You're converting "a collection of possibly-failed results" into "possibly a collection of results."
-
-**Analogy:** Think of traversal like a checklist. You're checking off items one by one (`A → Option<B>`). If any item fails the check, the whole checklist is invalid (`None`). If all pass, you get the filled-in checklist (`Some(Vec<B>)`). Traverse does this automatically — no manual short-circuit logic needed.
-
-```
-Vec<A>  +  fn(A) -> Option<B>
-       ↓ traverse
-Option<Vec<B>>    ← Some([b1, b2, b3]) or None on first failure
-```
-
-In Rust, this is powered by a hidden trick: `Iterator::collect::<Option<Vec<B>>>()` already does this! Collecting an iterator of `Option<B>` into `Option<Vec<B>>` short-circuits on `None`. Traversal just makes this pattern explicit and composable.
-
-## How It Works in Rust
-
-```rust
-// Step 1: The fundamental traverse operation — Option effect
-fn traverse_opt<A, B>(xs: Vec<A>, f: impl Fn(A) -> Option<B>) -> Option<Vec<B>> {
-    xs.into_iter()
-        .map(f)              // Iterator<Item = Option<B>>
-        .collect()           // collect() on Iterator<Item=Option<B>> into Option<Vec<B>>
-                             // ← this is the key: collect() knows to short-circuit!
-}
-
-// Works because Rust's FromIterator for Option short-circuits on None
-traverse_opt(vec!["1", "2", "3"], |s| s.parse::<i32>().ok());  // Some([1, 2, 3])
-traverse_opt(vec!["1", "x", "3"], |s| s.parse::<i32>().ok());  // None — "x" fails
-
-// Step 2: Same pattern for Result — get an error message instead of None
-fn traverse_result<A, B, E>(xs: Vec<A>, f: impl Fn(A) -> Result<B, E>) -> Result<Vec<B>, E> {
-    xs.into_iter().map(f).collect()  // Same trick! collect() short-circuits on Err
-}
-
-// Returns first error encountered:
-traverse_result(["1.5", "abc"].to_vec(), |s| {
-    s.parse::<f64>().map_err(|_| format!("bad float: {}", s))
-});  // Err("bad float: abc")
-
-// Step 3: Traverse a nested structure (matrix)
-fn traverse_matrix<A: Clone, B>(
-    m: Vec<Vec<A>>,
-    f: impl Fn(A) -> Option<B> + Clone,
-) -> Option<Vec<Vec<B>>> {
-    // outer traverse: for each row, inner traverse: for each element
-    traverse_opt(m, |row| traverse_opt(row, f.clone()))
-    // If any element in any row fails → None for the whole matrix
-}
-
-let matrix = vec![vec!["1", "2"], vec!["3", "4"]];
-traverse_matrix(matrix, |s| s.parse::<i32>().ok());
-// Some([[1, 2], [3, 4]])
-
-// Step 4: Traversal as filter_map — "Prism traversal"
-// Collect only the values that match a pattern (like a Prism over a collection)
-fn collect_values<A: Clone, B>(xs: &[A], prism: impl Fn(&A) -> Option<B>) -> Vec<B> {
-    xs.iter().filter_map(prism).collect()
-    // Different from traverse_opt: here None means "skip this element", not "fail"
-}
-
-enum Json { Num(f64), Str(String), Null }
-let jsons = vec![Json::Num(1.0), Json::Str("hi".into()), Json::Num(2.0), Json::Null];
-let nums = collect_values(&jsons, |j| match j { Json::Num(n) => Some(*n), _ => None });
-// [1.0, 2.0] — strings and nulls filtered out
-
-// Step 5: Traverse nested Option<Vec<A>>
-fn traverse_nested<A, B>(opt: Option<Vec<A>>, f: impl Fn(A) -> Option<B>) -> Option<Vec<B>> {
-    opt.and_then(|xs| traverse_opt(xs, f))
-    // None input → None output
-    // Some(xs) → traverse xs → Option<Vec<B>>
-}
-```
-
-## What This Unlocks
-
-- **Data validation pipelines** — parse and validate every field in a batch of records: `traverse_result(records, validate)` gives you either all-valid data or the first error, without manual error-accumulation code.
-- **API response handling** — deserialising a `Vec<RawJson>` into `Vec<ParsedItem>` is exactly traversal: `traverse_opt(raw_items, parse_item)`. One `None` means "malformed response."
-- **The `Option<Vec<T>>` ↔ `Vec<Option<T>>` flip** — knowing that `collect::<Option<Vec<T>>>()` does the flip explains a class of iterator patterns that are otherwise confusing.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| `traverse` | `List.map f xs \|> sequence` or direct `List.filter_map` | `iter().map(f).collect::<Option<Vec<_>>>()` |
-| Short-circuit on `None` | Applicative `sequence` over `option` monad | Built into `FromIterator` implementation for `Option<Vec<B>>` |
-| `traverse` with `Result` | Same: `sequence` over `result` applicative | `iter().map(f).collect::<Result<Vec<_>, E>>()` |
-| Filter-map (Prism traversal) | `List.filter_map` | `iter().filter_map(prism).collect()` |
-| Applicative requirement | Explicit: `traverse` requires `Applicative` constraint | Implicit: `FromIterator` trait handles the collection semantics |
+1. **HKT requirement**: Haskell's van Laarhoven encoding uses Functor/Applicative for optic unification requiring HKT; Rust uses explicit struct types per optic kind.
+2. **Operator syntax**: Haskell uses `^.`, `.~`, `%~` for terse optic use; Rust uses method calls, more verbose but explicit.
+3. **Derive macros**: `lens-rs` and similar crates provide derive macros for automatic lens generation; OCaml uses `ppx_lens` for the same.
+4. **Performance**: Boxed closure implementations have runtime overhead; monomorphized generic versions compile to zero-cost abstractions.
+
+## Exercises
+
+1. **Lens laws**: Write tests for all three lens laws: get-set (get after set returns set value), set-get (set to current value is identity), set-set (second set wins).
+2. **Prism laws**: Write tests for prism laws: preview after review returns Some, set via review then preview round-trips.
+3. **Compose two levels**: Create a lens for a struct field and a prism for an enum variant in that field — compose them and modify the inner value when the variant is present.

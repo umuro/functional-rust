@@ -2,45 +2,47 @@
 
 ---
 
-# 517: Closure-to-fn-pointer Coercion
+# Closure-to-Function-Pointer Coercion
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Non-capturing closures coerce to `fn` pointers; capturing ones cannot.
+C and systems programming have long relied on function pointers for callbacks — they are a fixed machine-word size, require no heap allocation, and map directly to a call instruction. Rust preserves this capability: non-capturing closures and named functions both coerce to `fn` pointer types, enabling zero-overhead callbacks in FFI-compatible APIs. The constraint is intentional — a capturing closure has extra data that a raw pointer cannot represent. Understanding when coercion works and when it fails helps you choose between `fn`, `impl Fn`, and `Box<dyn Fn>`.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Rust has two kinds of callable values: function pointers (`fn(T) -> U`) and closures (`impl Fn`). Function pointers are a single machine-word — just an address. Closures are fat: they carry their captured environment. This size difference matters when you're building dispatch tables, FFI callbacks, or data structures that store many callbacks of the same type.
+- Why non-capturing closures coerce to `fn` pointers but capturing ones do not
+- How named functions serve as `fn` pointer values
+- How to build dispatch tables using arrays of `fn` pointers (uniform size, no fat pointer)
+- When to use `fn` vs `impl Fn` vs `Box<dyn Fn>` for different API shapes
+- How FFI callbacks require `fn` pointer types for ABI compatibility
 
-If you use `Box<dyn Fn>` for everything, you pay for heap allocation and indirection even when the closure doesn't capture anything. If you want a `[fn(i32) -> i32; N]` array (all same size, stack-allocated), you need function pointers — not `dyn Fn`. The coercion rule gives you this for free: any closure that captures nothing is automatically coercible to a `fn` pointer of the matching signature.
+## Rust Application
 
-Understanding this boundary — what can and cannot coerce — helps you choose the right type in APIs, avoid unnecessary allocations, and write ergonomic callback registration without forcing callers to use `Box`.
+`apply_fn_ptr(f: fn(i32) -> i32, x: i32)` accepts only `fn` pointers. `make_transform_table()` returns `[fn(i32) -> i32; 4]` — an array of four function pointers including a non-capturing lambda. `build_pipeline(ops: Vec<fn(i32) -> i32>)` stores pointers in a `Vec` and folds over them. The `coercion_demo` function comments show that `let _: fn(i32) -> i32 = |x| x * 2` compiles but `let y = 5; let _: fn(i32) -> i32 = |x| x + y` does not.
 
-## The Intuition
+Key patterns:
+- `fn(i32) -> i32` — concrete function pointer type (single machine word, no allocation)
+- Non-capturing `|x| x + 10` coercing into `fn` slot in array literal
+- `type Callback = fn(i32) -> i32` — named alias for FFI-compatible pointer type
 
-A non-capturing closure is just a function with an anonymous name. It has no environment to carry. So its type *is* a function pointer — the compiler will let it coerce to one. A capturing closure, on the other hand, is a struct with a `call` method. It has no function-pointer representation because its environment goes with it everywhere. You must use `Box<dyn Fn>` or `impl Fn` for those.
+## OCaml Approach
 
-Think of it like this: if the closure needs a backpack (captured variables), it can't pretend to be a bare pointer. If it travels light, it can.
+OCaml has no function pointer / closure distinction at the value level — all functions are closures, and closed-over environments are heap-allocated. There is no direct coercion concept. For C FFI, OCaml uses `ctypes` or `Callback.register`, which wrap OCaml functions behind C-callable thunks. Performance-sensitive dispatch uses arrays of functions just as in Rust, but every entry is a closure regardless.
 
-## How It Works in Rust
-
-1. **Non-capturing closure** — `let f: fn(i32) -> i32 = |x| x + 1;` compiles; the closure captures nothing, so it coerces.
-2. **Named function** — `let f: fn(i32) -> i32 = double;` always works; named functions *are* `fn` pointers.
-3. **Array of fn pointers** — `[double, triple, |x| x * x]` works if all are non-capturing; uniform size, stack-allocated.
-4. **Capturing closure** — `let offset = 42; let f: fn(i32) -> i32 = |x| x + offset;` **fails**; must use `Box<dyn Fn(i32) -> i32>` instead.
-5. **FFI-style callbacks** — register a `fn(i32) -> i32` type alias as a callback; non-capturing closures and named functions both satisfy it without boxing.
-
-## What This Unlocks
-
-- Build dispatch tables and transform arrays with `fn` pointers — no heap allocation, uniform size.
-- Design FFI-compatible callback APIs that accept `fn` pointers directly.
-- Choose between `fn`, `impl Fn`, and `Box<dyn Fn>` with confidence based on whether capture is needed.
+```ocaml
+let ops = [| (fun x -> x * 2); (fun x -> x * 3) |]
+let apply i x = ops.(i) x
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Function pointers | All functions/closures are values; no distinction | `fn` pointer (no capture) vs closure (`impl Fn`/`Box<dyn Fn>`) |
-| Closure coercion | No equivalent; all closures are uniform | Non-capturing closures coerce to `fn T -> U`; capturing ones cannot |
-| Array of functions | `(int -> int) array` naturally | `[fn(i32) -> i32; N]` requires non-capturing closures |
-| Callback type | `'a -> 'b` function type | Choose `fn`, `impl Fn`, or `Box<dyn Fn>` based on capture needs |
+1. **Uniform representation**: Rust `fn` pointers are a single pointer word with no closure environment; OCaml always has a (pointer, environment) pair even for non-capturing functions.
+2. **FFI compatibility**: Rust `fn` pointers map directly to C function pointers — usable in `extern "C"` callbacks without wrappers; OCaml requires `ctypes` machinery or `Callback.register`.
+3. **Size guarantees**: Rust `fn` pointers have a known, fixed size enabling `[fn(T) -> U; N]` arrays; OCaml function values are opaque pointers of uniform size too, but via GC indirection.
+4. **Type safety**: Rust distinguishes `fn(i32) -> i32` from `fn(i64) -> i32` at the type level with no implicit coercion; OCaml's type system similarly rejects mismatched function types at compile time.
+
+## Exercises
+
+1. **FFI table**: Build a `[fn(i32) -> i32; N]` dispatch table and write a function that takes an index and applies the corresponding operation, returning an error variant for out-of-bounds indices.
+2. **Pipeline from strings**: Write `build_named_pipeline(ops: &[&str])` that looks up named operations (`"double"`, `"negate"`, etc.) in a `HashMap<&str, fn(i32) -> i32>` and returns a composed `fn` pipeline.
+3. **Capturing fallback**: Demonstrate that `Box<dyn Fn(i32) -> i32>` can hold both `fn` pointers and capturing closures, and write a dispatcher that tries a `fn` pointer table first and falls back to a `Box<dyn Fn>` registry.

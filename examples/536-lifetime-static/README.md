@@ -2,104 +2,49 @@
 
 ---
 
-# 536: 'static Lifetime
+# 'static Lifetime
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-`'static` means "valid for the entire program." String literals are `'static`. Thread-spawned closures must be `'static`. Understanding when to require it — and when *not* to — prevents a common class of beginner frustration.
+`'static` is the longest possible lifetime in Rust — it means "valid for the entire program duration." String literals embedded in the binary are `'static str`. Global constants and statics are `'static`. The `'static` bound on trait objects (`Box<dyn Trait + 'static>`) means the type contains no non-static references — it can be sent across thread boundaries and stored in long-lived data structures. Understanding `'static` is essential for thread-safe data sharing, global configuration, error type design, and trait object storage.
 
-## The Problem This Solves
+## Learning Outcomes
 
-When you spawn a thread or store something in a global, the data must be valid for as long as the program runs. The compiler can't prove a borrowed reference from a local scope survives that long:
+- What `'static` means: the reference is valid for the entire program's lifetime
+- How string literals (`"hello"`) are `&'static str` — embedded in the binary
+- How owned types (`String`, `Vec<T>`) satisfy `'static` bounds because they have no borrows
+- How `'static` bounds on trait objects (`Box<dyn Error + 'static>`) enable thread-safe error handling
+- Where `'static` is required: `thread::spawn`, global statics, `Box<dyn Any + 'static>`
 
-```rust
-fn spawn_worker(data: &str) {
-    std::thread::spawn(|| {
-        println!("{}", data); // ERROR: data may not live long enough
-        // data is borrowed — it could be dropped before the thread finishes
-    });
-}
+## Rust Application
+
+`APP_NAME: &'static str` and `ERROR_MESSAGES: &[(u16, &str)]` are program-wide statics. `get_error_msg(code)` returns `&'static str` — a reference to program binary data. `get_greeting()` returns `"Hello, World!"` typed as `&'static str`. `make_static_string()` returns a `String` — not `&'static str` — but `String` still satisfies `'static` trait bounds because it owns its data with no borrows. `store_static(s: &'static str)` demonstrates that only `'static` string references can be stored in this position.
+
+Key patterns:
+- `static FOO: &str = "..."` — the static variable itself is `'static`
+- `fn get() -> &'static str` — returning a reference to program-lifetime data
+- `T: 'static` bound: type contains no non-static references (owned types qualify)
+
+## OCaml Approach
+
+OCaml has no `'static` concept. All values are GC-managed and valid as long as any reference exists. Global values are declared with `let` at module scope:
+
+```ocaml
+let app_name = "MyApp"            (* module-level, available everywhere *)
+let error_messages = [(404, "Not Found"); (500, "Internal Server Error")]
 ```
 
-The fix is either to *own* the data (move it into the thread) or require it to be `'static`. The `'static` bound communicates: "I need this to live forever — don't give me a temporary borrow."
-
-`T: 'static` doesn't mean `T` is a static variable. It means `T` contains no borrowed references that could expire. An owned `String` satisfies `T: 'static` because it owns all its data.
-
-## The Intuition
-
-There are two distinct uses of `'static`:
-
-1. **`&'static str`** — a reference that truly lives forever (string literals, `static` variables). The data is baked into the binary.
-
-2. **`T: 'static` as a bound** — means "T owns its data, or its borrows are `'static`." This doesn't mean T lives forever. It means: *if* T contains references, they're `'static`. An owned `String` satisfies this because it has *no* references with limited scope.
-
-The `'static` bound is really saying "no borrowed data with a limited lifetime" — not "this value will exist forever."
-
-## How It Works in Rust
-
-**String literals are `'static`:**
-
-```rust
-// Embedded in binary — valid for entire program duration
-let s: &'static str = "I will never be freed";
-static APP_NAME: &str = "MyApp"; // also &'static str
-```
-
-**Thread spawning requires `'static`:**
-
-```rust
-// Works: owned data, moved into thread — satisfies 'static
-let data = vec![1, 2, 3];
-std::thread::spawn(move || {
-    println!("{:?}", data); // data moved — no borrow, safe
-});
-
-// Fails: borrowed reference with limited scope
-let data = vec![1, 2, 3];
-std::thread::spawn(|| {
-    println!("{:?}", &data); // ERROR: data doesn't live long enough
-});
-```
-
-**`T: 'static` bound — what satisfies it:**
-
-```rust
-fn store_globally<T: 'static>(value: T) { /* ... */ }
-
-store_globally(String::from("owned"));  // ✓ no borrowed refs
-store_globally(42i32);                  // ✓ no refs at all
-store_globally(vec!["a", "b"]);         // ✓ &'static str — fine
-store_globally("literal");              // ✓ &'static str
-
-// &String would fail — it's a borrow with limited scope
-let s = String::from("temp");
-// store_globally(&s); // ERROR: &s doesn't satisfy 'static
-```
-
-**Lazy global initialization:**
-
-```rust
-use std::sync::OnceLock;
-static CONFIG: OnceLock<Vec<String>> = OnceLock::new();
-
-fn get_config() -> &'static [String] {
-    CONFIG.get_or_init(|| vec!["setting1".to_string()])
-    // Returns &'static — valid forever once initialized
-}
-```
-
-## What This Unlocks
-
-- **Thread-safe data sharing** — move owned data into threads without reference counting. `T: 'static + Send` is the baseline for `thread::spawn`.
-- **Global caches and lazy initialization** — `OnceLock<T>` and `static` variables return `&'static T` — references you can store anywhere without worrying about lifetimes.
-- **Plugin and trait-object APIs** — `Box<dyn Trait + 'static>` is the default for stored trait objects. Understanding `'static` prevents the common "trait object requires 'static" confusion.
+The GC ensures these are always valid — there is no concept of a lifetime expiring.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| String literals | `string` values on the heap, GC-managed | `&'static str` — embedded in binary, truly immortal |
-| Global state | `let` at module level, GC-managed | `static` with type annotation; `OnceLock` for lazy initialization |
-| Thread data lifetime | Values kept alive by GC across threads | Must be `'static + Send` — owned or truly immortal |
-| `T: 'static` bound | No equivalent — GC handles all | "T owns its data" — no borrowed refs with limited scope |
-| Eternal references | All live references are eternal (GC) | Only `&'static T` is eternal — all others have scoped lifetimes |
+1. **Binary embedding**: Rust `&'static str` literals are embedded in the binary's read-only data segment; OCaml string literals are GC-allocated heap objects (though the compiler may intern them).
+2. **Thread safety**: Rust `'static` bound on `thread::spawn`'s closure ensures no borrowed references cross the thread boundary; OCaml's GC manages cross-thread safety through domain locks in OCaml 5.x.
+3. **Owned data and 'static**: In Rust, `String: 'static` because it has no borrows — a subtle but important distinction between "is `'static` data" and "satisfies `'static` bound"; OCaml has no equivalent.
+4. **Error types**: Rust `Box<dyn std::error::Error + 'static>` is the standard owned error type; OCaml exceptions are values of type `exn` with no lifetime tracking.
+
+## Exercises
+
+1. **Static dispatch table**: Define a `static OPS: &[(&str, fn(i32) -> i32)]` at module level mapping names to operations, and write a lookup function returning `Option<fn(i32) -> i32>`.
+2. **'static bound function**: Write `fn store_in_vec<T: 'static>(v: &mut Vec<Box<dyn std::any::Any>>, item: T)` and verify it rejects types with non-static borrows.
+3. **Lazy static config**: Use `std::sync::OnceLock<&'static str>` to store a program-global greeting initialized from a command-line argument on first access.

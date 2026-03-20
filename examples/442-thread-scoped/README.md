@@ -2,71 +2,39 @@
 
 ---
 
-# 442: Scoped Threads — Borrow Stack Data Across Threads
+# 442: Scoped Threads — Borrowing Across Threads
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Use `thread::scope` to spawn threads that borrow local data directly — no `Arc`, no cloning, no heap allocation.
+`thread::spawn` requires `'static` data — you can't borrow a local variable across threads because the spawned thread might outlive the caller's stack frame. This forces `Arc<T>` and cloning even when you just want to process slices of a local array in parallel. `thread::scope` (stabilized in Rust 1.63) solves this: scoped threads are guaranteed to complete before the scope exits, so they can safely borrow any data from the enclosing scope — including stack-allocated slices, without `Arc` or `clone`.
 
-## The Problem This Solves
+Scoped threads enable efficient parallel processing of local data: parallel prefix sums, parallel sorting passes, parallel data transformation — all with zero heap allocation overhead.
 
-`thread::spawn` requires a `'static` closure: everything the thread touches must live for the entire program lifetime or be owned by the thread. That rules out the most natural pattern — passing a reference to a local vector, slice, or string into a thread for parallel processing. The workaround is `Arc`, but Arc means heap allocation, atomic reference counting, and boilerplate cloning everywhere.
+## Learning Outcomes
 
-The deeper problem is safety. The compiler's `'static` requirement exists because a spawned thread can outlive the scope that created it. If you could borrow local data freely, the thread might read freed memory after the enclosing function returns. Early Rust APIs (including the infamous `std::thread::scoped` that was removed for soundness) got this wrong.
+- Understand why `thread::spawn` requires `'static` but `thread::scope` does not
+- Learn how `scope.spawn(|| borrowed_data)` borrows data safely within the scope lifetime
+- See how `parallel_sum` splits a slice and processes halves concurrently
+- Understand the scope guarantee: all threads are joined before `thread::scope` returns
+- Learn when to prefer scoped threads over `Arc<T>` + `send` threads
 
-`thread::scope` (stable since Rust 1.63) solves this correctly: all threads spawned inside the scope are **automatically joined when the scope exits**, before any local variables go out of scope. The compiler knows this, so it allows `&T` borrows inside scoped threads. Zero-copy parallel access to local data becomes safe and trivially expressible.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `parallel_sum` uses `thread::scope(|s| { let t1 = s.spawn(|| left.iter().sum()); ... })`. The `left` and `right` slices are borrowed from the enclosing function's `data` parameter — no `Arc`, no clone. Both threads are joined within the scope, ensuring the borrows remain valid. `parallel_map` chunks the data and processes each chunk with a scoped thread, collecting results back into a `Vec`.
 
-Think of `thread::scope` as a structured parallel block. You enter it, spawn as many threads as you want — passing plain `&T` references to local data — and when the block ends, all threads are joined. No thread can escape the block. That guarantee is what makes borrowing safe.
+## OCaml Approach
 
-In Java or Python, parallelising a local list means copying it or wrapping it in a shared structure. In Go, slices are reference types so you can pass them, but the race detector is the only thing stopping concurrent writes. In Rust, `thread::scope` makes the borrow checker do the work: a `&mut` slice can only go to one thread; `&` slices can go to many.
-
-## How It Works in Rust
-
-```rust
-use std::thread;
-
-fn parallel_sum(data: &[i64]) -> i64 {
-    let (left, right) = data.split_at(data.len() / 2);
-    let mut ls = 0i64;
-    let mut rs = 0i64;
-
-    thread::scope(|s| {
-        // s.spawn accepts &T borrows — no 'static required
-        let t1 = s.spawn(|| left.iter().sum::<i64>());
-        let t2 = s.spawn(|| right.iter().sum::<i64>());
-        // Both threads are joined when scope exits at `}`
-        ls = t1.join().unwrap();
-        rs = t2.join().unwrap();
-    }); // <-- guaranteed join point
-
-    ls + rs
-}
-
-// Borrow a local String without Arc
-let message = String::from("hello from stack");
-thread::scope(|s| {
-    s.spawn(|| println!("{}", message));       // shared &String
-    s.spawn(|| println!("len={}", message.len())); // fine — both read-only
-});
-// message is still owned here — no move needed
-```
-
-The closure passed to `thread::scope` receives a `&Scope<'_>` that ties thread lifetimes to the surrounding scope. The compiler uses this to approve borrows that would otherwise be rejected.
-
-## What This Unlocks
-
-- **Zero-copy data parallelism** — split a slice, process halves in parallel, merge results without any heap allocation or Arc overhead.
-- **Parallel iteration over local collections** — process a `Vec<T>` in chunks across N threads, where each thread borrows its chunk directly.
-- **Simpler parallel code** — eliminate `Arc::clone`, `Mutex`, and `.to_owned()` calls that exist only to satisfy `'static` bounds.
+OCaml's `Thread.create` requires heap-allocated data — OCaml's GC manages lifetimes so there's no stack-lifetime restriction. Any OCaml value can be shared across threads without the `'static` requirement. However, mutable state still requires synchronization (`Mutex.t`). OCaml 5.x's `Domain.spawn` has similar freedom — domains share the heap and can access any allocated value.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Borrow data in thread | unsafe — GC manages heap, not stack | `s.spawn(\|\| use_local_ref(&data))` |
-| Thread lifetime | unbounded by default | bounded to scope — auto-joined on exit |
-| Stack slice sharing | array copy usually needed | `&[T]` directly — zero-copy |
-| Mutable split | manual coordination | `split_at_mut` — borrow checker enforces disjointness |
-| `'static` requirement | N/A | lifted inside `thread::scope` |
+1. **Lifetime restriction**: Rust's `spawn` requires `'static`; scoped threads lift this. OCaml has no lifetime restriction since GC manages all values.
+2. **Allocation overhead**: Rust's scoped threads avoid `Arc` allocation; OCaml always uses heap allocation.
+3. **Guarantee mechanism**: Rust's scope is a closure that joins all threads on exit — enforced by the borrow checker; OCaml has no equivalent guarantee.
+4. **Rayon comparison**: `rayon::scope` extends this pattern with work stealing for better load balancing; `std::thread::scope` is the simpler no-dependency version.
+
+## Exercises
+
+1. **Parallel prefix sum**: Use `thread::scope` to compute prefix sums in parallel: split the array into N chunks, compute each chunk's sum in parallel, then do a sequential pass to add the previous chunk's total to each chunk's elements.
+2. **Parallel quicksort**: Implement in-place parallel quicksort using scoped threads: partition the array, then sort both partitions in separate threads using `thread::scope`. Stop spawning threads when partitions are smaller than a threshold.
+3. **Parallel matrix multiply**: Use `thread::scope` to multiply two matrices by assigning each output row to a separate thread. Verify results match sequential multiplication.

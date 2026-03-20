@@ -2,102 +2,49 @@
 
 ---
 
-# 620: Affine Traversal (Optional Lens)
+# Optics: affine traversal
 
-**Difficulty:** 5  **Level:** Master
+## Problem Statement
 
-Focus on zero or one element in a structure — the composition of a `Lens` and a `Prism` for optional nested access.
+Optics are composable data accessors originating from Haskell's lens library (Edward Kmett, 2012). They solve the deeply-nested update problem in immutable data: updating a field three levels deep requires rebuilding all intermediate values. Optics compose — a lens into a struct field composed with a prism for an enum variant gives a combined accessor that can get, set, and modify deeply nested optional values. The optic hierarchy includes Lens (exactly one focus), Prism (zero or one focus on enum variants), Traversal (zero or more foci), and Iso (lossless bidirectional conversion).
 
-## The Problem This Solves
+## Learning Outcomes
 
-You have nested data where some layers might not exist: `user.address?.city`. A `Lens` always succeeds (the field is always there). A `Prism` matches one enum variant (zero or one match). But when you compose them — "get the city from the address, but only if the address exists" — you need an optic that can focus on zero or one target. Neither Lens nor Prism alone expresses this.
+- The specific optic demonstrated in this example and what it focuses on
+- How to implement the optic manually using closures or structs in Rust
+- How this optic composes with others in the hierarchy
+- The laws the optic must satisfy for correct behavior
+- Where optics are used: state management, config manipulation, nested data transformation
 
-In Haskell, this is the `AffineTraversal` or `Optional` optic. It has a `preview :: S → Option<A>` (get the target if it exists) and a `set :: S → A → S` (update the target if it exists, do nothing if it doesn't). It's strictly between Prism and Traversal in the optics hierarchy.
+## Rust Application
 
-The practical value: deeply nested optional access is ubiquitous in real data. Without affine traversals, you either chain `.map()` operations on `Option<T>` (verbose, breaks composition) or use the `?` operator (breaks at function boundaries). An affine traversal gives you a single composable handle on "this path through the data, which may or may not exist."
+The source implements the optic concept using Rust's closure system. Due to lack of higher-kinded types, Rust uses explicit struct wrappers with Box<dyn Fn> fields or monomorphized versions with generic parameters. The examples show: the core get/set/preview/review operations, composition of two optics, and the laws verified in tests.
 
-## The Intuition
+Key patterns:
+- Core optic struct with closure fields
+- Composition: combining optics for deeper focus
+- Laws verification: identity, roundtrip, idempotence
+- Practical example: modifying nested struct/enum data
 
-An affine traversal is an optic that targets zero or one element — `preview` returns `Option<A>` (might not be there), and `set`/`modify` are no-ops when the target is absent — making it the right tool for optional nested access like `user?.address?.city`. The trade-off: more expressive than Option chaining but requires understanding the optics hierarchy; start with Option chaining and introduce affine traversals when composition gets unwieldy.
+## OCaml Approach
 
-## How It Works in Rust
+OCaml optics use the same record-with-function approach:
 
-```rust
-// Affine traversal: focus on zero or one element
-struct Affine<S, A> {
-    preview: Box<dyn Fn(&S) -> Option<A>>,
-    set:     Box<dyn Fn(S, A) -> S>,
-}
-
-impl<S: Clone + 'static, A: Clone + 'static> Affine<S, A> {
-    fn new(
-        preview: impl Fn(&S) -> Option<A> + 'static,
-        set:     impl Fn(S, A) -> S + 'static,
-    ) -> Self {
-        Affine { preview: Box::new(preview), set: Box::new(set) }
-    }
-
-    fn modify(&self, s: S, f: impl Fn(A) -> A) -> S {
-        if let Some(a) = (self.preview)(&s) {
-            (self.set)(s, f(a))
-        } else {
-            s  // no-op when target absent
-        }
-    }
-
-    // Compose two affine traversals: focus deeper
-    fn compose<B: Clone + 'static>(self, other: Affine<A, B>) -> Affine<S, B> {
-        let preview1 = self.preview;
-        let preview2 = other.preview;
-        let set1     = self.set;
-        let set2     = other.set;
-        Affine::new(
-            move |s| preview1(s).and_then(|a| preview2(&a)),
-            move |s, b| {
-                if let Some(a) = preview1(&s) {
-                    let new_a = (set2)(a, b);
-                    (set1)(s, new_a)
-                } else { s }
-            },
-        )
-    }
-}
-
-// Example: optional address city
-#[derive(Clone)]
-struct User { address: Option<Address> }
-#[derive(Clone)]
-struct Address { city: String }
-
-// Prism-like: User → Option<Address>
-let user_address: Affine<User, Address> = Affine::new(
-    |u| u.address.clone(),
-    |mut u, a| { u.address = Some(a); u },
-);
-
-// Lens-like: Address → city (always present)
-let address_city: Affine<Address, String> = Affine::new(
-    |a| Some(a.city.clone()),
-    |mut a, c| { a.city = c; a },
-);
-
-// Compose: User → Option<String> (city might not exist)
-let user_city = user_address.compose(address_city);
+```ocaml
+type ('s, 'a) lens = { get: 's -> 'a; set: 's -> 'a -> 's }
+let name_lens = { get = (fun u -> u.name); set = (fun u n -> { u with name = n }) }
+let compose l1 l2 = { get = (fun s -> l2.get (l1.get s)); set = (fun s a -> l1.set s (l2.set (l1.get s) a)) }
 ```
-
-## What This Unlocks
-
-- **Deeply nested optional access**: `user.org?.team?.lead?.email` as a single composable optic — `preview` returns `Option`, `set` is safe no-op.
-- **Enum field update**: update a field inside a specific variant — if the value is a different variant, `set` does nothing.
-- **Library-level nullable navigation**: build a fluent API for navigating optional nested structures without `if let` chains.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Affine traversal | `preview` + `set` where `set` may be no-op | `struct Affine<S, A>` with `preview` + `set` |
-| `preview` | `s -> 'a option` | `Fn(&S) -> Option<A>` |
-| Lens vs Affine | Lens always succeeds | Affine may return `None` |
-| Prism vs Affine | Prism: variant match | Affine: may include field access after match |
-| Composition | `Lens ∘ Prism` or `Prism ∘ Lens` | `.compose()` on `Affine<S,A>` + `Affine<A,B>` |
-| In optics hierarchy | Prism ⊆ Affine ⊆ Traversal | Same hierarchy |
+1. **HKT requirement**: Haskell's van Laarhoven encoding uses Functor/Applicative for optic unification requiring HKT; Rust uses explicit struct types per optic kind.
+2. **Operator syntax**: Haskell uses `^.`, `.~`, `%~` for terse optic use; Rust uses method calls, more verbose but explicit.
+3. **Derive macros**: `lens-rs` and similar crates provide derive macros for automatic lens generation; OCaml uses `ppx_lens` for the same.
+4. **Performance**: Boxed closure implementations have runtime overhead; monomorphized generic versions compile to zero-cost abstractions.
+
+## Exercises
+
+1. **Lens laws**: Write tests for all three lens laws: get-set (get after set returns set value), set-get (set to current value is identity), set-set (second set wins).
+2. **Prism laws**: Write tests for prism laws: preview after review returns Some, set via review then preview round-trips.
+3. **Compose two levels**: Create a lens for a struct field and a prism for an enum variant in that field — compose them and modify the inner value when the variant is present.

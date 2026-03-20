@@ -2,84 +2,57 @@
 
 ---
 
-# 819: Z-Algorithm
+# Z-Algorithm String Matching
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Compute, in linear time, how far each position in a string matches the string's own prefix — then use it for O(n + m) pattern matching with a single array.
+The Z-algorithm computes, for each position in a string, the length of the longest substring starting at that position that is also a prefix of the whole string. This Z-array answers pattern matching questions directly: concatenate `pattern + "$" + text`, compute the Z-array, and any position where Z[i] equals the pattern length is a match. The algorithm runs in O(n) time and O(n) space, making it a linear alternative to KMP with a simpler conceptual model. It powers prefix-related string queries in competitive programming, bioinformatics repeat analysis, and text compression preprocessing.
 
-## The Problem This Solves
+## Learning Outcomes
 
-The Z-algorithm is KMP's conceptual sibling: both achieve O(n + m) pattern matching, both precompute reuse information to avoid backtracking. The Z-array is often easier to reason about because it's a direct measurement — "the string starting here matches the first Z[i] characters of the whole string" — rather than the more abstract failure-function of KMP.
+- Understand the Z-box (l, r) maintenance: a window tracking the rightmost known matching prefix
+- Implement O(1) amortized extension using the existing Z-box to skip recomputation
+- Recognize the pattern matching reduction: `P + $ + T` → find positions where `Z[i] == |P|`
+- Learn the difference from KMP failure function: Z measures prefix matches at each position directly
+- Apply Z-array to: string periods, pattern counting, lexicographically smallest rotation
 
-Beyond pattern matching, the Z-array itself is a building block: detect if a string is a rotation of another, find the shortest period of a string, check if a string has a prefix that is also a suffix. It's a clean primitive that appears in competitive programming problems where KMP would also work but Z is more straightforward to implement correctly under pressure.
-
-For systems programmers: the Z-algorithm processes input in a single left-to-right pass, making it friendly for streaming and cache-efficient computation.
-
-## The Intuition
-
-Maintain a "Z-box" `[l, r)`: the rightmost interval where the string matches a prefix. For each new position `i`: if `i < r`, initialize `Z[i]` from the mirror position `Z[i-l]` (bounded by how far the box extends). Then expand by comparing characters. Update the Z-box if the new match extends further right. Each character is touched at most twice: once during expansion, once as a mirror lookup — giving O(n) total.
-
-For pattern search, concatenate `pattern + '$' + text`. Any position in the text portion where `Z[i] == len(pattern)` is a match. The sentinel `'$'` prevents Z-values from crossing the boundary between pattern and text.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-fn z_array(s: &[u8]) -> Vec<usize> {
+pub fn z_function(s: &[u8]) -> Vec<usize> {
     let n = s.len();
     let mut z = vec![0usize; n];
-    z[0] = n;                    // Convention: z[0] = length of whole string
-    let (mut l, mut r) = (0usize, 0usize);
-
+    let (mut l, mut r) = (0, 0);
     for i in 1..n {
-        if i < r {
-            // Mirror: reuse z[i-l], but don't go past the Z-box boundary
-            z[i] = z[i - l].min(r - i);
-        }
-        // Expand: compare s[z[i]] against s[i + z[i]]
-        while i + z[i] < n && s[z[i]] == s[i + z[i]] {
-            z[i] += 1;
-        }
-        // Update Z-box if new match extends further right
-        if i + z[i] > r {
-            l = i;
-            r = i + z[i];
-        }
+        if i < r { z[i] = z[i - l].min(r - i); }
+        while i + z[i] < n && s[z[i]] == s[i + z[i]] { z[i] += 1; }
+        if i + z[i] > r { l = i; r = i + z[i]; }
     }
     z
 }
-
-fn z_search(pattern: &str, text: &str) -> Vec<usize> {
-    let m = pattern.len();
-    // Sentinel '$' must not appear in pattern or text
-    let combined: Vec<u8> = pattern.bytes()
-        .chain(std::iter::once(b'$'))
-        .chain(text.bytes())
-        .collect();
-    let z = z_array(&combined);
-    // Positions in text where z[i] == m are match starts
-    z.iter()
-        .enumerate()
-        .skip(m + 1)               // Skip pattern + sentinel
-        .filter_map(|(i, &zi)| if zi == m { Some(i - m - 1) } else { None })
-        .collect()
-}
 ```
 
-The iterator chain for building the combined string is idiomatic Rust: `chain` composes without allocation until `collect()`.
+The implementation operates on `&[u8]` for byte-level efficiency. The Z-box `(l, r)` stores the leftmost start and one-past-end of the rightmost-extending known match. For position `i` inside the box, `z[i - l]` gives a safe lower bound without recomputation. Rust's array indexing with bounds checking in debug mode catches off-by-one errors during development. The separator `b'$'` in the concatenated slice must not appear in pattern or text for correctness — typically a byte value of 0 or a sentinel outside the alphabet.
 
-## What This Unlocks
+## OCaml Approach
 
-- **String period detection**: The shortest period of a string is the first position `i` where `i + Z[i] == n` — useful in run-length compression and DNA tandem repeat analysis.
-- **Rotation detection**: `s` is a rotation of `t` iff `s` appears in `t + t` — find it with Z in O(n).
-- **Competitive programming**: Z is often the cleaner choice over KMP for problems where you need the full prefix-match lengths, not just match positions.
+OCaml implements the Z-function with mutable `int ref` for `l` and `r`, or threads them through a tail-recursive loop. `Bytes.get` provides O(1) character access. The `Array.make n 0` creates the Z-array. OCaml's pattern matching on the Z-box condition `i < r` maps cleanly to `if i < !r then`. For string matching, `Bytes.concat Bytes.empty [pattern; sep; text]` creates the concatenated input. The result scan `Array.to_seq |> Seq.filter_mapi` finds positions where Z equals pattern length.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Array mutation | `Array.set arr i v` | `z[i] = v` — direct indexing |
-| String as bytes | `Bytes.of_string` or `String.to_seq` | `.bytes()` iterator — zero-copy |
-| Sentinel concat | `pattern ^ "$" ^ text` | `.chain(once(b'$')).chain(text.bytes())` |
-| Z-box update | `let l = ref 0; let r = ref 0` | `let (mut l, mut r) = (0, 0)` |
-| Filter positions | `Array.to_seq |> Seq.filter_map` | `.enumerate().filter_map(...)` |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Input type | `&[u8]` — byte slice | `bytes` or `string` |
+| Z-box state | Two `usize` variables | `int ref` or threaded recursion |
+| Concatenation | `[pattern, b'$', text].concat()` | `Bytes.concat` |
+| Bound checks | Debug-mode auto-checks | `Bytes.get` raises exception |
+| Result filter | `enumerate().filter()` | `Array.to_seq \|> Seq.filter_mapi` |
+| Separator byte | Must not appear in input | Same constraint |
+
+## Exercises
+
+1. Use the Z-array to find the shortest period of a string (smallest k such that the string is made of repeating k-length prefix).
+2. Find all occurrences of a pattern in text and return start/end pairs using the Z-function approach.
+3. Implement lexicographically smallest rotation: find i that minimizes `s[i..] + s[..i]`.
+4. Compare Z-algorithm and KMP on identical inputs and verify they produce consistent results.
+5. Use the Z-array to count distinct substrings that are prefixes of the string.

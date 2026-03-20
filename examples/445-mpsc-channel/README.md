@@ -4,76 +4,37 @@
 
 # 445: MPSC Channels — Message Passing Between Threads
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Send values across threads with `std::sync::mpsc` — multiple producers, one consumer, with automatic shutdown when all senders drop.
+Shared mutable state with locks is error-prone: deadlocks, priority inversion, and complex lock ordering. The alternative is message passing: threads communicate by sending values through channels, with no shared state. `std::sync::mpsc` (Multiple Producer, Single Consumer) provides channels for this pattern. Producers send messages; the consumer receives them. When all senders drop, the receiver's iteration automatically ends — a natural shutdown mechanism.
 
-## The Problem This Solves
+MPSC channels power the actor model, pipeline processing, result aggregation from worker threads, and the "channel as work queue" pattern used in thread pools.
 
-Shared mutable state (`Arc<Mutex<T>>`) is one concurrency model, but it requires every thread to coordinate on access. It scales poorly when threads have different roles: producers that generate work and a consumer that processes it. Shared state forces both sides to synchronise on every operation, creating contention.
+## Learning Outcomes
 
-The alternative is **message passing**: producers don't share data with the consumer — they send owned values through a channel. No locks, no shared memory, no coordination beyond the channel itself. The consumer processes messages one at a time in a clean sequential loop. This is the model Go popularised with goroutines and channels, and it maps directly to actor systems (Erlang, Akka).
+- Understand the MPSC channel contract: multiple senders, one receiver, bounded or unbounded
+- Learn how `tx.clone()` creates additional senders for multiple producer threads
+- See how `drop(tx)` signals shutdown — the channel closes when all senders drop
+- Understand `rx.iter()` for collecting all messages until channel close
+- Learn the relationship between `mpsc` and Go's channels (Go's are MPMC with select)
 
-The critical operational question is: when does the consumer stop? With shared state you need a sentinel value or an external flag. With `mpsc`, the answer is elegant: when all `Sender` clones are dropped, the channel closes and `recv()` returns `Err`. The consumer loop exits naturally. No sentinel, no flag, no race on "was the last message sent?".
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `multi_producer_single_consumer` creates a channel with `mpsc::channel()`. Each producer thread clones the `tx` sender, sends messages, then drops its clone when done. Crucially, `drop(tx)` drops the original sender — the channel only closes when all senders (original + clones) are dropped. `rx.iter()` blocks until the channel closes, collecting all messages. The test verifies the correct total message count.
 
-A `mpsc` channel is a thread-safe queue. The `Sender` end can be cloned and given to as many threads as you like — they all push values in. The `Receiver` end is unique — only one consumer. Values arrive in FIFO order (though producers interleave non-deterministically). `recv()` blocks; `try_recv()` and `try_iter()` don't.
+## OCaml Approach
 
-In Python: `queue.Queue()` with `put`/`get`. In Go: `ch := make(chan T)` with `ch <- v` and `<-ch`. The Rust version gives you type safety (the channel carries a specific `T`) and automatic close signaling via drop.
-
-## How It Works in Rust
-
-```rust
-use std::sync::mpsc;
-use std::thread;
-
-let (tx, rx) = mpsc::channel::<String>();
-
-// Multiple producers — clone the Sender for each thread
-let handles: Vec<_> = (0..3).map(|id| {
-    let tx = tx.clone(); // clone increments sender count
-    thread::spawn(move || {
-        for i in 0..5 {
-            tx.send(format!("p{}-msg{}", id, i)).unwrap();
-        }
-        // tx drops here — sender count decremented
-    })
-}).collect();
-
-// Drop the original tx — channel closes when ALL clones drop
-drop(tx);
-
-// for-loop on Receiver: iterates until channel closes
-for msg in rx {
-    println!("got: {}", msg);
-}
-// Loop exits when last Sender drops — no sentinel needed
-
-for h in handles { h.join().unwrap(); }
-
-// Non-blocking drain — collect all buffered messages
-let (tx2, rx2) = mpsc::channel::<u32>();
-for i in 0..5 { tx2.send(i).unwrap(); }
-drop(tx2);
-let all: Vec<u32> = rx2.try_iter().collect(); // non-blocking
-```
-
-The crucial line is `drop(tx)` after cloning. If you forget it, the channel never closes — `for msg in rx` loops forever waiting for the original sender that will never send.
-
-## What This Unlocks
-
-- **Producer-consumer pipelines** — worker threads generate results; a single collector thread aggregates them without any shared mutable state.
-- **Fan-out work queues** — main thread sends jobs to a `Receiver` shared via `Arc<Mutex<Receiver<Job>>>` among a pool of workers (see example 446).
-- **Event-driven loops** — a background thread sends events to the main thread's `rx` loop, enabling clean separation of concerns.
+OCaml's `Event` module provides synchronous channels: `let ch = Event.new_channel()`, `Event.sync (Event.send ch v)` blocks until a receiver is ready. The `Thread_safe_queue` from `Core` provides asynchronous buffered queues. OCaml 5.x's `Domainslib.Chan` provides a task pool with channels. Unlike Rust's `mpsc`, OCaml's built-in channel primitives are more primitive and require more assembly for complex patterns.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Channel creation | `Queue.create ()` + manual Mutex + Condvar | `let (tx, rx) = mpsc::channel()` |
-| Send | push + signal | `tx.send(v).unwrap()` |
-| Receive (blocking) | `Condition.wait` | `rx.recv().unwrap()` |
-| Receive (non-blocking) | manual `try` | `rx.try_recv()` or `rx.try_iter()` |
-| Shutdown signal | sentinel `None` or external flag | drop all `Sender` clones — `recv()` returns `Err` |
-| Multiple producers | manual clone/synchronise | `tx.clone()` — built-in |
+1. **MPSC vs. MPMC**: Rust's `std::sync::mpsc` is multiple-producer, single-consumer; Go's channels are MPMC. For MPMC in Rust, use `crossbeam::channel`.
+2. **Shutdown signal**: Rust channels close when all senders drop — automatic shutdown; OCaml requires explicit sentinel values or condition variables.
+3. **Bounded vs. unbounded**: `mpsc::channel()` is unbounded (back-pressure requires explicit management); `mpsc::sync_channel(n)` creates bounded channels.
+4. **Select**: Rust's `mpsc` has no select; `crossbeam::channel` + `crossbeam::select!` enable multi-channel receive.
+
+## Exercises
+
+1. **Pipeline with channels**: Build a three-stage pipeline: stage 1 produces numbers 1-1000, stage 2 squares them, stage 3 filters evens. Connect stages with `mpsc` channels. Verify the final output.
+2. **Fan-out and fan-in**: Create a work distributor: one sender distributes work items to N workers via N channels. Each worker sends results back via a single results channel. Verify all items are processed.
+3. **Backpressure with sync_channel**: Replace `mpsc::channel()` with `mpsc::sync_channel(10)`. Producer threads will block when the buffer is full. Verify the producer is throttled when the consumer is slow (add a `thread::sleep` in the consumer).

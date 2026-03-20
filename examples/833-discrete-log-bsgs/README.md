@@ -2,91 +2,66 @@
 
 ---
 
-# 833: Discrete Logarithm — Baby-Step Giant-Step
+# Discrete Logarithm — Baby-Step Giant-Step
 
-**Difficulty:** 5  **Level:** Master
+## Problem Statement
 
-Solve a^x ≡ b (mod p) in O(√p) time and space — meet-in-the-middle applied to cyclic groups.
+Given g, h, and prime p, the discrete logarithm problem asks: find x such that `g^x ≡ h (mod p)`. This is computationally hard for large p (the Discrete Log Problem, DLP), which is the security foundation of Diffie-Hellman key exchange, ElGamal encryption, DSA signatures, and elliptic curve cryptography. Baby-step Giant-step (BSGS) solves the DLP in O(sqrt(p)) time and O(sqrt(p)) space — much faster than brute force O(p) but still infeasible for cryptographic p (256+ bit). Understanding BSGS is essential for cryptanalysis, CTF competitions, and understanding why large primes are necessary.
 
-## The Problem This Solves
+## Learning Outcomes
 
-The discrete logarithm problem (DLP): given a, b, and prime p, find x such that a^x ≡ b (mod p). This is the computational hard problem underlying Diffie-Hellman key exchange, ElGamal encryption, and the Digital Signature Algorithm (DSA). While modular exponentiation is fast (O(log x)), the inverse — finding x from a^x — has no known polynomial algorithm for large p.
+- Understand the meet-in-the-middle decomposition: write x = i*m - j where m = ceil(sqrt(p))
+- Baby steps: precompute `h * g^j mod p` for j = 0..m into a hash map
+- Giant steps: for i = 1..m, compute `g^(i*m) mod p` and look up in the baby-step table
+- Recognize the time-space tradeoff: O(sqrt(p)) in both time and memory
+- Understand why BSGS only works for small p and why index calculus is needed for large p
 
-Baby-Step Giant-Step (BSGS) is the canonical O(√p) algorithm: impractical for cryptographic primes (p ≈ 2²⁵⁶) but essential for p up to ~10¹² in competitive programming and for pedagogical understanding of why DLP is hard. It also appears in factoring algorithms (Pohlig-Hellman reduces DLP to BSGS on prime-order subgroups).
-
-The algorithm returns `Some(x)` if a solution exists, or `None` if b is not a power of a modulo p.
-
-## The Intuition
-
-Write x = i · m - j, where m = ⌈√p⌉ and 0 ≤ i, j < m. Then a^x ≡ b becomes a^(im) ≡ b · a^j (mod p).
-
-**Baby steps**: compute b · a^j for j = 0, 1, ..., m-1. Store in a hash map: value → j.
-**Giant steps**: compute a^(im) for i = 1, 2, ..., m. If this value is in the hash map, you have i · m - j = x.
-
-This is meet-in-the-middle: instead of trying all x from 0 to p-1 (O(p) work), you meet from both sides in O(√p) work and O(√p) space.
-
-O(√p) time for both phases. The hash map lookup makes giant steps O(1) per query. OCaml uses `Hashtbl`. Rust uses `HashMap<u64, u64>` — same concept, but with explicit hash function choices affecting performance significantly for large m.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-use std::collections::HashMap;
-
-fn mod_pow(mut base: u64, mut exp: u64, modulus: u64) -> u64 {
-    let mut result = 1u64;
-    base %= modulus;
-    while exp > 0 {
-        if exp & 1 == 1 { result = result * base % modulus; }
-        base = base * base % modulus;
-        exp >>= 1;
-    }
-    result
-}
-
-fn baby_step_giant_step(a: u64, b: u64, p: u64) -> Option<u64> {
+pub fn baby_step_giant_step(g: u64, h: u64, p: u64) -> Option<u64> {
     let m = (p as f64).sqrt().ceil() as u64 + 1;
-
-    // Baby steps: store b * a^j → j for j in [0, m)
-    let mut table: HashMap<u64, u64> = HashMap::with_capacity(m as usize);
-    let mut baby = b % p;
+    // Baby steps: table[h * g^j mod p] = j
+    let mut table = HashMap::new();
+    let mut val = h;
     for j in 0..m {
-        table.insert(baby, j);
-        baby = baby * a % p; // baby = b * a^j
+        table.insert(val, j);
+        val = val * g % p;
     }
-
-    // Giant steps: compute a^(i*m) for i in [1, m]
-    let am = mod_pow(a, m, p); // a^m mod p
-    let mut giant = am;        // a^(1*m), a^(2*m), ...
+    // Giant steps: find g^(i*m) in table
+    let gm = mod_pow(g, m, p);
+    let mut giant = gm;
     for i in 1..=m {
         if let Some(&j) = table.get(&giant) {
-            // a^(i*m) = b * a^j  =>  x = i*m - j
-            let x = i * m - j;
-            return Some(x % (p - 1)); // reduce mod group order
+            return Some((i * m - j) % (p - 1));
         }
-        giant = giant * am % p;
+        giant = giant * gm % p;
     }
-    None // b is not a power of a mod p
+    None
 }
 ```
 
-`HashMap::with_capacity(m)` pre-allocates to avoid rehashing during the baby-step phase — a significant speedup for large m (avoid ~log m reallocations).
+The `HashMap<u64, u64>` stores baby steps with O(sqrt(p)) expected insertions and lookups. The giant step iterates `g^(i*m)` by repeatedly multiplying by `gm`, avoiding repeated `mod_pow` calls. The result `(i*m - j) % (p-1)` reduces modulo the group order (p-1 for prime p by Fermat). Rust's `Option` return signals no solution found, which happens when h is not in the cyclic group generated by g.
 
-The `mod_pow` function uses fast exponentiation (square-and-multiply): O(log exp) multiplications. For p up to 10¹², intermediate products fit in u64 only if p < 2³² — for larger p, use u128 or modular multiplication via u128 intermediate.
+## OCaml Approach
 
-The reduction `x % (p - 1)` handles the case where x > p-1 — since a^(p-1) ≡ 1 (mod p) by Fermat's little theorem, solutions repeat with period p-1.
-
-## What This Unlocks
-
-- **Diffie-Hellman security analysis**: BSGS directly attacks DH key exchange when p is small (p < 10¹²); for cryptographic p (~2²⁵⁶), only index calculus methods scale.
-- **Pohlig-Hellman reduction**: when p-1 has small prime factors, DLP reduces to BSGS on subgroups — explaining why safe primes (p = 2q+1, q prime) are required in DH.
-- **Competitive programming**: discrete log problems with p ≤ 10¹² are standard in ICPC and Codeforces — BSGS is the expected solution.
+OCaml implements BSGS with `Hashtbl.t` for baby steps: `Hashtbl.add table val j`. The giant step loop uses `for i = 1 to m do ... done`. OCaml's `float_of_int |> sqrt |> ceil |> int_of_float` computes m. The `Hashtbl.find_opt table giant` returns `int option`. OCaml's `Zarith` handles large moduli beyond 63-bit integers. The baby-step table uses `Hashtbl.replace` to handle collisions where multiple j values give the same baby step (take the smallest j).
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Hash map | `Hashtbl.create m` | `HashMap::with_capacity(m)` — pre-allocated |
-| Modular arithmetic | `Int64` or native (63-bit, risky) | `u64` for p < 2³², u128 for larger |
-| Fast exponentiation | Recursive or iterative with `Int64` | `mod_pow` with `base %= modulus` guard |
-| Square root ceiling | `int_of_float (sqrt (float p)) + 1` | `(p as f64).sqrt().ceil() as u64 + 1` |
-| Group order reduction | Manual `mod (p-1)` | `x % (p - 1)` — same, but type-checked u64 |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Baby step table | `HashMap<u64, u64>` | `Hashtbl` (int, int) |
+| m computation | `(p as f64).sqrt().ceil()` | `float_of_int |> sqrt |> ceil` |
+| Giant step iteration | Multiply by precomputed `gm` | Same approach |
+| No solution | Returns `None` | Returns `None` |
+| Large p support | Limited to u64 | `Zarith` for large p |
+| Complexity | O(sqrt(p)) time+space | Same |
+
+## Exercises
+
+1. Implement BSGS for a general group order n (not just prime p) using n instead of p-1 in the result.
+2. Optimize memory by using a sorted array + binary search instead of a HashMap for baby steps.
+3. Implement Pohlig-Hellman which reduces DLP over Z/pZ to smaller DLPs over prime-order subgroups.
+4. Test BSGS on small primes p < 10^6 and verify by computing g^result mod p == h.
+5. Measure the practical limit: what is the largest p for which BSGS completes in under 1 second on your machine?

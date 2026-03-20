@@ -2,87 +2,39 @@
 
 ---
 
-# 435: lazy_static! / OnceLock Pattern
+# 435: Lazy Static Pattern
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Initialise a global value exactly once on first access and reuse it safely across threads — the modern way with `OnceLock` / `LazyLock`, and what the old `lazy_static!` macro was doing underneath.
+Global state initialization in Rust is tricky: `static` variables require `const` initializers, but many useful values (HashMap, compiled regex, config loaded from env) can only be built at runtime. The `lazy_static!` macro (now largely superseded by `std::sync::OnceLock` in Rust 1.70+) solves this by wrapping initialization in a once-executed closure. `OnceLock<T>` provides thread-safe initialization on first access. This pattern enables global singletons, compiled regex caches, and runtime-initialized configuration that is accessed efficiently after the first call.
 
-## The Problem This Solves
+`OnceLock`/`lazy_static` patterns appear in compiled regex caches (the `regex` crate recommends this), global configuration, connection pool singletons, and any value that is expensive to initialize and needs global access.
 
-Global constants in Rust must be computable at compile time. That rules out anything that requires heap allocation (`Vec`, `HashMap`, `String`), system calls, or complex computation. Yet programs often need process-wide singletons: a compiled regex, a connection pool, a config map loaded from environment variables, a prime sieve.
+## Learning Outcomes
 
-The two wrong approaches: compute it every call (wasteful), or initialise it in `main` and thread it through every function as a parameter (ergonomic nightmare). What you want is a global that initialises itself the first time it's needed and is then shared — zero cost on subsequent accesses, thread-safe, no manual synchronisation.
+- Understand why `static mut` is unsafe and why `OnceLock` is the safe alternative
+- Learn how `OnceLock::get_or_init` guarantees single initialization across all threads
+- See how `thread_local!` provides per-thread storage without synchronization
+- Understand the historical `lazy_static!` macro and how `OnceLock` replaces it
+- Learn when to use `OnceLock` (global singleton) vs. `Arc<Mutex<T>>` (shared mutable state)
 
-`OnceLock<T>` (stable since Rust 1.70) and `LazyLock<T>` (stable since Rust 1.80) are the standard library answer. `lazy_static!` from the eponymous crate was the community solution before these were stabilised; understanding `OnceLock` demystifies what that macro was generating.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `CONFIG: OnceLock<Config>` is initialized on first call to `Config::global()` using `get_or_init`. The closure runs exactly once, thread-safely. `thread_local!` declares `COUNTER: Cell<u32>` as per-thread storage — each thread has its own counter, so no synchronization is needed. `COUNTER.with(|c| ...)` provides access to the thread-local within a closure.
 
-`OnceLock<T>` is a cell that transitions from "empty" to "full" exactly once. The first caller of `get_or_init(|| ...)` runs the closure and stores the result; all subsequent callers get a reference to the stored value. The transition is atomic — safe across multiple threads racing to initialise the same global.
+## OCaml Approach
 
-`LazyLock<T>` wraps this into a static that evaluates its initialiser on first deref, so you don't even need a wrapper function.
-
-The old `lazy_static!` macro generated essentially the same structure: a static `OnceLock`-like wrapper, a function to get the inner reference, and a `Deref` impl to make it transparent. Now the standard library provides this directly.
-
-## How It Works in Rust
-
-```rust
-use std::sync::{OnceLock, Mutex};
-use std::collections::HashMap;
-
-// ── OnceLock: initialise on first call, reuse forever ────────────────────────
-static GLOBAL_CONFIG: OnceLock<HashMap<String, String>> = OnceLock::new();
-
-fn get_config() -> &'static HashMap<String, String> {
-    GLOBAL_CONFIG.get_or_init(|| {
-        println!("Initializing config (runs ONCE)...");
-        let mut m = HashMap::new();
-        m.insert("host".to_string(), "localhost".to_string());
-        m.insert("port".to_string(), "8080".to_string());
-        m
-    })
-}
-// Second call: closure doesn't run; returns cached reference immediately.
-
-// ── Thread-safe mutable singleton ────────────────────────────────────────────
-static COUNTER: OnceLock<Mutex<u64>> = OnceLock::new();
-
-fn increment() -> u64 {
-    let mut c = COUNTER.get_or_init(|| Mutex::new(0)).lock().unwrap();
-    *c += 1;
-    *c
-}
-
-// ── LazyLock (Rust 1.80+) — closure in the static itself ─────────────────────
-// use std::sync::LazyLock;
-// static PRIMES: LazyLock<Vec<u32>> = LazyLock::new(|| sieve(100));
-// Access: &*PRIMES  or  just  PRIMES[i]  (Deref)
-
-// ── What lazy_static! was generating (simplified) ────────────────────────────
-// macro_rules! lazy_static_sim {
-//     (static ref $name:ident : $ty:ty = $init:expr ;) => {
-//         static $name: OnceLock<$ty> = OnceLock::new();
-//         fn get() -> &'static $ty { $name.get_or_init(|| $init) }
-//     };
-// }
-```
-
-**When to use which:**
-- `OnceLock<T>` — when you want explicit control over when initialisation happens, or need `set()` separately from `get_or_init()`
-- `LazyLock<T>` — when you want the simplest possible "global that initialises itself"
-- `lazy_static!` crate — for pre-1.80 compatibility, or in ecosystems that prefer explicit crate usage
-
-## What This Unlocks
-
-- **Compiled regexes as globals** — `static RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\d+").unwrap())` — compiled once, used everywhere, no per-call overhead.
-- **Config loaded at startup** — read environment variables and build a config map once; all code gets a `&'static Config` with no Arc or RefCell.
-- **Computed lookup tables** — sieve of Eratosthenes, trigonometric tables, hash seeds — initialised once, accessible from any thread.
+OCaml uses `Lazy.t` for lazy values: `let config = lazy (make_config ())` where `Lazy.force config` triggers initialization on first access. Thread safety in OCaml 4.x relies on the GIL; OCaml 5.x's `Mutex.t` and `Atomic.t` are needed for true concurrent lazy initialization. `Thread_local.t` provides per-domain storage in OCaml 5.x. The `lazy` keyword is built into the OCaml language, unlike Rust's library-based `OnceLock`.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Global mutable state | `ref` values at module level; not thread-safe by default | `OnceLock<Mutex<T>>` — thread-safe, initialised once |
-| Lazy initialisation | `lazy_t` (3rd party); or `let x = lazy (fun () -> ...)` | `OnceLock::get_or_init` / `LazyLock::new` (std) |
-| Thread safety | Not guaranteed; explicit locking | `OnceLock` is `Sync`; initialisation is atomic |
-| Equivalent of `lazy_static!` | No standard equivalent | `LazyLock<T>` (Rust 1.80+) |
+1. **Language vs. library**: OCaml's `lazy` is a language keyword; Rust's `OnceLock` is a standard library type.
+2. **Thread safety**: `OnceLock` is explicitly designed for concurrent initialization; OCaml's `lazy` requires explicit locking in OCaml 5.x multi-domain programs.
+3. **Thread-local**: Rust's `thread_local!` macro uses OS thread-local storage; OCaml 5.x's `Domain.DLS` provides domain-local storage.
+4. **Legacy**: The `lazy_static!` crate was widely used before `OnceLock`; OCaml's `Lazy.t` has been stable for decades.
+
+## Exercises
+
+1. **Compiled regex cache**: Use `OnceLock<Regex>` to cache a compiled regex pattern. Implement `fn is_valid_email(s: &str) -> bool` that initializes the regex once and reuses it. Verify with a test that the regex is only compiled once.
+2. **Config from env**: Create `AppConfig::global()` using `OnceLock` that reads configuration from environment variables on first call. Include `DATABASE_URL`, `PORT`, and `LOG_LEVEL`. Use `once_cell::sync::Lazy` or `OnceLock` to make the initialization thread-safe.
+3. **Per-thread ID**: Use `thread_local!` to assign each thread a unique ID on first access. Spawn 4 threads and verify each has a unique ID by collecting thread IDs from all threads and asserting they are all distinct.

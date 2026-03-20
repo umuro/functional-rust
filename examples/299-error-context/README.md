@@ -4,74 +4,61 @@
 
 # 299: Adding Context to Errors
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Attach "where and why" information to errors without losing the original cause.
+Bare error messages like "file not found" or "parse failed" are unhelpful without context about what was being attempted. Context wrapping adds layers of "where" and "why" information around errors: "while loading config: while reading /etc/app.conf: file not found". This is the `anyhow::context()` pattern — each operation wraps a lower-level error in a higher-level description, building an error chain that reads as a call-stack narrative.
 
-## The Problem This Solves
+## Learning Outcomes
 
-A production error log shows: `"not found"`. Which file? Which operation? There's no way to know without adding context at the point of failure — but if you just convert the error to a string, you lose the original structured error that callers might want to inspect programmatically.
+- Implement a generic `Context<E>` wrapper that adds a message to any error
+- Use `source()` to expose the wrapped error for chain traversal
+- Understand the layered error context pattern as a stack of descriptive messages
+- Build a helper function for ergonomic context addition without boilerplate at each call site
 
-Context wrapping solves this. Instead of swallowing the original error, you wrap it: the outer error carries a human-readable message explaining *what you were trying to do*, and the inner error (accessible via `source()`) preserves the original cause. Callers get both: a readable message and a traversable causal chain.
+## Rust Application
 
-This is what `anyhow::Context` does, and what production code needs. A bare `file not found` is useless. `loading config from '/etc/app/config.toml': file not found` tells an engineer exactly what to fix.
-
-## The Intuition
-
-Context wrapping is a linked-list prepend: add a new "what I was doing" node to the front of the error chain, while preserving the original error as `source()`.
-
-## How It Works in Rust
+A `Context<E>` struct wraps any error type with a descriptive message:
 
 ```rust
-// A generic context wrapper — holds a message and the original error
 #[derive(Debug)]
-struct Context<E> {
-    message: String,
-    source: E,
-}
-
-impl<E: fmt::Display> fmt::Display for Context<E> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.message)  // show the context message, not the inner error
-    }
+pub struct Context<E> {
+    pub message: String,
+    pub source: E,
 }
 
 impl<E: Error + 'static> Error for Context<E> {
-    fn source(&self) -> Option<&(dyn Error + 'static)> {
-        Some(&self.source)  // the original error is still accessible
-    }
+    fn source(&self) -> Option<&(dyn Error + 'static)> { Some(&self.source) }
 }
 
-// Extension trait: adds .context("...") to any Result
-trait WithContext<T, E> {
-    fn context(self, msg: &str) -> Result<T, Context<E>>;
-}
-
-impl<T, E: Error> WithContext<T, E> for Result<T, E> {
-    fn context(self, msg: &str) -> Result<T, Context<E>> {
-        self.map_err(|e| Context { message: msg.to_string(), source: e })
-    }
-}
-
-// Usage: context at every layer adds "what you were doing"
-fn load_config(path: &str) -> Result<String, Context<IoError>> {
-    read_file(path).context(&format!("loading config from '{}'", path))
+// Extension trait for ergonomic usage:
+fn load_config(path: &str) -> Result<String, Context<io::Error>> {
+    read_file(path).map_err(|e| Context {
+        message: format!("while loading config from '{}'", path),
+        source: e,
+    })
 }
 ```
 
-Walk the chain: `println!("{}", e)` prints the context message. `e.source()` gives the original `IoError`. A logging framework can walk `source()` repeatedly to print the full causal history.
+## OCaml Approach
 
-## What This Unlocks
+OCaml's `Result.map_error` can wrap errors with context strings, but there is no standard chaining mechanism. Libraries like `Error_monad` provide dedicated context operations:
 
-- **Debuggable production errors** — every error tells you what was being attempted, not just what went wrong
-- **Preserved structure** — the original error is still accessible via `source()` for programmatic inspection or further wrapping
-- **anyhow compatibility** — this is exactly the pattern `anyhow::Context::context()` uses; understanding it means you understand `anyhow`
+```ocaml
+let with_context msg = Result.map_error (fun e ->
+  Printf.sprintf "%s: %s" msg (string_of_error e))
+```
+
+This flattens the chain into a single string rather than preserving the original error as a structured value.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Context wrapping | Manual tuple type or string annotation | Wrapper struct implementing `Error::source()` |
-| Chain traversal | Manual recursion over cause field | Standard `source()` linked list |
-| Ergonomics | Verbose at every call site | `.context()` extension method on `Result` |
-| Message vs cause | Combined or separate | Separate: `Display` = message, `source()` = cause |
+1. **Structured vs string**: Rust's `Context<E>` preserves the original error as a typed value accessible via `source()`; OCaml typically flattens context into a combined error string.
+2. **Chain traversal**: Rust's `source()` chain enables iterating through all context layers programmatically; OCaml's string approach loses structure.
+3. **Type precision**: `Context<ParseError>` preserves the exact error type; `Box<dyn Error>` in `anyhow` erases it for flexibility.
+4. **Ecosystem**: `anyhow::Context` trait provides `.context("msg")` and `.with_context(|| msg)` as ergonomic extension methods — the idiomatic production approach.
+
+## Exercises
+
+1. Implement a `ResultExt` trait with `.context(msg)` and `.with_context(|| msg)` methods on any `Result<T, E: Error>`.
+2. Build a three-level operation (read → parse → validate) where each level wraps errors in context messages, then traverse and print the full chain.
+3. Compare the output of traversing a structured `Context<E>` chain with a flat string-concatenated approach for the same error scenario.

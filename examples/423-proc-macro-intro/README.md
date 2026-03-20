@@ -2,80 +2,39 @@
 
 ---
 
-# 423: Procedural Macros Overview
+# 423: Procedural Macro Introduction
 
-**Difficulty:** 4  **Level:** Expert
+## Problem Statement
 
-Compile-time code transformation using Rust functions — the machinery behind `#[derive(Serialize)]`, `#[tokio::main]`, and `sql!()`.
+`macro_rules!` handles syntactic patterns but cannot inspect type information or generate identifiers dynamically based on field names. Procedural macros (proc macros) operate on the full Rust token stream at compile time as external Rust programs: they receive a `TokenStream`, parse it using `syn`, and emit generated code using `quote`. This enables `#[derive(Serialize)]` to generate different code for each struct's specific field names and types — impossible with `macro_rules!`.
 
-## The Problem This Solves
+Proc macros power the entire Rust ecosystem's most powerful abstractions: `serde`, `tokio::main`, `actix::web::get`, `clap::Parser`, and thousands of derive macros.
 
-`macro_rules!` is powerful but pattern-based — it can only rearrange tokens mechanically. For real code generation you need to *understand* the structure of Rust code: inspect struct fields, read attribute arguments, generate conditional implementations based on generic parameters. This requires operating on the AST, not just token patterns.
+## Learning Outcomes
 
-Procedural macros are Rust functions that run at compile time. They receive a `TokenStream` (the raw tokens of the annotated code) and return a `TokenStream` (the generated code to replace or augment it). The compiler plugs the result back in as if you'd written it by hand. `#[derive(Serialize)]` reads your struct's fields and generates a `Serialize` implementation. `#[tokio::main]` wraps your `async fn main` in the runtime setup boilerplate. `sql!("SELECT ...")` verifies SQL syntax at compile time.
+- Understand the three types of proc macros: derive, attribute, function-like
+- Learn the proc macro development model: separate crate, `TokenStream` in/out
+- See conceptually what a `#[derive(MyDebug)]` proc macro generates for `Point`
+- Understand how `syn` parses token streams into AST nodes and `quote!` generates code
+- Learn why proc macros must be in a separate crate with `proc-macro = true`
 
-There are three types: **derive macros** add trait implementations, **attribute macros** modify or replace items, and **function-like macros** look like `macro_name!(...)` but run with full AST access. Each lives in its own crate with `proc-macro = true` in `Cargo.toml`.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, the code shows the output of what proc macros conceptually generate. `Point` with its `Debug` impl demonstrates what `#[derive(MyDebug)]` would produce: `f.debug_struct("Point").field("x", &self.x).field("y", &self.y).finish()`. `example_function` shows what a `#[log_calls]` attribute macro would transform — wrapping the body with enter/exit logging. These are the target outputs that real proc macros generate via `syn` parsing and `quote!` expansion.
 
-A procedural macro is a Rust function that takes code as input and returns code as output — all at compile time, giving you a compiler plugin without needing compiler internals.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-// In a proc-macro crate (Cargo.toml: [lib] proc-macro = true):
-use proc_macro::TokenStream;
-
-// --- DERIVE MACRO ---
-// Usage: #[derive(Describe)]
-#[proc_macro_derive(Describe)]
-pub fn derive_describe(input: TokenStream) -> TokenStream {
-    // input = struct/enum definition tokens
-    // output = additional impl block tokens
-    let ast: syn::DeriveInput = syn::parse(input).unwrap();
-    let name = &ast.ident;
-    quote::quote! {
-        impl Describe for #name {
-            fn describe(&self) -> String { stringify!(#name).to_string() }
-        }
-    }.into()
-}
-
-// --- ATTRIBUTE MACRO ---
-// Usage: #[my_attr]
-#[proc_macro_attribute]
-pub fn my_attr(args: TokenStream, item: TokenStream) -> TokenStream {
-    // args = attribute arguments, item = the annotated item
-    // return transformed item
-    item  // pass through unchanged in simplest case
-}
-
-// --- FUNCTION-LIKE MACRO ---
-// Usage: my_macro!(...)
-#[proc_macro]
-pub fn my_macro(input: TokenStream) -> TokenStream {
-    // input = everything inside the parens
-    input
-}
-```
-
-1. Create a separate crate, add `[lib] proc-macro = true` to `Cargo.toml`.
-2. Add `syn` (parse input) and `quote` (generate output) dependencies.
-3. Write a function annotated with `#[proc_macro_derive]`, `#[proc_macro_attribute]`, or `#[proc_macro]`.
-4. Use it from another crate by adding the proc-macro crate as a dependency.
-
-## What This Unlocks
-
-- **Derive macros**: Auto-implement traits for any struct/enum — `Serialize`, `Debug`, custom domain traits.
-- **Attribute macros**: Transform functions (`#[tokio::main]`, `#[test]`, `#[route("/api")]`).
-- **Function-like macros**: Compile-time DSLs — SQL validation, regex compilation, HTML templates.
+OCaml's PPX framework is the direct equivalent: a PPX plugin is a standalone OCaml program that receives the parsed OCaml AST (as `Parsetree` values), transforms it, and returns the modified AST. `ppx_deriving` is OCaml's `derive` equivalent. The AST is richer than Rust's token stream (already parsed) but requires knowledge of OCaml's `Parsetree` module. Dune integrates PPX as build-time preprocessors.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Compile-time code generation | PPX (preprocessor extensions) | Procedural macros (`proc-macro = true`) |
-| AST access | `Ppxlib.Ast` full AST | `syn` crate parses `TokenStream` to AST |
-| Code generation | `Ppxlib.Ast_builder` | `quote!` macro generates `TokenStream` |
-| Three macro types | PPX derivers, transformers, extensions | derive, attribute, function-like |
-| Separate crate required | PPX is a separate library | Yes — proc macros must be in their own crate |
+1. **Token vs. AST**: Rust proc macros receive raw token streams; OCaml PPX receives the parsed AST. Rust is more flexible but requires manual parsing; OCaml's AST is structured but verbose.
+2. **Separate crate**: Rust proc macros must live in a separate crate with `proc-macro = true`; OCaml PPX plugins are separate executables configured in dune.
+3. **syn/quote ecosystem**: Rust uses `syn` for parsing and `quote!` for generation; OCaml uses `Ppxlib` for AST traversal and `Ast_builder` for generation.
+4. **Error reporting**: Rust proc macros use `compile_error!` macro or `syn::Error::to_compile_error()`; OCaml uses `Location.error_extensionf` for positioned errors.
+
+## Exercises
+
+1. **Understand the output**: Take the `Point` struct and `Debug` impl in `src/lib.rs`. Trace through what `syn` would parse (struct name, field names, field types) and how `quote!` would produce the `impl Debug for Point` block.
+2. **Attribute macro sketch**: Write a `// TODO: proc-macro` function that takes `fn add(a: i32, b: i32) -> i32` and describes in comments what the `#[log_calls]` attribute macro would need to generate — including the logging calls and the original function body.
+3. **Research project**: Find three proc macros you use regularly (`tokio::main`, `serde::Deserialize`, `clap::Parser`). For each, describe in a code comment what token stream input they receive and what code they generate.

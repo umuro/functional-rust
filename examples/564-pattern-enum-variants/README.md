@@ -2,69 +2,52 @@
 
 ---
 
-# 564: Enum Variant Matching
+# Enum Variant Patterns
 
-**Difficulty:** 2  **Level:** Beginner
+## Problem Statement
 
-Match on every variant of an enum — the compiler ensures no case is missed.
+Algebraic data types (ADTs) with sum-type variants are the backbone of functional programming. Enums in Rust are full ADTs: variants can carry no data (unit), named fields (struct-like), or positional fields (tuple-like). Pattern matching on enum variants is exhaustive — the compiler verifies every variant is handled. This makes enums with match the preferred tool for command dispatch, protocol parsing, event handling, and any domain with a finite set of cases. It is the functional alternative to class hierarchies with virtual dispatch.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Without enum matching, branching on "what kind of thing is this?" means runtime type tags, instanceof chains, or string-keyed dispatch maps. You might forget a case. You might add a new case and not notice the six places in your code that need updating.
+- How to match all four kinds of enum variants: unit, struct-like, tuple, and tuple-struct
+- How `if let` provides non-exhaustive matching for a single variant of interest
+- How `matches!` tests variant membership without extracting data
+- How exhaustiveness checking catches missing variants at compile time
+- Where enum patterns replace virtual dispatch: command handling, protocol state machines
 
-In most languages, adding a new message type to a message-passing system means grep-and-pray. You search for every switch statement, hope you don't miss one, and find out at runtime when something falls into the default branch silently.
+## Rust Application
 
-Rust's `match` on enums is exhaustive by design. The compiler refuses to compile a match that doesn't cover every variant. Add `Message::Ping` to your enum and every existing match stops compiling, guiding you straight to each callsite that needs updating.
+`Message` has `Quit` (unit), `Move { x, y }` (struct-like), `Write(String)` (tuple), and `ChangeColor(u8, u8, u8)` (multi-tuple). `process_message` matches all four with different destructuring syntax per variant. `get_write_text` uses `if let Message::Write(text) = msg { Some(text) } else { None }` for single-variant extraction. `is_quit` uses `matches!(msg, Message::Quit)` for a boolean check.
 
-## The Intuition
+Key patterns:
+- `Message::Move { x, y } => ...` — struct variant destructuring
+- `Message::Write(text) => ...` — tuple variant destructuring
+- `if let Variant(data) = val { ... }` — single-variant binding
+- `matches!(val, Variant)` — boolean variant test
 
-Think of this as a switch statement that the compiler actually enforces. Java's `switch` on enums is close, but it lets you omit cases and silently fall through to a default. Python's `match` (3.10+) has structural matching but no exhaustiveness guarantee.
+## OCaml Approach
 
-The killer insight is that enum variants can *carry data*. `Message::Move { x, y }` isn't just a tag — it bundles the coordinates with the variant. In one match arm you get both the dispatch and the destructuring. That's something C's enum + union can't give you safely, and OOP inheritance makes you work much harder for.
+OCaml's variant types are the direct equivalent:
 
-Recursive enums (like the expression tree in this example) are the natural representation for trees, ASTs, JSON, and anything that's "one of several shapes, possibly nested."
-
-## How It Works in Rust
-
-```rust
-#[derive(Debug, Clone)]
-enum Expr {
-    Num(f64),                    // leaf: a number
-    Add(Box<Expr>, Box<Expr>),   // node: left + right
-    Mul(Box<Expr>, Box<Expr>),
-    Neg(Box<Expr>),
-    Var(String),                 // variable lookup
-}
-
-// Every arm handles one variant; compiler rejects if any are missing
-fn eval(env: &[(&str, f64)], e: &Expr) -> f64 {
-    match e {
-        Expr::Num(n)    => *n,
-        Expr::Add(l, r) => eval(env, l) + eval(env, r),
-        Expr::Mul(l, r) => eval(env, l) * eval(env, r),
-        Expr::Neg(e)    => -eval(env, e),
-        Expr::Var(s)    => env.iter()
-                              .find(|&&(k, _)| k == s)
-                              .map(|&(_, v)| v)
-                              .unwrap_or(0.0),
-    }
-}
-// Try removing any arm — the compiler will tell you exactly which variant
-// is unhandled. No runtime surprises.
+```ocaml
+type message = Quit | Move of {x: int; y: int} | Write of string | ChangeColor of int * int * int
+let process = function
+  | Quit -> "Quit"
+  | Move {x; y} -> Printf.sprintf "Move to (%d, %d)" x y
+  | Write text -> "Write: " ^ text
+  | ChangeColor (r, g, b) -> Printf.sprintf "Color: rgb(%d, %d, %d)" r g b
 ```
-
-## What This Unlocks
-
-- **Safe recursive data structures** — `Box<Expr>` breaks the size cycle; you get full ASTs, JSON trees, linked lists.
-- **Compiler-guided refactoring** — add a variant, find every match that needs updating immediately at compile time.
-- **Combined dispatch + destructuring** — `Mul(l, r)` gives you the variant tag *and* the inner values in one arm.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Syntax | `type expr = Num of float \| Add of expr * expr` | `enum Expr { Num(f64), Add(Box<Expr>, Box<Expr>) }` |
-| Exhaustiveness | Warning (configurable to error) | Hard compile error |
-| Recursive type | Native — no Box needed | Requires `Box<T>` for heap indirection |
-| Namespace | Variants unqualified by default | `Expr::Num` (use `use Expr::*` to shorten) |
-| Pattern syntax | `Num n` | `Num(n)` or `Add(l, r)` |
+1. **Unit variants**: Rust `Message::Quit` requires the enum name; OCaml `Quit` can be used unqualified in scope.
+2. **Inline record variants**: Rust struct-like variants `Move { x, y }` and OCaml inline records `Move of {x: int; y: int}` are equivalent.
+3. **`matches!` vs boolean match**: Rust's `matches!` macro; OCaml achieves the same with `(= Quit)` or a `function Quit -> true | _ -> false`.
+4. **Exhaustiveness**: Both compilers warn on missing variants; adding a new variant to the enum causes compile warnings in both.
+
+## Exercises
+
+1. **Command parser**: Implement a `Command` enum with `Move(Direction)`, `Look`, `Take(String)`, `Drop(String)`, `Quit` and write `fn execute(cmd: Command, world: &mut World) -> String`.
+2. **JSON value**: Build a `JsonValue` enum covering `Null`, `Bool(bool)`, `Number(f64)`, `Str(String)`, `Array(Vec<JsonValue>)`, `Object(Vec<(String, JsonValue)>)` with a `display` function.
+3. **From string**: Write `fn parse_message(s: &str) -> Option<Message>` that parses "quit", "move X Y", "write TEXT", "color R G B" into the `Message` enum.

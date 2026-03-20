@@ -2,54 +2,39 @@
 
 ---
 
-# 449: rayon::join for Parallel Tasks
+# 449: Rayon Join — Fork-Join Parallelism
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Run two independent computations in parallel and get both results back — the building block of parallel divide-and-conquer.
+Divide-and-conquer algorithms (merge sort, quicksort, parallel tree traversal) split a problem into two independent sub-problems that can be solved concurrently. The fork-join model captures this: `join(f, g)` runs both `f` and `g`, potentially in parallel, waiting for both to complete. `rayon::join` is the idiomatic way to express this in Rust — it automatically decides whether to run in parallel (if threads are available) or sequentially (if the thread pool is saturated), adapting to load.
 
-## The Problem This Solves
+Fork-join appears in parallel merge sort, Fibonacci computation, tree operations, and any divide-and-conquer algorithm where sub-problems are independent.
 
-Many algorithms naturally split into two independent subproblems: merge sort splits a slice in half, quicksort partitions around a pivot, Fibonacci splits into two recursive calls. Running these halves sequentially wastes half your cores.
+## Learning Outcomes
 
-`std::thread::spawn` works but requires `'static` lifetimes and explicit `JoinHandle` management. Writing parallel merge sort with raw threads means careful lifetime juggling that obscures the algorithm.
+- Understand the fork-join concurrency primitive: run two closures in parallel, wait for both
+- Learn how `thread::spawn` + `join` implements fork-join for `'static` data
+- See how `thread::scope` implements fork-join for borrowed data
+- Understand `rayon::join`'s adaptive behavior (parallel or sequential based on pool state)
+- Learn when fork-join produces speedup: sub-problems must be large enough to justify overhead
 
-`rayon::join` is the clean answer: pass two closures, get two results, all within the same lifetime scope. Rayon decides whether to run them on the current thread, a sibling thread, or steal them — always correctly.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `join` spawns one thread for `f` and runs `g` on the current thread, then joins the handle. `scoped_join` uses `thread::scope` for borrowed data. These are the building blocks for `parallel_sort` which implements a parallel merge sort: sort left half in one thread, right half in another, merge the results. The threshold prevents spawning threads for tiny slices.
 
-You're cooking a meal with a helper. You say "you do the salad, I'll do the main." You each work simultaneously. When both are done, you serve dinner. `rayon::join` is exactly that: fork two tasks, join when both finish. No manual thread handles, no lifetime headaches.
+## OCaml Approach
 
-## How It Works in Rust
-
-1. **Call `rayon::join`** with two closures that return values of potentially different types:
-   ```rust
-   let (left_result, right_result) = rayon::join(|| expensive_a(), || expensive_b());
-   ```
-2. **Rayon schedules** — it may run one closure inline and steal the other to a worker thread, or run both inline if the pool is busy. From your perspective it's always parallel-or-better.
-3. **Lifetime scoping** — unlike `spawn`, closures can borrow from the enclosing scope because `join` doesn't return until both finish.
-4. **Parallel merge sort example**:
-   ```rust
-   fn par_sort(v: &mut [i32]) {
-       if v.len() <= 1 { return; }
-       let mid = v.len() / 2;
-       let (left, right) = v.split_at_mut(mid);
-       rayon::join(|| par_sort(left), || par_sort(right));
-       merge(v);
-   }
-   ```
-
-## What This Unlocks
-
-- **Parallel divide-and-conquer** — merge sort, quicksort, tree traversal all become naturally parallel.
-- **Scoped borrowing** — both closures can reference local variables; Rayon guarantees they complete before the call returns.
-- **Composable parallelism** — nest `rayon::join` calls recursively; Rayon's scheduler prevents oversubscription automatically.
+OCaml 5.x's `Domain.spawn f` + `Domain.join h` implements fork-join: `let h = Domain.spawn f in let b = g () in let a = Domain.join h in (a, b)`. `Domainslib.Task.async`/`await` provide a higher-level composable version. For recursive divide-and-conquer, `Domainslib.Task.parallel_for` handles the recursion internally. OCaml 4.x's threads achieve fork-join but without parallelism.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Fork-join | `Domainslib.Task.async`/`await` | `rayon::join(f, g)` |
-| Lifetime of captured data | GC-managed | Statically verified by borrow checker |
-| Oversubscription | Manual pool sizing | Rayon work-steals within existing pool |
-| Return values | Futures awaited | Tuple `(A, B)` returned directly |
+1. **Adaptive**: `rayon::join` runs sequentially when the thread pool is saturated; manual `thread::spawn` always creates a thread.
+2. **Borrowed data**: `thread::scope` enables fork-join with borrowed slices; `rayon::join` on borrowed data requires `Sync` bounds.
+3. **Overhead**: Thread spawn for `join` costs ~100μs; `rayon::join` uses the existing pool with near-zero overhead.
+4. **Nesting**: Recursive `rayon::join` calls build a dynamic tree of tasks; manual recursive spawn causes thread count to grow exponentially.
+
+## Exercises
+
+1. **Parallel merge sort**: Implement complete parallel merge sort using the `join` function. Set a threshold below which sequential sort is used. Benchmark against `slice::sort()` for arrays of 1M, 10M, and 100M elements.
+2. **Parallel tree fold**: Given a binary tree of values, implement `parallel_fold(tree, identity, combine)` using fork-join: fold left subtree in one branch, right subtree in another, combine results. Test with a balanced tree of 65535 nodes.
+3. **Parallel search**: Use fork-join to implement parallel binary search across a sorted `Vec`. Split at the midpoint, search left and right in parallel, return the first match found. Compare with sequential binary search.

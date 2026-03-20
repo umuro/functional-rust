@@ -4,53 +4,59 @@
 
 # 325: Racing Futures with select!
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-`select!` races multiple futures and returns the first one to finish — the others are cancelled (dropped).
+Sometimes you want the first result from multiple concurrent operations — a timeout competing with an operation, querying multiple replicas and using the fastest response, or cancelling work when a stop signal arrives. The `select!` macro (in `tokio` or `futures`) polls multiple futures and returns when the first one completes, cancelling the others. This is the fundamental tool for implementing timeouts, fallbacks, and cancellation in async code.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You need to fetch data from a slow external API, but you can't let the user wait forever. Without `select!`, you either block forever or implement complex cancellation logic with shared flags, mutexes, and condition variables.
+- Understand `select!` as polling multiple futures and returning on first completion
+- Distinguish `select!` (first wins) from `join!` (all must complete)
+- Implement racing with timeouts as a common `select!` pattern
+- Recognize that unfinished futures in `select!` are dropped (cancelled)
 
-`select!` also solves the "try multiple sources" problem: hit your primary cache and a fallback simultaneously, return whichever responds first.
+## Rust Application
 
-## The Intuition
-
-`select!` is like JavaScript's `Promise.race()` or Python's `asyncio.wait(return_when=FIRST_COMPLETED)` — whoever finishes first wins, the rest are abandoned.
-
-```
-join!:    task1 ──────────────────┐
-          task2 ──────────┐       │  → waits for BOTH
-
-select!:  task1 ──────────────────
-          task2 ──────────┐  ← WINNER (first done)
-                          → returns immediately, drops others
-```
-
-## How It Works in Rust
+Thread-based racing simulation shows the concept:
 
 ```rust
-fn race<T: Send + 'static>(
-    tasks: Vec<(Box<dyn FnOnce()->T+Send>, &'static str)>
-) -> (&'static str, T) {
+pub fn race<T>(
+    tasks: Vec<(&'static str, Box<dyn FnOnce() -> T + Send>)>
+) -> (&'static str, T)
+where T: Send + 'static,
+{
     let (tx, rx) = mpsc::channel();
-
-    for (f, label) in tasks {
+    for (label, f) in tasks {
         let tx = tx.clone();
-        thread::spawn(move || {
-            let _ = tx.send((label, f()));  // first to finish sends
-        });
+        thread::spawn(move || { let _ = tx.send((label, f())); });
     }
-
-    rx.recv().unwrap()  // returns the first message
+    rx.recv().expect("all senders dropped")  // First result wins
 }
+```
+
+In Tokio: `tokio::select! { v = fut1 => handle_v, _ = timeout => handle_timeout }`.
+
+## OCaml Approach
+
+OCaml's `Lwt.pick` takes a list of promises and returns the first to resolve, cancelling the others:
+
+```ocaml
+(* Lwt.pick: first to resolve wins, others are cancelled *)
+let* result = Lwt.pick [
+  Lwt.map (fun v -> `Result v) (fetch ());
+  Lwt.map (fun () -> `Timeout) (Lwt_unix.sleep timeout_secs);
+]
 ```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Race futures | no stdlib equivalent | `select!` macro (tokio/futures) |
-| First-wins semantics | `Lwt.pick [p1; p2]` | `select!` — first branch wins |
-| Cancellation | exception propagation | losers are `drop`ped |
-| Timeout | `Lwt_unix.with_timeout` | `time::timeout(dur, future)` |
+1. **Cancellation**: Rust's `select!` drops (cancels) unfinished futures when one completes; Lwt's `pick` actively cancels losers.
+2. **Macro syntax**: `tokio::select!` uses Rust macro syntax with `pattern = future => body` arms; Lwt's `pick` is a regular function.
+3. **Non-determinism**: When multiple futures complete simultaneously, `select!` chooses one biased toward the first arm by default; `tokio::select! { biased; }` makes this explicit.
+4. **Timeout pattern**: `tokio::time::timeout(dur, future)` is a specialized `select!` for adding a deadline to any future.
+
+## Exercises
+
+1. Implement a `with_timeout<T>(f: impl FnOnce() -> T, timeout: Duration) -> Option<T>` that returns `None` if the operation takes too long.
+2. Race two "replicas" returning the same type and use the first result, ensuring both tasks are started before waiting.
+3. Implement a cancellation-aware worker: the worker computes a value, but can be interrupted by a cancellation signal arriving first.

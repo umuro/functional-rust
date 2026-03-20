@@ -2,92 +2,42 @@
 
 ---
 
-# 182: Existential Types
+# Existential Types via Box<dyn Trait>
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Store values of any type alongside their operations — the type is forgotten, the capability is preserved.
+An existential type packs a value together with proof that it satisfies an interface, erasing the concrete type. The consumer of an existential value can use the interface but cannot recover the original type. This enables heterogeneous collections (a `Vec` of different types all implementing the same trait), plugin architectures, and open-ended extension points. Rust's `Box<dyn Trait>` is the primary existential mechanism, paralleling OCaml's GADT-based existential encoding.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You have values of different types — `i32`, `String`, `f64`, a custom struct — and you want to put them all in one collection. Not as raw bytes; you want to be able to *do* something with each value, like display it. But you don't want to enumerate all possible types in an enum.
+- Understand existential types as "there exists a type satisfying this interface"
+- Build heterogeneous collections with `Box<dyn Display>` and custom traits
+- Implement the closure-based existential pattern for packing values with their operations
+- See how existentials enable extension without recompilation (open-world assumption)
 
-An existential type says: "there exists some type T, and I have a value of that T, and T supports these operations." The concrete T is hidden from the outside — only the operations are visible. This is the key idea behind `Box<dyn Trait>`.
+## Rust Application
 
-The contrast with generics: `fn show<T: Display>(v: T)` requires the caller to name `T`. An existential says the *callee* picks `T` — and nobody needs to name it.
+`Vec<Box<dyn Display>>` stores `42`, `"hello"`, and `3.14` together — each has a different concrete type, all erased behind `Display`. The custom `Showable` struct packs any value with its `show` function as a closure: `struct Showable { show: Box<dyn Fn() -> String> }`. This is the GADT existential: `exists T. (T, T -> String)` packed into one value. The closure captures both the value and the function, erasing `T` completely.
 
-## The Intuition
+## OCaml Approach
 
-When you write `Box::new(42_i32) as Box<dyn Display>`, you're packing two things into the heap: the value `42` and a pointer to `i32`'s implementation of `Display`. The type `i32` is erased — you can only call `Display`'s methods. This is an existential: *some type T* implements `Display`, and here's a value of that T.
-
-OCaml achieves the same with GADT constructors: `Show : 'a * ('a -> string) -> showable` packs a value with its display function, hiding `'a`. Rust's `Box<dyn Trait>` is the runtime analog with vtable dispatch.
-
-## How It Works in Rust
-
-```rust
-use std::fmt;
-
-// Approach 1: Box<dyn Trait> — Rust's native existential
-fn make_showables() -> Vec<Box<dyn fmt::Display>> {
-    vec![
-        Box::new(42),           // i32 erased — only Display survives
-        Box::new("hello"),      // &str erased
-        Box::new(3.14),         // f64 erased
-    ]
-}
-
-for item in make_showables() {
-    println!("{}", item);  // dispatch via vtable — correct impl called
-}
+OCaml encodes existentials via GADTs:
+```ocaml
+type showable = Show : 'a * ('a -> string) -> showable
+let show (Show (x, f)) = f x
+let showables = [Show (42, string_of_int); Show ("hello", Fun.id)]
 ```
-
-Approach 2: closure-based packing (mirrors OCaml GADT constructor):
-
-```rust
-struct Showable {
-    show_fn: Box<dyn Fn() -> String>,
-}
-
-impl Showable {
-    fn new<T: 'static>(value: T, to_string: fn(&T) -> String) -> Self {
-        // Both `value` and `to_string` are captured — T is erased from the outside
-        Showable {
-            show_fn: Box::new(move || to_string(&value)),
-        }
-    }
-
-    fn show(&self) -> String { (self.show_fn)() }
-}
-
-let items = vec![
-    Showable::new(42, |x| x.to_string()),
-    Showable::new(String::from("hello"), |x| x.clone()),
-    Showable::new(3.14f64, |x| format!("{}", x)),
-];
-```
-
-Multi-trait existential via supertrait:
-
-```rust
-trait Printable: fmt::Display + fmt::Debug {}
-impl<T: fmt::Display + fmt::Debug> Printable for T {}
-
-let items: Vec<Box<dyn Printable>> = vec![Box::new(42), Box::new("hi")];
-// Can call both display and debug on each item
-```
-
-## What This Unlocks
-
-- **Heterogeneous collections** — `Vec<Box<dyn Event>>` for event queues with different event types
-- **Plugin interfaces** — store plugins as `Box<dyn Plugin>` regardless of their concrete types
-- **Capability bundles** — pack a value with its serializer, validator, or formatter
+The `Show` constructor packs the value `x: 'a` and its `show` function `f: 'a -> string`, erasing `'a` in `showable`. OCaml's encoding is more transparent than Rust's closure-based approach — the packed function is explicit.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Existential encoding | GADT constructor: `Show : 'a * ('a -> string) -> showable` | `Box<dyn Trait>` via vtable |
-| Closure packing | `let pack v f = Show (v, f)` | `struct { show_fn: Box<dyn Fn() -> String> }` |
-| Multi-capability | First-class module with multiple fields | Super-trait combining multiple traits |
-| Recovering T | Pattern match on GADT constructor | Not possible — use `Any::downcast_ref` if needed |
-| Allocation | GC-managed heap | `Box` — heap allocation, drop via `Drop` |
+1. **GADT vs. closure**: OCaml's GADT explicitly packs `(value, function)`; Rust's closure-based approach bundles them in the captured environment — equivalent but differently structured.
+2. **Vtable vs. closure**: Rust's `Box<dyn Trait>` uses a vtable; the closure approach creates an independent dispatch mechanism — useful when the "trait" is just one function.
+3. **Type recovery**: Neither OCaml's `Show` existential nor Rust's `Box<dyn Any>` allows recovering the concrete type in the existential position; `Box<dyn Any>` is a different (universally typed) erasure.
+4. **Collection use**: Both `Vec<showable>` in OCaml and `Vec<Box<dyn Display>>` in Rust are idiomatic for heterogeneous collections.
+
+## Exercises
+
+1. Create `Vec<Box<dyn std::error::Error>>` and store different error types, then iterate and print each.
+2. Implement a `Callback` type using the closure existential: `struct Callback { call: Box<dyn Fn(Event) -> ()> }`.
+3. Write a plugin registry that stores `Vec<Box<dyn Plugin>>` and calls `plugin.name()` and `plugin.run()` on each.

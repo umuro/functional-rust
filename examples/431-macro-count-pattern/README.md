@@ -2,92 +2,39 @@
 
 ---
 
-# 431: Counting Elements at Compile Time
+# 431: Counting Patterns in Macros
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Count the number of arguments passed to a variadic macro at compile time — enabling fixed-size arrays, static dispatch tables, and compile-time arity validation with no runtime overhead.
+Many macro-generated code patterns need to know the number of elements at compile time: pre-allocating arrays of the right size, generating tuple types, creating assertions about argument counts. Counting macro arguments is surprisingly non-trivial — you can't use a simple `$n` count since macros don't have builtin counters. Three techniques exist: recursive counting (O(n) expansions), array length trick (O(1) using `[()].len()`), and the substitution trick. Each has different compile-time performance characteristics.
 
-## The Problem This Solves
+Counting patterns appear in `static_assertions` (checking type sizes), array initialization macros, compile-time tuple generation, and any macro needing to allocate the right amount of space.
 
-`macro_rules!` macros accept variadic input via `$($x:expr),*`, but there's no built-in `len` or `count`. When you need to create a fixed-size array from variadic arguments, or assert that exactly N items were passed, you need to count them yourself.
+## Learning Outcomes
 
-The naive recursive counting approach works but can hit the recursion limit for large inputs. The substitution trick — replacing each token with `()` and measuring the length of the resulting slice — is O(1) and the idiomatic solution for anything non-trivial.
+- Understand three approaches to counting macro arguments: recursion, array trick, expression counting
+- Learn why the array trick (`[()].len()`) is O(1) compile time vs. O(n) for recursive counting
+- See how `@single $_:tt => ()` converts each token to a unit value for array length counting
+- Understand when compile-time counts matter for performance (deeply recursive macros can hit `recursion_limit`)
+- Learn how to use counts in array initialization: `[default_val; count_array!($($x),*)]`
 
-Compile-time counting also enables patterns that would otherwise require runtime bookkeeping: a dispatch table whose size is known to the compiler, a `const N: usize` derived from a list of items, or a `compile_error!` if the wrong number of arguments is passed.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `count_recursive!` is the straightforward approach: base case returns 0, recursive case returns `1 + count!(tail)`. `count_array!` uses the `@single` helper to map each token to `()`, then `<[()]>::len(&[...])` to count at compile time without recursion. `count_exprs!` counts only expression fragments. The array trick is preferred for large counts to avoid recursion depth limits.
 
-The substitution trick is clever: replace every token in the variadic list with `()` (unit), put all those units into a slice literal `[(), (), ()]`, and call `.len()` on it. Since all the values are `()`, the compiler knows the length at compile time and optimises it to a constant. No recursion, no stack overflow, no iteration.
+## OCaml Approach
 
-The recursive approach (`1 + count!($($tail)*)`) reads more naturally but recurses once per element. For short lists (< 64 items) it's fine. For longer lists or when you want a guaranteed `const`, prefer the substitution trick.
-
-## How It Works in Rust
-
-```rust
-// ── Recursive count (clear, limited depth) ───────────────────────────────────
-macro_rules! count {
-    () => { 0usize };
-    ($head:tt $($tail:tt)*) => { 1 + count!($($tail)*) };
-}
-
-// ── Substitution trick (preferred for large lists) ───────────────────────────
-macro_rules! replace_with_unit { ($anything:tt) => { () }; }
-
-macro_rules! count_tts {
-    ($($tts:tt)*) => {
-        // Replaces each token with () then measures slice length — O(1), const
-        <[()]>::len(&[$(replace_with_unit!($tts)),*])
-    };
-}
-
-// ── Count expressions ─────────────────────────────────────────────────────────
-macro_rules! count_exprs {
-    () => { 0usize };
-    ($e:expr $(, $rest:expr)*) => { 1 + count_exprs!($($rest),*) };
-}
-
-// ── Build a fixed-size array — size inferred from argument count ──────────────
-macro_rules! fixed_array {
-    ($($val:expr),* $(,)?) => {{
-        const N: usize = count_exprs!($($val),*);
-        let arr: [i32; N] = [$($val,)*];
-        arr
-    }};
-}
-
-let arr = fixed_array![10, 20, 30, 40, 50];
-// arr has type [i32; 5] — the 5 is a compile-time constant
-
-// ── Static dispatch table with known size ────────────────────────────────────
-macro_rules! dispatch_table {
-    ($($name:ident : $fn:expr),* $(,)?) => {{
-        const SIZE: usize = count_exprs!($($fn),*);
-        let names: [&str; SIZE] = [$(stringify!($name),)*];
-        let funcs: [fn(i32) -> i32; SIZE] = [$($fn,)*];
-        (names, funcs)
-    }};
-}
-
-let (names, funcs) = dispatch_table!(
-    double: |x| x * 2,
-    square: |x| x * x,
-    negate: |x| -x,
-);
-// SIZE = 3 at compile time, no Vec allocation
-```
-
-## What This Unlocks
-
-- **Fixed-size arrays from variadic macros** — generate `[T; N]` arrays where `N` is the argument count, unlocking stack allocation and `const` contexts.
-- **Compile-time arity validation** — `assert!(count_exprs!(...) == expected)` inside a `const _` block fails the build if the wrong number of items is provided.
-- **Plugin/dispatch tables** — build a `[fn(...); N]` array of handlers where the size is known to the compiler, enabling bounds-free indexing.
+OCaml counts list elements at runtime with `List.length`. At compile time, OCaml uses type-level numbers (Peano arithmetic with GADTs or type-level naturals from the `zarith` library). PPX can count AST nodes during compilation. There's no direct equivalent of Rust's token-counting trick since OCaml PPX operates on the AST, where `List.length` on fields is straightforward.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Variadic argument count | Not directly — use lists; `List.length` at runtime | Compile-time via substitution trick or recursive `macro_rules!` |
-| Fixed-size array from variadic input | Not possible with standard syntax | `[T; N]` where `N = count_exprs!(...)` — zero runtime cost |
-| Compile-time assertions | `[@@if]` guards in ppx | `const _: () = assert!(count == expected)` |
-| Dispatch table sizing | `Array.make n` at runtime | `[fn; N]` with `N` as compile-time constant |
+1. **Compile vs. runtime**: Rust's count macros produce compile-time constants; OCaml's `List.length` is a runtime function.
+2. **Technique**: Rust needs tricks (array trick, recursion) because macros don't have built-in counters; OCaml PPX can directly use `List.length fields`.
+3. **Type-level**: Rust uses `const` values from macro counting; OCaml can encode lengths in types using GADTs for type-level length checking.
+4. **Performance**: The array trick is O(1) expansions; the recursive approach is O(n) expansions where n is the element count.
+
+## Exercises
+
+1. **Fixed-size tuple macro**: Implement `tuple!(1, 2, 3)` that generates a tuple literal AND uses `count_array!` to initialize an array `[0usize; count_array!(1, 2, 3)]` of the same length.
+2. **Sized collection**: Create `static_vec!(T, 1, 2, 3)` that generates `let arr: [T; COUNT] = [1, 2, 3]` where COUNT is the compile-time count. Verify that the array size matches the element count.
+3. **Argument count assertion**: Write `assert_arity!(fn_name, 3)` that at compile time asserts a tuple has exactly 3 elements, generating a `static_assertions::const_assert_eq!(COUNT, 3)` check.

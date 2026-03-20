@@ -2,60 +2,68 @@
 
 ---
 
-# 330: Async Sink
+# 330: Async Sink — Buffered Writing
 
-**Difficulty:** 4  **Level:** Expert
+## Problem Statement
 
-A destination that accepts values and flushes them in batches — the write side of a stream.
+Writing individual items to disk, network, or databases one at a time is inefficient. Batching writes — accumulating items in a buffer and flushing when the buffer is full or a flush is explicitly requested — is the standard optimization. The `Sink` trait (in the `futures` crate) is the write-side complement to `Stream`: it accepts items and provides backpressure when the buffer is full. Understanding the buffering and flushing lifecycle is essential for high-throughput I/O.
 
-## The Problem This Solves
+## Learning Outcomes
 
-If a `Stream` is a source you pull from, a `Sink` is a destination you push into. Real async systems constantly need to write to things that can't accept items one-by-one: databases preferring bulk inserts, log aggregators batching messages, or network sockets benefiting from coalescing writes.
+- Understand a `Sink` as a destination that accepts items and controls backpressure
+- Implement a `BatchSink` that buffers items and flushes in configurable-size batches
+- Recognize the lifecycle: `send()` (add item), auto-flush when full, `flush()` for explicit drain
+- Apply batching to reduce I/O overhead in database writes and network sends
 
-The `Sink` pattern buffers incoming values and flushes when full, absorbing bursts efficiently.
+## Rust Application
 
-## The Intuition
-
-Think of batched database writing:
-```js
-buffer.push(item);
-if (buffer.length >= BATCH_SIZE) await db.insertMany(buffer.splice(0));
-```
-
-Rust's `BatchSink` is the same: `send()` buffers, flush triggers when capacity is reached.
-
-## How It Works in Rust
+`BatchSink<T>` buffers items and flushes when capacity is reached:
 
 ```rust
-struct BatchSink<T> {
+pub struct BatchSink<T> {
     buffer: VecDeque<T>,
     capacity: usize,
     flushed_batches: Vec<Vec<T>>,
 }
 
 impl<T: Clone> BatchSink<T> {
-    fn send(&mut self, item: T) -> Result<(), String> {
+    pub fn send(&mut self, item: T) {
         self.buffer.push_back(item);
-        if self.buffer.len() >= self.capacity { self.flush()?; }
-        Ok(())
-    }
-
-    fn flush(&mut self) -> Result<(), String> {
-        if !self.buffer.is_empty() {
-            let batch: Vec<T> = self.buffer.drain(..).collect();
-            self.flushed_batches.push(batch);
+        if self.buffer.len() >= self.capacity {
+            self.flush(); // Auto-flush when buffer is full
         }
-        Ok(())
+    }
+    pub fn flush(&mut self) {
+        if !self.buffer.is_empty() {
+            self.flushed_batches.push(self.buffer.drain(..).collect());
+        }
     }
 }
 ```
 
-Key: `VecDeque::drain(..)` empties the buffer in one move. Always call `flush()` at the end.
+## OCaml Approach
+
+OCaml's `Buffer` module provides in-memory buffering, and `Lwt_io.flush` drains IO buffers. For custom batch logic, a mutable `Queue.t` serves as the accumulator:
+
+```ocaml
+let batch_sink capacity =
+  let buffer = Queue.create () in
+  let flush () = (* send batch *) Queue.clear buffer in
+  let send item =
+    Queue.add item buffer;
+    if Queue.length buffer >= capacity then flush ()
+  in (send, flush)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Mutable buffer | `mutable buf: 'a list` | `VecDeque<T>` |
-| Flush trigger | Manual `List.length` | `buffer.len() >= capacity` |
-| Drain | `s.buf <- []` | `buffer.drain(..)` |
+1. **Futures Sink trait**: `futures::Sink` provides `poll_ready`, `start_send`, `poll_flush`, `poll_close` — a four-phase protocol for async backpressure.
+2. **Backpressure**: A sync `BatchSink` blocks the producer inline; an async sink uses `poll_ready` → `Pending` to signal "not ready" without blocking.
+3. **Production use**: Kafka producers, Elasticsearch bulk indexers, and PostgreSQL batch inserters all use this buffering pattern.
+4. **Flush on drop**: Sinks should flush remaining items when dropped — implement `Drop` to flush the residual buffer.
+
+## Exercises
+
+1. Add `Drop` to `BatchSink<T>` that flushes any remaining buffered items when the sink is dropped.
+2. Implement a `LogSink` that batches log messages and writes them to a writer in configurable-size chunks.
+3. Add a high-watermark threshold: when the buffer reaches 80% capacity, start emitting backpressure signals.

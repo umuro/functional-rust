@@ -33,3 +33,9 @@ Rust replaces the functor with a generic struct `ComparableSet<T: Ord>`. The `Or
 2. **Trait vs module type:** `COMPARABLE` is an OCaml module type specifying `compare`; Rust uses the built-in `Ord` trait which every numeric type and `String` already implements.
 3. **Mutability:** OCaml's `add` returns a new value (functional update); Rust's `insert` consumes `self` and returns `Self`, encoding the same immutable-update pattern without hidden clones.
 4. **Performance:** The idiomatic Rust `ComparableSet` uses a sorted `Vec` with `binary_search` for O(log n) membership test; the OCaml original uses `List.exists` — O(n) — and sorts on `to_list`.
+
+## Exercises
+
+1. Implement `fmap` for a `BTreeSet<T: Ord>` by applying a function to each element and collecting results into a new set (note: `fmap` here is not a true functor due to the `Ord` constraint — explain why).
+2. Implement a `Functor` trait for a custom binary tree type and write `fmap` that applies a function to every leaf value while preserving tree structure.
+3. Implement `Functor` and `fmap` for a `Result<T, E>` type (mapping over the success value only), then compose two `fmap` calls and verify the functor composition law: `fmap(f∘g) == fmap(f) ∘ fmap(g)`.

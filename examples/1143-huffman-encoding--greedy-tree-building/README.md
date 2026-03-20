@@ -29,3 +29,9 @@ Rust mirrors the same `HTree` enum with `Box<HTree>` children. The idiomatic ver
 2. **Priority queue:** OCaml re-sorts the full list every iteration; Rust uses `BinaryHeap` for O(log n) insert/pop.
 3. **Ordering:** OCaml uses a comparison function passed to `List.sort`; Rust requires `Ord` implemented on the element type (via newtype).
 4. **String accumulation:** OCaml uses `^` for string concatenation; Rust uses `format!("{prefix}0")` on owned `String`.
+
+## Exercises
+
+1. Implement the Huffman decoder: given the encoding tree and a string of bits, reconstruct the original text.
+2. Extend the encoder to serialize the Huffman tree structure into a compact binary header so that the decoder does not need the tree separately.
+3. Implement adaptive Huffman coding: build the tree incrementally as you encode each symbol rather than in a separate pre-pass, and compare compression ratio with the static variant.

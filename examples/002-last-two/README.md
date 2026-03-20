@@ -35,3 +35,9 @@ Three approaches: (1) direct length-based indexing for O(1) access, (2) recursiv
 3. **Slice access:** Rust slices are contiguous memory → O(1) indexing; OCaml lists are linked → O(n) traversal
 4. **Windows iterator:** Rust's `windows(n)` has no direct OCaml equivalent — it exploits contiguous memory
 5. **Exhaustive matching:** Both languages require exhaustive patterns, but Rust's slice patterns (`[_, rest @ ..]`) are less common than OCaml's list patterns
+
+## Exercises
+
+1. Write `last_n` that returns the last `n` elements of a slice as an `Option<&[T]>`, returning `None` if the slice is shorter than `n`.
+2. Implement `last_two_by` that returns the last two elements of a slice satisfying a predicate, using only iterator combinators.
+3. Write a generic `sliding_last` that yields all consecutive windows of size `k` from the end of a list, collecting them into a `Vec<Vec<T>>`.

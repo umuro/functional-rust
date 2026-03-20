@@ -2,102 +2,37 @@
 
 ---
 
-# 782: const eval: Limitations and Workarounds
+# 782-const-eval-patterns — Const Eval Patterns
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Compute values at compile time with `const fn` — and know exactly which operations are allowed, which are forbidden, and how to work around the restrictions.
+Compile-time evaluation is not limited to simple arithmetic. Complex computations — string hashing for perfect hash maps, computing bit-reversal permutations, generating code tables — can run during compilation. This example collects practical `const fn` patterns: FNV hash of a string, log2 of a size for bit-counting, compile-time min/max/clamp, and ANSI escape code generation for terminal colors. These patterns eliminate entire categories of runtime initialization.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Moving computation from runtime to compile time has real benefits: zero runtime cost, no initialization order issues, and values that are baked directly into the binary. But `const fn` in Rust is not arbitrary computation — it is a restricted subset of Rust that the compiler can evaluate deterministically at compile time.
+- Implement `const fn const_hash(s: &str) -> u64` using the FNV-1a algorithm
+- Write `const fn const_log2(n: usize) -> usize` for bit-shift computations
+- Use `const fn const_min/max/clamp` for bounded configuration values
+- Understand which operations are available in `const fn` (bitops, arithmetic, loops, if)
+- See how `const fn` can generate switch tables: `const ESCAPE_CODES: [&str; 8]`
 
-Knowing the boundaries saves you from cryptic "this expression is not allowed in a constant" errors. More importantly, knowing the workarounds lets you achieve what you want within the rules: use fixed-size arrays instead of `Vec`, work with byte arrays instead of `String`, use integer approximations instead of floating-point where needed.
+## Rust Application
 
-This also covers `const {}` blocks (Rust 1.79+) — inline const evaluation in function bodies.
+`const_hash` implements FNV-1a: XOR each byte then multiply by the FNV prime. Used for compile-time `match`-like dispatch tables. `const_max` and `const_min` use `if` expressions. `const_clamp` combines them. `const_log2` uses a `while` loop to count right-shift steps. All are declared `pub const fn` and used to initialize `const` values at module level. Tests verify against expected values.
 
-## The Intuition
+## OCaml Approach
 
-The const evaluator is a Rust interpreter that runs at compile time. It's conservative: it only allows operations it can fully evaluate with no side effects and no indirection. Heap allocation (`Vec::new()`, `String::new()`) is forbidden because the heap doesn't exist at compile time. Dynamic dispatch is forbidden. Floating-point arithmetic was forbidden until Rust 1.82, when basic float ops became stable in `const fn`.
-
-What *is* allowed: integer arithmetic, bitwise ops, loops (`while` and `for` on ranges), conditionals, fixed-size arrays, `&str` literals, pattern matching, and calling other `const fn`s.
-
-## How It Works in Rust
-
-**Allowed — integer algorithms with loops:**
-```rust
-const fn gcd(mut a: u64, mut b: u64) -> u64 {
-    while b != 0 { let t = b; b = a % b; a = t; }
-    a
-}
-
-const GCD_48_18: u64 = gcd(48, 18);  // evaluated at compile time: 6
-```
-
-**Allowed — fixed-size array generation:**
-```rust
-const fn squares<const N: usize>() -> [u64; N] {
-    let mut out = [0u64; N];
-    let mut i = 0;
-    while i < N { out[i] = (i * i) as u64; i += 1; }
-    out
-}
-
-const SQUARES: [u64; 10] = squares::<10>();  // [0, 1, 4, 9, 16, 25, ...]
-```
-Use `while` not `for i in 0..N` — range iteration isn't yet stable in `const fn`.
-
-**Allowed — byte-level string operations:**
-```rust
-const fn starts_with_prefix(s: &[u8], prefix: &[u8]) -> bool {
-    if s.len() < prefix.len() { return false; }
-    let mut i = 0;
-    while i < prefix.len() {
-        if s[i] != prefix[i] { return false; }
-        i += 1;
-    }
-    true
-}
-```
-`&str` operations aren't fully available in `const`; work with `&[u8]` instead.
-
-**Forbidden — workarounds:**
-```rust
-// ✗ const fn build_vec() -> Vec<i32> { ... }   // Vec is heap — not allowed
-// ✓ Use [T; N] instead:
-const fn squares<const N: usize>() -> [u64; N] { ... }
-
-// ✗ const fn greet() -> String { ... }          // String is heap — not allowed
-// ✓ Use &'static str:
-const GREETING: &str = "hello";
-```
-
-**Allowed since Rust 1.79 — inline `const {}` block:**
-```rust
-fn demonstrate_const_block() {
-    let n = const { gcd(48, 18) };  // evaluated at compile time, result inlined
-    println!("n = {n}");
-}
-```
-The `const { ... }` expression evaluates at compile time and the result is used as a literal at that point in the function.
-
-**Dual use — same `const fn` at compile time and runtime:**
-```rust
-let runtime_gcd = gcd(1071, 462);  // same function, runtime call
-```
-`const fn` can be called at runtime too — it's a regular function that *also* happens to be evaluable at compile time.
-
-## What This Unlocks
-
-- **Zero-cost lookup tables** — compute `[u64; 256]` CRC tables, sine approximations, or prefix sums entirely at compile time.
-- **Compile-time validation** — use `const fn` assertions (`panic!` in const is allowed) to fail compilation if invariants are violated.
-- **Const generics + const fn** — combine `const N: usize` with `const fn` to generate differently-sized tables for different callers.
+OCaml lacks compile-time evaluation for complex patterns. The `cppo` preprocessor handles conditional compilation. For hash maps, `phf` (Rust) has no OCaml equivalent — OCaml uses runtime `Hashtbl`. Code generation via Dune rules or `ocamlopt` plugins can produce pre-computed tables, but this is more complex than Rust's `const fn`. Jane Street's `ppx_hash` generates efficient hash functions but evaluates them at runtime.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Compile-time value | `let () = assert ...` or PPX | `const X: T = expr;` |
-| Compile-time function | Meta-programming / PPX | `const fn` — restricted Rust subset |
-| Inline compile-time eval | N/A | `const { expr }` block (Rust 1.79+) |
-| Heap in const | N/A (GC lang, heap always available) | Forbidden — use `[T; N]` instead of `Vec` |
+1. **FNV at compile time**: Rust computes FNV hashes at compile time for switch dispatch; OCaml computes at runtime (module initialization), which is still fast but not embedded in the binary.
+2. **Log2 for arrays**: Rust uses `const_log2(N)` to compute shift amounts for power-of-two rings at compile time; OCaml computes this at runtime.
+3. **String patterns**: Rust's `const fn const_hash(s: &str)` enables compile-time string→u64 mapping; OCaml has no equivalent.
+4. **Restrictions**: `const fn` cannot call `println!`, allocate, or use `dyn`; OCaml module-level code can call any function.
+
+## Exercises
+
+1. Use `const_hash` to implement a compile-time dispatch table: `const HANDLERS: [(u64, &str); 4] = [...]` mapping hashed command names to handler names.
+2. Implement `const fn is_ascii_uppercase(c: u8) -> bool` and `const fn to_lowercase(c: u8) -> u8` and use them in a `const fn to_lowercase_str` that operates on a fixed-size array.
+3. Write `const fn encode_color(r: u8, g: u8, b: u8) -> u32` that packs RGB into a 24-bit constant and a complementary `const fn decode_color(c: u32) -> (u8, u8, u8)`.

@@ -4,64 +4,61 @@
 
 # 317: Parse Error Handling
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-`.parse::<T>()` returns `Result` — learn the standard parse error types and how to give better error messages.
+Parsing user-provided strings is the entry point for most validation errors. The standard library's `str::parse::<T>()` returns `Result<T, <T as FromStr>::Error>`, but the default error messages are often too vague. Implementing `FromStr` for custom types with detailed error enums provides precise, informative error messages and integrates with the standard `parse()` interface. This is the "type-safe parsing" pattern used throughout production Rust code.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Parsing strings into typed values is one of the most common operations in real programs: reading config files, handling CLI arguments, deserializing CSV, processing user input. In languages with exceptions, parse failures surface at runtime as surprises. In Rust, every parse returns a `Result` — failure is part of the function's signature.
+- Implement `FromStr` for a custom type to enable `.parse::<MyType>()` syntax
+- Define detailed parse error enums with `Empty`, `InvalidFormat`, and `OutOfRange` variants
+- Return specific error variants with context rather than generic string errors
+- Use `FromStr` to integrate with the standard library's parsing infrastructure
 
-The standard library's `.parse::<T>()` method (implemented via the `FromStr` trait) gives you `ParseIntError`, `ParseFloatError`, and `ParseBoolError` out of the box, but their error messages are sometimes terse. The real skill is knowing how to chain parse errors into richer application errors that tell users what went wrong and why.
+## Rust Application
 
-Implementing `FromStr` on your own types extends this model: your custom parser gets the same ergonomics as built-in parsing — callers use `.parse::<YourType>()` and handle failure in the same way they handle `parse::<i32>()`.
-
-## The Intuition
-
-Every call to `.parse()` is a bet that the string has the right format. `FromStr` is the trait that codifies that bet. The `Err` type tells you specifically how the bet was lost — not a generic "it failed" but a typed error you can pattern match on, display to users, or wrap in your own error type.
-
-## How It Works in Rust
+`impl FromStr` provides the `parse()` interface for custom types:
 
 ```rust
-// Built-in parsing — returns Result
-let n: Result<i32, _> = "42".parse();            // Ok(42)
-let n: Result<i32, _> = "abc".parse();           // Err(ParseIntError)
-let f: Result<f64, _> = "3.14".parse();          // Ok(3.14)
-
-// Better error messages with map_err
-let port: u16 = s.parse::<u16>()
-    .map_err(|e| format!("invalid port '{}': {}", s, e))?;
-
-// Implement FromStr for your own types
 use std::str::FromStr;
 
-struct PositiveInt(u64);
+impl FromStr for PositiveNumber {
+    type Err = ParsePositiveError;
 
-impl FromStr for PositiveInt {
-    type Err = String;  // or your own error enum
-    fn from_str(s: &str) -> Result<Self, String> {
-        let n: i64 = s.parse().map_err(|_| format!("not a number: {s}"))?;
-        if n <= 0 { return Err(format!("{n} is not positive")); }
-        Ok(PositiveInt(n as u64))
+    fn from_str(s: &str) -> Result<Self, ParsePositiveError> {
+        if s.is_empty() { return Err(ParsePositiveError::Empty); }
+        let n: i64 = s.parse().map_err(|_| ParsePositiveError::InvalidNumber(s.to_string()))?;
+        if n <= 0 { return Err(ParsePositiveError::NotPositive(n)); }
+        Ok(PositiveNumber(n as u64))
     }
 }
 
-// Now callers use the same ergonomics:
-let p: Result<PositiveInt, _> = "42".parse();
+// Now: "42".parse::<PositiveNumber>() -> Ok(PositiveNumber(42))
+// "0".parse::<PositiveNumber>()  -> Err(NotPositive(0))
 ```
 
-## What This Unlocks
+## OCaml Approach
 
-- **Typed parse errors** — `ParseIntError` and friends carry kind information (empty, invalid digit, overflow) you can match on for specific handling
-- **Custom parsers with standard ergonomics** — implement `FromStr` once and get `.parse()`, `str::parse()`, and `from_str()` for free
-- **Chain-friendly error enrichment** — `map_err` wraps terse standard errors with application-level context before propagating with `?`
+OCaml uses manual parsing functions rather than a standard `parse()` interface. The idiomatic approach is a `of_string` function returning `option` or `result`:
+
+```ocaml
+let positive_of_string s =
+  if String.length s = 0 then Error `Empty
+  else match int_of_string_opt s with
+  | None -> Error (`InvalidNumber s)
+  | Some n when n <= 0 -> Error (`NotPositive n)
+  | Some n -> Ok n
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Parse int | `int_of_string` (raises exception) | `s.parse::<i32>()` → `Result` |
-| Parse float | `float_of_string` | `s.parse::<f64>()` → `Result` |
-| Error type | Exception (dynamic) | `ParseIntError`, `ParseFloatError` (static) |
-| Custom parsing | Manual recursive descent | `impl FromStr` |
-| Error enrichment | `try ... with` + re-raise | `map_err(|e| format!("context: {}", e))` |
+1. **Standard interface**: Rust's `FromStr` is a standard trait — implementing it gives `str::parse()` syntax for free; OCaml requires custom `of_string` functions.
+2. **Error type**: `type Err = ParsePositiveError` makes the error type explicit in the trait; OCaml's return type carries it but without a standard name.
+3. **Ecosystem integration**: `FromStr` integrates with `structopt`/`clap` for CLI argument parsing, `serde` for deserialization, and `reqwest` for header value parsing.
+4. **Blanket impls**: All primitive types implement `FromStr` in Rust's standard library; OCaml provides `*_of_string` functions for primitives.
+
+## Exercises
+
+1. Implement `FromStr` for an `IpAddress` type that parses `"x.x.x.x"` notation, with specific error variants for wrong format, invalid octets, and out-of-range values.
+2. Add `Display` and `std::error::Error` implementations to your `ParsePositiveError` type.
+3. Use the `#[derive(Debug)]` and implemented `FromStr` together with `clap` to parse a custom CLI argument type.

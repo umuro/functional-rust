@@ -2,76 +2,51 @@
 
 ---
 
-# 591: Builder Pattern (Functional Style)
+# Functional Builder Pattern
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Build complex values through method chains that consume and return `Self` — immutable, composable, and type-safe configuration.
+The builder pattern addresses the "telescoping constructor" problem — many optional fields make constructors unwieldy. The functional variant uses consuming methods (`self -> Self`) instead of `&mut self`, creating an immutable chain. Each method returns a new value with one field changed. This style is prevalent in Rust's standard library (`std::thread::Builder`) and ecosystem (`reqwest::ClientBuilder`). It is also related to OCaml's record functional update syntax `{ record with field = new_val }`.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Complex structs often have many optional fields with sensible defaults. The naive solution is a constructor with 12 parameters — callers must know the order, can't skip arguments, and the call site is unreadable. The classic OOP fix is a mutable builder, but mutable builders can't be shared, partially applied, or stored as a "template" to derive variants from.
+- How consuming builder methods `fn field(mut self, val: T) -> Self` enable method chaining
+- How `Default` provides sensible starting configuration for builders
+- How functional update eliminates the need for separate `Builder` and `Config` types
+- How to implement `build()` that validates the configuration before returning it
+- Where the functional builder pattern appears: HTTP clients, runtime builders, parser configs
 
-The functional builder solves both problems. Each `with_*` method takes `self` by value, modifies one field, and returns `Self`. Because every step is a value transformation, you can store a base configuration and derive specializations from it. Tests can build a "default good config" and override one field per test case without mutation.
+## Rust Application
 
-The pattern extends to type-state builders with phantom types, where `build()` only compiles when all required fields have been set — turning runtime panics into compile errors. The compiler enforces that you've configured everything mandatory.
+`Config` implements `Default` with sensible values. Consuming methods: `fn host(mut self, h: impl Into<String>) -> Self { self.host = h.into(); self }`. Chaining: `Config::default().host("example.com").port(443).tls(true)`. The `Default` + consuming methods pattern is zero-overhead — the compiler inlines and optimizes away the intermediate values.
 
-## The Intuition
+Key patterns:
+- `fn method(mut self, val: T) -> Self` — consuming builder method
+- `impl Default for Config` — starting point for building
+- `.host("x").port(443).tls(true)` — method chain
+- `fn build(self) -> Result<Self, String>` — validated construction
 
-A functional builder is a series of value transformations: each `with_*` returns a new (or consumed) `Self` with one field changed, and `build()` produces the final value — the key difference from a mutable builder is composability: you can branch from any intermediate state. The trade-off: each step may clone/move the struct, which is negligible for configs but matters for large types.
+## OCaml Approach
 
-## How It Works in Rust
+OCaml uses functional record update syntax directly:
 
-```rust
-#[derive(Default, Clone)]
-struct ServerConfig {
-    host: String,
-    port: u16,
-    max_connections: usize,
-    tls: bool,
-}
-
-impl ServerConfig {
-    fn new() -> Self { Self::default() }
-
-    // Each method consumes self and returns Self — no mutation visible to caller
-    fn with_host(mut self, host: &str) -> Self {
-        self.host = host.to_string();
-        self  // return moved self
-    }
-    fn with_port(mut self, port: u16) -> Self { self.port = port; self }
-    fn with_max_connections(mut self, n: usize) -> Self { self.max_connections = n; self }
-    fn with_tls(mut self) -> Self { self.tls = true; self }
-
-    fn build(self) -> Result<Server, &'static str> {
-        if self.host.is_empty() { return Err("host required"); }
-        Ok(Server { config: self })
-    }
-}
-
-// Base config — stored as template
-let base = ServerConfig::new()
-    .with_host("localhost")
-    .with_max_connections(100);
-
-// Derive two variants without mutation
-let dev  = base.clone().with_port(8080);
-let prod = base.clone().with_port(443).with_tls();
+```ocaml
+type config = { host: string; port: int; tls: bool; timeout: float }
+let default_config = { host = "localhost"; port = 80; tls = false; timeout = 30.0 }
+let with_host h c = { c with host = h }
+let with_port p c = { c with port = p }
+(* Usage: default_config |> with_host "example.com" |> with_port 443 *)
 ```
-
-## What This Unlocks
-
-- **Test fixtures**: store a base "valid config" and override one field per test — no mutation needed.
-- **Configuration DSLs**: library users get a fluent API; library author controls which combinations are valid.
-- **Type-state builders**: phantom type parameters enforce that required fields are set before `build()` compiles.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Chaining style | `\|>` pipe operator | `.method()` chains on `Self` |
-| Immutable step | New record each step | `self`-consuming returns new `Self` |
-| Mutable step | Explicit `ref` | `mut self` internally — immutable externally |
-| Validation | `Result`-wrapped `build` | `build() -> Result<T, E>` |
-| Defaults | Explicit record literal | `Default` trait + `#[derive(Default)]` |
-| Type-state | GADTs / phantom types | Phantom type parameters on builder struct |
+1. **Consuming vs functional update**: Rust consumes `self` at each step (ownership transfer); OCaml creates a new record at each step (GC-managed copy).
+2. **Method syntax**: Rust `.host("x")` is a method call; OCaml `with_host "x" config` is a function call, typically chained with `|>`.
+3. **Validation**: Rust `build()` can return `Result<Config, Error>` for validation; OCaml typically validates in a separate `check` function.
+4. **Type safety**: Both enforce that missing fields have defaults through the `Default` trait or default record value.
+
+## Exercises
+
+1. **Validation**: Add `fn build(self) -> Result<Config, String>` that returns `Err` if `host` is empty or `port` is 0.
+2. **With-fn style**: Rewrite the builder as free functions `fn with_host(h: &str, c: Config) -> Config` that can be chained with `.pipe(|c| with_host("x", c))`.
+3. **Builder struct**: Create a separate `ConfigBuilder` struct with `&mut self` methods and a `build() -> Config` that consumes the builder — compare API ergonomics with the consuming-self style.

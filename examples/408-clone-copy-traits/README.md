@@ -2,74 +2,39 @@
 
 ---
 
-# 408: Clone vs Copy Semantics
+# 408: Clone and Copy Traits
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Two duplication models — implicit bitwise copy for small value types, explicit deep clone for everything else.
+Rust's ownership model moves values by default — after `let b = a`, `a` is consumed. For small stack-allocated types (integers, `f32`, pairs of floats), this restriction is unnecessary overhead: the value is trivially duplicated by copying bits. For heap-allocated types (strings, vectors), copying must be explicit to avoid unexpected O(n) copies. Rust resolves this with two traits: `Copy` (implicit bitwise copy, opt-in) and `Clone` (explicit `.clone()`, potentially expensive). This distinction makes performance visible in code: an `.clone()` call signals potential allocation.
 
-## The Problem This Solves
+`Copy` is implemented by all primitive types (`i32`, `f64`, `bool`, `char`), tuples of `Copy` types, and small structs/enums where all fields are `Copy`.
 
-When you assign a value in Rust, ownership moves by default. After `let b = a;`, `a` is gone — moved into `b`. This is correct for heap-owning types like `String` and `Vec` where silent copying would be expensive and surprising. But for simple integers and booleans, moving doesn't make sense: they're tiny, they contain no heap resources, and copying them is what you always want.
+## Learning Outcomes
 
-`Copy` marks types that are safe to duplicate by bit-copying — integers, `bool`, `char`, `f64`, tuples of `Copy` types, references. After `let b = a;` on a `Copy` type, both `a` and `b` are valid. No heap involved, no destructor to worry about, just bits.
+- Understand the semantic difference: `Copy` = implicit bit copy; `Clone` = explicit potentially-expensive copy
+- Learn which types can implement `Copy` (no heap allocation, no `Drop`, all fields `Copy`)
+- See how `Vector2D: Copy` allows passing by value without move semantics
+- Understand why `LabeledPoint` (contains `String`) can only be `Clone`, not `Copy`
+- Learn how `#[derive(Clone, Copy)]` works and its requirements
 
-`Clone` is the explicit version. Call `.clone()` to duplicate anything that implements it. For `String`, clone allocates a new heap buffer and copies the bytes. For complex nested types, it recurses. It's always opt-in, always visible in code, and potentially expensive — which is exactly the design intent.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `Vector2D` has `f32 x` and `f32 y` — both `Copy`, so the struct is `Copy`. After `let b = a`, both `a` and `b` are valid. Methods take `self` by value (not reference) because copying is cheap. `LabeledPoint` contains `String` which is `!Copy` (heap-allocated), so it can only derive `Clone`. Calling `labeled.clone()` explicitly duplicates the heap string. The test suite demonstrates that `Vector2D` can be used after being "moved" (it was actually copied).
 
-`Copy` = assign and the original still works (implicit bitwise copy); `Clone` = call `.clone()` explicitly when you need a deliberate duplicate that may allocate.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-// Copy types — assignment copies, original still valid
-let x: i32 = 42;
-let y = x;       // x is COPIED, not moved
-println!("{}", x); // still valid
-
-// Tuple of Copy types is also Copy
-let point = (1.0f64, 2.0f64);
-let p2 = point;  // copied
-println!("{:?}", point); // still valid
-
-// Clone — explicit, potentially expensive
-#[derive(Debug, Clone)]
-struct Config { name: String, values: Vec<i32> }
-
-let cfg = Config { name: "main".to_string(), values: vec![1, 2, 3] };
-let cfg2 = cfg.clone();  // allocates new String + new Vec
-// cfg is still valid, cfg2 is an independent copy
-
-// Can't be Copy if it owns heap memory
-// #[derive(Copy)] on Config would FAIL — String doesn't implement Copy
-
-// Custom Copy type — must also implement Clone
-#[derive(Debug, Clone, Copy)]
-struct Point { x: f64, y: f64 }
-
-let p = Point { x: 1.0, y: 2.0 };
-let p2 = p;  // copied — no .clone() needed
-process(p);  // p still valid here
-```
-
-1. `Copy` is a marker trait — no methods, just signals "bitwise copy is safe."
-2. `Clone` has the `.clone()` method — implement it for deep duplication.
-3. `Copy` requires `Clone` (all Copy types must also be Clone).
-4. Types with `Drop` implementations cannot be `Copy` (they manage resources).
-
-## What This Unlocks
-
-- **Ergonomic numeric code**: Pass `i32`, `f64`, `bool` freely without `clone()` noise.
-- **Explicit allocation awareness**: Seeing `.clone()` in code immediately signals "potential allocation here."
-- **Newtype copy semantics**: Wrap an `f64` in a newtype, derive `Copy`, and get full value semantics with type safety.
+OCaml values are either unboxed (integers, small variants) or boxed (heap-allocated). All values can be copied in OCaml — the GC manages aliasing. There is no `Copy`/`Clone` distinction. `String` in OCaml is mutable and copied by `String.copy`. Structural sharing is safe because the GC tracks all references. This simplicity comes at the cost of implicit O(n) copies when you don't intend to share.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Assignment | Always copies (persistent data structures) or aliases | Moves by default, copies only for `Copy` types |
-| Explicit duplication | Structural sharing (immutable), `copy` module | `.clone()` — always explicit, always visible |
-| Primitive types | All immutable values, copy-on-use | `i32`, `f64`, `bool`, `char` — `Copy` |
-| String | `string` is immutable, assignment is fine | `String` moves; `&str` is `Copy` |
-| Resource management | GC handles it | `Copy` explicitly forbidden for types with `Drop` |
+1. **Implicit vs. explicit**: Rust `Copy` types copy implicitly on assignment; OCaml copies are always by reference (shared) unless explicitly duplicated.
+2. **Heap safety**: Rust's `Copy` exclusion of heap types prevents accidental O(n) copies; OCaml relies on GC reference counting to manage copies safely.
+3. **Drop incompatibility**: Rust types implementing `Drop` cannot implement `Copy` (drop semantics conflict with bitwise copy); OCaml's GC finalizers have no such restriction.
+4. **Performance visibility**: Rust's `.clone()` calls are explicit in code, signaling potential cost; OCaml's mutations on shared data are equally implicit but have different implications.
+
+## Exercises
+
+1. **Complex number**: Implement `Complex { re: f64, im: f64 }` with `Copy + Clone + Add + Mul + Display`. Verify that both addition operands remain valid after the operation (due to `Copy`).
+2. **Color type**: Create `RgbColor { r: u8, g: u8, b: u8 }` implementing `Copy` and `LabeledColor { color: RgbColor, name: String }` implementing only `Clone`. Write a function accepting `impl Into<RgbColor>` that shows `RgbColor` can be passed by value freely.
+3. **Clone cost measurement**: Create a `BigStruct { data: Vec<u8> }` and clone it 1 million times. Then create a `SmallStruct { x: f64, y: f64 }` and copy it 1 million times. Measure and compare the time, explaining the difference.

@@ -33,3 +33,9 @@ Rust cannot have direct cyclic references due to ownership rules. We use `Rc<Ref
 2. **Self-reference:** OCaml's GC handles cycles naturally; Rust needs `RefCell` for interior mutability
 3. **Type erasure:** OCaml functions are first-class; Rust needs `dyn Fn` trait objects for dynamic dispatch
 4. **Memory management:** OCaml's GC cleans up the cycle; Rust's `Rc` reference counting handles it
+
+## Exercises
+
+1. Use the Y combinator to implement a recursive `sum` function that adds all integers from 1 to `n` without defining a named recursive function.
+2. Implement a memoized Y combinator variant: wrap the fixed-point combinator so that results for previously computed arguments are cached in a `HashMap`.
+3. Compare the Y combinator implementation with Rust's explicit recursive closures using a `Box<dyn Fn>` self-reference; benchmark both for computing Fibonacci(30) and explain the overhead difference.

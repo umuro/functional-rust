@@ -2,89 +2,37 @@
 
 ---
 
-# 773: Serde Attributes: rename, skip, flatten Patterns
+# 773-serde-attributes-concept — Serde Attributes Concept
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Manually implement what `#[serde(rename)]`, `#[serde(skip)]`, and `#[serde(flatten)]` do — then understand why the real `serde` attributes are so powerful.
+`serde`'s attribute system — `#[serde(rename = "...")]`, `#[serde(skip)]`, `#[serde(default)]`, `#[serde(flatten)]` — transforms how types map to their serialized representation. Understanding these attributes is essential for working with external JSON APIs, legacy formats, and versioned protocols. This example demystifies serde attributes by showing what behavior they encode without the actual serde crate, making the mental model clear.
 
-## The Problem This Solves
+## Learning Outcomes
 
-When you write `#[serde(rename = "id")]` on a field, you're telling `serde`'s derive macro to generate serialization code that uses `"id"` in JSON instead of the Rust field name `user_id`. But if this is just generated code, what does that code actually look like? And when the generated code does something unexpected, how do you reason about it?
+- Understand `#[serde(rename = "user_name")]` — changes the JSON key without changing the Rust field name
+- Understand `#[serde(skip)]` — omits a field from serialization (useful for derived/sensitive data)
+- Understand `#[serde(default)]` — uses `Default::default()` when the field is absent during deserialization
+- Understand `#[serde(flatten)]` — inlines a nested struct's fields into the parent object
+- Map each attribute to the code it conceptually generates
 
-This example implements `rename`, `skip`, and `flatten` *manually* using a custom `Serialize`/`Deserialize` trait pair. Seeing the explicit code makes the attribute semantics concrete: `rename` is a key substitution, `skip` is an `if` branch that omits a field, and `flatten` is merging one struct's fields into the parent map.
+## Rust Application
 
-Understanding the manual version makes `#[serde(default)]`, `#[serde(with = "...")]`, and field-level attribute combinations easy to reason about.
+`User` has fields with simulated attribute configurations stored in `FieldConfig` structs. `field_configs()` returns a `HashMap` mapping field names to their configuration. A serializer interprets these configs: `rename` maps to an alternate JSON key name, `skip` causes the field to be omitted, `default` causes missing fields to use `Default::default()`. The `serialize_user` function demonstrates how a derive macro would use the configs to produce the correct JSON key mapping.
 
-## The Intuition
+## OCaml Approach
 
-Serialization is "write struct fields into a map." `rename` means write under a different key. `skip` means don't write at all. `flatten` means write the nested struct's fields *directly into the same map* rather than as a nested object.
-
-Deserialization reverses each: `rename` reads from the renamed key, `skip` uses a default value (the field wasn't in the map), `flatten` reads the nested struct's fields from the same map level.
-
-## How It Works in Rust
-
-**The domain types:**
-```rust
-struct User {
-    user_id:  u32,    // rename → "id"
-    name:     String,
-    password: String, // skip — never written
-    address:  Address,// flatten — fields merged into User's map
-}
-```
-
-**`rename` in serialize** — write under the new key:
-```rust
-out.insert("id".into(), self.user_id.to_string());  // not "user_id"
-```
-
-**`skip` in serialize** — simply don't insert:
-```rust
-// password field: nothing written
-// name field:
-out.insert("name".into(), self.name.clone());
-```
-
-**`flatten` in serialize** — delegate to the nested struct's serializer:
-```rust
-self.address.serialize_to(out);  // merges street, city directly into `out`
-```
-`Address::serialize_to` writes `"street"` and `"city"` keys into the same `HashMap` as `User`'s fields.
-
-**`rename` in deserialize** — read from the new key:
-```rust
-let user_id = map.get("id")?.parse().ok()?;  // read "id", not "user_id"
-```
-
-**`skip` / `default` in deserialize** — use a default value:
-```rust
-let password = String::new();  // #[serde(default)] — field absent → empty string
-```
-
-**`flatten` in deserialize** — read the nested struct from the same map:
-```rust
-let address = Address::deserialize_from(map)?;  // reads "street", "city" from User's map
-```
-
-**The resulting wire format:**
-```
-city=Berlin|id=42|name=Alice|street=Main St 1
-// No "password", no "address" wrapper — flattened!
-```
-
-## What This Unlocks
-
-- **Debugging `serde` derive output** — when `#[serde(flatten)]` produces unexpected JSON, you know exactly what code it generates.
-- **Custom serialization without proc-macros** — for types where derive doesn't fit, implement `Serialize`/`Deserialize` manually using this pattern.
-- **Understanding attribute combinations** — `#[serde(rename = "id", skip_serializing_if = "Option::is_none")]` is just two of these transformations composed.
+OCaml's `ppx_sexp_conv` attributes: `[@sexp.opaque]` hides a field, `[@sexp_list]` treats a field as a list, `[@default 0]` provides a default. `ppx_yojson_conv` uses `[@yojson.option]`, `[@key "name"]`, and `[@yojson.drop_default]`. Unlike serde's unified attribute system, OCaml ppx attributes are ppx-specific and must be duplicated per serialization format.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Serialization | `ppx_sexp_conv`, `ppx_yojson_conv` | `serde` derive macros |
-| Field rename | `[@key "id"]` (ppx attribute) | `#[serde(rename = "id")]` |
-| Skip field | `[@sexp.option]` / custom | `#[serde(skip)]` |
-| Flatten nested struct | Not standard; manual | `#[serde(flatten)]` — merges into parent object |
-| Default on missing | `[@default ...]` | `#[serde(default)]` — calls `Default::default()` |
+1. **Unified vs per-format**: Serde's attributes work across all formats (JSON, TOML, YAML, MessagePack); OCaml requires separate attribute sets per ppx.
+2. **Runtime simulation**: This example simulates attribute effects at runtime via `FieldConfig`; real serde processes attributes at compile time via proc macros.
+3. **flatten**: Serde's `#[serde(flatten)]` is notoriously complex to implement; OCaml's ppx_yojson_conv doesn't support it natively.
+4. **Default values**: Serde's `#[serde(default = "fn_name")]` calls a custom function; OCaml's `[@default expr]` evaluates an expression at type definition time.
+
+## Exercises
+
+1. Implement a `serialize_with_rename(config: &FieldConfig, field_name: &str) -> &str` helper that returns the wire name — using `config.rename` if set, otherwise `field_name`.
+2. Write a `deserialize_user(json: &HashMap<String, String>) -> User` that applies `default` and `rename` configs during deserialization.
+3. Simulate `#[serde(skip_serializing_if = "Option::is_none")]` by adding a `skip_if_none: bool` field to `FieldConfig` and implementing the conditional skip logic.

@@ -2,62 +2,60 @@
 
 ---
 
-# 273: Iterator inspect()
+# 273: Debugging Iterators with inspect()
 
-**Difficulty:** 1  **Level:** Beginner
+## Problem Statement
 
-Insert a side-effect observation point anywhere in an iterator chain without altering the values or breaking the pipeline.
+Iterator pipelines are often opaque: when a `filter().map().fold()` chain produces an unexpected result, there is no obvious place to insert a print statement without breaking the pipeline. The `inspect()` adapter solves this by injecting a side-effect function at any point in the pipeline — the values pass through unchanged, but the closure can log, count, assert, or monitor them. It is the functional equivalent of `console.log` placed between transformations.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You have a multi-step iterator chain — filter, map, take — and something's wrong. You don't know whether the bug is in the filter predicate or the map transformation. To debug it, you'd have to break the chain apart, store intermediates in variables, and add print statements, then reassemble the pipeline once you're done. That's tedious and creates noise.
+- Understand `inspect(f)` as a transparent pass-through that applies a side-effect to each element
+- Use `inspect()` to debug intermediate values inside a lazy iterator pipeline
+- Recognize that `inspect()` does not modify values — it only observes them
+- Apply `inspect()` to count elements processed at different pipeline stages for profiling
 
-`inspect` solves this by letting you tap into the pipeline *in place*. Add `.inspect(|x| println!("{x:?}"))` between any two steps and you see exactly what's flowing through at that point — without changing the data, without restructuring the code, and without removing the surrounding adapters.
+## Rust Application
 
-This is the `.tap()` pattern from Haskell and RxJS: observe without consuming. In production code, `inspect` also sees use for logging, metrics counting, and tracing — any case where you want to observe elements as they flow through without affecting them.
-
-## The Intuition
-
-Pass each element through unchanged while calling a side-effect closure on it — like a one-way mirror inserted into the pipeline.
-
-## How It Works in Rust
+`Iterator::inspect(f)` returns an `Inspect<I, F>` adapter that calls `f(&item)` on each element, then yields the item unchanged. Since iterators are lazy, `inspect()` only runs when the pipeline is consumed:
 
 ```rust
-let result: Vec<i32> = (1..=10)
-    .inspect(|x| print!("[in:{x}] "))      // see all elements entering
-    .filter(|x| x % 2 == 0)
-    .inspect(|x| print!("[even:{x}] "))    // see only elements that passed filter
-    .map(|x| x * x)
+let result: Vec<i32> = [1, 2, 3, 4, 5]
+    .iter()
+    .copied()
+    .inspect(|x| println!("before filter: {}", x))
+    .filter(|&x| x % 2 == 0)
+    .inspect(|x| println!("after filter: {}", x))
     .collect();
-// prints: [in:1] [in:2] [even:2] [in:3] [in:4] [even:4] ...
-
-// Count elements at each pipeline stage
-use std::sync::atomic::{AtomicUsize, Ordering::SeqCst};
-let count_in  = AtomicUsize::new(0);
-let count_out = AtomicUsize::new(0);
-
-let filtered: Vec<i32> = (1..=20)
-    .inspect(|_| { count_in.fetch_add(1, SeqCst); })
-    .filter(|x| x % 3 == 0)
-    .inspect(|_| { count_out.fetch_add(1, SeqCst); })
-    .collect();
-// count_in: 20, count_out: 6
+// Prints: before 1, before 2, after 2, before 3, before 4, after 4, before 5
+// result = [2, 4]
 ```
 
-`inspect` receives a shared reference `&T` — it can observe but not modify. The closure runs lazily, only when the element is pulled through.
+## OCaml Approach
 
-## What This Unlocks
+OCaml lacks a built-in `inspect` equivalent. The idiomatic approach wraps a function with a side-effect using `|>` and a `tap`-like helper:
 
-- **Pipeline debugging:** Insert print statements between any two adapters without restructuring the chain — remove or leave them when done.
-- **Metrics and logging:** Count elements entering each stage, log suspicious values, trace which elements reach the end.
-- **Testing internal behavior:** Use `inspect` with a `Vec::push` in tests to verify what flows between stages without exposing intermediate state.
+```ocaml
+let tap f x = f x; x  (* apply side-effect, return value unchanged *)
+
+let result =
+  [1;2;3;4;5]
+  |> List.map (tap (Printf.printf "before filter: %d\n"))
+  |> List.filter (fun x -> x mod 2 = 0)
+  |> List.map (tap (Printf.printf "after filter: %d\n"))
+```
+
+The `tap` pattern is standard in functional languages for inserting side-effects into pipelines.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Equivalent | Manual `tap` wrapper function | `.inspect(f)` built into stdlib |
-| Side effects in pipelines | Generally avoided | Accepted for debug/logging |
-| Where in chain | Anywhere (manual wrap) | Anywhere — just insert |
-| Modifies values | No (must return value) | No (receives `&T`, can't mutate) |
-| Production use | Typically removed | Sometimes kept for logging |
+1. **Built-in vs manual**: Rust provides `inspect()` as a standard adapter; OCaml requires a manual `tap` combinator.
+2. **Laziness reveals timing**: Because Rust iterators are lazy, `inspect()` only fires when the pipeline is consumed — which reveals evaluation order and lazy behavior.
+3. **Testing use**: `inspect()` can collect observed values into a `Vec` via closure capture, enabling assertion-based pipeline testing.
+4. **Production use**: `inspect()` with logging frameworks (like `tracing`) is used in production pipelines to add observability without restructuring code.
+
+## Exercises
+
+1. Add `inspect()` calls to a multi-step iterator pipeline to print each stage's output, then count how many elements reach each stage.
+2. Use `inspect()` with a mutable counter to count how many elements pass through each stage of a `filter().map().take_while()` pipeline.
+3. Write a test that uses `inspect()` to capture intermediate values into a `Vec` via closure capture and assert their expected values.

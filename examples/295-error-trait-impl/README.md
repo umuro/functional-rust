@@ -4,76 +4,63 @@
 
 # 295: Implementing std::error::Error
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Make your custom error type a first-class citizen in the Rust error ecosystem.
+The `std::error::Error` trait is the common interface for all Rust errors, enabling error chaining, dynamic dispatch, and interoperability between libraries. Implementing it properly — with `Display` for user messages, `Debug` for developer output, and `source()` for causal chains — is the foundation of production-quality error handling. This mirrors the interface that `anyhow`, `thiserror`, and the broader ecosystem expect.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You've written a custom error enum — but `?` won't convert it, you can't store it in a `Vec<Box<dyn Error>>`, and error-reporting tools ignore your type completely. That's because none of those things work without the `Error` trait.
+- Implement the full `std::error::Error` trait: `Display`, `Debug`, and optionally `source()`
+- Use `source()` to create linked error chains that expose root causes
+- Understand the `Box<dyn Error + Send + Sync>` pattern for type-erased error storage
+- Recognize `Send + Sync` bounds as requirements for using errors across thread boundaries
 
-The `std::error::Error` trait is the contract that makes your type interoperable with everything else. Without it, your error is a dead end: callers can't chain it, log it generically, or propagate it across crate boundaries. Every production Rust codebase needs errors that speak the ecosystem's language.
+## Rust Application
 
-The three-part contract is simple: implement `Display` (human-readable message), `Debug` (derived for free), and optionally override `source()` to point to the underlying cause. That's it — but it unlocks everything.
-
-## The Intuition
-
-`std::error::Error` is the ID card that lets your error type work with `Box<dyn Error>`, error reporters, and the `?` operator's automatic conversion machinery.
-
-## How It Works in Rust
+`std::error::Error` requires only `Debug + Display`. The `source()` method is optional and defaults to `None`:
 
 ```rust
-use std::error::Error;
-use std::fmt;
-
-// Step 1: Implement Display (required by Error)
-#[derive(Debug)]  // Debug is also required — derive it for free
-struct ParseError { input: String, reason: String }
-
-impl fmt::Display for ParseError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "failed to parse '{}': {}", self.input, self.reason)
-    }
-}
-
-// Step 2: Implement the Error trait (empty body = source() returns None)
-impl Error for ParseError {}
-
-// Step 3: Wrap with source() for error chaining
 #[derive(Debug)]
-struct ValidationError {
-    field: String,
-    source: Box<dyn Error + Send + Sync>,  // boxed so it can be any error type
+pub struct ValidationError {
+    pub field: String,
+    pub source: Box<dyn Error + Send + Sync>,
 }
 
 impl fmt::Display for ValidationError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "validation failed for field '{}'", self.field)
+        write!(f, "field '{}' is invalid", self.field)
     }
 }
 
 impl Error for ValidationError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
-        Some(self.source.as_ref())  // points to the underlying cause
+        Some(self.source.as_ref())  // exposes the wrapped cause
     }
 }
-
-// Now both work with Box<dyn Error> and the ? operator
 ```
 
-The key insight about `source()`: it creates a singly-linked list of errors. Walk it with `e.source()` in a loop to reconstruct the full causal chain — invaluable in logs.
+## OCaml Approach
 
-## What This Unlocks
+OCaml does not have a standard error interface — errors are plain values. The idiomatic approach in modern OCaml uses `Result.t` with a custom error type and provides `to_string` for display. Libraries like `Fmt` provide `pp_error` conventions:
 
-- **`Box<dyn Error>` storage** — collect heterogeneous errors in `Vec<Box<dyn Error>>` or return them from `main()`
-- **Error chaining** — `source()` lets tooling (and your own code) walk the full causal chain for debugging
-- **`?` across crate boundaries** — combined with `From` impls, your error type can be the target of automatic conversions from any other error
+```ocaml
+type error = { field: string; cause: string }
+
+let string_of_error { field; cause } =
+  Printf.sprintf "field '%s' invalid: %s" field cause
+```
+
+OCaml lacks a standard "error chaining" mechanism — nested error types or exception causes must be manually threaded.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Error trait | No standard trait — use polymorphic variants or exceptions | `std::error::Error` (requires `Display + Debug`) |
-| Error chaining | Manual cause field | `source()` method — standard linked list |
-| Dynamic dispatch | Exceptions are already polymorphic | `Box<dyn Error>` — explicit opt-in |
-| Root cause | Traverse manually | Walk `e.source()` in a loop |
+1. **Standard interface**: Rust's `std::error::Error` is the universal error contract; OCaml has no equivalent standard trait.
+2. **Chaining**: Rust's `source()` creates a traversable linked list of causes; OCaml requires manual nested error structures.
+3. **Thread safety**: `Box<dyn Error + Send + Sync>` enables sending errors across thread boundaries; OCaml's GC handles this transparently.
+4. **Ecosystem**: `?` operator, `Box<dyn Error>`, `anyhow`, and `thiserror` all depend on `std::error::Error` as the common interface.
+
+## Exercises
+
+1. Implement `std::error::Error` for a three-level error chain: `IoError` wrapping `ParseError` wrapping `ValidationError`, and traverse the chain using `source()`.
+2. Write a function `print_error_chain(e: &dyn Error)` that iterates through `source()` links and prints each cause on a new line.
+3. Implement a custom error that wraps `std::io::Error` using `Box<dyn Error + Send + Sync>` and test that `source()` exposes the original IO error.

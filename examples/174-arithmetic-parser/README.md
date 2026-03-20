@@ -2,116 +2,42 @@
 
 ---
 
-# 174: Arithmetic Expression Evaluator
+# Arithmetic Expression Evaluator
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Evaluate `3 + 4 * (2 - 1)` directly during parsing — no AST, no intermediate representation, just a number.
+An arithmetic evaluator combines parsing and immediate evaluation: it reads an expression like `(3 + 4) * 2 - 1` and produces `13.0` without constructing an AST. This is the classic recursive descent evaluator, foundational to expression evaluation in spreadsheets, calculator apps, scripting engines, and configuration processors. Understanding it requires grasping how grammar levels correspond to function call levels.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Example 168 built a Pratt parser that produces an AST. Sometimes you don't need the tree — you just want the answer. A calculator, a config file with computed values, a constraint checker: they all want `eval(parse("3 + 4 * 2"))` to return `11.0`.
+- Implement a complete recursive descent arithmetic evaluator with correct precedence
+- Understand how grammar rules map to mutually recursive functions: `expr`, `term`, `factor`, `number`
+- See how parentheses are handled naturally by recursion (`factor` calls `expr`)
+- Appreciate why parsing-and-evaluating together is simpler than building an AST first
 
-Classic recursive descent handles this elegantly with *grammar-level precedence*: each precedence level is a separate function. `parse_additive` calls `parse_multiplicative` to get operands, which calls `parse_unary`, which calls `parse_primary`. The call stack *is* the precedence structure. No binding power tables needed.
+## Rust Application
 
-This approach also makes it easy to add error handling: detect division by zero, check for incomplete expressions, and return `Result<f64, String>` from every parser function. Compare this with the Pratt approach from 168-169 to see two valid paths to the same destination.
+The four-level grammar: `expr = term (('+' | '-') term)*`, `term = factor (('*' | '/') factor)*`, `factor = '-'? (number | '(' expr ')')`. Each grammar rule is one Rust function. `parse_expr` and `parse_term` use a loop to handle left-associative chains. `parse_factor` handles unary minus and delegates to `parse_number` or `parse_expr` for parenthesized sub-expressions. No AST is built — values are folded as the expression is parsed.
 
-## The Intuition
+## OCaml Approach
 
-Each grammar level handles one class of operators. Higher functions call lower functions to get their operands, which naturally enforces precedence: `parse_additive` gets its operands from `parse_multiplicative`, so multiplication always binds tighter.
-
+OCaml's recursive descent evaluator is structurally identical:
+```ocaml
+let rec expr () = ...
+and term () = ...
+and factor () = ...
 ```
-"3 + 4 * 2"
-parse_additive →
-  lhs = parse_multiplicative("3 + 4 * 2") → 3.0 (stops at '+')
-  op = '+'
-  rhs = parse_multiplicative("4 * 2") → 8.0 (handles '*' internally)
-  result = 3.0 + 8.0 = 11.0
-```
-
-## How It Works in Rust
-
-```rust
-// Entry point — handles + and -
-fn parse_additive(input: &str) -> ParseResult<f64> {
-    let (mut lhs, mut remaining) = parse_multiplicative(input)?;
-    loop {
-        let rest = remaining.trim_start();
-        if rest.starts_with('+') {
-            let (rhs, rest) = parse_multiplicative(&rest[1..])?;
-            lhs += rhs;
-            remaining = rest;
-        } else if rest.starts_with('-') {
-            let (rhs, rest) = parse_multiplicative(&rest[1..])?;
-            lhs -= rhs;
-            remaining = rest;
-        } else {
-            break;
-        }
-    }
-    Ok((lhs, remaining))
-}
-
-// Handles * and /
-fn parse_multiplicative(input: &str) -> ParseResult<f64> {
-    let (mut lhs, mut remaining) = parse_unary(input)?;
-    loop {
-        let rest = remaining.trim_start();
-        if rest.starts_with('*') {
-            let (rhs, rest) = parse_unary(&rest[1..])?;
-            lhs *= rhs;
-            remaining = rest;
-        } else if rest.starts_with('/') {
-            let (rhs, rest) = parse_unary(&rest[1..])?;
-            if rhs == 0.0 {
-                return Err("division by zero".to_string());
-            }
-            lhs /= rhs;
-            remaining = rest;
-        } else {
-            break;
-        }
-    }
-    Ok((lhs, remaining))
-}
-
-// Handles unary minus
-fn parse_unary(input: &str) -> ParseResult<f64> {
-    let input = input.trim_start();
-    if input.starts_with('-') {
-        let (val, rest) = parse_unary(&input[1..])?;  // recursive: --- x works
-        Ok((-val, rest))
-    } else {
-        parse_primary(input)
-    }
-}
-
-// Handles numbers and parenthesized expressions
-fn parse_primary(input: &str) -> ParseResult<f64> {
-    let input = input.trim_start();
-    if input.starts_with('(') {
-        let (val, rest) = parse_additive(&input[1..])?;
-        let rest = rest.trim_start()
-            .strip_prefix(')')
-            .ok_or("expected ')'")?;
-        Ok((val, rest))
-    } else {
-        parse_number(input)
-    }
-}
-```
-
-## What This Unlocks
-
-- **Zero-dependency calculator** — evaluate arbitrary arithmetic with `parse_additive(input)?.0`.
-- **Config computed values** — let config files say `timeout = 60 * 1000` and evaluate during load.
-- **Grammar-level precedence** — understand why the call stack *is* the precedence table.
+`let rec ... and ...` provides mutual recursion naturally. OCaml's reference-based input scanning (`let input_ref = ref s`) or functional threading (`let (v, rest) = expr s`) mirrors the Rust approach. The evaluator is a classic exercise in OCaml courses.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Mutual recursion | `let rec eval_expr () = ... and eval_additive () = ...` | Separate named functions — no `rec` annotation needed |
-| Left-associative loop | Tail-recursive helper `loop lhs rest` | `loop` + `break` |
-| Float operators | `+.` `-.` `*.` `/.` (distinct from int ops) | `+` `-` `*` `/` (same operators for all numeric types) |
-| Error value | `Error "division by zero"` | `Err("division by zero".to_string())` |
+1. **Input threading**: Rust threads `&str` slices through functions explicitly; OCaml can use a `ref` for the input position (imperative style) or tuples (functional style).
+2. **Float arithmetic**: Both use floating-point (`f64`/`float`) by default; integer arithmetic requires more careful parsing of the grammar.
+3. **Error handling**: Rust propagates `Result`; OCaml typically raises exceptions for malformed input in simple evaluators.
+4. **AST vs. direct evaluation**: Both examples evaluate directly; building an AST (examples 168-169) separates the concerns.
+
+## Exercises
+
+1. Add the modulo operator `%` between `term` and `factor` precedence levels.
+2. Support named constants: `pi` → `3.14159...`, `e` → `2.71828...` in the `factor` rule.
+3. Add function calls: `sin(x)`, `cos(x)`, `sqrt(x)` as valid `factor` expressions.

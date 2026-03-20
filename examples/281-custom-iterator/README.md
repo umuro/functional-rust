@@ -2,100 +2,66 @@
 
 ---
 
-# 281: Implementing Iterator Trait from Scratch
+# 281: Implementing the Iterator Trait from Scratch
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Implement `Iterator` on your own struct — one method required, the entire adapter ecosystem unlocked for free.
+Every iterator in Rust's standard library is built from the same foundation: a struct with state and a single `next()` method. Understanding this foundation is essential for building domain-specific sequences — streaming database rows, generating mathematical sequences, traversing custom data structures, or implementing infinite value generators. The entire iterator adapter ecosystem (`map`, `filter`, `zip`, etc.) becomes available for free once `next()` is implemented.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Your data structure has a natural traversal order, but it's not a slice or a vec. A graph node's BFS frontier. A custom number sequence — squares, Fibonacci, primes. A lazy generator that computes each value on demand. You need these to work with `map`, `filter`, `zip`, `take`, `collect`, and every other iterator tool without reimplementing them.
+- Understand that implementing `Iterator` requires only defining `type Item` and `fn next(&mut self) -> Option<Self::Item>`
+- Recognize that all other iterator adapters (`map`, `filter`, `sum`, etc.) are provided for free by the trait
+- Build stateful iterators using struct fields to track iteration progress
+- Implement custom termination logic by returning `None` from `next()`
 
-The power of Rust's iterator design is the minimal requirement: implement one method — `next()` — and you immediately get the full iterator toolkit for free. No inheritance hierarchy, no magic traits to satisfy, no runtime dispatch required.
+## Rust Application
 
-The alternative is implementing every transformation yourself, or collecting everything into a `Vec` and using slice iteration — which forces eager evaluation and allocates even when you'd only consume the first few elements.
-
-## The Intuition
-
-Implement `Iterator` by defining `type Item` and `fn next(&mut self) -> Option<Self::Item>`. Return `Some(value)` to yield a value, `None` to signal exhaustion.
-
-```rust
-impl Iterator for MyType {
-    type Item = u32;
-    fn next(&mut self) -> Option<u32> {
-        // compute next value, return Some or None
-    }
-}
-// Now: MyType.map(), .filter(), .zip(), .collect() — all free
-```
-
-## How It Works in Rust
+The `Iterator` trait has one required method. The `Squares` struct demonstrates state-carrying iteration:
 
 ```rust
-struct Squares { current: u32, max: u32 }
+pub struct Squares { current: u32, max: u32 }
 
 impl Squares {
-    fn new(max: u32) -> Self { Squares { current: 0, max } }
+    pub fn new(max: u32) -> Self { Squares { current: 0, max } }
 }
 
 impl Iterator for Squares {
     type Item = u32;
-
-    fn next(&mut self) -> Option<Self::Item> {
+    fn next(&mut self) -> Option<u32> {
         if self.current >= self.max { return None; }
         let val = self.current * self.current;
         self.current += 1;
-        Some(val)  // yield square of current position
+        Some(val)
     }
 }
 
-// All iterator adapters work immediately
-let squares: Vec<u32> = Squares::new(6).collect();
-// → [0, 1, 4, 9, 16, 25]
-
-let sum_of_squares: u32 = Squares::new(6).sum();
-// → 55
-
-let big_squares: Vec<u32> = Squares::new(10)
-    .filter(|&x| x > 10)
-    .collect();
-// → [16, 25, 36, 49, 64, 81]
-
-// Infinite iterator — signals infinity by always returning Some
-struct Fibonacci { a: u64, b: u64 }
-impl Iterator for Fibonacci {
-    type Item = u64;
-    fn next(&mut self) -> Option<u64> {
-        let val = self.a;
-        let next = self.a + self.b;
-        self.a = self.b;
-        self.b = next;
-        Some(val)  // never returns None — must use take() to bound
-    }
-}
-
-let fibs: Vec<u64> = Fibonacci { a: 0, b: 1 }.take(10).collect();
-// → [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
-
-// Zip two custom iterators — works because both implement Iterator
-let zipped: Vec<(u32, u64)> = Squares::new(5)
-    .zip(Fibonacci { a: 0, b: 1 })
-    .collect();
+// All iterator adapters work automatically
+let sum: u32 = Squares::new(5).filter(|&x| x > 0).sum();
 ```
 
-## What This Unlocks
+## OCaml Approach
 
-- **Lazy sequences** — compute values only when consumed; infinite sequences become trivial.
-- **Custom data structure traversal** — implement `Iterator` on trees, graphs, or domain objects to integrate with the full Rust ecosystem.
-- **Zero-cost abstractions** — custom iterators compile to the same machine code as hand-written loops with no allocation overhead.
+OCaml does not have a single iterator trait. The closest equivalent is the `Seq` module's lazy sequence type, which is a function `unit -> 'a node` where `node` is `Nil | Cons of 'a * 'a Seq.t`. A custom generator is a closure returning the next `Cons` or `Nil`:
+
+```ocaml
+let squares max =
+  let rec go n () =
+    if n >= max then Seq.Nil
+    else Seq.Cons (n * n, go (n + 1))
+  in go 0
+(* All Seq combinators (map, filter, fold_left) work on this *)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Custom sequence | `Seq.t` (thunk-based) or module | Implement `Iterator` trait |
-| Minimum required | `unit -> 'a Seq.node` | `fn next(&mut self) -> Option<Item>` |
-| Adapters for free | No — separate `Seq.*` functions | Yes — all `Iterator` methods available |
-| Infinite sequences | Natural with `Seq` | Natural — return `Some` forever, bound with `take()` |
-| State storage | Closure captures | Struct fields |
+1. **Interface size**: Rust's `Iterator` requires one method; OCaml's `Seq` is just a function type — both are minimal.
+2. **Free methods**: Rust's `Iterator` provides ~70 free methods once `next()` is implemented; OCaml's `Seq` module provides a smaller set.
+3. **State representation**: Rust stores state in a struct with named fields; OCaml uses closure-captured variables.
+4. **Type safety**: Rust's `type Item` makes the element type explicit in the trait; OCaml's `'a Seq.t` is polymorphic.
+
+## Exercises
+
+1. Implement a `Fibonacci` iterator struct that yields Fibonacci numbers indefinitely using two accumulator fields.
+2. Implement a `Range` iterator struct that yields integers from `start` to `end` with a configurable step size.
+3. Implement a `TakeWhile` adapter struct that wraps another iterator and stops when a predicate returns false — implement `Iterator` on it manually.

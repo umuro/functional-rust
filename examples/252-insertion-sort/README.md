@@ -33,3 +33,9 @@ Three implementations show the spectrum. The idiomatic in-place version uses two
 2. **List head access:** OCaml's `h :: t` destructuring becomes Rust's `[h, rest @ ..]` slice pattern — same idea, different syntax.
 3. **Search strategy:** OCaml's `insert` scans linearly; Rust's functional version uses `partition_point` (binary search) on the sorted accumulator for O(log n) comparisons.
 4. **Stability:** Both OCaml's `x <= h` guard and Rust's `partition_point(|h| h < &x)` place equal elements in original order — both sorts are stable.
+
+## Exercises
+
+1. Implement a binary insertion sort variant that uses binary search to find the insertion position, reducing comparisons to O(n log n) while keeping the O(n²) movement cost.
+2. Extend insertion sort to sort a linked list represented as `Vec<Option<usize>>` (next-pointer encoding) in-place by relinking pointers instead of moving values.
+3. Benchmark insertion sort against Rust's built-in `sort` for small arrays (n ≤ 16) and explain why std's Timsort uses insertion sort as a base case.

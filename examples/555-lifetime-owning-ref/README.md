@@ -2,75 +2,50 @@
 
 ---
 
-# 555: Owning References Pattern
+# Owning References Pattern
 
-**Difficulty:** 4  **Level:** Intermediate-Advanced
+## Problem Statement
 
-Build a struct that owns its data and simultaneously provides borrowed views into it — without self-referential pointers.
+Sometimes you want a type that owns its data and simultaneously exposes a view into it — a buffer that knows which window of its bytes is "active," a string that knows where its meaningful content starts and ends. Storing both the owner and a reference to its contents in the same struct leads to self-referential problems. The owning-reference pattern solves this by storing indices rather than pointers, computing views on demand, or using separate types for owner and view.
 
-## The Problem This Solves
+## Learning Outcomes
 
-A common pattern in parsing, indexing, and query engines is: you load data once, then hand out many cheap views into it. In languages with GC, this is trivial — everything is a reference. In Rust, the naive approach (store both the `Vec` and a `&[T]` pointing into it) is self-referential and rejected by the borrow checker.
+- How `OwnedSlice` stores indices instead of references to avoid self-referential issues
+- How `fn slice(&self) -> &[u8]` computes the view from stored indices at access time
+- How `fn narrow(&mut self, start, end)` adjusts the active window without copying data
+- How this pattern enables zero-copy processing of large buffers
+- Where owning references appear: network buffers, text editors (rope data structures), binary parsers
 
-The solution is to separate *data* from *metadata*. The struct owns the data (e.g. a `Vec<u8>`), and views are expressed as indices or byte-offsets rather than raw references. When you need a `&[u8]`, you reconstruct it from the stored indices at call time. The lifetime of the returned reference is tied to `&self`, not stored inside `self` — and that is exactly what the borrow checker needs to see.
+## Rust Application
 
-This pattern appears in `ParsedDocument`, query builders, arena allocators, and any cache that serves sub-slices of a larger buffer.
+`OwnedSlice` stores `data: Vec<u8>` with `start: usize` and `end: usize`. `slice(&self) -> &[u8]` returns `&self.data[self.start..self.end]` — a zero-copy view into the owned buffer. `narrow` adjusts the window bounds. This enables processing pipelines where a buffer is progressively consumed: each stage narrows the window to indicate how much it has processed, without copying or reallocating.
 
-## The Intuition
+Key patterns:
+- `data: Vec<u8>, start: usize, end: usize` — owned data with index window
+- `fn slice(&self) -> &[u8] { &self.data[self.start..self.end] }` — view computed from indices
+- `fn narrow(&mut self, s, e)` — adjust window without reallocation
 
-Instead of storing `&str` slices (which would require the struct to borrow from itself), store `(start, end)` byte pairs. When the caller asks for a token, compute `&self.source[start..end]` on the fly. The returned `&str` borrows from `self`, so its lifetime is tied to the struct's lifetime — no self-referential pointer needed.
+## OCaml Approach
 
-For query builder patterns, store the source data in the struct and return iterators or references with lifetime `'a` tied to `&'a self`. The caller can consume results as long as the builder lives.
+OCaml's `Bytes` or `Bigarray` slices are reference-counted or GC-managed, so owning references are natural:
 
-## How It Works in Rust
-
-**Index-based view** — store positions, not pointers:
-```rust
-struct ParsedDocument {
-    source: String,
-    token_spans: Vec<(usize, usize)>,  // (start, end) byte positions
-}
-
-impl ParsedDocument {
-    fn get_token(&self, i: usize) -> Option<&str> {
-        self.token_spans.get(i).map(|&(s, e)| &self.source[s..e])
-    }
-}
+```ocaml
+type owned_slice = { data: bytes; mutable start: int; mutable end_: int }
+let slice s = Bytes.sub s.data s.start (s.end_ - s.start)  (* copies *)
+(* Zero-copy requires Bigarray.Array1 sub-views *)
 ```
-`&self.source[s..e]` has lifetime `'self` — perfectly fine.
 
-**Iterator returning borrowed data** — the `'a` on `&'a self` flows into the `impl Iterator`:
-```rust
-impl QueryBuilder {
-    fn filter<'a>(&'a self, pred: impl Fn(&i32) -> bool)
-        -> impl Iterator<Item = &'a i32>
-    {
-        self.source.iter().filter(move |&&ref x| pred(x))
-    }
-}
-```
-The iterator holds a reference to `self.source`, so it can't outlive the builder.
-
-**Owned + metadata tuple** — return ownership and computed metadata together:
-```rust
-fn process_and_view(data: Vec<String>) -> (Vec<String>, Vec<usize>) {
-    let lengths: Vec<usize> = data.iter().map(|s| s.len()).collect();
-    (data, lengths)
-}
-```
-Compute what you need from `&data`, then move `data` into the return tuple. No lifetime juggling needed.
-
-## What This Unlocks
-
-- **Zero-copy document parsing** — parse once, serve many `&str` tokens without extra allocation.
-- **Query builder APIs** — fluent interfaces that borrow from internal data and return typed iterators.
-- **Avoiding `Arc<String>` overhead** — when you own the data, index-based views are cheaper than cloning into `Arc`.
+True zero-copy sub-views in OCaml require `Bigarray.Array1` with explicit layout management.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Sub-string view | `String.sub` (copies) or `Bytes.sub_string` | `&s[start..end]` (zero-copy borrow) |
-| Self-referential struct | Not a problem (GC) | Forbidden; use indices instead |
-| Returning borrowed iterator | GC handles refs | `impl Iterator<Item = &'a T>` with explicit lifetime |
-| Owned + borrowed tuple | Natural (everything is reference) | Return `(Vec<T>, Vec<usize>)` — compute metadata before moving |
+1. **Zero-copy views**: Rust `&self.data[s..e]` is a true zero-copy view into the `Vec`; OCaml `Bytes.sub` copies — zero-copy needs `Bigarray`.
+2. **Index invalidation**: Rust's borrow checker ensures `slice()` result cannot outlive `self`; OCaml's GC keeps `Bigarray` slices alive but does not prevent use-after-mutation.
+3. **Window mutation**: Rust `narrow(&mut self)` requires `&mut self` — the compiler prevents concurrent reads of the slice while narrowing; OCaml allows concurrent access through `ref`.
+4. **Rope data structure**: Text editors in Rust (like `ropey`) use owning-reference patterns extensively; OCaml text editors use GC-managed trees of `string` chunks.
+
+## Exercises
+
+1. **Packet parser**: Implement a `struct Packet { data: Vec<u8>, pos: usize }` with a `fn read_u16(&mut self) -> Option<u16>` that reads two bytes at `pos` and advances it.
+2. **Ring buffer view**: Extend `OwnedSlice` to wrap around: `fn wrap_slice(&self) -> (&[u8], &[u8])` returning the two parts when `start > end` (ring buffer state).
+3. **Zero-copy chains**: Implement `fn split_at(&self, mid: usize) -> (OwnedSliceView<'_>, OwnedSliceView<'_>)` returning two views into the same `OwnedSlice` without copying.

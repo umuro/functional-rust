@@ -2,92 +2,41 @@
 
 ---
 
-# 167: Recursive Parser
+# Recursive Parser
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Handle nesting — `(1 + (2 * 3))` — where a parser must call itself to parse its own contents.
+Recursive grammars — lists containing lists, expressions containing sub-expressions, JSON arrays containing arrays — require parsers that call themselves. In a strict functional setting, this creates a challenge: a closure cannot easily refer to itself. Rust's solution uses `Rc<dyn Fn>` for sharing a parser across recursive calls, or function pointers for simpler cases. Recursion is the fundamental mechanism for parsing context-free grammars.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Some grammars are recursive by nature: a list can contain lists, an expression can contain parenthesized expressions, an S-expression can contain S-expressions. The grammar rule for a list is literally `list = "[" (item | list)* "]"`. The parser for `list` needs to call `list` itself.
+- Understand why recursive parsers are necessary for context-free grammars
+- Learn to use `Rc<dyn Fn>` to share a parser across recursive closure calls
+- See the S-expression (Lisp-style) recursive structure as a concrete example
+- Understand the relationship between recursive parsers and recursive descent parsers
 
-In OCaml, `let rec` handles this naturally — you write `let rec parse_expr input = ... parse_expr ...` and it works. In Rust, closures can't reference themselves directly. A closure is a value stored in a variable; you can't capture a variable that holds the closure you're defining.
+## Rust Application
 
-This example shows three approaches to work around Rust's restriction: (1) regular named functions, which *can* call themselves; (2) `Rc<RefCell<Option<...>>>` for deferred initialization; (3) a `fix`-point combinator that encapsulates the pattern.
+The `Sexp` enum (`Atom(String)` or `List(Vec<Sexp>)`) is inherently recursive. The parser is built with `Rc`: `let sexp_parser: Rc<dyn Fn(&str) -> ParseResult<Sexp>>`. Inside the closure, `sexp_parser.clone()` is captured to allow recursive calls. `atom_parser` handles the base case; `list_parser` is `delimited('(', many0(sexp_parser_clone), ')')`. The `Rc` enables the parser to reference itself without `unsafe` or function pointers.
 
-## The Intuition
+## OCaml Approach
 
-The simplest fix: use named functions instead of closures. Named functions in Rust can call themselves recursively — the restriction only applies to closures. If your recursive parser doesn't need to capture variables from the environment, this is all you need.
-
-```rust
-// This works — named function can call itself
-fn parse_sexp(input: &str) -> ParseResult<Sexp> {
-    if input.starts_with('(') {
-        // ... parse list items by calling parse_sexp recursively
-        let (item, rest) = parse_sexp(item_input)?;
-    }
-    // ...
-}
+OCaml's `let rec` enables mutually recursive function definitions naturally:
+```ocaml
+let rec sexp input = (atom <|> list) input
+and list input = (char '(' *> many sexp <* char ')') input
 ```
-
-## How It Works in Rust
-
-```rust
-// Approach 1: Named recursive functions (simplest)
-fn parse_list(input: &str) -> ParseResult<Vec<i64>> {
-    let input = input.trim_start();
-    let input = input.strip_prefix('[')
-        .ok_or("expected '['")?;
-    let mut items = Vec::new();
-    let mut remaining = input.trim_start();
-    while !remaining.starts_with(']') {
-        if remaining.is_empty() {
-            return Err("unexpected end of input".to_string());
-        }
-        // Recursive call to parse_value — which may call parse_list again
-        let (val, rest) = parse_value(remaining)?;
-        items.push(val);
-        remaining = rest.trim_start();
-        remaining = remaining.strip_prefix(',').unwrap_or(remaining).trim_start();
-    }
-    Ok((items, &remaining[1..]))
-}
-
-// Approach 2: Rc for recursive closures
-use std::rc::Rc;
-use std::cell::RefCell;
-
-fn make_recursive_parser() -> impl Fn(&str) -> ParseResult<i64> {
-    // Forward declaration — initialized after we build the closure
-    let parser_ref: Rc<RefCell<Option<Box<dyn Fn(&str) -> ParseResult<i64>>>>> =
-        Rc::new(RefCell::new(None));
-
-    let parser_ref_clone = Rc::clone(&parser_ref);
-    let parser = move |input: &str| {
-        // Borrow the inner parser through the Rc
-        let inner = parser_ref_clone.borrow();
-        let p = inner.as_ref().unwrap();
-        p(input)  // call the real implementation
-    };
-
-    // Now set the actual implementation
-    *parser_ref.borrow_mut() = Some(Box::new(/* real parser */));
-    parser
-}
-```
-
-## What This Unlocks
-
-- **Nested expressions** — `(1 + (2 * 3))` requires an expression parser that calls itself.
-- **Tree-structured data** — JSON arrays containing JSON values, S-expressions containing S-expressions.
-- **Any context-free grammar** — recursive grammars are the norm, not the exception.
+No `Rc` or shared reference is needed — OCaml's recursive `let rec` bindings allow circular references directly. This is one area where OCaml's syntax is significantly more natural than Rust's for parser combinator code.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Recursive functions | `let rec parse input = ... parse ...` | Named functions can self-call; closures cannot |
-| Forward declaration | `let p = ref (fun _ -> failwith "unset")` | `Rc<RefCell<Option<Box<dyn Fn(...)>>>>` |
-| Fix-point combinator | `let rec fix f x = f (fix f) x` | `rc_fix` wraps with `Rc` to break the self-reference |
-| Mutual recursion | `let rec a ... and b ...` | Two named functions calling each other — works fine |
+1. **Recursive binding**: OCaml's `let rec` is the natural mechanism; Rust requires `Rc<dyn Fn>` or explicit function pointers to express recursion in closures.
+2. **Verbosity**: OCaml's recursive parser is a few lines; Rust's `Rc`-based approach requires explicit cloning and is more verbose.
+3. **Stack usage**: Both use the call stack for recursion — deeply nested input causes stack overflow in both; trampolining (example 197) is needed for very deep recursion.
+4. **Performance**: `Rc<dyn Fn>` adds reference counting and virtual dispatch overhead; OCaml's recursive functions are called directly.
+
+## Exercises
+
+1. Extend the S-expression parser to handle integer literals: `(+ 1 (* 2 3))`.
+2. Write a mutually recursive parser for `expr` and `term` without `Rc` using function pointers instead.
+3. Add depth limiting to the recursive parser to prevent stack overflow on deeply nested input.

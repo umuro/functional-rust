@@ -2,59 +2,60 @@
 
 ---
 
-# 266: Iterator step_by()
+# 266: Striding with step_by()
 
-**Difficulty:** 1  **Level:** Beginner
+## Problem Statement
 
-Stride through an iterator, yielding every nth element — lazy, zero-allocation, works on infinite sequences.
+Subsampling — taking every nth element from a sequence — is needed in signal processing (downsampling), matrix operations (accessing column strides), image processing (pixel subsampling), and data analysis (sampling large datasets). Without a dedicated combinator, this requires index-based loops or manual counter tracking. The `step_by(n)` adapter yields the first element, then skips `n-1` elements, repeatedly — turning strided access into a composable iterator operation.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You want every third element from a list, or multiples of 5 from a range, or to downsample a signal array. Without `step_by`, you'd write a counter variable, manually increment it, and check `if counter % n == 0` — imperative noise for a declarative idea. Or you'd reach for `filter(|i| i % n == 0)` on an enumerated iterator, which is verbose and less readable.
+- Understand that `step_by(n)` yields the first element then every nth subsequent element
+- Use `step_by()` with ranges to generate arithmetic progressions
+- Combine `step_by()` with other adapters for strided processing pipelines
+- Recognize the relationship between `step_by()` and array stride concepts in numerical computing
 
-`step_by(n)` names the intent directly: "give me every nth element." It's lazy (no intermediate allocation), works on any iterator including infinite ones, and composes with the rest of the iterator pipeline. For downsampling audio, generating arithmetic sequences, or accessing every kth row of a matrix, it's the idiomatic choice.
+## Rust Application
 
-A common gotcha: `step_by(1)` is identity — it yields every element. `step_by(0)` panics.
-
-## The Intuition
-
-Yield the first element, skip n-1, yield the next, skip n-1, repeat — effectively striding through the iterator at a fixed interval.
-
-## How It Works in Rust
+`Iterator::step_by(n)` skips `n-1` elements between each yielded element. The first element is always included. Step size must be at least 1:
 
 ```rust
 // Every 3rd element from a range
-let thirds: Vec<usize> = (0..10).step_by(3).collect();
-// → [0, 3, 6, 9]
+let result: Vec<usize> = (0..10).step_by(3).collect();
+// [0, 3, 6, 9]
 
-// Arithmetic sequences from infinite iterator
-let odd_positions: Vec<u64> = (1u64..).step_by(2).take(5).collect();
-// → [1, 3, 5, 7, 9]
+// Odd-indexed elements of a slice
+let arr = [10, 20, 30, 40, 50];
+let odd_indexed: Vec<i32> = arr.iter().copied().step_by(2).collect();
+// [10, 30, 50]
 
-// Downsample a signal array
-let signal = [1.0f64, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0];
-let downsampled: Vec<f64> = signal.iter().copied().step_by(2).collect();
-// → [1.0, 3.0, 5.0, 7.0]
-
-// Every other character
-let every_other: String = "abcdefgh".chars().step_by(2).collect();
-// → "aceg"
+// Generate even numbers: range starting at 0, step 2
+let evens: Vec<i32> = (0..).step_by(2).take(5).collect();
+// [0, 2, 4, 6, 8]
 ```
 
-The key: `step_by` takes n as the stride, starting from index 0. It does **not** skip the first element.
+## OCaml Approach
 
-## What This Unlocks
+OCaml lacks a built-in `step_by` for lists. It is implemented with `List.filteri` modulo arithmetic or via `Array` index stepping:
 
-- **Signal downsampling:** Reduce audio/image resolution by taking every nth sample without loading all data into memory.
-- **Arithmetic progressions:** `(0..).step_by(k)` generates multiples of k lazily — no `range(0, max, k)` needed.
-- **Matrix row access:** Stride through a flat array to visit every nth row of a row-major matrix.
+```ocaml
+let step_by n lst =
+  List.filteri (fun i _ -> i mod n = 0) lst
+
+(* Or with sequences *)
+let step_by_seq n seq =
+  Seq.filter_mapi (fun i x -> if i mod n = 0 then Some x else None) seq
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Equivalent | `List.filteri (fun i _ -> i mod n = 0) lst` | `iter.step_by(n)` |
-| Lazy | No (lists are eager) | Yes |
-| Infinite sequences | No | Yes (with `(0..).step_by(n)`) |
-| Readability | Verbose (index + modulo) | Declarative |
-| Zero-copy | No (new list) | Yes (adapter over original) |
+1. **Standard library**: `step_by()` is built into Rust's `Iterator`; OCaml requires `filteri` or manual index tracking.
+2. **Infinite sources**: Rust's `step_by()` composes with infinite ranges (`(0..).step_by(2)`); OCaml needs lazy sequences for this.
+3. **Numerical computing link**: `step_by` mirrors the "stride" concept in NumPy arrays (`a[::step]`), BLAS Level 1 routines (DAXPY stride), and C array pointer arithmetic.
+4. **Efficiency**: Rust's `step_by` skips elements without evaluating them on most iterator types; OCaml's `filteri` always calls the predicate on every element.
+
+## Exercises
+
+1. Use `step_by(2)` to extract all elements at odd indices from a slice, and `skip(1).step_by(2)` to extract elements at even indices.
+2. Generate the arithmetic sequence 3, 7, 11, 15, ... (starting at 3 with step 4) using `(3i32..).step_by(4)`.
+3. Implement matrix column extraction: given a flat row-major matrix as `&[f64]` with `cols` columns, extract column `k` using `step_by(cols)` with an appropriate skip.

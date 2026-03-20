@@ -2,111 +2,39 @@
 
 ---
 
-# 433: State Machine via Macro
+# 433: Macro-Defined State Machines
 
-**Difficulty:** 4  **Level:** Expert
+## Problem Statement
 
-Generate typestate state machine boilerplate — states as zero-sized types, transitions as consuming methods — so that invalid sequences are compile errors, not runtime panics.
+State machines (finite automata) model systems with discrete states and transitions: TCP connection lifecycle, UI component states, traffic lights, parser automata. Writing state machines by hand requires defining state enums, transition tables, and guards repeatedly. A `state_machine!` macro generates the enum, transition logic, and validity checks from a compact declaration. This keeps the state structure and transitions co-located and prevents invalid transitions from being written at all.
 
-## The Problem This Solves
+State machine macros appear in embedded systems (motor controllers, protocol implementations), parser generators, UI frameworks, and any system where invalid state transitions must be prevented.
 
-Protocol implementations — network connections, file handles, authentication flows, payment processors — have strict sequencing rules. You can only `send()` after `connect()`. You can only `commit()` inside a transaction. Calling methods out of order is a logic error that should be caught immediately, not at runtime in production when a user hits an unexpected state.
+## Learning Outcomes
 
-Encoding these rules as runtime enums plus guards (`if self.state != State::Connected { panic!() }`) is fragile: the guard is easy to forget, every method has boilerplate, and the compiler won't help you find callers that got the sequence wrong.
+- Understand how enums naturally model finite state machine states
+- Learn how `next()` transition methods enforce valid state progression
+- See how macro-generated state machines prevent invalid transitions at compile time
+- Understand the difference between enum-based (closed, compile-time) and table-based (open, runtime) state machines
+- Learn how `matches!` simplifies guard conditions in state machine methods
 
-The typestate pattern moves state into the type system: each state is a zero-sized type, and methods are only defined on the correct state. Call `send()` on a `Connection<Disconnected>` and the compiler refuses. The compiler *is* your state machine validator.
+## Rust Application
 
-Implementing this by hand requires: state structs, a generic struct, `PhantomData`, and an `impl` block per state. A state machine macro generates all of this from a concise declaration.
+In `src/lib.rs`, `TrafficLight` with `next()` implements a cyclic state machine (Red → Green → Yellow → Red). `DoorState` has guarded transitions: `can_open()` checks `Closed`, `can_close()` checks `Open`, `lock()` returns `None` if already locked. The exhaustive `match` in `next()` ensures every state has a transition — adding a variant requires updating the transition logic. This is the closed-set, compile-time-safe approach.
 
-## The Intuition
+## OCaml Approach
 
-Each state (`Disconnected`, `Connected`, `Authenticated`) is a zero-sized struct — it carries no data, costs nothing at runtime. The connection struct `Connection<S>` is generic over state `S`. Methods exist only on specific `Connection<ConcreteState>` types:
-
-```
-Connection<Disconnected>  →  .connect()  →  Connection<Connected>
-Connection<Connected>     →  .authenticate()  →  Connection<Authenticated>
-Connection<Authenticated> →  .send()  →  same state
-Connection<Authenticated> →  .disconnect()  →  Connection<Closed>
-```
-
-Each transition *consumes* `self` and returns a new typed value. Once consumed, you can't call the old state's methods — the original variable is moved. Impossible sequences are literally unrepresentable.
-
-## How It Works in Rust
-
-```rust
-use std::marker::PhantomData;
-
-// State marker types — zero bytes at runtime
-struct Disconnected;
-struct Connected;
-struct Authenticated;
-struct Closed;
-
-// The state machine struct — generic over current state
-struct Connection<State> {
-    host: String,
-    port: u16,
-    messages_sent: u32,
-    _state: PhantomData<State>,  // zero cost, carries type info
-}
-
-// Methods only on Disconnected
-impl Connection<Disconnected> {
-    fn new(host: &str, port: u16) -> Self {
-        Connection { host: host.into(), port, messages_sent: 0, _state: PhantomData }
-    }
-    // Consuming transition: Disconnected → Connected
-    fn connect(self) -> Connection<Connected> {
-        println!("Connecting to {}:{}", self.host, self.port);
-        Connection { _state: PhantomData, ..self }  // state type changes, data moves
-    }
-}
-
-// Methods only on Connected
-impl Connection<Connected> {
-    // Consuming transition: Connected → Authenticated
-    fn authenticate(self, _token: &str) -> Connection<Authenticated> {
-        Connection { _state: PhantomData, ..self }
-    }
-}
-
-// Methods only on Authenticated
-impl Connection<Authenticated> {
-    fn send(&mut self, msg: &str) {        // &mut self — doesn't transition
-        println!("→ {}", msg);
-        self.messages_sent += 1;
-    }
-    fn disconnect(self) -> Connection<Closed> {
-        Connection { _state: PhantomData, ..self }
-    }
-}
-
-// Valid sequence — compiles
-let conn = Connection::new("api.example.com", 443)
-    .connect()
-    .authenticate("secret-token");
-// ... use conn.send() ...
-let closed = conn.disconnect();
-
-// These DO NOT COMPILE:
-// Connection::new("h", 80).send("x");  // Disconnected has no send()
-// closed.send("x");                    // Closed has no send()
-```
-
-**The state machine macro** (`state_machine!` in the example) generates the state structs, the generic struct with `PhantomData`, and the `impl` blocks for each transition from the same concise DSL.
-
-## What This Unlocks
-
-- **Protocol correctness at compile time** — TCP, TLS, HTTP, OAuth, database transactions — any multi-step protocol can be modelled so misuse is a build failure.
-- **Self-documenting APIs** — the type signature of a function that accepts `Connection<Authenticated>` is documentation that cannot go stale.
-- **Macro-generated machines** — a `state_machine!` DSL lets you declare dozens of states and transitions concisely without hand-writing every `PhantomData` impl.
+OCaml state machines use algebraic types with pattern matching. `type state = Red | Yellow | Green` with `let next = function Red -> Green | Green -> Yellow | Yellow -> Red`. OCaml's exhaustiveness checking prevents forgetting a state in transitions. The `with` keyword in OCaml's record syntax enables expressing state updates cleanly. OCaml's module system can encapsulate the state machine behind an abstract type, hiding implementation details.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| State encoding | Variant in a GADT or module type | Zero-sized struct as phantom type parameter |
-| Invalid transitions | Runtime exception or explicit result type | Compile error — method doesn't exist on the wrong type |
-| Transition cost | Pattern match + allocation if boxing | Zero cost — state type is erased, only the generic changes |
-| State machine DSL | GADT or first-class modules | `macro_rules!` generating `impl` blocks per state |
-| Mutating within a state | Record update syntax | `&mut self` methods on specific `impl Connection<State>` |
+1. **Type-state pattern**: Rust can encode state in the type system (`struct Door<S: DoorState>`) making invalid transitions compile errors; OCaml can do this with GADTs but it's less common.
+2. **Exhaustiveness**: Both Rust `match` and OCaml `match` enforce exhaustive handling; both emit compiler warnings/errors for incomplete matches.
+3. **Mutability**: Rust's `next()` takes `self` by value (returning new state); OCaml's transition functions return new state values functionally.
+4. **Macro generation**: Rust macros can generate state machine boilerplate from declarations; OCaml uses functor-based state machine libraries.
+
+## Exercises
+
+1. **Type-state door**: Implement `Door<S>` where `S` is a phantom type parameter (`struct Open; struct Closed; struct Locked`). Write `fn open(door: Door<Closed>) -> Door<Open>` and `fn lock(door: Door<Closed>) -> Door<Locked>`. Prove that `fn open(door: Door<Locked>)` doesn't compile.
+2. **Parser state machine**: Implement a simple JSON token parser as a state machine with states `Start`, `InString`, `InNumber`, `InArray`, `Complete`, `Error`. The `next_char(c: char)` transition method drives the machine.
+3. **State machine macro**: Write `state_machine!(Light { Red --trigger:Timer--> Green, Green --trigger:Timer--> Yellow, Yellow --trigger:Timer--> Red })` that generates the enum, a `trigger` enum, and a `transition(event: Trigger) -> Option<Self>` method.

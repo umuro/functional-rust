@@ -33,3 +33,9 @@ The idiomatic Rust solution uses an iterative stack-based DFS with a `HashSet` f
 2. **Recursion vs. iteration:** OCaml's natural expression is recursive; Rust prefers an iterative stack to avoid stack-overflow on deep graphs.
 3. **Graph representation:** OCaml uses association lists (`(string * string list) list`) mirroring `List.assoc`; Rust uses `HashMap<&str, Vec<&str>>` for O(1) neighbor lookup.
 4. **Insert semantics:** `HashSet::insert` returns `false` when already present, letting us skip the `contains` + `insert` double-check OCaml needs with `SS.mem` + `SS.add`.
+
+## Exercises
+
+1. Implement iterative DFS using an explicit `Vec`-based stack instead of recursion, ensuring the traversal order matches the recursive version.
+2. Use DFS to detect cycles in a directed graph by tracking the current recursion path (gray nodes) and back edges.
+3. Implement Tarjan's strongly connected components algorithm using DFS with a low-link array and a stack, returning each SCC as a `Vec<NodeId>`.

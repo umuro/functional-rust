@@ -2,43 +2,50 @@
 
 ---
 
-# 571: `..` and `_` Wildcards
+# .. and _ Wildcards
 
-**Difficulty:** 2  **Level:** Beginner
+## Problem Statement
 
-Ignore fields, elements, and bindings you don't need in pattern matches.
+Large structs and long tuples often have many fields, but a given function cares about only one or two. Without wildcards, every pattern must mention every field. `_` ignores a single element; `..` ignores zero or more elements in struct patterns and slice patterns. Together they enable precise, readable patterns that name exactly the data you need. This is particularly important for forward compatibility — using `..` in struct patterns means adding new fields to the struct does not break existing match arms.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Rust's patterns are exhaustive by design — you must account for every field and variant. But often you only care about one or two fields in a large struct, or the first and last elements of a tuple. Writing out every field name just to ignore most of them is verbose and brittle: adding a field to the struct breaks every match site.
+- How `_` ignores a single field or variable binding
+- How `..` ignores remaining struct fields or middle slice elements
+- How `(a, _, _, _)` extracts the first element of a 4-tuple
+- How `Point { x, .. }` extracts just `x` from a struct with many fields
+- Why `..` in struct patterns is important for API evolution and forward compatibility
 
-`..` ("dot-dot") and `_` ("underscore") solve this. `..` in a struct pattern skips all remaining fields. `..` in a tuple pattern matches any number of elements in the middle. `_` ignores a single binding (and suppresses unused-variable warnings). Together they make patterns concise without sacrificing exhaustiveness.
+## Rust Application
 
-## The Intuition
+`get_x(p: &Point)` uses `Point { x, y: _, z: _ }` — verbose form of explicit ignoring. `get_x_short` uses `let Point { x, .. } = p;` — concise `..` form. `first_of_four((a, _, _, _): (i32, i32, i32, i32)) -> i32` ignores three tuple elements. Slice patterns: `[first, .., last]` ignores the middle elements. `_name` variables (underscore-prefixed) suppress unused variable warnings while still binding.
 
-`_` is a throwaway slot: "put something here but I don't want it." `..` is a throwaway range: "skip everything else I didn't name." In struct patterns, `..` means "I only named the fields I care about; let the rest be whatever." In tuples, `(first, .., last)` says "give me the first and last; the middle doesn't matter."
+Key patterns:
+- `Struct { field, .. }` — extract `field`, ignore rest
+- `(first, ..)` — extract first, ignore rest of tuple (nightly only; use `(first, _, _)`)
+- `[head, ..]` — first element of slice
+- `_` in any position — explicitly ignored single element
 
-The `_x` convention (leading underscore) binds the variable to suppress warnings, unlike bare `_` which doesn't bind at all — useful when you want the *name* for documentation clarity but the *value* isn't used yet.
+## OCaml Approach
 
-## How It Works in Rust
+OCaml's `_` and `_field` work identically, and record patterns also support partial matching:
 
-1. **Struct `..`** — `Config { host, port, .. }` in a function parameter destructures only `host` and `port`; all other fields are silently ignored.
-2. **Enum variant `_`** — `Response::Ok(v, _, _)` extracts the first field and ignores the others by position.
-3. **Tuple `..`** — `let (first, .., last) = (1, 2, 3, 4, 5)` binds first and last; middle elements are discarded.
-4. **Function parameter `_`** — `fn always_zero(_: i32) -> i32 { 0 }` accepts the argument but doesn't bind it.
-5. **`_x` suppression** — `let _unused = String::from("...");` binds without triggering unused-variable lint.
+```ocaml
+let get_x { x; _ } = x   (* _ ignores other fields *)
+let first_of_four (a, _, _, _) = a
+```
 
-## What This Unlocks
-
-- Match large structs without listing every field — future fields won't break the pattern.
-- Write function signatures that accept parameters for API compatibility without using them.
-- Extract head and tail of tuples in a single destructuring without intermediate bindings.
+OCaml requires listing all non-ignored record fields explicitly by default (compiler warning for partial patterns).
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Ignore a field | `_` in pattern; records use `{ field; _ }` | `_` for single field; `..` to skip all remaining struct fields |
-| Tuple remainder | `(first, _)` or `(first, _rest)` | `(first, .., last)` — `..` matches any number of middle elements |
-| Unused binding | `_x` convention in OCaml too | `_x` or `_` — `_x` binds, `_` doesn't |
-| Exhaustiveness | Compiler warns on missing cases | Same; `..` satisfies exhaustiveness for remaining struct fields |
+1. **`..` vs `_`**: Rust's `..` in struct patterns ignores all unlisted fields; OCaml uses `_` for each field individually or relies on a compiler flag to suppress partial-pattern warnings.
+2. **Forward compat**: Rust struct patterns without `..` cause compile errors when new fields are added to the struct; OCaml partial record patterns cause warnings.
+3. **Tuple `..`**: Rust tuple struct `..` ignores trailing fields; OCaml requires explicit `_` for each ignored position.
+4. **Slice middle**: Rust `[first, .., last]` skips middle elements; OCaml arrays require explicit indexing for this pattern.
+
+## Exercises
+
+1. **Add field safely**: Add a `w: i32` field to `Point3D { x, y, z }` and verify that patterns using `..` continue compiling without modification, while patterns without `..` report an error.
+2. **Deep ignore**: Write `fn extract_leaf(tree: &Tree) -> Option<i32>` where `Tree` is a nested struct with many fields — use `..` to ignore fields at each level and extract only the leaf value.
+3. **Tuple third**: Write `fn third_of_five<T: Copy>((_, _, x, _, _): (T, T, T, T, T)) -> T` using `_` for each ignored position — compare readability with an equivalent index-based version.

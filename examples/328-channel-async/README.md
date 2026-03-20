@@ -4,53 +4,60 @@
 
 # 328: Async Channels (mpsc)
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Multi-producer, single-consumer channels let multiple tasks send messages to one receiver — the safe, idiomatic way to communicate between concurrent workers.
+Shared mutable state across threads requires locks — error-prone and contended. Channels provide an alternative: communicate via message passing rather than sharing state. Go popularized "don't communicate by sharing memory; share memory by communicating." Rust's `std::sync::mpsc` (multi-producer, single-consumer) channels implement this pattern with type-safe, backpressure-supporting message queues. This is the foundation for actor-based and pipeline architectures.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You have multiple threads producing data and need to funnel them all into one place. Shared mutable state requires locking on every access. Channels are the alternative: no shared state, no locks, just message passing.
+- Use `mpsc::channel()` for unbounded and `mpsc::sync_channel()` for bounded channels
+- Implement fan-in: multiple producers sending to one consumer
+- Handle channel closure: `Sender` drop signals end of stream to `Receiver`
+- Understand backpressure: bounded channels block producers when the buffer is full
 
-When all `Sender`s are dropped, the channel closes and `recv()` returns an error, giving the consumer a clean signal to stop.
+## Rust Application
 
-## The Intuition
-
-Go channels (`chan T`) are the famous version of this pattern. Rust `mpsc` is similar but more explicit: `Sender<T>` and `Receiver<T>` are distinct types.
+Fan-in with multiple producers and one consumer:
 
 ```rust
-let (tx, rx) = mpsc::channel::<i32>();
-let tx2 = tx.clone();  // clone for second producer
-thread::spawn(move || tx.send(42).unwrap());
-thread::spawn(move || tx2.send(99).unwrap());
-let val = rx.recv().unwrap();
+pub fn create_producer(tx: Sender<String>, label: &'static str, count: usize) -> JoinHandle<()> {
+    thread::spawn(move || {
+        for i in 1..=count {
+            tx.send(format!("{}-{}", label, i)).unwrap();
+        }
+        // tx drops here — if last sender, receiver knows stream ended
+    })
+}
+
+// Drop the original tx so receiver ends when all producers finish
+let (tx, rx) = mpsc::channel();
+create_producer(tx.clone(), "a", 3);
+create_producer(tx.clone(), "b", 3);
+drop(tx);  // Critical: drop original so rx detects closure
+
+let messages: Vec<_> = rx.into_iter().collect();
 ```
 
-## How It Works in Rust
+## OCaml Approach
 
-```rust
-fn producer(tx: mpsc::Sender<String>, label: &'static str, n: usize) {
-    thread::spawn(move || {
-        for i in 1..=n {
-            tx.send(format!("{label}-{i}")).unwrap();
-        }
-    });
-}
+OCaml uses `Event` channels or the `Domainslib` library for channel-based concurrency. Lwt provides `Lwt_stream` for async streams:
 
-fn main() {
-    let (tx, rx) = mpsc::channel::<String>();
-    producer(tx.clone(), "A", 3);
-    producer(tx.clone(), "B", 3);
-    drop(tx);  // important: drop original so rx knows when to stop
-    let msgs: Vec<String> = rx.into_iter().collect();
-}
+```ocaml
+(* Lwt_stream: lazy push-based stream *)
+let (stream, push) = Lwt_stream.create ()
+let () = push (Some "message1"); push (Some "message2"); push None
+let* messages = Lwt_stream.to_list stream
 ```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Create channel | `Event.new_channel ()` | `mpsc::channel()` |
-| Send | `Event.send chan x` | `tx.send(val)` |
-| Receive | `Event.receive chan` | `rx.recv()` |
-| Multiple producers | manual sync | `tx.clone()` |
+1. **MPSC vs MPMC**: Rust's standard `mpsc` is multi-producer single-consumer; Tokio's `broadcast` and `watch` channels provide multi-consumer.
+2. **Backpressure**: `sync_channel(capacity)` blocks the sender when full; unbounded `channel()` never blocks but may allocate unboundedly.
+3. **Closure detection**: The receiver detects channel closure when all senders are dropped — `recv()` returns `Err` or `into_iter()` terminates.
+4. **async channels**: `tokio::sync::mpsc` is the async-aware version — `send().await` yields instead of blocking the thread.
+
+## Exercises
+
+1. Implement a pipeline with three stages connected by channels: generator → transformer → aggregator.
+2. Use a bounded `sync_channel` to implement backpressure: the producer should slow down when the consumer can't keep up.
+3. Implement a work-stealing queue where multiple workers receive tasks from a shared channel and report results back to a collector.

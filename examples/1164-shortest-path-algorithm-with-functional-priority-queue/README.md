@@ -29,3 +29,9 @@ The idiomatic Rust version uses `BinaryHeap<Reverse<(u32, String)>>` — a max-h
 2. **Mutability:** OCaml threads immutable maps through recursion; Rust mutates `HashMap`/`BTreeMap` and the heap in place
 3. **Stale entry handling:** Both use lazy deletion — OCaml checks `if d > dist_u then go pq' dist`, Rust checks `if d > dist[u] { continue }`
 4. **Borrow constraint:** Rust must `.cloned()` the BTreeSet's first element to release the immutable borrow before calling `.remove()` — OCaml's persistent data structures have no such constraint
+
+## Exercises
+
+1. Replace the functional priority queue with a `BinaryHeap`-based one and verify the results are identical while measuring the performance difference.
+2. Implement the `k`-shortest paths algorithm (Yen's algorithm) on top of this Dijkstra implementation, returning the `k` shortest simple paths from source to target.
+3. Model a transportation network (cities as nodes, roads as edges with km distances) and use the shortest-path algorithm to find optimal routes, then extend to support waypoints (must-visit intermediate nodes).

@@ -29,3 +29,9 @@ Rust uses a trait `Monoid` with associated functions `empty()` and `combine()`. 
 2. **Multiple instances:** OCaml separates instances at the call site with `(module Sum)`; Rust separates them via distinct newtype structs.
 3. **Identity element:** OCaml `M.empty` is a value; Rust `M::empty()` is an associated function (called once per fold, matching the value semantics).
 4. **Fold:** Both use left fold — OCaml `List.fold_left`, Rust `Iterator::fold` — producing identical evaluation order.
+
+## Exercises
+
+1. Implement a `HashMap` monoid whose binary operation merges two maps by summing numeric values for shared keys.
+2. Write a `fold_map` function that applies a function `f: T -> M` to each element before combining with the monoid, and use it to compute the sum of squares in one pass.
+3. Demonstrate the associativity law of your monoid implementation with a property-based test: for any three values `a`, `b`, `c`, verify `combine(combine(a,b),c) == combine(a,combine(b,c))`.

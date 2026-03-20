@@ -29,3 +29,8 @@ Rust functions are not curried. Idiomatic Rust uses multi‑argument functions (
 2. **Partial Application:** OCaml uses `add 5`; Rust uses `|y| add(5, y)` or a factory function.
 3. **Labeled Arguments:** OCaml has named parameters; Rust uses structs or separate closures.
 4. **Operator Sections:** OCaml can write `( * ) 2`; Rust can define `|x| x * 2`.
+## Exercises
+
+1. Partially apply a curried `clamp` function `(i32, i32, i32) -> i32` to create a `clamp_0_100` specialization, and map it over a `Vec<i32>`.
+2. Write a `compose` higher-order function and demonstrate that `(compose(f, g))(x) == f(g(x))` holds for string processing functions.
+3. Build a query-filter DSL using partially applied predicates: define `eq`, `gt`, `lt` as curried comparators and use `filter` with partial application to select records from a `Vec<Row>`.

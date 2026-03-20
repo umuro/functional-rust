@@ -2,122 +2,133 @@
 
 ---
 
-# 362: Trie — Prefix Tree for String Lookups
+# 362: Trie Structure
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-O(m) lookup and prefix search where m is the key length — independent of how many keys are stored.
+Hash maps give O(1) exact key lookup but can't answer prefix queries: "list all words starting with 'pre'" requires scanning all keys. A trie (retrieval tree, Fredkin 1960) stores strings by decomposing them into characters — each node represents one character, paths from root to end-marked nodes spell out stored words. Lookup is O(m) where m is the key length, independent of how many words are stored. Tries power autocomplete in IDEs and search engines, IP routing tables (compact trie on bit prefixes), spell checkers, and dictionary compression (compressed tries / DAWG). They're the data structure behind DNS resolution caches.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You're building autocomplete. Given a prefix like "rust", return all stored keys that start with "rust". With a `HashMap`, you'd iterate every key and check `key.starts_with(prefix)` — O(n·m) where n is the number of keys and m is the prefix length. That's a full scan every query.
+- Implement a `TrieNode` with `children: HashMap<char, TrieNode>` and `is_end: bool`
+- Insert a word by traversing/creating one node per character
+- Search for exact words by traversing the path and checking `is_end`
+- Find all words with a given prefix using recursive subtree traversal (DFS)
+- Understand why lookup is O(m) regardless of vocabulary size
+- Compare trie prefix queries to linear scan over a sorted list
 
-A Trie (prefix tree) solves this by sharing common prefixes in the tree structure. "rust" and "rustacean" both start with "rust" — in a Trie, they share the nodes for r→u→s→t. To find all words with prefix "rust", you walk four nodes to reach the "rust" node, then collect everything below it. The cost is O(m) to navigate to the prefix, then O(k) to collect k results — completely independent of total keys stored.
-
-The second use case is dictionary-style operations: check if a word exists (vs. just being a prefix of another word), count words by prefix, or delete a word without affecting words that share its prefix. All are O(m) and naturally expressed in the tree structure.
-
-## The Intuition
-
-There's no direct Python standard library equivalent. The closest is a nested dict: `{"r": {"u": {"s": {"t": {"_end": True, "a": ...}}}}}`. A Trie is exactly this — each node is a map from character to child node, with a flag marking whether the path to this node forms a complete word.
-
-The tradeoff: a Trie uses more memory than a `HashMap<String, V>` for sparse key sets (each node is a struct), but enables prefix operations that a flat hash map simply can't do efficiently.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
 use std::collections::HashMap;
 
-struct TrieNode {
+#[derive(Default, Debug, Clone)]
+pub struct TrieNode {
     children: HashMap<char, TrieNode>,
-    is_end: bool, // true if this node marks the end of an inserted key
+    is_end: bool,
 }
 
-impl TrieNode {
-    fn new() -> Self {
-        TrieNode { children: HashMap::new(), is_end: false }
-    }
-}
-
-struct Trie {
+pub struct Trie {
     root: TrieNode,
 }
 
 impl Trie {
-    fn new() -> Self { Trie { root: TrieNode::new() } }
+    pub fn new() -> Self { Self { root: TrieNode::default() } }
 
-    // O(m) where m = key length
-    fn insert(&mut self, key: &str) {
+    pub fn insert(&mut self, word: &str) {
         let mut node = &mut self.root;
-        for ch in key.chars() {
-            node = node.children.entry(ch).or_insert_with(TrieNode::new);
+        for c in word.chars() {
+            node = node.children.entry(c).or_default();
         }
-        node.is_end = true; // mark end of this key
+        node.is_end = true;
     }
 
-    // O(m) — walk the tree, return true only if key was inserted
-    fn contains(&self, key: &str) -> bool {
+    pub fn search(&self, word: &str) -> bool {
         let mut node = &self.root;
-        for ch in key.chars() {
-            match node.children.get(&ch) {
-                Some(child) => node = child,
+        for c in word.chars() {
+            match node.children.get(&c) {
+                Some(n) => node = n,
                 None => return false,
             }
         }
         node.is_end
     }
 
-    // O(m) to reach prefix node, then O(k) to collect k results
-    fn words_with_prefix<'a>(&'a self, prefix: &str) -> Vec<String> {
+    pub fn starts_with(&self, prefix: &str) -> bool {
         let mut node = &self.root;
-        for ch in prefix.chars() {
-            match node.children.get(&ch) {
-                Some(child) => node = child,
-                None => return vec![], // prefix not found
+        for c in prefix.chars() {
+            match node.children.get(&c) {
+                Some(n) => node = n,
+                None => return false,
             }
         }
-        // Collect all words below this node
+        true // any path exists with this prefix
+    }
+
+    pub fn words_with_prefix(&self, prefix: &str) -> Vec<String> {
+        // navigate to prefix node, then DFS collect all end nodes
+        let mut node = &self.root;
+        for c in prefix.chars() {
+            match node.children.get(&c) {
+                Some(n) => node = n,
+                None => return vec![],
+            }
+        }
         let mut results = Vec::new();
-        collect(node, &mut prefix.to_string(), &mut results);
+        collect_words(node, prefix.to_string(), &mut results);
         results
     }
 }
 
-fn collect(node: &TrieNode, current: &mut String, out: &mut Vec<String>) {
-    if node.is_end { out.push(current.clone()); }
-    for (&ch, child) in &node.children {
-        current.push(ch);
-        collect(child, current, out);
-        current.pop();
+fn collect_words(node: &TrieNode, prefix: String, results: &mut Vec<String>) {
+    if node.is_end { results.push(prefix.clone()); }
+    for (c, child) in &node.children {
+        collect_words(child, format!("{}{}", prefix, c), results);
     }
 }
-
-// Usage
-let mut trie = Trie::new();
-trie.insert("rust");
-trie.insert("rustacean");
-trie.insert("rusty");
-trie.insert("ruby");
-
-println!("{}", trie.contains("rust"));     // true
-println!("{}", trie.contains("rus"));      // false (not inserted as a key)
-
-let matches = trie.words_with_prefix("rust");
-println!("{matches:?}"); // ["rust", "rustacean", "rusty"] (order depends on HashMap)
 ```
 
-## What This Unlocks
+`or_default()` creates an empty `TrieNode` on the fly — the entry API handles both traversal and creation in one statement. Prefix completion is a two-phase operation: navigate to the prefix tip (O(m)), then DFS-collect all words below (O(count × average_length)).
 
-- **Autocomplete and search suggestions**: walk to the prefix node in O(m), collect all completions below — the canonical use case.
-- **Spell checking with suggestions**: find all words within edit distance 1 of a query by branching at each mismatch during traversal.
-- **IP routing tables**: longest-prefix matching on binary keys (CIDR notation) is a Trie on bits — the actual algorithm used in router hardware.
+## OCaml Approach
+
+OCaml's recursive types with `Map` children:
+
+```ocaml
+module CharMap = Map.Make(Char)
+
+type trie = {
+  children: trie CharMap.t;
+  is_end: bool;
+}
+
+let empty = { children = CharMap.empty; is_end = false }
+
+let rec insert node = function
+  | [] -> { node with is_end = true }
+  | c :: rest ->
+    let child = try CharMap.find c node.children with Not_found -> empty in
+    let updated = insert child rest in
+    { node with children = CharMap.add c updated node.children }
+
+let insert_word trie word =
+  insert trie (List.of_seq (String.to_seq word))
+```
+
+OCaml's functional trie returns new nodes on insert (persistent). `CharMap` replaces `HashMap<char, TrieNode>` with a functional balanced BST. The structure is immutable — each `insert` returns a new trie sharing unchanged subtrees with the original.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Prefix tree | not in stdlib | custom `HashMap`-based Trie |
-| Insert | recursive functional | iterative with `entry()` |
-| Exact lookup | O(m) with custom impl | O(m) walk to end node |
-| Prefix search | O(n·m) with flat map | O(m + k) with Trie |
-| Memory | cons-cell sharing possible | `HashMap` per node (higher overhead) |
-| Alternative | `Map` with string keys | `HashMap<String, V>` (no prefix ops) |
+| Aspect | Rust `HashMap<char, TrieNode>` | OCaml `CharMap.t trie` |
+|--------|-------------------------------|------------------------|
+| Children map | `HashMap` (O(1) lookup) | `Map.Make(Char)` (O(log σ)) |
+| Mutability | In-place (`&mut self`) | Persistent (new trie per insert) |
+| Alphabet size | Any (unicode chars) | Any (via functor) |
+| Memory sharing | None — copy on clone | Structural sharing |
+| Compact trie | Manual or `radix-trie` crate | Manual implementation |
+
+## Exercises
+
+1. **Delete a word**: Implement `remove(&mut self, word: &str)` that marks `is_end = false` for the word's terminal node; also prune empty subtrees (nodes with no children and `is_end = false`).
+2. **Longest common prefix**: Given a list of words inserted into a trie, find the longest common prefix by traversing the root while each node has exactly one child and `is_end = false`.
+3. **Compressed trie**: Implement a Patricia trie where edge labels are substrings (not single chars), reducing the number of nodes from O(total_chars) to O(words) for strings with long common prefixes.

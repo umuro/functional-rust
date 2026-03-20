@@ -4,62 +4,58 @@
 
 # 304: Splitting Ok/Err with partition()
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Process all items in a batch and separate the successes from the failures.
+When processing a batch of inputs where some may fail, sometimes you want both the successes and the failures — not a short-circuit. Importing a CSV where invalid rows are logged and skipped, processing API responses where some fail and others succeed, or batch-validating records while collecting all errors. The `partition(Result::is_ok)` pattern collects all results in one pass, then extracts the `Ok` and `Err` values into separate vectors.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You're processing a batch of user records — parsing ages, validating emails, reading config values. Some will fail. With `collect::<Result<Vec>>()`, the first failure stops everything: you get one error and lose all the successes. For batch processing, that's wrong — you want to know *all* the failures, not just the first one.
+- Use `partition(Result::is_ok)` to split a `Vec<Result<T, E>>` into successes and failures
+- Extract values from `Ok` and `Err` variants after partitioning
+- Recognize this as the "harvest all results" counterpart to `collect::<Result<Vec<_>, _>>()`
+- Use `fold` for more control over multi-way result classification
 
-Real production batch jobs need a different contract: process everything, collect the successes, collect the failures, report both. An import script that stops at the first bad row and loses the other 999 valid ones is broken. A script that processes all rows and reports "imported 847, failed 153 (see attached log)" is useful.
+## Rust Application
 
-`partition(Result::is_ok)` splits a `Vec<Result<T, E>>` into two `Vec`s in a single pass — all `Ok` items in one, all `Err` items in the other. No short-circuiting. Everything is processed.
-
-## The Intuition
-
-`partition(Result::is_ok)` is the "process all, separate outcomes" alternative to `collect::<Result<Vec>>()` — it never stops early, and you get both successes and failures.
-
-## How It Works in Rust
+Partition into `Ok` and `Err` groups, then extract inner values:
 
 ```rust
-let inputs = ["1", "two", "3", "four", "5"];
-
-// Step 1: map to Result
-let results: Vec<Result<i32, &str>> = inputs.iter()
-    .map(|s| s.parse::<i32>().map_err(|_| *s))
-    .collect();
-
-// Step 2: partition into Ok and Err groups (single pass, processes ALL)
-let (successes, failures): (Vec<_>, Vec<_>) = results
-    .into_iter()
-    .partition(Result::is_ok);
-
-// Step 3: unwrap each group (safe — partition guarantees type)
-let nums: Vec<i32> = successes.into_iter().flatten().collect();
-//  ↑ .flatten() on Result<T, E> yields the Ok value
-let bad: Vec<&str> = failures.into_iter().map(|r| r.unwrap_err()).collect();
-
-println!("Parsed: {:?}", nums);       // [1, 3, 5]
-println!("Unparseable: {:?}", bad);   // ["two", "four"]
-
-// Practical: batch report
-println!("{} succeeded, {} failed", nums.len(), bad.len());
+pub fn partition_results<T, E>(
+    results: Vec<Result<T, E>>
+) -> (Vec<T>, Vec<E>) {
+    let (oks, errs): (Vec<_>, Vec<_>) = results.into_iter().partition(Result::is_ok);
+    let ok_vals: Vec<T> = oks.into_iter().map(|r| r.unwrap()).collect();
+    let err_vals: Vec<E> = errs.into_iter().map(|r| r.unwrap_err()).collect();
+    (ok_vals, err_vals)
+}
+// All successes and all failures, in one pass
 ```
 
-The `.flatten()` trick works because `IntoIterator for Result<T, E>` yields zero items for `Err` and one item for `Ok`. After partition, you know all items in `successes` are `Ok`, so `flatten()` safely extracts the values.
+The `itertools` crate provides `partition_map` which avoids the intermediate `Vec<_>` step.
 
-## What This Unlocks
+## OCaml Approach
 
-- **Batch processing with full reporting** — import jobs, validation pipelines, and bulk transforms that need to see all failures, not just the first
-- **Graceful degradation** — process what you can, log what you can't, continue without aborting
-- **Separate error handling** — deduplicate errors, group them by type, or write failed items to a dead-letter queue
+OCaml uses `List.partition_map` (OCaml 4.12+) or a fold:
+
+```ocaml
+let partition_results results =
+  List.partition_map (function
+    | Ok v -> Left v
+    | Error e -> Right e
+  ) results
+```
+
+Earlier OCaml versions use `List.fold_left` with two accumulator lists.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Split into two lists | Manual fold into pair | `partition(Result::is_ok)` |
-| Short-circuits? | No (manual) | No — all items processed |
-| vs. collect::\<Result\> | Stops at first Err | Never stops — collects all |
-| Extract values after | Manual pattern match | `.flatten()` on Ok group; `.map(unwrap_err)` on Err group |
+1. **OCaml 4.12+**: `List.partition_map` (new in 4.12) closely mirrors this Rust pattern with `Left`/`Right` discrimination.
+2. **Two passes in Rust**: Rust's `partition` + `map(unwrap)` uses two passes; `itertools::partition_map` does it in one.
+3. **Error collection**: This pattern enables collecting all validation errors at once, which is better UX than "fix one error, retry, discover the next error".
+4. **Ordering**: Both approaches preserve the relative order of elements within each group.
+
+## Exercises
+
+1. Parse a CSV file where each line may fail, collecting successfully parsed rows and all parse errors into separate lists.
+2. Implement a `classify_results<T, E>` function that takes a `Vec<Result<T, E>>` and returns three groups: successes, retryable errors, and permanent errors (based on error kind).
+3. Compare memory usage of `partition(Result::is_ok)` followed by `unwrap()` versus a single `fold` that accumulates directly — which avoids more intermediate allocations?

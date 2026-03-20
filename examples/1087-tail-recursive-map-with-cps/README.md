@@ -29,3 +29,9 @@ Idiomatic Rust sidesteps the problem entirely: `list.iter().map(f).collect()` is
 2. **Iterator abstraction:** Rust's iterator pipeline (`iter().map().collect()`) replaces all three OCaml variants for practical use — it's lazy, composable, and stack-safe by construction.
 3. **Continuation representation:** OCaml closures are GC-managed and cheap to nest. Rust requires `Box<dyn FnOnce>` with explicit `'static` bounds, making CPS more verbose and allocation-heavy.
 4. **Ownership in map:** OCaml's `map` produces a new list (immutable by default). Rust's `map` takes `&[T]` and produces `Vec<U>`, making the borrow/own distinction explicit in the type signature.
+
+## Exercises
+
+1. Use the CPS technique to implement a tail-recursive `zip` that pairs elements from two lists, returning a `Vec<(A, B)>` without growing the call stack.
+2. Rewrite the CPS `map` to return an iterator instead of a `Vec`, making it lazy — each element is computed only when polled.
+3. Benchmark CPS `map` against Rust's built-in `.map().collect()` on a list of one million elements and explain any performance differences in terms of closure overhead and inlining.

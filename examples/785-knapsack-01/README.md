@@ -2,81 +2,37 @@
 
 ---
 
-# 785. 0/1 Knapsack: DP Table Approach
+# 785-knapsack-01 — 0/1 Knapsack Problem
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Classic resource-allocation DP: given items with weights and values, maximise total value within a weight budget — with three implementations and full traceback.
+The 0/1 knapsack problem is a foundational combinatorial optimization problem: given items with weights and values and a capacity-limited bag, select items to maximize total value without exceeding capacity. "0/1" means each item is either taken or not (no fractions). It appears in resource allocation, project portfolio selection, cargo loading, and is a building block for more complex optimization problems. The DP solution runs in O(n × W) time, making large instances tractable.
 
-## The Problem This Solves
+## Learning Outcomes
 
-The 0/1 knapsack problem appears wherever you must make binary include/exclude decisions under a resource constraint. Scheduling jobs within a time budget, selecting features within a sprint velocity, packing cargo within weight limits — all are knapsack variants. The "0/1" means each item is taken whole or not at all (unlike the fractional knapsack, which is solvable greedily).
+- Model the 0/1 knapsack as a 2D DP table `dp[i][w]` = max value using first i items with capacity w
+- Implement the recurrence: `dp[i][w] = max(dp[i-1][w], dp[i-1][w - weight[i]] + value[i])`
+- Optimize space from O(n × W) to O(W) using a 1D array with right-to-left iteration
+- Understand why right-to-left iteration prevents using the same item twice
+- Reconstruct the chosen items by backtracking through the DP table
 
-This is also the canonical introduction to 2D DP tables: the recurrence `dp[i][w] = max(dp[i-1][w], dp[i-1][w-weight_i] + value_i)` captures the exact structure of "take or skip" decisions at each step. Understanding this table and its traceback unlocks most other combinatorial DP problems.
+## Rust Application
 
-## The Intuition
+`knapsack(weights, values, capacity)` fills an `(n+1) × (capacity+1)` table. For each item and capacity, it takes the maximum of skipping or including the item. `knapsack_optimized` uses a single `Vec<usize>` of length `capacity+1`, iterating weights from right to left to avoid counting items twice. Tests cover the classic example `(weights=[1,2,3], values=[6,10,12], capacity=5)` and edge cases.
 
-Work backwards: at each item, you either take it (gaining its value, spending its weight) or skip it. The DP table stores the best achievable value for every `(item_count, remaining_capacity)` pair. Fill it left-to-right, row by row. The answer is at `dp[n][capacity]`. Traceback recovers *which* items were selected by walking backwards through the table. In OCaml you'd naturally write the recursive version first and add a `Hashtbl` for memoisation; in Rust, the tabulation approach with a `Vec<Vec<u64>>` is more cache-friendly and lets you traceback directly.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-// O(n × capacity) time, O(n × capacity) space
-pub fn knapsack_tab(items: &[Item], capacity: usize) -> KnapsackResult {
-    let n = items.len();
-    // dp[i][w] = max value using first i items with capacity w
-    let mut dp = vec![vec![0u64; capacity + 1]; n + 1];
-
-    for i in 1..=n {
-        let item = &items[i - 1];
-        for w in 0..=capacity {
-            dp[i][w] = if item.weight > w {
-                dp[i-1][w]                                    // can't take it
-            } else {
-                dp[i-1][w].max(item.value + dp[i-1][w - item.weight]) // take or skip
-            };
-        }
-    }
-
-    // Traceback: walk backwards to find selected items
-    let mut selected = Vec::new();
-    let mut w = capacity;
-    for i in (1..=n).rev() {
-        if dp[i][w] != dp[i-1][w] {       // value changed → item i was taken
-            selected.push(i - 1);
-            w = w.saturating_sub(items[i-1].weight);
-        }
-    }
-    // ...
-}
-
-// Space-optimised: 1D rolling array — O(capacity) space
-// Must iterate weight right-to-left to avoid using an item twice
-pub fn knapsack_1d(items: &[Item], capacity: usize) -> u64 {
-    let mut dp = vec![0u64; capacity + 1];
-    for item in items {
-        for w in (item.weight..=capacity).rev() {   // ← right-to-left is critical
-            dp[w] = dp[w].max(item.value + dp[w - item.weight]);
-        }
-    }
-    dp[capacity]
-}
-```
-
-The 1D optimisation reduces space from O(n × W) to O(W). The right-to-left iteration ensures each item is considered only once (if you iterate left-to-right, you'd allow taking the same item multiple times — that's the unbounded knapsack variant).
-
-## What This Unlocks
-
-- **Portfolio optimisation**: select investments maximising return within a risk/capital budget.
-- **Sprint planning**: maximise feature delivery given team velocity, treating each story as an item with story-point weight and business-value score.
-- **Subset-sum and coin change**: both are knapsack variants with unit values; the same 1D rolling array technique applies directly.
+OCaml's functional style uses `Array.init` for DP table construction and `Array.fold_left` for optimization. The functional approach with `Array.init (n+1) (fun i -> Array.init (cap+1) (fun w -> ...))` creates the full table lazily but requires a fix-point or explicit memoization. The imperative style with `for` loops and `Array.set` is idiomatic for DP in OCaml despite the functional aesthetic.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| DP table | `Array.make_matrix` (mutable) or recursive + `Hashtbl` | `vec![vec![0u64; W+1]; n+1]` |
-| Take/skip recurrence | `max` on recursive calls | `dp[i-1][w].max(value + dp[i-1][w-wt])` |
-| Traceback | Recursive descent through memo table | Reverse loop over 2D `Vec` |
-| Space optimisation | Swap two arrays each row | Single `Vec`, iterate `rev()` |
-| Item struct | Record type with fields | `struct Item { weight: usize, value: u64 }` |
+1. **Mutability**: Rust's `vec![vec![0; capacity + 1]; n + 1]` with `dp[i][w] = ...` is imperative; OCaml's `for` loop equivalent is similar but uses `Array.set dp.(i).(w) val`.
+2. **Space optimization**: Both languages implement the 1D right-to-left optimization identically — the algorithm is language-independent.
+3. **Reconstruction**: Rust backtracks through `dp` by comparing `dp[i][w]` with `dp[i-1][w]`; OCaml uses the same technique.
+4. **Bounds checking**: Rust's `Vec` bounds-checks by default; OCaml's `Array.unsafe_get` skips checks for performance in tight DP loops.
+
+## Exercises
+
+1. Add item reconstruction: modify `knapsack` to also return the indices of the chosen items by backtracking through the DP table.
+2. Implement the unbounded knapsack variant where each item can be taken multiple times, modifying the recurrence and iteration direction.
+3. Write a branch-and-bound solver for knapsack that prunes branches where the remaining capacity cannot improve the best-so-far solution, and compare it against DP for small instances.

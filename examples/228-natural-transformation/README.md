@@ -45,3 +45,9 @@ function. Composition is a simple function call chain.
 3. **Naturality by construction:** Rust's parametric generics guarantee naturality for free
    — any `fn<T>(Vec<T>) -> Option<T>` that doesn't inspect `T` is automatically natural.
 4. **Composition:** OCaml uses function application; Rust is identical — `option_to_vec(safe_head(list))` chains two nat transformations directly.
+
+## Exercises
+
+1. Implement a natural transformation from `Result<T, E>` to `Option<T>` that discards the error, and verify the naturality square holds for a sample function `f: T -> U`.
+2. Write a natural transformation from `Vec<T>` to `Option<T>` that returns the first element (head), and implement its inverse as a partial natural transformation.
+3. Define a `Monad` trait (with `unit` and `bind`) for `Option`, implement it, then use natural transformations to lift a computation from `Vec` context into `Option` context.

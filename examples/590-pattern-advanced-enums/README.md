@@ -2,80 +2,51 @@
 
 ---
 
-# 590: Advanced Enum Pattern Cookbook
+# Pattern Advanced Enums
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Model complex domain types with recursive enums, mixed variant forms, and exhaustive pattern matching — one enum that replaces a whole class hierarchy.
+Pattern matching in Rust goes beyond simple value checks — it enables powerful dispatch mechanisms for type-safe command processing, visitor-pattern traversals, state machine transitions, and recursive data structure manipulation. This example demonstrates advanced pattern matching techniques that arise in compiler construction, game engines, protocol implementations, and functional programming idioms applied to real systems code.
 
-## The Problem This Solves
+## Learning Outcomes
 
-In object-oriented languages, a "type that can be one of several shapes" requires an abstract base class, concrete subclasses, a visitor pattern for exhaustive dispatch, and a runtime type tag you can't inspect statically. It's a lot of ceremony for a very common idea.
+- Advanced pattern matching constructs specific to this example's domain
+- How Rust's exhaustiveness checking prevents missed cases in complex dispatch
+- How patterns interact with ownership — matching by value vs by reference
+- How recursive enum patterns (trees, ASTs) work with  variants
+- Where this technique appears in real-world Rust: compilers, game engines, CLI tools
 
-Rust enums collapse all of this into one construct. A single `enum` can have unit variants (no data), tuple variants (positional fields), and struct variants (named fields), all in the same type. The compiler generates the discriminant, enforces exhaustive matching, and can even derive common traits like `Debug`, `Clone`, `PartialEq`, and `Hash`. No base class, no visitor, no runtime type erasure.
+## Rust Application
 
-Recursive types — trees, JSON, S-expressions, ASTs — are the canonical use case. A `Json` enum with an `Array(Vec<Json>)` variant is a recursive type: `Vec<Json>` stores owned `Json` values, each of which may themselves be arrays. The recursion terminates because `Vec` is heap-allocated — Rust knows the stack frame for `Json` is finite because the `Vec` is a fixed-size pointer, not an inline array of unknown depth.
+The source demonstrates the core technique with working examples that can be run directly. Key constructs include enum variant matching, guard conditions, nested destructuring, and composition of multiple pattern types. The match expressions are exhaustive — adding new variants requires updating all match sites, making the code refactor-safe.
 
-## The Intuition
+Key patterns demonstrated:
+- Named constant patterns using `const` values in match arms
+- Type-dispatch via enum variants carrying different payload types
+- `Box<T>` deref patterns for recursive data structures
+- Or-pattern grouping for related variants in dispatch tables
 
-An enum variant is a named constructor. `Json::Null` constructs the null value. `Json::Num(3.14)` constructs a number. `Json::Array(vec![...])` constructs an array. The `match` expression is the inverse constructor — it deconstructs the value and lets you act on each case. The compiler verifies at compile time that you've covered every case. This is *exhaustive dispatch* — no forgotten branches, no default-fallthrough bugs.
+## OCaml Approach
 
-Phantom types (`PhantomData<T>`) add a compile-time type marker to an enum without storing any data for it at runtime. This is useful for state machines where you want the type system to prevent invalid state transitions.
+OCaml's ML heritage makes it the reference implementation for these patterns. Variant types, exhaustive matching, and recursive type handling in OCaml are equivalent in power:
 
-## How It Works in Rust
-
-```rust
-#[derive(Debug, Clone)]
-enum Json {
-    Null,                              // unit variant — no data
-    Bool(bool),                        // tuple variant — one field
-    Num(f64),                          // tuple variant
-    Str(String),                       // tuple variant
-    Array(Vec<Json>),                  // recursive via heap (Vec)
-    Object(Vec<(String, Json)>),       // recursive via heap (Vec)
-}
-
-impl Json {
-    fn depth(&self) -> usize {
-        match self {
-            Json::Array(xs)  => 1 + xs.iter().map(Json::depth).max().unwrap_or(0),
-            Json::Object(kv) => 1 + kv.iter().map(|(_, v)| v.depth()).max().unwrap_or(0),
-            _                => 0,   // _ catches all remaining unit/scalar variants
-        }
-    }
-
-    fn get(&self, key: &str) -> Option<&Json> {
-        match self {
-            Json::Object(kv) => kv.iter().find(|(k, _)| k == key).map(|(_, v)| v),
-            _                => None,
-        }
-    }
-}
-
-// Mixed variant forms in one enum:
-enum Expr {
-    Lit(i64),                          // tuple
-    Var { name: String },              // struct variant
-    Add(Box<Expr>, Box<Expr>),         // recursive — Box breaks infinite size
-    Unit,                              // unit
-}
+```ocaml
+(* Pattern matching in OCaml handles:
+   - Variant constructors with data: Cmd (arg1, arg2) -> ...
+   - Guards: | x when x > threshold -> ...  
+   - Nested patterns: Node { left; right } -> ...
+   - Recursive cases: the natural form for tree traversal *)
 ```
-
-`Box<Expr>` in the recursive `Add` variant is required: without it, Rust can't compute the size of `Expr` on the stack (it would be infinitely large). `Box` indirects through the heap, making the size finite.
-
-## What This Unlocks
-
-- **Complete domain models in one type**: A compiler AST, a JSON value, a network protocol packet — expressed as one enum without inheritance hierarchies or visitor boilerplate.
-- **Compile-time exhaustiveness**: Add a new variant and every `match` that doesn't cover it becomes a compile error — the compiler finds every place that needs updating.
-- **Zero-cost dispatch**: The compiler generates a jump table or branch tree from your `match` — no virtual dispatch, no pointer indirection through vtables.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Mixed variant kinds | All use `of` syntax | Unit / tuple / struct variants in one `enum` |
-| Recursive type | `type t = A \| B of t` | `Box<T>` required to break size cycle |
-| Exhaustive match | `match` — compiler warns on missing | `match` — compiler errors on missing |
-| Derived traits | `deriving` ppx | `#[derive(Debug, Clone, PartialEq)]` |
-| Phantom type marker | GADT | `PhantomData<T>` |
-| Dispatch cost | Compiled to jump table | Compiled to jump table — no vtable |
+1. **Box deref**: Rust requires `Box<T>` for recursive types and Rust's patterns transparently deref through `Box`; OCaml's GC manages recursive variant pointers automatically.
+2. **Const patterns**: Rust allows named `const` values in patterns; OCaml can use `let open Consts in` to bring constants into scope for pattern matching.
+3. **Visitor pattern**: OCaml's idiomatic style uses recursive functions directly; Rust often uses both direct recursion and the trait-based visitor pattern for separation of concerns.
+4. **State machines**: Both languages naturally express state machines with variant enums + match — this is one of the strongest arguments for algebraic types over OOP class hierarchies.
+
+## Exercises
+
+1. **Extend the data type**: Add a new variant or field to the main data structure and trace all the match expressions that need updating — practice the exhaustiveness feedback loop.
+2. **Accumulating visitor**: Write a traversal function that collects all leaf values into a `Vec<T>` using only pattern matching and recursion.
+3. **State machine validation**: Implement an invalid-transition error: when the state/event combination is unexpected, return `Err("invalid transition")` instead of panicking.

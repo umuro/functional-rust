@@ -4,73 +4,37 @@
 
 # 404: From, Into, TryFrom, TryInto
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-The canonical way to convert between types in Rust — infallible and fallible, with `as` for low-level casts.
+Type conversions are pervasive: temperatures between Celsius and Fahrenheit, integers between types, domain values from raw data. Ad-hoc conversion functions (`celsius_to_fahrenheit`, `as_kelvin`) don't compose and require memorizing function names. The `From`/`Into` trait pair standardizes infallible conversions: implement `From<A> for B` and get `Into<A>` on `B` for free via blanket impl. `TryFrom`/`TryInto` handle fallible conversions returning `Result`. This unification means all conversions use `.into()`, `.from()`, or `.try_into()` consistently.
 
-## The Problem This Solves
+`From`/`Into` power the entire `?` operator error conversion, `Into<Vec<u8>>` in network APIs, `From<String>` for `PathBuf`, and virtually every constructor pattern in `std`.
 
-Type conversion is everywhere. Integers need to grow or shrink. Strings become error types. Domain objects convert to transport types. Without a standard approach, every library invents its own conversion methods (`to_i32()`, `parse_as_user()`, `from_raw_string()`) and composing them becomes an ecosystem of one-offs.
+## Learning Outcomes
 
-Rust standardizes this with `From<T>` and `Into<T>`. Implement `From<A> for B` and you automatically get `Into<B> for A` for free — the blanket impl in std handles it. This means APIs that accept `impl Into<T>` work with any type that has a `From` impl, without extra work from callers. The `?` operator uses `From` to convert errors automatically.
+- Understand the `From`/`Into` blanket impl relationship: implementing `From<A> for B` gives `Into<B> for A` automatically
+- Learn `TryFrom`/`TryInto` for fallible conversions with `type Error`
+- See how temperature unit conversions demonstrate clean `From` chains
+- Understand why `.into()` sometimes requires type annotation to resolve ambiguity
+- Learn how `From` powers the `?` operator's error type conversion
 
-`as` exists for raw numeric casts. It's intentionally lossy: `300u16 as u8` silently truncates to `44`. Use it only when you understand and accept the truncation. For conversions that might fail, use `TryFrom`/`TryInto` — same ergonomics, but returns `Result`.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `From<Celsius> for Fahrenheit`, `From<Fahrenheit> for Celsius`, and the Kelvin conversions form a complete temperature conversion graph. Each `From` implementation gives a corresponding `Into` for free. `PositiveInt` uses `TryFrom<i32>` with `type Error = String` to validate at construction time. The `?` operator uses `From<E1> for E2` to convert error types automatically when returning `Result<T, E2>` in a function.
 
-`From<T>` is a declared, lossless conversion that can't fail; `as` is a raw cast that can truncate; implement `From` and `Into` comes for free.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-// From<T> — infallible conversion
-struct Wrapper(i32);
-impl From<i32> for Wrapper {
-    fn from(val: i32) -> Self { Wrapper(val) }
-}
-
-let w: Wrapper = Wrapper::from(42);
-let w2: Wrapper = 42.into();  // Into is automatic from From impl
-
-// String conversions — heavily uses From/Into
-let s: String = String::from("hello");
-let s2: String = "hello".into();
-
-// Error conversion with ? — requires From<OrigError> for TargetError
-fn parse_port(s: &str) -> Result<u16, String> {
-    s.parse::<u16>().map_err(|e| e.to_string())
-}
-
-// TryFrom — fallible conversion, returns Result
-use std::convert::TryFrom;
-
-let big: i32 = 1000;
-let small = u8::try_from(big);  // Err: value too large
-let ok = u8::try_from(200i32);  // Ok(200)
-
-// as — raw numeric cast, potentially lossy
-let x: u16 = 300;
-let y: u8 = x as u8;   // 44 — silently truncates!
-let f: f64 = 3.99;
-let n: i32 = f as i32; // 3 — truncates, doesn't round
-```
-
-1. Implement `From<Source> for Target` — get `Into` for free.
-2. Use `TryFrom`/`TryInto` when conversion can fail — returns `Result`.
-3. Reserve `as` for numeric contexts where you understand and accept truncation.
-
-## What This Unlocks
-
-- **Ergonomic APIs**: Functions taking `impl Into<String>` accept `&str`, `String`, and anything else with a `From` impl.
-- **Error propagation**: `?` uses `From` to convert errors automatically — `impl From<io::Error> for MyError` makes `?` work.
-- **Zero boilerplate**: One `From` impl gives you `Into`, `TryInto` (via `TryFrom`), and compatibility with the entire ecosystem.
+OCaml uses explicit conversion functions in modules: `Celsius.of_fahrenheit`, `Temperature.to_kelvin`. There is no equivalent of the `From`/`Into` blanket relationship — each conversion function is independent. OCaml's `Result.bind` and `let*` syntax handle fallible conversions. The `ppx_conv_func` library provides some standardization but OCaml has no universal conversion trait.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Type conversion | Explicit coercion functions, no standard interface | `From`/`Into` traits, blanket impls |
-| Numeric widening | Implicit in some cases | Always explicit: `x as i64` or `i64::from(x)` |
-| Lossy cast | `Int32.of_int` (may truncate) | `as` keyword — intentionally lossy |
-| Fallible conversion | Returns `option`/`result` by convention | `TryFrom`/`TryInto` return `Result` |
-| Error conversion | Manual, per-library | `impl From<E1> for E2` + `?` automatic |
+1. **Blanket impl**: Rust's `Into` is automatically derived from `From`; OCaml requires implementing each conversion direction independently.
+2. **Error conversion**: Rust's `?` operator uses `From<E1> for E2` for automatic error coercion; OCaml uses `Result.map_error` explicitly.
+3. **Fallible variants**: Rust has separate `TryFrom`/`TryInto` for fallible conversions with `type Error`; OCaml uses `option` or `result` as return types on any function.
+4. **Type inference**: Rust sometimes needs type annotation with `.into()` (`let f: Fahrenheit = c.into()`); OCaml's explicit function names make the target type clear.
+
+## Exercises
+
+1. **Color space conversion**: Implement `From<RgbColor>` for `HslColor` and `From<HslColor>` for `RgbColor` using the standard formulas. Write a round-trip test verifying that converting RGB → HSL → RGB returns the original within floating-point tolerance.
+2. **Error conversion chain**: Create three error types `ParseError`, `IoError`, `AppError`. Implement `From<ParseError> for AppError` and `From<IoError> for AppError`. Write a function using `?` that combines a parse and an IO operation into a single `Result<T, AppError>`.
+3. **Integer hierarchy**: Implement `From<i32>` for `BigInt(Vec<i32>)` and `TryFrom<BigInt>` for `i32` (failing when the BigInt doesn't fit). Show that `let big: BigInt = 42i32.into()` works, and `i32::try_from(big).unwrap_or(-1)` handles overflow.

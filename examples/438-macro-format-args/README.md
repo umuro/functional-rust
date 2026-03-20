@@ -2,84 +2,39 @@
 
 ---
 
-# 438: format_args! for Zero-Alloc Formatting
+# 438: `format_args!` and Efficient Formatting
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Capture format arguments lazily without allocating a `String` — the low-level primitive that `println!`, `format!`, and logging frameworks build on.
+String formatting is ubiquitous but has performance implications. `format!("{}: {}", name, value)` always allocates a new `String`. For logging, writing to a buffer, or outputting to a `Write` implementor, you want to format directly without intermediate allocation. `format_args!` returns a `fmt::Arguments` value — a lightweight descriptor of the format string and its arguments — that can be passed to `write!`, `writeln!`, or any `fmt::Write` implementor. This avoids the intermediate `String` allocation when the target already implements `Write`.
 
-## The Problem This Solves
+`format_args!` is the foundation of all Rust's format macros: `format!`, `println!`, `writeln!`, `eprintln!`, `log::info!` — they all ultimately receive `fmt::Arguments`.
 
-`format!("{} = {}", key, value)` always allocates a `String`, even if you're just going to write it to a buffer immediately. In hot loops, logging infrastructure, or embedded systems where the heap is precious, this allocation is waste. You want to describe *what* to format without paying the allocation cost until the bytes are actually written somewhere.
+## Learning Outcomes
 
-`format_args!` is the compile-time macro that captures format arguments as a `fmt::Arguments` struct — a lazy description of the formatting operation. No allocation happens. You pass `fmt::Arguments` to any `Write` implementor (`File`, `TcpStream`, your custom buffer) and it formats directly into the destination. `println!`, `format!`, `write!`, and `log!` all use `format_args!` internally.
+- Understand `format_args!` as the zero-allocation format descriptor used by `write!` and `writeln!`
+- Learn how `write!(buf, ...)` is more efficient than `buf.push_str(&format!(...))` for buffer building
+- See how format width (`{:>width$}`) and precision specifiers work programmatically
+- Understand `std::fmt::Write` trait enabling custom write targets
+- Learn the format performance hierarchy: `write!` > `format!` > string concatenation
 
-This matters when building logging, tracing, or I/O infrastructure. Accept `fmt::Arguments` in your API and callers get zero-alloc formatting for free.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `write_to_buffer` uses `write!(buf, ...)` with `String` implementing `fmt::Write` directly. `format_padded` uses `{:>width$}` with a named `width` parameter for dynamic width specification. `format_number` implements thousands-separator formatting by reversing the digit string, inserting commas every 3 digits, then re-reversing. This is an example of manual formatting where `format!` doesn't have the right built-in specifier.
 
-`format_args!` captures a format expression as a value that describes the formatting to do, without doing it — allocation happens only when you write it to a concrete output.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-use std::fmt;
-use std::fmt::Write;
-
-// format_args! returns fmt::Arguments — no allocation
-let args = format_args!("{} + {} = {}", 1, 2, 3);
-// Nothing allocated yet — args is a stack value
-
-// Write to a String (allocates only here)
-let mut s = String::new();
-write!(s, "{}", args).unwrap();  // "1 + 2 = 3"
-
-// Write to stderr directly — no intermediate String
-eprintln!("{}", args);  // format_args! inside
-
-// Accept fmt::Arguments in your own API — zero-alloc logging
-fn log(level: &str, args: fmt::Arguments<'_>) {
-    // Could write to file, buffer, network — whatever
-    println!("[{}] {}", level, args);
-}
-
-// Macro wrapper so callers use familiar syntax
-macro_rules! my_log {
-    ($level:expr, $($arg:tt)*) => {
-        log($level, format_args!($($arg)*))
-    };
-}
-
-my_log!("INFO", "user {} logged in from {}", user_id, ip);
-// ↑ No String allocation — format_args captures the args, log() writes them
-
-// format_args! in a struct for deferred formatting
-struct Lazy<'a>(fmt::Arguments<'a>);
-
-impl<'a> fmt::Display for Lazy<'a> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_fmt(self.0)
-    }
-}
-```
-
-1. `format_args!(...)` — same syntax as `format!` but returns `fmt::Arguments` instead of `String`.
-2. `fmt::Arguments` is a stack value referencing the original arguments — no heap allocation.
-3. Pass to `write!`, `writeln!`, `print!`, or any `fmt::Write`/`io::Write` implementor.
-4. Build macro wrappers: accept `$($arg:tt)*` and forward to `format_args!($($arg)*)`.
-
-## What This Unlocks
-
-- **Zero-allocation logging**: Build log macros that format directly to a sink without intermediate `String`.
-- **Deferred formatting**: Capture what to format, decide where to write it later.
-- **Efficient I/O**: Write formatted output directly to `TcpStream`, `File`, or custom buffers without intermediate allocation.
+OCaml's `Printf.sprintf`, `Format.sprintf`, and `Buffer.add_string` correspond to Rust's formatting approaches. `Buffer.t` is the direct equivalent of `String` as a write target. `Format.fprintf fmt "..." args` writes to a formatter without intermediate allocation. OCaml's `format` type (for `Printf.printf`/`Format.printf`) is type-checked at compile time similarly to Rust's format strings.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Format without allocation | `Format.fprintf` with `formatter` | `format_args!` + `fmt::Write` |
-| Deferred formatting | `Format.kdprintf` continuation-passing | `fmt::Arguments` value — pass around |
-| Format to sink | `Format.fprintf out_channel` | `write!(sink, "{}", args)` |
-| Building format macros | `Format.kasprintf` | `macro_rules!` + `format_args!($($arg)*)` |
-| String allocation | `Format.asprintf` | `format!` (allocates); `format_args!` (doesn't) |
+1. **Type-checked formats**: Both Rust and OCaml check format strings at compile time; Rust uses a macro-based approach, OCaml uses `format` type GADT inference.
+2. **Zero-copy writing**: Rust's `write!` avoids intermediate allocation; OCaml's `Buffer.add_string` is similarly efficient.
+3. **Dynamic width**: Rust uses `{:>width$}` with named width; OCaml uses `Printf.sprintf "%*s" width s` for dynamic width.
+4. **Custom targets**: Rust's `fmt::Write` trait enables any type to be a format target; OCaml's `Format.formatter` is the universal output target.
+
+## Exercises
+
+1. **Log formatter**: Implement `struct LogLine` with `timestamp: u64`, `level: &str`, `message: &str`. Use `write!(buf, ...)` to format it as `"[{timestamp}] {LEVEL}: {message}"` into a pre-allocated `String` buffer, benchmarking against `format!("{}", line)`.
+2. **Table formatter**: Build a `TableWriter` implementing `fmt::Write` that collects rows and emits aligned column output when `finish()` is called, computing column widths from all rows.
+3. **Number formatting**: Extend `format_number` to support different separators (`,` for US, `.` for EU, `_` for code), and add `format_currency(n: f64, symbol: &str, decimal_places: u8)` for monetary formatting.

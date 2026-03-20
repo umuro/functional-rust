@@ -4,109 +4,55 @@
 
 # 293: The ? Operator
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-The single most important operator for readable error handling in Rust — it says "if this failed, return the error immediately."
+Chaining fallible operations with `and_then()` is composable but visually noisy when there are many sequential steps. The `?` operator provides syntactic sugar for early return on failure: `expr?` desugars to `match expr { Ok(v) => v, Err(e) => return Err(e.into()) }`. This makes error propagation code read like imperative code while retaining the type safety of explicit `Result` types. It is Rust's equivalent of OCaml's `let*` syntax and Haskell's `do` notation.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You're writing a function that calls three other functions, each of which might fail. Without `?`, you'd write this:
+- Understand `?` as desugaring to early-return on `Err` (or `None`)
+- Recognize that `?` calls `From::from(e)` on the error — enabling automatic type conversion
+- Use `?` in functions returning `Result` to chain multiple fallible operations
+- Understand when to use `?` vs `and_then()`: sequential steps vs branching/nested logic
+
+## Rust Application
+
+The `?` operator works in any function returning `Result<_, E>` (or `Option<_>`) where `E: From<OtherError>`:
 
 ```rust
-fn compute(a_str: &str, b_str: &str) -> Result<u32, AppError> {
-    match parse_positive(a_str) {
-        Ok(a) => match parse_positive(b_str) {
-            Ok(b) => match safe_div(a, b) {
-                Ok(result) => Ok(result * 2),
-                Err(e) => Err(e),
-            },
-            Err(e) => Err(e),
-        },
-        Err(e) => Err(e),
-    }
+fn process(s: &str, divisor: i32) -> Result<i32, AppError> {
+    let n: i32 = s.parse()?;         // ParseIntError -> AppError via From
+    if n < 0 { return Err(AppError::NegativeInput); }
+    let q = n / divisor;             // no ?; not fallible here
+    if divisor == 0 { return Err(AppError::DivByZero); }
+    Ok(q * 2)
 }
 ```
 
-This is six lines of boilerplate that all say the same thing: "if it failed, pass the error up." Multiply that by every function in a real application and you have hundreds of lines of noise hiding your actual logic.
+The `impl From<ParseIntError> for AppError` enables automatic error conversion at the `?` site.
 
-The `?` operator collapses all that into a single character. Place `?` after any expression that returns `Result` or `Option`, and Rust does the match for you: if it's `Ok(x)`, unwrap to `x` and continue; if it's `Err(e)`, return `Err(e.into())` immediately. Your function reads like a happy-path-only description of what it does.
+## OCaml Approach
 
-## The Intuition
+OCaml's `let*` binding (4.08+) is the exact equivalent — it desugars `let* x = expr in rest` to `Result.bind expr (fun x -> rest)`:
 
-If you've written async JavaScript with `async/await`, you've seen this idea: instead of `.then().then().catch()`, you write straight-line code and errors bubble up automatically via `try/catch`. The `?` operator is Rust's equivalent — but checked at compile time, with no exceptions thrown at runtime.
-
-Think of `?` as a supercharged early return: "try to get this value — if it fails, bail out of the whole function with that error." It's not magic, it's just very convenient shorthand.
-
-## How It Works in Rust
-
-```rust
-use std::num::ParseIntError;
-
-#[derive(Debug)]
-enum AppError {
-    Parse(ParseIntError),
-    DivByZero,
-    NegativeInput,
-}
-
-// This impl lets ? automatically convert ParseIntError into AppError
-impl From<ParseIntError> for AppError {
-    fn from(e: ParseIntError) -> Self { AppError::Parse(e) }
-}
-
-fn parse_positive(s: &str) -> Result<u32, AppError> {
-    let n: i32 = s.parse()?;  // ? here: if parse fails, return Err(AppError::Parse(...))
-                               // The From impl does the conversion automatically
-    if n < 0 {
-        Err(AppError::NegativeInput)
-    } else {
-        Ok(n as u32)
-    }
-}
-
-fn safe_div(a: u32, b: u32) -> Result<u32, AppError> {
-    if b == 0 { Err(AppError::DivByZero) } else { Ok(a / b) }
-}
-
-// Three ? operators, three potential early returns — reads like straight-line code
-fn compute(a_str: &str, b_str: &str) -> Result<u32, AppError> {
-    let a = parse_positive(a_str)?;  // if this fails, return immediately
-    let b = parse_positive(b_str)?;  // if this fails, return immediately
-    let result = safe_div(a, b)?;    // if this fails, return immediately
-    Ok(result * 2)                   // only get here if all three succeeded
-}
-
-// ? works on Option too
-fn find_double(v: &[i32], target: i32) -> Option<i32> {
-    let idx = v.iter().position(|&x| x == target)?;  // None if not found
-    let val = v.get(idx)?;                             // None if out of bounds
-    Some(val * 2)
-}
+```ocaml
+let process s divisor =
+  let* n = int_of_string_opt s |> Option.to_result ~none:`NotANumber in
+  if n < 0 then Error `Negative
+  else Ok (n / divisor * 2)
 ```
 
-What `?` desugars to under the hood:
-```rust
-// `expr?` expands to roughly:
-match expr {
-    Ok(val)  => val,
-    Err(e)   => return Err(e.into()),  // .into() uses the From trait
-}
-```
-
-The `.into()` is what makes `?` so flexible: as long as you implement `From<SourceError> for YourError`, `?` handles the conversion automatically.
-
-## What This Unlocks
-
-- **File I/O** — open file, read contents, parse lines, validate format: each step uses `?` and errors float up to the caller naturally
-- **HTTP clients** — `let resp = client.get(url).send()?.json::<MyType>()?;` — two fallible operations, two `?`, one line
-- **CLI tools** — propagate all errors up to `main()` with `fn main() -> Result<(), Box<dyn Error>>` and use `?` throughout
+OCaml does not perform automatic error type conversion at `let*` — the error type must already match.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Error propagation | `let* x = result in ...` (ppx_let) | `let x = result?;` |
-| Desugars to | `Result.bind` | `match + return Err(e.into())` |
-| Type conversion | Manual | Automatic via `From` trait |
-| On Option | Manual `match` or `Option.bind` | `option?` — returns `None` early |
-| Works in closures | Yes | Limited — `?` only works in functions returning `Result`/`Option` |
+1. **Auto-conversion**: Rust's `?` calls `From::from()` on the error automatically; OCaml's `let*` requires the error type to already unify.
+2. **Works on both**: Rust's `?` works on both `Result` and `Option` in the same function returning `Option`; OCaml has separate bind for each.
+3. **Syntactic position**: `?` is a postfix operator in Rust; `let*` is a prefix binding form in OCaml.
+4. **Propagation level**: `?` always returns from the enclosing function; `and_then` can propagate within an expression without returning.
+
+## Exercises
+
+1. Rewrite a function that uses three `and_then()` calls to use `?` instead, and verify they produce identical results.
+2. Implement two custom error types and use `?` to convert between them automatically via `impl From`.
+3. Write a function that uses `?` in a `main()` returning `Result<(), Box<dyn Error>>` to demonstrate the top-level error propagation pattern.

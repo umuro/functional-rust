@@ -2,87 +2,58 @@
 
 ---
 
-# 831: Miller-Rabin Probabilistic Primality Test
+# Miller-Rabin Primality Test
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Deterministic primality for all 64-bit integers using 12 fixed witnesses — the algorithm inside RSA key generation and every serious cryptographic library.
+Deterministic primality testing via trial division is O(sqrt(n)), impractical for 64-bit numbers (up to 4 billion operations). Cryptographic applications need to test numbers with hundreds of digits for primality during key generation. Miller-Rabin is a probabilistic primality test that runs in O(k log^2 n) where k is the number of witness rounds — each round reduces error probability to 1/4. With k=25 rounds, the probability of a false positive is negligible. For 64-bit integers, a specific set of deterministic witnesses {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37} makes Miller-Rabin deterministic — no false positives for any n < 3.3 * 10^24.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Trial division checks primality in O(√n): for a 64-bit prime near 2^63, that's ~3 billion divisions — unacceptably slow. The sieve is fast but requires O(n) memory — impractical for numbers near 2^63. Miller-Rabin tests primality in O(k log² n) where k is the number of witnesses, regardless of the size of n.
+- Decompose n-1 as 2^r * d where d is odd, used in the Miller-Rabin witness test
+- Implement the witness test: `a^d ≠ 1 (mod n)` AND `a^(2^j * d) ≠ -1 (mod n)` for all j means composite
+- Understand strong pseudoprimes and why multiple witnesses reduce false positive rate
+- Use the deterministic witness set for 64-bit integers to get an exact answer
+- Compare with Fermat test: Miller-Rabin has no Carmichael number problem
 
-For probabilistic Miller-Rabin, each witness independently has a ≤ 1/4 chance of being fooled by a composite. With 12 witnesses, a composite passing all tests has probability ≤ (1/4)^12 ≈ 6 × 10^-8. But more powerfully: with the specific deterministic witness set `{2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37}`, the test is *provably correct* for all n < 3.3 × 10^24 — covering every 64-bit integer with certainty. This is what production RSA implementations use.
-
-Understanding Miller-Rabin also illuminates *why* RSA's random prime generation works: generate a random odd number, run Miller-Rabin with a few witnesses, repeat until prime. The prime number theorem guarantees roughly 1 in ln(n) candidates near n is prime — for 2048-bit primes, you need ~1400 trials on average.
-
-## The Intuition
-
-Factor `n - 1 = 2^s × d` where d is odd. By Fermat's little theorem, if n is prime, then `a^(n-1) ≡ 1 (mod n)` for any a. More precisely: the sequence `a^d, a^(2d), a^(4d), …, a^(2^s × d)` mod n must either start at 1, or hit -1 (= n-1) somewhere before the end. Any composite n fails this condition for at least 3/4 of all bases a. Checking multiple witnesses gives exponential confidence.
-
-`trailing_zeros()` is the idiomatic way to factor out powers of 2 from `n-1` — replaces the loop that tests `n % 2 == 0` repeatedly.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-fn mulmod(a: u64, b: u64, m: u64) -> u64 {
-    (a as u128 * b as u128 % m as u128) as u64  // u128 prevents overflow
-}
-
-fn pow_mod(mut base: u64, mut exp: u64, m: u64) -> u64 {
-    let mut result = 1u64;
-    base %= m;
-    while exp > 0 {
-        if exp & 1 == 1 { result = mulmod(result, base, m); }
-        base = mulmod(base, base, m);
-        exp >>= 1;
+pub fn miller_rabin(n: u64) -> bool {
+    if n < 4 { return n >= 2; }
+    if n % 2 == 0 { return false; }
+    let (mut r, mut d) = (0u32, n - 1);
+    while d % 2 == 0 { d /= 2; r += 1; }
+    // Witnesses that are deterministic for n < 3_317_044_064_679_887_385_961_981
+    for &a in &[2u64, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37] {
+        if !is_composite(n, a, d, r) { continue; }
+        return false;
     }
-    result
-}
-
-fn miller_witness(n: u64, d: u64, s: u32, a: u64) -> bool {
-    let mut x = pow_mod(a, d, n);
-    if x == 1 || x == n - 1 { return true; }   // Passed trivially
-    for _ in 1..s {
-        x = mulmod(x, x, n);
-        if x == n - 1 { return true; }           // Hit -1 in the sequence
-    }
-    false  // Failed: n is composite (or a is an exceptional witness)
-}
-
-pub fn is_prime(n: u64) -> bool {
-    match n {
-        0 | 1 => false,
-        2 | 3 | 5 | 7 => true,
-        _ if n % 2 == 0 || n % 3 == 0 => false,
-        _ => {
-            // Factor n-1 = 2^s * d with d odd
-            let mut d = n - 1;
-            let s = d.trailing_zeros();    // Count factors of 2
-            d >>= s;
-
-            // 12 witnesses: deterministic for all n < 3.3 × 10^24
-            const WITNESSES: &[u64] = &[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37];
-            WITNESSES.iter().all(|&a| a >= n || miller_witness(n, d, s, a))
-        }
-    }
+    true
 }
 ```
 
-The `a >= n` guard handles the edge case where a witness is larger than n itself (e.g., testing primality of n=5 with witness a=7).
+The witness set `{2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37}` covers all 64-bit integers deterministically (proven by exhaustive verification). The `is_composite` helper computes `a^d mod n` using `mod_pow` with `u128` intermediates, then checks the Miller-Rabin condition. Rust's exhaustive match or `for` over a fixed slice is idiomatic. Early return on `false` (composite found) is efficient. The function is pure and thread-safe with no global state.
 
-## What This Unlocks
+## OCaml Approach
 
-- **RSA key generation**: Generate random odd numbers, test with Miller-Rabin, repeat until prime — this is exactly how OpenSSL generates RSA primes.
-- **Large prime discovery**: Primality testing for Mersenne prime candidates, safe primes for Diffie-Hellman, and Sophie Germain primes all use Miller-Rabin or its deterministic refinements.
-- **Factoring integration**: Miller-Rabin combines with Pollard's rho (#825) to build a complete integer factorizer: recursively split n if composite, stop when n is prime.
+OCaml's Miller-Rabin decomposes `n-1` using a recursive/iterative bit-strip. The witness list is a `let witnesses = [2; 3; 5; 7; 11; 13; 17; 19; 23; 29; 31; 37]`. The test uses `List.for_all (fun a -> not (is_composite n a d r)) witnesses`. OCaml's `Int64` or `Zarith` handles modular multiplication for large n. The 63-bit native `int` suffices for n < 2^62; for full 64-bit range, `Int64` or `Zarith.mpz` is needed.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| 128-bit multiply | `Int64` widening or Zarith | `(a as u128 * b as u128) % m as u128` |
-| Factor 2s from n-1 | Manual loop dividing by 2 | `d.trailing_zeros()` — hardware instruction |
-| Witness iteration | `List.for_all (fun a -> ...)` | `WITNESSES.iter().all(|&a| ...)` |
-| Early exit on failure | Exception or bool accumulator | `all()` short-circuits on `false` |
-| Guard for small witness | Explicit `if a < n` check | `a >= n \|\|` in the closure |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| 64-bit modular mul | `as u128` intermediate | `Int64` or `Zarith` |
+| Witness iteration | `for &a in &[...]` | `List.for_all` |
+| Overflow safety | `u128` prevents overflow | `Zarith` arbitrary precision |
+| Deterministic range | n < 3.3 * 10^24 | Same witnesses, same range |
+| False positives | None with chosen witnesses | None |
+| Probabilistic mode | Add random witnesses | `Random.int64` witnesses |
+
+## Exercises
+
+1. Implement the probabilistic version with k random witnesses and estimate false positive rate empirically.
+2. Use Miller-Rabin to generate large primes: generate random odd n until Miller-Rabin returns true.
+3. Compare Miller-Rabin with the Fermat primality test on Carmichael numbers (which fool Fermat but not Miller-Rabin).
+4. Implement Baillie-PSW primality test (Miller-Rabin base 2 + strong Lucas) which has no known pseudoprimes.
+5. Benchmark Miller-Rabin vs. trial division for n up to 10^12 and measure crossover point.

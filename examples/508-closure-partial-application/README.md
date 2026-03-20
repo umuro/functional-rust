@@ -2,74 +2,75 @@
 
 ---
 
-# 508: Partial Application with Closures
+# Closure Partial Application
 
-**Difficulty:** 2  **Level:** Beginner-Intermediate
+Partial application fixes some arguments of a multi-argument function, producing a specialised single-argument function — implemented in Rust with closures that capture the fixed arguments.
 
-Fix some arguments of a function, producing a specialized version with fewer parameters.
+## Problem Statement
 
-## The Problem This Solves
+A function `add(x, y)` needs to be passed to `map` which expects `Fn(i32) -> i32`. Partial application solves this: `partial(add, 5)` returns `|y| add(5, y)` — the `5` is baked in. This pattern appears everywhere: creating specialised predicates (`between(0, 100, x)`), building pipeline stages with fixed configuration, and adapting multi-argument functions to single-argument interfaces. Haskell and OCaml have partial application built into the language via currying; Rust requires explicit closures.
 
-You have a general function `clamp(lo, hi, x)` and you need to call it hundreds of times always with `lo=0, hi=100`. Every call site repeats `clamp(0, 100, value)`. If the constants change, you update dozens of places.
+## Learning Outcomes
 
-Or you're building a pipeline: `items.iter().filter(|x| in_range(0, 100, x))` — the predicate logic is there but the bounds are scattered. What you really want is a pre-configured `in_range_0_100` you can pass around cleanly.
+- Implement generic `partial` that fixes the first argument of a 2-arg function
+- Implement `partial2` that fixes the first two arguments of a 3-arg function
+- Understand `A: Copy` bound — the fixed argument is copied into each returned closure
+- Write manual partial application with `create_adder(n)` and `create_range_checker(lo, hi)`
+- Recognise the connection between partial application and currying
 
-This is the problem partial application solves: fix the "configuration" arguments, get back a function that only takes the "input" arguments. It's a core technique in functional programming that dramatically reduces repetition and makes code read at the right level of abstraction.
+## Rust Application
 
-## The Intuition
-
-Partial application is like filling out a form ahead of time. `send_email(from, to, subject, body)` — you fill in `from` and `subject` once at the top of your module, and pass around `send_with_context(to, body)` to everyone who needs to send emails.
-
-In Python: `from functools import partial; add5 = partial(add, 5)`. In JavaScript: `const add5 = (x) => add(5, x)` or `add.bind(null, 5)`. Rust uses the same technique as JavaScript: a closure that captures the fixed arguments via `move` and forwards them to the original function.
-
-Unlike OCaml or Haskell where functions are curried by default (applying fewer args than expected automatically produces a partial application), Rust requires you to write the closure explicitly — but it's one line.
-
-## How It Works in Rust
+Generic `partial` fixes the first argument of any 2-arg function:
 
 ```rust
-fn clamp(lo: i32, hi: i32, x: i32) -> i32 { x.max(lo).min(hi) }
-fn between(lo: i32, hi: i32, x: i32) -> bool { x >= lo && x <= hi }
-
-// Manual partial application: capture fixed args via move closure
-let clamp_0_100 = |x| clamp(0, 100, x);   // lo and hi are fixed
-let in_teens    = |x| between(13, 19, x); // lo and hi are fixed
-
-println!("{}", clamp_0_100(150));  // 100
-println!("{}", in_teens(15));      // true
-
-// Generic partial helper: fix the first argument of any 2-arg function
-fn partial<A: Copy, B, C, F>(f: F, a: A) -> impl Fn(B) -> C
+pub fn partial<A: Copy, B, C, F>(f: F, a: A) -> impl Fn(B) -> C
 where F: Fn(A, B) -> C {
-    move |b| f(a, b)   // a is captured by value (Copy), b comes from caller
+    move |b| f(a, b)
 }
-
-let starts_with_hello = partial(|prefix: &str, s: &str| s.starts_with(prefix), "hello");
-println!("{}", starts_with_hello("hello world")); // true
-println!("{}", starts_with_hello("hi there"));    // false
-
-// In a pipeline: partially applied functions slot right into iterators
-let add5 = |x: &i32| x + 5;       // fixes the +5 part
-let double = |x: i32| x * 2;      // captures nothing; still "partially applies" the *2
-
-let result: Vec<i32> = [1, 2, 3, 4, 5].iter()
-    .map(add5)
-    .map(double)
-    .filter(|&x| between(13, 19, x))  // or .filter(in_teens.clone())
-    .collect();
 ```
 
-## What This Unlocks
+Usage:
 
-- **Cleaner pipelines** — pre-configure predicates and transformers at the top of a function; pass the specialized versions into `map`/`filter`/`sort_by`.
-- **Reusable configuration** — share pre-configured functions across a module without passing redundant parameters everywhere.
-- **Factory functions** — `make_validator(min, max)` returns a closure; hand validators to form fields, API endpoints, and CLI parsers uniformly.
+```rust
+let add5 = partial(|x, y| x + y, 5);
+assert_eq!(add5(10), 15);
+
+let clamp_to_100 = partial2(clamp, 0, 100);
+assert_eq!(clamp_to_100(150), 100);
+```
+
+Manual factory functions are often clearer than generic `partial`:
+
+```rust
+pub fn create_range_checker(lo: i32, hi: i32) -> impl Fn(i32) -> bool {
+    move |x| between(lo, hi, x)
+}
+```
+
+## OCaml Approach
+
+OCaml functions are curried by default — partial application is syntactic:
+
+```ocaml
+let add x y = x + y
+let add5 = add 5         (* partial application — no extra syntax *)
+let () = assert (add5 10 = 15)
+
+let clamp lo hi x = max lo (min hi x)
+let clamp_to_100 = clamp 0 100  (* fix first two args *)
+```
+
+This is a fundamental difference: OCaml's multi-argument functions are syntactic sugar for nested single-argument functions; Rust's multi-argument functions are genuinely multi-argument.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Partial application | `let add5 = (+) 5` — automatic | `let add5 = \|x\| add(5, x)` — explicit closure |
-| Curried by default | Yes — `f a b = (f a) b` | No — must wrap in closure |
-| Fix first arg | `let f = g arg1` | `move \|rest\| g(arg1, rest)` |
-| Generic helper | `let partial f a b = f a b` | `fn partial<A,B,C,F>(f: F, a: A) -> impl Fn(B)->C` |
-| Iterator integration | Natural with curried predicates | Closures plug directly into `map`/`filter` |
+1. **Implicit vs. explicit**: OCaml has built-in partial application via currying — `add 5` is legal. Rust requires an explicit closure or `partial` helper.
+2. **`Copy` constraint**: Rust's `partial` requires `A: Copy` so the fixed argument is copied into each returned closure; OCaml copies `int`/`float` primitives implicitly.
+3. **`partial2` generality**: Rust's `partial2` must be defined separately from `partial`; OCaml's currying handles any number of fixed arguments uniformly.
+4. **Specialisation at compile time**: Rust's `partial` is monomorphised — the returned closure is a distinct type per call; OCaml uses uniform representation for all closures.
+
+## Exercises
+
+1. **`partial_right`**: Write `fn partial_right<A, B: Copy, C, F>(f: F, b: B) -> impl Fn(A) -> C where F: Fn(A, B) -> C` that fixes the *second* argument.
+2. **URL builder**: Use `partial` or manual closures to build `get_users`, `get_orders` from a generic `make_request(method, endpoint)` base function.
+3. **Pipeline with partial**: Build a numeric pipeline `[partial(clamp, 0), partial(|x,n| x*n, 2), |x| x as f64 / 100.0]` using `chain_closures` from example 505 and verify the output.

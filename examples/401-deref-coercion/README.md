@@ -4,62 +4,37 @@
 
 # 401: Deref and Deref Coercions
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Automatic reference conversions that let smart pointers and owned types work seamlessly with borrowed slices and str.
+Rust's ownership system produces many wrapper types: `Box<T>`, `Arc<T>`, `String`, `Vec<T>`. Without deref coercions, using these types would require explicit unwrapping everywhere — `(*my_box).some_method()`, `(&my_string).as_str()`. The `Deref` trait and Rust's deref coercion rules automatically convert `&Box<T>` to `&T`, `&String` to `&str`, and `&Vec<T>` to `&[T]` when the compiler needs to. This makes functions accepting `&str` work seamlessly with `String`, `Box<String>`, `Arc<String>`, and any other type that dereferences to `str`.
 
-## The Problem This Solves
+Deref coercions are fundamental to `std`: they explain why `Box<T>` behaves like `T`, why `String` works where `&str` is expected, and how custom smart pointers integrate with the rest of the language.
 
-You have a `String` but a function wants `&str`. You have a `Vec<T>` but a function wants `&[T]`. You have a `Box<T>` but want to call methods on `T`. Copying the data would be wasteful; manual casting is noise. Rust solves this with *Deref coercions*: automatic, zero-cost reference conversions that trigger when types don't match but have a `Deref` chain connecting them.
+## Learning Outcomes
 
-Deref coercions make APIs ergonomic without sacrificing safety. A function `fn greet(s: &str)` works with `&String`, `&Box<String>`, or `&Arc<String>` — all coerce automatically. Without this, every string function would need to be duplicated for every string-like type.
+- Understand the `Deref` trait and its `type Target` associated type
+- Learn how Rust's deref coercion inserts `*` automatically at type boundaries
+- See how implementing `Deref<Target = T>` makes a type behave like a pointer to `T`
+- Understand the deref chain: `Arc<String>` → `String` → `str` through multiple coercions
+- Learn `DerefMut` for mutable dereferences and its role in transparent mutation
 
-The coercion happens at compile time. The compiler follows the chain of `Deref` impls — `String: Deref<Target=str>`, `Box<T>: Deref<Target=T>`, `Arc<T>: Deref<Target=T>` — until the types align. No runtime cost, no allocation.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `MyBox<T>` implements `Deref<Target = T>` by returning `&self.0`. With this, `*my_box` automatically gives `T`, and functions accepting `&T` accept `&MyBox<T>` through coercion. `string_length(s: &str)` accepts `&String`, `&Box<String>`, and `&MyBox<String>` all transparently. `DerefMut` provides the mutable dereference path. The coercion chain `&MyBox<String>` → `&String` → `&str` applies up to N dereferences automatically.
 
-Deref coercion is the compiler automatically inserting `*` dereferences until types match — like saying `&String` is "good enough" wherever `&str` is needed because `String` knows how to deref to `str`.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-// String → str coercion (String: Deref<Target = str>)
-fn greet(name: &str) { println!("Hello, {}!", name); }
-
-let owned = String::from("Alice");
-greet(&owned);          // &String coerces to &str automatically
-greet(&owned[..]);      // explicit slice, same result
-
-// Vec<T> → [T] coercion (Vec<T>: Deref<Target = [T]>)
-fn sum(nums: &[i32]) -> i32 { nums.iter().sum() }
-
-let v = vec![1, 2, 3];
-sum(&v);                // &Vec<i32> coerces to &[i32]
-
-// Box<T> → T coercion — call T's methods through Box
-let boxed = Box::new(String::from("hello"));
-greet(&boxed);          // Box<String> → String → str, two hops
-
-// The chain: Box<String> → deref → String → deref → str
-// Compiler inserts: &*(&*boxed) automatically
-```
-
-1. You write `&smart_pointer` where `&target` is needed.
-2. Compiler checks `Deref` impls, follows the chain until types align.
-3. Inserts the necessary `*` dereferences — all at compile time, zero cost.
-
-## What This Unlocks
-
-- **Universal API design**: Write functions accepting `&str` and `&[T]` — they work with all owning and smart-pointer types.
-- **Custom smart pointers**: Implement `Deref<Target=T>` on your type and get automatic ergonomics for free.
-- **Method resolution**: Calling `.len()` on a `Box<Vec<i32>>` traverses `Box → Vec → [T]` to find the method.
+OCaml has no automatic coercions — all conversions are explicit. `Buffer.contents buf` to get a string from a buffer, `String.to_bytes s` for byte conversion, etc. OCaml's objects support subtype coercion (`(obj :> base_class_type)`) but this is structural subtyping, not deref-based. The programmer writes explicit conversion functions where Rust would insert implicit deref coercions.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Automatic coercion | Subtyping (rare, mostly for polymorphism) | Deref chain coercion at compile time |
-| String types | One string type (`string`) | `String` (owned) / `&str` (borrowed) — coerce automatically |
-| Smart pointers | GC handles all; no manual Deref | `Box`, `Rc`, `Arc` all `Deref` to inner type |
-| Zero-cost | GC overhead exists | Coercions are compile-time transformations, no runtime cost |
-| Custom smart pointer ergonomics | N/A | `impl Deref for MyBox<T>` gives full coercion chain |
+1. **Implicit vs. explicit**: Rust inserts deref coercions automatically; OCaml requires explicit conversion at every call site.
+2. **Chain depth**: Rust applies deref coercions transitively to arbitrary depth; OCaml's explicit conversions never chain automatically.
+3. **Mutable deref**: Rust's `DerefMut` enables `*my_box = new_value` through the smart pointer; OCaml uses explicit setter functions or mutable record fields.
+4. **Smart pointer integration**: Rust's deref system lets `Box`, `Arc`, `Rc`, `Mutex` guards, and custom types all "disappear" at use sites; OCaml smart pointers require explicit unwrapping.
+
+## Exercises
+
+1. **Custom smart pointer**: Implement a `Counted<T>` smart pointer that wraps `T` and counts how many times it has been dereferenced. Implement `Deref<Target = T>` and `DerefMut`. Write tests verifying the count increments.
+2. **Coercion chain**: Write a function `fn bytes_length(s: &[u8]) -> usize`. Show that it accepts `Vec<u8>`, `Box<Vec<u8>>`, and a custom `ByteBuffer` implementing `Deref<Target = Vec<u8>>` through successive coercions.
+3. **Rc-like pool**: Implement a simplified `Pool<T>` with `clone_ref` returning a `PoolRef<T>` that implements `Deref<Target = T>`. Use an `Arc<T>` internally for the value, demonstrating how smart pointers compose with deref.

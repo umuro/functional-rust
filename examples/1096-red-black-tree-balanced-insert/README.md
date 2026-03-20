@@ -37,3 +37,9 @@ a new tree).
 2. **Pattern depth:** OCaml matches nested constructors in one pattern; Rust needs match guards + `let-else` destructuring
 3. **Ownership semantics:** `insert` takes `self` by value (consuming the old tree); OCaml shares structure via GC
 4. **Method style:** Rust uses `impl` blocks for a natural `tree.insert(x)` API; OCaml uses free functions `insert x t`
+
+## Exercises
+
+1. Implement `is_balanced` — a function that verifies all red-black invariants (no two consecutive red nodes, equal black heights on all paths) and returns a descriptive error on violation.
+2. Add a `remove_min` operation that deletes the smallest element while maintaining balance.
+3. Implement a `MultiSet` variant of the red-black tree that allows duplicate keys by storing a count alongside each element.

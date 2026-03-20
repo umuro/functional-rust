@@ -2,69 +2,61 @@
 
 ---
 
-# 288: Iterator collect()
+# 288: Materializing Iterators with collect()
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Materialize a lazy iterator into any collection type — `Vec`, `HashMap`, `HashSet`, `String`, `BTreeMap`, and more — including collecting `Result<Vec<T>>` from a fallible stream.
+Lazy iterators describe computations but produce no output until consumed. The `collect()` method is the primary way to materialize a lazy iterator pipeline into a concrete data structure. Its power lies in genericity: the same `collect()` call produces a `Vec`, `HashSet`, `HashMap`, `String`, `BTreeMap`, or any other `FromIterator`-implementing type, depending solely on the type annotation. This makes pipelines maximally composable — the output format is a separate decision from the transformation logic.
 
-## The Problem This Solves
+## Learning Outcomes
 
-An iterator is lazy — it produces elements on demand but doesn't store them. At some point you need the results in a concrete data structure you can index, share, or pass to APIs that don't accept iterators. Without `collect()`, you'd write a `for` loop pushing elements into a pre-allocated collection — boilerplate that drowns out the intent.
+- Understand `collect()` as materializing a lazy iterator into any `FromIterator<T>` type
+- Use type annotations (or turbofish `::<Vec<_>>()`) to specify the output collection type
+- Collect into `HashSet` for deduplication, `HashMap` from pairs, `String` from chars
+- Recognize `collect::<Result<Vec<T>, E>>()` as the short-circuit pattern for fallible collection
 
-`collect()` generalizes this: any type implementing `FromIterator<T>` can receive the elements. The *type you collect into* determines how elements are assembled. Collect `(K, V)` pairs into a `HashMap`. Collect `char`s into a `String`. Collect `Option<T>` or `Result<T, E>` — the entire collection short-circuits on the first `None` or `Err`, returning a single `Option<Vec<T>>` or `Result<Vec<T>, E>`.
+## Rust Application
 
-The main challenge is type inference: `collect()` can't infer the target type from the iterator alone. You need either a type annotation on the binding (`let v: Vec<i32> = ...`) or the turbofish (`.collect::<Vec<i32>>()`).
-
-## The Intuition
-
-Tell Rust what collection type you want; `collect()` drives the `FromIterator` machinery to assemble all elements into it.
-
-## How It Works in Rust
+`collect()` is generic over the output type, which is determined by type inference or explicit annotation:
 
 ```rust
-// Vec — the default
+// Vec: basic materialization
 let squares: Vec<u32> = (0..5).map(|x| x * x).collect();
-// → [0, 1, 4, 9, 16]
 
-// HashSet — automatic deduplication
-let set: HashSet<i32> = vec![1, 2, 2, 3, 3, 3].into_iter().collect();
-// set.len() == 3
+// HashSet: automatic deduplication
+let unique: HashSet<i32> = vec![1, 2, 2, 3, 3].into_iter().collect();
 
-// HashMap — from (K, V) iterator
-let map: HashMap<&str, u32> = [("a", 1), ("b", 2)].into_iter().collect();
+// HashMap: from (key, value) pairs
+let map: HashMap<&str, i32> = vec![("a", 1), ("b", 2)].into_iter().collect();
 
-// String — from chars
-let s: String = ['R', 'u', 's', 't'].iter().collect();
-// → "Rust"
+// String: from characters
+let s: String = "hello".chars().map(|c| c.to_ascii_uppercase()).collect();
 
-// BTreeMap — sorted by key
-let bmap: BTreeMap<i32, i32> = (0..5).map(|x| (x, x*x)).collect();
-
-// Result<Vec<T>> — fail fast on first parse error
-let nums: Result<Vec<i32>, _> = ["1", "2", "3"].iter()
-    .map(|s| s.parse::<i32>())
-    .collect();  // Ok([1, 2, 3])
-
-let broken: Result<Vec<i32>, _> = ["1", "oops", "3"].iter()
-    .map(|s| s.parse::<i32>())
-    .collect();  // Err(ParseIntError) — stops at first failure
+// Result<Vec>: fails on first error
+let nums: Result<Vec<i32>, _> = vec!["1", "2", "x"].iter()
+    .map(|s| s.parse::<i32>()).collect();
+// Err(...) because "x" fails to parse
 ```
 
-The turbofish syntax: `.collect::<Vec<_>>()` — `_` lets Rust infer the element type, you only specify the container.
+## OCaml Approach
 
-## What This Unlocks
+OCaml does not have a unified `collect` function. Each collection type has its own conversion function: `List.of_seq`, `Array.of_seq`, `Hashtbl.of_seq`, or `String.concat ""` for strings:
 
-- **Fallible batch processing:** `collect::<Result<Vec<_>, _>>()` runs every parse/conversion and either gives you all results or the first error — one expression replaces a try/catch loop.
-- **Deduplication:** `.collect::<HashSet<_>>()` removes duplicates with no extra code; `.collect::<BTreeSet<_>>()` does the same with sorted output.
-- **String assembly:** Collect `char` iterators, `&str` slices, or `String` segments directly into a `String` — no `push_str` loop needed.
+```ocaml
+(* OCaml: different function for each target type *)
+let lst = List.of_seq (Seq.map (fun x -> x*x) (Seq.init 5 Fun.id))
+let arr = Array.of_seq (Seq.map (fun x -> x*x) (Seq.init 5 Fun.id))
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| To list | Natural — lists are the base type | `.collect::<Vec<_>>()` |
-| To set | `List.sort_uniq compare` (manual) | `.collect::<HashSet<_>>()` |
-| To map | `List.fold_left` into Map | `.collect::<HashMap<K,V>>()` |
-| Type selection | Inferred from context | Annotation or turbofish required |
-| Fallible collect | Manual fold with error check | `.collect::<Result<Vec<_>, _>>()` |
+1. **Unified API**: Rust's `collect()` works for all `FromIterator` types via one method; OCaml requires type-specific conversion functions.
+2. **Type-driven dispatch**: The output type of `collect()` is selected by the compiler from type annotations alone — no conditional branching.
+3. **Fallible collection**: `collect::<Result<Vec<T>, E>>()` aggregates results, short-circuiting on first error — OCaml requires explicit fold logic.
+4. **Custom types**: Implementing `FromIterator` makes any user-defined collection participate in `collect()` — it is an extension point.
+
+## Exercises
+
+1. Collect a `Vec<(String, Vec<i32>)>` into a `HashMap<String, Vec<i32>>` using `collect()`.
+2. Use `collect::<String>()` to join a vector of characters with an uppercase transformation.
+3. Collect a `Vec<Result<i32, String>>` into `Result<Vec<i32>, String>`, then separately collect all errors using `partition()`.

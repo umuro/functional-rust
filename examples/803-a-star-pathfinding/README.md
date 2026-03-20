@@ -2,80 +2,37 @@
 
 ---
 
-# 803. A* Pathfinding with Manhattan Heuristic
+# 803-a-star-pathfinding — A* Pathfinding
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Guided shortest-path search on a 2D grid using a heuristic to focus exploration toward the goal — O(E log V) in the worst case, much faster in practice.
+A* (Hart, Nilsson, Raphael, 1968) is the standard pathfinding algorithm in games, robotics, and navigation systems. It improves on Dijkstra by adding a heuristic that guides the search toward the goal, dramatically reducing explored nodes. The Manhattan distance heuristic is admissible (never overestimates) on grids, guaranteeing optimal paths. Used in every major game engine (Unity NavMesh, Unreal AI), Google Maps, and robot motion planning.
 
-## The Problem This Solves
+## Learning Outcomes
 
-A* is the pathfinding algorithm used in virtually every game engine, robotics motion planner, and GPS navigation system. Dijkstra's algorithm expands outward uniformly in all directions; A* focuses the search toward the goal by adding a heuristic estimate of remaining cost. On grid maps with many nodes, this can reduce explored nodes by orders of magnitude compared to Dijkstra.
+- Implement A* using an open set (`BinaryHeap<Reverse<(f_score, position)>>`) with `came_from` map
+- Use the Manhattan distance `|dx| + |dy|` as an admissible heuristic for grid movement
+- Track `g_score` (cost from start) and `f_score = g_score + h(goal)` per node
+- Reconstruct the path by walking the `came_from` map backward from goal to start
+- Understand why admissible heuristics guarantee optimal paths
 
-The choice of heuristic determines both correctness and performance: a *consistent* (monotone) heuristic guarantees optimal paths. For grid movement allowing only cardinal directions, the Manhattan distance `|dx| + |dy|` is the exact minimum cost to reach the goal, making it an ideal admissible heuristic.
+## Rust Application
 
-## The Intuition
+`astar(start, goal, obstacles)` uses `HashSet` for obstacle lookup, a `BinaryHeap<Reverse<(usize, (i32,i32))>>` for the open set, `HashMap<pos, g_score>`, and `came_from: HashMap<pos, pos>`. Expands 4-directional neighbors, skips obstacles, and updates costs. On reaching `goal`, reconstructs the path by walking `came_from`. Tests verify path existence and obstacle avoidance.
 
-A* maintains a priority queue ordered by `f = g + h`, where `g` is the actual cost from start to the current node, and `h` is the heuristic estimate to the goal. Nodes with low `f` are explored first — the algorithm "aims" at the goal. Dijkstra is A* with `h = 0`. A* with Manhattan heuristic on a grid is Dijkstra with perfect cost guidance. Rust implements the min-heap with `BinaryHeap<Reverse<(f, g, row, col)>>`, using `Reverse` because `BinaryHeap` is a max-heap. OCaml would use a priority queue module or sorted list; the structure is otherwise identical.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-use std::collections::BinaryHeap;
-use std::cmp::Reverse;
-
-// O(E log V) worst case; in practice much faster with a good heuristic
-// grid: 0=passable, b'#'=wall
-fn a_star(
-    grid: &[Vec<u8>],
-    start: (usize, usize),
-    goal:  (usize, usize),
-) -> Option<Vec<(usize, usize)>> {
-    let mut g_cost = vec![vec![u64::MAX / 2; cols]; rows];
-    let mut came: Vec<Vec<Option<(usize, usize)>>> = vec![vec![None; cols]; rows];
-    let mut heap = BinaryHeap::new();
-
-    // Heuristic: Manhattan distance (admissible for cardinal movement)
-    let h = |r: usize, c: usize| -> u64 {
-        ((r as i64 - goal.0 as i64).abs() + (c as i64 - goal.1 as i64).abs()) as u64
-    };
-
-    g_cost[start.0][start.1] = 0;
-    heap.push(Reverse((h(start.0, start.1), 0u64, start.0, start.1)));
-    //                  ^f                   ^g    ^row      ^col
-
-    while let Some(Reverse((_, g, r, c))) = heap.pop() {
-        if g > g_cost[r][c] { continue; }   // stale entry
-        if (r, c) == goal { /* reconstruct and return */ }
-
-        for (dr, dc) in [(-1i64,0),(1,0),(0,-1),(0,1)] {
-            // bounds check, wall check, then:
-            let ng = g + 1;
-            if ng < g_cost[nr][nc] {
-                g_cost[nr][nc] = ng;
-                came[nr][nc]   = Some((r, c));
-                heap.push(Reverse((ng + h(nr, nc), ng, nr, nc)));
-            }
-        }
-    }
-    None
-}
-```
-
-Path reconstruction walks `came[][]` backwards from the goal to the start, then reverses. The stale-entry guard `if g > g_cost[r][c] { continue }` is the same lazy-deletion pattern as Prim's/Dijkstra.
-
-## What This Unlocks
-
-- **Game AI pathfinding**: every RTS and RPG game uses A* (or a variant like Theta* or Jump Point Search) for unit navigation on tile maps.
-- **Robot motion planning**: mobile robots compute collision-free paths through occupancy grid maps using A* with Euclidean or Manhattan heuristics.
-- **GPS routing**: road navigation systems use A* (or Bidirectional A*) with geographic distance as the heuristic, processing millions of road network nodes in milliseconds.
+OCaml implements A* using `Map.t` for `g_score` and `came_from`, and `Set.t` as the open set with a custom ordering by `f_score`. OCaml's `Hashtbl` provides faster mutable alternatives. The `OcamlAI` library and various game frameworks use OCaml A* implementations. The path reconstruction uses `List.rev` on the accumulated path.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Min-heap | Priority queue module | `BinaryHeap<Reverse<(u64, u64, usize, usize)>>` |
-| Heuristic | Inline function or `let h = ...` | Closure `let h = \|r, c\| -> u64 { ... }` |
-| Stale entry | `Hashtbl` of visited + check | `if g > g_cost[r][c] { continue }` |
-| Path matrix | `(int * int) option array array` | `Vec<Vec<Option<(usize, usize)>>>` |
-| Bounds check | `if r >= 0 && r < rows ...` | Cast `i64` coordinates, then `as usize` after check |
+1. **Priority queue**: Rust's `BinaryHeap<Reverse<...>>` is efficient; OCaml's balanced BST-based `Set` has higher constant factors but equivalent asymptotic complexity.
+2. **Heuristic pluggability**: Rust's closure `let heuristic = |p| ...` makes it easy to swap heuristics; OCaml uses first-class functions similarly.
+3. **Tuple comparison**: Rust's `Reverse((f_score, pos))` sorts by f_score first due to tuple lexicographic order; OCaml's custom `Set.compare` must be explicit.
+4. **Game use**: Unity's NavMesh, Unreal's PathFollowingComponent, and Godot's NavigationAgent all use A* variants internally; Rust game engines use the same algorithm.
+
+## Exercises
+
+1. Add diagonal movement (8 directions) with a cost of `√2` for diagonals, and switch the heuristic to Euclidean distance.
+2. Implement weighted A* (multiply heuristic by a weight `w > 1`) to trade optimality for speed. Compare path quality and nodes expanded for `w = 1, 1.5, 2.0`.
+3. Add a `max_steps` limit to A* and return the partial path if the goal is not reached within the step budget — useful for real-time game AI.

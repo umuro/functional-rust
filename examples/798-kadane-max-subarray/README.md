@@ -2,69 +2,37 @@
 
 ---
 
-# 798. Kadane's Algorithm: Maximum Subarray Sum
+# 798-kadane-max-subarray — Kadane's Algorithm
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Find the contiguous subarray with the maximum sum in O(n) — and recover its exact start and end indices.
+Maximum subarray sum (Kadane's algorithm, 1984) finds the contiguous subarray with the largest sum in O(n) time. This is an astonishing result: intuitively it seems you must check all pairs, but a single pass suffices. It models maximum profit from a sequence of daily stock gains/losses, maximum signal amplitude in signal processing, and appears in image processing (maximum sum submatrix). It is one of the most elegant DP algorithms.
 
-## The Problem This Solves
+## Learning Outcomes
 
-The maximum subarray problem appears in financial analysis (find the period of greatest cumulative gain in a price series), image processing (find the brightest rectangular region in a 2D intensity map — Kadane in 2D), signal processing (find the strongest burst in a noisy signal), and genomics (find the region of highest GC-content in a sequence).
+- Understand Kadane's insight: at each position, either extend the current subarray or start a new one
+- Implement `max_subarray(arr) -> i32` with O(n) time and O(1) space
+- Track start and end indices with `max_subarray_indices` for reconstruction
+- Handle all-negative arrays (maximum subarray is the least-negative element)
+- Extend to the 2D case (maximum sum submatrix) using Kadane's on column prefix sums
 
-Despite looking simple, the problem has subtle edge cases (all-negative arrays, single elements) that naive brute-force O(n²) solutions handle poorly. Kadane's algorithm solves it exactly in a single pass, making it suitable for streaming data where you can't store the full array.
+## Rust Application
 
-## The Intuition
+`max_subarray` tracks `max_so_far` and `max_ending`. At each element: `max_ending = max(x, max_ending + x)` — start fresh if previous was dragging sum negative. `max_subarray_indices` additionally tracks `start`, `end`, and `s` (current start candidate). Classic test: `[-2,1,-3,4,-1,2,1,-5,4]` → sum=6 (subarray `[4,-1,2,1]`).
 
-At each position, you have a choice: extend the current subarray, or start fresh. If `current_sum + x < x`, it means the current prefix is dragging you down — drop it and start a new subarray at `x`. Track the best seen so far. That's it. The entire algorithm fits in one conditional per element. OCaml expresses this elegantly as a fold over the array with an accumulator tuple; Rust uses a `for` loop with `enumerate` to also track indices.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-// O(n) time, O(1) space — single pass
-fn max_subarray(arr: &[i64]) -> (i64, usize, usize) {
-    assert!(!arr.is_empty(), "array must be non-empty");
-    let mut best_sum   = arr[0];
-    let mut best_start = 0;
-    let mut best_end   = 0;
-    let mut curr_sum   = arr[0];
-    let mut curr_start = 0;
-
-    for (i, &x) in arr.iter().enumerate().skip(1) {
-        if x > curr_sum + x {
-            // Starting fresh is better than extending
-            curr_sum   = x;
-            curr_start = i;
-        } else {
-            curr_sum  += x;
-        }
-        if curr_sum > best_sum {
-            best_sum   = curr_sum;
-            best_start = curr_start;
-            best_end   = i;
-        }
-    }
-    (best_sum, best_start, best_end)
-}
-
-// Example: [-2, 1, -3, 4, -1, 2, 1, -5, 4]
-// Answer:  sum=6, subarray=[4, -1, 2, 1] at indices 3..6
-```
-
-The condition `x > curr_sum + x` is equivalent to `curr_sum < 0` but avoids the separate negative-sum check. For all-negative arrays, this correctly returns the least-negative single element. The index tracking adds four extra variables but no asymptotic cost.
-
-## What This Unlocks
-
-- **Time-series analysis**: find the interval of maximum cumulative return in a sequence of daily price changes — directly applicable to backtesting trading strategies.
-- **2D max subarray**: the standard generalisation fixes each pair of rows, runs Kadane on the column sums — O(n²m) for an n×m matrix. Used in image segmentation and 2D pattern detection.
-- **Streaming algorithms**: Kadane processes one element at a time with O(1) state, making it ideal for sliding-window variants and online data processing where the array doesn't fit in memory.
+OCaml implements Kadane's with a `fold_left` over the array, carrying `(max_so_far, max_ending)` as the accumulator: `Array.fold_left (fun (best, cur) x -> let cur' = max x (cur + x) in (max best cur', cur')) (arr.(0), arr.(0)) arr`. This functional one-liner is idiomatic OCaml. The index-tracking variant requires imperative state with `ref` cells.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Iteration | `Array.fold_left` with tuple accumulator | `for (i, &x) in arr.iter().enumerate()` |
-| Start fresh condition | `x > curr + x` or `curr < 0` | Same condition, identical semantics |
-| Index tracking | Extra `ref` variables in fold | Named mutable variables `curr_start`, `best_end` |
-| All-negative case | Returns single element (same logic) | Same: `best_sum = arr[0]` initialisation handles it |
-| Return type | Tuple `(sum, start, end)` | Tuple `(i64, usize, usize)` |
+1. **Functional elegance**: OCaml's `fold_left` expresses Kadane's as a single combinator; Rust's explicit loop is more readable for the index-tracking variant.
+2. **All-negative case**: Both languages return the maximum single element for all-negative arrays; the algorithm handles this naturally.
+3. **2D extension**: Both languages implement the 2D variant by fixing left and right column boundaries and running Kadane's on the row-sum array.
+4. **Applications**: The `max_subarray` pattern appears in financial (buy-low-sell-high when returns are daily differences), signal processing, and machine learning (max activation windows).
+
+## Exercises
+
+1. Implement `max_submatrix(matrix: &[Vec<i32>]) -> i32` using the column-compression + Kadane's technique to find the maximum sum submatrix in O(n² × m) time.
+2. Implement `max_circular_subarray(arr: &[i32]) -> i32` for circular arrays using the observation that max(normal, total - min_subarray) handles the wrap-around case.
+3. Implement `k_max_nonoverlapping_subarrays(arr, k)` that finds the top k non-overlapping maximum sum subarrays using a DP extension of Kadane's.

@@ -40,3 +40,9 @@ neighbours, matching the OCaml `List.fold_left` pattern directly.
 2. **Distance map**: OCaml's `Map.Make(String)` is persistent/immutable; Rust's `BTreeMap` is mutable but produces the same sorted-key iteration order.
 3. **Tail recursion**: OCaml's TCO turns `let rec go` into a loop automatically; Rust's `fn go` recurses on the stack — safe for small graphs, not for production-scale graphs.
 4. **Stale entries**: Both approaches allow duplicate `(dist, node)` entries in the priority queue; the `alt < current` guard ensures only improvements are enqueued.
+
+## Exercises
+
+1. Generalize the graph representation to use a generic edge-weight type `W: Ord + Add + Zero` so the same Dijkstra function works on both integer and floating-point graphs.
+2. Implement `eccentricity` — the maximum shortest-path distance from a given node to any reachable node — and use it to compute the graph's diameter and radius.
+3. Modify Dijkstra to return a `Stream`-like iterator that yields `(node, distance)` pairs in discovery order, enabling early termination once a target node is reached.

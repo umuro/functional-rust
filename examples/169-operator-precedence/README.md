@@ -2,93 +2,36 @@
 
 ---
 
-# 169: Operator Precedence
+# Operator Precedence
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Build a full operator table — multi-character operators, multiple precedence levels, and two equivalent parsing algorithms.
+Operator precedence determines how `1 + 2 * 3 - 4 / 2` is parsed: multiplication and division bind tighter than addition and subtraction, so the result is `1 + (2*3) - (4/2) = 5`. Associativity determines how `1 - 2 - 3` groups: left-associativity gives `(1-2)-3 = -4`, right-associativity gives `1-(2-3) = 2`. Encoding both correctly in a parser requires a systematic approach: this example shows the classic table-driven, multi-level recursive descent method.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Real languages have many operators: `+`, `*`, `==`, `!=`, `<=`, `>=`, `&&`, `||`. They all have different precedence levels. `&&` binds more tightly than `||`. Comparison operators bind more tightly than `&&`. Arithmetic binds more tightly than comparison. Getting this wrong causes subtle bugs: `a && b || c` parsed as `a && (b || c)` instead of `(a && b) || c`.
+- Understand precedence levels and how they create a parse hierarchy
+- Learn left vs. right associativity and how to encode each in recursive descent
+- See the `Assoc` enum and precedence table as the structured alternative to Pratt's binding power
+- Practice parsing real arithmetic with correct operator grouping
 
-Multi-character operators introduce another problem: `>=` must be matched before `>`, or you'll parse `>=` as `>` followed by `=` — which is wrong. Longest-match-first is the rule.
+## Rust Application
 
-This example extends the Pratt parser from example 168 with a proper operator table, two-character operators, and also shows *precedence climbing* — a different algorithm for the same problem, proving they're equivalent.
+The parser defines `(precedence: u8, Assoc: Left|Right)` for each operator. `parse_expr(input, min_prec)` uses a loop: parse a number, then while the next operator has precedence `>= min_prec`, consume it and recursively parse the right side. For right-associative operators, the recursive call uses `min_prec` (same level); for left-associative, it uses `min_prec + 1` (strictly higher). This single loop correctly handles all precedence levels without separate functions per level.
 
-## The Intuition
+## OCaml Approach
 
-Replace the hardcoded `match op { '+' => (20, 21), ... }` with a table of `OpInfo` structs. Each entry has the symbol, precedence level, and associativity. Computing binding powers from precedence + associativity is straightforward: left-associative at level N → `(2*N, 2*N+1)`, right-associative → `(2*N+1, 2*N)`.
-
-For multi-character operators: scan for 2-char operators before 1-char operators.
-
-## How It Works in Rust
-
-```rust
-#[derive(Clone, Copy, Debug)]
-enum Assoc { Left, Right }
-
-#[derive(Debug)]
-struct OpInfo {
-    symbol: &'static str,
-    precedence: u8,
-    assoc: Assoc,
-}
-
-const OPERATORS: &[OpInfo] = &[
-    OpInfo { symbol: "||", precedence: 1, assoc: Assoc::Left },
-    OpInfo { symbol: "&&", precedence: 2, assoc: Assoc::Left },
-    OpInfo { symbol: "==", precedence: 3, assoc: Assoc::Left },
-    OpInfo { symbol: "!=", precedence: 3, assoc: Assoc::Left },
-    OpInfo { symbol: "<=", precedence: 4, assoc: Assoc::Left },
-    OpInfo { symbol: ">=", precedence: 4, assoc: Assoc::Left },
-    OpInfo { symbol: "<",  precedence: 4, assoc: Assoc::Left },
-    OpInfo { symbol: ">",  precedence: 4, assoc: Assoc::Left },
-    OpInfo { symbol: "+",  precedence: 5, assoc: Assoc::Left },
-    OpInfo { symbol: "-",  precedence: 5, assoc: Assoc::Left },
-    OpInfo { symbol: "*",  precedence: 6, assoc: Assoc::Left },
-    OpInfo { symbol: "/",  precedence: 6, assoc: Assoc::Left },
-    OpInfo { symbol: "^",  precedence: 7, assoc: Assoc::Right },
-];
-
-// Try 2-char operators first, then 1-char — longest match wins
-fn find_op(input: &str) -> Option<&'static OpInfo> {
-    // 2-char pass
-    for op in OPERATORS {
-        if op.symbol.len() == 2 && input.starts_with(op.symbol) {
-            return Some(op);
-        }
-    }
-    // 1-char pass
-    for op in OPERATORS {
-        if op.symbol.len() == 1 && input.starts_with(op.symbol) {
-            return Some(op);
-        }
-    }
-    None
-}
-
-// Convert precedence + associativity to (left_bp, right_bp)
-fn binding_power(op: &OpInfo) -> (u8, u8) {
-    let p = op.precedence * 2;
-    match op.assoc {
-        Assoc::Left  => (p, p + 1),  // right bp slightly higher → left-assoc
-        Assoc::Right => (p + 1, p),  // left bp slightly higher → right-assoc
-    }
-}
-```
-
-## What This Unlocks
-
-- **Language-grade operator tables** — extend to 20+ operators by adding rows to the table.
-- **Two parsing algorithms** — Pratt and precedence climbing produce identical ASTs; pick whichever reads more clearly to you.
-- **Multi-character operators** — `==`, `!=`, `<=`, `>=`, `&&`, `||` all handled correctly.
+OCaml's Menhir generator handles this declaratively. Hand-written OCaml parsers use either recursive descent (one `parse_X` function per level) or the precedence-climbing algorithm (same as this example). The `%left`/`%right`/`%nonassoc` declarations in Menhir are compiled into identical shift-reduce decisions in the generated LALR table.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Operator table | `op_info list` with record syntax | `&[OpInfo]` constant slice |
-| Record | `{ symbol: string; precedence: int; assoc: assoc }` | `struct OpInfo { symbol: &'static str, ... }` |
-| Associativity | `type assoc = Left \| Right` | `enum Assoc { Left, Right }` with `#[derive(Clone, Copy)]` |
-| Longest-match | Try longer strings first in list | Same — scan `OPERATORS` for 2-char before 1-char |
+1. **Precedence climbing vs. Pratt**: Example 168 uses Pratt (binding powers as numbers); this example uses precedence climbing (precedence + associativity table) — both are equivalent in expressive power.
+2. **Generator vs. manual**: OCaml Menhir encodes precedence declaratively; hand-written parsers in both languages use procedural algorithms.
+3. **Associativity encoding**: Left-associativity uses `prec + 1` for recursive right-side parsing; right-associativity uses `prec` — the same in Pratt.
+4. **Non-associativity**: Some operators are non-associative (`a < b < c` is an error in Python); this requires checking after parsing and emitting an error.
+
+## Exercises
+
+1. Add `**` (exponentiation) as right-associative with higher precedence than `*` and `/`.
+2. Verify `1 - 2 - 3` parses as `(1 - 2) - 3 = -4` (left-associative), not `1 - (2 - 3) = 2`.
+3. Implement comparison operators (`<`, `>`, `==`) as non-associative — `a < b < c` should be a parse error.

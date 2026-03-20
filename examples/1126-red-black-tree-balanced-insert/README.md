@@ -36,3 +36,9 @@ form new nodes — avoiding full-tree copies while producing a new root.
 2. **Pattern matching:** OCaml's tuple-of-variant patterns map cleanly to nested `if let` in Rust; using `ref` inside reference patterns creates double-references (`&&T`) — avoid it.
 3. **Root invariant:** Both make the root black after insert; OCaml does it in the outer `match`, Rust does it by destructuring and rebuilding the root node.
 4. **Type bounds:** The `Ord + Clone` bounds on `impl<T>` make the constraints explicit, whereas OCaml's type-class inference handles this implicitly.
+
+## Exercises
+
+1. Implement `to_vec` for the red-black tree that performs an in-order traversal and collects elements into a sorted `Vec<T>`.
+2. Add `insert_all` that takes a `Vec<T>` and inserts each element, then write a test confirming the resulting tree contains exactly those elements in sorted order.
+3. Implement `delete_min` that removes the smallest element while preserving red-black invariants; verify correctness by checking the BST and color properties after each operation.

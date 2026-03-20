@@ -4,76 +4,56 @@
 
 # 271: Transform-and-Find with find_map()
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Find the first element that both matches and transforms successfully — returns the transformed value, not the original.
+A very common pattern is: try to convert each element into a useful form, stop at the first success, and return it. For example, parse numbers from strings until one succeeds, look up each key in several registries until a hit, or try multiple fallback strategies until one works. The naive approach chains `map()` and `find()`, but this creates intermediate `Option` values. The `find_map(f)` adapter fuses these into a single lazy operation: find the first `Some(...)` result from applying `f`.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You're scanning a list looking for the first element that passes a test *and* needs to be transformed before you use it. Parse the first valid integer from a list of strings. Find the first filename with a `.rs` extension and return just the stem. Find the first key=value pair in a config file and return the parsed pair. 
+- Understand `find_map(f)` as fused `map(f).flatten().next()` — find the first `Some` from `f`
+- Recognize the "try each, return first success" pattern that `find_map` optimally handles
+- Use `find_map()` to parse heterogeneous data, looking for the first valid interpretation
+- Distinguish from `filter_map()`: `find_map` stops at first success, `filter_map` collects all
 
-Without `find_map`, you'd write `filter_map(f).next()` — or a manual loop with an `if let Some(x) = transform(element)` that breaks on success. Both work, but `find_map` makes the intent explicit: "find the first element for which this transformation succeeds."
+## Rust Application
 
-The key is that the closure returns `Option<B>` — `None` means "skip this element", `Some(value)` means "found it, return this value." OCaml doesn't have a built-in equivalent; you'd use `List.find_map` (added in OCaml 4.10) or compose `filter_map` with `List.nth`.
-
-## The Intuition
-
-`find_map(f)` applies `f` to each element in order. The first time `f` returns `Some(value)`, it stops and returns that `Some(value)`. If `f` returns `None` for every element, the result is `None`.
-
-```rust
-let strings = ["hello", "42", "world", "17"];
-let first_int = strings.iter().find_map(|s| s.parse::<i32>().ok());
-// → Some(42)   stops at "42", never processes "world" or "17"
-```
-
-## How It Works in Rust
+`Iterator::find_map(f)` calls `f` on each element and returns the first `Some(...)` value, stopping immediately. Returns `None` if all calls return `None`:
 
 ```rust
-let strings = ["hello", "42", "world", "17", "foo"];
+let strings = ["foo", "bar", "42", "baz"];
+let result = strings.iter().find_map(|s| s.parse::<i32>().ok());
+// Some(42) — stops after finding "42", doesn't process "baz"
 
-// Parse: first valid integer
-let first_int = strings.iter().find_map(|s| s.parse::<i32>().ok());
-// → Some(42)
-
-// Conditional transform: first word longer than 4 chars, return its length
-let first_long_len = strings.iter()
-    .find_map(|s| if s.len() > 4 { Some(s.len()) } else { None });
-// → Some(5)  ("hello" has 5 chars)
-
-// Parse key=value pairs — use ? operator inside closure
-let env_vars = ["PATH=/usr/bin", "HOME=/root", "BAD", "USER=alice"];
-let first_kv = env_vars.iter().find_map(|s| {
-    let mut parts = s.splitn(2, '=');
-    let key = parts.next()?;   // None if empty
-    let val = parts.next()?;   // None if no '='
-    Some((key, val))
-});
-// → Some(("PATH", "/usr/bin"))
-
-// Strip suffix: first .rs file stem
-let files = ["main.txt", "lib.rs", "README.md", "util.rs"];
-let first_rs_stem = files.iter().find_map(|f| f.strip_suffix(".rs"));
-// → Some("lib")
-
-// find_map(f) == filter_map(f).next()  — they're equivalent
-let equiv = strings.iter().filter_map(|s| s.parse::<i32>().ok()).next();
-assert_eq!(first_int, equiv);
+// Find first number larger than 10
+let nums = [1i32, 2, 3, 15, 4, 20];
+let result = nums.iter().find_map(|&x| if x > 10 { Some(x * 2) } else { None });
+// Some(30) — transforms and returns first match
 ```
 
-The `?` operator inside the closure is idiomatic — it converts `None`/`Err` to `None` and returns early from the closure.
+## OCaml Approach
 
-## What This Unlocks
+OCaml's `List.find_map` (standard since OCaml 4.10) is exactly equivalent:
 
-- **Search + parse in one pass** — scan strings/tokens and return the first successfully parsed value.
-- **Conditional extraction** — return the first element that passes a condition *and* its derived value (not the original).
-- **Early-exit transformation** — stop as soon as you find what you need, without allocating an intermediate collection.
+```ocaml
+let result = List.find_map (fun s ->
+  match int_of_string_opt s with
+  | Some n -> Some n
+  | None -> None
+) ["foo"; "bar"; "42"; "baz"]
+(* Some 42 *)
+```
+
+This is one of the cleanest analogies between the two languages — both provide `find_map` as a standard library function.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Find and transform | `List.find_map` (4.10+) | `iter.find_map(f)` |
-| Stops at first `Some` | Yes | Yes — lazy, early exit |
-| Equivalent to | `filter_map f lst \|> List.hd_opt` | `.filter_map(f).next()` |
-| Returns | `'b option` | `Option<B>` |
-| Closure return type | `'a -> 'b option` | `FnMut(T) -> Option<B>` |
+1. **Standard library parity**: Both Rust and OCaml (4.10+) provide `find_map` as a standard function with identical semantics.
+2. **Lazy**: Both implementations stop at the first `Some` — crucial for expensive operations like network lookups or file parsing.
+3. **vs filter_map**: `find_map` returns `Option<B>` (first success); `filter_map` returns `Iterator<Item=B>` (all successes).
+4. **Combinatorial search**: Useful in plugin systems, format auto-detection, and fallback chains where you try until one works.
+
+## Exercises
+
+1. Given a list of user IDs, use `find_map()` to return the first user that exists in a `HashMap` lookup.
+2. Try to parse a string first as `i64`, then as `f64`, then as `bool`, using `find_map` over a list of parsing functions.
+3. Implement `find_map` from scratch using only `map()`, `filter()`, and `next()`, then verify it produces identical results.

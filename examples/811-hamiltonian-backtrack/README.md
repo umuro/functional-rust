@@ -2,93 +2,37 @@
 
 ---
 
-# 811: Hamiltonian Cycle via Backtracking
+# 811-hamiltonian-backtrack — Hamiltonian Path (Backtracking)
 
-**Difficulty:** 5  **Level:** Master
+## Problem Statement
 
-Find a cycle that visits every vertex exactly once — NP-complete, solved by exhaustive backtracking with pruning.
+A Hamiltonian path visits every vertex exactly once. Unlike Eulerian path (efficient, O(V+E)), Hamiltonian path is NP-complete — no polynomial algorithm is known. The backtracking approach prunes the search tree by abandoning partial paths that cannot possibly complete. It is the basis for TSP (traveling salesman) solvers and appears in puzzle solving (knight's tour, Sudoku) and genome sequencing (alternative to Eulerian for short reads).
 
-## The Problem This Solves
+## Learning Outcomes
 
-A Hamiltonian cycle is a closed path through a graph that visits every vertex exactly once. Unlike Eulerian circuits (every *edge* once, solvable in O(V+E)), the Hamiltonian version is NP-complete — no polynomial algorithm is known, and none is expected.
+- Implement backtracking for Hamiltonian path: try each unvisited neighbor, recurse, undo on failure
+- Use a `visited: Vec<bool>` array to track which vertices are in the current path
+- Understand why backtracking is still exponential worst-case but practical for small graphs
+- Apply pruning heuristics: Warnsdorff's rule for knight's tour
+- See why Hamiltonian is NP-complete while Eulerian is polynomial
 
-Use backtracking for Hamiltonian path/cycle on small graphs (up to ~20 vertices in practice). It appears in route planning (visit every city exactly once and return), puzzle solving (knight's tour on a chessboard), and as a subroutine in TSP solvers. For larger instances you'd switch to dynamic programming (Held-Karp, O(2^n · n²)) or heuristics.
+## Rust Application
 
-The algorithm returns `Some(path)` if a Hamiltonian cycle exists, or `None` if the graph has none. The path is a vector of vertex indices forming the cycle (first vertex = last vertex implicitly).
+`hamiltonian_path(n, edges)` builds an adjacency matrix. Starts at vertex 0 with `visited[0] = true`. `backtrack` tries each unvisited neighbor `next`: if `adj[last][next]`, set `visited[next]`, push to path, recurse; if `path.len() == n`, return true. Backtrack by popping and clearing visited. Returns the first complete path found, or `None`.
 
-## The Intuition
+## OCaml Approach
 
-Build the path one vertex at a time. At each step, try every unvisited neighbour of the current endpoint. If you reach a dead end (no valid next vertex), backtrack and try a different choice. When all vertices are visited, check if there's an edge back to the start — if yes, you have a Hamiltonian cycle.
-
-Worst case: O(n!) — trying every permutation. In practice, pruning (only extend via actual edges) cuts this dramatically for sparse graphs. For dense graphs approaching O(n²) edges, the exponential character dominates.
-
-In OCaml, backtracking fits naturally into recursive functions with immutable path tracking. In Rust, you use a mutable `visited` bitset and `path` vector, undoing changes on backtrack — explicit undo/redo rather than functional state threading.
-
-## How It Works in Rust
-
-```rust
-fn hamiltonian_cycle(adj: &[Vec<usize>]) -> Option<Vec<usize>> {
-    let n = adj.len();
-    if n == 0 { return Some(vec![]); }
-
-    let mut path = vec![0usize];       // start at vertex 0
-    let mut visited = vec![false; n];
-    visited[0] = true;
-
-    if backtrack(adj, &mut path, &mut visited, n) {
-        Some(path)
-    } else {
-        None
-    }
-}
-
-fn backtrack(
-    adj: &[Vec<usize>],
-    path: &mut Vec<usize>,
-    visited: &mut Vec<bool>,
-    n: usize,
-) -> bool {
-    if path.len() == n {
-        // All vertices visited — check if last connects back to start
-        let last  = *path.last().unwrap();
-        let start = path[0];
-        return adj[last].contains(&start);
-    }
-
-    let current = *path.last().unwrap();
-    for &next in &adj[current] {
-        if !visited[next] {
-            // Extend path
-            visited[next] = true;
-            path.push(next);
-
-            if backtrack(adj, path, visited, n) { return true; }
-
-            // Undo (backtrack)
-            path.pop();
-            visited[next] = false;
-        }
-    }
-    false // dead end
-}
-```
-
-The mutable `visited` and `path` with explicit push/pop replace what functional languages handle via immutable persistent data structures or explicit state copying. Rust's borrow checker ensures no accidental aliasing during the recursive calls — `adj` is borrowed immutably while `path` and `visited` are mutably borrowed, which is safe because they're disjoint.
-
-For production use, sort `adj[current]` by degree (try low-degree vertices first) to prune earlier. A `visited` bitset using `u64` shifts is faster than `Vec<bool>` for small graphs.
-
-## What This Unlocks
-
-- **Puzzle solving**: knight's tour, Gray codes, and combinatorial games with "visit each state once" constraints.
-- **Route optimisation seed**: backtracking finds exact solutions for small TSP instances before handing off to heuristics.
-- **NP-completeness demonstrations**: Hamiltonian cycle is the canonical NP-complete graph problem — understanding it grounds complexity theory.
+OCaml implements backtracking with `let rec backtrack path vis = ...`. OCaml's recursive style makes backtracking natural: `if success then Some path else List.fold_left try_next None neighbors`. The `exception Found of int list` pattern enables early termination when a path is found. Heuristics like Warnsdorff's rule (choose vertex with fewest onward moves first) dramatically speed up knight's tour solutions.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Backtrack state | Immutable list threaded through recursion | Mutable `Vec` with push/pop (explicit undo) |
-| Visited set | `bool array` with manual reset | Same — `vec![false; n]` with `visited[next] = false` |
-| Recursion depth | May stack-overflow for n > ~5000 | Same risk — convert to iterative for very large n |
-| Path return | Accumulator passed through | Mutable `path: &mut Vec<usize>` |
-| NP hardness | Same algorithm, same complexity | Same — no Rust magic makes NP problems polynomial |
+1. **Backtracking style**: Rust's mutable `path` and `visited` with explicit push/pop is imperative; OCaml's recursive approach with immutable lists is more idiomatic but allocates more.
+2. **Early termination**: Rust returns `true` immediately on finding a path; OCaml uses exceptions or `Option` for early return through the recursion stack.
+3. **NP-completeness**: Both languages face the same exponential worst case; pruning heuristics matter more than language choice.
+4. **Knight's tour**: The knight's tour (finding a Hamiltonian path on a chessboard for a knight) is solvable in O(n²) using Warnsdorff's heuristic — a practical exception to the NP-hardness.
+
+## Exercises
+
+1. Implement Warnsdorff's heuristic for the knight's tour: always move to the square with the fewest onward moves. Verify it solves 8×8 chessboard instantly.
+2. Add pruning: if any unvisited vertex has 0 remaining unvisited neighbors before the path is complete, immediately backtrack.
+3. Implement the Hamiltonian cycle variant (returns to start) by adding a check at `path.len() == n` that `adj[last][start]` is true.

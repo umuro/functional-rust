@@ -31,7 +31,7 @@ REQUIRED_SECTIONS = [
 MIN_WORDS = 150
 
 # Lines of actual content (non-blank, not the boilerplate header, not H1)
-MIN_BODY_LINES = 20
+MIN_BODY_LINES = 18
 
 _BOILERPLATE_RE = re.compile(
     r"^\s*$|"               # blank

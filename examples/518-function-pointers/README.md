@@ -2,80 +2,48 @@
 
 ---
 
-# 518: Function Pointers vs Closures
+# Function Pointers vs Closures
 
-**Difficulty:** 2  **Level:** Beginner-Intermediate
+## Problem Statement
 
-Two kinds of callable in Rust — know when to use each for maximum clarity and performance.
+Two abstractions represent callable values in Rust: `fn` pointers (a plain machine address) and closures (address plus captured environment). The tension between them matters in practice: `fn` pointers have a known, fixed size — useful for FFI, const contexts, and uniform dispatch tables. Closures are more powerful but carry hidden state and require generics or boxing. Choosing the wrong abstraction forces unnecessary heap allocation or limits caller flexibility. This example compares the two side-by-side including their memory layout.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You write a function that accepts a callback and use `fn(i32) -> i32` as the parameter type. A user passes a closure that captures a variable — and gets a type error. Or you write `F: Fn(i32) -> i32` everywhere and then try to put function pointers in an array — and hit size issues.
+- The concrete memory difference between `fn` pointers, non-capturing closures, and capturing closures
+- How `apply_fn_ptr(f: fn(i32) -> i32)` differs from `apply_generic<F: Fn(i32) -> i32>(f: F)`
+- Why named functions can be used directly as `fn` pointer values
+- When to prefer `fn` (FFI, tables, const) vs `impl Fn` (generic) vs `Box<dyn Fn>` (dynamic)
+- How `std::mem::size_of_val` reveals the size of each callable kind
 
-Understanding when to use `fn` pointers versus `impl Fn`/`Box<dyn Fn>` closures is essential for writing ergonomic APIs. Getting it wrong either rejects valid inputs, adds unnecessary overhead, or prevents storing callables in arrays and const contexts.
+## Rust Application
 
-There's also a performance angle: `fn` pointers are one machine word and can be stored in plain arrays without boxing. Closures may be zero-sized or large depending on what they capture, and have different inlining characteristics.
+`square`, `cube`, and `double` are named functions usable as `fn(i32) -> i32` values. `math_ops()` returns `Vec<(&'static str, fn(i32) -> i32)>` — a named dispatch table. `apply_generic<F: Fn(i32) -> i32>` accepts both `fn` pointers and any closure via monomorphization. `size_comparison()` calls `std::mem::size_of_val` on a `fn` pointer (one word), a non-capturing lambda (zero bytes), and a capturing lambda (size of captured `i32`).
 
-## The Intuition
+Key patterns:
+- `fn(i32) -> i32` — zero-overhead, no allocation, FFI-safe
+- `F: Fn(i32) -> i32` — zero-cost generic, monomorphized at compile time
+- `std::mem::size_of_val(&closure)` — inspect runtime size of a callable
 
-A **function pointer** (`fn(i32) -> i32`) is just an address — a number pointing to a compiled function. Like a C function pointer. It can't capture state because there's nowhere to store it. But it's `Copy`, tiny (one word), and works in const contexts.
+## OCaml Approach
 
-A **closure** is an anonymous struct that happens to implement `Fn`/`FnMut`/`FnOnce`. It can carry captured state (like an object with fields). Each closure is its own type. The size varies: a non-capturing closure may be zero bytes; a closure capturing a `Vec` might be 24 bytes.
+OCaml has a unified function type — there is no `fn` pointer vs closure distinction at the source level. All functions are closures; non-capturing ones compile to a record with a code pointer and an empty environment. The compiler optimizes away the environment allocation for known non-capturing functions in many cases, but the type does not distinguish them.
 
-The key insight: every `fn` pointer implements `Fn`, `FnMut`, and `FnOnce`. So APIs using `impl Fn` accept *both* function pointers and closures. APIs using `fn(...)` reject closures with captures.
-
-In Python and JavaScript, all functions are objects on the heap — there's no distinction. Rust's separation gives you the zero-cost option (`fn` ptr) when you don't need capture, and the powerful option (`impl Fn`) when you do.
-
-## How It Works in Rust
-
-```rust
-fn square(x: i32) -> i32 { x * x }
-fn double(x: i32) -> i32 { x * 2 }
-
-// fn pointer: one word, Copy, no captures
-fn apply_fn_ptr(f: fn(i32) -> i32, x: i32) -> i32 { f(x) }
-// Generic: accepts fn pointers AND closures (static dispatch)
-fn apply_generic<F: Fn(i32) -> i32>(f: F, x: i32) -> i32 { f(x) }
-
-// fn pointer table: array of (name, function) pairs — no boxing needed
-let ops: Vec<(&str, fn(i32) -> i32)> = vec![
-    ("square", square),
-    ("double", double),
-    ("negate", |x| -x),   // non-capturing closure COERCES to fn ptr
-];
-// Non-capturing closures automatically coerce to fn pointers!
-
-// fn pointer is Copy — can copy freely
-let f: fn(i32) -> i32 = square;
-let g = f;    // copied
-println!("{} {}", f(3), g(3)); // both work
-
-// Closure with capture: ONLY works with impl Fn, NOT fn ptr
-let offset = 100;
-let add_offset = move |x: i32| x + offset;  // captures offset
-// apply_fn_ptr(add_offset, 5);  // ✗ ERROR: can't coerce capturing closure to fn ptr
-println!("{}", apply_generic(add_offset, 5)); // ✓ 105
-
-// Size comparison
-println!("{}", std::mem::size_of::<fn(i32) -> i32>());  // 8 bytes (pointer)
-let nc = |x: i32| x + 1;
-println!("{}", std::mem::size_of_val(&nc));  // 0 bytes! (non-capturing = no state)
-let cap = move |x: i32| x + offset;
-println!("{}", std::mem::size_of_val(&cap)); // 4 bytes (captures one i32)
+```ocaml
+let square x = x * x
+let ops = [("square", square); ("double", fun x -> x * 2)]
+let apply f x = f x
 ```
-
-## What This Unlocks
-
-- **Const-compatible callbacks** — `fn` pointers work in `const` contexts, static arrays, and FFI; closures don't.
-- **FFI callbacks** — `extern "C" fn(...)` pointers are what C libraries expect; closures with captures can't be passed to C directly.
-- **Table-driven programming** — arrays of `fn` pointers for dispatch tables, command parsers, and jump tables without boxing overhead.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Function pointer | `int -> int` (first class, boxed by GC) | `fn(i32) -> i32` — one word, stack |
-| Closure | Same type as fn — no distinction | Anonymous type implementing `Fn*` |
-| Can capture | Always | `fn` ptr: no; closure: yes |
-| Size | 1 word (uniform representation) | `fn` ptr: 1 word; closure: 0..N bytes |
-| Copy semantics | Yes (value semantics) | `fn` ptr: Copy; closure: depends on captures |
+1. **Size visibility**: Rust exposes `size_of_val` to measure closure size at compile time; OCaml treats all function values as one-word GC pointers, hiding the environment.
+2. **FFI boundary**: Rust `fn` pointers cross C FFI boundaries natively; OCaml functions require `ctypes` wrappers or `Callback.register` for the same.
+3. **Generic dispatch**: Rust monomorphizes `F: Fn(T) -> U` into separate code per closure type; OCaml uses boxing (value representation) — no separate copies but with indirection.
+4. **Dispatch tables**: Rust `Vec<fn(i32) -> i32>` stores uniform-size pointers with no allocation overhead per entry; OCaml `list` of functions stores GC-managed boxed values.
+
+## Exercises
+
+1. **Benchmark dispatch**: Measure the performance difference between calling via `fn(i32) -> i32`, via `impl Fn(i32) -> i32`, and via `Box<dyn Fn(i32) -> i32>` in a tight loop using `std::hint::black_box`.
+2. **Const dispatch table**: Define a `const` array `OPS: [fn(i32) -> i32; 4]` at the module level and verify it is accessible in `const` evaluation contexts.
+3. **Dynamic registry**: Build a `HashMap<String, Box<dyn Fn(i32) -> i32>>` where named functions and capturing closures can both be registered, then write a `run(name, arg)` dispatcher.

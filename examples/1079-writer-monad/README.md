@@ -33,3 +33,9 @@ Rust implements Writer as a generic struct with `bind` and `map` methods. Method
 2. **Ownership:** Rust's `bind` consumes `self`, making it clear the old Writer is gone. OCaml's bind copies/shares the log via GC
 3. **Monoid abstraction:** OCaml uses `@` (list append) directly; Rust can abstract over the log type with a `Monoid` trait
 4. **Type inference:** OCaml infers everything from usage; Rust sometimes needs explicit type annotations on closures
+
+## Exercises
+
+1. Extend the `Writer` monad to use a generic log type that implements `Monoid` (not just `String`), and use it to accumulate a structured audit log as a `Vec<LogEntry>`.
+2. Implement `censor` — a function that transforms the accumulated log entries using a provided function — and use it to redact sensitive values from a computation log.
+3. Build a multi-step computation pipeline using the writer monad that tracks both a string log and a numeric performance metric (operation count) simultaneously, using a product monoid.

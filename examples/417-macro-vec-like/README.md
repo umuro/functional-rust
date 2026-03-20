@@ -2,78 +2,39 @@
 
 ---
 
-# 417: Implementing vec!-like Macros
+# 417: Vec-like Collection Macros
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Build collection-literal macros using declarative macro repetition — the same pattern that powers `vec!`, `hashmap!`, and `format!`.
+The `vec![1, 2, 3]` literal macro is so convenient that the absence of equivalent literals for `HashSet`, `BTreeSet`, and `HashMap` is a constant friction point. Initializing these collections requires `let mut s = HashSet::new(); s.insert(1); s.insert(2);` — three lines per item. Collection literal macros (`set!`, `map!`, `btree_set!`) bring the same ergonomics to all standard collections, making initialization as concise as `vec!` while maintaining type safety and supporting trailing commas.
 
-## The Problem This Solves
+Collection literal macros are so commonly needed that third-party crates like `maplit` and `im` provide them, and they're one of the most commonly written first macros.
 
-Constructing collections with literal syntax is natural in many languages but Rust has no built-in syntax for `{1: "a", 2: "b"}` or `{1, 2, 3}` as a `HashSet`. You need `HashMap::new()` + repeated `insert()` calls — five lines for what should be one. Rust's answer is: write the macro yourself, once, and use it everywhere.
+## Learning Outcomes
 
-`macro_rules!` gives you pattern matching on token streams. The key pattern is repetition: `$($x:expr),*` matches zero or more comma-separated expressions and `$(action)*` repeats a block for each captured match. This is how `vec![1, 2, 3]` works — it matches `$($x:expr),*` and expands to a series of `.push($x)` calls.
+- Understand how `vec!` works internally and how to replicate the pattern for other collections
+- Learn how `::std::collections::HashSet::new()` fully-qualified paths prevent name resolution issues in macros
+- See how trailing comma support (`$(,)?`) improves ergonomic macro usage
+- Understand how to handle both empty and non-empty collection initialization
+- Learn how collection literal macros compose with type inference
 
-Understanding this pattern lets you build `hashset!`, `hashmap!`, `deque!`, or any domain-specific collection literal. The macro runs at compile time; the output is exactly what you'd write by hand.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `set!()` handles the empty case returning `HashSet::new()`. `set!($($elem:expr),+ $(,)?)` creates a set, inserts each element in a repetition block, and returns it. The block `{{ ... }}` creates a temporary scope, and the last expression is the result. `map!` uses `$key:expr => $val:expr` pairs. The `::std::` prefix ensures macros work when `use std::collections::*` is not in scope.
 
-`$($x:expr),*` captures "zero or more comma-separated expressions" and `$(body)*` repeats the body once per capture — this repetition pattern is the core of all collection-building macros.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-// Replicate how vec! works
-macro_rules! my_vec {
-    () => { Vec::new() };
-    ($($x:expr),+ $(,)?) => {{   // $(,)? = optional trailing comma
-        let mut v = Vec::new();
-        $(v.push($x);)+          // expand once per captured $x
-        v
-    }};
-}
-
-// hashset! literal
-macro_rules! hashset {
-    ($($x:expr),* $(,)?) => {{
-        let mut s = std::collections::HashSet::new();
-        $(s.insert($x);)*
-        s
-    }};
-}
-
-// hashmap! with key => value syntax
-macro_rules! hashmap {
-    ($($k:expr => $v:expr),* $(,)?) => {{
-        let mut m = std::collections::HashMap::new();
-        $(m.insert($k, $v);)*
-        m
-    }};
-}
-
-// Usage
-let v = my_vec![1, 2, 3, 4];
-let s = hashset!["a", "b", "c"];
-let m = hashmap!["one" => 1, "two" => 2,];  // trailing comma ok
-```
-
-1. `macro_rules! name { (pattern) => { expansion } }` — arms match like `match`.
-2. `$x:expr` captures one expression. `$($x:expr),*` captures a comma-separated list.
-3. `$(body)+` expands `body` once per element (requires ≥1). `*` allows zero.
-4. `$(,)?` at the end accepts an optional trailing comma — good style.
-
-## What This Unlocks
-
-- **Collection literals**: `hashmap!`, `hashset!`, `deque!` — write once, use like built-ins.
-- **DSL syntax**: Custom repetition patterns for configuration, query building, test fixtures.
-- **Zero runtime cost**: Macros expand at compile time to plain Rust code — no overhead over hand-written loops.
+OCaml uses module functions for collection creation: `let s = List.fold_left (fun acc x -> Set.add x acc) Set.empty [1; 2; 3]`. `Base.Set.of_list` and `Base.Map.of_alist_exn` provide one-liner initialization. OCaml's list literal syntax `[1; 2; 3]` is built-in and convenient; other collections require explicit construction. No macro infrastructure is needed since the module functions are expressive enough.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| List literal | `[1; 2; 3]` built-in | `vec![1, 2, 3]` via macro |
-| Custom syntax | PPX (preprocessor extensions) | `macro_rules!` declarative macros |
-| Repetition pattern | Camlp4/PPX sequence matching | `$($x:expr),*` + `$(body)*` |
-| Compile-time expansion | PPX (complex setup) | `macro_rules!` — built into language |
-| Map literal | No standard literal | Write `hashmap!` macro yourself |
+1. **Built-in vs. macro**: OCaml's list literal is syntax; Rust's `vec!` and equivalent macros are library code that expands to `push` calls.
+2. **Empty case**: Rust macros must handle `set!()` explicitly (no elements means no insert calls); OCaml's `Set.empty` is a value.
+3. **Type inference**: Rust's collection macros infer element types from the provided values; OCaml's typed modules require the element type to be known from the module.
+4. **Homogeneity**: Both Rust and OCaml collection literals require all elements to have the same type; Rust enforces this via the type system, OCaml via the module's type parameter.
+
+## Exercises
+
+1. **Ordered map**: Implement `omap!{ key => val, ... }` creating a `BTreeMap` (ordered map). Verify that iteration produces keys in sorted order.
+2. **Default dict**: Implement `default_map!{ key => val, ... ; default: expr }` that creates a `HashMap` with a default value, returning the default for missing keys via a `get_or_default(key)` method on a wrapper.
+3. **Multimap**: Implement `multimap!{ key1 => [v1, v2], key2 => [v3] }` creating a `HashMap<K, Vec<V>>` where multiple values per key are supported via list syntax.

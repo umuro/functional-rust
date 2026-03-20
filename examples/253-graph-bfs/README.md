@@ -33,3 +33,9 @@ Rust mirrors the imperative OCaml style closely: `HashSet` replaces `Hashtbl`, `
 2. **Queue:** OCaml's `Queue` is doubly-ended by default; Rust's `VecDeque` is explicit about push/pop ends (`push_back` / `pop_front`).
 3. **Visited set:** OCaml uses `Hashtbl.mem` + `Hashtbl.add` (two operations); Rust's `HashSet::insert` returns a `bool`, combining both into one.
 4. **Result accumulation:** OCaml uses a `ref` list prepended in reverse then `List.rev`; Rust uses `Vec::push` directly in order.
+
+## Exercises
+
+1. Extend BFS to return the shortest-hop path between two nodes (not just distance), by recording predecessors in a `HashMap` during traversal.
+2. Implement multi-source BFS: start from a set of source nodes simultaneously and find, for each node in the graph, the nearest source.
+3. Use BFS to solve a word-ladder puzzle: build a graph where words are nodes and edges connect words differing by one letter, then find the shortest transformation sequence.

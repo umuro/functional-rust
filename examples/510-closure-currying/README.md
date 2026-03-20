@@ -2,83 +2,75 @@
 
 ---
 
-# 510: Currying Pattern in Rust
+# Closure Currying
 
-**Difficulty:** 3  **Level:** Intermediate
+Currying transforms an N-argument function into a chain of N single-argument functions — `add(x, y)` becomes `add(x)(y)`. Rust implements currying explicitly through nested closures returning closures, with `curry` and `uncurry` as conversion utilities.
 
-Transform multi-argument functions into chains of single-argument functions: `add(3, 4)` becomes `add(3)(4)`.
+## Problem Statement
 
-## The Problem This Solves
+Currying (named after Haskell Curry, formalised by Schönfinkel) is the theoretical foundation of lambda calculus — every multi-argument function can be expressed as nested single-argument functions. Practical benefits: unified partial application syntax (just call with fewer arguments), function composition works naturally on single-argument functions, and point-free style becomes possible. OCaml and Haskell have currying built in; Rust requires explicit nested closures, but the pattern is expressible and useful.
 
-You want to use `map` with a two-argument function, but `map` only passes one argument per call. In OCaml or Haskell, this is trivial — all functions are curried by default, so `map (add 5) [1;2;3]` just works. In Rust, you reach for a closure: `map(|x| add(5, x), ...)`.
+## Learning Outcomes
 
-The deeper problem appears when you need to compose or partially apply many multi-argument functions. The manual closure wrapping accumulates, making code verbose. Currying solves this structurally: a curried function *is* its own partial application mechanism.
+- Write curried functions returning `impl Fn(i32) -> i32` from `fn add(x: i32) -> impl Fn(i32) -> i32`
+- Implement three-argument currying with nested `Box<dyn Fn>`
+- Write a generic `curry<F>` that converts an uncurried 2-arg function to curried form
+- Write `uncurry` that converts curried form back to a 2-arg function
+- Implement `flip` that reverses the argument order of a curried function
 
-Understanding currying also demystifies function type signatures in type theory, makes closures-as-return-values feel natural, and helps you recognize patterns in Rust APIs that implicitly curry (like `sort_by_key`).
+## Rust Application
 
-## The Intuition
-
-Currying is named after Haskell Curry (the logician, not the food). The idea: instead of `f(a, b) = result`, you have `f(a) = g` where `g(b) = result`. You transform a function of N arguments into N nested single-argument functions.
-
-In OCaml, `let add a b = a + b` is automatically `add : int -> int -> int` — a function that takes an `int` and returns a function `int -> int`. You get partial application for free: `let add5 = add 5`.
-
-In Rust, you make this explicit with nested closures. Each closure captures the previous arguments via `move` and returns another closure. It's more verbose than OCaml but the mechanics are identical.
-
-## How It Works in Rust
+Two-argument curried functions:
 
 ```rust
-// Curried add: add(x)(y) instead of add(x, y)
-fn add(x: i32) -> impl Fn(i32) -> i32 {
-    move |y| x + y    // x captured by move
-}
+pub fn add(x: i32) -> impl Fn(i32) -> i32 { move |y| x + y }
+pub fn mul(x: i32) -> impl Fn(i32) -> i32 { move |y| x * y }
 
-let add5 = add(5);      // add5: impl Fn(i32) -> i32
-println!("{}", add5(3));  // 8
-println!("{}", add(3)(4)); // 7 — chained call
+add(5)(3)  // 8 — partial: add(5) returns Fn(i32)->i32
+```
 
-// Three-argument curried function: clamp(lo)(hi)(x)
-// impl Fn -> impl Fn doesn't compile, so use Box<dyn Fn>
-fn clamp(lo: i32) -> Box<dyn Fn(i32) -> Box<dyn Fn(i32) -> i32>> {
-    Box::new(move |hi| Box::new(move |x| x.max(lo).min(hi)))
-}
+Generic curry/uncurry conversions:
 
-let clamp_0_100 = clamp(0)(100);  // partially applied — lo and hi fixed
-println!("{}", clamp_0_100(150));  // 100 — clamped
-println!("{}", clamp_0_100(42));   //  42 — unchanged
+```rust
+pub fn curry<A: Copy, B: Copy, C, F>(f: F)
+    -> Box<dyn Fn(A) -> Box<dyn Fn(B) -> C>>
+where F: Fn(A, B) -> C + Copy { ... }
 
-// Convert uncurried to curried generically
-fn curry<A: Copy + 'static, B: Copy + 'static, C: 'static, F>(
-    f: F
-) -> Box<dyn Fn(A) -> Box<dyn Fn(B) -> C>>
-where F: Fn(A, B) -> C + Copy + 'static {
-    Box::new(move |a| Box::new(move |b| f(a, b)))
-}
-
-let curried_mul = curry(|x: i32, y: i32| x * y);
-let times6 = curried_mul(6);
-println!("{}", times6(7));  // 42
-
-// Convert curried back to uncurried
-fn uncurry<A, B, C, F, G>(f: F) -> impl Fn(A, B) -> C
+pub fn uncurry<A, B, C, F, G>(f: F) -> impl Fn(A, B) -> C
 where F: Fn(A) -> G, G: Fn(B) -> C {
     move |a, b| f(a)(b)
 }
-let plain_add = uncurry(add);
-println!("{}", plain_add(3, 4)); // 7
 ```
 
-## What This Unlocks
+## OCaml Approach
 
-- **Partial application for free** — a curried function *is* a partial application factory; `add(5)` returns a reusable `+5` function.
-- **Point-free style** — use `map(add(10), items)` instead of `map(|x| x + 10, items)` when functions are curried.
-- **Type theory foundations** — understanding currying demystifies Rust's `Fn` type signatures, `impl Fn(A) -> impl Fn(B) -> C`.
+OCaml functions are curried by default:
+
+```ocaml
+let add x y = x + y   (* add : int -> int -> int — already curried *)
+let add5 = add 5       (* partial application — no extra syntax *)
+let () = assert (add5 3 = 8)
+
+(* Three-arg currying *)
+let clamp lo hi x = max lo (min hi x)
+let clamp_0_100 = clamp 0 100
+
+(* Flip *)
+let flip f x y = f y x
+let sub_from_10 = flip (-) 10   (* fun x -> 10 - x *)
+```
+
+OCaml's default currying makes all of these patterns natural without any boilerplate.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Curried by default | Yes — every function | No — must explicitly nest closures |
-| Partial application | `let add5 = add 5` — automatic | `let add5 = add(5)` — only if curried |
-| Type signature | `int -> int -> int` | `impl Fn(i32) -> impl Fn(i32) -> i32` |
-| Multi-level return | Natural with type inference | Needs `Box<dyn Fn>` for 3+ levels |
-| `curry` helper | `let curry f a b = f (a, b)` | Generic function or macro |
+1. **Implicit currying**: OCaml's `add x y` is syntactic sugar for `fun x -> (fun y -> x + y)` — partial application is free. Rust's `add(x, y)` is a true 2-arg function requiring explicit closure wrapping.
+2. **`Box<dyn Fn>` overhead**: Rust's generic `curry` must use `Box<dyn Fn>` to erase the return type of the nested closure; OCaml's type system handles this transparently.
+3. **`Copy` constraints**: Rust's `curry` requires `A: Copy, B: Copy` to capture arguments in nested closures; OCaml copies integers implicitly.
+4. **`flip` ergonomics**: Rust's `flip` requires complex lifetime/trait bounds; OCaml's `let flip f x y = f y x` is trivial.
+
+## Exercises
+
+1. **Point-free style**: Implement `sum_of_squares: Vec<i32> -> i32` using only `map`, `fold`, and curried `add`/`mul` — no explicit lambda bodies.
+2. **Curry3**: Implement `curry3` that converts `Fn(A, B, C) -> D` to `Fn(A) -> (Fn(B) -> (Fn(C) -> D))`.
+3. **Practical currying**: Use curried `add`, `mul`, and `partial` to build a `tax_calculator(rate: f64)(price: f64) -> f64` and a `discounted_tax(discount: f64)(rate: f64)(price: f64) -> f64`.

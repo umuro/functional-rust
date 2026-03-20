@@ -4,79 +4,60 @@
 
 # 260: Stateful Accumulation with scan()
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Like `fold`, but yields each intermediate accumulator value as part of the output sequence.
+Computing running totals, prefix sums, or any sequence where each value depends on all previous values is a common need in financial systems, signal processing, and data streaming. A plain `fold()` produces only the final accumulated result. The `scan()` adapter solves this by emitting each intermediate accumulated state as an element — turning a `fold` into a stream of partial results.
 
-## The Problem This Solves
+## Learning Outcomes
 
-`fold` collapses a sequence to one final value — useful for totals, but it discards all the intermediate states. When you need the *running* total — a prefix sum, a cumulative product, a balance history — `fold` alone can't help. You'd need a mutable accumulator and a manual push into a results vector.
+- Understand `scan()` as `fold()` that yields each intermediate state rather than only the final value
+- Use mutable accumulator state inside a `scan()` closure
+- Return `None` from a `scan()` closure to terminate the sequence early
+- Build running totals, prefix products, and other prefix-sum structures
 
-Running totals appear everywhere: bank statement balances, time-series prefix sums, running maximum in a streaming algorithm, state machine output. Each step's result depends on the previous step's state. Without `scan`, you write an imperative loop with two mutable variables — the state and the output vector — mixing concerns that should be separate.
+## Rust Application
 
-`scan` threads a mutable state through the iteration (like `fold`) while also emitting each updated state as an iterator element. You get both: the evolving state *and* a lazy sequence of every intermediate value. Returning `None` from the closure also gives you early termination — fold a prefix of the sequence until a condition is met.
-
-## The Intuition
-
-`scan(initial_state, |state, item| -> Option<output>)` is `fold` that yields each step. The closure receives `&mut state` (mutate it in place) and the current item, then returns `Some(value)` to emit a value and continue, or `None` to stop the iterator early.
-
-```rust
-let running_sum: Vec<i32> = [1, 2, 3, 4, 5].iter()
-    .scan(0i32, |state, &x| { *state += x; Some(*state) })
-    .collect();
-// → [1, 3, 6, 10, 15]
-```
-
-The state persists across calls — each invocation of the closure sees the state left by the previous call. The initial value sets the state before any item is processed.
-
-## How It Works in Rust
+`scan(initial, f)` takes an initial accumulator value and a closure `|state: &mut S, item: T| -> Option<B>`. It mutates `state` in place and yields `Some(value)` for each step. Returning `None` terminates the iterator:
 
 ```rust
-let nums = [1i64, 2, 3, 4, 5];
-
-// Running sum — state is mutated, current state is emitted
-let running_sum: Vec<i64> = nums.iter()
-    .scan(0i64, |state, &x| {
-        *state += x;     // state is &mut i64 — mutate through dereference
-        Some(*state)     // emit the new state value
-    })
+// Running sum (prefix sums)
+let result: Vec<i32> = [1, 2, 3, 4, 5]
+    .iter()
+    .scan(0i32, |sum, &x| { *sum += x; Some(*sum) })
     .collect();
-// → [1, 3, 6, 10, 15]
+// [1, 3, 6, 10, 15]
 
-// Early termination — return None to stop the iterator
-let partial: Vec<i64> = nums.iter()
-    .scan(0i64, |state, &x| {
-        *state += x;
-        if *state > 6 { None } else { Some(*state) }  // stop when sum exceeds 6
-    })
+// Early termination: stop when sum exceeds 6
+let capped: Vec<i32> = [1, 2, 3, 4, 5]
+    .iter()
+    .scan(0i32, |s, &x| { *s += x; if *s > 6 { None } else { Some(*s) } })
     .collect();
-// → [1, 3, 6]   (stops before adding 4, which would give 10)
-
-// Bank balances — same pattern, real-world framing
-let transactions = [100i64, -30, 50, -80, 200];
-let balances: Vec<i64> = transactions.iter()
-    .scan(0i64, |balance, &tx| {
-        *balance += tx;
-        Some(*balance)
-    })
-    .collect();
-// → [100, 70, 120, 40, 240]
+// [1, 3, 6]
 ```
 
-The closure signature `|state, item|` — `state` is `&mut S`, so you mutate through dereference. The emitted value does not have to equal the state — you can emit a transformation of the state.
+## OCaml Approach
 
-## What This Unlocks
+OCaml's `List.scan_left` (introduced in recent versions) directly mirrors this pattern, or one can build it with `List.fold_left` accumulating into a reversed list of intermediates:
 
-- **Prefix sums and running totals** — cumulative sums for range queries, balance histories, score progressions.
-- **Streaming state machines** — emit the current state at each transition; stop on a terminal state by returning `None`.
-- **Early-exit aggregation** — fold that stops as soon as a threshold is crossed, without consuming the rest of the iterator.
+```ocaml
+(* Manual scan: fold collecting intermediates *)
+let scan_left f init xs =
+  List.rev (snd (List.fold_left (fun (acc, lst) x ->
+    let acc' = f acc x in (acc', acc' :: lst)
+  ) (init, []) xs))
+```
+
+OCaml's `Seq` module makes this natural for lazy streams.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Running accumulation | Manual `fold_left` with list append | `iter.scan(init, \|state, x\| ...)` |
-| Early termination | Raise exception or use lazy `Seq` | Return `None` from closure |
-| State mutability | New value returned each step | `state` is `&mut S`, mutated in place |
-| Laziness | No (strict lists) | Yes — elements produced on demand |
-| Emit vs state | Always emits the accumulator | Can emit any transformation of state |
+1. **Output**: `scan()` emits every intermediate state; OCaml's equivalent must explicitly accumulate intermediates into a list.
+2. **Early termination**: Rust's `scan()` can return `None` to stop the sequence; a fold-based OCaml approach requires extra logic.
+3. **Mutable reference**: Rust's closure receives `&mut state`, making mutation explicit; OCaml uses functional update via return value.
+4. **Real-world use**: Used in NumPy as `np.cumsum()`, in databases as window functions, and in streaming analytics as running aggregates.
+
+## Exercises
+
+1. Compute prefix products of a slice using `scan()` — the product of all elements up to and including each position.
+2. Use `scan()` to implement a running maximum: each output is the maximum seen so far.
+3. Build a balance tracker: given a sequence of deposit/withdrawal amounts, use `scan()` to emit the running account balance and terminate when it goes negative.

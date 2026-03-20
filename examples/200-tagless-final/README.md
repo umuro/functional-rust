@@ -33,3 +33,9 @@ Rust replaces the OCaml module type with a trait `Expr` whose associated type `R
 2. **Module vs. trait:** OCaml passes interpreters as first-class modules; Rust uses monomorphisation over a type parameter
 3. **`bool` keyword:** OCaml names the constructor `bool`; Rust must rename to `bool_val` since `bool` is a built-in type
 4. **Zero-cost:** Both encodings are zero-cost — no boxing or dynamic dispatch in the final encoding
+
+## Exercises
+
+1. Add a new `Console` interpreter for the tagless-final algebra that prints each expression to stdout instead of evaluating it, demonstrating the open extension property.
+2. Implement a `Pretty` interpreter that renders arithmetic expressions back to a human-readable string, reusing the same algebra trait without modifying existing code.
+3. Define a larger algebra that includes both arithmetic and boolean operations, combine the two interpreters using trait composition, and implement a short-circuit evaluator that skips the right operand of `And` when the left is `false`.

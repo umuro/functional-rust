@@ -4,71 +4,53 @@
 
 # 268: Splitting Pairs with unzip()
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Split an iterator of `(A, B)` tuples into two separate collections in a single pass.
+Data often arrives paired — key-value entries, coordinate pairs, or associated data — but needs to be split into separate collections for independent processing. The `unzip()` adapter is the exact inverse of `zip()`: it consumes an iterator of pairs and distributes them into two separate collections simultaneously, in a single pass. This is more efficient than collecting all pairs first and then splitting.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You have a sequence of paired data — students and their scores, keys and values, x/y coordinates — and you need them in two separate collections. Without `unzip()`, you'd iterate twice (once to collect the firsts, once to collect the seconds) or write a manual loop with two `push` calls. Both approaches are more code and less expressive than the intent.
+- Understand `unzip()` as the inverse of `zip()` — splitting `Iterator<(A, B)>` into `(Vec<A>, Vec<B>)`
+- Recognize that `unzip()` operates in a single pass without intermediate storage
+- Use `unzip()` to separate keys from values, x-coordinates from y-coordinates
+- Apply `unzip()` after `map()` to transform and simultaneously split data
 
-`unzip()` is the inverse of `zip()`: where `zip` pairs two iterators into one, `unzip` splits one iterator of pairs into two. It's a single allocation pass — both collections are filled simultaneously.
+## Rust Application
 
-OCaml has `List.split` for exactly this operation. In Rust, `unzip()` works on any iterator of 2-tuples and collects into any collection type that implements `Default + Extend`.
-
-## The Intuition
-
-`unzip()` takes `Iterator<Item=(A, B)>` and produces `(CollectionA<A>, CollectionB<B>)` — splitting at the seam of every tuple, in one pass.
-
-```rust
-let pairs = vec![(1, "one"), (2, "two"), (3, "three")];
-let (nums, words): (Vec<i32>, Vec<&str>) = pairs.into_iter().unzip();
-// nums  → [1, 2, 3]
-// words → ["one", "two", "three"]
-```
-
-## How It Works in Rust
+`Iterator::unzip()` collects into two separate `FromIterator` collections simultaneously. It requires specifying the output types, which Rust infers from context:
 
 ```rust
-// Basic split
-let pairs = vec![(1i32, "one"), (2, "two"), (3, "three")];
-let (nums, words): (Vec<i32>, Vec<&str>) = pairs.into_iter().unzip();
+let pairs = vec![(1i32, 'a'), (2, 'b'), (3, 'c')];
+let (nums, chars): (Vec<i32>, Vec<char>) = pairs.into_iter().unzip();
+// nums = [1, 2, 3], chars = ['a', 'b', 'c']
 
-// zip → unzip roundtrip (inverse operations)
+// Roundtrip: zip then unzip recovers original collections
 let a = vec![1i32, 2, 3];
 let b = vec![4i32, 5, 6];
-let (a2, b2): (Vec<i32>, Vec<i32>) = a.iter().copied()
-    .zip(b.iter().copied())
-    .unzip();
-// a2 == a, b2 == b
-
-// Practical: separate names from scores, compute average
-let students = [("Alice", 95u32), ("Bob", 87), ("Carol", 92)];
-let (names, scores): (Vec<&str>, Vec<u32>) = students.iter().copied().unzip();
-let avg = scores.iter().sum::<u32>() / scores.len() as u32;
-// names → ["Alice", "Bob", "Carol"], avg → 91
-
-// Generate two related sequences in one pass
-let (squares, cubes): (Vec<u32>, Vec<u32>) = (1u32..=5)
-    .map(|n| (n * n, n * n * n))  // produce pairs
-    .unzip();
-// squares → [1, 4, 9, 16, 25]
-// cubes   → [1, 8, 27, 64, 125]
+let (a2, b2): (Vec<i32>, Vec<i32>) = a.iter().copied().zip(b.iter().copied()).unzip();
+assert_eq!(a, a2);
 ```
 
-The type annotation `(Vec<A>, Vec<B>)` on the left side is required — `unzip()` can't infer which collection type you want without it.
+## OCaml Approach
 
-## What This Unlocks
+OCaml provides `List.split` which is exactly `unzip` for lists of pairs:
 
-- **Separating structured records** — split `(key, value)` pairs into parallel key and value vecs for separate processing.
-- **Roundtrip with `zip`** — build combined processing pipelines that split at the end for separate outputs.
-- **Computing parallel statistics** — separate a `Vec<(x, y)>` into xs and ys to compute stats on each dimension independently.
+```ocaml
+let (firsts, seconds) = List.split [(1,'a'); (2,'b'); (3,'c')]
+(* firsts = [1;2;3], seconds = ['a';'b';'c'] *)
+```
+
+This is strict (builds both lists in one pass) and is a standard library function, unlike `zip` / `combine` in OCaml.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Split list of pairs | `List.split` | `iter.unzip()` |
-| Inverse of pairing | `List.combine` ↔ `List.split` | `zip()` ↔ `unzip()` |
-| Works on any iterator | No — list-specific | Yes — any `Iterator<Item=(A,B)>` |
-| Collection type | Always `list` | Generic — `Vec`, `HashMap`, etc. |
+1. **Name**: Rust calls it `unzip()`; OCaml calls it `List.split`; Haskell calls it `unzip` — all are identical in semantics.
+2. **Generic output**: Rust's `unzip()` works into any `FromIterator`-implementing collection; OCaml's `List.split` is list-specific.
+3. **Single pass**: Both Rust and OCaml implement unzip in a single pass over the pairs, building both outputs simultaneously.
+4. **Transform then split**: The common pattern is `map(...).unzip()` — transform pairs and split in one composed operation.
+
+## Exercises
+
+1. Parse a list of `"key=value"` strings, splitting on `=`, and use `unzip()` to collect keys and values into separate `Vec<String>` collections.
+2. Given a list of 2D points as `(f64, f64)` pairs, use `unzip()` to get separate `x` and `y` coordinate vectors for plotting.
+3. Use `enumerate()` followed by `unzip()` to simultaneously extract indices and values from a slice.

@@ -2,108 +2,39 @@
 
 ---
 
-# 432: enum_dispatch via Macros
+# 432: Macro Enum Dispatch
 
-**Difficulty:** 4  **Level:** Expert
+## Problem Statement
 
-Generate a closed-set enum that delegates trait method calls to its variants — the same performance as a hand-written `match`, with none of the boilerplate, and zero heap allocation.
+Enums with many variants often need repetitive match arms for dispatch methods. A `Command` enum with 20 variants requires a 20-arm `match` for each dispatch method. When variants map uniformly to trait implementations, macros can generate all the match arms automatically. This is the `enum_dispatch` crate's core idea: eliminate the boilerplate of matching each variant and delegating to the inner type. The `dispatch_enum!` macro generates both the enum and its dispatch methods from a compact declaration.
 
-## The Problem This Solves
+Enum dispatch macros appear in event handling systems, command patterns, codec implementations, and any state machine with many uniform variant behaviors.
 
-When you have a trait and several types that implement it, the idiomatic way to store them heterogeneously is `Box<dyn Trait>` — a fat pointer with heap allocation and a virtual dispatch table. For most use cases that's fine. But in hot loops, plugin systems, or game ECS code, the heap allocation and cache-unfriendly vtable lookup matter. You want static dispatch but still need to store mixed types in a `Vec`.
+## Learning Outcomes
 
-The manual solution is to write an enum with one variant per concrete type and implement the trait on the enum by delegating each method to the inner value via `match`. This is fast — the compiler can inline the inner calls — but it's massive boilerplate. Adding a new type means adding a variant, an `impl From`, and touching every method arm.
+- Understand how `dispatch_enum!` generates both enum variants and dispatch methods
+- Learn how `stringify!($variant)` in match arms provides zero-cost variant names
+- See how macros reduce the O(n) boilerplate of adding dispatch methods to enums
+- Understand when enum dispatch (closed set, fast) is better than `dyn Trait` (open set, flexible)
+- Learn how the `matches!` macro simplifies variant-checking predicates
 
-The `enum_dispatch` macro automates this pattern: you declare the trait, the enum, and the types, and the macro generates the full delegation impl and all `From` conversions.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `dispatch_enum!(Action { Start, Stop, Pause, Resume })` generates the `Action` enum and an `impl Action` with a `name()` method. The `stringify!($variant)` in the match arm converts each variant name to a `&'static str` at compile time. The `Command` enum demonstrates manual dispatch in `execute()`. The `matches!(self, DoorState::Closed)` idiom for state predicates shows the `matches!` standard library macro for single-variant checking.
 
-The generated enum is an ordinary Rust enum — it lives on the stack, its size is the max of its variants. The macro writes what you'd write by hand: a `match` arm for each variant that calls the same method on the inner value.
+## OCaml Approach
 
-This is the "closed world" trade-off: you give up the ability to add new types at runtime (unlike `dyn Trait`) in exchange for zero heap allocation, inlineable dispatch, and the compiler knowing the full set of possibilities (enabling exhaustiveness checks and optimisations).
-
-## How It Works in Rust
-
-```rust
-// The macro generates: enum, trait impl with match delegation, From impls
-macro_rules! enum_dispatch {
-    (
-        trait $trait_name:ident { $(fn $method:ident($($p:ident: $t:ty),*) -> $ret:ty;)* }
-        enum $enum_name:ident { $($variant:ident($inner:ty)),* $(,)? }
-    ) => {
-        #[derive(Debug)]
-        enum $enum_name { $($variant($inner),)* }
-
-        impl $trait_name for $enum_name {
-            $(fn $method(&self, $($p: $t),*) -> $ret {
-                match self {
-                    $($enum_name::$variant(inner) => inner.$method($($p),*),)*
-                }
-            })*
-        }
-
-        $(impl From<$inner> for $enum_name {
-            fn from(x: $inner) -> Self { $enum_name::$variant(x) }
-        })*
-    };
-}
-
-trait Animal {
-    fn speak(&self) -> String;
-    fn speed(&self) -> f64;
-}
-
-struct Dog; struct Cat;
-impl Animal for Dog { fn speak(&self) -> String { "Woof!".into() } fn speed(&self) -> f64 { 5.0 } }
-impl Animal for Cat { fn speak(&self) -> String { "Meow!".into() } fn speed(&self) -> f64 { 8.0 } }
-
-// Macro invocation — generates AnyAnimal enum + impl Animal for AnyAnimal
-enum_dispatch! {
-    trait Animal { fn speak() -> String; fn speed() -> f64; }
-    enum AnyAnimal { Dog(Dog), Cat(Cat), }
-}
-
-// Usage: no Box, no heap, stored by value
-let animals: Vec<AnyAnimal> = vec![Dog.into(), Cat.into()];
-for a in &animals {
-    println!("{} ({}m/s)", a.speak(), a.speed()); // static dispatch via match
-}
-
-// Size: the enum, not a pointer
-println!("{}", std::mem::size_of::<AnyAnimal>());   // e.g. 24
-println!("{}", std::mem::size_of::<Box<dyn Animal>>()); // 16 (pointer + vtable ptr)
-```
-
-**What the macro generates (expanded):**
-```rust
-enum AnyAnimal { Dog(Dog), Cat(Cat) }
-impl Animal for AnyAnimal {
-    fn speak(&self) -> String {
-        match self {
-            AnyAnimal::Dog(inner) => inner.speak(),
-            AnyAnimal::Cat(inner) => inner.speak(),
-        }
-    }
-    fn speed(&self) -> f64 {
-        match self { AnyAnimal::Dog(i) => i.speed(), AnyAnimal::Cat(i) => i.speed() }
-    }
-}
-impl From<Dog> for AnyAnimal { fn from(x: Dog) -> Self { AnyAnimal::Dog(x) } }
-impl From<Cat> for AnyAnimal { fn from(x: Cat) -> Self { AnyAnimal::Cat(x) } }
-```
-
-## What This Unlocks
-
-- **Zero-allocation heterogeneous collections** — store mixed concrete types in a `Vec<AnyAnimal>` with no heap per element.
-- **Plugin systems with known plugin sets** — define all plugin types at compile time, generate the dispatch enum, get fast dispatch with type safety.
-- **Hot path optimisation** — the compiler can inline the inner method calls through the `match` arms; `Box<dyn Trait>` cannot be inlined.
+OCaml handles enum dispatch through algebraic types and pattern matching. A `type command = Print of string | Add of int * int | Exit` with `let execute = function Print s -> ... | Add (a,b) -> ... | Exit -> ...` is idiomatic. OCaml's exhaustiveness checking ensures all variants are handled. Adding a new variant breaks existing match expressions — a feature (forces updates) or a bug (breaks compatibility).
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Heterogeneous collections | Polymorphic variants or GADT-based encoding | `dyn Trait` (heap) or enum dispatch (stack) |
-| Dynamic dispatch | Objects / first-class modules | `Box<dyn Trait>` — heap + vtable |
-| Static enum dispatch | Variant matching is the norm | Enum dispatch macro generates match-based delegation |
-| Adding a new type | New constructor + match arm | New variant + macro regenerates everything |
-| Heap allocation | GC-managed; implicit | Explicit; enum dispatch avoids it entirely |
+1. **Exhaustiveness**: Both Rust and OCaml require exhaustive match arms; adding a variant to a `dispatch_enum!`-generated enum requires updating all dispatch methods.
+2. **Name generation**: Rust's `stringify!($variant)` gives the variant name as a string automatically; OCaml needs explicit string mappings or deriving.
+3. **Macro vs. pattern**: OCaml's pattern matching is a language feature; Rust's dispatch is a macro-generated impl.
+4. **Closed vs. open**: Both enum dispatch approaches are closed sets; `dyn Trait` in Rust and first-class modules in OCaml handle open sets.
+
+## Exercises
+
+1. **Codec dispatch**: Use `dispatch_enum!` to generate a `Format { Json, Csv, Toml, Binary }` enum with a `content_type() -> &'static str` method returning the MIME type for each format.
+2. **Error category**: Create `ErrorCategory { Network, Io, Parse, Permission, Timeout }` with dispatch methods `is_retryable() -> bool` and `log_level() -> &'static str`. Implement these with different behavior per variant.
+3. **Dispatch with data**: Extend the pattern to handle variants with payloads: `dispatch_data!( Message { Text(String) => fn len -> String::len(data), Binary(Vec<u8>) => fn len -> data.len() } )`.

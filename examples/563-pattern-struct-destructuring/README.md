@@ -2,73 +2,50 @@
 
 ---
 
-# 563: Struct Destructuring
+# Struct Destructuring
 
-**Difficulty:** 2  **Level:** Beginner
+## Problem Statement
 
-Extract struct fields directly into bindings — no `.field` access needed.
+Extracting multiple fields from a struct simultaneously — without intermediate temporary variables — is a fundamental ergonomic feature of pattern matching languages. Struct destructuring allows binding multiple fields in one pattern, renaming them, ignoring others with `..`, and doing all of this directly in function parameters. This eliminates boilerplate field access chains (`p.x`, `p.y`) in favor of declarative extraction that reads like a specification of what data you need.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Without destructuring, pulling data out of structs is verbose noise. You write `person.name`, `person.age`, `person.age` again, over and over. When a function only cares about two of five fields, you still have to lug the whole struct around and access each field by name at every use site.
+- How `let Point { x, y } = p;` binds struct fields to local names
+- How `Point { name: n, age: a }` renames fields during destructuring
+- How `..` ignores remaining fields in a destructuring pattern
+- How destructuring works directly in function parameters: `fn f(Point { x, y }: &Point)`
+- Where struct destructuring reduces boilerplate: geometric computation, configuration extraction
 
-The real pain shows up in `match` guards: `if person.age < 18` is fine, but when you're pattern-matching on a `Person` wrapped inside an `Option` inside a `Vec`, you end up with deeply nested `.field` chains that bury the actual logic.
+## Rust Application
 
-Struct destructuring lets you name what you want, right where you need it, and ignore the rest with `..`. The signal-to-noise ratio flips: the binding is front-and-center, the struct name is just context.
+`get_x(p: &Point)` uses `let Point { x, .. } = p;` — binds `x`, ignores `y`. `distance_from_origin` uses `let Point { x, y } = p;` — binds both. `describe_person` uses `Person { name: n, age: a }` — field rename. `add_points(Point(x1, y1): &Point, Point(x2, y2): &Point)` destructures in function parameters directly. `quadrant(p: &Point)` uses match arms with `Point { x, y }` patterns plus guards.
 
-## The Intuition
+Key patterns:
+- `let Struct { field1, field2 } = val;` — field binding
+- `Struct { field: new_name }` — rename during destructuring
+- `Struct { field1, .. }` — partial destructuring with ignore
+- Parameter destructuring: `fn f(Struct { field }: Struct)`
 
-Think of it as unpacking a labelled box. You write the label you want (`x`, `name`, `age`) and Rust pulls the matching field. You can skip fields with `..`, rename them with `field: local_name`, and combine destructuring with guards in a single `match` arm.
+## OCaml Approach
 
-Python's dataclasses don't have this at all — you always write `p.x`. JavaScript has object destructuring (`const { x, y } = point`), which is the closest analogy. OCaml's record patterns work the same way. Rust is strict: the field names must match exactly, but you only pay for what you use.
+OCaml record destructuring uses the same syntax as pattern matching:
 
-The key insight: destructuring works *anywhere* a pattern is valid — `let`, `match`, function parameters, `if let`, `for` loops.
-
-## How It Works in Rust
-
-```rust
-struct Point { x: f64, y: f64 }
-struct Person { name: String, age: u32, email: String }
-
-// Function parameter destructuring — no body boilerplate
-fn distance(Point { x, y }: &Point) -> f64 {
-    (x * x + y * y).sqrt()  // x and y are directly in scope
-}
-
-// Skip fields you don't need with ..
-fn greet(Person { name, age, .. }: &Person) -> String {
-    format!("Hello {}, age {}", name, age)  // email not mentioned
-}
-
-// Destructuring in match + guard
-fn classify(person: &Person) -> &'static str {
-    match person {
-        Person { age, .. } if *age < 18 => "minor",
-        Person { age, .. } if *age < 65 => "adult",
-        _                               => "senior",
-    }
-}
-
-// Rename a field: `x: local_name`
-let Point { x: px, y: py } = some_point;
-
-// Nested struct destructuring in one let
-struct Rect { tl: Point, br: Point }
-let Rect { tl: Point { x: x1, y: y1 }, br: Point { x: x2, y: y2 } } = r;
+```ocaml
+type point = { x: int; y: int }
+let get_x { x; _ } = x
+let distance_from_origin { x; y } = sqrt (float_of_int (x*x + y*y))
+let f { x; y } { x = x2; y = y2 } = { x = x+x2; y = y+y2 }
 ```
-
-## What This Unlocks
-
-- **Zero-cost clarity in function signatures** — destructure parameters directly, no `.field` inside the body.
-- **Surgical `match` arms** — pull out only the fields you care about, add guards, ignore the rest with `..`.
-- **Nested unpacking in one expression** — `Rect { tl: Point { x, y }, .. }` reaches arbitrarily deep without intermediate bindings.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Syntax | `{ x; y; _ }` | `{ x, y, .. }` |
-| Field rename | `{ x = px; _ }` | `{ x: px, .. }` |
-| Exhaustiveness | Warning if field omitted without `_` | Compile error; use `..` to skip |
-| In function params | Yes — `let f { x; _ } = ...` | Yes — `fn f(Point { x, .. }: &Point)` |
-| Works in `let` | Yes | Yes |
+1. **`..` vs `_`**: Rust uses `..` to ignore remaining fields; OCaml uses `_` in the pattern for each unused field, or relies on the fact that not listing a field is an error without explicit ignore.
+2. **Parameter destructuring**: Both Rust and OCaml support destructuring in function parameters — idiomatic in both languages.
+3. **Field rename**: Rust `{ field: new_name }` renames; OCaml `{ field = new_name }` does the same with `=` instead of `:`.
+4. **Match in let**: Rust allows struct destructuring in `let` bindings, `match` arms, and parameters; OCaml has the same flexibility.
+
+## Exercises
+
+1. **RGB to HSL**: Write `fn rgb_to_hsl(Color { r, g, b }: Color) -> (f64, f64, f64)` using parameter destructuring to extract the color components without field access notation.
+2. **Config extractor**: Create a `struct Config { host: String, port: u16, max_connections: usize, timeout_ms: u64 }` and write a function that destructures it to build a connection string.
+3. **Nested destructuring**: Write `fn summarize(Outer { inner: Inner { value } }: &Outer) -> i32` that extracts the inner value using nested struct destructuring in the parameter.

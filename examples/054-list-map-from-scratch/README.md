@@ -43,3 +43,9 @@ let add1 = map (fun x -> x + 1)
 2. **Partial application**: OCaml's `let add1 = map (fun x -> x + 1)` curries naturally; Rust wraps in a named function or closure instead
 3. **Ownership**: Rust's `map` takes `&[A]` (a slice reference) and produces an owned `Vec<B>`, avoiding allocation until `collect()`
 4. **Generics vs polymorphism**: OCaml infers `'a list -> 'b list`; Rust requires explicit `<A, B, F: Fn(&A) -> B>`
+
+## Exercises
+
+1. Implement `map_rev` that applies a mapping function to each element and returns the result in reverse order, using a single pass.
+2. Write `map_while` from scratch: apply `f: T -> Option<U>` to elements until it returns `None`, then stop — collect only the `Some` values.
+3. Implement `map_accumulate` (a scan): like `map` but threads an accumulator through each step, returning both the transformed list and the final accumulator value.

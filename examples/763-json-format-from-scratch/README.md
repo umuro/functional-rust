@@ -2,125 +2,37 @@
 
 ---
 
-# 763: JSON-Like Format Built From Scratch
+# 763-json-format-from-scratch — JSON Format From Scratch
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-A complete recursive AST, hand-written serializer via `Display`, and a recursive-descent parser — all in ~200 lines of safe, std-only Rust.
+JSON (JavaScript Object Notation) was introduced in 2001 and is now the universal data interchange format. Building a JSON serializer from scratch teaches you about recursive data structures, string escaping, number formatting, and the performance trade-offs in text-based formats. Understanding JSON's structure also helps when working with serde's JSON support and when debugging serialization issues in production systems.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Every web developer uses JSON daily without understanding the parsing machinery behind it. When you need to parse a domain-specific language, a configuration format, or a protocol, you need to write a parser. The JSON grammar is small enough to implement in a few hundred lines, but rich enough to teach every technique you'll need: recursive types, string escaping, number parsing, whitespace handling, and proper error messages.
+- Represent JSON as a recursive `JsonValue` enum: Null, Bool, Number, String, Array, Object
+- Implement `to_json(&self) -> String` for compact output
+- Implement `to_json_pretty(&self, indent: usize) -> String` with configurable indentation
+- Handle string escaping: `"`, `\`, newlines, control characters
+- Understand JSON number formatting: integers vs. floats, scientific notation edge cases
 
-Understanding how JSON works from the inside also makes you a better user of `serde_json`. You'll know why certain shapes are valid, why nested objects require recursion, and why string escaping is non-trivial. When `serde_json` produces an unexpected result, you'll be able to reason about what the parser is doing.
+## Rust Application
 
-This is also a practical foundation. Real-world formats like TOML, custom DSLs, and binary protocols use the same structural patterns: an AST (enum with recursive variants), a serializer (walking the tree), and a parser (consuming bytes and building the tree).
+`JsonValue` is an enum with six variants. `to_json` recursively serializes: null/bool/number directly, strings with `escape_json_string`, arrays with comma-joined items, objects with `"key": value` pairs. `to_json_pretty` uses `to_json_indent(level, indent)` to track nesting depth. `escape_json_string` handles `"`, `\`, newlines, tabs, and Unicode escapes. Number formatting avoids scientific notation for integers under 1e15.
 
-## The Intuition
+## OCaml Approach
 
-A JSON value is one of: null, bool, number, string, array (of values), or object (of string→value pairs). That's a recursive enum in Rust — `Vec<Json>` and `Vec<(String, Json)>` reference the same type being defined. Rust's `Box<T>` handles the heap allocation that makes recursive types work.
-
-The serializer is a `Display` implementation that walks the tree and writes output. The parser is a `Parser` struct that holds a byte slice and a position, advancing through the input and calling itself recursively for nested values.
-
-The same pattern appears in every parser you'll ever write: `peek()` looks at the current byte, `next()` consumes it, `skip_ws()` skips spaces, and specialized methods like `parse_string()` and `parse_value()` handle each grammar production.
-
-## How It Works in Rust
-
-```rust
-// Recursive enum — Vec<Json> means this type contains itself
-#[derive(Debug, Clone, PartialEq)]
-pub enum Json {
-    Null,
-    Bool(bool),
-    Number(f64),
-    Str(String),
-    Array(Vec<Json>),
-    Object(Vec<(String, Json)>),   // ordered like real JSON parsers
-}
-
-// Serializer — implement Display for pretty formatting
-impl fmt::Display for Json {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Json::Null          => write!(f, "null"),
-            Json::Bool(b)       => write!(f, "{b}"),
-            Json::Str(s)        => {
-                write!(f, "\"")?;
-                for c in s.chars() {
-                    match c {
-                        '"'  => write!(f, "\\\"")?,
-                        '\\' => write!(f, "\\\\")?,
-                        '\n' => write!(f, "\\n")?,
-                        c    => write!(f, "{c}")?,
-                    }
-                }
-                write!(f, "\"")
-            }
-            Json::Array(arr)    => {
-                write!(f, "[")?;
-                for (i, v) in arr.iter().enumerate() {
-                    if i > 0 { write!(f, ", ")?; }
-                    write!(f, "{v}")?;   // recursion via Display
-                }
-                write!(f, "]")
-            }
-            // Object and Number similar...
-        }
-    }
-}
-
-// Parser — position-based, recursive
-struct Parser<'a> { s: &'a [u8], pos: usize }
-
-impl<'a> Parser<'a> {
-    fn parse_value(&mut self) -> Result<Json, ParseError> {
-        self.skip_ws();
-        match self.peek()? {
-            b'"' => Ok(Json::Str(self.parse_string()?)),
-            b't' => { self.pos += 4; Ok(Json::Bool(true)) }
-            b'[' => {
-                self.pos += 1;
-                let mut arr = vec![];
-                loop {
-                    arr.push(self.parse_value()?);   // RECURSION
-                    self.skip_ws();
-                    match self.peek()? {
-                        b',' => self.pos += 1,
-                        b']' => { self.pos += 1; break }
-                        _    => return Err(ParseError("expected ',' or ']'".into())),
-                    }
-                }
-                Ok(Json::Array(arr))
-            }
-            // null, false, numbers, objects...
-        }
-    }
-}
-
-pub fn parse(s: &str) -> Result<Json, ParseError> {
-    Parser::new(s).parse_value()
-}
-```
-
-Key points:
-- `Vec<Json>` in an enum variant requires no `Box` because `Vec` is already heap-allocated
-- The parser keeps a `pos: usize` cursor into `&[u8]` — byte-level parsing avoids UTF-8 complexity for ASCII structure characters
-- String parsing handles `\"`, `\\`, `\n`, `\t` — these are the tricky cases
-- `Object` uses `Vec<(String, Json)>` not `HashMap` — preserves insertion order, same as V8's JSON parser
-
-## What This Unlocks
-
-- **Foundation for custom DSLs**: any language with expressions, nested structures, and literals follows this same pattern — grammar → AST → serializer + parser
-- **Understand serde_json internals**: the `Json` enum here is structurally identical to `serde_json::Value`; this is what you're working with when you use `.as_array()` and `.as_object()`
-- **Parser combinators**: once you understand recursive-descent parsing, `nom` and `winnow` become intuitive — they're just this pattern with reusable combinators
+OCaml's `Yojson` library represents JSON as a variant type similar to `JsonValue`. Encoding uses `Yojson.Safe.to_string` and `Yojson.Safe.pretty_to_string`. Custom serialization uses the `to_basic` function to convert from library types. OCaml's `Jsonaf` (Jane Street) provides a high-performance alternative. Both OCaml JSON libraries handle Unicode and number formatting edge cases that this from-scratch example omits.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Recursive type | `type json = Null \| Array of json list` | `enum Json { Array(Vec<Json>) }` — `Vec` provides indirection |
-| Serializer | `Format.fprintf` or `Buffer.add_string` | `impl fmt::Display` — integrate with `println!` |
-| Parser state | Functional: thread `pos` through returns | Imperative: `Parser` struct with mutable `pos` |
-| String escaping | Manual char-by-char | Same — match on `char` and write escape sequences |
-| Error type | Exception or `result` | `struct ParseError(String)` |
-| Production library | `yojson`, `ezjsonm` | `serde_json`, `json` |
+1. **Recursion**: Both represent JSON as recursive algebraic data types (enums in Rust, variants in OCaml); the recursive `to_string` pattern is identical.
+2. **Object ordering**: Rust's example uses `Vec<(String, JsonValue)>` to preserve insertion order; OCaml's `Yojson` uses an association list with the same property.
+3. **Number handling**: JSON numbers are IEEE 754 doubles; both languages face the same `1.0 vs 1` formatting challenge.
+4. **Performance**: Production JSON libraries (Rust's `simd-json`, OCaml's `jsonaf`) use SIMD for bulk scanning; this from-scratch version prioritizes clarity.
+
+## Exercises
+
+1. Implement `from_json(s: &str) -> Result<JsonValue, ParseError>` — a simple recursive descent JSON parser for the types in the `JsonValue` enum.
+2. Add `merge_objects` that combines two `JsonValue::Object` values, with the second's values overriding the first's for duplicate keys.
+3. Implement `json_path_get(root: &JsonValue, path: &str) -> Option<&JsonValue>` that navigates a dot-separated path like `"users.0.name"` through a JSON tree.

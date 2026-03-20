@@ -2,109 +2,49 @@
 
 ---
 
-# 623: Grand Tour — Functional Programming Patterns in Production Rust
+# Optics: functional rust grand tour
 
-**Difficulty:** 5  **Level:** Master
+## Problem Statement
 
-A complete worked example synthesising the entire functional Rust curriculum: domain types, pure functions, validation, error propagation, iterator pipelines, and composable transformation chains.
+Optics are composable data accessors originating from Haskell's lens library (Edward Kmett, 2012). They solve the deeply-nested update problem in immutable data: updating a field three levels deep requires rebuilding all intermediate values. Optics compose — a lens into a struct field composed with a prism for an enum variant gives a combined accessor that can get, set, and modify deeply nested optional values. The optic hierarchy includes Lens (exactly one focus), Prism (zero or one focus on enum variants), Traversal (zero or more foci), and Iso (lossless bidirectional conversion).
 
-## The Problem This Solves
+## Learning Outcomes
 
-Learning individual patterns in isolation is necessary but not sufficient. The real skill is combining them: algebraic data types that model the domain, pure functions that transform values without side effects, `Result` and `Option` chains that propagate errors without exceptions, and iterator pipelines that process collections without intermediate allocations — all working together in a coherent system.
+- The specific optic demonstrated in this example and what it focuses on
+- How to implement the optic manually using closures or structs in Rust
+- How this optic composes with others in the hierarchy
+- The laws the optic must satisfy for correct behavior
+- Where optics are used: state management, config manipulation, nested data transformation
 
-This example builds an order processing pipeline that a real production system might use. It touches every major functional pattern: `enum`-based error types with `Display`, pure transformation functions, `Result`-based validation, iterator chaining with `flat_map` and `fold`, currency conversion as a pure function, and `HashMap` aggregation. No `unsafe`, no `Arc<Mutex<>>`, no side effects in the core logic — functional purity throughout.
+## Rust Application
 
-This is where the entire series converges. Every pattern from examples 001–622 exists to make code like this possible: correct, composable, testable without mocks, and readable without tracing control flow through mutations.
+The source implements the optic concept using Rust's closure system. Due to lack of higher-kinded types, Rust uses explicit struct wrappers with Box<dyn Fn> fields or monomorphized versions with generic parameters. The examples show: the core get/set/preview/review operations, composition of two optics, and the laws verified in tests.
 
-## The Intuition
+Key patterns:
+- Core optic struct with closure fields
+- Composition: combining optics for deeper focus
+- Laws verification: identity, roundtrip, idempotence
+- Practical example: modifying nested struct/enum data
 
-Functional programming in Rust is not about avoiding `mut` or pretending Rust is Haskell. It's about a discipline of design:
+## OCaml Approach
 
-1. **Model the domain in types.** If an illegal state is unrepresentable in the type system, you can't create it by accident.
-2. **Separate pure computation from side effects.** Functions that transform data are easy to test; functions that print, write to disk, or mutate global state are not.
-3. **Use `Result` and `Option` for control flow.** The `?` operator threads errors through call chains without `try/catch` or `null` checks.
-4. **Compose with iterators.** An iterator pipeline is a data transformation expressed as a sequence of small, named, testable steps.
+OCaml optics use the same record-with-function approach:
 
-## How It Works in Rust
-
-```rust
-// ── Domain types: illegal states are unrepresentable ─────────────────────
-#[derive(Debug, Clone, Copy, PartialEq)]
-enum Currency { USD, EUR, GBP }
-
-#[derive(Debug, Clone)]
-struct Order { id: String, items: Vec<OrderItem>, discount: f64 }
-
-// ── Error type: all failure modes named and structured ───────────────────
-#[derive(Debug)]
-enum OrderError {
-    InsufficientStock { product: String, requested: u32, available: u32 },
-    InvalidDiscount(f64),
-    EmptyOrder,
-}
-
-// ── Pure functions: no side effects, fully testable ──────────────────────
-fn item_subtotal(item: &OrderItem) -> f64 {
-    item.product.price.amount * item.qty as f64
-}
-
-fn order_total(order: &Order) -> f64 {
-    order.items.iter().map(item_subtotal).sum::<f64>() * (1.0 - order.discount)
-}
-
-// ── Validation: Result propagation with ? ────────────────────────────────
-fn validate_order(order: &Order) -> Result<(), OrderError> {
-    if order.items.is_empty() { return Err(OrderError::EmptyOrder); }
-    if order.discount < 0.0 || order.discount > 1.0 {
-        return Err(OrderError::InvalidDiscount(order.discount));
-    }
-    for item in &order.items {
-        if item.qty > item.product.stock {
-            return Err(OrderError::InsufficientStock {
-                product: item.product.name.clone(),
-                requested: item.qty,
-                available: item.product.stock,
-            });
-        }
-    }
-    Ok(())
-}
-
-// ── Pipeline: validate → transform → aggregate ───────────────────────────
-fn process_orders(orders: &[Order]) -> (Vec<&Order>, Vec<(&Order, OrderError)>) {
-    let (valid, invalid): (Vec<_>, Vec<_>) = orders.iter()
-        .map(|o| validate_order(o).map(|_| o).map_err(|e| (o, e)))
-        .partition(Result::is_ok);
-    (valid.into_iter().map(|r| r.unwrap()).collect(),
-     invalid.into_iter().map(|r| r.unwrap_err()).collect())
-}
-
-// ── Aggregation: iterator fold into HashMap ──────────────────────────────
-fn revenue_by_currency(orders: &[&Order]) -> HashMap<String, f64> {
-    orders.iter().fold(HashMap::new(), |mut acc, order| {
-        let currency = order.items.first()
-            .map(|i| format!("{:?}", i.product.price.currency))
-            .unwrap_or_default();
-        *acc.entry(currency).or_insert(0.0) += order_total(order);
-        acc
-    })
-}
+```ocaml
+type ('s, 'a) lens = { get: 's -> 'a; set: 's -> 'a -> 's }
+let name_lens = { get = (fun u -> u.name); set = (fun u n -> { u with name = n }) }
+let compose l1 l2 = { get = (fun s -> l2.get (l1.get s)); set = (fun s a -> l1.set s (l2.set (l1.get s) a)) }
 ```
-
-Each function is: small, named, pure (no side effects), and testable in isolation. The pipeline combines them without ceremony — no class hierarchies, no dependency injection, no mocks needed.
-
-## What This Unlocks
-
-- **Production business logic** — order systems, pricing engines, inventory management, billing pipelines — all naturally modelled as pure transformations over domain types.
-- **Concurrent processing** — pure functions are trivially parallelisable with `rayon::par_iter()`: no shared state, no locking, no races.
-- **Property-based testing** — pure functions invite `proptest` and `quickcheck`: generate arbitrary inputs, verify algebraic properties hold without writing specific test cases.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Algebraic data types | `type error = InsufficientStock of ...` | `enum OrderError { InsufficientStock { ... } }` |
-| Pattern matching | `match e with` | `match e { ... }` — exhaustive, same semantics |
-| Error propagation | `Result.bind`, `let*` | `?` operator — desugar to `match` + early return |
-| Iterator pipeline | `List.filter_map`, `List.fold_left` | `.filter_map()`, `.fold()`, `.partition()` |
-| Pure functions | Default (immutable by default) | Default (move semantics; `mut` is explicit opt-in) |
+1. **HKT requirement**: Haskell's van Laarhoven encoding uses Functor/Applicative for optic unification requiring HKT; Rust uses explicit struct types per optic kind.
+2. **Operator syntax**: Haskell uses `^.`, `.~`, `%~` for terse optic use; Rust uses method calls, more verbose but explicit.
+3. **Derive macros**: `lens-rs` and similar crates provide derive macros for automatic lens generation; OCaml uses `ppx_lens` for the same.
+4. **Performance**: Boxed closure implementations have runtime overhead; monomorphized generic versions compile to zero-cost abstractions.
+
+## Exercises
+
+1. **Lens laws**: Write tests for all three lens laws: get-set (get after set returns set value), set-get (set to current value is identity), set-set (second set wins).
+2. **Prism laws**: Write tests for prism laws: preview after review returns Some, set via review then preview round-trips.
+3. **Compose two levels**: Create a lens for a struct field and a prism for an enum variant in that field — compose them and modify the inner value when the variant is present.

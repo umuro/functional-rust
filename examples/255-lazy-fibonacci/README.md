@@ -49,3 +49,9 @@ captures `a` and `b` by value, keeping each tail self-contained.
    `move` closures take ownership, making each thunk independent and `'static`.
 4. **Infinite safety:** Both languages are safe with infinite streams so long as
    you only force finite prefixes; neither will diverge on `take n`.
+
+## Exercises
+
+1. Extend the lazy Fibonacci iterator to produce a generic linear recurrence: parameterize it with an initial pair `(a, b)` and a step function `(T, T) -> T`.
+2. Use the lazy iterator to compute the first Fibonacci number greater than one million without materializing earlier values.
+3. Implement a lazy Sieve of Eratosthenes using Rust iterators, generating prime numbers on demand, and use it to find all primes less than 10,000.

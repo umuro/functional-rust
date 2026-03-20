@@ -2,77 +2,39 @@
 
 ---
 
-# 420: env! and option_env! for Build-time Values
+# 420: `env!` and `option_env!` — Compile-time Environment Variables
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Embed environment variables directly into your binary at compile time — no runtime config file, no `std::env::var`, just constants baked in during the build.
+Version numbers, API keys for build-time compilation, build metadata, and package names should be embedded in binaries without being hardcoded as string literals that can drift from the actual package metadata. `env!("CARGO_PKG_VERSION")` reads the version from `Cargo.toml` at compile time, producing a `&'static str` with zero runtime cost. `option_env!` handles optional variables that may not be present, returning `Option<&'static str>`. This is how `--version` flags get their version strings, and how build-time configuration is embedded into binaries.
 
-## The Problem This Solves
+`env!` is used by virtually every CLI tool for `--version` output, embedded firmware for build metadata, and any binary that needs to know its own version at runtime.
 
-Applications often need values that are fixed for a given build: version strings, API endpoints, feature flags, build timestamps. Reading them at runtime from environment variables or config files adds startup complexity, failure modes ("where's the config?"), and potential security exposure. Including them at compile time means they're constants — inlined, no parsing, no I/O, no missing values.
+## Learning Outcomes
 
-`env!("VAR")` reads an environment variable at compile time and produces a `&'static str`. If the variable isn't set, the *build* fails — not the runtime. This is a deliberate design: the problem is caught at the source. `option_env!("VAR")` returns `Option<&'static str>` for optional values, letting you handle absence gracefully at compile time.
+- Understand how `env!` reads environment variables at compile time, not runtime
+- Learn the standard Cargo-provided env vars: `CARGO_PKG_VERSION`, `CARGO_PKG_NAME`, `CARGO_PKG_AUTHORS`
+- See how `option_env!` handles optional variables with `Option<&'static str>`
+- Understand why compile-time embedding is preferable to runtime `std::env::var` for version info
+- Learn how CI systems can inject build metadata via environment variables
 
-Combined with Cargo's automatic variables (`CARGO_PKG_VERSION`, `CARGO_PKG_NAME`, `CARGO_MANIFEST_DIR`), this covers the most common case — version strings — without any extra setup.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `VERSION`, `PKG_NAME`, and `AUTHORS` are `const &str` values read from Cargo-provided environment variables. These are set automatically by `cargo build`. `full_version()` concatenates them at runtime but both strings are `'static`. `build_profile()` uses `option_env!("PROFILE")` with `.unwrap_or("unknown")` for an optional variable. `optional_api_key()` returns `Option<&'static str>` for a key that may be absent.
 
-`env!("VAR")` reads an environment variable when `cargo build` runs and bakes it into the binary as a compile-time constant — the variable doesn't need to exist at runtime.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-// Cargo automatically sets these — always available
-const VERSION: &str = env!("CARGO_PKG_VERSION");
-const PKG_NAME: &str = env!("CARGO_PKG_NAME");
-
-// Build fails if MY_API_KEY isn't set during cargo build
-const API_KEY: &str = env!("MY_API_KEY");
-
-// option_env! — None if not set, Some(&str) if set
-const OPTIONAL_ENDPOINT: Option<&str> = option_env!("STAGING_URL");
-
-fn main() {
-    println!("{} v{}", PKG_NAME, VERSION);
-
-    match OPTIONAL_ENDPOINT {
-        Some(url) => println!("Using staging: {}", url),
-        None      => println!("Using production endpoint"),
-    }
-}
-
-// Common pattern: build info struct
-pub struct BuildInfo {
-    pub version: &'static str,
-    pub pkg_name: &'static str,
-    pub profile: &'static str,
-}
-
-pub const BUILD: BuildInfo = BuildInfo {
-    version: env!("CARGO_PKG_VERSION"),
-    pkg_name: env!("CARGO_PKG_NAME"),
-    profile: if cfg!(debug_assertions) { "debug" } else { "release" },
-};
-```
-
-1. `env!("NAME")` → `&'static str` constant. Build error if unset.
-2. `option_env!("NAME")` → `Option<&'static str>`. `None` if unset, `Some(val)` if set.
-3. Cargo pre-sets: `CARGO_PKG_VERSION`, `CARGO_PKG_NAME`, `CARGO_PKG_AUTHORS`, `CARGO_MANIFEST_DIR`.
-4. For custom values, set the env var before `cargo build`, or use `build.rs` to emit `cargo:rustc-env=VAR=value`.
-
-## What This Unlocks
-
-- **Zero-overhead version strings**: `env!("CARGO_PKG_VERSION")` baked in as a static string — no parsing, no allocation.
-- **CI/CD build tagging**: Inject git commit SHA, build timestamp, or CI pipeline ID at build time.
-- **Fail-fast secrets**: Mandatory API keys cause build failure, not silent runtime misconfiguration.
+OCaml dune build system generates `Version.ml` files from opam metadata: `(library (name mylib) (inline_tests) (preprocessor_deps ../CHANGES.md))`. The `%%VERSION%%` substitution in `dune` files inserts the package version. OCaml's `Sys.argv.(0)` provides the binary name but not version. Libraries like `build_info` generate OCaml modules from build metadata. There is no direct equivalent of `env!` — all approaches require build system configuration.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Compile-time constants | `[%%getenv "VAR"]` (ppx_getenv) or custom PPX | `env!("VAR")` built-in |
-| Package version | Manual or external tooling | `env!("CARGO_PKG_VERSION")` automatic |
-| Optional build var | Custom handling required | `option_env!("VAR")` returns `Option` |
-| Build script injection | Makefile / Dune env | `build.rs` emits `cargo:rustc-env=VAR=val` |
-| Runtime env | `Sys.getenv` | `std::env::var("VAR")` (different from `env!`) |
+1. **Built-in Cargo vars**: Rust has documented, guaranteed `CARGO_PKG_*` variables; OCaml requires explicit `dune` configuration to expose package metadata.
+2. **Zero config**: `env!("CARGO_PKG_VERSION")` requires no setup beyond having a `Cargo.toml`; OCaml's equivalent requires dune rules.
+3. **Optional**: `option_env!` returns `Option<&'static str>` cleanly; OCaml's equivalent requires conditional compilation or runtime checks.
+4. **Build reproducibility**: Compile-time env vars baked into the binary make builds non-reproducible if the env changes; both languages face this trade-off.
+
+## Exercises
+
+1. **Version command**: Create a `print_version()` function that prints `"{PKG_NAME} {VERSION}\nBuilt by: {AUTHORS}\nProfile: {PROFILE}"` using all available Cargo env vars. Call it from a `main.rs` with `--version` flag handling.
+2. **Build-time API key**: Use `option_env!("SENTRY_DSN")` to conditionally initialize error reporting. If the key is present at compile time, initialize a mock Sentry client; otherwise print a warning that error reporting is disabled.
+3. **Custom build info**: Write a `build.rs` script that sets `cargo:rustc-env=BUILD_TIMESTAMP={timestamp}` using `SystemTime::now()`. Access it with `env!("BUILD_TIMESTAMP")` in the library and verify the timestamp is baked in.

@@ -33,3 +33,9 @@ Rust's `Result` provides `and_then` as the standard bind combinator, making `.an
 2. **Error conversion:** OCaml concatenates strings freely; Rust requires `map_err` to convert parse errors into the uniform `String` error type.
 3. **Syntax sugar:** Rust's `?` operator provides do-notation-style sequencing without a monad typeclass — each `?` is an explicit bind step.
 4. **Ownership:** Rust validation functions take `i64` by value (Copy type), avoiding any borrow complications in the chain.
+
+## Exercises
+
+1. Extend the error chain to use a custom error enum with distinct variants for each failure mode, and map each step's error type using `map_err`.
+2. Implement `result_all` — analogous to `option_all` — that collects a `Vec<Result<T, E>>` into `Result<Vec<T>, E>`, returning the first error encountered.
+3. Combine `Option` and `Result` chaining: write a function that looks up a configuration key (returning `Option`), parses its value (returning `Result`), and applies a range check (returning `Result`), threading through a unified error type.

@@ -2,55 +2,54 @@
 
 ---
 
-# 846: Monte Carlo Methods — π Estimation and Sampling
+# Monte Carlo Pattern
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Use random sampling to approximate integrals and probabilities — the technique behind physics simulations, financial models, and machine learning.
+Some problems are too complex for exact algorithms but can be approximated by random sampling. Monte Carlo methods estimate quantities by sampling: estimate pi by generating random points in a unit square and counting those inside the unit circle; estimate integrals by averaging function values at random points; approximate Nash equilibria in game theory; simulate financial option pricing. Error decreases as O(1/sqrt(n)) — independent of dimensionality, which is the key advantage over deterministic quadrature for high-dimensional integration. Monte Carlo underpins financial risk models, particle physics simulation, and probabilistic algorithms.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Many integrals have no closed form. Numerical quadrature (grid-based integration) works in 1-3 dimensions but becomes exponentially expensive in higher dimensions — the "curse of dimensionality." Monte Carlo integration sidesteps this: sample random points, evaluate the function, average. The error is O(1/√n) regardless of dimension.
+- Implement pi estimation: sample (x,y) uniformly in [-1,1]^2, count points where x^2+y^2 < 1
+- Understand O(1/sqrt(n)) convergence: 4x more samples gives 2x more accuracy
+- Implement Monte Carlo integration: estimate `integral(f, a, b)` by averaging f at random points
+- Apply to high-dimensional integration where deterministic methods are exponentially expensive
+- Recognize the importance of a good random number generator (LCG vs PCG vs Mersenne Twister)
 
-This same idea underlies neural network training (minibatch SGD is Monte Carlo gradient estimation), Bayesian inference (MCMC), option pricing (Black-Scholes simulation), and physical simulations (radiosity, ray tracing). The technique is indispensable for any computation where exact enumeration is intractable.
-
-The π estimation example is the cleanest illustration: a unit square contains a quarter-circle of radius 1. Uniformly sample (x, y) pairs; the fraction satisfying x²+y²≤1 converges to π/4.
-
-## The Intuition
-
-Throw darts at a square board with a circle drawn on it. Count how many land inside the circle. That ratio is π/4. Throw more darts → better estimate. The law of large numbers guarantees convergence; the central limit theorem tells you the error: ±1.96/√n at 95% confidence.
-
-Monte Carlo integration generalizes this: to integrate f(x) over [a,b], pick random x values in [a,b] and average f(x). The average converges to the integral divided by (b-a).
-
-Acceptance-rejection sampling goes further: to sample from a non-uniform distribution, sample uniformly and reject points with probability proportional to how unlikely they are under the target distribution.
-
-## How It Works in Rust
-
-1. **LCG PRNG** — a simple linear congruential generator gives reproducible pseudorandom `f64`s in [0,1) with no dependencies. Constants are Knuth's recommended LCG parameters.
-2. **π estimation** — `(0..n).filter(|_| x²+y² ≤ 1.0).count()` with random `x`, `y`. Ratio × 4 = estimate.
-3. **`mc_integrate`** — sample `n` random `x` in `[a,b]`, sum `f(x)`, multiply by `(b-a)/n`. Works for any `Fn(f64) -> f64`.
-4. **Acceptance-rejection** — loop until `n` samples accepted. For `sin(x)` on `[0,π]`, accept `x` if `uniform() < sin(x)`.
+## Rust Application
 
 ```rust
-// π estimation — core loop
-let inside = (0..n)
-    .filter(|_| { let (x, y) = (rng.next_f64(), rng.next_f64()); x*x + y*y <= 1.0 })
-    .count();
-4.0 * inside as f64 / n as f64
+pub fn estimate_pi(n: u64, rng: &mut impl RngCore) -> f64 {
+    let inside = (0..n).filter(|_| {
+        let x: f64 = rng.gen_range(-1.0..=1.0);
+        let y: f64 = rng.gen_range(-1.0..=1.0);
+        x * x + y * y <= 1.0
+    }).count();
+    4.0 * inside as f64 / n as f64
+}
 ```
 
-## What This Unlocks
+The `impl RngCore` parameter makes the function testable with a deterministic seeded RNG. The `filter` + `count` pattern is idiomatic Rust for conditional counting. Using `f64` for the coordinates gives sufficient precision for the statistical error that dominates at typical sample sizes. Parallelizing with Rayon (`par_iter().filter().count()`) gives near-linear speedup since samples are independent. The `rand` crate's `gen_range` handles the uniform sampling cleanly.
 
-- **Numerical integration without calculus** — approximate any integral with three lines of code.
-- **Dimension-independent error** — O(1/√n) holds in 2D, 100D, or 10,000D; deterministic grids cannot match this.
-- **Foundation for probabilistic algorithms** — MCMC, particle filters, and Monte Carlo tree search all build on this primitive.
+## OCaml Approach
+
+OCaml's Monte Carlo uses `Random.float 2.0 -. 1.0` for uniform samples. The pi estimation is: `let count = ref 0 in for _ = 1 to n do let x = ... and y = ... in if x*.x +. y*.y <= 1.0 then incr count done; 4.0 *. float !count /. float n`. OCaml's `Random.self_init ()` seeds from system entropy. The `Seq` module creates an infinite sample sequence for lazy Monte Carlo. OCaml's `Float.sqrt` and `.*.` operators handle the computation.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| PRNG | `Random.float 1.0` (stdlib) | LCG / xorshift (no deps needed) |
-| Loop accumulate | `for` + mutable `ref` | `(0..n).filter().count()` |
-| Convergence rate | O(1/√n) | Same — math doesn't change |
-| Higher-order integrate | `let mc f a b n` | `fn mc_integrate(f: impl Fn(f64) -> f64, ...)` |
-| Acceptance-rejection | `while count < n` | Same imperative pattern |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| RNG | `rand::RngCore` trait | `Random` module (LCG-based) |
+| Testability | Seeded `SmallRng::seed_from_u64` | `Random.init seed` |
+| Parallelism | `rayon::par_iter()` | `Domain.spawn` (OCaml 5.0) |
+| Sample counting | `filter().count()` | Mutable counter in loop |
+| Convergence | O(1/sqrt n) | Same |
+| Higher dimensions | Same complexity advantage | Same |
+
+## Exercises
+
+1. Implement Monte Carlo integration for a 1D function and compare with the exact analytical result.
+2. Extend to 10D integration of `x1^2 + ... + x10^2 <= 1` to demonstrate the dimensionality advantage.
+3. Use stratified sampling (divide the domain into strata, sample uniformly within each) and compare convergence with naive Monte Carlo.
+4. Implement parallel Monte Carlo using Rayon with independent per-thread RNGs and measure linear speedup.
+5. Estimate the variance of your pi estimator as a function of n and verify it matches the theoretical O(1/n) variance.

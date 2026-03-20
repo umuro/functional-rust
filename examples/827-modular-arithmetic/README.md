@@ -2,88 +2,58 @@
 
 ---
 
-# 827: Modular Arithmetic
+# Modular Arithmetic
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Build a type-safe `ModInt` wrapper that enforces invariants and overloads operators — the foundation of all modular number theory in Rust.
+When computing large combinatorial values (n! mod p, binomial coefficients, number of paths), intermediate results overflow 64-bit integers long before the final answer. Modular arithmetic performs all operations in a finite field Z/pZ, keeping values bounded. Computing `(a + b) % m`, `(a * b) % m`, `pow(a, b, m)`, and `inv(a, m)` are the building blocks of competitive programming, cryptography, and number theory. The key insight: `(a * b) % m = ((a % m) * (b % m)) % m`. Modular exponentiation (fast power) runs in O(log b) and is essential for RSA, Diffie-Hellman, and primality testing.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Every cryptographic primitive, every competitive programming problem with "answer mod 10^9+7", every hash function — they all do arithmetic in ℤ_m. The challenge is engineering correctness: forgetting a `% m` here, overflowing a multiply there, getting a negative result from subtraction. These bugs are silent (values stay in the right range until they don't) and hard to track down.
+- Implement modular addition, subtraction, and multiplication with proper overflow prevention
+- Implement fast modular exponentiation via repeated squaring in O(log exp) time
+- Understand modular inverse and when it exists (only when gcd(a, m) = 1)
+- Compute factorial and binomial coefficients modulo a prime efficiently
+- Recognize when to use Fermat's little theorem vs. extended Euclidean for modular inverse
 
-The solution is a newtype wrapper `ModInt` that enforces `v ∈ [0, m)` by construction and overloads `+`, `-`, `*` to automatically stay in range. This is idiomatic Rust: encode invariants in the type system so the compiler catches violations, not your test suite.
-
-Modular inverse is the key derived operation. When m is prime, Fermat's little theorem gives `a^(-1) ≡ a^(p-2) (mod p)` — computable with fast exponentiation. For general m, use the Extended Euclidean algorithm. Both are shown here.
-
-## The Intuition
-
-Modular arithmetic "wraps around" at m. Addition and subtraction stay safe with a single `% m` and a correction for negative subtraction results. Multiplication requires care: two `u64` values in [0, m) can have a product up to (10^9)² ≈ 10^18, which exceeds `u64::MAX` (≈ 1.8 × 10^19) — barely safe for m ≤ 10^9+7, but not for arbitrary u64 moduli. The safe idiom: widen to `u128` for the multiply, then reduce mod m.
-
-Fermat inverse: `a × a^(p-2) ≡ a^(p-1) ≡ 1 (mod p)` by Fermat's little theorem. So `a^(-1) = a^(p-2) mod p`. Requires p prime. For general m, Extended Euclidean finds x such that `a×x + m×y = gcd(a,m) = 1` — then x mod m is the inverse.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-struct ModInt { v: u64, m: u64 }
-
-impl ModInt {
-    fn new(v: i64, m: u64) -> Self {
-        // Handle negative inputs: (v % m + m) % m normalizes to [0, m)
-        let v = ((v % m as i64) + m as i64) as u64 % m;
-        ModInt { v, m }
+pub fn mod_add(a: u64, b: u64, m: u64) -> u64 { (a + b) % m }
+pub fn mod_mul(a: u64, b: u64, m: u64) -> u64 { (a % m) * (b % m) % m }
+pub fn mod_pow(mut base: u64, mut exp: u64, m: u64) -> u64 {
+    let mut result = 1u64;
+    base %= m;
+    while exp > 0 {
+        if exp & 1 == 1 { result = result * base % m; }
+        base = base * base % m;
+        exp >>= 1;
     }
-
-    // Modular exponentiation: base^exp mod m in O(log exp)
-    fn pow(self, mut exp: u64) -> Self {
-        let (mut base, mut result) = (self, ModInt::new(1, self.m));
-        while exp > 0 {
-            if exp & 1 == 1 { result = result * base; }
-            base = base * base;
-            exp >>= 1;
-        }
-        result
-    }
-
-    // Fermat inverse: O(log m), requires m prime
-    fn inv_fermat(self) -> Self {
-        assert!(self.v != 0, "no inverse for 0");
-        self.pow(self.m - 2)  // a^(p-2) mod p
-    }
-
-    // Extended Euclidean inverse: works for any coprime (v, m)
-    fn inv(self) -> Option<Self> {
-        let (g, x, _) = extended_gcd(self.v as i64, self.m as i64);
-        if g != 1 { None } else { Some(ModInt::new(x, self.m)) }
-    }
+    result
 }
-
-impl Mul for ModInt {
-    type Output = Self;
-    fn mul(self, rhs: Self) -> Self {
-        // u128 widening prevents overflow: (u64::MAX)^2 > u64::MAX
-        let v = (self.v as u128 * rhs.v as u128 % self.m as u128) as u64;
-        ModInt { v, m: self.m }
-    }
-}
-// Add and Sub: (a + b) % m and (a + m - b) % m
 ```
 
-The `impl Trait for Type` pattern is Rust's answer to OCaml's lack of operator overloading — `+`, `-`, `*` on `ModInt` now look like regular arithmetic in calling code.
+Rust's `u64` multiplication can overflow for moduli above 2^32, requiring `u128` for intermediate products: `((a as u128 * b as u128) % m as u128) as u64`. The `wrapping_mul` method is not appropriate here — we want the exact mathematical result mod m. `mod_pow` uses the binary exponentiation algorithm: at each bit of `exp`, square the base and optionally multiply into result. The bit-test `exp & 1 == 1` and right-shift `exp >>= 1` are cache-friendly and branch-predictable.
 
-## What This Unlocks
+## OCaml Approach
 
-- **Competitive programming**: Combinatorics mod 10^9+7 — factorials, binomial coefficients, inverse factorials — all cleanly expressed with `ModInt`.
-- **Cryptography implementation**: Modular inverse is the core of RSA key generation (`d = e^(-1) mod φ(n)`) and every elliptic curve point operation.
-- **Polynomial arithmetic**: FFT-based polynomial multiplication works mod a prime; `ModInt` makes the coefficient arithmetic clean and safe.
+OCaml's `int` is 63-bit on 64-bit systems, allowing products up to about 4.6 * 10^18. For moduli up to 2^30, `a * b mod m` stays in bounds. For larger moduli, OCaml uses `Int64` or `Zarith`. Modular exponentiation is a clean tail-recursive function: `let rec pow_mod base exp m = if exp = 0 then 1 else let half = pow_mod (base * base mod m) (exp / 2) m in if exp mod 2 = 0 then half else half * base mod m`. OCaml's `Fun.protect` ensures cleanup in modular operations with side effects.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Wrapper type | Record `{v: int; m: int}` or module | `struct ModInt { v: u64, m: u64 }` |
-| Operator overload | Cannot overload `+`, use functions | `impl Add for ModInt` — full overloading |
-| u128 multiply | `Int64` or Zarith for big values | `(a as u128 * b as u128) % m as u128` |
-| Negative normalization | `((v mod m) + m) mod m` | Same; cast through `i64` then `u64` |
-| Fermat inverse | `pow_mod a (m-2) m` function call | `self.pow(self.m - 2)` method |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Overflow risk | `u64 * u64` overflows above 2^32 mod | `int * int` overflows above 2^30 mod |
+| Large modulus | Use `u128` intermediate | Use `Int64` or `Zarith` |
+| Mod exponentiation | Iterative with bit manipulation | Recursive or iterative |
+| Modular inverse | `mod_pow(a, m-2, m)` for prime m | Same via Fermat |
+| Binomial coefficients | Precompute factorial array mod p | Same approach |
+| Newtype safety | `struct Mod<const M: u64>(u64)` | `type modint = int` (no enforcement) |
+
+## Exercises
+
+1. Implement a `ModInt<const M: u64>` newtype that overloads arithmetic operators to auto-apply modular reduction.
+2. Precompute factorial and inverse factorial tables mod p to answer n-choose-k queries in O(1).
+3. Implement Lucas' theorem for computing binomial coefficients mod a prime p for very large n, k.
+4. Use modular arithmetic to verify matrix multiplication: `(A * B) % m = ((A % m) * (B % m)) % m`.
+5. Benchmark `u64` vs. `u128` intermediate for modular multiplication and measure the throughput difference.

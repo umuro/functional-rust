@@ -2,75 +2,37 @@
 
 ---
 
-# 807: Bipartite Graph Detection (2-Colouring)
+# 807-bipartite-check — Bipartite Check
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Determine whether a graph can be 2-coloured — equivalent to detecting odd cycles — using BFS in O(V+E).
+A bipartite graph can be 2-colored: vertices split into two sets where all edges go between sets (no edges within a set). BFS-based 2-coloring checks bipartiteness in O(V+E). Applications: job matching (workers and jobs are two sets), recommendation systems (users and items), scheduling (tasks and time slots), and the fundamental theorem that a graph is bipartite if and only if it contains no odd-length cycles.
 
-## The Problem This Solves
+## Learning Outcomes
 
-A graph is bipartite if its vertices can be split into two sets such that every edge connects a vertex in one set to a vertex in the other — never two vertices in the same set. This is equivalent to asking: can you 2-colour the graph? And equivalently: does it contain any odd-length cycle?
+- Implement BFS 2-coloring: assign alternating colors to adjacent vertices
+- Detect non-bipartiteness: same color on adjacent vertices during BFS
+- Handle disconnected graphs: run BFS from every uncolored vertex
+- Understand the bipartite-iff-no-odd-cycles theorem
+- Apply to matching problems (König's theorem: max matching = min vertex cover in bipartite graphs)
 
-Bipartiteness appears in matching problems (job assignments, stable marriage), scheduling (tasks and machines), and database query optimization. Any time you have a "two-sided" relationship — users and items in a recommendation system, students and courses — you're working with a bipartite structure. Checking bipartiteness before running a matching algorithm saves you from applying algorithms that require it when the input violates the assumption.
+## Rust Application
 
-The algorithm returns either a valid 2-colouring (each vertex labelled 0 or 1) or a proof of non-bipartiteness via the odd cycle. Even for disconnected graphs, each component is checked independently.
+`is_bipartite(n, edges)` builds an undirected adjacency list. BFS from each unvisited vertex assigns `color[start] = true`. For each neighbor `v` of `u`: if uncolored, assign opposite color and enqueue; if same color as `u`, return false (odd cycle). Tests: even cycle (4 nodes, bipartite) and triangle (3 nodes, not bipartite).
 
-## The Intuition
+## OCaml Approach
 
-BFS naturally enforces 2-colouring. Start at any vertex, colour it 0. Colour all its neighbours 1. Colour their unvisited neighbours 0. If you ever try to colour a vertex that already has the same colour as its neighbour, you've found an odd cycle — the graph is not bipartite.
-
-The assignment `color[w] = 1 - color[v]` is the entire logic: flip the colour at each BFS level. If a cross-edge connects two same-coloured vertices, the cycle length is even+1 = odd.
-
-O(V+E) time. This is one of the cleanest BFS applications: no visited array needed separately — uncoloured vertices serve as "unvisited." In OCaml, you'd use `Option` to represent uncoloured. In Rust, `i8` with -1 as sentinel is compact and cache-friendly.
-
-## How It Works in Rust
-
-```rust
-use std::collections::VecDeque;
-
-fn is_bipartite(adj: &[Vec<usize>]) -> Option<Vec<i8>> {
-    let n = adj.len();
-    let mut color = vec![-1i8; n]; // -1 = uncoloured
-
-    for start in 0..n {
-        if color[start] != -1 { continue; } // already coloured
-
-        // BFS from this component's root
-        color[start] = 0;
-        let mut queue = VecDeque::from([start]);
-
-        while let Some(v) = queue.pop_front() {
-            for &w in &adj[v] {
-                if color[w] == -1 {
-                    color[w] = 1 - color[v]; // flip colour
-                    queue.push_back(w);
-                } else if color[w] == color[v] {
-                    return None; // same colour on both ends → odd cycle
-                }
-            }
-        }
-    }
-    Some(color) // valid 2-colouring
-}
-```
-
-`VecDeque` from the standard library is Rust's double-ended queue — the natural choice for BFS. `pop_front` is O(1) amortised. Using `i8` instead of an `Option<u8>` avoids the overhead of matching and keeps the color array tight in memory.
-
-The `1 - color[v]` trick works because colours are 0 and 1 — flipping between them with subtraction avoids a branch.
-
-## What This Unlocks
-
-- **Maximum bipartite matching**: König's theorem, Hopcroft-Karp, Hungarian algorithm — all require a bipartite graph as input.
-- **Graph colouring lower bound**: a graph that isn't bipartite requires at least 3 colours; bipartite graphs are exactly the 2-colourable ones.
-- **Cycle parity in dependency graphs**: detecting odd cycles in constraint graphs (e.g., in 2-SAT preprocessing or scheduling feasibility).
+OCaml implements BFS with `Queue.t` and a `color: bool option array`. The `Queue.add` / `Queue.pop` pattern drives the BFS. OCaml's `Option.map` applies color flipping functionally. The `Ocamlgraph` library provides `Coloring.check_bipartite`. OCaml's `for v in adj.(u) do ...` is idiomatic for adjacency list traversal.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Uncoloured sentinel | `None` in `int option array` | `-1i8` — avoids `Option` wrapping overhead |
-| Queue | `Queue.t` module | `VecDeque<usize>` from `std::collections` |
-| Colour flip | `1 - c` or `match c` | `1 - color[v]` — same idiom |
-| Disconnected graph | Explicit loop over components | Same outer `for start in 0..n` loop |
-| Early exit | `raise Exit` or `Result` | `return None` — idiomatic `Option` return |
+1. **BFS queue**: Rust uses `VecDeque<usize>` (FIFO); OCaml uses `Queue.t` — equivalent data structures.
+2. **Color representation**: Rust uses `Option<bool>` (uncolored / colored); OCaml uses `int option` or `bool option` similarly.
+3. **Disconnected graphs**: Both check all vertices to handle disconnected graphs — the `for v in 0..n` outer loop is identical.
+4. **Matching connection**: Bipartite check is a prerequisite for maximum bipartite matching (Hopcroft-Karp); both languages use the same foundation.
+
+## Exercises
+
+1. Implement `bipartite_partition(n, edges) -> Option<(Vec<usize>, Vec<usize>)>` that returns the two vertex sets if bipartite, or `None` if not.
+2. Find the shortest odd cycle in a non-bipartite graph using BFS level tracking — the cycle length is the graph's "odd girth."
+3. Implement maximum bipartite matching using the augmenting path algorithm (Hungarian / Hopcroft-Karp), building on the bipartite check.

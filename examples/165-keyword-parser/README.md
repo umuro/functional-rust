@@ -2,88 +2,43 @@
 
 ---
 
-# 165: Keyword Parser
+# Keyword Parser
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Parse reserved words with word boundary checking — so `"if"` matches in `"if x"` but not in `"iffy"`.
+Keywords like `if`, `else`, `while`, and `return` must be distinguished from identifiers. A naive string parser would match `"if"` at the start of `"ifstream"` — failing to recognize that `"ifstream"` is an identifier containing the prefix `"if"`. Keyword parsers enforce word boundary checking: the keyword must not be followed by an identifier character. This is the difference between lexer-level and parser-level thinking in grammar design.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Every language has keywords: `if`, `else`, `fn`, `return`, `let`. They look just like identifiers — but they're reserved. A naive approach parses `"if"` with `tag("if")`, which matches correctly in `"if x = 1"`. But it also matches the start of `"iffy"`, treating the variable `iffy` as a keyword followed by garbage.
+- Understand the word boundary problem: why `tag("if")` alone is insufficient for keywords
+- Implement `keyword` as `tag` followed by a negative lookahead (no identifier character)
+- Learn how keyword parsers interact with identifier parsers in a complete lexer
+- See the "longest match" rule as the standard resolution for keyword/identifier ambiguity
 
-The fix is word boundary detection: after matching the keyword string, check that the *next* character is not a letter, digit, or underscore. If it is, the match is inside a longer identifier and should fail.
+## Rust Application
 
-Add token mapping (parse `"if"` → `Token::If`) and multi-keyword choice (try `"else if"` before `"else"`) and you have the complete keyword layer that sits between your scanner and your grammar.
+`keyword(kw: &str) -> Parser<&str>` matches the exact string, then checks that the next character is not an identifier character (using `is_ident_char`). If the check fails — the keyword is followed by `'a'..='z'`, `'0'..='9'`, or `'_'` — the parser fails, leaving the input at the original position. This ensures `"ifstream"` is rejected as a keyword match while `"if "` and `"if("` succeed. The negative lookahead does not consume the following character.
 
-## The Intuition
+## OCaml Approach
 
-A keyword parser = `tag(keyword_str)` + boundary check. The boundary check peeks at the next character: if it could continue an identifier, reject the match.
-
+In OCaml's angstrom, the common pattern is:
+```ocaml
+let keyword kw =
+  string kw *> peek_char >>= function
+  | Some c when is_ident_char c -> fail ("expected end of keyword '" ^ kw ^ "'")
+  | _ -> return kw
 ```
-input: "if x > 0"
-tag("if") → ok, remaining: " x > 0"
-next char: ' ' — not an ident char → keyword match ✓
-
-input: "iffy_name"
-tag("if") → ok, remaining: "fy_name"  
-next char: 'f' — IS an ident char → reject ✗
-```
-
-## How It Works in Rust
-
-```rust
-#[derive(Clone, Debug, PartialEq)]
-enum Token { If, Else, Let, Fn, Return }
-
-fn keyword<'a>(word: &'static str, tok: Token) -> impl Fn(&'a str) -> ParseResult<Token> {
-    move |input| {
-        if !input.starts_with(word) {
-            return Err(format!("expected '{}'", word));
-        }
-        let rest = &input[word.len()..];
-
-        // Word boundary: next char must NOT be an identifier character
-        if rest.starts_with(|c: char| c.is_alphanumeric() || c == '_') {
-            return Err(format!("'{}' is a prefix, not a keyword", word));
-        }
-
-        Ok((tok.clone(), rest))
-    }
-}
-
-// Try multiple keywords, longest first to avoid prefix ambiguity
-fn any_keyword(input: &str) -> ParseResult<Token> {
-    // Sort by length descending: try "else if" before "else"
-    let mut candidates = vec![
-        ("if",     Token::If),
-        ("else",   Token::Else),
-        ("let",    Token::Let),
-        ("fn",     Token::Fn),
-        ("return", Token::Return),
-    ];
-    candidates.sort_by(|a, b| b.0.len().cmp(&a.0.len()));
-
-    for (word, tok) in candidates {
-        if let Ok(result) = keyword(word, tok)(input) {
-            return Ok(result);
-        }
-    }
-    Err("no keyword matched".to_string())
-}
-```
-
-## What This Unlocks
-
-- **Token classification** — turn raw strings into typed `Token` values for your grammar layer.
-- **Identifier vs keyword** — parse `let` as a keyword, `lethal` as an identifier.
-- **Extensible keyword tables** — add a keyword by adding one entry to the candidates list.
+`peek_char` looks at the next character without consuming it, providing the lookahead. This is equivalent to Rust's approach and equally necessary for correct keyword parsing.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Token type | `type token = If \| Then \| Else` | `enum Token { If, Then, Else }` |
-| Clone for reuse | Automatic (structural equality) | `#[derive(Clone)]` required |
-| Boundary check | `String.get rest 0` | `rest.chars().next()` |
-| Longest-first sort | `List.sort (fun a b -> compare (len b) (len a))` | `Vec::sort_by(&#124;a, b&#124; b.0.len().cmp(&a.0.len()))` |
+1. **Lookahead**: Both use non-consuming lookahead (peek); the implementation detail is language-specific but the semantics are identical.
+2. **Negative lookahead**: Both express "keyword not followed by identifier char"; Rust checks the remainder string; OCaml uses `peek_char`.
+3. **Reserved words**: Some parsers pre-collect keywords into a `HashSet` and check identifiers against it; this is an alternative to individual keyword parsers.
+4. **Error messages**: Failing keyword parsers should report "expected keyword 'X'"; reporting "expected identifier" would mislead the user.
+
+## Exercises
+
+1. Build a `keywords` combinator that tries a list of keywords in order: `keywords(["if", "else", "while"])`.
+2. Write a parser that correctly distinguishes `"for"` (keyword) from `"formula"` (identifier) and test both.
+3. Implement `reserved_word(words: &[&str]) -> impl Fn(&str) -> bool` as a fast lookup for keyword exclusion in identifier parsing.

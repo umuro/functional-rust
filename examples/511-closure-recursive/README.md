@@ -2,89 +2,70 @@
 
 ---
 
-# 511: Recursive Closures (Y Combinator)
+# Recursive Closures and Y Combinator
 
-**Difficulty:** 5  **Level:** Advanced
+Rust closures cannot reference themselves directly, so recursive anonymous computations require either named inner functions, open recursion (passing self as argument), or the Y combinator pattern using a `struct` wrapper.
 
-Closures can't reference themselves by name — here are three techniques to make them recursive anyway, culminating in the Y combinator.
+## Problem Statement
 
-## The Problem This Solves
+In lambda calculus, the Y combinator `Y(f) = f(Y(f))` enables recursion without named functions — it passes the function to itself as an argument. Rust closures are anonymous and cannot capture themselves (they don't exist yet when their body is evaluated). The workarounds are: (1) a named `fn` (simplest), (2) open recursion — a `step(self_, n)` function where `self_` is the recursive delegate, (3) a `struct Y(Box<dyn Fn(&Y, A) -> B>)` that passes itself explicitly. These are not just curiosities — they illustrate how recursive computation works at the type level.
 
-You write `let fact = |n| if n <= 1 { 1 } else { n * fact(n-1) }` and get: `cannot find value 'fact' in this scope`. The closure is being defined, so it doesn't exist yet. Rust (unlike OCaml's `let rec`) has no keyword for recursive bindings.
+## Learning Outcomes
 
-For 99% of cases, use a named function — that's the right answer. But there are legitimate scenarios where you need anonymous recursion: implementing interpreters, writing generic fixed-point combinators, or studying lambda calculus in Rust. The Y combinator is also a gateway to understanding how recursion is *derived* from lambda calculus without needing it as a primitive.
+- Understand why closures cannot be self-referential in Rust
+- Implement open recursion via a higher-order `step` function
+- Build a `Y<A, B>` combinator struct with `call(&self, arg) -> B`
+- Implement `y_factorial` and `fib_open` using the Y combinator
+- Recognise that named functions are always the practical choice for real code
 
-The real challenge here isn't just syntax — it's types. A recursive closure's type would be infinite: `T = Fn(T) -> U`. Rust's type system requires all types to have known, finite sizes. The solution: break the infinite type with `Box`.
+## Rust Application
 
-## The Intuition
-
-The Y combinator `Y(f) = f(Y(f))` is a mathematical trick: it finds the fixed point of `f`. Instead of a closure calling *itself*, it receives a copy of itself as an argument (open recursion), which breaks the self-reference cycle.
-
-Think of it like this: instead of `fact(n)` calling `fact`, you write `fact(self, n)` where `self` is whatever-makes-me-recurse, and then you build the machinery that passes the right thing for `self`.
-
-In OCaml, `let rec fact n = ...` is syntax sugar that the compiler expands using the Y combinator internally. Rust exposes the machinery — which is educational, even if you'd normally use a named function.
-
-## How It Works in Rust
+`Y` struct combinator:
 
 ```rust
-// Approach 1: Named function — ALWAYS prefer this for real code
-fn factorial(n: u64) -> u64 {
-    if n <= 1 { 1 } else { n * factorial(n - 1) }
-}
+pub struct Y<A, B>(pub Box<dyn Fn(&Y<A, B>, A) -> B>);
 
-// Approach 2: Open recursion — pass self as argument
-// The closure takes itself via a dyn Fn reference
-fn apply(step: &dyn Fn(&dyn Fn(u64) -> u64, u64) -> u64, n: u64) -> u64 {
-    step(&|m| apply(step, m), n)
-}
-let fact_step = |self_: &dyn Fn(u64) -> u64, n: u64| -> u64 {
-    if n <= 1 { 1 } else { n * self_(n - 1) }
-};
-println!("{}", apply(&fact_step, 6)); // 720
-
-// Approach 3: Y combinator using Box<dyn Fn> to break the type recursion
-// Without Box, the type `Y<A,B>` would contain itself — infinite type
-struct Y<A, B>(Box<dyn Fn(&Y<A, B>, A) -> B>);
 impl<A, B> Y<A, B> {
-    fn call(&self, arg: A) -> B { (self.0)(self, arg) }
+    pub fn call(&self, arg: A) -> B { (self.0)(self, arg) }
 }
 
-fn y_combinator<A, B, F>(f: F) -> impl Fn(A) -> B
-where
-    F: Fn(&dyn Fn(A) -> B, A) -> B + 'static,
-    A: 'static, B: 'static,
-{
-    let step = Y(Box::new(move |this: &Y<A, B>, arg: A| f(&|a| this.call(a), arg)));
-    move |arg| step.call(arg)
+pub fn y_factorial() -> Y<u64, u64> {
+    Y(Box::new(|y, n| if n <= 1 { 1 } else { n * y.call(n - 1) }))
 }
-
-let fact = y_combinator(|self_: &dyn Fn(u64) -> u64, n: u64| -> u64 {
-    if n <= 1 { 1 } else { n * self_(n - 1) }
-});
-println!("{}", fact(10)); // 3628800
-
-// Approach 4: Rc<RefCell<Box<dyn Fn>>> — self-referential via shared pointer
-let fib: std::rc::Rc<std::cell::RefCell<Box<dyn Fn(u64) -> u64>>> =
-    std::rc::Rc::new(std::cell::RefCell::new(Box::new(|_| 0)));
-let fib_clone = fib.clone();
-*fib.borrow_mut() = Box::new(move |n| {
-    if n <= 1 { n } else { fib_clone.borrow()(n-1) + fib_clone.borrow()(n-2) }
-});
-println!("{}", fib.borrow()(10)); // 55
 ```
 
-## What This Unlocks
+Open recursion via `factorial_open`:
 
-- **Lambda calculus in Rust** — the Y combinator is the proof that recursion is derivable; implement it here to deeply understand Rust's type system.
-- **Interpreter patterns** — when building expression evaluators or rule engines, fixed-point combinators allow recursive evaluation rules without named global functions.
-- **Type system mastery** — understanding *why* `Box` breaks the infinite type recursion teaches you how Rust's type system handles recursive data structures generally.
+```rust
+pub fn factorial_open<F>(step: F, n: u64) -> u64
+where F: Fn(&dyn Fn(u64) -> u64, u64) -> u64 { ... }
+
+factorial_open(|self_, n| if n <= 1 { 1 } else { n * self_(n-1) }, 10)
+```
+
+## OCaml Approach
+
+OCaml's `let rec` makes recursive closures trivial:
+
+```ocaml
+let rec factorial n = if n <= 1 then 1 else n * factorial (n-1)
+
+(* Y combinator — possible but not idiomatic *)
+let y f = (fun x -> f (fun v -> x x v)) (fun x -> f (fun v -> x x v))
+let factorial = y (fun self_ n -> if n <= 1 then 1 else n * self_ (n-1))
+```
+
+OCaml's `let rec` is the normal way; the Y combinator is a theoretical exercise or used when recursion must be abstracted.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Self-referential closure | `let rec f x = f (x-1)` | Not directly — need workaround |
-| Open recursion | `let f self x = self self (x-1)` | `\|self_, x\| self_(x-1)` with `dyn Fn` |
-| Y combinator | Natural — types allow it directly | Requires `Box<dyn Fn>` to break infinite type |
-| Named recursion | `let rec` keyword | Named `fn` — always the practical choice |
-| Tail-call optimization | Guaranteed | Not guaranteed — stack overflow risk |
+1. **`let rec` vs. named `fn`**: OCaml's `let rec` makes anonymous recursive closures natural; Rust requires named `fn` for the recursive case.
+2. **Y combinator cost**: Rust's `Y` struct uses `Box<dyn Fn>` — heap allocation and vtable dispatch per call. OCaml's Y combinator similarly uses indirect dispatch.
+3. **Open recursion pattern**: Both Rust and OCaml can express open recursion (pass `self_` as an argument); OCaml's is syntactically lighter.
+4. **Practical recommendation**: In both languages, named recursive functions are the right choice for production code; the Y combinator is for learning and theory.
+
+## Exercises
+
+1. **Fibonacci with Y**: Implement Fibonacci via the `Y` combinator and verify `y_fib.call(10) == 55`.
+2. **Trampolining**: Implement a `Trampoline<T>` enum (`Done(T) | More(Box<dyn FnOnce() -> Trampoline<T>>)`) to make the Y-combinator stack-safe for large inputs.
+3. **Memoised Y**: Extend the Y combinator to wrap the recursive step with a `HashMap` cache — implement `memo_y_factorial` that uses memoization inside the Y combinator.

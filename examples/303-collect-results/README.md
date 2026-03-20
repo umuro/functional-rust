@@ -4,60 +4,59 @@
 
 # 303: Collecting Iterator<Result<T>> into Result<Vec<T>>
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Transform a sequence of fallible operations into an all-or-nothing result in one expression.
+Parsing a batch of inputs where each might fail presents a choice: fail fast on the first error, or collect all errors. The `collect::<Result<Vec<T>, E>>()` pattern implements fail-fast: if any element produces `Err`, the entire collection short-circuits and returns that `Err`. This is the most common pattern for validating a batch of inputs — parse all or fail on the first invalid one.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You have a list of strings to parse, a list of files to read, or a list of records to validate. Each individual operation returns `Result<T, E>`. You want the full list if everything succeeds, or the first error if anything fails. The naive approach is a `for` loop with early return — verbose and hard to compose with the rest of your iterator pipeline.
+- Understand that `collect::<Result<Vec<T>, E>>()` short-circuits on the first `Err`
+- Use this pattern to validate that all inputs in a batch are well-formed
+- Recognize the difference from `filter_map(|r| r.ok())` which silently drops errors
+- Combine with `?` to propagate batch validation errors cleanly
 
-Rust's `FromIterator` implementation for `Result` solves this. When you write `.collect::<Result<Vec<T>, E>>()`, the iterator stops at the first `Err` and returns it — or returns `Ok(Vec)` containing all the values if every item was `Ok`. It's a short-circuit fold that's built into the type system.
+## Rust Application
 
-This matters because it composes cleanly with the rest of the iterator toolkit. You can `map`, `filter`, and `flat_map` before the collect — the whole pipeline runs on the happy path, and any error short-circuits at collect time.
-
-## The Intuition
-
-`collect::<Result<Vec<T>, E>>()` is a short-circuit fold: accumulate all `Ok` values into a `Vec`, but stop and return the first `Err` encountered.
-
-## How It Works in Rust
+When collecting into `Result<Vec<T>, E>`, the iterator stops at the first `Err` and returns it:
 
 ```rust
-// The type annotation on collect() is what triggers this behavior
-let inputs = ["1", "2", "3", "4"];
-let parsed: Result<Vec<i32>, _> = inputs.iter()
-    .map(|s| s.parse::<i32>())  // Iterator<Item = Result<i32, ParseIntError>>
-    .collect();                  // Result<Vec<i32>, ParseIntError> — all or nothing
+// Parse all strings — fails on first error
+pub fn parse_all(inputs: &[&str]) -> Result<Vec<i32>, ParseIntError> {
+    inputs.iter().map(|s| s.parse::<i32>()).collect()
+}
+// parse_all(&["1", "2", "3"]) -> Ok([1, 2, 3])
+// parse_all(&["1", "x", "3"]) -> Err(parse error for "x")
 
-// Ok if everything succeeds
-assert_eq!(parsed, Ok(vec![1, 2, 3, 4]));
-
-// Err on first failure — later items aren't processed
-let bad_inputs = ["1", "two", "3"];
-let result: Result<Vec<i32>, _> = bad_inputs.iter()
-    .map(|s| s.parse::<i32>())
-    .collect();
-// => Err(ParseIntError for "two") — "3" was never attempted
-
-// The turbofish form when the type can't be inferred:
-let result = inputs.iter()
-    .map(|s| s.parse::<i32>())
-    .collect::<Result<Vec<_>, _>>();
+// Double all values — same pattern with transformation
+pub fn double_all(inputs: &[&str]) -> Result<Vec<i32>, ParseIntError> {
+    inputs.iter().map(|s| s.parse::<i32>().map(|n| n * 2)).collect()
+}
 ```
 
-The short-circuit behavior is important: if you have expensive operations after the first bad item, they won't run. If you need to *process all items and collect all errors*, use `partition` (example 304) instead.
+## OCaml Approach
 
-## What This Unlocks
+OCaml requires an explicit fold for this pattern:
 
-- **Parse all-or-nothing** — validate a batch of inputs: either get all results or know the first failure
-- **Composable pipeline** — chain with `filter`, `map`, `flat_map` before the collect; errors flow through naturally
-- **One-liner batch processing** — replace a for-loop-with-early-return with a single expression
+```ocaml
+let parse_all inputs =
+  List.fold_right (fun s acc ->
+    match int_of_string_opt s with
+    | None -> Error (Printf.sprintf "not a number: %s" s)
+    | Some n -> Result.map (fun lst -> n :: lst) acc
+  ) inputs (Ok [])
+```
+
+The fold short-circuits naturally when `acc` is `Error _` — matching Rust's behavior.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| All-or-nothing fold | Manual fold with early return | `.collect::<Result<Vec<_>, _>>()` |
-| Short-circuit on error | Manual | Automatic — first `Err` stops iteration |
-| Type annotation | N/A | Required to select the `Result`-collecting `FromIterator` |
-| vs. collect all errors | Manual two-pass | Use `partition(Result::is_ok)` instead |
+1. **Conciseness**: Rust's `collect::<Result<Vec<_>, _>>()` is a single method call; OCaml requires an explicit fold.
+2. **Short-circuit position**: Rust stops at the first error in iteration order (left to right); the OCaml `fold_right` stops from the right — order matters.
+3. **vs partition**: `collect::<Result<Vec<_>>>` gives all-or-nothing; `partition(Result::is_ok)` gives both lists — choose based on requirements.
+4. **Type inference**: Rust infers the error type from the `map` transformation; the turbofish `::<Result<Vec<i32>, _>>` is rarely needed.
+
+## Exercises
+
+1. Implement a CSV parser that parses each row's fields, collecting into `Result<Vec<Row>, ParseError>` and short-circuiting on the first malformed row.
+2. Compare `collect::<Result<Vec<_>>>` with `filter_map(Result::ok).collect::<Vec<_>>()` on a mixed input — show they produce different results.
+3. Use `collect::<Result<Vec<_>>>()` in a function returning `Result`, then propagate the collection error with `?`.

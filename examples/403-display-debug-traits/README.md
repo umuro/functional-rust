@@ -2,79 +2,39 @@
 
 ---
 
-# 403: Display, Debug, and Formatting
+# 403: Display and Debug Traits
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Two separate formatting traits for two audiences — users and developers — with format specifiers that call each one.
+Formatting output for different audiences requires different representations. Debug output should be complete and unambiguous for developers (`Color::Rgb(255, 0, 0)`); display output should be readable for end users (`rgb(255,0,0)`). Mixing these leads to either confusing user-facing output or opaque developer output. Rust separates these concerns with two traits: `Debug` (derivable, for `{:?}`) and `Display` (manual, for `{}`). Additional formatter traits (`LowerHex`, `Binary`, `Octet`, `Pointer`) handle domain-specific representations.
 
-## The Problem This Solves
+`Display` and `Debug` are the entry points to all of Rust's format machinery — `format!`, `println!`, `write!`, `eprintln!`, and `assert_eq!` error messages all rely on them.
 
-Every type eventually needs to be printed. But "printing for users" and "printing for debugging" are different needs. A `Duration` displayed to a user should say "2 hours 15 minutes." Displayed to a developer it should show `Duration { secs: 8100, nanos: 0 }`. Conflating these creates user-facing output full of struct internals, or debug sessions where you can't see what's actually stored.
+## Learning Outcomes
 
-Rust separates these concerns at the trait level. `Display` (invoked by `{}`) is for human-readable, user-facing output that you design deliberately. `Debug` (invoked by `{:?}`) is for developers — show everything, make it inspectable. You implement `Display` manually when you care about the presentation. You derive `Debug` automatically in almost every case.
+- Understand the semantic difference between `Debug` (developer) and `Display` (user) formatting
+- Learn how to implement `fmt::Display` with `fmt::Formatter` and `write!` macro
+- See how `#[derive(Debug)]` generates a complete structural representation automatically
+- Understand how to implement additional format traits like `LowerHex` for `{:x}` support
+- Learn how `fmt::Formatter` provides alignment, width, fill, and precision parameters
 
-A third need: zero-allocation formatting — `format_args!` captures format arguments lazily without immediately allocating a `String`. This matters in hot paths, logging infrastructure, and embedded systems.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `Color` derives `Debug` automatically and gets `Color::Rgb(r, g, b)` format for free. `Display` is implemented manually to produce `rgb(r,g,b)` and color names. `LowerHex` enables `format!("{:x}", color)` to produce CSS hex colors like `#ff0000`. The `fmt` method receives `&mut fmt::Formatter` and returns `fmt::Result` — all format traits share this signature. The `write!` macro inside `fmt` is the primary building block.
 
-`{}` calls `Display` (write this for humans), `{:?}` calls `Debug` (write this for developers) — two audiences, two traits, one type.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-use std::fmt;
-
-struct Temperature { celsius: f64 }
-
-// Display: user-facing, deliberate design
-impl fmt::Display for Temperature {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{:.1}°C", self.celsius)
-    }
-}
-
-// Debug: auto-derived for developer inspection
-#[derive(Debug)]
-struct Temperature { celsius: f64 }
-
-// Usage
-let t = Temperature { celsius: 23.5 };
-println!("{}", t);    // "23.5°C"     — Display
-println!("{:?}", t);  // "Temperature { celsius: 23.5 }" — Debug
-println!("{:#?}", t); // pretty-printed Debug
-
-// Format specifiers
-println!("{:>10}", t);  // right-align in 10 chars
-println!("{:0>5}", 42); // "00042" — zero-pad
-
-// Custom Debug (when derived doesn't suit)
-impl fmt::Debug for Temperature {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Temperature")
-            .field("celsius", &self.celsius)
-            .field("fahrenheit", &(self.celsius * 1.8 + 32.0))
-            .finish()
-    }
-}
-```
-
-1. Derive `Debug` on almost every type — it's free and invaluable.
-2. Implement `Display` when the type has a natural user-facing representation.
-3. `write!(f, ...)` in the `fmt` method — same syntax as `println!` but writes to a formatter.
-
-## What This Unlocks
-
-- **Free debugging**: `#[derive(Debug)]` + `{:?}` = inspectable types with zero effort.
-- **Error messages**: Implement `Display` on error types for human-readable error reporting.
-- **Custom format specifiers**: Implement `fmt::LowerHex`, `fmt::Binary`, etc. for `{:x}`, `{:b}` support.
+OCaml has `Printf.printf "%s"` for string formatting and `Format.pp_print_*` functions for the `Format` module's structured pretty-printing. Custom types implement `pp : Format.formatter -> t -> unit` functions used with `%a` in format strings. There is no `Display`/`Debug` split — the same `pp` function serves both roles, though libraries conventionally have `pp` (compact) and `show` (verbose) variants.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| User-facing print | `Printf.printf` / `Format.printf` | `impl Display` + `{}` |
-| Debug/developer print | `#show_type` or manual | `#[derive(Debug)]` + `{:?}` |
-| Format strings | `%d`, `%s` type-checked at compile time | `{}`, `{:?}` trait-dispatched |
-| Custom formatters | `Format.pp_print_*` | `impl fmt::Display` / `impl fmt::Debug` |
-| Pretty print | `Format` module with boxes | `{:#?}` for pretty Debug, or custom `Display` |
+1. **Automatic derivation**: Rust's `#[derive(Debug)]` generates complete implementations; OCaml's `deriving show` ppx extension provides similar capability.
+2. **Two-trait split**: Rust maintains `Debug` and `Display` as separate traits; OCaml uses one `pp` convention, relying on programmer discipline.
+3. **Format string integration**: Rust uses `format!("{}", x)` for Display and `format!("{:?}", x)` for Debug; OCaml uses `%a` with explicit `pp` functions.
+4. **Fmt trait family**: Rust has `Debug`, `Display`, `Binary`, `Octal`, `LowerHex`, `UpperHex`, `LowerExp`, `UpperExp`, `Pointer` — a full family; OCaml relies on `Printf` format strings.
+
+## Exercises
+
+1. **Pretty matrix**: Implement `Display` for a `Matrix<f64>` that formats as aligned columns (use `write!(f, "{:8.3}", val)` width specifier) and `Debug` showing the raw flat array.
+2. **Recursive tree**: Implement `Display` for a `Tree<i32>` (leaf or node with two children) using indentation — leaves on their own line, nodes with children indented 2 spaces. Use `fmt::Formatter::write_str` for each line.
+3. **Custom format trait**: Implement `fmt::Binary` for a `Bitset(u64)` type, formatting it as `0b{bits}` with the set bits indicated. Implement `fmt::Display` to show just the set bit positions as `{1, 3, 7}`.

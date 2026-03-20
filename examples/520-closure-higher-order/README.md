@@ -2,86 +2,50 @@
 
 ---
 
-# 520: Higher-Order Functions
+# Higher-Order Functions
 
-**Difficulty:** 2  **Level:** Beginner-Intermediate
+## Problem Statement
 
-Functions that take or return other functions — the backbone of Rust's iterator API and functional programming style.
+Higher-order functions (HOFs) — functions that take or return other functions — are the backbone of functional programming. They emerged from lambda calculus (Alonzo Church, 1930s) and appeared in practical form in LISP, ML, and Haskell. Rust's iterator API is built entirely on HOFs: `map`, `filter`, `fold`, `flat_map`, `zip`. Beyond the standard library, custom HOFs like `zip_with`, `scan_left`, and `group_by` allow expressing complex data transformations as pipelines without intermediate allocations or imperative loops.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Without higher-order functions, every data transformation is a loop with slightly different body. Want the sum of squares of even numbers? One loop. Want the maximum after a transformation? Another loop. Want to group by a property? Yet another loop. The structure is identical; only the inner logic changes.
+- How to write custom higher-order functions using generic `Fn` bounds
+- The difference between `map`/`filter` (element-wise) and `fold`/`scan` (accumulating)
+- How `zip_with` generalizes `zip + map` into a single combining step
+- How `scan_left` produces all intermediate fold values (useful for running totals)
+- How to implement `partition_by` and `group_by` using closures as classifiers
 
-Higher-order functions (HOFs) extract the structure and let you supply only what varies. `filter(is_even)` + `map(square)` + `sum()` replaces a hand-written loop, and each step is independently testable and named.
+## Rust Application
 
-The secondary problem: without lazy HOFs, each step allocates an intermediate collection. Rust's iterator HOFs are lazy — they fuse into a single loop at compile time, eliminating intermediate allocations entirely.
+`zip_with<A, B, C, F>(a: &[A], b: &[B], f: F) -> Vec<C>` combines two slices element-wise using any combining function. `scan_left` mirrors Haskell's `scanl` — it returns a `Vec` containing `init` followed by each intermediate accumulation. `partition_by<T, P>` wraps `Iterator::partition` with a custom predicate. `group_by<T>` groups consecutive equal elements into sublists. All accept `Fn`-bounded generic parameters so they work with both closures and named functions.
 
-## The Intuition
+Key patterns:
+- `F: Fn(&A, &B) -> C` — combining function over references
+- `a.iter().zip(b.iter()).map(|(x, y)| f(x, y)).collect()` — zip then map
+- `items.iter().take_while(|x| pred(x)).cloned().collect()` — lazy short-circuit
 
-Higher-order functions treat behavior as data. `map` is a machine that applies your transformation to each element. `filter` is a machine that applies your predicate. `fold` is a machine that applies your accumulator. You supply the behavior; they supply the infrastructure.
+## OCaml Approach
 
-Python has `map()`, `filter()`, and `functools.reduce()`. JavaScript has `Array.map()`, `.filter()`, `.reduce()`. Rust's iterator methods are the same, but with a crucial difference: they're **lazy**. Nothing computes until you call a consuming adapter like `.collect()` or `.sum()`.
+OCaml's `List` module provides `map`, `filter`, `fold_left`, `fold_right`, and `partition` as stdlib HOFs. Custom combinators like `zip_with` and `scan_left` are straightforward to write and compose. OCaml's structural tail-call optimization makes recursive HOFs efficient without iterators.
 
-Laziness means `(1..1_000_000).filter(is_prime).take(5)` only computes until it finds 5 primes — it doesn't check all million numbers first.
-
-## How It Works in Rust
-
-```rust
-let nums: Vec<i32> = (1..=10).collect();
-
-// map: transform each element
-let squares: Vec<i32> = nums.iter().map(|&x| x * x).collect();
-
-// filter: keep elements matching predicate
-let evens: Vec<i32> = nums.iter().filter(|&&x| x % 2 == 0).copied().collect();
-
-// fold: accumulate (the general HOF — map and filter are special cases)
-let sum: i32 = nums.iter().fold(0, |acc, &x| acc + x);
-
-// chained pipeline — LAZY: single pass, no intermediate allocations
-let result: i32 = nums.iter()
-    .filter(|&&x| x % 2 == 0)   // keep evens
-    .map(|&x| x * x)             // square them
-    .sum();                       // accumulate
-
-// flat_map: map then flatten (like Python's chain of map with list results)
-let pairs: Vec<i32> = [1, 2, 3].iter()
-    .flat_map(|&x| [x, x * 10])  // each element becomes two elements
-    .collect();  // [1, 10, 2, 20, 3, 30]
-
-// any/all: short-circuit HOFs
-println!("{}", nums.iter().any(|&x| x > 5));  // true (stops at first match)
-println!("{}", nums.iter().all(|&x| x > 0));  // true
-
-// Custom HOF: zip two slices with a combining function
-fn zip_with<A, B, C, F: Fn(&A, &B) -> C>(a: &[A], b: &[B], f: F) -> Vec<C> {
-    a.iter().zip(b.iter()).map(|(x, y)| f(x, y)).collect()
-}
-let sums = zip_with(&[1, 2, 3], &[10, 20, 30], |x, y| x + y); // [11, 22, 33]
-
-// Custom HOF: scan (running totals — all intermediate fold values)
-fn scan_left<T: Clone, U: Clone, F: Fn(U, &T) -> U>(
-    items: &[T], init: U, f: F
-) -> Vec<U> {
-    let mut acc = init.clone();
-    std::iter::once(init)
-        .chain(items.iter().map(move |item| { acc = f(acc.clone(), item); acc.clone() }))
-        .collect()
-}
+```ocaml
+let zip_with f xs ys = List.map2 f xs ys
+let scan_left f init xs =
+  List.fold_left (fun (acc, res) x ->
+    let acc' = f acc x in (acc', acc' :: res)
+  ) (init, [init]) xs |> snd |> List.rev
 ```
-
-## What This Unlocks
-
-- **Zero-allocation pipelines** — chain `map`, `filter`, `flat_map`, `take_while` without intermediate `Vec`s; the compiler fuses them into one loop.
-- **Readable data transformations** — express "even squares less than 50" as a pipeline that reads like English rather than nested loops.
-- **Custom iterator adapters** — write your own `zip_with`, `scan`, or `group_by` as HOFs that integrate seamlessly with the iterator ecosystem.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Map | `List.map f xs` | `iter.map(f).collect()` |
-| Filter | `List.filter pred xs` | `iter.filter(pred).collect()` |
-| Fold | `List.fold_left f init xs` | `iter.fold(init, f)` |
-| Flat map | `List.concat_map f xs` | `iter.flat_map(f).collect()` |
-| Laziness | Eager by default | Lazy by default — consumes only on `.collect()` |
+1. **Iterator vs recursion**: Rust HOFs operate on `Iterator` chains with lazy evaluation and optional collect; OCaml HOFs typically process `list` values recursively, though `Seq` provides laziness.
+2. **Zero-copy iteration**: Rust `&[T]` slices avoid allocation in HOFs that don't need ownership; OCaml lists are always heap-allocated linked lists.
+3. **Trait bounds**: Rust requires explicit `Fn`, `FnMut`, or `FnOnce` bounds on HOF parameters; OCaml infers the function type structurally without named bounds.
+4. **Return types**: Rust HOFs returning `impl Fn` cannot name the concrete type; OCaml HOFs return plain function types that are fully transparent to the type checker.
+
+## Exercises
+
+1. **`unfold`**: Implement `unfold<T, S, F>(seed: S, f: F) -> Vec<T> where F: Fn(S) -> Option<(T, S)>` that generates a vector by repeatedly applying `f` until it returns `None`.
+2. **`chunk_by`**: Write a HOF that groups elements into fixed-size chunks, returning a `Vec<Vec<T>>`, handling the remainder chunk if the length is not divisible.
+3. **`find_map`**: Implement `find_map<T, U, F>(items: &[T], f: F) -> Option<U> where F: Fn(&T) -> Option<U>` that returns the first `Some` result from applying `f` to each element.

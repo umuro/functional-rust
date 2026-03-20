@@ -38,3 +38,9 @@ Rust offers three approaches:
 3. **Partial application:** OCaml creates specialized functions via currying (`let sum = fold_right (+) lst 0`); Rust uses closures
 4. **No cons-list:** Rust slices are contiguous memory — `rfold` iterates backwards by index, not by recursive structure
 5. **Copy semantics:** `copy` in OCaml is free (structural sharing); in Rust it allocates a new Vec
+
+## Exercises
+
+1. Use `fold_right` to implement `map` — derive the mapping operation purely from a right fold.
+2. Implement `maximum` using `fold_right` that returns the largest element in a non-empty list wrapped in `Option`.
+3. Use `fold_right` to implement `flatten` that concatenates a list of lists into a single list, and compare its stack usage to an iterative approach for large inputs.

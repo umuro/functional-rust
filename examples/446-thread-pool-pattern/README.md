@@ -2,88 +2,39 @@
 
 ---
 
-# 446: Thread Pool — Reuse Threads for Amortised Concurrency
+# 446: Thread Pool Pattern
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Pre-spawn N worker threads that drain a shared job queue — eliminate per-task thread creation overhead and cap total concurrency.
+Spawning a new OS thread for each incoming request is expensive: thread creation takes ~100μs and each thread consumes ~8MB of stack space by default. A thread pool pre-creates N worker threads that loop waiting for jobs, processing each job from a shared queue. The `rayon` crate provides a global thread pool, but understanding the implementation reveals the fundamental pattern: a channel as work queue, `Arc<Mutex<Receiver>>` for shared job pickup, and `JoinHandle`s for graceful shutdown.
 
-## The Problem This Solves
+Thread pools power web servers (tokio's blocking thread pool), HTTP clients, database connection management, and any system with variable-rate work items.
 
-Spawning a thread for each unit of work has real cost: OS kernel call, stack allocation (typically 2–8 MB reserved), scheduler registration. For thousands of short tasks, this overhead dominates. A server spawning a thread per HTTP request will exhaust memory and kernel thread limits under load.
+## Learning Outcomes
 
-The solution is a thread pool: create N threads once at startup, then reuse them. Work items (closures) are sent through a channel; workers dequeue and execute them. When a job finishes, the thread doesn't exit — it loops back and takes the next job. Total thread count is bounded; jobs queue when all workers are busy.
+- Understand why thread pools outperform per-request thread spawning
+- Learn how `Arc<Mutex<Receiver<Job>>>` shares a single channel receiver across workers
+- See how `Box<dyn FnOnce() + Send + 'static>` erases job types into a uniform queue entry
+- Understand graceful shutdown: dropping the sender closes the channel, workers exit their loops
+- Learn how the `Drop` impl on `ThreadPool` ensures clean shutdown
 
-The tricky part in Rust is sharing the `Receiver` among N workers. A `Receiver` is not `Clone` — `mpsc` is single-consumer by design. The solution is `Arc<Mutex<Receiver<Job>>>`: wrap the receiver so workers compete for jobs via a mutex. Exactly one worker dequeues each job; the OS scheduler naturally load-balances.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `ThreadPool` stores `Vec<JoinHandle<()>>` and a `Sender<Job>`. Each worker thread runs `loop { rx.lock().unwrap().recv() }` — competing for jobs from the shared `Arc<Mutex<Receiver>>`. When `Drop` is called, the sender is dropped (channel closes), workers receive `Err` from `recv()` and exit. `execute<F: FnOnce() + Send + 'static>` boxes the closure and sends it. The `Option<Sender>` in the struct enables taking ownership during drop.
 
-A thread pool is a restaurant kitchen. Instead of hiring a chef per order (expensive, chaotic), you hire N chefs at opening and give them a ticket system. Orders go on the rail; any free chef takes the next ticket. When all chefs are busy, tickets queue. When the restaurant closes, you wait for current orders to finish, then send the chefs home.
+## OCaml Approach
 
-In Java: `Executors.newFixedThreadPool(n)`. In Python: `ThreadPoolExecutor(max_workers=n)`. In Go: a buffered channel of goroutines. Rust's standard library doesn't include a thread pool, but building one from `mpsc` + `Arc<Mutex<>>` in ~30 lines illustrates the primitives cleanly. Production code uses `rayon` or `tokio`.
-
-## How It Works in Rust
-
-```rust
-use std::sync::{Arc, Mutex, mpsc};
-use std::thread;
-
-type Job = Box<dyn FnOnce() + Send + 'static>;
-
-pub struct ThreadPool {
-    workers: Vec<thread::JoinHandle<()>>,
-    tx: Option<mpsc::Sender<Job>>,
-}
-
-impl ThreadPool {
-    pub fn new(n: usize) -> Self {
-        let (tx, rx) = mpsc::channel::<Job>();
-        // Wrap Receiver so N workers can share it
-        let rx = Arc::new(Mutex::new(rx));
-
-        let workers = (0..n).map(|_| {
-            let rx = Arc::clone(&rx);
-            thread::spawn(move || loop {
-                // Acquire lock, dequeue one job, release lock, execute job
-                match rx.lock().unwrap().recv() {
-                    Ok(job) => job(),        // run the closure
-                    Err(_)  => break,        // channel closed — exit
-                }
-            })
-        }).collect();
-
-        ThreadPool { workers, tx: Some(tx) }
-    }
-
-    pub fn execute<F: FnOnce() + Send + 'static>(&self, f: F) {
-        self.tx.as_ref().unwrap().send(Box::new(f)).unwrap();
-    }
-}
-
-impl Drop for ThreadPool {
-    fn drop(&mut self) {
-        drop(self.tx.take()); // close channel — workers see Err and exit
-        for w in self.workers.drain(..) {
-            w.join().unwrap(); // wait for clean shutdown
-        }
-    }
-}
-```
-
-The `Drop` impl is the shutdown protocol: drop the `Sender`, which closes the channel, which causes all `recv()` calls to return `Err`, which causes all workers to `break` their loop. Then `join()` waits for all of them. Dropping the pool blocks until all queued jobs complete.
-
-## What This Unlocks
-
-- **Bounded concurrency** — cap the number of simultaneous threads regardless of how many tasks are submitted.
-- **Amortised thread cost** — create threads once, reuse indefinitely; ideal for high-throughput servers and batch processors.
-- **Graceful shutdown** — the `Drop` + channel-close pattern ensures queued work completes and threads exit cleanly on pool destruction.
+OCaml's `Domainslib` provides `Task.pool` — a domain pool (OCaml 5.x's parallel unit) for distributing work. `Task.run pool (fun () -> computation)` submits work. For OCaml 4.x threads, `Thread_pool` libraries (like `moonpool`) provide similar functionality. The Lwt and Async libraries have their own thread pool abstractions for offloading blocking work from their event loops.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Job type | `unit -> unit` | `Box<dyn FnOnce() + Send + 'static>` |
-| Shared queue | `Queue.t` + `Mutex` + `Condvar` | `mpsc::Receiver` in `Arc<Mutex<...>>` |
-| Shutdown | sentinel `None` or flag | drop `Sender` — workers see `Err` on `recv` |
-| Backpressure | manual queue capacity check | `mpsc::sync_channel(bound)` for bounded queue |
-| Production use | `Domainslib` | `rayon`, `tokio::task::spawn_blocking` |
+1. **Job type**: Rust uses `Box<dyn FnOnce() + Send>` for type-erased closures; OCaml uses `unit -> unit` closures.
+2. **Worker count**: Rust thread pools use OS threads; OCaml 5.x's domain pools use parallelism domains.
+3. **Graceful shutdown**: Rust uses channel close for shutdown signal; OCaml typically uses a sentinel value or explicit stop flag.
+4. **Rayon alternative**: `rayon::ThreadPool` provides work-stealing on top of OS threads for better load balancing than the simple queue approach.
+
+## Exercises
+
+1. **Priority queue**: Replace the `mpsc::channel` with `Arc<Mutex<BinaryHeap<(Priority, Job)>>>`. Support `execute_with_priority(priority: u8, f: impl FnOnce() + Send)` and verify higher-priority jobs execute first.
+2. **Worker metrics**: Add per-worker job counters using `Arc<AtomicU64>`. Expose `fn job_counts(&self) -> Vec<u64>` that returns each worker's processed job count. Verify work is reasonably balanced.
+3. **Timeout jobs**: Extend `ThreadPool::execute` to accept `execute_with_timeout(timeout: Duration, f: impl FnOnce() + Send)`. Spawn a monitoring thread that kills long-running jobs (simulated by tracking active jobs).

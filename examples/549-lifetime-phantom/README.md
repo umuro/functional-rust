@@ -2,127 +2,51 @@
 
 ---
 
-# 549: PhantomData for Lifetime Variance
+# PhantomData for Lifetime Markers
 
-**Difficulty:** 5  **Level:** Advanced
+## Problem Statement
 
-`PhantomData<T>` tells the compiler "this type logically contains a T even though no T appears in the struct fields." It controls variance, drop checking, and type-state encoding — all at zero runtime cost.
+Sometimes a struct logically borrows from an external lifetime but does not store any reference — perhaps it holds a raw pointer, a numeric ID, or an opaque handle. Without `PhantomData`, the compiler has no way to know the struct's relationship to that lifetime, leading to incorrect variance and missing lifetime checks. `PhantomData<&'a T>` is a zero-size type that carries lifetime and variance information without storing any data. It is essential for safe wrappers around raw pointers, arena allocators, typed indices, and foreign-function handles.
 
-## The Problem This Solves
+## Learning Outcomes
 
-When you write a struct using raw pointers, the compiler has no idea what lifetime relationship exists between the struct and the pointed-at data. Without guidance, it can't enforce borrow rules correctly:
+- Why `PhantomData<&'a T>` is needed when a struct logically borrows `'a` but has no reference field
+- How `Handle<'a, T>` with `PhantomData<&'a T>` prevents handles from outliving their source
+- How `Index<T>` uses `PhantomData<T>` for type-safety without storing a `T`
+- How `PhantomData` affects variance (covariant, contravariant, invariant)
+- Where `PhantomData` appears: arena allocators, foreign-function handles, typed indices, raw pointer wrappers
 
-```rust
-struct MyRef<'a, T> {
-    ptr: *const T,      // raw pointer — compiler doesn't track 'a
-    // no 'a usage → compiler warns: 'a is unused
-}
-// ERROR or warning: lifetime parameter 'a is never used
+## Rust Application
+
+`Handle<'a, T>` stores a `usize` id and `PhantomData<&'a T>` — the phantom data ensures the handle cannot outlive the data it refers to, even though no reference is stored. `Index<T>` uses `PhantomData<T>` for type-level tagging: an `Index<User>` and `Index<Post>` are distinct types even though both store a `usize`, preventing accidental index misuse. The `new` constructors take no reference — `PhantomData` is constructed as `PhantomData` (zero-size, zero-cost).
+
+Key patterns:
+- `PhantomData<&'a T>` — covariant in `'a` and `T`, carries lifetime without storing data
+- `PhantomData<T>` — type marker for typed indices, zero-size at runtime
+- `_marker: PhantomData` — the field name `_marker` is conventional
+
+## OCaml Approach
+
+OCaml achieves typed index safety through phantom types using abstract module signatures or the `Ppx_phantom` approach:
+
+```ocaml
+type 'a index = Index of int
+let make_index n : 'a index = Index n
+let get (Index n) = n
+(* User_index and Post_index are the same type at runtime but distinct by convention *)
 ```
 
-You need to tell the compiler: "treat this `*const T` as if it were `&'a T` for borrow-checking purposes." That's what `PhantomData<&'a T>` does — it adds no data, but declares the variance relationship.
-
-Beyond lifetimes, `PhantomData` enables zero-cost type state machines: the compiler enforces state transitions at compile time by using a phantom type parameter.
-
-## The Intuition
-
-`PhantomData<T>` is a zero-sized type that says "pretend I contain a T." It costs nothing at runtime but provides the compiler with the type information it needs for:
-
-- **Variance**: `PhantomData<&'a T>` → covariant in `'a` (same as `&'a T`). `PhantomData<*mut T>` → invariant. `PhantomData<fn(T)>` → contravariant.
-- **Drop checking**: `PhantomData<T>` tells the drop checker that your type "owns" a T, so it runs T's destructor logic.
-- **Type state**: `PhantomData<State>` makes the type `Struct<State>` where `State` is a phantom — different states are different types, enforced by which methods are available.
-
-## How It Works in Rust
-
-**Variance via PhantomData:**
-
-```rust
-use std::marker::PhantomData;
-
-// Covariant in 'a — same behavior as &'a T
-struct CovariantRef<'a, T> {
-    ptr: *const T,
-    _marker: PhantomData<&'a T>,  // covariant: &'long T works where &'short T expected
-}
-
-// Invariant in T — same behavior as &mut T
-struct InvariantWrapper<T> {
-    ptr: *mut T,
-    _marker: PhantomData<*mut T>,  // invariant: must match exactly
-}
-
-// Contravariant in T — same behavior as fn(T)
-struct Contravariant<T> {
-    f: fn(T),
-    _marker: PhantomData<fn(T)>,  // contravariant in T
-}
-```
-
-**Type state machine — zero runtime cost:**
-
-```rust
-struct Locked;    // zero-sized state types
-struct Unlocked;
-
-struct Door<State> {
-    name: String,
-    _state: PhantomData<State>,  // State is purely compile-time
-}
-
-impl Door<Locked> {
-    fn new(name: &str) -> Self {
-        Door { name: name.to_string(), _state: PhantomData }
-    }
-    
-    fn unlock(self) -> Door<Unlocked> {
-        println!("Unlocking {}", self.name);
-        Door { name: self.name, _state: PhantomData }
-    }
-    // No `open` method here — can't open a locked door
-}
-
-impl Door<Unlocked> {
-    fn open(&self) { println!("Opening {}", self.name); }
-    fn lock(self) -> Door<Locked> {
-        Door { name: self.name, _state: PhantomData }
-    }
-}
-
-// Compile-time enforcement:
-let door = Door::<Locked>::new("front");
-// door.open();   // ERROR: Door<Locked> has no method `open`
-let door = door.unlock();
-door.open();     // fine — Door<Unlocked>
-```
-
-**Ownership signaling for drop check:**
-
-```rust
-// PhantomData<T> (not &T) tells drop checker we OWN a T — its destructor must run
-struct OwnedPtr<T> {
-    ptr: *mut T,
-    _owned: PhantomData<T>,  // "I own this T — run T's Drop when I'm dropped"
-}
-
-impl<T> Drop for OwnedPtr<T> {
-    fn drop(&mut self) {
-        unsafe { drop(Box::from_raw(self.ptr)); }
-    }
-}
-```
-
-## What This Unlocks
-
-- **Safe unsafe abstractions** — raw pointer types with correct variance declarations behave exactly like their safe counterparts from a borrow-checker perspective. Wrap `*const T` with `PhantomData<&'a T>` and the compiler enforces the same lifetime rules as `&'a T`.
-- **Zero-cost type state machines** — enforce protocol correctness (connection must be opened before used, file must be closed after write) with zero runtime overhead. The state is purely a type parameter.
-- **Correct custom containers** — a custom `Vec`-like type needs `PhantomData<T>` to signal ownership so that the compiler's drop checker works correctly and variance is covariant (matching `Vec<T>`).
+OCaml's phantom types are a convention — the runtime has no distinction. Rust's `PhantomData` enforces the distinction at the type level.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Phantom type parameters | `type 'state lock = unit` — phantom type common in OCaml | `PhantomData<State>` — zero-sized, explicit, with variance control |
-| Type state machines | Phantom types in modules or GADTs | `Struct<PhantomData<State>>` — different methods per state type |
-| Variance declarations | Functor laws / explicit annotations | `PhantomData<&'a T>` = covariant, `PhantomData<*mut T>` = invariant |
-| Raw pointer safety | Not applicable (GC) | `PhantomData` tells borrow checker how to treat the raw pointer |
-| Drop semantics | GC handles all | `PhantomData<T>` signals ownership — drop checker runs T's destructor |
+1. **Runtime cost**: `PhantomData` is zero-size — no runtime overhead; OCaml phantom types are also zero-cost at runtime since the `'a` type parameter is erased.
+2. **Lifetime enforcement**: Rust `PhantomData<&'a T>` enforces that `Handle<'a, T>` cannot outlive `'a` at compile time; OCaml phantom types cannot express lifetime constraints.
+3. **Variance control**: `PhantomData` precisely controls variance (covariant, contravariant, invariant); OCaml phantom types are covariant by default unless annotated.
+4. **Raw pointer wrappers**: Rust raw pointer wrappers use `PhantomData<T>` to tell the compiler what the pointer "logically owns"; OCaml raw pointers (via `Bigarray` or `ctypes`) rely on programmer discipline.
+
+## Exercises
+
+1. **Typed generation handle**: Implement `struct GenerationHandle<'arena, T> { id: u32, _p: PhantomData<&'arena T> }` where `'arena` ensures the handle cannot outlive the arena it was allocated from.
+2. **Two phantom types**: Create `struct Matrix<T, Rows, Cols> { data: Vec<T>, _p: PhantomData<(Rows, Cols)> }` and implement `fn transpose(m: Matrix<T, R, C>) -> Matrix<T, C, R>` — use phantom row/col types to prevent transposing the wrong way.
+3. **Invariant phantom**: Change `Handle<'a, T>` to use `PhantomData<&'a mut T>` — explain what changes in terms of variance and what programs the compiler now rejects.

@@ -29,3 +29,9 @@ Rust models a lens as a struct with two `Box<dyn Fn(...)>` fields. Composition c
 2. **Composition ownership:** OCaml freely copies closures; Rust `compose` consumes both lenses and wraps internals in `Rc` so getter and setter can share access.
 3. **Immutable update syntax:** OCaml has `{ record with field = value }`; Rust reconstructs the entire struct.
 4. **Clone requirements:** OCaml copies values implicitly; Rust needs explicit `.clone()` when the getter must return an owned value from a borrow.
+
+## Exercises
+
+1. Implement a `zoom` helper that takes a lens and a function operating on the focused value, returning an updated outer structure.
+2. Create a lens for each field of a nested `Config { server: Server { host: String, port: u16 }, timeout: u64 }` struct and compose them to update the host in a single expression.
+3. Implement an `optional_lens` (prism) that focuses on the `Some` variant of an `Option` field, returning `None` from get when the field is absent.

@@ -2,90 +2,51 @@
 
 ---
 
-# 559: Region Inference Basics
+# Region Inference
 
-**Difficulty:** 4  **Level:** Intermediate-Advanced
+## Problem Statement
 
-How Rust's borrow checker infers the minimal scope for each borrow — and why Non-Lexical Lifetimes (NLL) made programs that were always correct finally compile.
+Rust's borrow checker models each reference as having a "region" — a set of program points at which the reference is valid. The compiler infers the minimal region sufficient to cover all uses of the reference, rather than using a static scope. Region inference is the theoretical foundation that makes both lexical lifetimes and NLL work. Understanding how the compiler infers regions helps predict what the borrow checker will accept, explains "does not live long enough" errors, and motivates the Polonius project which extends region inference to handle more cases soundly.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Early Rust tied borrows to lexical scopes: a borrow started at `let r = &x;` and ended at the closing `}`. This was simple to implement but too conservative — it rejected programs that were obviously safe, like using a reference and then mutating the original after the last use of the reference.
+- What a region is: a set of program points at which a reference is considered live
+- How the compiler infers the minimal region covering all uses of a reference
+- How nested regions work: inner borrows end before outer ones
+- How region inference interacts with control flow (if/else, loops)
+- Why Polonius extends region inference to track where borrows flow through control paths
 
-Non-Lexical Lifetimes (stabilized in Rust 2018) changed this. The borrow checker now infers the *minimal* region — the span from first use to last use — rather than the lexical block. This is "region inference": computing the smallest region that satisfies all the constraints, then checking for conflicts.
+## Rust Application
 
-Understanding NLL explains why certain Rust code works that you might expect to fail, and helps you reason about where to restructure code when you hit borrow errors.
+`inferred_region` shows `let r = &x; let _ = *r; x = 10;` — the region of `r` covers only the two uses, ending before `x = 10`. `region_span(data: &[i32]) -> i32` has one region covering the whole function body. `nested_regions` shows an inner `{ let r = &v[0..2]; }` block — `r`'s region ends at the `}`, allowing `v.push(10)` outside. The source illustrates how the compiler's region analysis maps to the physical scopes visible in code.
 
-## The Intuition
+Key patterns:
+- Region = minimal set of program points covering all uses
+- Inner block `{}` creates a nested region that ends at `}`
+- `v[0..2]` borrow ends when its region ends, enabling `v.push` after
 
-Think of a region as a highlighted range in your source code. The borrow checker infers regions by asking: where is this reference first used? Where is it last used? The region is that span. Two regions conflict if they overlap *and* one is a mutable borrow.
+## OCaml Approach
 
-Before NLL, regions were approximated by block boundaries (too large). With NLL, regions shrink to actual usage. A borrow can "end" mid-block the moment the reference is last used, even if the variable is still in scope.
+OCaml has no region inference. The GC uses a reachability-based model: a value is alive as long as any path from a root (stack variable, global) can reach it. This is simpler than region inference — no program-point-level tracking is needed.
 
-## How It Works in Rust
-
-**NLL in action — mutation after last reference use:**
-```rust
-let mut v = vec![1, 2, 3];
-{
-    let sum: i32 = v.iter().sum();  // borrow of v starts here
-    println!("sum: {}", sum);       // borrow ends at last use of sum/v
-}
-v.push(4);  // safe: borrow ended at `println!`, before this line
+```ocaml
+let region_demo () =
+  let v = [| 1; 2; 3; 4; 5 |] in
+  let r = v.(0) in  (* no "region" — just a copy *)
+  (* can modify v freely — r is just an int *)
+  v.(0) <- 10;
+  r  (* returns original value *)
 ```
-Pre-NLL: this would fail (the block containing `sum` still open). NLL: borrow ends at `println!`.
-
-**Region tied to a specific scope:**
-```rust
-let x = 5i32;
-let r1;
-{
-    let y = 10i32;
-    r1 = &x;       // region of r1: here to the final println!
-    let r2 = &y;   // region of r2: here to the println! inside this block
-    println!("r2: {}", r2);
-    // r2's region ends here — y can be dropped
-}
-println!("r1: {}", r1);  // valid: r1 borrows x, which still lives
-```
-
-**Struct lifetimes — explicit but inferred at call site:**
-```rust
-struct View<'a> { data: &'a [i32] }
-
-impl<'a> View<'a> {
-    fn new(data: &'a [i32]) -> Self { View { data } }
-    fn sum(&self) -> i32 { self.data.iter().sum() }
-}
-
-let data = vec![10, 20, 30];
-let view = View::new(&data);  // 'a inferred = region of `data`
-println!("{}", view.sum());
-// view dropped here — 'a ends — data can be moved/dropped
-```
-
-**Two independent borrows — non-overlapping regions:**
-```rust
-let a = vec![1, 2, 3];
-let b = vec![4, 5, 6];
-let sum_a: i32 = a.iter().sum();  // borrow of a: just this line
-let sum_b: i32 = b.iter().sum();  // borrow of b: just this line
-// Both borrows ended immediately (sum_a, sum_b are i32, not refs)
-println!("{} {}", sum_a, sum_b);
-```
-The regions of the two borrows don't overlap with any mutable use, so this compiles without explicit annotation.
-
-## What This Unlocks
-
-- **Confident borrow error diagnosis** — "this borrow lasts until X" in error messages is the region; now you know what X means.
-- **Restructuring to satisfy the borrow checker** — NLL means the fix is often to move the last use of a reference earlier, not to restructure ownership.
-- **Understanding lifetime annotations** — explicit `'a` tells the compiler the *minimum* region for a borrow; the checker infers the actual region within that constraint.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Reference validity tracking | GC (runtime) | Regions inferred at compile time |
-| Borrow scope | N/A | From first use to last use (NLL) |
-| Lexical vs non-lexical | N/A | NLL: borrow ends at last use, not at `}` |
-| Struct lifetime | GC handles | `'a` on struct field ties lifetime to call site |
+1. **Tracking granularity**: Rust's region inference is per-program-point; OCaml's GC is reachability-based — fundamentally different models with different tradeoffs.
+2. **Minimal regions**: Rust's NLL infers the minimal region, avoiding false positives; earlier Rust used lexical scopes (maximal regions), rejecting more correct programs.
+3. **Control flow**: Region inference handles if/else and loops by computing the union of regions across control paths; OCaml has no equivalent analysis.
+4. **Polonius improvement**: Polonius computes per-path (not just per-point) regions, accepting programs that NLL rejects due to conservative union of paths; OCaml never needs this refinement.
+
+## Exercises
+
+1. **Manual region tracing**: Take `inferred_region` and add comments to every line marking which references are in scope at that point — identify where each region starts and ends.
+2. **Loop region**: Write a loop that borrows `v[i]`, uses it, then modifies `v[i+1]` — identify whether the borrow region covers the whole loop iteration or ends at the borrow's last use.
+3. **Region extension**: Try extending a borrow's region by using it later in the function — observe how the compiler's error message identifies the conflicting use point.

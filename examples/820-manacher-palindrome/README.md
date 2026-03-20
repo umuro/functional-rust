@@ -2,93 +2,55 @@
 
 ---
 
-# 820: Manacher's Algorithm
+# Manacher's Algorithm — Longest Palindromic Substring
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Find the longest palindromic substring in O(n) by reusing mirror symmetry inside already-known palindromes — never re-examining a character twice.
+Finding the longest palindromic substring naively requires O(n^2) time by expanding from each center. Manacher's algorithm finds all palindromic substrings — both odd and even length — in O(n) time by reusing previously computed palindrome radii. This is the canonical O(n) solution to "find the longest palindrome in a string," a classic interview problem with practical applications in DNA analysis (palindromic sequences indicate restriction enzyme sites), text compression, and symmetry detection. The key insight is that palindromes inside a larger known palindrome have known minimum radii, avoiding redundant character comparisons.
 
-## The Problem This Solves
+## Learning Outcomes
 
-The naïve approach to finding the longest palindrome expands around each center in O(n) per center, giving O(n²) total. For real-world use cases — DNA palindrome detection (restriction enzyme sites), string compression, natural language processing — O(n²) on multi-megabyte inputs is too slow.
+- Transform the string with sentinel characters (`#`) to unify odd/even length palindrome handling
+- Understand the center/right-boundary invariant: track the palindrome extending furthest right
+- Use the mirror property: `p[mirror] = p[i]` (limited by the right boundary) as a starting point
+- Implement the O(n) linear scan with the amortized argument for why each character is visited O(1) times
+- Recover substring positions from the transformed string's palindrome radius array
 
-Manacher's algorithm reduces this to O(n) by exploiting one insight: if you're inside a known large palindrome, the mirror of your current center already tells you a lower bound for your palindrome radius. The Z-box technique from the Z-algorithm applied to palindrome geometry.
-
-The classic transform (inserting `#` between characters) eliminates the odd/even palindrome distinction entirely, letting you handle "racecar" and "abba" with identical code. This kind of uniform representation — making the irregular case disappear — is a hallmark of elegant algorithm design.
-
-## The Intuition
-
-Transform `"abc"` into `"#a#b#c#"` so every palindrome has an odd length and a definite center. Maintain `(c, r)`: the center and right boundary of the rightmost palindrome found so far. For each new center `i`: if `i < r`, initialize `P[i]` from the mirror `P[2c - i]`, capped at `r - i` (can't extend past the known palindrome). Then expand. If the expansion extends past `r`, update `(c, r)`. Each position is processed at most twice: once inside an existing palindrome (mirror lookup, O(1)) and once during expansion. Total: O(n).
-
-OCaml and Rust implement identical logic; the difference is Rust's method syntax (`.min()`) versus OCaml's polymorphic `min` function.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-// Transform "racecar" → "#r#a#c#e#c#a#r#"
-// Every palindrome is now odd-length with a definite center
-fn transform(s: &str) -> Vec<u8> {
-    let mut t = Vec::with_capacity(2 * s.len() + 1);
-    t.push(b'#');
-    for b in s.bytes() {
-        t.push(b);
-        t.push(b'#');
-    }
-    t
-}
-
-fn manacher(t: &[u8]) -> Vec<usize> {
-    let n = t.len();
-    let mut p = vec![0usize; n];      // p[i] = palindrome radius at center i
-    let (mut c, mut r) = (0usize, 0usize);  // Rightmost palindrome: center, right boundary
-
-    for i in 0..n {
-        if i < r {
-            let mirror = 2 * c - i;
-            p[i] = p[mirror].min(r - i);  // Mirror lower bound, capped at Z-box
-        }
-        // Expand around i — each character expanded at most once total
-        let mut a = p[i] + 1;
-        while i >= a && i + a < n && t[i - a] == t[i + a] {
-            a += 1;
-        }
-        p[i] = a - 1;
-        if i + p[i] > r {
-            c = i;
-            r = i + p[i];  // New rightmost palindrome
-        }
-    }
-    p
-}
-
-fn longest_palindrome(s: &str) -> &str {
-    let t = transform(s);
-    let p = manacher(&t);
-    // Find center with maximum radius
-    let (best_c, best_r) = p.iter().enumerate()
-        .max_by_key(|&(_, &r)| r)
-        .map(|(i, &r)| (i, r))
-        .unwrap();
-    // Map transformed index back to original: start = (best_c - best_r) / 2
-    let start = (best_c - best_r) / 2;
-    &s[start..start + best_r]
+pub fn manacher(s: &str) -> String {
+    // Transform: "abc" -> "#a#b#c#"
+    let t: Vec<char> = std::iter::once('#')
+        .chain(s.chars().flat_map(|c| [c, '#']))
+        .collect();
+    let mut p = vec![0usize; t.len()];
+    let (mut c, mut r) = (0usize, 0usize);
+    // For each center i: p[i] = mirror's radius or expand
 }
 ```
 
-The index mapping `(best_c - best_r) / 2` works because the `#` sentinels always occupy even positions in the transformed string, so dividing by 2 recovers the original index.
+The `#`-interleaving transformation turns all palindromes into odd-length ones, simplifying the algorithm. Rust's iterator chaining with `flat_map` and `once` creates the transformed string without a separate loop. The `p` array stores palindrome radii in the transformed string. After computation, the maximum in `p` gives the longest palindrome; converting back to original string coordinates divides by 2. Rust's ownership ensures the transformed string lives exactly as long as needed for the computation.
 
-## What This Unlocks
+## OCaml Approach
 
-- **Bioinformatics**: Palindromic DNA sequences are restriction enzyme recognition sites; Manacher finds all of them in O(n).
-- **String compression**: Detecting the longest palindrome is a step in grammar-based compression and LZ-variant schemes.
-- **Competitive programming**: Any problem asking about palindromic substrings in O(n) needs Manacher; it also generalizes to palindrome hashing and eertree (palindromic tree).
+OCaml implements the transformation with `Buffer`, appending `'#'` between and around each character. The palindrome radius array is `Array.make (2*n+1) 0`. Center and right boundary are mutable `int ref` values. OCaml's pattern matching elegantly handles the three cases: mirror palindrome fits entirely within boundary, mirror radius equals boundary distance, or expansion needed. The `String.sub` at the end extracts the longest palindromic substring from the original coordinates.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Transform string | `String.concat "" (List.init ...)` | Byte-level `Vec<u8>`, `push` loop |
-| Mutable radius array | `Array.make n 0` | `vec![0usize; n]` |
-| Min of two values | `min a b` (polymorphic) | `a.min(b)` — method call |
-| Centre tracking | `let c = ref 0; let r = ref 0` | `let (mut c, mut r) = (0, 0)` |
-| Result extraction | `Array.fold_left` with index tracking | `.enumerate().max_by_key(...)` |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Transformation | `flat_map` + `once` | `Buffer` with character appending |
+| Radius array | `Vec<usize>` | `int array` |
+| Center/right state | Two `usize` variables | `int ref` pair |
+| Result extraction | `p.iter().enumerate().max_by_key()` | `Array.fold_left` for max |
+| Char handling | `chars()` for Unicode | `Uchar` or byte-level |
+| Sentinel choice | `#` (not in typical ASCII text) | Same; often `\000` for bytes |
+
+## Exercises
+
+1. Return all palindromic substrings (not just the longest) sorted by length descending.
+2. Count the total number of distinct palindromic substrings using the Manacher array.
+3. Find the minimum number of cuts to partition a string into palindromes (use Manacher for O(n) palindrome detection + DP).
+4. Implement Eertree (palindromic tree) as an alternative data structure and compare with Manacher.
+5. Extend to report palindromes of a minimum length k efficiently without O(n) post-processing.

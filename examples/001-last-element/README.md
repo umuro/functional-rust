@@ -69,3 +69,9 @@ pub fn last<T>(list: &[T]) -> Option<&T> {
 | Null safety | `option` type | `Option<T>` |
 | Memory model | GC-managed | Borrow checker enforces lifetimes |
 | Stdlib call | `List.rev lst \| List.hd_opt` | `slice.last()` |
+
+## Exercises
+
+1. Implement `second_to_last` that returns the second-to-last element of a list as an `Option`.
+2. Implement `last_n` that returns the last `n` elements of a list as a `Vec`, returning an empty vec if the list is shorter.
+3. Generalize `last_element` into a `last_by` function that accepts a predicate and returns the last element satisfying it, then use it to find the last even number in a list of integers.

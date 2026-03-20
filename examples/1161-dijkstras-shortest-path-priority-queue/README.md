@@ -36,3 +36,9 @@ skipped via a guard check, mirroring the OCaml implicit de-duplication from the 
 2. **Mutability:** OCaml builds new maps at each step (immutable); Rust mutates `HashMap` in place for efficiency.
 3. **Ordering:** OCaml gets min-heap behavior from `Set.min_elt` on `(int, string)` tuples; Rust wraps entries in `Reverse` to flip `BinaryHeap`'s default max-heap ordering.
 4. **String ownership:** OCaml strings are garbage-collected and freely shared; Rust requires explicit `.clone()` when the same `String` must live in both the heap and the distance map simultaneously.
+
+## Exercises
+
+1. Implement `shortest_path_tree` that returns a spanning tree (as a parent map) that encodes the shortest path from the source to every reachable node.
+2. Modify the priority queue to use a Fibonacci heap interface and discuss the asymptotic improvement (`O(V log V + E)` vs `O((V+E) log V)`).
+3. Apply Dijkstra to a time-dependent graph where edge weights change depending on the current cost accumulated so far, and explain why the greedy argument breaks.

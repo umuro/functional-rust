@@ -2,75 +2,52 @@
 
 ---
 
-# 815: Boyer-Moore-Horspool String Search
+# Boyer-Moore String Search
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Sublinear average-case string search: skip whole pattern-lengths at a time using a precomputed bad-character table.
+Naive string search checks every position in the text, yielding O(n*m) worst-case time. For long texts with long patterns this is prohibitively slow. Real-world applications — log scanning, virus signature detection, text editors, DNA sequence analysis — require sublinear average-case search. Boyer-Moore achieves this by using two heuristics: the bad-character rule skips large chunks of text when a mismatch occurs at the wrong character position, and the good-suffix rule leverages known pattern structure to skip even further. The result is often O(n/m) average-case performance, making Boyer-Moore the algorithm behind `grep` and many production text search tools.
 
-## The Problem This Solves
+## Learning Outcomes
 
-KMP achieves O(n + m) by never backing up — but it still examines every character of the text at least once. Boyer-Moore goes further: it can skip entire sections of text without examining them, achieving O(n/m) average case. For long patterns on large texts (e.g., searching source code for a 20-character identifier), this is a dramatic practical speedup.
+- Understand the bad-character heuristic and how it allows right-to-left scanning with large skips
+- Implement a preprocessing phase that builds a shift table from the pattern
+- Recognize why Boyer-Moore scans the pattern right-to-left even though it advances left-to-right through text
+- Learn how the algorithm achieves sublinear average-case complexity
+- Compare Boyer-Moore with KMP: Boyer-Moore is faster in practice for large alphabets, KMP has better worst-case
 
-Boyer-Moore-Horspool is the simplified variant that keeps only the bad-character heuristic. It's easier to implement correctly and fast enough for the overwhelming majority of real use cases. The full Boyer-Moore adds the good-suffix rule for additional worst-case guarantees, but BMH is what you reach for in practice: file search tools like `grep` use Boyer-Moore variants internally.
-
-The trade-off: BMH has O(n×m) worst case (repeated single-character patterns in repeated text), while KMP is always O(n + m). Choose BMH when patterns are long and the alphabet is large (English text, source code), choose KMP when patterns may be repetitive or worst-case guarantees matter.
-
-## The Intuition
-
-Compare right-to-left within the window. When a mismatch occurs at the rightmost position, look at the text character there and shift the pattern so that character aligns with its last occurrence in the pattern. The shift table `skip[c]` is built once in O(m): for each pattern character at position `i` (not the last), `skip[c] = m - 1 - i`. The default shift for characters not in the pattern is `m` — skip the entire pattern width. O(n/m) average because each shift advances by roughly `m/2` on random text.
-
-OCaml builds the same table with `Array.make 256 m`; Rust uses `[usize; 256]` on the stack for cache-friendly constant-time access.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-// Build the shift (bad-character) table in O(m)
-fn build_shift(pattern: &[u8]) -> [usize; 256] {
-    let m = pattern.len();
-    let mut shift = [m; 256];  // Default: shift by full pattern length
-    // All characters except the last get a shift based on their rightmost position
-    for i in 0..m.saturating_sub(1) {
-        shift[pattern[i] as usize] = m - 1 - i;
-    }
-    shift
-}
-
-fn bmh_search(text: &str, pattern: &str) -> Vec<usize> {
-    let (t, p) = (text.as_bytes(), pattern.as_bytes());
-    let (n, m) = (t.len(), p.len());
-    if m == 0 || m > n { return vec![]; }
-
-    let shift = build_shift(p);
-    let mut matches = Vec::new();
-    let mut pos = 0;
-
-    while pos + m <= n {
-        let mut j = m;
-        // Compare right-to-left: first mismatch triggers the shift
-        while j > 0 && p[j - 1] == t[pos + j - 1] { j -= 1; }
-        if j == 0 { matches.push(pos); }
-        // Always shift by the bad-character value of the rightmost text char
-        pos += shift[t[pos + m - 1] as usize];
-    }
-    matches
+pub fn boyer_moore(text: &str, pattern: &str) -> Vec<usize> {
+    let t: Vec<char> = text.chars().collect();
+    let p: Vec<char> = pattern.chars().collect();
+    // bad_char table: for each character, last occurrence in pattern
+    // skip = pattern_len - 1 - bad_char[text[i]]
 }
 ```
 
-The `[usize; 256]` stack array is a key Rust performance idiom: fixed-size, no heap allocation, fits in L1 cache.
+The implementation collects chars upfront to handle Unicode correctly. The bad-character table maps each character to its rightmost occurrence in the pattern. When a mismatch occurs at position `i` in the text, we can skip by `pattern_len - 1 - bad_char[mismatch_char]` positions, advancing the pattern past the mismatch. Rust's `HashMap<char, usize>` stores this shift table naturally without alphabet-size assumptions, making it work for any Unicode input without a fixed alphabet array.
 
-## What This Unlocks
+## OCaml Approach
 
-- **Text editors and IDEs**: Fast find-in-file; Visual Studio Code's search uses Boyer-Moore-family algorithms.
-- **Network packet inspection**: Match signatures in high-throughput streams where O(n/m) matters; Snort IDS uses multi-pattern Boyer-Moore.
-- **`grep` and file utilities**: The foundation of pattern-matching in CLI tools when the pattern is a literal string.
+In OCaml, Boyer-Moore is implemented using `Bytes` or `String` with `Char.code` indexing for O(1) character access. The bad-character table is often an `int array` of size 256 for ASCII. OCaml's tail recursion enables a clean recursive formulation of the scan loop. The `Buffer` module avoids string concatenation in preprocessing. Functors can parameterize over alphabet type, and the `Map` module serves the role of Rust's `HashMap`. OCaml's immutable-first style encourages returning a list of match positions rather than mutating a results vector.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Shift table | `Array.make 256 m` | `[usize; 256]` — stack-allocated, no heap |
-| Char to index | `Char.code c` | `c as usize` |
-| Right-to-left compare | `for j = m-1 downto 0` | `while j > 0 { j -= 1; }` |
-| Shift on mismatch | `shift.(Char.code text.[pos+m-1])` | `shift[t[pos + m - 1] as usize]` |
-| Pattern not found | Returns empty list | Returns empty `Vec` |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Shift table | `HashMap<char, usize>` for Unicode | `int array` (256) for ASCII or `Map` |
+| String indexing | `chars().collect()` to Vec | `String.get`/`Bytes.get` by index |
+| Alphabet size | Unbounded (any Unicode) | Usually 256 for byte-level search |
+| Result collection | `Vec<usize>` pushed in loop | Recursive list accumulation |
+| Pattern scanning | Right-to-left inner loop | Same, via index arithmetic |
+| Worst case | O(n*m) with bad-character only | Same without good-suffix rule |
+
+## Exercises
+
+1. Add the good-suffix heuristic and measure the improvement on repetitive text like `"aaaa...a"` searching for `"aaab"`.
+2. Implement a case-insensitive version by normalizing to lowercase during the bad-character table build.
+3. Benchmark Boyer-Moore against KMP on: short patterns in long text, long patterns in long text, and DNA sequences.
+4. Extend to return `(usize, usize)` pairs of `(start, end)` positions instead of just start indices.
+5. Handle the edge case where the pattern is longer than the text gracefully without panicking.

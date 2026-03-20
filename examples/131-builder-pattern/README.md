@@ -58,3 +58,9 @@ bookkeeping.
 4. **Ownership:** Rust's builder takes `self` by value so the old builder is
    consumed at each transition — no aliasing, no double-use. OCaml copies
    the record functionally, achieving the same single-use semantics.
+
+## Exercises
+
+1. Add a required field to the builder (e.g., a non-optional `name: String`) and enforce at compile time using typestate that `build()` cannot be called before `set_name` is invoked.
+2. Extend the builder to support optional fields with default values, and implement `merge` that combines two partially-filled builders by preferring non-None values from the right builder.
+3. Implement a fluent HTTP request builder: method, URL, headers (multiple allowed), optional body — using the typestate pattern to ensure `send()` is only available after both method and URL are set.

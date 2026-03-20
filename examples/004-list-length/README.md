@@ -35,3 +35,9 @@ Two implementations: naive `1 + length_naive t` (stack risk) and tail-recursive 
 3. **Fold:** Rust's `fold` is iterative (no stack growth); OCaml's `List.fold_left` is tail-recursive — same safety guarantees
 4. **Practical value:** In Rust, manual length computation is purely educational; in OCaml, the tail-recursive version matters
 5. **Large lists:** OCaml's naive version risks stack overflow; Rust's naive version does too, but `.len()` eliminates the need
+
+## Exercises
+
+1. Implement `list_length` without using `.len()` or `.count()` — use only a fold or manual recursion.
+2. Write `length_bounded` that counts elements up to a maximum `limit`, stopping early once the limit is reached (without scanning the rest of the list).
+3. Implement `lengths` that takes a `Vec<Vec<T>>` and returns a `Vec<usize>` containing the length of each inner list, using only iterator combinators.

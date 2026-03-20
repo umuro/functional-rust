@@ -2,115 +2,37 @@
 
 ---
 
-# 775: Fixed-Size Arrays with const N Parameter
+# 775-const-array-size — Const Array Size
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Build stack-allocated data structures — ring buffers, fixed stacks, sliding-window statistics — where the capacity is a type parameter, not a runtime value.
+Heap-allocated `Vec<T>` is versatile but has overhead: a pointer, length, and capacity word, plus a heap allocation. For collections with a small, known maximum size (network packet fields, audio samples, fixed-size queues), a stack-allocated vector with a compile-time capacity bound eliminates all this overhead. `StackVec<T, CAP>` provides `Vec`-like operations with a static capacity guarantee, failing gracefully when the capacity is exceeded rather than allocating more space.
 
-## The Problem This Solves
+## Learning Outcomes
 
-A ring buffer that allocates a `Vec<T>` internally pays for heap allocation, pointer indirection, and dynamic resizing. In many contexts — embedded systems, real-time audio processing, network packet buffering, sensor data windowing — you know the maximum capacity at compile time and want it on the stack. No allocation, no bounds-check overhead, no fragmentation.
+- Implement `StackVec<T: Copy + Default, const CAP: usize>` with `data: [T; CAP]` and a `len: usize` runtime counter
+- Provide `push() -> Result<(), T>` that returns the item on overflow instead of panicking
+- Implement `pop() -> Option<T>`, `get(i)`, and `as_slice()` for `Vec`-like ergonomics
+- Verify size: `size_of::<StackVec<u8, 64>>()` = 64 + 8 (len) bytes — no heap pointer
+- See real-world applications: `heapless::Vec` in embedded Rust, `arrayvec` crate
 
-The challenge before const generics was that `struct RingBuffer<T>` couldn't encode the capacity in its type. You'd hard-code it (`struct RingBuffer8<T>([T; 8], ...)`) or use a heap `Vec`. Const generics solve this: `RingBuffer<f32, 16>` and `RingBuffer<f32, 1024>` are different types with different stack footprints, and you choose the right one at the call site.
+## Rust Application
 
-Sliding-window statistics (for sensor smoothing, rate calculation, moving averages) are a particularly common use case: a `RingBuffer<f64, 32>` holding the last 32 sensor readings, with zero dynamic allocation.
+`StackVec<T, CAP>` stores `data: [T; CAP]` initialized to `T::default()` and `len: usize`. `push` checks `len < CAP` before writing and incrementing; returns `Err(value)` on overflow. `pop` decrements `len` and returns the element. `as_slice()` returns `&self.data[..self.len]`. The `capacity()` method is `const fn`. Tests verify push-to-capacity, overflow handling, pop behavior, and iteration.
 
-## The Intuition
+## OCaml Approach
 
-Think of C's `float buf[N]` where `N` is a `#define` constant — except Rust's version is generic and type-safe. The type `RingBuffer<f32, 16>` carries `16` as part of its type signature, so the compiler knows the array is exactly 16 elements at compile time.
-
-For Python developers, this feels like NumPy arrays where shape is part of the type. For JavaScript developers, there's no direct equivalent — TypeScript's fixed-tuple types are the closest approximation.
-
-## How It Works in Rust
-
-```rust
-// The capacity N is part of the type — RingBuffer<f32, 16> vs RingBuffer<f32, 1024>
-#[derive(Debug)]
-pub struct RingBuffer<T: Copy + Default, const N: usize> {
-    data: [T; N],   // stack-allocated array — no heap
-    head: usize,    // index of oldest element
-    count: usize,   // how many valid elements
-}
-
-impl<T: Copy + Default, const N: usize> RingBuffer<T, N> {
-    pub fn new() -> Self {
-        // [T::default(); N] — zero-initialize the array at compile-known size
-        Self { data: [T::default(); N], head: 0, count: 0 }
-    }
-
-    pub fn push(&mut self, val: T) {
-        let tail = (self.head + self.count) % N;
-        self.data[tail] = val;
-        if self.count < N {
-            self.count += 1;          // not full yet — just grow
-        } else {
-            self.head = (self.head + 1) % N;  // full — overwrite oldest
-        }
-    }
-
-    pub fn iter(&self) -> impl Iterator<Item = &T> {
-        (0..self.count).map(|i| &self.data[(self.head + i) % N])
-    }
-
-    pub fn is_full(&self) -> bool { self.count == N }
-}
-
-// Fixed-capacity stack — N is the maximum depth
-pub struct FixedStack<T: Copy + Default, const N: usize> {
-    data: [T; N],
-    top: usize,
-}
-
-impl<T: Copy + Default, const N: usize> FixedStack<T, N> {
-    pub fn push(&mut self, v: T) -> bool {
-        if self.top >= N { return false; }  // stack full — no panic
-        self.data[self.top] = v;
-        self.top += 1;
-        true
-    }
-    pub fn pop(&mut self) -> Option<T> {
-        if self.top == 0 { return None; }
-        self.top -= 1;
-        Some(self.data[self.top])
-    }
-}
-
-// Sliding-window moving average — no heap allocation
-let mut window: RingBuffer<f64, 8> = RingBuffer::new();
-for reading in sensor_data {
-    window.push(reading);
-    if window.is_full() {
-        let avg: f64 = window.iter().sum::<f64>() / 8.0;
-        println!("Moving avg: {avg:.2}");
-    }
-}
-
-// size_of confirms stack allocation
-println!("{} bytes", std::mem::size_of::<RingBuffer<f64, 8>>());
-// 8 × 8 bytes (f64) + 2 × 8 bytes (usize) = 80 bytes — on the stack
-```
-
-Key points:
-- `[T::default(); N]` requires `T: Default + Copy` — `Default` for the initial value, `Copy` because arrays use `Copy` for initialization
-- The `% N` modular arithmetic keeps `head` and `tail` within bounds without bounds-check panics
-- Returning `false` from `push` on a full stack is better than panicking — let callers decide
-- `std::mem::size_of::<RingBuffer<f64, 8>>()` is computed at compile time — no surprises
-- `iter()` returning `impl Iterator` hides the modular arithmetic from callers
-
-## What This Unlocks
-
-- **Real-time embedded code**: no heap allocator required — all memory is in the type's stack footprint; the linker can compute total memory usage statically
-- **Sensor smoothing and signal processing**: sliding-window average, variance, min/max over the last N samples — allocate once, never GC
-- **Capacity-checked data structures**: `FixedStack<u32, 64>` — the capacity is part of the public API type signature, not documentation
+OCaml has no stack-allocated arrays of generic size. All arrays (`Array.make n x`) are heap-allocated. For fixed-size buffers, OCaml uses `Bytes.create n` (mutable) or `Bigarray` (C-backed). The `Cstruct` library in MirageOS provides a `StackVec`-like interface over C-allocated buffers for network packet processing. OCaml's GADT-based length-indexed lists provide type-level length tracking but are heap-allocated.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Fixed-size collection | `Array.make n default` (heap) | `[T; N]` — stack-allocated, size in type |
-| Capacity in type | Bigarray with kind | `struct RingBuffer<T, const N: usize>` |
-| Default initialization | `Array.make n 0` | `[T::default(); N]` — requires `T: Default + Copy` |
-| Overflow on push | Exception or `None` | Return `bool` or `Option` |
-| Memory layout | Heap pointer + length | Inline — part of the struct's stack frame |
-| Moving average | Mutable array + index arithmetic | Same — `% N` modular arithmetic |
+1. **Stack vs heap**: Rust's `StackVec<T, CAP>` is stack-allocated for small `CAP`; OCaml arrays are always heap-allocated.
+2. **Overflow handling**: Rust returns `Err(item)` on overflow, giving callers control; OCaml would raise an exception.
+3. **Embedded use**: `heapless::Vec` (Rust crate) is used in `no_std` embedded firmware; OCaml cannot target microcontrollers without GC.
+4. **Type system**: `StackVec<u8, 64>` and `StackVec<u8, 128>` are different Rust types; OCaml arrays of different sizes are the same type.
+
+## Exercises
+
+1. Implement `extend_from_slice(slice: &[T]) -> Result<(), ()>` that copies all slice elements into the `StackVec` or fails if there is insufficient capacity.
+2. Add `sort(&mut self)` using `self.data[..self.len].sort()` and verify it works correctly with the length boundary.
+3. Implement `StackVec::from_slice<const N: usize>(s: &[T; N]) -> Option<Self>` that creates a `StackVec` from a fixed array, returning `None` if `N > CAP`.

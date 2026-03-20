@@ -4,86 +4,64 @@
 
 # 290: Advanced Splitting Patterns
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Split iterators into multiple collections in a single pass — unzip, partition, and multi-way categorization without multiple traversals.
+Real-world data classification often requires more than a binary split. Partitioning numbers into negative, zero, and positive; splitting strings by parse success while keeping both results; routing events to different queues — these require multi-way classification in a single pass. This example explores `unzip`, `partition`, and custom fold-based trisection patterns, demonstrating when to use each.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Data processing often requires splitting a collection based on a predicate or structure. The naive approach iterates multiple times — once to find the positives, once for the negatives, once per category. For large datasets or non-replayable iterators (network streams, lazy generators), this is wrong or impossible.
+- Distinguish `unzip()` (split pairs by position) from `partition()` (split by predicate)
+- Implement multi-way classification beyond binary using `fold()`
+- Use `partition_map` patterns (via fold) for splitting while transforming
+- Recognize that each additional split requires one more collection — and one more `fold` branch
 
-Rust's `partition` and `unzip` consume an iterator in a single pass and produce two collections simultaneously. `partition(|x| predicate)` splits by boolean — true elements go left, false go right, exactly like `List.partition` in OCaml. `unzip()` on an iterator of pairs separates the pairs into two collections — the iterator analogue of transposing a list of tuples.
+## Rust Application
 
-Combining these with `fold` gives you n-way splits, categorization by enum variant, and simultaneous accumulation into different container types — all in one traversal. This is the functional pattern for what imperative code does with multiple loops and mutable accumulators.
-
-## The Intuition
-
-`partition` and `unzip` are single-pass transformations that split one iterator into two collections — fold lets you extend this to any number of buckets.
-
-## How It Works in Rust
+`partition` splits by boolean predicate; `unzip` splits by pair structure; `fold` enables arbitrary multi-way classification:
 
 ```rust
-// partition — split by predicate
-let nums = vec![-3i32, -1, 0, 1, 2, 5];
+// Binary partition by sign
 let (negatives, non_neg): (Vec<i32>, Vec<i32>) =
-    nums.into_iter().partition(|&x| x < 0);
-// negatives: [-3, -1], non_neg: [0, 1, 2, 5]
+    vec![-1, 0, 1, -2, 2].into_iter().partition(|&x| x < 0);
 
-// unzip — split pairs into two collections
-let pairs = vec![(1, 'a'), (2, 'b'), (3, 'c')];
-let (numbers, letters): (Vec<i32>, Vec<char>) = pairs.into_iter().unzip();
-// numbers: [1, 2, 3], letters: ['a', 'b', 'c']
+// Unzip pairs
+let (keys, values): (Vec<_>, Vec<_>) = pairs.into_iter().unzip();
 
-// Nested unzip — unzip pairs-of-pairs
-let nested: Vec<((i32, i32), &str)> = vec![((1, 2), "a"), ((3, 4), "b")];
-let (inner_pairs, labels): (Vec<(i32,i32)>, Vec<&str>) = nested.into_iter().unzip();
-let (lefts, rights): (Vec<i32>, Vec<i32>) = inner_pairs.into_iter().unzip();
-
-// partition_map pattern: split by parse success
-let data = vec!["1", "two", "3", "four"];
-let (nums, words): (Vec<i32>, Vec<&&str>) = data.iter().fold(
-    (Vec::new(), Vec::new()),
-    |(mut ns, mut ws), s| {
-        match s.parse::<i32>() {
-            Ok(n) => ns.push(n),
-            Err(_) => ws.push(s),
-        }
-        (ns, ws)
-    }
-);
-
-// Three-way split using fold
-let values = [1u32, 15, 100, 8, 50, 3, 200];
-let (small, medium, large) = values.iter().fold(
+// Trisect: three-way classification via fold
+let (neg, zero, pos) = nums.into_iter().fold(
     (vec![], vec![], vec![]),
-    |(mut s, mut m, mut l), &v| {
-        match v {
-            0..=10   => s.push(v),
-            11..=99  => m.push(v),
-            _        => l.push(v),
+    |(mut n, mut z, mut p), x| {
+        match x.cmp(&0) {
+            Ordering::Less => n.push(x),
+            Ordering::Equal => z.push(x),
+            Ordering::Greater => p.push(x),
         }
-        (s, m, l)
+        (n, z, p)
     }
 );
 ```
 
-1. `partition(|x| bool)` → `(Vec<T>, Vec<T>)` — single pass, two buckets.
-2. `unzip()` on `Iterator<Item=(A,B)>` → `(Vec<A>, Vec<B>)` — separate the pairs.
-3. `fold((vec![], vec![], ...), |acc, item| { ... acc })` — n-way split in one pass.
-4. Combine with `flat_map`, `filter_map`, or `scan` for transform-then-split pipelines.
+## OCaml Approach
 
-## What This Unlocks
+OCaml's `List.partition` handles binary splits. For multi-way classification, `List.fold_left` with a tuple accumulator is the standard approach — identical in structure to the Rust `fold` pattern:
 
-- **Single-pass efficiency**: Partition large datasets or streams without multiple traversals.
-- **Non-replayable iterators**: Split a file reader or network stream — you only read it once.
-- **Clean functional style**: Replace multiple mutable accumulator loops with one `fold` returning a tuple.
+```ocaml
+let (neg, zero, pos) = List.fold_left (fun (n,z,p) x ->
+  if x < 0 then (x::n, z, p)
+  else if x = 0 then (n, x::z, p)
+  else (n, z, x::p)
+) ([], [], []) nums
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Two-way split | `List.partition pred lst` | `iter.partition(\|x\| pred(x))` |
-| Pair separation | `List.split [(a,b);...]` | `iter.unzip()` |
-| N-way split | `List.fold_left` with tuple accumulator | `fold((vec![], ...), \|acc, x\| ...)` |
-| Result split | `List.partition_map` (>=4.12) | `fold` with `match Ok/Err` pattern |
-| Single-pass guarantee | Depends on strictness | Guaranteed — `Iterator` consumed once |
+1. **Immutable accumulation**: OCaml's fold accumulator is passed by value and returned — `x::n` creates a new cons cell; Rust's `fold` with `Vec::push` mutates in place.
+2. **Ordering**: OCaml's fold-based partition reverses order (prepend to list); Rust's `push` preserves insertion order.
+3. **Ergonomics**: The `itertools` crate's `partition_map` and `partition_fold` provide cleaner APIs for common multi-way patterns.
+4. **Real-world use**: Router dispatching, event classification, multi-bucket histogram construction.
+
+## Exercises
+
+1. Implement a four-way classifier that sorts strings into "short" (≤3), "medium" (4-7), "long" (8-12), and "very long" (>12) buckets.
+2. Use fold to simultaneously partition results into successes and failures while counting each.
+3. Build a pipeline that parses strings into `i32`, filters evens, and collects both valid evens and parse errors in a single fold.

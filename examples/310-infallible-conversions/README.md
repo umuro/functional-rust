@@ -4,61 +4,66 @@
 
 # 310: Infallible Conversions
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-`std::convert::Infallible` — the error type for conversions that cannot fail, and how `From` and `TryFrom` relate.
+Some conversions are always valid (`u8` to `u32`), while others might fail (`u32` to `u8` — might overflow). Rust encodes this distinction in the type system: `From/Into` for infallible conversions, `TryFrom/TryInto` for fallible ones. Using `TryFrom` for a conversion that might fail makes failure handling explicit and visible, unlike C-style implicit narrowing casts that silently truncate. This mirrors OCaml's explicit type coercions.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Rust's conversion traits split into two families: `From`/`Into` for conversions that always succeed, and `TryFrom`/`TryInto` for conversions that might fail. This is clean in principle, but breaks down when you need to write generic code that works with both. A generic function that accepts `TryFrom<T>` cannot accept `From<T>` implementations without a separate constraint — even though `From` implies infallibility.
+- Understand `TryFrom<T>` as the fallible counterpart to `From<T>`
+- Implement `TryFrom<u32>` for a newtype wrapper with a validity constraint
+- Use `try_into()` for conversions that can fail with a specific error type
+- Recognize the relationship: infallible `From` implies `Into`; `TryFrom` implies `TryInto`
 
-The solution is `Infallible`. Every `From<T> for U` implementation automatically gives you `TryFrom<T, Error = Infallible> for U` via a blanket impl in the standard library. This unifies both families: `TryFrom` is the general form, `From` is the special case where the error type is `Infallible`. Generic code can now accept `TryFrom<T>` and work for both fallible and infallible conversions.
+## Rust Application
 
-The practical benefit extends to API design. When you're implementing a trait that requires `TryFrom` (because it's part of a generic interface), but your specific type's conversion truly cannot fail, you can implement `From` and get `TryFrom` for free — with `Infallible` as the documented proof that failure is impossible.
-
-## The Intuition
-
-`Infallible` is an enum with zero variants. You cannot construct a value of type `Infallible`. So `Result<T, Infallible>` is really just `T` in disguise — the `Err` variant can never exist, and `.unwrap()` can never panic.
-
-Think of it as a type-level proof: "I claim this conversion cannot fail, and here's the evidence — an error type with no values."
-
-## How It Works in Rust
+`TryFrom<T>` defines fallible construction from a raw value:
 
 ```rust
-use std::convert::{Infallible, TryFrom};
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct NonZeroU32(u32);
 
-// From<u8> for u32 is infallible — u8 always fits in u32
-let n: u32 = u32::from(255u8); // never fails
+#[derive(Debug, PartialEq)]
+pub struct ZeroError;
 
-// The blanket impl gives us TryFrom for free:
-let r: Result<u32, Infallible> = u32::try_from(255u8);
-// r is always Ok — Infallible proves it
-
-// Your own type: From gives you TryFrom automatically
-struct Meters(f64);
-impl From<f64> for Meters {
-    fn from(v: f64) -> Self { Meters(v) }
+impl TryFrom<u32> for NonZeroU32 {
+    type Error = ZeroError;
+    fn try_from(n: u32) -> Result<Self, ZeroError> {
+        if n == 0 { Err(ZeroError) }
+        else { Ok(NonZeroU32(n)) }
+    }
 }
-// Now Meters::try_from(1.5f64) works with Error = Infallible
 
-// Generic code works with both:
-fn convert<T, U: TryFrom<T, Error = Infallible>>(val: T) -> U {
-    U::try_from(val).unwrap() // safe — Infallible proves no panic
-}
+// Usage: 5u32.try_into() or NonZeroU32::try_from(5)
+let valid: Result<NonZeroU32, ZeroError> = 5u32.try_into();
+let invalid: Result<NonZeroU32, ZeroError> = 0u32.try_into();
 ```
 
-## What This Unlocks
+## OCaml Approach
 
-- **Unified generic APIs** — write functions accepting `TryFrom<T>` and handle both infallible and fallible converters without code duplication
-- **Self-documenting contracts** — `Error = Infallible` in a trait impl is a machine-checked promise that the conversion cannot fail
-- **Free `TryFrom` impls** — implement `From` and get `TryFrom` for free, satisfying trait bounds that require the fallible API
+OCaml uses explicit conversion functions — there is no standard `TryFrom` trait equivalent:
+
+```ocaml
+type non_zero = NonZero of int
+
+exception ZeroError
+
+let non_zero_of_int n =
+  if n = 0 then Error `ZeroError
+  else Ok (NonZero n)
+```
+
+OCaml's lack of numeric implicit conversion makes this less critical — explicit function calls are always required.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Infallible conversion | `int_of_char` (total function) | `From<T>` / `Into<T>` |
-| Fallible conversion | `int_of_string` raises exception | `TryFrom<T, Error=E>` |
-| Infallible marker | N/A (type system doesn't track) | `std::convert::Infallible` |
-| Generic over both | Manual dispatch | `TryFrom<T, Error=Infallible>` |
-| Zero-variant type | `type void = \|` (empty variant) | `enum Infallible {}` |
+1. **Trait unification**: `TryFrom`/`TryInto` provide a standard interface for all fallible conversions; OCaml uses ad-hoc `*_of_*` naming conventions.
+2. **Symmetric pair**: `impl TryFrom<A> for B` automatically provides `impl TryInto<B> for A` — symmetry is built in.
+3. **std numeric impls**: The standard library implements `TryFrom<u64>` for `u8`, `u16`, etc. — the idiomatic way to do checked narrowing.
+4. **Orphan rule**: You can implement `TryFrom<ThirdPartyType>` for your type but not for third-party types — same as `From`.
+
+## Exercises
+
+1. Implement a `BoundedI32(i32)` newtype that wraps integers in range `[MIN, MAX]`, implementing `TryFrom<i32>` with a `RangeError` for out-of-range values.
+2. Use the standard library's `TryFrom<i64>` for `i32` to safely narrow a value, handling the error case explicitly.
+3. Implement `TryFrom<&str>` for a `Color` enum with `Red`, `Green`, `Blue` variants, parsing case-insensitively.

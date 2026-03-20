@@ -2,43 +2,48 @@
 
 ---
 
-# 577: Irrefutable vs Refutable Patterns
+# Irrefutable vs Refutable Patterns
 
-**Difficulty:** 2  **Level:** Beginner
+## Problem Statement
 
-Some patterns always match; others might not — and Rust's syntax reflects the difference.
+Rust distinguishes between patterns that always succeed (irrefutable) and those that might fail (refutable). `let` bindings, function parameters, and `for` loops require irrefutable patterns — patterns that cannot fail to match. `if let`, `while let`, and `match` arms accept refutable patterns. This distinction is enforced at compile time: using a refutable pattern in a `let` binding is an error. Understanding this rule explains compiler errors and guides which construct to use for which kind of pattern.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Rust distinguishes between patterns that *always* succeed (irrefutable) and patterns that *might* fail (refutable). This distinction determines where each kind of pattern is allowed. `let` bindings require irrefutable patterns. `if let`, `while let`, and `match` arms accept refutable ones. Mixing them up is a compile error with a helpful message, but understanding the distinction from the start prevents the confusion entirely.
+- What irrefutable means: the pattern always matches any value of the type
+- What refutable means: the pattern might not match (e.g., `Some(x)` on `Option<T>`)
+- Why `let x = 5;`, `let (a, b) = pair;` are irrefutable
+- Why `let Some(x) = opt;` is a compile error (refutable in `let`)
+- How `let-else`, `if let`, and `match` are the correct contexts for refutable patterns
 
-Irrefutable patterns are everywhere: every `let` statement, every function parameter, every `for` loop. They're so common you may not think of them as "patterns" at all. Refutable patterns — `Some(v)`, `Ok(x)`, variant names — can fail to match, so they need a context that handles the failure.
+## Rust Application
 
-## The Intuition
+Irrefutable: `let x = 5;`, `let (a, b) = (1, 2);`, `let Point { x, y } = point;` — these always match. Refutable: `Some(x)`, `Ok(v)`, `[a, ..]`, `1 | 2 | 3` — these might not match every value. `let Some(x) = opt;` is allowed only with `let-else` or as `let-else`. Function parameters must be irrefutable: `fn f((a, b): (i32, i32))` works; `fn f(Some(x): Option<i32>)` does not.
 
-An irrefutable pattern is a guarantee: no matter what value you give it, it will match. `let x = expr` always works — `x` can hold any value. `let (a, b, c) = (1, 2, 3)` always works — a 3-tuple always has three elements. A struct destructure in a `let` always works — the struct always has those fields.
+Key patterns:
+- Irrefutable: variable, `_`, tuple `(a, b)`, struct `Point { x, y }`, tuple struct `Pair(a, b)`
+- Refutable: `Some(x)`, `Ok(v)`, `Err(e)`, `[first, ..]`, integer literals, enum variants
+- Irrefutable required in: `let`, `for`, function parameters
+- Refutable allowed in: `if let`, `while let`, `match`, `let-else`
 
-A refutable pattern might say "no": `Some(v)` doesn't match `None`. That's why you need `if let` — it provides an else branch for when the pattern doesn't match. Using a refutable pattern in a plain `let` is a compile error because there's no way to handle the "doesn't match" case.
+## OCaml Approach
 
-## How It Works in Rust
+OCaml has the same distinction but does not enforce it at the syntax level — partial `let` patterns generate a warning rather than a compile error:
 
-1. **Irrefutable `let`** — `let x = 42; let (a, b) = (1, 2); let Point { x, y } = p;` — always match, no `if` needed.
-2. **Irrefutable function params** — `fn add((a, b): (i32, i32)) -> i32 { a + b }` — tuple destructuring in the parameter position.
-3. **Irrefutable `for`** — `for (n, ch) in &pairs` — destructures each element; works because every pair is a 2-tuple.
-4. **Refutable `if let`** — `if let Some(v) = opt { ... }` — handles the case where it doesn't match.
-5. **Refutable `while let`** — `while let Some(t) = stack.pop() { ... }` — loops until the pattern fails to match.
-
-## What This Unlocks
-
-- Destructure structs, tuples, and pairs directly in `let` and `for` without wrapping in `match`.
-- Know immediately which syntax to reach for: `let` for things that always match, `if let`/`match` for things that might not.
-- Write idiomatic destructuring in function signatures instead of extracting fields manually inside the body.
+```ocaml
+let Some x = Some 5 in x  (* warning: this is partial *)
+let (a, b) = (1, 2) in a + b  (* fine — always matches *)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Irrefutable let | `let (a, b) = pair` — always works | Same: `let (a, b) = pair` |
-| Refutable patterns | `match opt with Some v -> ... \| None -> ...` | `if let Some(v) = opt { ... }` or `match` |
-| For loop destructuring | `List.iter (fun (n, ch) -> ...)` | `for (n, ch) in &pairs` — irrefutable destructuring |
-| Refutable in let | Compiler warns of non-exhaustive; may generate exception | Compile error: "refutable pattern in local binding" |
+1. **Enforcement**: Rust makes using refutable patterns in `let` a hard compile error; OCaml issues a warning for partial `let` patterns but allows them.
+2. **`let-else` for refutable**: Rust provides `let-else` as the sanctioned way to use refutable patterns in `let` position with a mandatory fallback; OCaml has no equivalent — you use `match`.
+3. **Function parameters**: Rust function parameters require irrefutable patterns; OCaml function parameters can be partial patterns (with a warning).
+4. **Comprehension**: Understanding irrefutable vs refutable helps predict which construct to use; in OCaml, the distinction is stylistic rather than structural.
+
+## Exercises
+
+1. **Classify patterns**: For each pattern below, state whether it is irrefutable or refutable: `(a, b)`, `Some(x)`, `x`, `_`, `[h, ..]`, `Point { x, y }`, `Ok(v)`, `1 | 2 | 3`.
+2. **Fix the error**: Take `let Some(x) = maybe_value;` and fix it using both `let-else` and `if let` — explain the semantic difference between the two fixes.
+3. **Irrefutable tuple**: Write `fn sum_pair((a, b): (i32, i32)) -> i32 { a + b }` and `fn sum_triple((a, b, c): (i32, i32, i32)) -> i32` — verify parameter destructuring works for tuples.

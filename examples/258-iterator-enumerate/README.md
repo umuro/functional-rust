@@ -4,72 +4,56 @@
 
 # 258: Index-Value Pairs with enumerate()
 
-**Difficulty:** 1  **Level:** Beginner
+## Problem Statement
 
-Get `(index, value)` pairs from any iterator without tracking a counter manually.
+Knowing the position of each element while iterating is a recurring need: numbering output lines, finding the index of the first matching element, or computing index-dependent transformations. The traditional C-style `for (int i = 0; i < n; i++)` loop provides this but loses the iterator abstraction. The `enumerate()` adapter solves this by injecting a zero-based index alongside each element, keeping the pipeline composable.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You're iterating a list and you need the position of each element — to number output lines, filter by index, or find which position holds a value. The naive solution is a mutable `let mut i = 0;` counter that you increment at the bottom of every loop body. That counter can drift, get forgotten after a `continue`, or just clutter the code.
+- Understand how `enumerate()` wraps each element with its zero-based index
+- Use `(index, value)` destructuring patterns in `map()` and `for` loops
+- Filter or transform elements based on their position
+- Combine `enumerate()` with `filter()` to find the index of a matching element
 
-In Python you reach for `enumerate(items)`. In OCaml you use `List.iteri` or `List.mapi`. In Rust, `enumerate()` is the idiomatic answer — it works on *any* iterator, not just slices, and integrates cleanly with the rest of the adapter chain.
+## Rust Application
 
-The bigger payoff comes in chains. Without `enumerate()` you can't easily combine index-awareness with `filter`, `map`, or `find` — you'd need to `collect()` first, then use index-based loops. With `enumerate()` you stay in the lazy pipeline.
-
-## The Intuition
-
-`enumerate()` wraps each element with its zero-based position, turning `Iterator<Item=T>` into `Iterator<Item=(usize, T)>`.
-
-```rust
-let fruits = ["apple", "banana", "cherry"];
-for (i, fruit) in fruits.iter().enumerate() {
-    // i = 0, 1, 2
-}
-```
-
-## How It Works in Rust
+`Iterator::enumerate()` returns `Enumerate<I>`, yielding `(usize, Item)` pairs. The index starts at zero and increments by one for each element consumed:
 
 ```rust
-let fruits = ["apple", "banana", "cherry", "date"];
-
-// Basic: loop with position
-for (i, fruit) in fruits.iter().enumerate() {
-    println!("{}: {}", i, fruit);
+let v = ["a", "b", "c"];
+for (i, s) in v.iter().enumerate() {
+    println!("{}: {}", i, s);
 }
+// 0: a, 1: b, 2: c
 
-// Filter by index — keep only even positions
-let even_indexed: Vec<_> = fruits.iter()
+// Index-dependent transformation
+let result: Vec<i32> = [10, 20, 30].iter()
     .enumerate()
-    .filter(|(i, _)| i % 2 == 0)  // pattern-match the tuple
-    .map(|(_, v)| *v)               // drop the index again
+    .map(|(i, &val)| val + i as i32)
     .collect();
-
-// Format with 1-based numbers
-let numbered: Vec<String> = fruits.iter()
-    .enumerate()
-    .map(|(i, f)| format!("{}. {}", i + 1, f))  // i+1 for 1-based
-    .collect();
-
-// Find first matching element AND its position
-let found = fruits.iter()
-    .enumerate()
-    .find(|(_, f)| f.starts_with('c'));  // → Some((2, "cherry"))
+// [10, 21, 32]
 ```
 
-Destructure the tuple immediately in the closure signature — it's cleaner than `pair.0`/`pair.1`.
+## OCaml Approach
 
-## What This Unlocks
+OCaml's `List.mapi` applies a function `(index -> element -> result)` to each element, which is the direct equivalent for transformation. For filtering by position, one typically uses a manual `fold_left` with a counter accumulator:
 
-- **Numbered output** — generate "1. item", "2. item" lists without a manual counter.
-- **Index-aware filtering** — keep every Nth element, skip the header row (index 0), etc.
-- **Position search** — find the index of the first element matching a condition (as an alternative to `position()` when you need both the index and the value).
+```ocaml
+let indexed = List.mapi (fun i x -> (i, x)) ["a"; "b"; "c"]
+(* [(0,"a"); (1,"b"); (2,"c")] *)
+```
+
+OCaml lacks a direct `enumerate()` on `Seq`, but `Seq.zip (Seq.ints 0) seq` achieves the same lazily.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Iterate with index | `List.iteri (fun i x -> ...)` | `iter.enumerate()` |
-| Map with index | `List.mapi (fun i x -> ...)` | `.enumerate().map(\|(i, x)\| ...)` |
-| Filter with index | `List.filteri (fun i _ -> ...)` | `.enumerate().filter(\|(i, _)\| ...)` |
-| Index type | `int` | `usize` (always non-negative) |
-| Works on any iterator | No — list-specific functions | Yes — any `Iterator` |
+1. **Built-in vs manual**: Rust provides `enumerate()` as a first-class adapter; OCaml requires `List.mapi` or a manual index counter for the same effect.
+2. **Zero-based index**: Both languages use zero-based indexing for this operation.
+3. **Type**: Rust yields `(usize, &T)`; OCaml's `mapi` yields the result of the applied function directly.
+4. **Laziness**: `enumerate()` is lazy in Rust; `List.mapi` processes eagerly in OCaml.
+
+## Exercises
+
+1. Use `enumerate()` to find the index of the first element in a slice that satisfies a predicate, returning `Option<usize>`.
+2. Build a function that takes a `Vec<String>` and returns a formatted numbered list like `["1. first", "2. second"]`.
+3. Use `enumerate()` and `filter()` together to return only the even-indexed elements of a slice.

@@ -2,79 +2,63 @@
 
 ---
 
-# 283: ExactSizeIterator
+# 283: ExactSizeIterator for Known-Length Iterators
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Provide O(1) element count on your custom iterator to enable pre-allocation, size assertions, and optimizer hints.
+Pre-allocating the right amount of memory before collecting an iterator avoids repeated resizing. Displaying progress bars requires knowing total count upfront. Splitting an iterator into equally-sized chunks requires knowing its length. The `ExactSizeIterator` trait signals that an iterator knows its exact remaining length in O(1) time, enabling these optimizations without counting all elements first.
 
-## The Problem This Solves
+## Learning Outcomes
 
-When you `collect()` an iterator into a `Vec`, Rust checks `size_hint()` to pre-allocate the right amount of memory. If the hint is wrong or absent, `Vec` starts small and reallocates multiple times as it grows — potentially 2-3x the necessary work for large collections.
+- Understand `ExactSizeIterator` as providing O(1) `len()` for iterators with known size
+- Implement `ExactSizeIterator` on a custom iterator struct with a computable length
+- Use `len()` for pre-allocation and progress display without consuming the iterator
+- Recognize which standard iterators implement `ExactSizeIterator`: slice iterators, ranges, `Vec` drains, but not filtered or chained iterators
 
-`ExactSizeIterator` is the trait that says "I know my remaining count precisely." Implementing it lets consumers call `.len()` on your iterator — just like calling `.len()` on a `Vec` — and allocate exactly the right capacity upfront. The standard library uses this internally: `Vec::from_iter` for ranges is O(1) allocation because ranges implement `ExactSizeIterator`.
+## Rust Application
 
-You implement it by providing accurate `size_hint()` bounds (both lower and upper matching exactly) and optionally overriding `len()`. Once you implement the trait, callers can use `Vec::with_capacity(iter.len())` + `extend()` for single-allocation collection.
-
-## The Intuition
-
-Declare that your iterator knows exactly how many elements remain, unlocking O(1) length queries and pre-allocation optimizations.
-
-## How It Works in Rust
+Implementing `ExactSizeIterator` requires `Iterator` and provides `len()`. `Vec::collect()` uses `size_hint()` for pre-allocation — `ExactSizeIterator` makes this exact:
 
 ```rust
-struct FixedRange { current: usize, end: usize }
+pub struct FixedRange { current: usize, end: usize }
 
 impl Iterator for FixedRange {
     type Item = usize;
-    fn next(&mut self) -> Option<usize> { /* ... */ }
-
-    // Required: size_hint must be exact (lo == hi)
-    fn size_hint(&self) -> (usize, Option<usize>) {
-        let remaining = self.end.saturating_sub(self.current);
-        (remaining, Some(remaining))  // both bounds equal = exact
+    fn next(&mut self) -> Option<usize> {
+        if self.current >= self.end { return None; }
+        let v = self.current;
+        self.current += 1;
+        Some(v)
     }
 }
 
-// Declare: this iterator knows its exact remaining count
 impl ExactSizeIterator for FixedRange {
-    fn len(&self) -> usize {
-        self.end.saturating_sub(self.current)
-    }
+    fn len(&self) -> usize { self.end - self.current }
 }
 
-// Now callers can:
-let fr = FixedRange::new(3, 8);
-println!("{}", fr.len());  // 5 — O(1), no traversal
-
-// Pre-allocate exactly right
-let source = vec![1i32, 2, 3, 4, 5];
-let mut dest = Vec::with_capacity(source.iter().len());  // single allocation
-dest.extend(source.iter().map(|&x| x * 2));
-// dest == [2, 4, 6, 8, 10], allocated once
-
-// Built-in ExactSizeIterators
-let arr = [1i32, 2, 3, 4, 5];
-let mut it = arr.iter();
-it.len();     // 5
-it.next();
-it.len();     // 4 — tracks remaining count
-
-(0i32..10).len();  // 10 — ranges know their size
+let r = FixedRange::new(0, 10);
+println!("Will collect {} items", r.len()); // 10, without consuming
+let v: Vec<_> = r.collect(); // pre-allocates exactly 10 slots
 ```
 
-## What This Unlocks
+## OCaml Approach
 
-- **Single-allocation collect:** Pre-allocate Vec with `with_capacity(iter.len())` + `extend()` — no reallocation, especially valuable in hot paths.
-- **API contracts:** Functions that require exactly N elements can `assert_eq!(iter.len(), n)` instead of collecting and checking `len()` after.
-- **Optimizer hints:** The standard library uses `ExactSizeIterator` bounds to eliminate per-element capacity checks inside `collect()`.
+OCaml's `Seq` module is inherently forward-only without size information. Length is known only for `Array` and `List` (via `Array.length` and `List.length`). Sequences built from generators have no known length unless explicitly tracked alongside:
+
+```ocaml
+(* OCaml has no ExactSizeIterator equivalent — length must be tracked separately *)
+let (length, seq) = (10, Seq.init 10 Fun.id)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Length of sequence | `Array.length` (arrays only) | `ExactSizeIterator::len()` on any iterator |
-| Lists | `List.length` — O(n) traversal | No direct equivalent; iterators can be O(1) |
-| Pre-allocation | Manual size tracking | `Vec::with_capacity(iter.len())` |
-| Safety | Arrays are fixed-size | `len()` must match actual remaining elements |
-| Standard iterators | N/A | Slices, ranges, `zip` of ESI all implement it |
+1. **Trait-based annotation**: Rust uses a marker trait to communicate "I know my size"; OCaml has no equivalent standard mechanism.
+2. **Pre-allocation optimization**: `collect::<Vec<_>>()` uses `ExactSizeIterator` to pre-allocate the exact vector capacity; OCaml's `Array.of_seq` must grow or traverse twice.
+3. **Composition loss**: Applying `filter()` or `flat_map()` to an `ExactSizeIterator` loses the `ExactSizeIterator` implementation — only size-preserving adapters like `map()` retain it.
+4. **Progress bars**: Libraries like `indicatif` use `ExactSizeIterator::len()` to display accurate progress without pre-consuming the iterator.
+
+## Exercises
+
+1. Implement `ExactSizeIterator` for a custom `StridedRange` that yields every nth element from a range, where the exact count is computable as `(end - start + step - 1) / step`.
+2. Write a function that takes an `ExactSizeIterator` and a progress-display closure, calling the closure with `(index, total)` for each element.
+3. Show that `filter()` applied to an `ExactSizeIterator` loses the `ExactSizeIterator` implementation by checking the trait bounds in the type signature.

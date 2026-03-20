@@ -2,116 +2,51 @@
 
 ---
 
-# 545: Split Borrows from Structs
+# Split Borrows from Structs
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-The borrow checker tracks field granularity. You can mutably borrow two *different* fields of a struct at the same time — the compiler knows they don't overlap.
+A common pattern in game engines and simulations: update the player's position while reading the enemy list from the same `GameState`. Naively, borrowing `&mut self` prevents reading any field — the entire struct is "mutably borrowed." But Rust's borrow checker actually tracks borrows at the field level, not just the struct level. Split borrows let you hold `&mut` to one field and `&` to another simultaneously, as long as they do not alias. This is critical for performance-sensitive code that avoids unnecessary cloning.
 
-## The Problem This Solves
+## Learning Outcomes
 
-A common frustration: you have a struct with two fields and need to pass mutable references to both simultaneously:
+- How Rust's borrow checker tracks borrows at the field level for plain structs
+- How `get_refs(&mut self) -> (&mut f32, &mut f32, &[(f32, f32)])` enables simultaneous field borrows
+- Why split borrows work for structs but not through a method call on `self` in general
+- How `split_at_mut` and `split_first_mut` provide split borrows on slices
+- Where split borrows matter: ECS systems, game state, embedded systems with shared hardware registers
 
-```rust
-struct State {
-    data: Vec<i32>,
-    cache: Vec<i32>,
-}
+## Rust Application
 
-let mut s = State { data: vec![1,2,3], cache: vec![] };
+`GameState` holds player coordinates and an enemy list. `get_refs(&mut self)` returns a tuple of `&mut f32`, `&mut f32`, and `&[(f32, f32)]` — three simultaneous borrows of different fields. Rust accepts this because `player_x`, `player_y`, and `enemies` are distinct fields and cannot alias. For slices, `split_at_mut(mid)` returns `(&mut [T], &mut [T])` — two non-overlapping mutable slice halves, which is safe precisely because they partition the original slice.
 
-// Intuitive but fails:
-process(&mut s.data, &mut s.cache);
-// ERROR: cannot borrow `s` as mutable more than once
-// The compiler sees TWO borrows of `s` — same source
+Key patterns:
+- `(&mut self.field_a, &mut self.field_b, &self.field_c)` — direct field split
+- `slice.split_at_mut(mid)` — standard library split borrow for slices
+- `slice.split_first_mut()` — returns `(&mut T, &mut [T])` for head/tail patterns
+
+## OCaml Approach
+
+OCaml records allow simultaneous access to multiple fields through references with no restriction:
+
+```ocaml
+type game_state = { mutable player_x: float; mutable player_y: float; mutable enemies: (float * float) list }
+let update state dx dy =
+  state.player_x <- state.player_x +. dx;
+  state.player_y <- state.player_y +. dy
 ```
 
-But this isn't actually unsafe — `data` and `cache` are different memory locations. The borrow checker handles this, but only when you borrow fields *directly*, or use methods that split the struct for you.
-
-## The Intuition
-
-The borrow checker reasons about *paths*, not just variables. `s.data` and `s.cache` are different paths into `s`. Borrowing both mutably is safe — the same reason you can write to two different elements of an array (as long as they don't alias).
-
-The key is that the *struct itself* can't be borrowed mutably twice — but its *fields* can be, because each field has a unique address. You need to do the split at the borrow level, not after the fact.
-
-Methods can formalize split borrows by returning `(&mut T, &mut U)` from a single `&mut self` call. The compiler can verify that the two returned mutable references point to different parts of `self`.
-
-## How It Works in Rust
-
-**Direct field access — compiler sees separate paths:**
-
-```rust
-struct GameState {
-    player_x: f32,
-    enemies: Vec<(f32, f32)>,
-    score: u32,
-}
-
-fn update(gs: &mut GameState) {
-    let px = gs.player_x; // read player_x (Copy — no borrow)
-    
-    // Borrow enemies (different field from score)
-    let nearby = gs.enemies.iter()
-        .filter(|&&(ex, _)| (ex - px).abs() < 10.0)
-        .count();
-    
-    // Mutate score (different field from enemies)
-    gs.score += nearby as u32 * 10; // OK — score ≠ enemies
-}
-```
-
-**Method returning split mutable borrows:**
-
-```rust
-impl GameState {
-    // Returns (&mut f32, &mut f32, &mut u32) — three different fields
-    fn position_and_score_mut(&mut self) -> (&mut f32, &mut f32, &mut u32) {
-        (&mut self.player_x, &mut self.player_y, &mut self.score)
-        // Compiler verifies: player_x, player_y, score are disjoint fields
-    }
-}
-
-let (px, py, score) = gs.position_and_score_mut();
-*px = 5.0;
-*py = 3.0;
-*score += 100;
-// All three modified — no conflict because they're separate fields
-```
-
-**`split_at_mut` — the canonical slice split:**
-
-```rust
-let mut v = vec![1, 2, 3, 4, 5, 6];
-
-// v.split_at_mut(3) returns (&mut [i32], &mut [i32]) — non-overlapping halves
-let (left, right) = v.split_at_mut(3);
-left[0] += 100;  // modifying left half
-right[0] += 200; // modifying right half — safe!
-// This would be an ERROR with indexed borrows: v[0] and v[3] in same borrow
-
-println!("{:?}", v); // [101, 2, 3, 204, 5, 6]
-```
-
-**When split borrows don't work — same field:**
-
-```rust
-// Can't split if both borrows are of the same field:
-let (a, b) = (&mut s.data, &mut s.data); // ERROR: two mutable borrows of same field
-// Fix: use s.data.split_at_mut() instead
-```
-
-## What This Unlocks
-
-- **Parallel processing within a single struct** — pass mutable references to two halves of a game state to two different subsystems without copying or unsafe code.
-- **Cache-friendly struct layouts** — keep hot and cold data in the same struct, use split borrows to access hot data while cold data is simultaneously processed.
-- **Avoiding unnecessary `Arc<Mutex<T>>`** — when you control the entire struct and just need to touch two fields, split borrows give you safe concurrent-*seeming* access on a single thread without synchronization overhead.
+No borrowing concept exists — all fields are always accessible through the record reference.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Mutable access to record fields | Records are immutable by default; `ref` for mutation; GC manages | `&mut` is exclusive — but split borrows let you hold `&mut` to two *different* fields |
-| Simultaneous field mutation | Update syntax creates new record; no aliasing concern | Direct field split: compiler verifies disjointness at field level |
-| Slice splitting | `Array.sub` allocates; manual indexing | `split_at_mut` returns `(&mut [T], &mut [T])` — zero cost, borrow-checked |
-| Interior mutability | `ref` cells or mutable fields | Split borrows: when fields are known-disjoint, `&mut` to both is safe |
-| Safety | Mutation tracked by discipline and GC | Field-level borrow tracking: unsafe would be needed only for dynamic disjointness (e.g., two arbitrary indices) |
+1. **Field-level tracking**: Rust's borrow checker tracks individual struct fields — an improvement from early Rust which tracked whole structs; OCaml has no borrow tracking at all.
+2. **Method boundary**: When split-borrow logic is inside a method returning a tuple, Rust accepts it; when callers try to hold borrows and call other methods simultaneously, the checker may reject it.
+3. **Slice splits**: Rust requires `split_at_mut` for safe mutable slice splits; OCaml array/Bigarray slices can be subindexed mutably without restriction.
+4. **ECS systems**: Rust ECS frameworks (Bevy, Legion) use unsafe code or archetype-based storage to achieve the split-borrow patterns that game logic requires; OCaml ECS frameworks rely on runtime discipline.
+
+## Exercises
+
+1. **Physics update**: Add a method `fn physics_step(&mut self) -> (&mut f32, &mut f32, &[(f32, f32)]) { ... }` and write a loop that moves the player toward the nearest enemy using the split references.
+2. **Slice head/tail**: Write a function `fn map_head_tail<T: Clone + std::fmt::Debug>(s: &mut [T], f: impl Fn(&mut T))` using `split_first_mut` that applies `f` to the head while printing the tail.
+3. **Struct with two Vecs**: Create a `struct Buffers { input: Vec<u8>, output: Vec<u8> }` and a method returning `(&mut Vec<u8>, &mut Vec<u8>)` — then use both to implement a transform-in-place operation.

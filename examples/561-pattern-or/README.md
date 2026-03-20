@@ -2,111 +2,55 @@
 
 ---
 
-# 561: Or-Patterns — pat1 | pat2
+# Or Patterns
 
-**Difficulty:** 2  **Level:** Beginner
+## Problem Statement
 
-Match multiple patterns in a single arm using `|`. Reduces repetition when different patterns share the same action.
+Matching the same action for multiple variants is a common need in language interpreters, state machines, and data validation. Before Rust 2021's or-pattern stabilization, developers had to either duplicate arms or use `if matches!(...)` guards. Or patterns (`|` in match arms and `if let`) allow matching several alternatives with one arm, keeping code DRY and exhaustiveness checking intact. OCaml has always had this with its `|` in `match`, making it a natural comparison point.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Without or-patterns, matching several variants with the same handler requires either duplicating the arm body or indirection through a helper function:
+- How `|` in a single match arm matches multiple alternatives
+- How `matches!(value, A | B | C)` provides a concise boolean check
+- How or-patterns work in `if let` and `let` destructuring
+- How or-patterns interact with enum variants, ranges, and literals
+- Where or-patterns reduce duplication in state machine transitions and input validation
 
-```rust
-match color {
-    Color::Red   => "warm",   // duplicate arms
-    Color::Yellow=> "warm",   // same body — tedious and easy to miss one
-    Color::Green => "cool",
-    Color::Blue  => "cool",
-    Color::Purple=> "mixed",
-}
+## Rust Application
+
+`is_vowel(c: char) -> bool` uses `matches!(c, 'a' | 'e' | ... )` — a boolean check over multiple char alternatives. `describe_number(n: i32)` uses `1 | 2 | 3 => "small"` in a match arm. `is_primary(c: &Color)` uses `matches!(c, Color::Red | Color::Green | Color::Blue)`. Or-patterns in match arms are exhaustiveness-checked — adding a new variant causes a compile warning unless covered. The `|` separates alternatives anywhere a pattern is valid.
+
+Key patterns:
+- `1 | 2 | 3 => expr` — multiple literals in one arm
+- `matches!(val, Pat1 | Pat2)` — boolean or-pattern check
+- `Color::A | Color::B => ...` — enum variant or-pattern
+
+## OCaml Approach
+
+OCaml has had or-patterns since its earliest versions:
+
+```ocaml
+let is_vowel c = match c with
+  | 'a' | 'e' | 'i' | 'o' | 'u' -> true
+  | _ -> false
+
+let describe_number n = match n with
+  | 1 | 2 | 3 -> "small"
+  | 4 | 5 | 6 -> "medium"
+  | _ -> "other"
 ```
 
-Or-patterns let you express "any of these → same action" directly in the pattern language, with no duplication.
-
-## The Intuition
-
-`pat1 | pat2` reads as "matches if pat1 OR pat2 matches." It's a logical OR on patterns — both branches share the same binding names and must bind the same types. The arm body executes once for whichever pattern matched.
-
-Or-patterns work at any nesting level — inside tuples, enums, or other compound patterns. They also work in `if let`, `while let`, and `matches!`.
-
-## How It Works in Rust
-
-**Enum variant grouping:**
-
-```rust
-#[derive(Debug)]
-enum Color { Red, Green, Blue, Yellow, Purple }
-
-fn classify(c: &Color) -> &'static str {
-    match c {
-        Color::Red | Color::Yellow  => "warm",   // two variants, one arm
-        Color::Green | Color::Blue  => "cool",
-        Color::Purple               => "mixed",
-    }
-}
-```
-
-**`matches!` macro — boolean test with or-patterns:**
-
-```rust
-fn is_primary(c: &Color) -> bool {
-    matches!(c, Color::Red | Color::Green | Color::Blue)
-}
-```
-
-**Integer or-patterns:**
-
-```rust
-fn describe_number(n: i32) -> &'static str {
-    match n {
-        0 | 1         => "tiny",
-        2 | 3 | 4     => "small",
-        5..=9         => "medium",
-        _             => "large",
-    }
-}
-```
-
-**Nested or-patterns (inside compound patterns):**
-
-```rust
-enum Shape { Circle(f64), Square(f64), Triangle(f64, f64) }
-
-fn has_single_param(s: &Shape) -> bool {
-    matches!(s, Shape::Circle(_) | Shape::Square(_))
-}
-
-// Or in a full match with data binding:
-fn area_approx(s: &Shape) -> f64 {
-    match s {
-        Shape::Circle(r) | Shape::Square(r) => r * r, // both bind `r`
-        Shape::Triangle(base, height)       => base * height / 2.0,
-    }
-}
-```
-
-**`if let` with or-patterns:**
-
-```rust
-let c = Color::Red;
-if let Color::Red | Color::Yellow = c {
-    println!("warm color");
-}
-```
-
-## What This Unlocks
-
-- **DRY match arms** — when five variants map to one of two outcomes, write two arms instead of five. The intent is immediately clear.
-- **Type-safe grouping** — or-patterns are checked by the exhaustiveness checker. Add a new variant to the enum and the compiler points you to every match that needs updating.
-- **Clean `matches!` predicates** — express "is this one of these values?" as a single boolean expression usable in `filter`, `assert`, and `if` conditions.
+The syntax is identical in spirit to Rust's.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Multiple patterns, one arm | `| pat1 | pat2 ->` (leading `|` optional) | `pat1 \| pat2 =>` — same syntax, middle `\|` |
-| Binding in or-patterns | Each alternative must bind same names/types | Same rule — all alternatives must produce same bindings |
-| `matches!` equivalent | N/A (inline match or `function`) | `matches!(expr, pat1 \| pat2)` → `bool` |
-| Exhaustiveness | Compiler checks all constructors covered | Same — exhaustiveness checked across all or-pattern arms |
-| Range patterns | `0..9 ->` (exclusive) | `0..=9 =>` (inclusive) — combinable with `\|` |
+1. **Stabilization history**: OCaml has had or-patterns since v1; Rust stabilized them fully in edition 2021 — earlier editions required separate arms.
+2. **Scope of binding**: Rust requires all alternatives in an or-pattern to bind the same names with the same types; OCaml has the same restriction.
+3. **`matches!` macro**: Rust's `matches!` is a convenient shorthand; OCaml achieves the same with a `function | Pat1 | Pat2 -> true | _ -> false`.
+4. **Nested or-patterns**: Rust supports nested or-patterns inside destructuring (`Some(1 | 2)`); OCaml supports the same.
+
+## Exercises
+
+1. **Operator classifier**: Write `fn is_arithmetic_op(c: char) -> bool` using or-patterns to check for `+`, `-`, `*`, `/`, `%`.
+2. **Status grouping**: Implement `fn http_category(code: u16) -> &'static str` using or-patterns and ranges to classify 200-299 as "success", 400-499 as "client error", 500-599 as "server error".
+3. **Variant groups**: Create a `KeyEvent` enum with many variants and use or-patterns to group them into "printable", "control", and "navigation" in a single `categorize` function.

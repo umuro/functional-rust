@@ -2,109 +2,37 @@
 
 ---
 
-# 783: Type-Level Arithmetic with const Generics
+# 783-const-type-arithmetic — Const Type Arithmetic
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Express array size relationships in the type system: `concat([T; A], [T; B]) -> [T; A+B]` — the output length is computed at compile time.
+Type-level arithmetic allows the type system to reason about sizes and dimensions. `Add<3, 4>::VALUE == 7` and `Mul<3, 4>::VALUE == 12` are computed by the compiler. This enables types like `Matrix<f64, 3, 4>` and `Matrix<f64, 4, 5>` to multiply only when the inner dimensions match — a matrix multiplication type error becomes a compile error. Used in linear algebra libraries (`nalgebra`) and tensor libraries that enforce dimension compatibility.
 
-## The Problem This Solves
+## Learning Outcomes
 
-When you concatenate two arrays, the output array's length is the sum of the inputs. In most languages this is a runtime property — you get a `Vec` and check `.len()`. With const generics in Rust, the length is a *type-level* property: `[T; A+B]` is a distinct type from `[T; 5]`, and the compiler verifies at every call site that the sizes are consistent.
+- Implement `Add<A, B>` and `Mul<A, B>` structs with `const VALUE: usize`
+- Create `Vec3<const N: usize>` with typed length and slice access
+- Implement `concat_vec` that combines two vectors and returns a `Vec<f64>` (not `[f64; A+B]` — limited by stable Rust)
+- Understand why `Matrix<ROWS, COLS>` multiplication checks inner dimensions at compile time
+- See how nalgebra uses this for dimension-safe linear algebra operations
 
-This matters for embedded systems, SIMD, cryptography, and any domain where buffer sizes are contracts — stack-allocated, no heap, no size-mismatch bugs at runtime. A wrong size is a compile error, not a panic.
+## Rust Application
 
-The same mechanism enables unit-typed quantities (`Meters<5> + Meters<3> = Meters<8>`) where adding distances of different units won't compile.
+`Add<A, B>` provides `const VALUE: usize = A + B`. `Mul<A, B>` provides `const VALUE: usize = A * B`. `Vec3<N>` wraps `[f64; N]` with typed length. `Matrix<const R: usize, const C: usize>` wraps `[[f64; C]; R]` with `mul` that only accepts `Matrix<C, D>`. `concat_vec` returns `Vec<f64>` because stable Rust cannot use `{A+B}` as a const generic expression directly. Comments explain the nightly approach.
 
-## The Intuition
+## OCaml Approach
 
-`const N: usize` as a type parameter lets you parameterize over array sizes. Expressions like `{ A + B }` in type position compute the size at compile time. The compiler instantiates a new monomorphized version of the function for each concrete pair of sizes.
-
-The curly braces `{ A + B }` are required in type position to disambiguate const expressions from other syntax. This is still stabilizing across different expression forms — but addition and multiplication work stably.
-
-## How It Works in Rust
-
-**Array concatenation** — output type encodes the sum:
-```rust
-pub fn concat<T: Copy + Default, const A: usize, const B: usize>(
-    a: [T; A],
-    b: [T; B],
-) -> [T; { A + B }] {
-    let mut out = [T::default(); { A + B }];
-    out[..A].copy_from_slice(&a);
-    out[A..].copy_from_slice(&b);
-    out
-}
-
-let a = [1, 2, 3];   // [i32; 3]
-let b = [4, 5];      // [i32; 2]
-let c = concat(a, b); // [i32; 5] — length in the type
-```
-
-**Array split** — sizes must sum to N:
-```rust
-pub fn split<T: Copy + Default, const N: usize, const A: usize>(
-    arr: [T; N],
-) -> ([T; A], [T; { N - A }])
-where [(); N - A]: Sized {
-    // ...
-}
-
-let (left, right): ([i32; 2], [i32; 3]) = split([1, 2, 3, 4, 5]);
-// Wrong split would be a compile error
-```
-The `where [(); N - A]: Sized` bound is a workaround for the compiler to accept the subtraction expression in type position.
-
-**Interleave** — output is double the input:
-```rust
-pub fn interleave<T: Copy + Default, const N: usize>(
-    a: [T; N], b: [T; N],
-) -> [T; { N * 2 }] { ... }
-```
-
-**Unit-typed quantities** — wrong dimensions don't compile:
-```rust
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Meters<const N: usize>;
-
-pub fn add_meters<const A: usize, const B: usize>(
-    _a: Meters<A>, _b: Meters<B>
-) -> Meters<{ A + B }> { Meters }
-
-let m5 = Meters::<5>;
-let m3 = Meters::<3>;
-let m8 = add_meters(m5, m3);  // type: Meters<8>
-// add_meters(m5, Feet::<3>)  // won't compile — different type
-```
-
-**Repeat** — output size is N*K:
-```rust
-pub fn repeat_array<T: Copy + Default, const N: usize, const K: usize>(
-    arr: [T; N],
-) -> [T; { N * K }] { ... }
-
-let r = repeat_array::<i32, 2, 3>([1, 2]);  // [i32; 6]
-```
-
-**Zip** — equal-length constraint enforced by type:
-```rust
-pub fn zip<A: Copy + Default, B: Copy + Default, const N: usize>(
-    a: [A; N], b: [B; N],
-) -> [(A, B); N] { ... }
-// zip([1,2,3], [4,5]) → compile error: N=3 vs N=2
-```
-
-## What This Unlocks
-
-- **Stack-allocated, size-verified buffers** — no heap, no bounds checks at runtime, wrong sizes are compile errors.
-- **Type-safe dimensional analysis** — `Meters<N>` + `Meters<M>` = `Meters<N+M>`, incompatible units don't compile.
-- **Compile-time API contracts** — functions that take two arrays of the same size, or produce an array of a known computed size.
+OCaml achieves type-level dimension checking via GADTs and phantom type arithmetic. Libraries like `Tensorflow_ocaml` use shape-indexed tensors. `tensor-ocaml` uses `Z.t Succ.t` for natural number type encoding (Peano arithmetic). While more verbose than Rust's const generics, OCaml's GADT approach can express more complex invariants. `linalg` and `owl` libraries sacrifice type-level safety for practical usability.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Fixed-size array | `('a, 'a) array` with runtime length | `[T; N]` — N is a compile-time `usize` |
-| Type-level size computation | Type-level integers via modules/GADTs | `const N: usize`; `{ A + B }` in type position |
-| Unit-typed quantities | Phantom types / GADTs | `struct Meters<const N: usize>` |
-| Size constraint at call site | Dependent types (not standard OCaml) | Monomorphization — compiler checks each instantiation |
+1. **Ergonomics**: Rust's `Matrix<3, 4>` is concise; OCaml's Peano encoding (`Succ (Succ (Succ Zero))`) is verbose and impractical for large dimensions.
+2. **Expression restriction**: Stable Rust cannot write `[f64; A + B]` as a generic array size; OCaml's GADTs don't have this restriction since all arrays are heap-allocated.
+3. **Library support**: `nalgebra` (Rust) uses const generics for dimension-safe matrices with excellent ergonomics; OCaml lacks an equivalent mature library.
+4. **Nightly features**: Rust nightly allows `{ A + B }` in const generic expressions; this enables `concat_arr<A, B>() -> [f64; A+B]` without `Vec`.
+
+## Exercises
+
+1. Implement `Matrix<R, C>::transpose() -> Matrix<C, R>` that reverses the dimensions in the type signature.
+2. Write a `dot_product<const N: usize>(a: &Vec3<N>, b: &Vec3<N>) -> f64` that computes the inner product — the same `N` constraint prevents mismatched lengths.
+3. Implement `outer_product<const M: usize, const N: usize>(a: &Vec3<M>, b: &Vec3<N>) -> Matrix<M, N>` that computes the outer product with correct dimension types.

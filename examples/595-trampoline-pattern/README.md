@@ -2,75 +2,53 @@
 
 ---
 
-# 595: Trampoline Pattern
+# Trampoline Pattern
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Turn deep recursion into a loop by returning thunks instead of recursing — stack overflow prevention without TCO.
+Deep recursion causes stack overflow. Rust's default stack is 8MB — a recursive function that calls itself millions of times will overflow. Languages with tail-call optimization (OCaml, Scheme, Haskell) eliminate this through compiler transformation. Rust does not guarantee TCO. The trampoline pattern provides a library-level solution: instead of calling recursively, return a thunk (deferred computation). A loop `run`s the trampoline by repeatedly calling the thunk until `Done`. This converts O(n) stack depth to O(1) stack depth with O(n) heap allocation.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Rust does not guarantee tail-call optimisation. A recursive function that calls itself in tail position still grows the stack. Count down from a million and you'll hit a stack overflow — even if the logic is perfectly tail-recursive.
+- What a trampoline is: a loop that evaluates thunks until a final value is produced
+- How `Bounce<T> { Done(T), More(Box<dyn FnOnce() -> Bounce<T>>) }` models the trampoline
+- How to convert a recursive function to trampoline style
+- The tradeoff: O(1) stack, O(n) heap allocation for the thunk chain
+- Where trampolines are used: stack-safe interpreters, Scala's `TailCalls`, Haskell's `Cont` monad
 
-Functional languages like OCaml and Haskell eliminate this with TCO or lazy evaluation. Rust makes you explicit about it. The trampoline pattern is the idiomatic solution: instead of calling the next step of the recursion, *return a description of that step* (a thunk — a zero-argument closure). A driver loop repeatedly calls thunks until it gets a final value. The stack stays constant-depth; the heap holds the pending computation.
+## Rust Application
 
-## The Intuition
+`run<T>(b: Bounce<T>) -> T` loops: `Done(v)` returns the value; `More(th)` calls `th()` to get the next step. `fact_t(n, acc)` returns `More(Box::new(move || fact_t(n-1, n*acc)))` instead of calling recursively — each step is a thunk. The recursion depth is O(1) in stack space. The trampoline processes each step in the `run` loop, allocating one box per step on the heap.
 
-A ball on a trampoline: it hits the surface and bounces up, then comes back down. It never builds up — it just keeps bouncing at the same height. The driver loop is the trampoline surface. Each recursive "call" is a bounce: you land, get sent back up (execute a thunk), land again, until you're caught (the `Done` case).
+Key patterns:
+- `Bounce::More(Box::new(move || next_step()))` — defer next step
+- `loop { match bounce { Done(v) => return v, More(f) => bounce = f() } }` — trampoline loop
+- Accumulator-style `fact_t(n, acc)` — tail-recursive with trampoline
 
-## How It Works in Rust
+## OCaml Approach
 
-1. **Define the `Bounce` type** — a sum type of "finished" or "more work":
-   ```rust
-   enum Bounce<T> {
-       Done(T),
-       More(Box<dyn FnOnce() -> Bounce<T>>),
-   }
-   ```
-2. **Driver loop** — iteratively calls thunks, never grows the stack:
-   ```rust
-   fn run<T>(mut b: Bounce<T>) -> T {
-       loop {
-           match b {
-               Bounce::Done(v)  => return v,
-               Bounce::More(th) => b = th(),
-           }
-       }
-   }
-   ```
-3. **Stack-safe factorial** — return a thunk instead of recursing:
-   ```rust
-   fn fact_t(n: u64, acc: u64) -> Bounce<u64> {
-       if n == 0 { Bounce::Done(acc) }
-       else      { Bounce::More(Box::new(move || fact_t(n - 1, n * acc))) }
-   }
+OCaml has TCO for tail calls — trampolines are unnecessary for simple tail-recursive functions:
 
-   let result = run(fact_t(1_000_000, 1)); // no stack overflow
-   ```
-4. **Mutually recursive functions** — each calls the other by returning `More`:
-   ```rust
-   fn even_t(n: u64) -> Bounce<bool> {
-       if n == 0 { Bounce::Done(true) }
-       else      { Bounce::More(Box::new(move || odd_t(n - 1))) }
-   }
-   fn odd_t(n: u64) -> Bounce<bool> {
-       if n == 0 { Bounce::Done(false) }
-       else      { Bounce::More(Box::new(move || even_t(n - 1))) }
-   }
-   ```
-5. **Cost** — each step allocates a `Box`. For performance-critical paths, consider `stacker` (runtime stack growth) or iterative reformulation.
+```ocaml
+(* OCaml with TCO — no stack overflow: *)
+let rec fact_acc n acc = if n <= 1 then acc else fact_acc (n-1) (n * acc)
 
-## What This Unlocks
+(* If needed, OCaml also has trampolines: *)
+type 'a bounce = Done of 'a | More of (unit -> 'a bounce)
+let rec run = function Done v -> v | More f -> run (f ())
+```
 
-- **Arbitrary recursion depth** — count to a billion without stack overflow; only heap is consumed.
-- **Mutually recursive state machines** — the natural encoding of protocols, parsers, and coroutines.
-- **Understand async** — async state machines are the compiler-generated trampoline for `Future` chains.
+OCaml's `run` function itself uses a tail call and is therefore stack-safe.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Tail recursion | TCO guaranteed | Not guaranteed → use trampoline |
-| Thunk type | `unit -> 'a` (lazy) | `Box<dyn FnOnce() -> Bounce<T>>` |
-| Driver loop | Handled by runtime | Explicit `run()` loop |
-| Allocation | GC closure | `Box` per step |
+1. **TCO availability**: OCaml guarantees TCO for direct tail calls; Rust does not — trampolines are necessary for stack-safe recursion in Rust.
+2. **Stack vs heap**: OCaml TCO uses O(1) stack AND O(1) heap per step; Rust trampolines use O(1) stack but O(n) heap for the thunk chain.
+3. **Mutual recursion**: OCaml's TCO handles mutually tail-recursive functions; Rust requires explicit trampolining for mutual tail recursion.
+4. **Ergonomics**: OCaml tail-recursive code reads like normal recursive code; Rust trampoline code is more verbose with explicit `Bounce` wrapping.
+
+## Exercises
+
+1. **Fibonacci trampoline**: Convert the naive recursive Fibonacci to trampoline style using an accumulator pair — verify it handles `fib(1_000_000)` without stack overflow.
+2. **Mutual trampoline**: Implement mutually tail-recursive `is_even` and `is_odd` using the trampoline pattern where each returns `More(Box::new(|| other(n-1)))`.
+3. **Cont monad**: Implement the Continuation monad as a `struct Cont<A, R>(Box<dyn FnOnce(Box<dyn FnOnce(A) -> R>) -> R>)` and show how it relates to the trampoline.

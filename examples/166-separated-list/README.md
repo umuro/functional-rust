@@ -2,104 +2,40 @@
 
 ---
 
-# 166: Separated List
+# Separated List
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Parse `a, b, c` — the comma-separated pattern used everywhere: function arguments, array literals, CSV rows, import lists.
+Comma-separated values, semicolon-separated statements, pipe-separated fields — separated lists appear everywhere in text formats. `separated_list0` and `separated_list1` parse sequences of items with a separator between each pair, correctly handling the last item (no trailing separator in strict formats) and empty lists. Building this from primitives requires careful handling of the separator-before-next-item pattern to avoid consuming the separator when the list has ended.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Separated lists are everywhere. Function calls: `foo(x, y, z)`. Array literals: `[1, 2, 3]`. CSV rows: `Alice,30,Engineer`. Import lists: `use std::{io, fs, collections}`. Every language, every data format — they all have this pattern.
+- Implement `separated_list0` and `separated_list1` combinators
+- Understand the interleave pattern: item, (sep item)*, where `(sep item)*` is the tail
+- Learn how separated list parsing relates to `many0` and `pair`
+- See how separated lists form the basis for CSV, function argument lists, and array literals
 
-The tricky part is the separator. You can't just parse `item (sep item)*` naively — what about trailing separators like `[1, 2, 3,]`? And what about the empty list `[]`? You need to handle three cases: empty list, single item, and multiple items with separators between them.
+## Rust Application
 
-The harder problem is *backtracking on the separator*. If you parse `1,` and then fail to find another item, you've consumed the trailing comma. You need to save your position before trying the separator, and only advance past it if the next item also succeeds.
+`separated_list1(sep, item)` parses one `item`, then `many0(preceded(sep, item))` — a separator followed by an item, repeated zero or more times. The separator is consumed as part of the tail, not as a lookahead. This correctly handles `"1"` (one item), `"1,2,3"` (three items), and rejects `""` (zero items for `_list1`). `separated_list0` wraps `opt(separated_list1)` to handle the empty case.
 
-## The Intuition
+## OCaml Approach
 
-Parse the first item. Then loop: save position, try the separator, try the next item. If both succeed, keep going. If either fails, *restore position to before the separator* and stop.
-
+Angstrom provides `sep_by : 'a t -> 'b t -> 'b list t` and `sep_by1`:
+```ocaml
+let csv_row = sep_by (char ',') field_parser
 ```
-input: "1, 2, 3"
-parse first: 1, remaining: ", 2, 3"
-  save pos → try sep "," → ok → try item → 2 → keep
-  save pos → try sep "," → ok → try item → 3 → keep
-  save pos → try sep "," → fail → restore → stop
-result: [1, 2, 3]
-```
-
-## How It Works in Rust
-
-```rust
-fn separated_list0<'a, T, S>(
-    separator: impl Fn(&'a str) -> ParseResult<S>,
-    item: impl Fn(&'a str) -> ParseResult<T>,
-) -> impl Fn(&'a str) -> ParseResult<Vec<T>> {
-    move |input| {
-        let mut results = Vec::new();
-        let mut remaining = input;
-
-        // Try first item — if this fails, return empty list (list0 allows empty)
-        match item(remaining) {
-            Err(_) => return Ok((results, remaining)),
-            Ok((val, rest)) => {
-                results.push(val);
-                remaining = rest;
-            }
-        }
-
-        // Now try separator + item pairs
-        loop {
-            let before_sep = remaining;  // save position BEFORE separator
-
-            match separator(before_sep) {
-                Err(_) => break,  // no separator → done
-                Ok((_, after_sep)) => {
-                    match item(after_sep) {
-                        Err(_) => break,  // separator but no item → trailing sep, restore
-                        Ok((val, rest)) => {
-                            results.push(val);
-                            remaining = rest;  // advance past both sep and item
-                        }
-                    }
-                }
-            }
-            // Note: if sep succeeded but item failed, remaining is still before_sep
-            // because we didn't update it — that's the backtracking
-        }
-
-        Ok((results, remaining))
-    }
-}
-
-// list1: requires at least one item
-fn separated_list1<'a, T, S>(
-    separator: impl Fn(&'a str) -> ParseResult<S>,
-    item: impl Fn(&'a str) -> ParseResult<T>,
-) -> impl Fn(&'a str) -> ParseResult<Vec<T>> {
-    move |input| {
-        let (results, rest) = separated_list0(&separator, &item)(input)?;
-        if results.is_empty() {
-            Err("expected at least one item".to_string())
-        } else {
-            Ok((results, rest))
-        }
-    }
-}
-```
-
-## What This Unlocks
-
-- **Function argument lists** — `parse_args = separated_list0(comma, parse_expr)`.
-- **Array/tuple literals** — wrap with `[` and `]` using `delimited`.
-- **CSV rows and data formats** — any flat list with a separator between items.
+OCaml's functional style makes the separator combinator more concise. The implementation uses `many (sep *> item)` after the first item — structurally identical to Rust's approach but expressed with `>>=` and infix operators.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Loop style | Tail-recursive helper function | `loop` + `break` |
-| Backtracking | Return previous `remaining` value | Don't update `remaining` if item fails |
-| Trailing sep | Separate `separated_list_trailing` variant | Same approach — separate function |
-| Empty list | `list0` returns `[]` | Returns `Vec::new()` |
+1. **Separator consumption**: Both parsers consume the separator as part of the item following it (not before it) — this is the standard approach ensuring correct error location.
+2. **Trailing separator**: Neither `sep_by` variant allows trailing separators; a separate `opt(sep)` must be added for formats like Rust's trailing commas in arrays.
+3. **Return type**: Rust returns `Vec<T>`; OCaml returns `'a list` — both are ordered sequences.
+4. **Whitespace around separators**: Production parsers wrap separators with `ws_wrap` or use `lexeme`; these examples show the pure combinator without whitespace.
+
+## Exercises
+
+1. Parse a function argument list: `"(a, b, c)"` → `vec!["a", "b", "c"]` using `delimited` + `separated_list0`.
+2. Add support for trailing separators: `"1, 2, 3,"` → `vec![1, 2, 3]`.
+3. Parse nested lists: `"[[1,2],[3,4,5]]"` → `vec![vec![1,2], vec![3,4,5]]` using recursive separated list parsers.

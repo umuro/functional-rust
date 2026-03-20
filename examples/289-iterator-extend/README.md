@@ -4,82 +4,58 @@
 
 # 289: Extending Collections with extend()
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Append elements from any iterator into an existing collection in place — the in-place alternative to `chain().collect()`.
+Building up a collection incrementally from multiple sources — appending new items to an existing `Vec`, merging two `HashMap`s, adding elements from a computation to an existing set — is a fundamental operation in accumulative algorithms. The `extend()` method is the mutable counterpart to `collect()`: it appends elements from any `IntoIterator` to an existing collection in place, avoiding the need to create intermediate temporary collections.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You have an existing collection and you want to add more elements to it. The naive approach: `let new_vec = existing.into_iter().chain(more).collect()` — but that consumes the original, creates a new allocation, and loses the variable binding. If you're appending in a loop (building up a result incrementally), each iteration creates and destroys a vec.
+- Understand `extend()` as the in-place append operation for any `Extend<T>` collection
+- Use `extend()` to merge multiple sources into a single pre-existing collection
+- Recognize that `extend` on a `Vec` is equivalent to `append` but accepts any iterator
+- Combine `extend()` with filtered or transformed iterators for selective merging
 
-`extend()` adds elements to an existing collection in place, reusing its allocation when possible. It's more efficient than `chain + collect` when you already have a collection and just want to grow it. It also works on any collection that implements `Extend<T>` — `Vec`, `String`, `HashMap`, `HashSet`, `BTreeSet`, and more.
+## Rust Application
 
-OCaml's lists are immutable, so there's no in-place equivalent — you prepend with `::` or use `Buffer.add_string` for strings. Rust's `extend()` is the imperative counterpart to functional `append`.
-
-## The Intuition
-
-`collection.extend(iterator)` drains the iterator and pushes each element into the collection — equivalent to calling `push`/`insert` in a loop, but expressed as a single declarative call.
-
-```rust
-let mut v = vec![1, 2, 3];
-v.extend([4, 5, 6]);
-// v is now [1, 2, 3, 4, 5, 6]
-```
-
-## How It Works in Rust
+`Extend::extend(iter)` appends elements from `iter` to `self`. It is implemented by `Vec`, `String`, `HashMap`, `HashSet`, and other standard collections:
 
 ```rust
-use std::collections::{HashMap, HashSet};
+let mut base = vec![1, 2, 3];
+base.extend([4, 5, 6]);
+base.extend(7..=9);
+// base = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-// Extend a Vec
-let mut base = vec![1i32, 2, 3];
-base.extend([4, 5, 6]);               // from array
-base.extend(7..=9);                   // from range
-// → [1, 2, 3, 4, 5, 6, 7, 8, 9]
+// String extend from chars
+let mut s = String::from("hello");
+s.extend(" world".chars());
 
-// Extend String with chars (String implements Extend<char>)
-let mut s = String::from("Hello");
-s.extend(", world!".chars());
-// → "Hello, world!"
-
-// Extend HashMap — duplicate keys overwrite
+// HashMap extend merges entries (later values overwrite earlier)
 let mut map: HashMap<&str, i32> = HashMap::new();
-map.insert("a", 1);
-map.extend([("b", 2), ("c", 3)]);
-// → {"a": 1, "b": 2, "c": 3}
-
-// Extend HashSet — duplicates are silently ignored
-let mut set: HashSet<i32> = [1, 2, 3].iter().copied().collect();
-set.extend([3, 4, 5]);  // 3 already present — no duplicate
-// → {1, 2, 3, 4, 5}
-
-// Extend with a transformed iterator
-let mut evens = vec![2i32, 4];
-evens.extend((1..20).filter(|x| x % 2 == 0).take(3));
-// appends [2, 4, 6] to existing [2, 4]
-// → [2, 4, 2, 4, 6]
-
-// Incremental building — more efficient than repeated chain+collect
-let mut result: Vec<i32> = Vec::new();
-for batch in [[1, 2], [3, 4], [5, 6]] {
-    result.extend(batch);  // reuses allocation when possible
-}
+map.extend([("a", 1), ("b", 2)]);
+map.extend([("b", 99), ("c", 3)]); // "b" -> 99 now
 ```
 
-`extend()` calls `reserve()` internally when it can determine the size hint, pre-allocating space to avoid repeated reallocation.
+## OCaml Approach
 
-## What This Unlocks
+OCaml's `List.rev_append` and `@` operator combine lists, but these create new lists rather than mutating in place. For mutable structures, `Buffer.add_string` (for strings) and `Hashtbl.add_seq` provide equivalent in-place extension:
 
-- **Incremental collection building** — accumulate results across loop iterations without creating intermediate collections.
-- **Multi-source merging** — extend a vec from several different iterators, each adding a slice or range.
-- **In-place set/map population** — add entries to an existing `HashMap` or `HashSet` from a sequence of key-value pairs.
+```ocaml
+(* Functional: create new list combining both *)
+let combined = base @ [4; 5; 6]
+
+(* Mutable: Hashtbl extend from sequence *)
+Hashtbl.add_seq tbl (List.to_seq [("b", 2); ("c", 3)])
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Append to collection | `lst @ more` (new list) | `vec.extend(iter)` (in-place) |
-| String append | `Buffer.add_string` | `string.extend(chars)` or `string.push_str` |
-| HashMap insert many | `List.fold_left` + `Hashtbl.add` | `map.extend(pairs)` |
-| Allocation | Always new allocation | Reuses existing allocation (amortized) |
-| vs. `chain + collect` | Equivalent output | `extend` avoids creating a new collection |
+1. **Mutability**: Rust's `extend()` mutates the collection in place, consuming the iterator; OCaml's `@` creates a new list.
+2. **Conflict resolution**: HashMap `extend` silently overwrites on key collision; explicit merge logic is needed if different behavior is desired.
+3. **Allocation efficiency**: `extend()` on a `Vec` reserves space using `size_hint()` to minimize reallocations; OCaml's `@` always allocates.
+4. **Build pattern**: The common Rust pattern builds a `Vec` with `with_capacity()` then uses `extend()` in a loop — one allocation, multiple appends.
+
+## Exercises
+
+1. Build a word frequency map by `extend()`-ing a `HashMap<String, usize>` from multiple document iterators, combining counts correctly.
+2. Use `extend()` to merge sorted chunks back into a single sorted `Vec` (k-way merge via repeated extend + sort, demonstrating the efficiency concern).
+3. Implement a `StringBuilder` wrapper around `String` that provides an `append(iter)` method using `extend()`, chaining multiple sources.

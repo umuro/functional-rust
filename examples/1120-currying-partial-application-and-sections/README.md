@@ -29,3 +29,8 @@ Rust functions are not curried. Idiomatic Rust uses multi‑argument functions (
 2. **Partial Application:** OCaml uses `add 5`; Rust uses `|y| add(5, y)` or a factory function.
 3. **Labeled Arguments:** OCaml has named parameters; Rust uses structs or separate closures.
 4. **Operator Sections:** OCaml can write `( * ) 2`; Rust can define `|x| x * 2`.
+## Exercises
+
+1. Use partial application to derive `square` and `cube` from a general `power: u32 -> u32 -> u32` curried function.
+2. Implement a `curry` adapter that converts a regular two-argument Rust function into a curried form `A -> (B -> C)`.
+3. Demonstrate operator sections: implement `add_k`, `sub_k`, and `mul_k` using partial application and use them to build a chain of arithmetic transformations over a `Vec<f64>`.

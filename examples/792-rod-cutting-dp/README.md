@@ -2,67 +2,37 @@
 
 ---
 
-# 792: Rod Cutting Problem
+# 792-rod-cutting-dp — Rod Cutting Problem
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Maximize profit by cutting a rod into pieces — an unbounded knapsack variant solved with bottom-up DP.
+Rod cutting is a classic unbounded knapsack variant: given a rod of length n and prices for each length, maximize revenue by cutting the rod into pieces. Unlike 0/1 knapsack, pieces of the same length can be used multiple times. It was popularized by Cormen et al. "Introduction to Algorithms" and models real cutting-stock problems in manufacturing, timber processing, and cable management.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You have a rod of length `n` and a price list where `prices[i]` is the value of a piece of length `i+1`. You can cut the rod any way you like (or not at all). What's the maximum revenue you can achieve? This is the canonical **unbounded knapsack** problem: each piece length can be used multiple times, and you want to maximize value given a capacity constraint (the rod length).
+- Model rod cutting as `dp[i]` = max revenue for rod of length i
+- Apply the unbounded knapsack recurrence: for each length i, try all cut positions j from 1 to i
+- Understand why this is O(n²) time and O(n) space
+- Recognize the connection to the coin change problem (same recurrence structure)
+- Reconstruct the optimal cuts taken
 
-Real-world analogues: stock cutting in manufacturing (minimize waste), task scheduling (split a time budget across repeatable tasks for maximum value), and bandwidth allocation. Any time you have a divisible resource and want to optimally assign it to repeatable options, rod cutting is the template.
+## Rust Application
 
-The key insight is that each cut produces a *prefix* of the remaining rod — so `dp[i]` only needs to look at all smaller sub-problems, making bottom-up filling straightforward. Unlike 0/1 knapsack (each item used once), here you can always try cutting off another piece of the same length.
+`rod_cutting(prices, n)` initializes `dp = [0; n+1]`. For each length `i`, tries all cut lengths `j` from 1 to `min(i, prices.len())`. Updates `dp[i] = max(dp[i], prices[j-1] + dp[i-j])`. The classic example: prices `[1,5,8,9,10,17,17,20]` for length 8 yields revenue 22 (cutting into pieces of 2+6 or similar). Tests cover the textbook examples.
 
-## The Intuition
+## OCaml Approach
 
-`dp[i]` = maximum revenue for a rod of length `i`. Base case: `dp[0] = 0`. Recurrence: for each length `i`, try cutting off a piece of length `j` (1 ≤ j ≤ i) and add its price to `dp[i-j]`. Take the max over all `j`. The `cuts[i]` array tracks which cut length was chosen at each step, enabling O(n) reconstruction. Total: O(n²) time, O(n) space.
-
-## How It Works in Rust
-
-```rust
-fn rod_cut(prices: &[u64]) -> (u64, Vec<usize>) {
-    let n = prices.len();
-    let mut dp   = vec![0u64; n + 1];    // max revenue for each rod length
-    let mut cuts = vec![0usize; n + 1];  // which cut was optimal
-
-    for i in 1..=n {
-        for j in 1..=i {
-            // prices[j-1] = value of a piece of length j
-            let v = prices[j - 1] + dp[i - j];
-            if v > dp[i] {
-                dp[i]   = v;
-                cuts[i] = j;  // cut off j from the front
-            }
-        }
-    }
-
-    // Reconstruct: follow the cuts[] array until rod length = 0
-    let mut pieces = Vec::new();
-    let mut len = n;
-    while len > 0 {
-        pieces.push(cuts[len]);
-        len -= cuts[len];
-    }
-    (dp[n], pieces)
-}
-```
-
-The reconstruction loop is clean: `cuts[len]` always tells you the size of the first piece, and you subtract it until nothing remains. `u64` prices prevent overflow on large inputs. The `prices` slice is 0-indexed (`prices[j-1]` = price for length `j`), matching the natural 1-indexed problem statement.
-
-## What This Unlocks
-
-- **Unbounded knapsack pattern** — rod cutting is the clearest example of "items can be reused"; the same inner loop structure applies to coin change, word break, and interval scheduling.
-- **Parallel decision tables** — maintaining `cuts[]` alongside `dp[]` is the standard way to reconstruct which choices led to the optimal value, without re-running the DP.
-- **1D DP reduction** — grid/interval DPs often reduce to 1D when the problem is linear (e.g., rod cutting reduces from 2D "start,end" to 1D "remaining length").
+OCaml implements the same recurrence with `Array.make (n+1) 0` and nested `for` loops. The reconstruction uses a `cut: int array` tracking which cut was made at each length. Functional style can use `Array.fold_left` over cut lengths. OCaml's `List.init` generates the price list naturally. The rod cutting problem is typically presented alongside the coin change problem in OCaml algorithm courses.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| 1D mutable DP table | `Array.make (n+1) 0` | `vec![0u64; n + 1]` |
-| 0-indexed price list | `prices.(j-1)` | `prices[j - 1]` — same |
-| Reconstruction loop | Tail-recursive or `while` | Idiomatic `while len > 0` |
-| Overflow protection | OCaml ints wrap silently | `u64` gives 64-bit range; use `saturating_add` for extra safety |
+1. **Recurrence**: Identical to coin change but indexed from 1 (rod lengths) instead of the coin denominations; the algorithms are structurally the same.
+2. **Reconstruction**: Both use an auxiliary `cut` array; Rust's `Option<usize>` per cell is cleaner than OCaml's `-1` sentinel.
+3. **Manufacturing**: Real cutting-stock problems add kerf (saw blade waste) and minimum piece length; both languages model these as additional constraints.
+4. **Optimization**: The price array may have `None` (unsaleable lengths); handling this requires wrapping prices in `Option`.
+
+## Exercises
+
+1. Implement `rod_cutting_reconstruct(prices, n) -> Vec<usize>` that returns the lengths of cuts made (in any order), not just the max revenue.
+2. Add a fixed cost per cut (blade setup cost) to the problem: the revenue for k cuts is `max_revenue - k * cut_cost`, and find the optimal number of cuts.
+3. Implement the 2D variant: a rectangular sheet can be cut horizontally or vertically, and pieces have prices by (width × height). Model as a 2D DP.

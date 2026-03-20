@@ -43,3 +43,9 @@ neighbour relaxation that OCaml expresses with `List.fold_left`.
 2. **Min-heap polarity:** OCaml's `Set.min_elt` naturally returns the smallest element; Rust's `BinaryHeap` is max-first, requiring `Reverse` to achieve the same behaviour.
 3. **Stale entries:** OCaml's `Set.remove` ensures each `(distance, node)` pair is unique, preventing re-processing. Rust's heap allows duplicates, so the idiomatic version guards with `if d > dist[u] { continue }`.
 4. **Mutation vs immutability:** OCaml's `SMap.add` and `PQ.add` return new values; Rust's `HashMap::insert` and `BinaryHeap::push` mutate in place — the result is the same, but the Rust version avoids allocation per update.
+
+## Exercises
+
+1. Extend the graph to a labeled multigraph where each edge also carries a string label, and return the sequence of edge labels along the shortest path.
+2. Implement Johnson's algorithm: reweight negative edges using Bellman–Ford, then run Dijkstra from every node, enabling all-pairs shortest paths on sparse graphs with negative weights.
+3. Apply Dijkstra to model a packet-routing simulation: nodes are routers, edges are links with latency, and each router table is computed as the shortest-path tree from that router.

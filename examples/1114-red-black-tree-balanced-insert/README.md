@@ -29,3 +29,9 @@ Rust requires `Box<RBTree<T>>` for the recursive children (to bound the type's s
 2. **Pattern matching depth:** OCaml matches arbitrarily deep in one arm; Rust requires nested `match *box` to deref-and-inspect Box fields.
 3. **Polymorphism:** OCaml uses implicit parametric polymorphism `'a`; Rust requires explicit `<T: Ord>` trait bounds.
 4. **Persistent fold:** OCaml's `List.fold_left (fun t x -> insert x t) E xs` becomes `iter.fold(E, |tree, v| insert(v, tree))` — identical intent, different syntax.
+
+## Exercises
+
+1. Implement a `difference` operation: given two red-black trees `a` and `b`, return a new tree containing elements in `a` that are not in `b`.
+2. Add an `nth` method (0-indexed) that returns the `n`-th smallest element in O(log n) by augmenting nodes with subtree sizes.
+3. Implement a persistent snapshot: wrap the tree in an `Arc` so multiple owners can hold different versions of the tree at different points in time, and verify no mutation is visible across snapshots.

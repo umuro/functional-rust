@@ -29,3 +29,9 @@ Idiomatic Rust uses `BinaryHeap<Reverse<(usize, String)>>` as a mutable min-heap
 2. **Distance map:** OCaml's `Map.Make` is immutable (returns new map on `add`); Rust's `HashMap`/`BTreeMap` is mutated in place.
 3. **Fold vs loop:** OCaml's `List.fold_left` is the idiomatic iteration primitive; Rust's `Iterator::fold` is equivalent and used in `dijkstra_functional`.
 4. **Sorted output:** OCaml's `Map.Make` iterates in key order by default; Rust's `HashMap` is unordered — use `BTreeMap` when sorted iteration matters.
+
+## Exercises
+
+1. Track the number of edge relaxations performed and compare it between the priority-queue variant and a brute-force `O(V²)` implementation for small dense graphs.
+2. Implement bidirectional Dijkstra that searches from both source and target simultaneously and stops when the two frontiers meet, potentially halving the search space.
+3. Apply the shortest-path algorithm to a word-ladder puzzle: nodes are words and edges connect words differing by one letter; find the shortest transformation sequence.

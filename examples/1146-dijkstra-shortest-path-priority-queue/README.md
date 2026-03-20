@@ -29,3 +29,9 @@ Rust uses `std::collections::BinaryHeap<Reverse<(usize, String)>>` as a min-heap
 2. **Immutability:** OCaml's `dist` and `pq` are immutable values threaded through recursion; Rust uses `mut` bindings updated in a `while let` loop.
 3. **Stale entries:** OCaml's `Set.remove` prunes the old entry immediately; Rust's lazy approach pushes duplicate entries and skips them at pop, trading memory for simpler code.
 4. **Borrow checker:** The functional Rust version must `.collect()` relaxed edges into a `Vec` before updating `dist` and `heap` — the compiler enforces the separation that OCaml gets "for free" from immutability.
+
+## Exercises
+
+1. Implement `all_pairs_shortest_paths` using Dijkstra from each node as the source, returning a matrix (or map) of pairwise distances.
+2. Add a `max_flow` stub that uses the shortest-path tree from Dijkstra as the augmenting path finder in a Ford-Fulkerson flow algorithm.
+3. Benchmark your Dijkstra implementation against a version using a simple unsorted `Vec`-based priority queue, and explain the crossover point where the binary-heap version becomes faster.

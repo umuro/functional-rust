@@ -33,3 +33,9 @@ Rust's default ownership model gives each value exactly one owner and drops it a
 2. **Visibility:** OCaml's reference count is invisible; Rust exposes `Rc::strong_count` for inspection and reasoning.
 3. **Drop timing:** OCaml's GC may defer collection; Rust's `Rc` drops deterministically the moment the last owner goes out of scope.
 4. **Thread safety:** OCaml's GC handles concurrent access; Rust's `Rc` is intentionally `!Send` — use `Arc` across threads.
+
+## Exercises
+
+1. Build a simple directed graph using `Rc<RefCell<Node>>` where each node holds a label and a list of neighbor references, then implement a DFS traversal.
+2. Implement a basic observer pattern using `Rc<dyn Fn(Event)>` callbacks: register multiple observers on an event source and fire them all when an event occurs.
+3. Demonstrate the `Rc` cycle problem by creating two nodes that reference each other, confirm the memory leak using a `Drop` impl, then fix it using `Weak<T>`.

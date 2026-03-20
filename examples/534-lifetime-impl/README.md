@@ -2,109 +2,48 @@
 
 ---
 
-# 534: Lifetimes in impl Blocks
+# Lifetimes in impl Blocks
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-The `impl<'a>` block declares the lifetime that the struct was parameterized with. Methods can then return references tied to the *data's* lifetime — not to `self`'s borrow.
+When a struct has a lifetime parameter, every `impl` block for that struct must repeat the lifetime parameter and can use it in method signatures. The critical subtlety is that methods can return references with either the struct's lifetime (`'a`) or the lifetime of `&self` — and these are different. A method returning `&'a T` can return data that outlives the method call; a method returning `&T` tied to `&self` is only valid for the duration of the method borrow. Understanding this distinction prevents common confusion when implementing view-type APIs.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Here's the subtle issue: when a method returns a reference, it can come from two different sources — either from `self` (the temporary borrow of the struct), or from the data the struct *wraps* (the `'a` lifetime). These are different scopes and the distinction matters.
+- How `impl<'a, T> View<'a, T>` propagates the struct's lifetime into method signatures
+- Why `fn get(&self, index: usize) -> Option<&'a T>` returns data with the stored lifetime, not `self`'s
+- How `fn slice(&self, ...) -> Option<View<'a, T>>` creates a sub-view with the same parent lifetime
+- The difference between returning `&'a T` vs `&T` (where `T` is tied to `self`)
+- Where this pattern is used: slice wrappers, buffer views, database row references
 
-```rust
-struct View<'a, T> {
-    data: &'a [T],
-}
+## Rust Application
 
-impl<'a, T> View<'a, T> {
-    // WRONG idea: fn get(&self) -> Option<&T>
-    // This ties the return to &self, not to 'a.
-    // The caller drops the View, and the returned reference becomes invalid!
-    
-    // RIGHT: fn get(&self) -> Option<&'a T>
-    // Return is tied to 'a — the underlying data's lifetime.
-    // Caller can drop the View and still use the returned element.
-}
+`View<'a, T>` stores `data: &'a [T]`. The `get` method returns `Option<&'a T>` — not `Option<&T>` — because the data outlives the `View` struct itself; the reference is valid as long as the original slice is valid. `slice` similarly returns `Option<View<'a, T>>` — a sub-view with the same `'a` lifetime. This is the key insight: `self.data.get(index)` returns `Option<&'a T>` because `self.data` is already `&'a [T]`.
+
+Key patterns:
+- `impl<'a, T> View<'a, T>` — repeating `'a` in the `impl` header
+- `fn get(&self, i: usize) -> Option<&'a T>` — returning the stored lifetime, not `&self`'s
+- `fn slice(&self, start, end) -> Option<View<'a, T>>` — sub-view preserving the parent lifetime
+
+## OCaml Approach
+
+OCaml modules implementing view-like abstractions use plain records and return values without lifetime annotations. The GC ensures the referenced data remains alive:
+
+```ocaml
+type 'a view = { data: 'a array; start: int; len: int }
+let get v i = if i < v.len then Some v.data.(v.start + i) else None
+let slice v s e = if s <= e && e <= v.len then Some { v with start = v.start + s; len = e - s } else None
 ```
-
-If you get this wrong, you either unnecessarily restrict the caller (forcing them to keep the view alive), or you create a use-after-free if the compiler doesn't catch it. Explicit `'a` on the return type is the fix.
-
-## The Intuition
-
-Think of a `View<'a, T>` as a telescope pointed at an array. The telescope (`View`) can be dropped; the stars (`T` data) stay in the sky. When `get()` returns `&'a T`, it's returning a pointer to the stars — not to the telescope. The caller can put the telescope away and still look at what they found.
-
-The `impl<'a>` syntax just brings the `'a` parameter into scope for all the methods. It's not declaring a new lifetime — it's saying "I'm implementing methods for the `View` that was already declared with `'a`."
-
-## How It Works in Rust
-
-**The impl block header:**
-
-```rust
-struct View<'a, T> {
-    data: &'a [T],
-}
-
-// impl<'a, T>: bring 'a into scope for all methods
-// View<'a, T>: this is the specific type we're implementing for
-impl<'a, T> View<'a, T> {
-    fn new(data: &'a [T]) -> Self {
-        View { data }
-    }
-    
-    // Returns &'a T — tied to the data's lifetime, NOT self's borrow
-    fn get(&self, index: usize) -> Option<&'a T> {
-        self.data.get(index)
-    }
-    
-    // Sub-view has the same 'a — shares the same data lifetime
-    fn slice(&self, start: usize, end: usize) -> View<'a, T> {
-        View { data: &self.data[start..end] }
-    }
-}
-```
-
-**Proof the distinction matters:**
-
-```rust
-let data = vec![10, 20, 30, 40, 50];
-let view = View::new(&data);
-
-let elem = view.get(1);   // returns Option<&'a T>
-drop(view);                // view is gone
-println!("{:?}", elem);   // fine! elem tied to data, not view
-```
-
-**Method returning `'a` from a field:**
-
-```rust
-struct Formatter<'a> {
-    prefix: &'a str,
-}
-
-impl<'a> Formatter<'a> {
-    // Returns &'a str — caller can drop Formatter, still has the prefix
-    fn get_prefix(&self) -> &'a str {
-        self.prefix // returning the 'a field directly
-    }
-    
-    // Contrast: if we returned &str (elided, tied to &self),
-    // the result would be invalid after Formatter drops
-}
-```
-
-## What This Unlocks
-
-- **Drop the wrapper, keep the element** — iterators, views, and cursor types can return `&'a T` pointing directly into the underlying data. The view itself is disposable.
-- **Composable views** — a `slice()` method that returns `View<'a, T>` shares the same lifetime as the original, making it safe to chain view operations.
-- **Explict lifetime documentation** — `fn get_prefix(&self) -> &'a str` instantly tells readers "this prefix's validity is determined by construction, not by the method call."
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Method return references | GC manages all lifetimes — no annotations | Must specify if return is tied to `'a` (data) or implicitly to `&self` |
-| Drop wrapper, keep element | Automatic — GC keeps element alive | Explicit `&'a T` return type makes this safe without GC |
-| `impl` block parameters | No equivalent — methods don't have lifetime params | `impl<'a> Foo<'a>` brings the struct's `'a` into scope |
-| View/iterator types | Typically return new values | Common pattern: view that returns `&'a T` — borrow outlives the view itself |
-| Lifetime elision in methods | N/A | Rule 3: `&self` method — output implicitly tied to self; must override for `'a` |
+1. **Return lifetime source**: Rust methods must distinguish whether a returned reference comes from `self` or from the stored `'a` data — different lifetimes with different scopes; OCaml has no such distinction.
+2. **Sub-view lifetime**: Rust `slice` returns `View<'a, T>` with the same lifetime as the original — no copy made; OCaml slice creates a new record pointing into the same array, relying on GC for safety.
+3. **Method signature verbosity**: Rust `impl<'a, T>` methods often repeat `'a` in return types; OCaml methods on parameterized types (`'a view`) are simpler to write.
+4. **Safety model**: Rust's `View<'a, T>` statically prevents accessing data after the source slice is freed; OCaml's GC prevents it dynamically — the array is kept alive as long as any view references it.
+
+## Exercises
+
+1. **Mutable view**: Implement `struct ViewMut<'a, T> { data: &'a mut [T] }` with `fn get_mut(&mut self, i: usize) -> Option<&mut T>` — note the lifetime difference from the immutable version.
+2. **Chained slices**: Write a method `fn chunks(&self, size: usize) -> Vec<View<'a, T>>` that splits the view into equal-sized sub-views without copying data.
+3. **View iterator**: Implement `struct ViewIter<'a, T> { view: &'a View<'a, T>, pos: usize }` as an `Iterator<Item = &'a T>` that yields elements from the view.

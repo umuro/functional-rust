@@ -4,65 +4,57 @@
 
 # 302: Option::transpose() — Collecting Optional Results
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Convert `Option<Result<T, E>>` into `Result<Option<T>, E>` — the key to clean iterator pipelines.
+HashMap lookups return `Option<&V>`. Parsing the value returns `Result<T, E>`. The combination is `Option<Result<T, E>>` — but most downstream code wants `Result<Option<T>, E>`. The `Option::transpose()` method handles this conversion. A closely related use case is collecting a `Vec<Option<Result<T, E>>>` where `None` means "absent" and `Err` means "failed to parse", and both need to be handled cleanly.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You're iterating over optional values — perhaps from a config map where some keys exist and others don't. For the keys that exist, you need to parse their values. You get back `Option<Result<T, E>>` from each lookup — present-and-parseable, present-but-invalid, or absent. Now you want to propagate parse errors while filtering out absences.
+- Use `Option<Result<T, E>>::transpose()` to convert to `Result<Option<T>, E>`
+- Apply this to map lookups followed by value parsing
+- Filter out `None` values while propagating `Err` from a mixed `Vec`
+- Understand the semantics: `None` becomes `Ok(None)`, `Some(Ok(v))` becomes `Ok(Some(v))`, `Some(Err(e))` becomes `Err(e)`
 
-Without `transpose()`, you'd write a nested match at every step. With it, you can `filter_map` cleanly: transpose the `Option<Result<T,E>>` into `Result<Option<T>,E>`, and the transpose's semantics do the right thing — `None` becomes `Ok(None)` (which `filter_map` skips), `Some(Ok(v))` becomes `Ok(Some(v))` (which `filter_map` keeps), and `Some(Err(e))` becomes `Err(e)` (which propagates).
+## Rust Application
 
-The practical payoff: a one-liner that looks up optional config values, parses them, filters missing ones, and propagates any parse error — all without a single explicit `match`.
-
-## The Intuition
-
-`Option::transpose()` moves the `Result` layer *outside* the `Option` — turning "maybe a result" into "either an error, or maybe a value."
-
-## How It Works in Rust
+The canonical use case: look up a config key (optional) and parse its value (fallible):
 
 ```rust
-// Option::transpose() rules:
-let some_ok: Option<Result<i32, &str>> = Some(Ok(42));
-let some_err: Option<Result<i32, &str>> = Some(Err("bad"));
-let none:    Option<Result<i32, &str>> = None;
-
-some_ok.transpose()   // => Ok(Some(42))  — present and valid
-some_err.transpose()  // => Err("bad")    — present but invalid: error propagates
-none.transpose()      // => Ok(None)      — absent: treated as success with no value
-
-// The killer use case: filter_map with error propagation
-fn lookup_and_parse(
+pub fn lookup_and_parse(
     map: &HashMap<&str, &str>,
     key: &str,
 ) -> Result<Option<i32>, ParseIntError> {
-    map.get(key)              // Option<&&str>
-       .map(|s| s.parse())   // Option<Result<i32, ParseIntError>>
-       .transpose()          // Result<Option<i32>, ParseIntError>
+    map.get(key)           // Option<&&str>
+       .map(|s| s.parse()) // Option<Result<i32, _>>
+       .transpose()        // Result<Option<i32>, _>
 }
-
-// Collect a list: skip None, fail on bad parse, keep good values
-let inputs: Vec<Option<&str>> = vec![Some("1"), None, Some("2"), Some("bad")];
-let result: Result<Vec<i32>, _> = inputs.into_iter()
-    .filter_map(|opt| opt.map(|s| s.parse::<i32>()).transpose())
-    //  ↑ None → filtered out; Some(Err) → short-circuits; Some(Ok(v)) → kept
-    .collect();
+// If key absent: Ok(None)
+// If key present and valid: Ok(Some(42))
+// If key present but invalid: Err(parse error)
 ```
 
-The `filter_map` + `transpose` idiom is the idiomatic way to "parse values that might not exist, fail on bad ones."
+## OCaml Approach
 
-## What This Unlocks
+OCaml requires explicit pattern matching for this transformation:
 
-- **Optional config values** — `lookup_and_parse` returns `Ok(None)` for missing keys and `Err` for bad values — exactly what callers need
-- **Mixed iterators** — process collections where some entries might not apply and others might fail
-- **`?` after transpose** — once you have `Result<Option<T>>`, use `?` normally and handle `None` with `unwrap_or` or `ok_or`
+```ocaml
+let lookup_and_parse map key =
+  match Hashtbl.find_opt map key with
+  | None -> Ok None
+  | Some s -> match int_of_string_opt s with
+    | None -> Error ("invalid: " ^ s)
+    | Some n -> Ok (Some n)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| `Some(Ok(v))` → `Ok(Some(v))` | Manual match | `Option::transpose()` |
-| `Some(Err(e))` → `Err(e)` | Manual match | `Option::transpose()` |
-| `None` → `Ok(None)` | Manual match | `Option::transpose()` |
-| filter_map + error propagation | Manual fold | `filter_map(|o| o.map(f).transpose()).collect()` |
+1. **Ergonomics**: Rust's `transpose()` condenses the three-way match into a single method call; OCaml requires explicit nested pattern matching.
+2. **Type system**: Rust encodes the transformation in the type system — the compiler rejects incorrect applications.
+3. **filter_map interaction**: `filter_map(|opt| opt.map(|s| s.parse::<i32>()).transpose())` elegantly handles None-skip and Err-propagate in one expression.
+4. **collect integration**: `iter.filter_map(opt_result).collect::<Result<Vec<_>, _>>()` combines option filtering with result collection cleanly.
+
+## Exercises
+
+1. Parse a `Vec<Option<&str>>` where `None` means "use default 0" and `Some("x")` should propagate as an error, using `transpose()` and `unwrap_or`.
+2. Implement a function that reads an optional HTTP header value and parses it as a number, returning `Ok(None)` if absent.
+3. Collect a `Vec<Option<Result<i32, E>>>` into a `Result<Vec<i32>, E>`, skipping `None` values and short-circuiting on the first `Err`.

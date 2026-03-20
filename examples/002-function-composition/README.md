@@ -45,3 +45,9 @@ where
    - A closure capturing `f` and `g`
    - A function pointer (less flexible but more concrete)
 4. **Lifetime Handling:** Rust's `move` captures are explicit; OCaml's closures capture implicitly.
+
+## Exercises
+
+1. Write a `compose3` function that chains three unary functions `f`, `g`, `h` so that `compose3(f, g, h)(x)` returns `f(g(h(x)))`.
+2. Implement a `compose_n` that takes a `Vec<Box<dyn Fn(i32) -> i32>>` and returns a single composed function applying them right-to-left.
+3. Use function composition to build a text-processing pipeline: trim whitespace → lowercase → remove punctuation → split into words, returning a `Vec<String>`.

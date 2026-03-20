@@ -2,109 +2,42 @@
 
 ---
 
-# 162: Identifier Parser
+# Identifier Parser
 
-**Difficulty:** ⭐⭐⭐  **Level:** Foundations
+## Problem Statement
 
-Parse programming language identifiers — and discover Rust's unique zero-copy `&str` trick along the way.
+Identifiers appear in every programming language, configuration format, and data schema: variable names, function names, JSON keys, INI section names. An identifier is typically a letter or underscore followed by any number of letters, digits, or underscores. Parsing identifiers correctly — distinguishing them from keywords, handling Unicode identifiers, producing owned `String` output — is a foundational skill for building any language-level parser.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Parsing identifiers is the first thing any language parser does. Before you can parse `let x = 42`, you need to recognize that `x` is an identifier (starts with a letter or `_`, continues with letters, digits, or `_`) and that `let` is a keyword (same syntax, but reserved).
+- Build a complete identifier parser: leading letter/underscore, followed by letters/digits/underscores
+- Understand why identifiers start with a letter (not digit) in most languages
+- Learn how to produce owned `String` output from a parser returning `Vec<char>`
+- See how identifier parsing combines with keyword exclusion for language lexers
 
-This example brings together everything from the series — `satisfy`, `many0`, `map`, and a new Rust-specific technique: returning `&str` directly instead of a `String`. In most parsers, the identifier is returned as an owned `String`. But Rust lets you return a *slice of the original input* — a `&'a str` that borrows from the input without any allocation. This is genuinely unique to Rust's ownership model.
+## Rust Application
 
-## The Intuition
+`identifier() -> Parser<String>` combines: `satisfy(|c| c.is_ascii_alphabetic() || c == '_', "letter or underscore")` for the first character, then `many0(satisfy(|c| c.is_alphanumeric() || c == '_', "alphanumeric or underscore"))` for the rest. The first and rest are joined with `pair` and `map`. The result is collected into a `String` via `iter().collect()`. Keyword exclusion (`"if"`, `"let"`) can be added by checking the result against a keyword set.
 
-An identifier rule is: start with `[a-zA-Z_]`, continue with zero or more `[a-zA-Z0-9_]`. That's `satisfy(start_pred)` followed by `many0(satisfy(continue_pred))`. Collect the results into a string, and you have an identifier parser.
+## OCaml Approach
 
-The zero-copy version is more interesting. Instead of building a `String` character by character, it scans the input and asks: "How many bytes from the start of this `&str` are valid identifier characters?" Then it returns `&input[..end]` — a slice into the original string that shares its memory. Zero allocations.
-
-Reserved word filtering is a semantic layer on top. Syntactically, `let` is a valid identifier. Semantically, it's not — your language reserves it. You parse the identifier first, then check: if it's in the reserved list, reject it with an error.
-
-## How It Works in Rust
-
-**Approach 1 — allocating with `String`:**
-```rust
-fn identifier<'a>() -> Parser<'a, String> {
-    Box::new(|input: &'a str| {
-        // First char: letter or underscore
-        let start = satisfy(|c| c.is_ascii_alphabetic() || c == '_', "letter or _");
-        let (first, rest) = start(input)?;
-
-        // Remaining chars: letter, digit, or underscore
-        let cont = many0(satisfy(|c| c.is_ascii_alphanumeric() || c == '_', "ident char"));
-        let (chars, rem) = cont(rest)?;
-
-        // Build the String by collecting
-        let mut s = String::with_capacity(1 + chars.len());
-        s.push(first);
-        for c in chars { s.push(c); }
-        Ok((s, rem))
-    })
-}
-// identifier()("hello world") = Ok(("hello", " world"))
-// identifier()("_foo bar")    = Ok(("_foo", " bar"))
-// identifier()("x1y2z3!")     = Ok(("x1y2z3", "!"))
-// identifier()("123")         = Err — can't start with digit
+In angstrom:
+```ocaml
+let ident_start = satisfy (fun c -> Char.is_alpha c || c = '_')
+let ident_rest = take_while (fun c -> Char.is_alphanum c || c = '_')
+let identifier = lift2 (fun c s -> String.make 1 c ^ s) ident_start ident_rest
 ```
-
-**Approach 2 — zero-copy with `&str` slice:**
-```rust
-fn identifier_slice<'a>() -> Parser<'a, &'a str> {
-    Box::new(|input: &'a str| {
-        let mut chars = input.chars();
-        match chars.next() {
-            Some(c) if c.is_ascii_alphabetic() || c == '_' => {
-                let mut end = c.len_utf8();  // start after first char
-                for ch in chars {
-                    if ch.is_ascii_alphanumeric() || ch == '_' {
-                        end += ch.len_utf8();  // accumulate byte length
-                    } else {
-                        break;
-                    }
-                }
-                // Return a slice of the original input — zero allocation
-                Ok((&input[..end], &input[end..]))
-            }
-            _ => Err("Expected identifier".to_string()),
-        }
-    })
-}
-// identifier_slice()("myVar = 5") = Ok(("myVar", " = 5"))
-// The returned "myVar" is NOT a new String — it's a pointer into the original input
-```
-The `end` variable accumulates the byte length of the identifier. `&input[..end]` is a zero-copy reference to that prefix. This is idiomatic Rust and not possible in garbage-collected languages.
-
-**Approach 3 — reserved word rejection:**
-```rust
-fn identifier_not_reserved<'a>(reserved: &[&str]) -> Parser<'a, String> {
-    let reserved: Vec<String> = reserved.iter().map(|s| s.to_string()).collect();
-    Box::new(move |input: &'a str| {
-        let (name, rest) = identifier()(input)?;  // parse syntactically valid identifier
-        if reserved.iter().any(|r| r == &name) {
-            Err(format!("'{}' is a reserved word", name))  // semantic rejection
-        } else {
-            Ok((name, rest))
-        }
-    })
-}
-// p("myVar") = Ok(("myVar", ""))
-// p("let")   = Err("'let' is a reserved word")
-```
-
-## What This Unlocks
-
-- **Language frontend parsing** — identifiers are the most common token in any language parser; this is the production-ready version.
-- **Zero-copy tokenization** — `identifier_slice` returns views into the original source, making it practical to tokenize large files without heap pressure.
-- **Keyword discrimination** — combining syntactic parsing with reserved-word filtering separates the lexer's job (what *can* be an identifier) from the parser's job (what *should* be one).
+OCaml's `take_while` is more efficient than `many0(satisfy(...))` because it works on the raw buffer without constructing intermediate character values.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| String building | `String.make 1 c ^ String.init n (fun i -> ...)` | `String::new()` + `push` |
-| Zero-copy output | Not idiomatic (strings are GC values) | `&'a str` — a slice into the original input, no allocation |
-| Reserved word check | `List.mem name reserved` | `reserved.iter().any(\|r\| r == &name)` |
-| Char classification | Manual: `c >= 'a' && c <= 'z' \|\| ...` | Built-in: `is_ascii_alphabetic()`, `is_ascii_alphanumeric()` |
-| Byte advancement | `String.length c` (always 1 in OCaml bytes) | `c.len_utf8()` — correct for multi-byte Unicode |
+1. **Efficiency**: OCaml's `take_while` scans bytes directly; Rust's `many0(satisfy(...))` decodes each UTF-8 character individually — more correct for Unicode but slower for ASCII.
+2. **Owned output**: Both produce owned strings (`String` in Rust, `string` in OCaml) — identifiers are typically stored and compared, not just sliced.
+3. **Unicode identifiers**: Rust's `is_ascii_alphabetic()` restricts to ASCII; `is_alphabetic()` allows Unicode letters; OCaml's `Uchar` handles Unicode similarly.
+4. **Keyword exclusion**: Both add keyword exclusion as a post-map check; some parsers define keywords as distinct parser rules tried before identifiers.
+
+## Exercises
+
+1. Add keyword exclusion: the identifier parser should fail if the result is in `["if", "else", "while", "let", "fn"]`.
+2. Implement `scoped_identifier() -> Parser<Vec<String>>` that parses `"std::collections::HashMap"` as `["std", "collections", "HashMap"]`.
+3. Write a test verifying that `"_private"`, `"CamelCase"`, `"snake_case_123"` all parse successfully.

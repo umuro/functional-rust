@@ -4,82 +4,37 @@
 
 # 426: Function-like Proc Macros
 
-**Difficulty:** 4  **Level:** Expert
+## Problem Statement
 
-Macros that look like function calls but run at compile time with full AST access — for DSLs, compile-time validation, and code generation from structured input.
+Function-like proc macros look like function calls (`my_macro!(...)`) but unlike `macro_rules!`, they receive their entire argument as a `TokenStream` and can generate arbitrary Rust code. This enables domain-specific languages embedded in Rust source: SQL queries (`sql!("SELECT * FROM users WHERE id = $1")` with type-checked parameters), HTML templates, CSS-in-Rust, regex patterns compiled at build time. The `sql!` macro can verify query syntax at compile time and generate typed query structs — impossible with `macro_rules!`.
 
-## The Problem This Solves
+Function-like proc macros power `quote!` itself, `pest`'s grammar macros, type-checked SQL in `sqlx`, and compile-time regex compilation in `regex_lite`.
 
-`macro_rules!` works on token patterns but can't understand their meaning. `sql!("SELECT * FROM users WHERE id = ?")` needs to parse SQL, validate it against a schema, and generate type-safe query code. `html! { <div class="main">...</div> }` needs to parse HTML syntax and generate `VNode` constructor calls. These require semantic understanding of structured input, not just token shuffling.
+## Learning Outcomes
 
-Function-like proc macros look like `name!(...)` — identical syntax to declarative macros — but the implementation is a Rust function with full access to `syn`, `quote`, and anything else you can import. The entire content inside the parens arrives as a `TokenStream` for you to interpret however you need.
+- Understand function-like proc macros as the most flexible macro type (arbitrary input parsing)
+- Learn the `#[proc_macro]` registration and the `TokenStream` in/out signature
+- See how function-like macros differ from `macro_rules!` (full tokenstream access, external crate)
+- Understand compile-time validation use cases: SQL, regex, URIs, JSON schemas
+- Learn the ergonomic difference: function-like macros allow custom syntax without `$` sigils
 
-Real examples: `regex!("[a-z]+")` compiles the regex at compile time; `include_proto!("schema.proto")` generates Rust types from protobuf; `query!("SELECT id FROM users")` in `sqlx` validates SQL and generates typed structs. All of these are function-like proc macros.
+## Rust Application
 
-## The Intuition
+The `src/lib.rs` demonstrates what function-like proc macros produce. A `sql!` proc macro would parse its string argument, validate SQL syntax at compile time, and generate a typed query struct with parameter types inferred from the schema. A `regex!` proc macro compiles the regex at compile time, avoiding runtime compilation overhead. A `html!` macro parses HTML-like syntax and generates `String`-building code.
 
-A function-like proc macro receives everything inside `macro!(...)` as a token stream and returns any Rust code — it's a compile-time code generator with full Rust as its implementation language.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-// In proc-macro crate:
-use proc_macro::TokenStream;
-use quote::quote;
-use syn::{parse_macro_input, LitStr, LitInt};
-
-// Simple: generate a constant from a string literal
-#[proc_macro]
-pub fn make_greeting(input: TokenStream) -> TokenStream {
-    let name = parse_macro_input!(input as LitStr);
-    let greeting = format!("Hello, {}!", name.value());
-    quote! { #greeting }.into()
-}
-
-// Usage: const MSG: &str = make_greeting!("World");
-// Expands to: const MSG: &str = "Hello, World!";
-
-// Custom syntax: parse key=value pairs
-#[proc_macro]
-pub fn config(input: TokenStream) -> TokenStream {
-    // Parse custom DSL: config!(host = "localhost", port = 8080)
-    // Validate at compile time, generate Config struct construction
-    // ...
-    input  // simplified
-}
-
-// Compile-time regex compilation
-#[proc_macro]
-pub fn regex(input: TokenStream) -> TokenStream {
-    let pattern = parse_macro_input!(input as LitStr);
-    let pat = pattern.value();
-    // Validate regex at compile time — build error if invalid!
-    if let Err(e) = regex_syntax::Parser::new().parse(&pat) {
-        return syn::Error::new(pattern.span(), e.to_string())
-            .to_compile_error().into();
-    }
-    quote! { ::regex::Regex::new(#pat).unwrap() }.into()
-}
-```
-
-1. `#[proc_macro]` on a public function in a proc-macro crate.
-2. Function signature: `pub fn name(input: TokenStream) -> TokenStream`.
-3. Parse `input` with `syn` — could be a literal, a custom syntax, or any token sequence.
-4. Validate at compile time — emit `syn::Error::to_compile_error()` for user-friendly build errors.
-5. Generate output with `quote!`.
-
-## What This Unlocks
-
-- **Compile-time DSLs**: SQL, HTML, regex, configuration formats — validate and generate at build time.
-- **Type-safe interfaces**: Generate typed structs from schemas at compile time (protobuf, SQL, GraphQL).
-- **Custom syntax**: Any token stream you can parse — create embedded mini-languages.
+OCaml's equivalent is the `[%ppx_name expr]` extension point syntax. `[%sql "SELECT * FROM users"]` with a custom PPX validates SQL at compile time. `[%re "regex"]` compiles regular expressions. OCaml's `ppxlib` extension points provide the same power as function-like proc macros, with the same compile-time validation benefits. The `ocaml-re` library uses this for compile-time regex compilation.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Compile-time DSL | Camlp4 / `[%extension_point]` via PPX | `#[proc_macro]` function-like macro |
-| Custom syntax | Camlp4 grammar extensions | Parse `TokenStream` with `syn` |
-| Compile-time validation | PPX with `Location.raise_errorf` | `syn::Error::new(span, msg).to_compile_error()` |
-| Meta-programming entry point | PPX driver (`ppxlib.runner`) | `#[proc_macro]` — registered by crate type |
-| Usage syntax | `[%myext ...]` | `myext!(...)` — indistinguishable from built-ins |
+1. **Syntax freedom**: Rust function-like proc macros accept any token sequence; OCaml extension points must contain valid OCaml expressions inside `[%name ...]`.
+2. **Error location**: Rust can attach errors to specific spans within the input; OCaml PPX errors appear at the extension point location.
+3. **Schema access**: Both can read external files (SQL schemas, OpenAPI specs) during compilation; Rust uses build scripts to pass paths via env vars.
+4. **Caching**: Rust proc macros run on every compilation (unless incremental cache hits); OCaml PPX runs on every file containing the extension.
+
+## Exercises
+
+1. **Compile-time JSON**: Implement `json!({ "key": "value", "num": 42 })` as a function-like macro (or simulate with `macro_rules!`) that validates the JSON structure at compile time and generates a `serde_json::Value` constructor.
+2. **Unit literal**: Create `meters!(5.3)` that expands to `Meters(5.3f64)` and `kilometers!(1.2)` to `Kilometers(1.2f64)`. Use function-like proc macros (or `macro_rules!`) to make unit conversion values ergonomic.
+3. **Compile-time UUID**: Implement `uuid!("550e8400-e29b-41d4-a716-446655440000")` that validates the UUID format at compile time and generates a `[u8; 16]` constant. Compile-error on malformed input.

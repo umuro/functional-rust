@@ -2,87 +2,39 @@
 
 ---
 
-# 425: Attribute Macros #[my_attr]
+# 425: Proc Macro Attribute
 
-**Difficulty:** 4  **Level:** Expert
+## Problem Statement
 
-Transform or replace entire items at compile time — the mechanism behind `#[tokio::main]`, `#[test]`, and `#[route("/api")]`.
+Attribute macros transform the item they annotate. `#[tokio::main]` rewrites `async fn main()` into a synchronous main that creates a Tokio runtime. `#[actix_web::get("/path")]` registers a handler function with routing metadata. `#[cached]` wraps a function with memoization. These transformations are impossible with derive macros (which only add implementations) or `macro_rules!` (which can't inspect or rewrite existing items). Attribute macros receive both the attribute arguments and the annotated item, enabling full code transformation.
 
-## The Problem This Solves
+Attribute macros are the mechanism behind framework integration: web routing, async runtime setup, middleware injection, retry logic, and profiling annotations.
 
-Derive macros add code alongside an item. Sometimes you need to *transform* the item itself — wrap a function body, modify a struct's fields, add setup/teardown around a function. Attribute macros receive the full item and return whatever code should replace it, giving you complete control.
+## Learning Outcomes
 
-`#[tokio::main]` takes your `async fn main()` and wraps it in `tokio::runtime::Builder::new_multi_thread().build().unwrap().block_on(async { ... })`. `#[instrument]` (from `tracing`) wraps function bodies with span setup and teardown. `#[route("/api/users", method = "GET")]` registers handler functions with a web framework. All of these are attribute macros — they receive the function and return a transformed version.
+- Understand the attribute proc macro lifecycle: receives `(attr: TokenStream, item: TokenStream)`
+- Learn how attribute macros can transform, wrap, or replace the annotated item
+- See the difference from derive macros: attribute macros modify existing items, derives add new impls
+- Understand how `#[tokio::main]` rewrites async functions using attribute macros
+- Learn the `#[proc_macro_attribute]` registration and how arguments are passed
 
-Unlike derive macros (which only add items), attribute macros replace the annotated item entirely. If you return the input unchanged, you're a no-op. If you return something different, the original code is gone and your output is what the compiler sees.
+## Rust Application
 
-## The Intuition
+The `src/lib.rs` demonstrates the conceptual output of attribute macros. A `#[log_calls]` attribute would wrap the function body with entry/exit logging. A `#[retry(3)]` attribute would wrap the body in a retry loop. A `#[cached]` attribute would add a `HashMap` cache around a pure function. Real implementations require a separate proc-macro crate with `syn` for parsing the function signature and `quote!` for generating the wrapper.
 
-An attribute macro receives an item (function, struct, mod) and returns code to replace it — full transformation power, not just addition.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-// In proc-macro crate:
-use proc_macro::TokenStream;
-use quote::quote;
-use syn::{parse_macro_input, ItemFn};
-
-// Simple: wrap function with logging
-#[proc_macro_attribute]
-pub fn log_call(args: TokenStream, item: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(item as ItemFn);
-    let name = &input.sig.ident;
-    let body = &input.block;
-    let sig = &input.sig;
-    let vis = &input.vis;
-
-    quote! {
-        #vis #sig {
-            println!("[LOG] Entering {}", stringify!(#name));
-            let result = (|| #body)();
-            println!("[LOG] Exiting {}", stringify!(#name));
-            result
-        }
-    }.into()
-}
-
-// Usage:
-#[log_call]
-fn expensive_computation(x: i32) -> i32 {
-    x * x + 1
-}
-// Compiles to the logged version — original body still runs,
-// wrapped with println! before and after.
-
-// Reading attribute arguments
-#[proc_macro_attribute]
-pub fn retry(args: TokenStream, item: TokenStream) -> TokenStream {
-    let retries: usize = args.to_string().parse().unwrap_or(3);
-    let input = parse_macro_input!(item as ItemFn);
-    // ... generate retry loop wrapping the function body
-}
-
-// Usage: #[retry(5)] fn flaky_operation() { ... }
-```
-
-1. `#[proc_macro_attribute]` — two arguments: `args` (inside the `#[attr(args)]`) and `item` (the annotated item).
-2. Parse `item` as `syn::ItemFn`, `syn::ItemStruct`, etc. depending on what you expect.
-3. Deconstruct the item, transform, and `quote!` the result.
-4. Return the replacement `TokenStream` — the original item is replaced entirely.
-
-## What This Unlocks
-
-- **Function wrapping**: Add logging, timing, retry logic, or authorization checks around any function body.
-- **Framework integration**: Web route registration, test harness setup, RPC method binding.
-- **Conditional generation**: Inspect attribute arguments to change what code is generated.
+OCaml's PPX extensions (`[@attr]` and `[%ext ...]`) serve the attribute macro role. A `[@log_calls]` ppx extension receives the function's AST and can wrap it. `ppxlib`'s `Attribute.declare` creates typed attribute handlers. The `ppx_bench` and `ppx_expect` libraries use this to transform functions with benchmarking and expectation test machinery.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Item transformation | PPX `[@@deriving ...]` / `[%extension]` | `#[proc_macro_attribute]` |
-| Function wrapping | `[%log_call]` via custom PPX | `#[log_call]` attribute macro |
-| Access to body | `Ppxlib` expression rewriting | `syn::ItemFn` — access `sig`, `block`, `vis` |
-| Attribute arguments | `[@@attr arg]` syntax | `args: TokenStream` — parse as needed |
-| Framework routing | Hand-written registration | `#[route("/path")]` attribute macro |
+1. **Arguments**: Rust attribute macros receive arguments as a `TokenStream` and parse them freely; OCaml PPX attributes use a typed declaration system.
+2. **Item types**: Rust attribute macros can annotate any item (fn, struct, impl, mod); OCaml PPX extensions are declared for specific AST node types.
+3. **Error handling**: Rust macros can call `compile_error!` or return a `TokenStream` with errors; OCaml raises exceptions or uses `Location.error_extensionf`.
+4. **Testing**: Rust attribute macro tests use `trybuild` for expected outputs; OCaml uses `ppx_deriving`'s test `expect` tests.
+
+## Exercises
+
+1. **Timing attribute**: Implement `#[timed]` that wraps any function with `let start = Instant::now(); let result = original_body; println!("{}: {:?}", fn_name, start.elapsed()); result`.
+2. **Validate input**: Create `#[validate_positive]` for functions taking `i32` that adds an assertion at the start: `assert!(arg > 0, "argument must be positive")`. Handle functions with multiple parameters by validating only the first `i32`.
+3. **Deprecated with replacement**: Implement `#[replace_with("new_function_name")]` that emits a deprecation warning `#[deprecated(note = "use new_function_name instead")]` and adds a `log::warn!` call at the start of the function body.

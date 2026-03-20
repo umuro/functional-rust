@@ -2,100 +2,41 @@
 
 ---
 
-# 224: Mutumorphism
+# Mutumorphism — Genuinely Mutual Recursion
 
-**Difficulty:** 5  **Level:** Expert
+## Problem Statement
 
-Two folds that depend on each other — compute two results simultaneously where each depends on the other's intermediate values.
+Mutually recursive functions — `is_even` and `is_odd` depending on each other — are natural in mathematics but require mutual `let rec` in functional languages. A mutumorphism generalizes this: two folds that are mutually dependent, each using the other's result at each recursive step. Unlike zygomorphism (one feeds the other), mutumorphism has symmetric dependency. The classic example: `is_even(n)` uses `is_odd(n-1)` and vice versa.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Zygo (example 221) runs one "helper" fold alongside a main fold, but the helper is independent — the main fold uses helper results, not vice versa. Mutumorphism is genuinely mutual: both folds receive *each other's* results at every step.
+- Understand mutumorphisms as mutually recursive catamorphisms
+- Learn how `mutu` computes two results simultaneously in one traversal
+- See `is_even`/`is_odd` as the canonical mutumorphism example
+- Understand the difference between `zygo` (one-way dependency) and `mutu` (two-way dependency)
 
-The canonical example: `isEven` and `isOdd` are mutually recursive by definition — `isEven(n) = isOdd(n-1)` and `isOdd(n) = isEven(n-1)`. You can't compute one without the other. Mutumorphism encodes this as two algebras that receive a paired `(A, B)` layer.
+## Rust Application
 
-A more compelling use case: simultaneously evaluate an expression *and* type-check it. Both the value and the type of each subexpression are needed to compute the value and type of the parent.
+`mutu<A, B>(alg_a: impl Fn(NatF<(A, B)>) -> A, alg_b: impl Fn(NatF<(A, B)>) -> B) -> impl Fn(FixNat) -> (A, B)`. Both algebras receive `NatF<(A, B)>` — the pair of both results for each child. `alg_a` for `is_even`: `NatF::ZeroF => true`, `NatF::SuccF((_, b_pred)) => b_pred` (is_even(n) = is_odd(n-1) = the b result of the predecessor). Symmetric for `alg_b`. The result is `(is_even(n), is_odd(n))` in one pass.
 
-## The Intuition
+## OCaml Approach
 
-In `mutu(alg_a, alg_b, tree)`, both algebras receive `F<(A, B)>` — the functor layer where each recursive position has already been expanded into the pair of both results. Each algebra picks what it needs from the pair.
-
-Compare to `cata`: `cata(alg, tree)` gives `alg` an `F<A>` — just one result per position. `mutu` gives both algebras an `F<(A, B)>` — the full pair at every position. This is why `isEven` can call `isOdd` at each step without a separate traversal.
-
-The result is a pair `(A, B)` produced in a single pass, even though both sides depend on each other.
-
-## How It Works in Rust
-
-```rust
-fn mutu<A: Clone, B: Clone>(
-    alg_a: &dyn Fn(NatF<(A, B)>) -> A,   // sees BOTH results at each position
-    alg_b: &dyn Fn(NatF<(A, B)>) -> B,
-    fix: &FixNat,
-) -> (A, B) {
-    // Recursively expand each child into its (A, B) pair
-    let paired: NatF<(A, B)> = fix.0.map_ref(|child| mutu(alg_a, alg_b, child));
-    // Both algebras receive the same paired layer — must clone to share
-    (alg_a(paired.clone()), alg_b(paired))
-}
+OCaml's `let rec ... and` provides native mutual recursion:
+```ocaml
+let rec is_even n = if n = 0 then true else is_odd (n - 1)
+and is_odd n = if n = 0 then false else is_even (n - 1)
 ```
-
-isEven / isOdd — the mutual dependency in action:
-
-```rust
-fn is_even_alg(n: NatF<(bool, bool)>) -> bool {
-    match n {
-        NatF::ZeroF => true,                  // 0 is even
-        NatF::SuccF((_even, odd)) => odd,     // n+1 is even iff n is odd
-    }
-}
-
-fn is_odd_alg(n: NatF<(bool, bool)>) -> bool {
-    match n {
-        NatF::ZeroF => false,                 // 0 is not odd
-        NatF::SuccF((even, _odd)) => even,    // n+1 is odd iff n is even
-    }
-}
-
-// Both computed in a single traversal:
-let (even, odd) = mutu(&is_even_alg, &is_odd_alg, &nat(4));
-// even = true, odd = false
-```
-
-Simultaneous evaluation + type-checking:
-
-```rust
-fn val_alg(e: ExprF<(Value, Typ)>) -> Value {
-    match e {
-        ExprF::Add((Value::VInt(a), _), (Value::VInt(b), _)) => Value::VInt(a + b),
-        ExprF::If((Value::VBool(true), _), (v, _), _) => v,  // use type to guide eval
-        _ => Value::VError,
-    }
-}
-
-fn typ_alg(e: ExprF<(Value, Typ)>) -> Typ {
-    match e {
-        ExprF::Add((_, Typ::TInt), (_, Typ::TInt)) => Typ::TInt,
-        ExprF::If((_, Typ::TBool), (_, t1), (_, t2)) if t1 == t2 => t1,
-        _ => Typ::TError,
-    }
-}
-
-// Type and value computed together — one pass, mutual dependency
-let (value, typ) = mutu_expr(&val_alg, &typ_alg, &expr);
-```
-
-## What This Unlocks
-
-- **Simultaneous evaluation + type-checking** — one traversal instead of two separate passes
-- **Even/odd parity tracking** — any mutually-defined predicate on recursive structures
-- **Co-dependent accumulations** — wherever two summary values at a node depend on each other's child values
+OCaml's native mutual recursion is more readable than the `mutu` scheme for simple cases. The `mutu` formulation is useful when the mutual structure must be captured as a first-class value (e.g., for testing or transformation).
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Algebra signature | `'f ('a * 'b) -> 'a` | `Fn(F<(A, B)>) -> A` |
-| Pair type | `'a * 'b` (native tuple) | `(A, B)` |
-| Layer sharing | Single evaluation, GC handles aliasing | `.clone()` required to share paired layer between two algebras |
-| Pattern matching | `VInt a, _` on pair | `(Value::VInt(a), _)` — same structure |
-| vs zygo | Helper is one-way dependency | Both algebras are mutually dependent |
+1. **Native mutual recursion**: OCaml's `let rec ... and` expresses mutual recursion directly; Rust's `fn` definitions can call each other directly too — `mutu` is the structured/compositional version.
+2. **First-class capture**: `mutu` captures the mutual recursion as a composable value; native `let rec ... and` is not first-class.
+3. **Zygomorphism vs. mutumorphism**: `zygo` has one-way dependency (A uses B's results); `mutu` has two-way dependency (A uses B's and B uses A's).
+4. **Practical use**: Mutual recursion arises in grammar parsers (expression/statement), type checkers (term/type), and game AI (agent/environment).
+
+## Exercises
+
+1. Implement `count_even_odd(n)` using `mutu`: count how many even and odd numbers exist in `[0..n]` in one traversal.
+2. Write a `mutu`-based tree algorithm: `min_leaf` and `max_leaf` computed simultaneously.
+3. Express the Fibonacci sequence using `mutu`: `fib(n)` and `fib(n+1)` computed together.

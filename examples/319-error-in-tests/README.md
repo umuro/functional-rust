@@ -4,84 +4,61 @@
 
 # 319: Error Handling in Tests
 
-**Difficulty:** 1  **Level:** Beginner
+## Problem Statement
 
-Write clean, readable tests for fallible code — including the failure cases.
+Tests that call fallible functions traditionally use `unwrap()`, which panics with an unhelpful message on failure. Rust test functions can return `Result<(), E>`, enabling `?` to propagate errors with full context. Additionally, `#[should_panic(expected = "...")]` attributes test that specific panics occur — completing the testing toolkit for both `Result`-returning and panic-producing code.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You have a function that returns `Result<T, E>`. Testing both the success and failure paths requires different approaches: success tests want to extract the value and check it, failure tests want to assert on the error variant, and some tests need to verify that code panics. Writing all of these with manual `match` expressions is verbose and obscures what's actually being tested.
+- Write test functions returning `Result<(), E>` to use `?` for clean error propagation
+- Use `#[should_panic(expected = "message")]` to test expected panic behavior
+- Use `assert_eq!` / `assert!` inside `Result`-returning tests for mixed assertions
+- Recognize that returning `Err` from a test function causes a clean test failure with the error message
 
-Rust's test framework handles this well — but you need to know the idioms. Result-returning test functions (`fn test() -> Result<(), E>`) let you use `?` freely inside tests. `assert_eq!` on `Result` values checks equality. `#[should_panic]` marks tests that are expected to panic. And `unwrap_err()` extracts the error for inspection without a verbose match.
+## Rust Application
 
-Testing error paths thoroughly is what separates production-quality code from prototype code. Error handling that's never been tested is error handling that doesn't work when you need it.
-
-## The Intuition
-
-Test functions can return `Result<(), E>` — use `?` freely for the happy path, and `unwrap_err()` / `assert_eq!` for the error path.
-
-## How It Works in Rust
+Tests returning `Result` get clean error messages; `#[should_panic]` tests expected panics:
 
 ```rust
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[test]
+fn test_safe_div_result() -> Result<(), MathError> {
+    let result = safe_div(10, 2)?;  // ? propagates MathError on failure
+    assert_eq!(result, 5);
+    Ok(())
+}
 
-    // Pattern 1: Result-returning test — use ? freely
-    #[test]
-    fn div_ok() -> Result<(), MathError> {
-        assert_eq!(safe_div(10, 2)?, 5);  // ? fails the test if Err
-        Ok(())  // must return Ok(()) at the end
-    }
+#[test]
+#[should_panic(expected = "division by zero")]
+fn test_div_panics() {
+    let _ = 1 / 0;  // panics with "attempt to divide by zero"
+}
 
-    // Pattern 2: Assert on specific error value
-    #[test]
-    fn div_zero() {
-        assert_eq!(safe_div(5, 0), Err(MathError::DivisionByZero));
-    }
-
-    // Pattern 3: Check error without equality — matches! macro
-    #[test]
-    fn div_zero_variant() {
-        assert!(matches!(safe_div(5, 0), Err(MathError::DivisionByZero)));
-    }
-
-    // Pattern 4: Inspect the error value
-    #[test]
-    fn sqrt_neg_message() {
-        let err = safe_sqrt(-9).unwrap_err();  // unwrap_err() panics if Ok
-        assert_eq!(err, MathError::NegativeInput(-9));
-    }
-
-    // Pattern 5: Test that a function panics
-    #[test]
-    #[should_panic]           // test passes if the body panics
-    fn panics_on_unwrap() {
-        safe_div(1, 0).unwrap();  // this panics
-    }
-
-    // Pattern 6: #[should_panic(expected = "...")] — verify the panic message
-    #[test]
-    #[should_panic(expected = "division by zero")]
-    fn panics_with_message() {
-        panic!("division by zero");
-    }
+#[test]
+fn test_error_variant() {
+    let result = safe_div(10, 0);
+    assert_eq!(result, Err(MathError::DivisionByZero));
 }
 ```
 
-The `?` operator in tests converts an error into a test failure with the error's `Debug` output. It's cleaner than `unwrap()` because the test failure message tells you *which* error occurred, not just "called unwrap on an Err value."
+## OCaml Approach
 
-## What This Unlocks
+OCaml testing with `Alcotest` uses `Alcotest.check` for assertions and `Alcotest.check_raises` for expected exceptions. Test functions return `unit` and raise `Alcotest.Test_error` on failure:
 
-- **Clean happy-path tests** — `fn test() -> Result<(), E>` with `?` reads like production code, not test boilerplate
-- **Complete error coverage** — `#[should_panic]`, `unwrap_err()`, and `assert_eq!` on `Err` cover all the ways things can go wrong
-- **Documented panic contracts** — `#[should_panic]` tests serve as documentation: "calling this with X is a programmer error that panics"
+```ocaml
+let test_safe_div () =
+  Alcotest.(check int) "five" 5 (safe_div 10 2);
+  Alcotest.check_raises "div by zero" Division_by_zero (fun () -> safe_div 1 0)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Assert equality | `assert_equal` (OUnit) | `assert_eq!(actual, expected)` |
-| Expected error | `assert_raises` | `assert_eq!(f(), Err(e))` or `#[should_panic]` |
-| Result in tests | Manual `match` | `fn test() -> Result<(), E>` — use `?` directly |
-| Inspect error | Manual `match` | `result.unwrap_err()` — panics if `Ok` |
+1. **Test return type**: Rust test functions can return `Result<(), E>` — the `?` operator works naturally inside them; OCaml tests return `unit`.
+2. **Failure message**: Rust test failure from `Err(e)` displays `format!("{:?}", e)`; OCaml's Alcotest shows the exception message.
+3. **Expected panic**: `#[should_panic]` is a compile-time annotation; OCaml's `check_raises` is a runtime assertion.
+4. **Integration**: `Result`-returning tests integrate with `?` and all `Result` combinators — tests read like production code.
+
+## Exercises
+
+1. Write a test that uses `?` to call three fallible operations in sequence, failing with a descriptive error if any step fails.
+2. Add `#[should_panic(expected = "invariant violated")]` tests for functions that use `assert!` to enforce preconditions.
+3. Write a test that captures the `Err` value from a failing operation and uses `assert_eq!` on the error variant — verifying both that it failed and how it failed.

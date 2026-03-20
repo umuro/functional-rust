@@ -29,3 +29,9 @@ Rust achieves similar composability through several idiomatic patterns: nested f
 2. **Method Chaining:** Rust's idiomatic style uses method chaining (`.map()`, `.filter()`, etc.), which is the natural equivalent. OCaml doesn't have methods on built-in types.
 3. **Ownership:** Rust's pipe function uses `FnOnce` for one-shot transformations, enforcing move semantics when values are consumed. OCaml handles this implicitly.
 4. **Type Inference:** Both languages infer the intermediate types in a pipeline, but Rust requires explicit type bounds for generic higher-order functions.
+
+## Exercises
+
+1. Define a `pipe2` macro (or function pair) that chains two single-argument closures and apply it to a string processing pipeline: parse → validate → format.
+2. Extend the pipeline pattern to support error propagation: write `pipe_result` that threads a `Result<T, E>` through a sequence of `FnOnce(T) -> Result<U, E>` steps, short-circuiting on the first error.
+3. Build a numeric pipeline using `pipe` that computes a statistical summary (min, max, mean, standard deviation) over a `Vec<f64>` in a single readable chain.

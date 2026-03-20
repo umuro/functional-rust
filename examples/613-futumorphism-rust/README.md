@@ -2,85 +2,50 @@
 
 ---
 
-# 613: Futumorphism
+# Futumorphism
 
-**Difficulty:** 5  **Level:** Master
+## Problem Statement
 
-An anamorphism (unfold) that can produce multiple levels at once — the dual of histomorphism, using a `Free` comonad structure.
+A futumorphism (futu) is the dual of a histomorphism — an anamorphism that can look ahead multiple levels into the future structure being built. It uses a free monad of the base functor as the coalgebra target, allowing the generator to produce multiple levels of structure at once. This is useful for expanding macros, generating tree structures, and producing ahead-of-need outputs.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Anamorphism (`ana`) unfolds a seed value one step at a time: given a seed, produce one layer of the structure and a new seed for the next. This is fine for simple sequences, but some generation patterns are naturally multi-step. Generating Fibonacci numbers requires two previous values; generating bit patterns requires looking two positions ahead; tokenizing a string may produce multiple tokens per source character.
+- The categorical definition and the mathematical laws that must hold
+- How to implement this pattern in Rust despite the lack of higher-kinded types
+- The relationship to more familiar functional idioms (fold, unfold, map)
+- Key concepts: futu, look-ahead unfold, Free monad coalgebra
+- Where this pattern appears in production systems and when simpler alternatives suffice
 
-With `ana`, multi-step generation requires threading awkward state through the seed type. You end up encoding "I already generated the next element, please use it" in the seed, which is a code smell. The futumorphism makes this formal: the coalgebra can return a `Free F A` value that contains either a seed for further unfolding (`Pure(seed)`) or a pre-built layer with possibly more seeds embedded (`Free(layer)`).
+## Rust Application
 
-This is the dual of histomorphism: histo gives the fold access to all *previous* results; futu gives the unfold the ability to produce *multiple future* steps. Together they form the "past and future" recursion scheme pair.
+macro expansion, multi-level tree generation. The source demonstrates the concept with a concrete data type — typically a simple tree or list — showing the pattern in a form that can be run and verified. Due to Rust's type system limitations, the implementation is more verbose than Haskell but the core idea is preserved.
 
-## The Intuition
+Key patterns:
+- The defining operation and its type signature
+- The laws it must satisfy (verified in tests)
+- Composition with other morphisms in the scheme
+- Concrete examples with traversable data types
 
-A futumorphism is an anamorphism where the coalgebra can "pre-produce" multiple layers at once instead of just one seed — by returning a `Free` value that interleaves "I have a ready-made layer here" with "continue unfolding from this seed". The trade-off: more expressive than `ana` but harder to reason about; use `ana` when you generate one step at a time, `futu` when the natural decomposition produces multiple steps.
+## OCaml Approach
 
-## How It Works in Rust
+OCaml's pattern matching and recursive types make morphism implementations natural. The `Fix` type and F-algebra/coalgebra patterns translate directly, though without Haskell's typeclass machinery:
 
-```rust
-// Free monad over F: either a pure value (seed for continuation)
-// or a layer with Free values in the recursive positions
-enum Free<A> {
-    Pure(A),              // "continue unfolding from seed A"
-    Cons(i32, Box<Free<A>>),  // "here's a ready-made layer; recurse into inner Free"
-}
-
-// The unfolded list result
-type List = Vec<i32>;
-
-// Futumorphism: coalgebra returns Free<Seed> — can produce multiple steps
-fn futu<S>(seed: S, coalg: &impl Fn(S) -> Free<S>) -> List {
-    let mut result = Vec::new();
-    futu_inner(coalg(seed), coalg, &mut result);
-    result
-}
-
-fn futu_inner<S>(free: Free<S>, coalg: &impl Fn(S) -> Free<S>, out: &mut Vec<i32>) {
-    match free {
-        Free::Pure(seed) => {
-            // Continue unfolding from the new seed
-            futu_inner(coalg(seed), coalg, out);
-        }
-        Free::Cons(value, rest) => {
-            // Pre-built layer — emit this value and continue with rest
-            out.push(value);
-            futu_inner(*rest, coalg, out);
-        }
-    }
-}
-
-// Example: generate pairs [n, n+1, n+2, ...] stepping by 2
-// The coalgebra produces TWO elements at once
-fn pair_coalg(seed: i32) -> Free<i32> {
-    if seed > 10 {
-        return Free::Pure(seed); // actually, terminate somehow
-    }
-    // Produce two elements in one coalgebra call
-    Free::Cons(seed, Box::new(Free::Cons(seed + 1, Box::new(Free::Pure(seed + 2)))))
-    //         ^^^^ first element  ^^^^^^^^^^^^^^^^^^^^^ second element pre-built
-}
+```ocaml
+(* OCaml recursive schemes use:
+   - Recursive variant types for F-algebras
+   - Higher-order functions for the morphism
+   - GADTs for type-safe fixed points in advanced cases *)
 ```
-
-The key: a single coalgebra invocation can produce multiple `Cons` layers before bottoming out with `Pure(next_seed)`, enabling efficient multi-step generation.
-
-## What This Unlocks
-
-- **Efficient sequence generation**: produce Fibonacci pairs, byte pairs, or token groups in single coalgebra calls without re-entering the unfold machinery.
-- **Streaming tokenizers**: one source character may produce multiple tokens — futu naturally expresses this as one coalgebra step yielding multiple `Cons` nodes.
-- **Dual of dynamic programming**: while histo accumulates past results to avoid recomputation, futu pre-computes future steps to avoid redundant seeds.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Anamorphism | `let rec ana coalg seed = ...` | `fn ana<S>(seed: S, coalg: impl Fn(S) -> F<S>)` |
-| Futumorphism | `futu coalg seed` — coalg returns `CoFree` | Coalgebra returns `Free<S>` |
-| vs Ana | One layer per call | Multiple layers per call possible |
-| `Free` monad | `type 'a free = Pure of 'a \| Free of 'a free f` | `enum Free<A> { Pure(A), Layer(...) }` |
-| Dual of | Histomorphism | Histomorphism |
-| Practical use | Batch generation, tokenizers | Same |
+1. **HKT requirement**: These morphisms ideally require higher-kinded types for full generality; Rust uses GATs or associated types as approximations.
+2. **Performance**: Rust's implementations are more verbose but compile to efficient machine code; OCaml's implementations are more concise with similar runtime performance.
+3. **Practical adoption**: In Haskell, recursive schemes from `recursion-schemes` are widely used; in Rust and OCaml, direct recursion is more common in practice.
+4. **Theoretical value**: Understanding these patterns deepens intuition for all recursive programming, even when direct recursion is used in production code.
+
+## Exercises
+
+1. **Laws verification**: Write tests that verify the categorical laws for this morphism on a specific data type.
+2. **New data type**: Apply the morphism to a different recursive data type (e.g., apply catamorphism to a rose tree instead of a binary tree).
+3. **Comparison**: Implement the same computation using direct recursion and the morphism — measure whether the morphism version composes more cleanly.

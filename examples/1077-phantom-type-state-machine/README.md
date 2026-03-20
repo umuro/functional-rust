@@ -33,3 +33,9 @@ Rust uses zero-sized marker types (`struct Opened;`) and `PhantomData<State>` to
 2. **State transition:** OCaml returns a new value; Rust *moves* the old one, making reuse impossible
 3. **Method dispatch:** OCaml uses standalone functions with type constraints; Rust uses `impl` blocks on specific type parameters
 4. **Runtime comparison:** Both languages can also do runtime checks (enum/variant), but phantom types are zero-cost
+
+## Exercises
+
+1. Add a third state (e.g., `Locked`) to the phantom-type state machine and implement transitions that enforce valid state sequences at compile time.
+2. Apply the phantom-type state machine pattern to model a network connection lifecycle: `Disconnected → Connecting → Connected → Disconnecting → Disconnected`, preventing methods like `send` from being called in wrong states.
+3. Implement a builder for a configuration struct using phantom types to enforce that required fields (`host`, `port`) must be set before `build()` can be called.

@@ -2,45 +2,47 @@
 
 ---
 
-# 519: Closure Type Inference
+# Closure Type Inference
 
-**Difficulty:** 2  **Level:** Beginner-Intermediate
+## Problem Statement
 
-Rust infers closure types from context — but each closure has a unique anonymous type.
+Type inference for closures is a quality-of-life feature that distinguishes modern functional-leaning languages from older systems languages. In Rust, the compiler infers closure parameter and return types from the context in which the closure is first used — similar to how Hindley-Milner inference works in ML-family languages. However, unlike full HM inference, Rust locks in a closure's type at its first use site and rejects subsequent calls with different types. Understanding these rules helps avoid cryptic type errors when composing iterators and higher-order functions.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Closures in Rust don't have a written type — the compiler generates a unique, anonymous type for each one, even if two closures have identical signatures and bodies. This matters when you try to store multiple closures in a `Vec`, return them from functions, or pass them across type boundaries. Understanding how inference works — and where it breaks down — prevents confusing errors.
+- How Rust infers closure parameter types from their first use
+- Why closures have unique, anonymous types that must be captured via generics or boxing
+- When explicit type annotations are required and when they are redundant
+- Why the same closure cannot be called with two different argument types
+- How `apply<F, T, U>(f: F, x: T) -> U` generalizes over closure types
 
-It also matters for performance. When Rust can infer a concrete closure type at the call site, it monomorphizes the code: no vtable, no indirection, full inlining potential. When you use `dyn Fn`, you pay for dynamic dispatch. The compiler does the right thing automatically, but you need to understand what "the right thing" is.
+## Rust Application
 
-The first-use rule is a subtle footgun: a closure's input types are fixed by the first call. If you call `add(1i32, 2i32)`, the closure is now `fn(i32, i32) -> i32` forever. Trying to call it with `f64` later is a type error. This is different from generics, which can be instantiated multiple times.
+`apply<F, T, U>(f: F, x: T) -> U where F: Fn(T) -> U` is a fully generic HOF — the compiler infers `F`, `T`, and `U` at each call site. `inference_demo` shows `let double = |x| x * 2` — once called with `5i32`, the compiler locks `x: i32`. `consistent_types` shows the error that would arise if `process` were called with both `i32` and `f64`. `needs_annotation<T: Add>` requires explicit `|a: T, b: T|` because `T` is generic and cannot be inferred from expression shape alone.
 
-## The Intuition
+Key patterns:
+- Single-type-per-closure rule — once inferred, the type is fixed
+- `let f = |x| x + 1; let _: i32 = f(5);` — inference from usage
+- Generic bounds `T: std::ops::Add<Output = T> + Copy` enabling polymorphic closures
 
-Think of closure type inference as the compiler watching how you use the closure and then making a permanent decision. The first time you call it, the types are locked in. Every use after that must match. This is monomorphism by default — great for performance, occasionally surprising.
+## OCaml Approach
 
-The unique-type rule means `let f = |x: i32| x+1; let g = |x: i32| x+1;` gives `f` and `g` different types even though they look identical. You can't put them in a `[_; 2]` array unless you annotate both as `fn(i32) -> i32`.
+OCaml uses the Hindley-Milner algorithm with full let-polymorphism. Closures infer types independently at each use, and a value-restriction applies to prevent unsound generalization of mutable values. Unlike Rust, OCaml can generalize `let f = fun x -> x` to `'a -> 'a` — a genuinely polymorphic identity closure.
 
-## How It Works in Rust
-
-1. **Context inference** — `nums.iter().map(|&x| x * 2)` infers `x: i32` from `Vec<i32>`; no annotation needed.
-2. **First-use fixation** — `let add = |x, y| x + y; add(1i32, 2i32);` locks the type as `(i32, i32) -> i32`.
-3. **Explicit annotations** — annotate the parameter or return type when context is insufficient: `|s: &str| -> i64 { s.parse().unwrap_or(0) }`.
-4. **Unique anonymous types** — `f` and `g` defined separately have distinct types; use `impl Fn(i32) -> i32` or `fn(i32) -> i32` when you need a common type.
-5. **Generic functions** — `fn apply<F: Fn(T) -> U>(f: F, x: T) -> U` accepts any closure matching the signature; monomorphizes per call site.
-
-## What This Unlocks
-
-- Write closures in iterator chains without annotating every type — inference handles it.
-- Understand why `Vec<impl Fn>` doesn't work and why `Vec<Box<dyn Fn>>` does.
-- Confidently choose between monomorphized generics and dynamic dispatch based on your use case.
+```ocaml
+let apply f x = f x       (* 'a -> 'b inferred *)
+let double = fun x -> x * 2  (* int -> int inferred from * *)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Closure type | Inferred structurally; closures with same sig are compatible | Each closure has unique anonymous type; `impl Fn` or `Box<dyn Fn>` for abstraction |
-| Polymorphic closures | Natural; `let f x = x + 1` is polymorphic | Closures are monomorphic; type fixed on first use |
-| Type inference | Bidirectional; Hindley-Milner | Unidirectional; inferred from context and first use |
-| Collections of closures | `(int -> int) list` directly | `Vec<Box<dyn Fn(i32) -> i32>>` needed for heterogeneous closures |
+1. **Polymorphic closures**: OCaml can produce a polymorphic closure `'a -> 'a`; Rust closures have a single unique type — true polymorphism requires a trait bound on a generic parameter.
+2. **Lock-in rule**: Rust fixes the closure type at first use, making later calls with different types a hard error; OCaml unifies types across uses in the same scope.
+3. **Type annotation frequency**: Rust closures rarely need annotations when used immediately with concrete types; OCaml type annotations are often omitted entirely due to HM inference.
+4. **Error messages**: Rust type errors for closures point to the conflicting use site; OCaml errors often point to the unification failure between two constraints, which can be further away.
+
+## Exercises
+
+1. **Double then square**: Write `let f = |x| x * 2` and compose it with `let g = |x| x * x` using `apply`, verifying that all types are inferred with no annotations.
+2. **Generic apply2**: Implement `apply2<F, A, B, C>(f: F, a: A, b: B) -> C where F: Fn(A, B) -> C` and use it with both a named function and a closure.
+3. **Annotation exploration**: Try giving `let f = |x| x + 1` an explicit return type `-> i64` and verify that calling it with an `i32` literal causes a type error, explaining why.

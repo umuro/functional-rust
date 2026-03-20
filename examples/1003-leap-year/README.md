@@ -1,145 +1,45 @@
-# Example #4: Leap Year Validator
+[![hightechmind.io](https://img.shields.io/badge/hightechmind.io-functional--rust-blue)](https://hightechmind.io)
 
-**Topic:** Boolean Logic with Divisibility Rules  
-**Category:** Pattern Matching & Logic  
-**Difficulty:** Beginner
+# 1003 — Leap Year
 
-## Overview
+## Problem Statement
 
-This example demonstrates converting a simple boolean expression from OCaml to Rust. A leap year is determined by a clear set of rules:
-
-1. If divisible by **400** → leap year
-2. Else if divisible by **100** → not a leap year
-3. Else if divisible by **4** → leap year
-4. Otherwise → not a leap year
+Determine whether a year is a leap year using the Gregorian calendar rules: a year is a leap year if it is divisible by 400, or divisible by 4 but not divisible by 100. Implement `is_leap_year(year: u32) -> bool` as a single boolean expression and verify on 2000 (leap), 1900 (not), 2004 (leap), 2001 (not).
 
 ## Learning Outcomes
 
-After studying this example, you will understand:
+- Express the Gregorian leap year rule as a compact boolean expression
+- Use `%` modulo and `&&`/`||` with correct precedence (no extra parentheses needed)
+- Write tests covering all four rule branches: 400-divisible, 100-divisible, 4-divisible, none
+- Understand that `(year % 400 == 0) || (year % 4 == 0 && year % 100 != 0)` is the canonical form
+- Map Rust's `u32` year and `%` operator to OCaml's `int` and `mod`
+- Recognise that clean single-expression logic eliminates branching error
 
-- How to express complex boolean logic idiomatically in Rust
-- Two different approaches to the same problem (expression vs. guards)
-- The equivalence between OCaml's `mod` operator and Rust's `%` operator
-- How to write comprehensive unit tests in Rust
-- How Rust's type system and borrowing rules affect simple functions
-- The similarities and differences in how OCaml and Rust express predicates
+## Rust Application
+
+`is_leap_year(year: u32) -> bool` returns `(year % 400 == 0) || (year % 4 == 0 && year % 100 != 0)`. The `&&` operator binds tighter than `||`, making the parentheses around each operand of `||` clear but technically optional. The `u32` type prevents negative year values, which simplifies the domain. Tests cover all four cases: year 2000 is divisible by 400 (leap), 1900 is divisible by 100 but not 400 (not leap), 2004 is divisible by 4 but not 100 (leap), and 2001 is not divisible by 4 (not leap).
 
 ## OCaml Approach
 
-```ocaml
-let leap_year year =
-  (year mod 400 = 0) || (year mod 4 = 0 && year mod 100 <> 0)
-```
+`let leap_year year = (year mod 400 = 0) || (year mod 4 = 0 && year mod 100 <> 0)` is the direct translation. The logic is identical; only the syntax differs: `mod` instead of `%`, `=` instead of `==`, `<>` instead of `!=`. Both implementations are O(1) and branchless.
 
-**Characteristics:**
-- Declarative: expresses the condition directly as a boolean expression
-- Uses `mod` for modulo operation
-- Uses `||` for logical OR and `&&` for logical AND
-- Uses `<>` for "not equal" comparison
-- No explicit type annotation (inferred as `int -> bool`)
-- Very compact and readable
+## Key Differences
 
-## Rust Approach
+| Aspect | Rust | OCaml |
+|--------|------|-------|
+| Modulo | `year % 4` | `year mod 4` |
+| Equality | `== 0` | `= 0` |
+| Not equal | `!= 0` | `<> 0` |
+| Year type | `u32` (unsigned) | `int` (signed) |
+| Boolean ops | `&&`, `\|\|` | `&&`, `\|\|` |
+| Branchless | Yes | Yes |
 
-### Idiomatic Expression (Primary)
+This is one of the cleanest cross-language demonstrations: the algorithm is identical, the syntax differs only in operator spelling. Use it to show that problem-solving translates directly between languages.
 
-```rust
-pub fn is_leap_year(year: u32) -> bool {
-    (year % 400 == 0) || (year % 4 == 0 && year % 100 != 0)
-}
-```
+## Exercises
 
-**Characteristics:**
-- Nearly identical to OCaml in structure
-- Uses `%` operator for modulo (same semantics as OCaml's `mod`)
-- Uses `==` for equality and `!=` for "not equal"
-- Explicit return type annotation (`-> bool`)
-- Function parameters require type annotations (`year: u32`)
-- Clean and direct, minimal overhead
-
-### Alternative Implementation (Guard Clauses)
-
-```rust
-pub fn is_leap_year_guards(year: u32) -> bool {
-    if year % 400 == 0 {
-        return true;
-    }
-    if year % 100 == 0 {
-        return false;
-    }
-    year % 4 == 0
-}
-```
-
-**Characteristics:**
-- Uses early returns and guard clauses (imperative style)
-- More verbose but sometimes clearer intent
-- Guards fail-fast: if first condition is true, return immediately
-- The last line is an implicit return (idiomatic Rust)
-- Easier to add side effects (logging, debugging) if needed
-
-## Key Differences Between OCaml and Rust
-
-### 1. **Type System Explicitness**
-   - **OCaml:** Types are inferred; no annotation needed
-   - **Rust:** Function signatures require explicit types for parameters and return values
-   - **Benefit in Rust:** Code is self-documenting and compiler catches type errors early
-
-### 2. **Operators and Syntax**
-   - **OCaml:** `mod` (word), `<>` (not equal), `||` (or), `&&` (and)
-   - **Rust:** `%` (symbol), `!=` (not equal), `||` (or), `&&` (and)
-   - **Similarity:** Both use short-circuit evaluation for `&&` and `||`
-   - **Note:** Rust's `%` works identically to OCaml's `mod` for positive integers
-
-### 3. **Integer Types**
-   - **OCaml:** Uses a single `int` type (typically 63-bit on 64-bit systems)
-   - **Rust:** Requires explicit integer type (`u32`, `i32`, `u64`, etc.)
-   - **Benefit in Rust:** Prevents accidental overflow and clarifies intent (unsigned vs. signed)
-
-### 4. **Function Definitions**
-   - **OCaml:** `let` keyword, inferred types, minimal ceremony
-   - **Rust:** `fn` keyword, explicit types, visibility modifiers (`pub`)
-   - **Visibility:** Rust requires explicit `pub` to export; OCaml functions are public by default
-
-### 5. **Testing Approach**
-   - **OCaml:** Uses `assert` statements scattered in code or in separate test files
-   - **Rust:** Has a built-in test framework (`#[test]` attribute, `assert!` macros)
-   - **Benefit in Rust:** Tests are integrated into the library, run with `cargo test`
-
-## Code Structure
-
-- **`src/lib.rs`** - Main implementation with both approaches and comprehensive tests
-- **`example.rs`** - Standalone executable demonstrating both functions
-- **`example.ml`** - OCaml version with equivalent tests
-- **`Cargo.toml`** - Package manifest for Rust
-- **`COMPARISON.md`** - Detailed side-by-side analysis
-
-## Running the Code
-
-### Rust
-
-```bash
-# Run tests
-cargo test -p example-1003-leap-year
-
-# Run the example executable
-rustc --edition 2021 example.rs && ./example
-```
-
-### OCaml
-
-```bash
-# Compile and run with assertions
-ocamlopt example.ml -o leap_year_ml && ./leap_year_ml
-
-# Or with the bytecode compiler
-ocamlc example.ml -o leap_year_ml && ./leap_year_ml
-```
-
-## Key Insights for Functional Programmers
-
-1. **Expression-Oriented:** Both languages excel at expressing predicates as boolean expressions
-2. **Pattern Matching:** While this example doesn't use it, both languages support pattern matching for more complex conditions
-3. **Immutability:** Both languages handle immutable values naturally; `year` is never modified
-4. **No Side Effects:** The function is pure—same input always produces same output
-5. **Type Safety:** Rust's explicit types catch errors earlier; OCaml's inference is more concise
+1. Write a version using a `match` on `(year % 400, year % 100, year % 4)` tuples and compare readability.
+2. Implement `days_in_year(year: u32) -> u32` that returns 366 for leap years and 365 for non-leap years.
+3. Write `next_leap_year(year: u32) -> u32` that finds the first leap year strictly after the given year.
+4. Count leap years in a range using `(1..=2100).filter(|&y| is_leap_year(y)).count()`.
+5. In OCaml, implement `leap_years_between : int -> int -> int list` that returns all leap years in the inclusive range.

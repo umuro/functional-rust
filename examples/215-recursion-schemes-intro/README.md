@@ -33,3 +33,9 @@ Rust defines `enum ExprF<A>` as the base functor with a `map` method. The catamo
 2. **Functor map:** OCaml `fmap` is a standalone function; Rust `ExprF::map` is a method, matching idiomatic Rust style.
 3. **Algebra representation:** OCaml uses named functions; Rust uses `Fn(ExprF<A>) -> A` closures or function pointers — same flexibility, different syntax.
 4. **Monomorphisation:** Rust generates a specialised `cata` for each algebra at compile time, so there is no dynamic dispatch or boxing penalty.
+
+## Exercises
+
+1. Implement `anamorphism` (unfold) — the dual of catamorphism — that generates a recursive structure from a seed value, and use it to build a list of Fibonacci numbers up to a limit.
+2. Implement `hylomorphism` (a compose of ana and cata) and use it to implement Mergesort: the unfold splits the list, the fold merges sorted sublists.
+3. Implement `paramorphism` — a fold that also provides the original sub-structure at each step — and use it to implement a `tails` function that returns all suffixes of a list.

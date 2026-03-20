@@ -2,45 +2,47 @@
 
 ---
 
-# 551: Rc and Weak for Cycles
+# Rc and Weak for Shared Ownership
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Break reference cycles with non-owning weak pointers.
+Tree and graph structures require nodes to reference each other, but reference cycles prevent reference-counted memory from being freed. A tree node holding a strong `Rc` reference to its parent and the parent holding a strong `Rc` to its children creates a cycle — the counts never reach zero. The solution: break cycles with `Weak<T>` — a non-owning reference that does not prevent deallocation. `Rc::downgrade` creates a `Weak`; `weak.upgrade()` returns `Option<Rc<T>>` — `None` if the target has been freed. This pattern is fundamental in GUI widget trees, DOM implementations, and doubly-linked lists.
 
-## The Problem This Solves
+## Learning Outcomes
 
-`Rc<T>` uses reference counting: when the count reaches zero, the value is dropped. This works perfectly for trees where ownership flows in one direction. But add a back-pointer — a child holding a reference to its parent — and you have a cycle. Both sides keep the other's count above zero. Neither ever drops. You have a memory leak.
+- How `Rc<T>` provides shared ownership with reference counting in single-threaded code
+- Why `Weak<T>` breaks cycles: it does not increment the strong reference count
+- How `Rc::downgrade(parent)` and `weak.upgrade()` work together
+- How `Rc<RefCell<T>>` combines shared ownership with interior mutability for tree nodes
+- Where this pattern appears: GUI trees, DOM, doubly-linked lists, observer patterns
 
-This problem appears in every bidirectional data structure: trees with parent pointers, doubly-linked lists, observer patterns where subjects know about their observers, and graph nodes that reference neighbors. In garbage-collected languages, the GC handles cycles. In Rust's ownership model, you need to break cycles explicitly.
+## Rust Application
 
-`Weak<T>` is a non-owning reference: it doesn't increment the strong count. You create one with `Rc::downgrade(&rc)`. When all strong `Rc<T>` references drop, the value is deallocated — even if `Weak<T>` references remain. Those weak refs become "dead": `weak.upgrade()` returns `None`. This makes the pattern explicit: the owner holds a strong `Rc`, the back-pointer holds a `Weak`.
+`Node` holds `parent: RefCell<Weak<Node>>` and `children: RefCell<Vec<Rc<Node>>>`. `add_child` calls `Rc::downgrade(parent)` to store a weak parent reference. `parent()` calls `weak.upgrade()` — returning `None` if the parent was dropped. Since `Weak` does not increment the strong count, dropping the root node correctly frees the tree even with parent pointers. `Rc::new(Node { ... })` creates reference-counted nodes; `RefCell` provides interior mutability for the child list and parent pointer.
 
-## The Intuition
+Key patterns:
+- `Rc::downgrade(&rc)` — create `Weak<T>`, non-owning pointer
+- `weak.upgrade()` — `Option<Rc<T>>`, `None` if dropped
+- `RefCell<Weak<Node>>` — interior mutable weak reference
 
-Think of `Rc` as owning a house and `Weak` as having a key to it. Owning the house keeps it standing. Holding a key doesn't. Once all the owners sell and the house is demolished, your key opens nothing — `upgrade()` returns `None`. The key doesn't prevent demolition.
+## OCaml Approach
 
-In a tree: parent owns its children (`Rc`). Children have a key to their parent (`Weak`). The tree is alive as long as someone holds the root. Drop the root, everything falls.
+OCaml's GC handles cycles automatically — no weak references needed for simple tree structures. The GC can collect cycles of `ref`-connected values. Weak references exist in OCaml (`Weak` module) for cache-like use cases where you want GC to collect entries:
 
-## How It Works in Rust
-
-1. **Downgrade to weak** — `Rc::downgrade(&strong)` creates a `Weak<T>` without incrementing the strong count.
-2. **Upgrade to check liveness** — `weak.upgrade()` returns `Option<Rc<T>>`: `Some` if the value is still alive, `None` if it was dropped.
-3. **Tree parent pattern** — parent field is `Option<Weak<RefCell<Node>>>`: weak because children don't own their parent.
-4. **Reference count inspection** — `Rc::strong_count(&rc)` and `Rc::weak_count(&rc)` let you observe the counts; useful for debugging cycles.
-5. **Cycle prevention check** — wrap in a block: create `Rc`, downgrade to `Weak`, drop the `Rc`; `upgrade()` then returns `None`, confirming no cycle.
-
-## What This Unlocks
-
-- Build bidirectional tree and graph structures without memory leaks.
-- Implement observer/listener patterns where subjects don't own their observers.
-- Reason precisely about object lifetimes in data structures with back-references.
+```ocaml
+type 'a node = { value: 'a; parent: 'a node option ref; children: 'a node list ref }
+(* Cycles are handled by GC — no Weak needed for correctness *)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Shared ownership | GC; no explicit reference counting | `Rc<T>`: single-threaded reference counting |
-| Cycles | GC detects and collects cycles | `Rc` leaks cycles; must use `Weak` to break them |
-| Non-owning reference | Mutable weak refs via `Weak` module or custom | `Weak<T>`: explicit non-owning handle; `upgrade()` → `Option` |
-| Back-pointers in trees | Record field; GC handles liveness | `Option<Weak<RefCell<Node>>>`: explicit, non-owning |
+1. **Cycle handling**: Rust `Rc` cannot collect cycles — `Weak` breaks them; OCaml's tracing GC collects cycles of regular references without special handling.
+2. **Upgrade cost**: `weak.upgrade()` is an atomic compare-and-increment; OCaml `Weak.get` checks liveness via the GC; both are O(1) but with different overhead.
+3. **Explicit cycle breaking**: Rust programs must consciously choose which direction of a bidirectional relationship uses `Weak`; OCaml programs can use strong references in both directions.
+4. **Arc vs Rc**: For multi-threaded code, Rust uses `Arc<Mutex<T>>` with `Arc::downgrade`; OCaml uses `Mutex.t` and GC-managed values in OCaml 5.x domains.
+
+## Exercises
+
+1. **Graph with cycles**: Implement a directed graph using `HashMap<usize, Rc<RefCell<GraphNode>>>` where each node holds `Vec<Weak<RefCell<GraphNode>>>` edges to prevent retain cycles.
+2. **Observer cleanup**: Build an observable value using `Vec<Weak<dyn Fn(&T)>>` for listeners — when the listener is dropped, its `Weak` returns `None` and is automatically removed from the list.
+3. **Drop order verification**: Create a parent node and two children, then drop the parent first — verify (using a `Drop` impl with `println!`) that the children are also dropped despite the parent backpointer.

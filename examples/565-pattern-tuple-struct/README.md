@@ -2,79 +2,51 @@
 
 ---
 
-# 565: Tuple Struct Patterns
+# Tuple Struct Patterns
 
-**Difficulty:** 2  **Level:** Beginner
+## Problem Statement
 
-Destructure newtype and multi-field tuple structs in patterns — get type safety without accessor boilerplate.
+Tuple structs serve two roles: lightweight structs with positional fields, and newtypes — single-field wrappers that create type-distinct values. The newtype pattern (`struct Meters(f64)`) prevents accidentally passing `Seconds` where `Meters` is expected, even though both are `f64` internally. Pattern matching on tuple structs extracts fields directly, either in `match` arms, `let` bindings, or function parameters. This is common in unit systems (NASA Mars Climate Orbiter crashed from a meters/feet confusion), domain modeling, and type-safe ID types.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Primitive obsession is the bug where your function takes three `f64` arguments — distance, time, and speed — and nothing stops you from passing them in the wrong order. At the call site they're all just `f64`. The compiler can't help you. Tests catch it only if you write them right.
+- How `let Point(x, y) = p;` destructures a tuple struct
+- How `fn f(Point(x, y): &Point)` puts destructuring directly in function parameters
+- How `Meters(m)` in a pattern extracts the inner value while discarding the wrapper
+- How the newtype pattern (`struct Meters(f64)`) prevents type confusion at compile time
+- Where tuple struct patterns appear: unit conversions, typed IDs, domain modeling
 
-Tuple structs are the lightweight fix. `Meters(f64)` and `Seconds(f64)` are distinct types. `speed(seconds, meters)` won't compile. You pay almost nothing: no field names, just a wrapper type. But to use the inner value, you have to destructure — and that's where patterns shine.
+## Rust Application
 
-The same technique applies whenever you want branded primitives: `UserId(u64)`, `Rgb(u8, u8, u8)`, `NonEmpty(String)`. You define one type, one pattern, and you're done.
+`get_coords(p: &Point) -> (i32, i32)` uses `let Point(x, y) = p;`. `add_points` takes two `&Point` parameters with destructuring in the signature. `meters_to_feet(Meters(m): Meters) -> f64` extracts `m` in the parameter — the `Meters` wrapper prevents calling with a `Seconds` value. `describe_color(Color(r, g, b): &Color)` destructures all three components for the match.
 
-## The Intuition
+Key patterns:
+- `TupleStruct(field1, field2)` in `let` and `match`
+- Parameter destructuring: `fn f(Wrapper(inner): Wrapper)`
+- `_` for unused fields: `TupleStruct(first, _)` 
+- Newtype unwrap: `Meters(m)` extracts `f64` from `Meters`
 
-A tuple struct is just a struct with positional fields — `struct Rgb(u8, u8, u8)` is like `struct Rgb { 0: u8, 1: u8, 2: u8 }` without the field names. The pattern mirrors the constructor: if you built it with `Rgb(255, 0, 0)`, you unpack it with `Rgb(r, g, b)`.
+## OCaml Approach
 
-This is OCaml's single-constructor type — `type meters = Meters of float` — used as a newtype wrapper. The Rust version is slightly more ergonomic because it works directly in function parameter position.
+OCaml achieves newtypes with abstract module signatures or single-constructor variants:
 
-The pattern `fn add(Meters(a): Meters, Meters(b): Meters)` reads as: "this function takes something shaped like `Meters(a)` and `Meters(b)`." The destructuring happens right at the boundary. No intermediate variables, no `.0` accessor noise.
-
-## How It Works in Rust
-
-```rust
-#[derive(Debug, Clone, Copy, PartialEq)]
-struct Meters(f64);
-
-#[derive(Debug, Clone, Copy, PartialEq)]
-struct Seconds(f64);
-
-#[derive(Debug, Clone, Copy)]
-struct Rgb(u8, u8, u8);
-
-// Destructure in function parameter — can't mix up types
-fn add(Meters(a): Meters, Meters(b): Meters) -> Meters {
-    Meters(a + b)
-}
-
-fn speed(Meters(d): Meters, Seconds(t): Seconds) -> f64 {
-    d / t  // d and t are plain f64 — safe to combine here
-}
-
-// Multi-field tuple struct
-fn to_gray(Rgb(r, g, b): Rgb) -> Rgb {
-    let avg = ((r as u16 + g as u16 + b as u16) / 3) as u8;
-    Rgb(avg, avg, avg)
-}
-
-// Destructure in let binding
-let Meters(total) = add(Meters(100.0), Meters(50.0));
-println!("{:.1} m", total);  // 150.0 m
-
-// Destructure in match
-match color {
-    Rgb(255, 0, 0) => "pure red",
-    Rgb(r, g, b) if r == g && g == b => "gray",
-    _ => "other",
-}
+```ocaml
+type meters = Meters of float
+type seconds = Seconds of float
+let meters_to_feet (Meters m) = m *. 3.28084
 ```
 
-## What This Unlocks
-
-- **Type-safe units** — `Meters`, `Seconds`, `Celsius`, `UserId` catch transposition errors at compile time.
-- **Zero-cost abstraction** — tuple structs compile to the same memory layout as the inner type; no overhead.
-- **Pattern matching on shape** — combine with match to branch on specific values (`Rgb(255, 0, 0)`) or extract all fields (`Rgb(r, g, b)`).
+The `Meters of float` pattern is identical in concept to Rust's `struct Meters(f64)`.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Definition | `type meters = Meters of float` | `struct Meters(f64);` |
-| Constructor | `Meters 3.0` | `Meters(3.0)` |
-| Destructure in `let` | `let Meters n = x in ...` | `let Meters(n) = x;` |
-| Destructure in param | `let f (Meters n) = ...` | `fn f(Meters(n): Meters)` |
-| Multi-field | `type rgb = RGB of int * int * int` | `struct Rgb(u8, u8, u8)` |
+1. **Syntax**: Rust `struct Meters(f64)` defines a tuple struct; OCaml `type meters = Meters of float` defines a single-constructor variant — both serve the newtype purpose.
+2. **Exhaustiveness**: OCaml `match` on a single-constructor variant is always exhaustive; Rust `let Meters(m) = val` is irrefutable (always succeeds).
+3. **Type safety**: Both prevent accidentally mixing `Meters` and `Seconds` — a compile error in both languages.
+4. **Transparency**: Rust tuple struct fields can be `pub` or private; OCaml's abstraction is controlled via module signatures.
+
+## Exercises
+
+1. **Temperature newtype**: Create `struct Celsius(f64)` and `struct Fahrenheit(f64)` with conversion functions that destructure in parameters; verify the compiler rejects passing `Celsius` to a `Fahrenheit` function.
+2. **Typed ID**: Implement `struct UserId(u64)` and `struct PostId(u64)` and write a `get_post_for_user(uid: UserId, pid: PostId) -> String` function — verify `(pid, uid)` argument order fails at compile time.
+3. **Two-field tuple struct**: Create `struct Range(i32, i32)` with methods `contains(&self, n: i32) -> bool` and `overlap(&self, Range(other_start, other_end): &Range) -> bool` using tuple struct destructuring.

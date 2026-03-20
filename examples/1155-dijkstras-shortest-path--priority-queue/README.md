@@ -29,3 +29,9 @@ Rust uses `BinaryHeap<Reverse<(u32, &str)>>` — a standard max-heap wrapped wit
 2. **Distance map:** OCaml's `SMap` is an immutable functional map returned from each recursion; Rust mutates a `HashMap` in place.
 3. **Stale entries:** OCaml removes the exact entry before processing; Rust uses lazy deletion — stale entries stay in the heap and are skipped when popped.
 4. **Borrow checker:** Rust cannot hold a shared borrow of `dist` (for `get`) and a mutable borrow (for `insert`) simultaneously in one iterator chain — collecting updates first resolves this.
+
+## Exercises
+
+1. Extend the implementation to support weighted undirected graphs (edges listed once but traversable in both directions) and verify shortest paths are symmetric.
+2. Add a `reachable_from` function that returns the set of all nodes reachable from a given source using the Dijkstra search frontier.
+3. Use the shortest-path implementation to solve a grid-based pathfinding problem: represent a 2D grid as a graph where blocked cells have infinite-weight edges and find the shortest route from top-left to bottom-right.

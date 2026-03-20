@@ -2,75 +2,52 @@
 
 ---
 
-# 530: Closures in Benchmarking
+# Closures in Benchmarking
 
-**Difficulty:** 2  **Level:** Beginner-Intermediate
+## Problem Statement
 
-Use closures to wrap workloads for repeatable measurement — and `black_box` to keep the compiler honest.
+Micro-benchmarking is notoriously tricky: compilers optimize aggressively, CPUs speculate and prefetch, and without careful technique, what you measure may not reflect what actually runs in production. Closures are central to benchmarking APIs because they encapsulate the code under test while providing the benchmark harness control over setup, teardown, and iteration. `std::hint::black_box` prevents the optimizer from eliminating computations whose results are discarded. This example shows how to build closure-based benchmarking utilities similar to `criterion`.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Writing a benchmark is easy. Writing a *correct* benchmark is surprisingly hard. The most common mistake: timing code that the compiler has silently deleted. LLVM sees that your computation's result is never used, concludes the entire computation is dead code, and removes it. Your benchmark reports sub-nanosecond timings for "doing nothing" — and you publish those numbers.
+- How `FnMut() -> T` encapsulates the code under test in a reusable way
+- Why `std::hint::black_box` is essential for preventing dead code elimination
+- How warmup iterations reduce JIT and cache effects in micro-benchmarks
+- How `bench_compare` takes two `FnMut` closures and reports their relative performance
+- How setup and teardown closures enable fair measurement of just the code under test
 
-The second most common mistake: running the workload once and reporting that single measurement. One sample has no statistical validity. Cache effects, OS scheduling, CPU throttling, and branch predictor state all introduce variance that a single measurement cannot distinguish from signal.
+## Rust Application
 
-Closures solve both problems elegantly. A closure wraps the workload into a repeatable unit the harness can call N times. `std::hint::black_box` wraps the inputs and outputs, creating an opaque barrier the compiler cannot see through — it cannot prove the result is unused, so it cannot delete the computation. Combined with warmup iterations, you get a statistically sound measurement with minimal boilerplate.
+`bench<T, F: FnMut() -> T>(name, iterations, f)` runs warmup (10% of iterations), then times the main loop, calling `black_box(f())` to prevent optimization. `bench_compare` calls `bench` on two closures and prints their ratio. `consume<T>(value: T) -> T` is an alias for `black_box`. `bench_with_setup<S, T, Setup, Test, Teardown>` accepts three closures: one to create test data, one to run the test, and one to clean up — measuring only the test phase.
 
-## The Intuition
+Key patterns:
+- `black_box(f())` — opaque barrier preventing optimization of the benchmark body
+- Warmup loop before timing: `for _ in 0..iterations/10 { black_box(f()); }`
+- Generic `FnMut` — supports both closures and named functions as benchmarks
 
-A benchmark closure is a promise: "here is a piece of work; run it as many times as you need." The harness holds the closure, calls it repeatedly with a timer around the loop, and reports statistics. The closure captures setup data (input arrays, parameters) so each iteration gets fresh-looking inputs without reconstructing them from scratch.
+## OCaml Approach
 
-`black_box(x)` is a fence that says "x is observable." The compiler treats it as if x was sent to some external system it can't inspect. Wrapping both inputs and the result ensures the computation isn't optimised away: `black_box(f(black_box(input)))`.
+OCaml benchmarking uses the `Core_bench` or `Bechamel` library. Benchmarks are registered as closures:
 
-## How It Works in Rust
-
-```rust
-use std::hint::black_box;
-use std::time::Instant;
-
-fn bench<T, F: FnMut() -> T>(name: &str, iters: usize, mut f: F) {
-    // Warmup: prime instruction cache and branch predictor
-    for _ in 0..iters / 10 {
-        black_box(f());
-    }
-
-    let start = Instant::now();
-    for _ in 0..iters {
-        black_box(f());  // result is "observed" — compiler keeps the computation
-    }
-    let per_iter = start.elapsed() / iters as u32;
-    println!("{name}: {per_iter:?}/iter");
-}
-
-// Usage: closure captures the input data, called once per iteration.
-let data: Vec<i64> = (0..1000).collect();
-bench("sum", 100_000, || {
-    black_box(data.iter().sum::<i64>())
-});
-
-// Parameterised bench: test the same algorithm at different input sizes.
-fn bench_scaling<F: Fn(usize) -> i64>(name: &str, sizes: &[usize], f: F) {
-    for &n in sizes {
-        bench(&format!("{name} n={n}"), 10_000, || f(black_box(n)));
-    }
-}
+```ocaml
+let bench name f =
+  let t0 = Unix.gettimeofday () in
+  for _ = 1 to 1000 do ignore (f ()) done;
+  let t1 = Unix.gettimeofday () in
+  Printf.printf "%s: %.2fus\n" name ((t1 -. t0) /. 1000.0 *. 1e6)
 ```
 
-For production benchmarking, use `criterion` (statistical analysis, HTML reports, regression detection) or `divan` (attribute macros, lower boilerplate). Both use the same `black_box` + warmup + many-iterations model internally.
-
-## What This Unlocks
-
-- **Correct measurements**: `black_box` on inputs and outputs ensures the benchmark actually executes the code you intend to measure.
-- **Composable benchmark suites**: A bench function that accepts `FnMut() -> T` works for any workload — sort, hash, parse, compute. One harness, many benchmarks.
-- **Scalability analysis**: Closure factories for different input sizes let you plot complexity curves — does your algorithm scale as `O(n)` or `O(n log n)`?
+OCaml lacks a `black_box` equivalent in stdlib — `ignore` or `Sys.opaque_identity` is used instead.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Benchmark closure | `fun () -> computation` | `|| { black_box(computation()) }` |
-| Prevent optimisation | `Sys.opaque_identity` | `std::hint::black_box` |
-| Repeated execution | Manual `for` loop | Framework calls `iter(|| ...)` |
-| Setup data in closure | Closure captures | `move ||` captures owned data |
-| Parameterised bench | Multiple separate functions | Closure factory per parameter |
-| Production framework | `Core_bench` | `criterion`, `divan` |
+1. **Dead code prevention**: Rust has `std::hint::black_box` as a stable stdlib function; OCaml uses `Sys.opaque_identity` (internal, not guaranteed stable) or `ignore` which the optimizer may eliminate.
+2. **Timing granularity**: Rust's `std::time::Instant` has nanosecond resolution; OCaml's `Unix.gettimeofday` has microsecond resolution on most platforms.
+3. **Generic test body**: Rust's `FnMut() -> T` allows the benchmark to observe the return value via `black_box`; OCaml's `unit -> unit` discards the result, potentially allowing optimization.
+4. **Library ecosystem**: Rust has `criterion` (statistics-based) and `divan` as mature benchmark frameworks; OCaml has `Core_bench` from Jane Street and `Bechamel`.
+
+## Exercises
+
+1. **Statistics bench**: Extend `bench` to return not just total duration but also mean, standard deviation, and min/max per iteration over multiple runs.
+2. **Comparison macro**: Write a macro `bench_vs!(name1 => expr1, name2 => expr2, iterations: N)` that benchmarks two expressions and asserts the ratio is within a given tolerance.
+3. **Setup benchmark**: Use `bench_with_setup` to benchmark `Vec::sort` vs `Vec::sort_unstable` on random data — ensure the setup closure generates a new random vector each iteration so sorting is never pre-sorted.

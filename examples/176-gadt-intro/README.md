@@ -2,72 +2,49 @@
 
 ---
 
-# 176: Introduction to GADTs
+# Introduction to GADTs
 
-**Difficulty:** ⭐⭐⭐  **Level:** Advanced
+## Problem Statement
 
-Simulate Generalized Algebraic Data Types in Rust using phantom types, so different enum variants can carry provably different return types.
+Generalized Algebraic Data Types (GADTs) extend ordinary algebraic data types by allowing each constructor to specify a different return type for the type parameter. This enables type-safe expression trees where `eval` on `int expr` always returns `int`, not `int | bool`. GADTs were introduced in OCaml to bring the expressiveness of dependent types to mainstream functional programming. Rust simulates them via phantom types and sealed trait hierarchies.
 
-## The Problem This Solves
+## Learning Outcomes
 
-In a normal Rust enum, every variant collapses to the same type. If you build an expression tree with `enum Expr { Int(i64), Bool(bool), Add(Box<Expr>, Box<Expr>) }`, the `eval` function must return `Box<dyn Any>` — you've thrown away type information and now need runtime casts. This means `Add(Bool(true), Int(5))` is representable, and its wrongness is only caught at runtime.
+- Understand what GADTs are and why they extend ordinary ADTs
+- Learn Rust's GADT simulation: phantom type parameters + sealed marker types
+- See how the `ExprType` sealed trait restricts valid type indices
+- Understand why Rust's simulation requires `unreachable!()` branches that OCaml's GADTs eliminate
 
-Generalized Algebraic Data Types (GADTs) solve this by letting each constructor carry its own type index. In OCaml, `Int : int -> int expr` is a constructor whose type says "I produce an `int expr`". The type system can then prove that `eval : 'a expr -> 'a` — call `eval` on an `int expr` and you get an `int`; call it on a `bool expr` and you get a `bool`. No casts, no `Any`.
+## Rust Application
 
-The payoff is an expression tree where the type of the result is part of the node's type. You literally cannot write `Add(Bool(true), Int(5))` — the compiler rejects it before your program ever runs.
+The sealed module defines `ExprType` as a private supertrait, implemented only for `i64` and `bool`. `ExprInner` is an untyped enum; `Expr<T: ExprType>` wraps it with a phantom `T`. Smart constructors (`int_lit`, `bool_lit`, `add`, `equal`) set `T` correctly — the compiler rejects constructing an `Expr<bool>` with `AddF` because `add` returns `Expr<i64>`. The `eval` function on `Expr<T>` must handle all `ExprInner` variants, with `unreachable!()` for impossible cases guaranteed by the phantom type.
 
-## The Intuition
+## OCaml Approach
 
-Think of a vending machine with typed buttons. A standard enum is like a machine where all buttons return a bag of "something" — you have to reach in and hope it's what you wanted. A GADT is like a machine where button A returns a `Drink` and button B returns a `Snack`, guaranteed by the machine's own type. The *return type* of each button is built into the button's type signature.
-
-In Rust we don't have native GADTs, but we can get close with **phantom types**: `Expr<T>` is a struct that carries a `PhantomData<T>`. The type `T` is never stored — it takes zero bytes — but the compiler tracks it statically. Smart constructors enforce the rules: `Expr::<i64>::int(5)` only compiles when building an integer node. `Expr::<bool>::bool_val(true)` only compiles for booleans. The type parameter flows through the tree and prevents mixing.
-
-## How It Works in Rust
-
-```rust
-use std::marker::PhantomData;
-
-// The phantom type T says "what this expression evaluates to"
-struct Expr<T> {
-    inner: ExprInner,       // actual data, untyped
-    _phantom: PhantomData<T>, // type tag — zero bytes
-}
-
-// Only specific impl blocks exist:
-impl Expr<i64> {
-    fn int(n: i64) -> Self { /* only callable for i64 */ }
-    fn add(a: Expr<i64>, b: Expr<i64>) -> Expr<i64> { /* enforces both i64 */ }
-    fn eval(&self) -> i64 { /* return type matches phantom */ }
-}
-
-impl Expr<bool> {
-    fn bool_val(b: bool) -> Self { /* only callable for bool */ }
-    fn eval(&self) -> bool { /* return type matches phantom */ }
-}
-
-// This compiles:
-let e: Expr<i64> = Expr::add(Expr::int(3), Expr::int(4));
-let result: i64 = e.eval(); // statically known: returns i64
-
-// This does NOT compile — types mismatch:
-// Expr::add(Expr::int(3), Expr::bool_val(true));
-//                         ^^^^^^^^^^^^^^^^^ expected Expr<i64>, found Expr<bool>
+OCaml's GADTs express this directly:
+```ocaml
+type _ expr =
+  | IntLit : int -> int expr
+  | BoolLit : bool -> bool expr
+  | Add : int expr * int expr -> int expr
+  | Equal : int expr * int expr -> bool expr
+let rec eval : type a. a expr -> a = function
+  | IntLit n -> n
+  | BoolLit b -> b
+  | Add (l, r) -> eval l + eval r
+  | Equal (l, r) -> eval l = eval r
 ```
-
-The key insight: `PhantomData<T>` lets you brand a struct with a type without storing any value of that type. Different `impl` blocks on different `Expr<T>` specializations enforce GADT-like rules.
-
-## What This Unlocks
-
-- **Type-safe ASTs** for compilers, query builders, template engines — where you need to know the output type of each node statically.
-- **Typed serialization/deserialization** — a schema type parameterized by its decoded value (`Schema<User>` decodes to `User`).
-- **Embedded DSLs** where invalid programs are impossible to represent — the host language's type system rejects nonsense programs at the DSL level.
+The compiler knows that `eval` on `int expr` cannot match `BoolLit` — no `unreachable!()` needed.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| GADT syntax | `type _ expr = Int : int -> int expr` | `struct Expr<T>` + `PhantomData<T>` + separate `impl` blocks |
-| Type refinement in match | Automatic per branch — compiler knows `a = int` inside `Int` branch | No refinement; must use `unreachable!()` for provably-impossible arms |
-| Enforcing constructor rules | Built into the type system via GADT constructor return types | Enforced by only exposing smart constructors (no direct struct construction) |
-| Runtime overhead | None | None — `PhantomData` is zero-sized |
-| Exhaustiveness | Full GADT checking | Pattern matching on inner untyped enum; type safety at construction time only |
+1. **Exhaustiveness**: OCaml's GADT pattern matching is exhaustive per index — impossible cases are excluded; Rust's phantom type simulation requires `unreachable!()` for dead branches.
+2. **Constructor syntax**: OCaml's `: type expr` syntax is built into the language; Rust requires phantom parameters and smart constructors.
+3. **Type variable scope**: OCaml's `type a. a expr -> a` scopes the type variable per clause; Rust uses trait bounds and associated types.
+4. **Safety guarantee**: Both prevent constructing ill-typed expressions at compile time; OCaml's guarantee is stronger (no runtime dead-code branches).
+
+## Exercises
+
+1. Add a `Neg : int expr -> int expr` constructor and implement its evaluation.
+2. Add `IfThenElse : bool expr -> 'a expr -> 'a expr -> 'a expr` — how does the type constraint on the two branches affect the Rust simulation?
+3. Verify at compile time that `add(bool_lit(true), int_lit(1))` is rejected.

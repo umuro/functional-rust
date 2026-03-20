@@ -4,67 +4,67 @@
 
 # 320: Fallible Iterators
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-An iterator that can fail — `Iterator<Item = Result<T, E>>` — and how to drive it with fail-fast or best-effort collection.
+Iterators over external data sources — file lines, network streams, database cursors — may fail during iteration. The standard `Iterator` trait doesn't accommodate per-element errors. The solution is an iterator yielding `Result<T, E>` items, combined with the `collect::<Result<Vec<_>, _>>()` short-circuit pattern or `filter_map(Result::ok)` for best-effort collection. This is the standard pattern for parsing streams and processing external data.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Standard iterators are assumed infallible: each `.next()` call either gives you a value or signals that the sequence is done. But many real sources of data can fail mid-stream: reading lines from a file, parsing records from a network socket, deserializing rows from a database cursor. Pretending each step can't fail leads to panics or swallowed errors.
+- Implement iterators that yield `Result<T, E>` items for fallible element sources
+- Use `collect::<Result<Vec<T>, E>>()` for fail-fast batch processing
+- Use `filter_map(|r| r.ok())` for best-effort processing that ignores errors
+- Understand the tradeoffs: fail-fast vs best-effort vs error collection
 
-The idiomatic Rust answer is `Iterator<Item = Result<T, E>>`. Each element is either a successful value or an error. This keeps the iterator API intact while exposing the possibility of failure at each step. The hard part is deciding what to do with those errors — collect everything and report the first failure? Skip bad records and continue? Partition successes and failures for separate handling?
+## Rust Application
 
-Rust's standard library provides all these strategies through different collection patterns, and they compose naturally with existing iterator adapters.
-
-## The Intuition
-
-Think of a fallible iterator as a conveyor belt where any item might be marked "defective." You have three choices: stop the line on first defect (fail-fast), let defective items fall off (filter), or sort them into two bins (partition). All three are expressible with a single `Iterator<Item = Result<T, E>>` as input.
-
-## How It Works in Rust
+Two strategies for handling per-element errors:
 
 ```rust
-// Fail-fast: collect into Result — short-circuits on first Err
-let numbers: Result<Vec<i32>, _> = ["1", "2", "bad", "4"]
-    .iter()
-    .map(|s| s.parse::<i32>())
-    .collect();
-// → Err(ParseIntError) — stops at "bad", never processes "4"
+// Fail-fast: stop at first error
+pub fn parse_all(inputs: &[&str]) -> Result<Vec<i64>, String> {
+    inputs.iter().map(|s| parse_int(s)).collect()
+}
 
-// Best-effort: filter_map drops errors, collects successes
-let valid: Vec<i32> = ["1", "bad", "3"]
-    .iter()
-    .filter_map(|s| s.parse::<i32>().ok())
-    .collect();
-// → [1, 3]
+// Best-effort: skip errors
+pub fn parse_best_effort(inputs: &[&str]) -> Vec<i64> {
+    inputs.iter().filter_map(|s| parse_int(s).ok()).collect()
+}
 
-// Partition: collect both successes and failures
-let (oks, errs): (Vec<_>, Vec<_>) = inputs
-    .iter()
-    .map(|s| s.parse::<i32>())
-    .partition(Result::is_ok);
-let values: Vec<i32> = oks.into_iter().map(Result::unwrap).collect();
-
-// Process one at a time with manual control
-for item in iter.map(|s| s.parse::<i32>()) {
-    match item {
-        Ok(n) => process(n),
-        Err(e) => eprintln!("skipping: {}", e),
-    }
+// With default: replace errors with a fallback value
+pub fn parse_with_default(inputs: &[&str], default: i64) -> Vec<i64> {
+    inputs.iter().map(|s| parse_int(s).unwrap_or(default)).collect()
 }
 ```
 
-## What This Unlocks
+## OCaml Approach
 
-- **Safe streaming** — process file lines, network packets, or database rows with explicit error handling at each step, not a panic buried in production
-- **Composable strategies** — choose fail-fast, skip, or partition based on the application's tolerance for partial results, without changing the iterator source
-- **Library compatibility** — the `fallible-iterator` crate extends this pattern with an ergonomic `FallibleIterator` trait if you need `?` to work naturally at each step
+OCaml handles this with `Seq.filter_map` for best-effort and `List.fold_right` for fail-fast:
+
+```ocaml
+(* Best-effort: *)
+let parse_best_effort inputs =
+  Seq.filter_map (fun s -> int_of_string_opt s) (List.to_seq inputs)
+  |> List.of_seq
+
+(* Fail-fast: *)
+let parse_all inputs =
+  List.fold_right (fun s acc ->
+    let* lst = acc in
+    match int_of_string_opt s with
+    | None -> Error ("not a number: " ^ s)
+    | Some n -> Ok (n :: lst)
+  ) inputs (Ok [])
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Fallible sequence | `Seq.t` with `option`/`result` element | `Iterator<Item=Result<T,E>>` |
-| Fail-fast collect | Manual `fold` with early exit | `.collect::<Result<Vec<_>,_>>()` |
-| Skip errors | `Seq.filter_map` | `.filter_map(\|r\| r.ok())` |
-| Partition | `List.partition` | `.partition(Result::is_ok)` |
-| Lazy evaluation | `Seq` (lazy by default) | Iterators (lazy by default) |
+1. **Iterator type**: Rust iterators yielding `Result<T, E>` compose naturally with all iterator adapters; OCaml requires explicit fold-based handling.
+2. **Short-circuit collect**: `collect::<Result<Vec<T>, E>>()` is the idiomatic Rust one-liner for fail-fast; OCaml requires explicit fold.
+3. **Fallible iterator crate**: The `fallible-iterator` crate provides a `FallibleIterator` trait with `map_err`, `and_then`, and `collect` for cleaner error handling on stream-like sources.
+4. **Stream sources**: BufRead::lines() returns `Iterator<Item = io::Result<String>>` — the standard library models fallible iteration this way.
+
+## Exercises
+
+1. Implement a CSV line parser iterator that yields `Result<Row, ParseError>` per line, then collect all lines or fail on the first parse error.
+2. Process a stream of log lines where some are malformed, using `filter_map` to skip malformed lines and count how many were skipped.
+3. Implement `parse_all_errors(inputs: &[&str]) -> (Vec<i64>, Vec<String>)` that collects both successes and error messages in a single pass.

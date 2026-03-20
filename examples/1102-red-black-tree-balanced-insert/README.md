@@ -46,3 +46,9 @@ explicit — `insert` takes `&self` and returns a new `RbTree<T>`.
    second `match ins t with`, Rust via the same idiom on the `ins` result.
 4. **FromIterator:** Rust's trait system lets `RbTree` participate in `.collect()`
    idiomatically; OCaml uses `List.fold_left` ad hoc.
+
+## Exercises
+
+1. Implement `contains` on the red-black tree and write a test that verifies every inserted element can be found and no non-inserted element is found.
+2. Add a method `black_height` that returns the number of black nodes on any root-to-leaf path and assert it is the same for all paths.
+3. Implement a `from_iter` constructor that builds a balanced red-black tree from an unsorted iterator and verify it produces a valid BST by checking that `to_sorted_vec` yields elements in order.

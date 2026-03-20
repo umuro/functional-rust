@@ -29,3 +29,9 @@ Rust represents the tree as a `pub enum HTree` with `Box<HTree>` for child refer
 2. **Priority queue:** OCaml sorts the whole list on each merge step; Rust's idiomatic version uses `BinaryHeap` with a reversed `Ord` impl for O(log n) per operation.
 3. **Memory management:** OCaml's GC handles tree allocation automatically; Rust transfers ownership through `Box`, making the tree's lifetime explicit and statically verified.
 4. **Pattern matching:** Both languages use exhaustive match on the tree variant, but Rust's borrow checker ensures references into the tree are valid without needing a GC.
+
+## Exercises
+
+1. Add a `verify` function that checks a Huffman code table for prefix-free property — no code is a prefix of another code.
+2. Implement run-length encoding as a pre-processing step before Huffman coding and compare compression ratios on highly repetitive vs. random inputs.
+3. Extend to a multi-symbol (byte-pair) Huffman variant: compute frequencies of adjacent byte pairs, encode the most frequent pairs as single symbols, then apply standard Huffman — and compare compression ratios.

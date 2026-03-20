@@ -2,43 +2,54 @@
 
 ---
 
-# 516: Complex Closure Environments
+# Complex Closure Environments
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Closures that capture structs, collections, and other closures as their environment.
+Closures derive much of their power from capturing their surrounding environment — local variables, structs, collections, even other closures. Understanding what a closure captures, how it captures it (by move vs by reference), and what that means for ownership is central to writing idiomatic Rust. This example explores complex capture scenarios: closures over structs with boxed function fields, cyclic iterators over vectors, closures wrapping other closures, mutable counters, and growing accumulators.
 
-## The Problem This Solves
+## Learning Outcomes
 
-In simple examples, closures capture one or two primitives. Real-world closures often capture much richer state: a configuration struct, a `HashMap` for lookup, a `Vec` with an index for cycling, or another closure to pass along. Understanding how Rust handles these complex captures — including what gets moved versus borrowed, and how nested closures compose — is essential for building formatters, pipelines, factories, and middleware chains.
+- How `move` closures take ownership of captured variables
+- How a closure can capture a struct containing a `Box<dyn Fn>` field
+- How mutable state (counters, accumulators) lives inside `FnMut` closures
+- How closures can wrap other closures to add behavior like logging
+- The relationship between closure capture mode and the `Fn`/`FnMut`/`FnOnce` trait bound
 
-The question is always: what does this closure *own*? When you `move` a `Config` struct into a closure, the closure owns everything in that struct, including its `Box<dyn Fn>` field. When you capture a `HashMap` by move, the closure becomes a lookup function that owns its data. When a closure captures another closure, you get higher-order composition with no external state.
+## Rust Application
 
-## The Intuition
+`make_formatter` takes ownership of a `Config` struct (including its `Box<dyn Fn>` field) via `move`, producing an `impl FnMut(&str) -> String`. `make_cycler` captures a `Vec<T>` and a mutable `index` counter — it must be `FnMut` because it mutates `index` on each call. `make_logged_fn` wraps an existing closure `F` with a `String` name, demonstrating closure-over-closure composition. `make_accumulator` captures a `Vec<T>` and grows it on each call, returning the whole accumulated state.
 
-A closure's environment is like a small struct the compiler generates for you. Every captured variable becomes a field in that struct. With `move`, the fields contain owned values. Without `move`, they contain references. The closure *is* that struct plus a `call` method.
+Key patterns:
+- `move |s| { ... cfg ... }` — transferring struct ownership into closure
+- `let mut index = 0; move || { index = ...; }` — mutable counter in `FnMut`
+- `impl Fn(A) -> B` wrapping another `F: Fn(A) -> B` — transparent decoration
 
-When you write a closure that captures another closure, you're nesting structs — composition by value. The outer closure's environment holds the inner closure, and so on. This is how pipeline stages, middleware chains, and transformer factories work in Rust.
+## OCaml Approach
 
-## How It Works in Rust
+OCaml closures capture by reference to the heap — all values are boxed, so there is no move/copy distinction. A mutable counter is represented with `ref`:
 
-1. **`move` for ownership** — `move |...| { ... }` transfers ownership of all captured variables into the closure; the original binding is consumed.
-2. **Complex struct capture** — capturing a `Config` (with a `Box<dyn Fn>` field) works fine; the closure owns the entire config, including its closure field.
-3. **`Vec` + index cycler** — capture a `Vec<T>` by move and a mutable `index: usize`; the `FnMut` closure increments the index on each call, wrapping via `%`.
-4. **Nested closure factory** — a closure returning a `Box<dyn Fn>` captures a local variable; the returned closure captures from the outer closure's environment.
-5. **Pipeline via captured `next`** — each step captures an optional `Box<dyn Fn(i32) -> i32>` as `next`; calling it chains to the next stage naturally.
+```ocaml
+let make_cycler items =
+  let arr = Array.of_list items in
+  let i = ref 0 in
+  fun () ->
+    let v = arr.(!i) in
+    i := (!i + 1) mod Array.length arr;
+    v
+```
 
-## What This Unlocks
-
-- Build configurable formatters, validators, and transformers that own their configuration.
-- Implement cyclic iterators and round-robin selectors with no external state.
-- Compose multi-stage pipelines where each stage is a closure holding the next stage.
+Wrapping a closure with logging is identical syntactically — just `fun x -> log name; f x`.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Closure capture | By reference (closures close over mutable refs) | `move` for ownership; implicit borrow otherwise |
-| Capturing a struct with closures | Transparent; GC manages | Closure owns the struct; `Box<dyn Fn>` fields work fine |
-| Higher-order closures | Natural; first-class functions | `Box<dyn Fn>` or `impl Fn` for returning closures |
-| Mutable captured state | `ref` cells or mutable bindings | `FnMut` + `move` captured `mut` variables |
+1. **Capture semantics**: Rust closures capture by reference by default but require `move` to take ownership; OCaml always captures by reference to GC-managed heap values.
+2. **Mutability in captures**: Rust requires `FnMut` for closures that mutate captured state, making the mutation explicit at the type level; OCaml uses `ref` cells with no type-level distinction.
+3. **Nested closures**: Rust must satisfy lifetime/ownership rules when a closure captures another closure (e.g., both must be `'static` if stored); OCaml has no such constraint.
+4. **Cycler state**: Rust's cycler owns its `Vec` and `index` completely inside the closure; OCaml's equivalent uses `ref` and an array, with the GC preventing dangling references.
+
+## Exercises
+
+1. **Throttle closure**: Write `make_throttle(f, n)` that calls `f` only every `n` invocations, tracking the call count inside the returned `FnMut`.
+2. **Logging wrapper**: Extend `make_logged_fn` to record every call's argument and return value in a `Vec` captured inside the wrapper closure.
+3. **Composable formatter**: Implement `make_pipeline(steps: Vec<Box<dyn Fn(String) -> String>>)` that returns an `impl FnMut(String) -> String` applying each step in sequence.

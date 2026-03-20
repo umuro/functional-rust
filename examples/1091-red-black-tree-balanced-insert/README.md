@@ -29,3 +29,9 @@ Rust mirrors the OCaml structure with public free functions `balance`, `insert`,
 2. **Or-patterns:** OCaml collapses four balance cases with `|`; Rust uses separate match arms with `matches!` guards
 3. **Traversal:** OCaml's `to_list` eagerly builds a list via `@`; Rust implements `Iterator` for lazy, O(log n)-space traversal
 4. **Ownership:** Rust's `balance` takes ownership of subtrees, destructuring `Box` to reuse allocations in rotations
+
+## Exercises
+
+1. Extend the red-black tree with a `to_sorted_vec` method that performs an in-order traversal and collects all elements.
+2. Implement a `merge` function that combines two red-black trees into a single balanced tree.
+3. Write property-based tests verifying that after inserting a random sequence of integers the resulting tree is a valid BST and satisfies all red-black invariants (color and black-height rules).

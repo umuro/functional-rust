@@ -4,75 +4,55 @@
 
 # 262: Sliding Windows over Slices
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Iterate over every overlapping N-element sub-slice — zero-copy, no index arithmetic, no bounds checking.
+Signal processing, time-series analysis, and pattern recognition algorithms frequently examine overlapping subsequences of fixed length. A moving average over stock prices, an n-gram language model, or detecting whether an array is sorted — all require looking at consecutive groups of elements simultaneously. The `windows(n)` method provides zero-copy, overlapping sub-slices of a fixed length, making these algorithms expressible as simple iterator pipelines.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Many algorithms need to look at a group of consecutive elements together: compute a moving average over the last 3 data points, check if a sequence is strictly sorted, detect local maxima by comparing each point to its neighbors, extract bigrams or trigrams from a word list. Without `windows()`, you'd use index arithmetic — `data[i-1]`, `data[i]`, `data[i+1]` — which requires careful bounds checking and obscures the intent.
+- Understand how `windows(n)` yields overlapping sub-slices of length `n`
+- Distinguish `windows()` from `chunks()`: overlapping vs non-overlapping
+- Compute sliding averages, detect sorted order, and find patterns using `windows()`
+- Recognize the zero-copy nature: each window is a borrowed sub-slice, not a new allocation
 
-The sliding window is a fundamental pattern in signal processing, text analysis, and sequence algorithms. Each window overlaps the previous by `n-1` elements, stepping one position forward each time. For a slice of length `L` and window size `n`, you get `L - n + 1` windows.
+## Rust Application
 
-OCaml has no built-in sliding window — you'd write a recursive function or use `List.init` with sublist extraction, allocating new lists at each step. Rust's `windows(n)` is a zero-copy method on slices that returns slice references into the original data.
-
-## The Intuition
-
-`windows(n)` produces sub-slices of exactly `n` consecutive elements, advancing one step at a time. Every element except the first and last `n-1` appears in multiple windows.
-
-```text
-data = [1, 2, 3, 4, 5]    windows(3):
-         [1, 2, 3]
-            [2, 3, 4]
-               [3, 4, 5]
-```
-
-Each window is a `&[T]` — a borrowed view into the original slice. No allocation, no copying. Passing a window to `.iter().sum()` or indexing `w[0]`, `w[1]` works as you'd expect.
-
-## How It Works in Rust
+`slice::windows(n)` returns a `Windows<'_, T>` iterator yielding `&[T]` sub-slices. Each successive window advances by one position. For a slice of length `m`, there are `m - n + 1` windows:
 
 ```rust
 let data = [1i32, 2, 3, 4, 5];
-
-// Moving average (window size 3)
-let moving_avg: Vec<f64> = data.windows(3)
-    .map(|w| w.iter().sum::<i32>() as f64 / 3.0)
+// Moving average with window size 2
+let avgs: Vec<f64> = data.windows(2)
+    .map(|w| w.iter().sum::<i32>() as f64 / 2.0)
     .collect();
-// → [2.0, 3.0, 4.0]
+// [1.5, 2.5, 3.5, 4.5]
 
-// Check if strictly increasing — compare each adjacent pair
-let is_increasing = data.windows(2).all(|w| w[0] < w[1]);
-// → true
-
-// Find local maxima: center element greater than both neighbors
-let signal = [1i32, 3, 2, 5, 4, 6, 2];
-let local_max: Vec<usize> = signal.windows(3)
-    .enumerate()
-    .filter(|(_, w)| w[1] > w[0] && w[1] > w[2])  // middle > both sides
-    .map(|(i, _)| i + 1)                            // i is index of w[0]; center is i+1
-    .collect();
-// → [1, 3, 5]
-
-// Bigrams from a word list
-let words = ["the", "quick", "brown", "fox"];
-let bigrams: Vec<_> = words.windows(2).collect();
-// → [["the","quick"], ["quick","brown"], ["brown","fox"]]
+// Detect sorted order: every adjacent pair must be non-decreasing
+let is_sorted = data.windows(2).all(|w| w[0] <= w[1]); // true
 ```
 
-`windows()` is a slice method — call it on `&[T]` or arrays. Window size must be > 0 (panics otherwise). For non-overlapping chunks, use `chunks(n)` instead.
+## OCaml Approach
 
-## What This Unlocks
+OCaml lacks a standard `windows` function on lists. The idiomatic functional approach uses `List.init` and `List.sub` on arrays, or defines a recursive function that takes the head as a sub-list:
 
-- **Signal processing** — moving averages, rolling min/max, smoothing filters over sensor or financial data.
-- **NLP n-grams** — bigrams and trigrams from token sequences without manual indexing or subslice extraction.
-- **Sequence validation** — sorted check, monotonicity, pattern matching over consecutive elements in one clean expression.
+```ocaml
+let windows n lst =
+  let arr = Array.of_list lst in
+  Array.init (Array.length arr - n + 1) (fun i ->
+    Array.to_list (Array.sub arr i n))
+```
+
+This allocates new sub-arrays; Rust's `windows()` avoids this via slice references.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Sliding window | Manual recursion or `List.init` | `slice.windows(n)` — built in |
-| Memory | Allocates new lists per window | Zero-copy — references into original slice |
-| Overlapping | Must implement manually | Built-in behavior |
-| Non-overlapping | Must implement manually | `chunks(n)` instead |
-| Works on iterators | N/A | Slice method only — collect to `Vec` first if needed |
+1. **Zero-copy**: Rust's `windows()` yields borrowed `&[T]` slices with no allocation; OCaml's equivalent creates new sub-lists.
+2. **Overlap**: `windows(n)` is overlapping; `chunks(n)` is non-overlapping — two complementary methods in Rust.
+3. **Standard library**: `windows()` is a stable part of Rust's slice API; OCaml requires user-defined functions.
+4. **Use cases**: Signal processing (DSP), n-gram text analysis, financial moving averages, sorted-order detection.
+
+## Exercises
+
+1. Use `windows(3)` to compute a 3-element moving average over a `Vec<f64>` of temperature readings.
+2. Detect local maxima in a sequence: an element is a local maximum if it is strictly greater than its neighbors — use `windows(3)`.
+3. Find the starting index of a pattern (sub-slice) within a larger slice using `windows()` and `position()`.

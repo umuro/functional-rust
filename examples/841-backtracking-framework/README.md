@@ -2,94 +2,63 @@
 
 ---
 
-# 841: Backtracking — Generic Recursive Framework with Pruning
+# Backtracking Framework
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Enumerate all valid solutions by building candidates incrementally and abandoning dead-end branches early — the algorithmic engine behind N-queens, Sudoku solvers, and combinatorial optimization.
+Many combinatorial optimization and enumeration problems — N-queens, Sudoku solving, permutation generation, subset enumeration, graph coloring, constraint satisfaction — require exploring a search space that grows exponentially with input size. Backtracking systematically explores candidates and abandons (backtracks from) any partial solution as soon as it determines it cannot lead to a valid complete solution. This pruning makes backtracking vastly more efficient than brute force for well-constrained problems, though still exponential in the worst case. Understanding backtracking as a reusable framework — not just specific puzzles — enables applying it to new combinatorial problems.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Many problems require finding all (or the best) solution in a combinatorial search space: N-queens placement, Sudoku, graph coloring, subset sum, scheduling with constraints. Brute force generates all candidates then filters — O(n! × n) for permutations. Backtracking does better by pruning: if a partial assignment already violates constraints, abandon it immediately without completing it.
+- Implement the backtracking template: `choose → explore → unchoose`
+- Use a `used` flag array to avoid revisiting elements in permutation generation
+- Recognize constraint-based pruning: skip choices that violate constraints early
+- Apply to N-queens: test placement validity before recursing, backtrack on conflict
+- Understand the difference between backtracking (exact, complete) and heuristic search (approximate)
 
-This is not just an academic exercise. Sudoku solvers, SAT solvers (DPLL algorithm), constraint satisfaction in AI planning, and automatic theorem provers are all backtracking with increasingly sophisticated pruning strategies. The difference between a 1ms and a 1s Sudoku solve is almost entirely in the quality of the pruning predicate.
-
-The generic framework makes the pattern explicit: try each choice, check the constraint predicate after each extension (not just at leaves), recurse, then undo the choice (backtrack). Implemented in Rust with mutable `Vec` state passed by `&mut` reference — no heap allocation per recursive call.
-
-## The Intuition
-
-Think of it as tree search: each node is a partial solution, branches are choices at the next position. DFS with pruning: at each node, check if the current partial solution is still consistent. If not, don't explore any of its subtrees — that's the prune. If yes, extend to all children. At leaf nodes (full assignment), collect the solution.
-
-The key insight: check constraints at every extension, not just at the end. For N-queens, check whether placing a queen in column `col` at row `row` conflicts with any already-placed queen. This eliminates entire subtrees of size (n-row)! at each prune.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-// Constraint check: can we place a queen at (row, col)?
-fn is_safe(board: &[usize], row: usize, col: usize) -> bool {
-    for r in 0..row {
-        let c = board[r];
-        // Conflicts: same column, or same diagonal
-        if c == col || c.abs_diff(col) == r.abs_diff(row) {
-            return false;
+pub fn generate_permutations<T: Clone>(items: &[T]) -> Vec<Vec<T>> {
+    let mut result = vec![];
+    let mut current = vec![];
+    let mut used = vec![false; items.len()];
+    fn backtrack<T: Clone>(items: &[T], used: &mut Vec<bool>,
+                            current: &mut Vec<T>, result: &mut Vec<Vec<T>>) {
+        if current.len() == items.len() { result.push(current.clone()); return; }
+        for i in 0..items.len() {
+            if used[i] { continue; }
+            used[i] = true; current.push(items[i].clone());
+            backtrack(items, used, current, result);
+            used[i] = false; current.pop(); // unchoose
         }
     }
-    true
-}
-
-// N-Queens: board[row] = column of queen in that row
-fn n_queens(n: usize) -> Vec<Vec<usize>> {
-    let mut solutions = Vec::new();
-    let mut board = vec![0usize; n];
-    n_queens_rec(n, 0, &mut board, &mut solutions);
-    solutions
-}
-
-fn n_queens_rec(n: usize, row: usize, board: &mut Vec<usize>, solutions: &mut Vec<Vec<usize>>) {
-    if row == n {
-        solutions.push(board.clone());  // Complete solution: collect
-        return;
-    }
-    for col in 0..n {
-        if is_safe(board, row, col) {
-            board[row] = col;                              // Choose
-            n_queens_rec(n, row + 1, board, solutions);   // Explore
-            // Backtrack: board[row] will be overwritten in next iteration
-            // (explicit undo only needed if state isn't overwritten)
-        }
-    }
-}
-
-// Permutations: explicit undo via used[] flag
-fn permutations_rec<T: Clone>(xs: &[T], current: &mut Vec<T>,
-                               used: &mut Vec<bool>, result: &mut Vec<Vec<T>>) {
-    if current.len() == xs.len() { result.push(current.clone()); return; }
-    for i in 0..xs.len() {
-        if !used[i] {
-            used[i] = true;          // Choose
-            current.push(xs[i].clone());
-            permutations_rec(xs, current, used, result);  // Explore
-            current.pop();           // Undo choice
-            used[i] = false;         // Undo flag — explicit backtrack
-        }
-    }
+    backtrack(items, &mut used, &mut current, &mut result);
+    result
 }
 ```
 
-The `&mut Vec` pattern — passing mutable collections by reference rather than returning them — is idiomatic Rust for recursive algorithms that accumulate results. It avoids cloning partial solutions on every recursive call.
+The nested `fn backtrack` captures the mutable references from the outer scope. The `used` flag array tracks which elements are in the current path, enabling O(n) per-choice overhead instead of O(n) vec contains check. The `current.push` / `current.pop` pattern is the canonical "choose/unchoose" backtracking structure. Generic `<T: Clone>` makes this work for any cloneable type. The `result.push(current.clone())` clones the current path at leaf nodes — the only allocation cost.
 
-## What This Unlocks
+## OCaml Approach
 
-- **SAT solvers and constraint programming**: The DPLL algorithm for satisfiability is backtracking with unit propagation as pruning — the core of every modern SAT solver (MiniSAT, Z3).
-- **Sudoku and puzzle solving**: Constraint propagation (eliminating candidate values from peers) + backtracking solves any Sudoku; the same pattern handles Nonograms, Kakuro, and logic puzzles.
-- **Subset enumeration and knapsack variants**: "Find all subsets with sum exactly k" is backtracking with a sum constraint — used in portfolio optimization, scheduling, and combinatorial auction algorithms.
+OCaml backtracking uses a `used` array as `bool array` mutated in-place. The recursive function returns `unit` and accumulates results via an `acc ref`. OCaml's functional style can also express this with continuation-passing: `let rec backtrack cont current used = ...`. The `Array.make n false` initializes the used flags. OCaml's pattern matching for N-queens constraint checking reads naturally. The `List.rev current` at leaf nodes (if building the list from head prepending) recovers the correct order.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Mutable accumulator | `ref` list or `Buffer` | `&mut Vec` passed down — explicit |
-| Board state | `int list` (functional, no undo needed) | `Vec<usize>` with in-place update |
-| Undo step | Functional: no undo (immutable state) | `current.pop(); used[i] = false;` |
-| Collect solutions | `results := sol :: !results` | `solutions.push(board.clone())` |
-| Constraint check | Pure function on list | Pure function on slice — identical style |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Used flags | `Vec<bool>` | `bool array` |
+| Result accumulation | `&mut Vec<Vec<T>>` | `acc ref` or continuation |
+| Choose/unchoose | `push`/`pop` on `Vec` | `Array.set` true/false |
+| Generic type | `<T: Clone>` | Parametric `'a` |
+| N-queens variant | Separate `fn queens` | Separate or same framework |
+| Iterative variant | `Iterator` via generator | Sequence with `Seq.t` |
+
+## Exercises
+
+1. Implement N-queens backtracking using this framework: add a validity check before recursing.
+2. Implement Sudoku solver using backtracking with forward checking (propagate constraints after each placement).
+3. Add an `Iterator` interface to the backtracking framework so permutations can be consumed lazily.
+4. Implement combination generation (choose k from n) and verify the count equals C(n, k).
+5. Apply backtracking to graph coloring: find a k-coloring of a graph or report that none exists.

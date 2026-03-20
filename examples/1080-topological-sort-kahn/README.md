@@ -33,3 +33,9 @@ Rust uses `HashMap` for O(1) lookups and `VecDeque` for efficient queue operatio
 2. **Queue implementation:** OCaml uses lists (O(n) dequeue); Rust uses `VecDeque` (O(1) amortized)
 3. **Iteration:** OCaml recurses with pattern matching; Rust uses `while let` loops with mutable state
 4. **Cycle detection:** Both return incomplete results when cycles exist; Rust wraps in `Option<Vec>` for explicit error handling
+
+## Exercises
+
+1. Extend Kahn's algorithm to detect cycles and return a `Result<Vec<NodeId>, Vec<NodeId>>` where the error contains nodes involved in the cycle.
+2. Implement a parallel-layer variant of topological sort that groups nodes into levels where all nodes in the same level can execute concurrently (nodes with the same effective depth).
+3. Model a build system dependency graph using Kahn's topological sort: parse a list of `"target: dep1 dep2"` rules, topologically sort them, and print the build order.

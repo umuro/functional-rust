@@ -2,87 +2,45 @@
 
 ---
 
-# 179: GADT Preventing Runtime Errors
+# GADT Preventing Runtime Errors — Safe Head
 
-**Difficulty:** ⭐⭐⭐  **Level:** Advanced
+## Problem Statement
 
-Encode emptiness/non-emptiness in a list's type so that `head` on an empty list is a compile-time error instead of a runtime panic.
+`head` on an empty list is undefined. Instead of returning `Option<T>` and forcing callers to handle `None`, the typestate approach encodes emptiness in the type: `SafeList<T, NonEmpty>` has a `head` method; `SafeList<T, Empty>` does not. This converts a potential runtime panic into a compile error, and callers never need to unwrap. The pattern generalizes to any operation that requires a precondition: safe division, safe array access, safe database reads.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Every Rust developer has written `vec.first().unwrap()` with a mental note "this can't be empty here." Sometimes you're right. Sometimes a refactor later breaks the invariant, and you get a panic in production at 2 AM. The type system never helped you — `Vec<T>` has no memory of whether it was just created empty or has been filled.
+- Encode list emptiness as a phantom type state (`Empty` vs. `NonEmpty`)
+- Implement `head` only on `SafeList<T, NonEmpty>` — calling it on an empty list is a compile error
+- See how `push` transitions from `SafeList<T, Empty>` to `SafeList<T, NonEmpty>`
+- Understand this as a specialized typestate pattern (example 130) applied to data structures
 
-The real problem is that the *guarantee* "this list is non-empty" lives in your head, in comments, maybe in a test — but not in the type. When code changes, the guarantee drifts silently. Phantom types let you bake the guarantee into the type itself: `SafeList<T, NonEmpty>` vs `SafeList<T, Empty>`. The `head` method only exists on the `NonEmpty` variant — the compiler simply won't let you call it on an empty list.
+## Rust Application
 
-This is a specific application of the type-state pattern (see example 180 for the general form). Here the "state" being tracked is a structural property of the data itself: does it have at least one element?
+`Empty` and `NonEmpty` are zero-sized marker structs. `SafeList<T, S>` wraps `Vec<T>` with `PhantomData<S>`. `SafeList<T, Empty>::new() -> SafeList<T, Empty>` creates an empty list. `push(self, val: T) -> SafeList<T, NonEmpty>` transitions to non-empty. `head(&self) -> &T` is implemented only on `SafeList<T, NonEmpty>` — the compiler rejects calling `head` on a `SafeList<T, Empty>`. This is zero-overhead: `PhantomData` has no runtime size.
 
-## The Intuition
+## OCaml Approach
 
-A coffee machine has two states: "has coffee" and "empty." The "dispense" button only works in the "has coffee" state — it's physically locked out otherwise. You don't check at runtime whether there's coffee; the machine's state tells you. If you want to dispense, you must first be holding a `Machine<HasCoffee>`, not a `Machine<Empty>`.
-
-A `SafeList<T, NonEmpty>` works the same way. `head` is only defined on `SafeList<T, NonEmpty>`. To get a `NonEmpty` list, you must either start with a `cons` operation (which is always non-empty) or branch based on what you have. The emptiness state is tracked at every step.
-
-## How It Works in Rust
-
-```rust
-use std::marker::PhantomData;
-
-// Type-level state tags — no data, just markers
-struct Empty;
-struct NonEmpty;
-
-// The list itself — S is the phantom state
-struct SafeList<T, S> {
-    data: Vec<T>,
-    _state: PhantomData<S>,
-}
-
-// Empty constructor — only produces Empty
-impl<T> SafeList<T, Empty> {
-    fn new() -> Self {
-        SafeList { data: Vec::new(), _state: PhantomData }
-    }
-}
-
-// Pushing an element always produces NonEmpty, regardless of prior state
-impl<T, S> SafeList<T, S> {
-    fn push(mut self, val: T) -> SafeList<T, NonEmpty> {
-        self.data.push(val);
-        SafeList { data: self.data, _state: PhantomData }
-    }
-}
-
-// head only exists for NonEmpty lists — Empty lists literally have no head method
-impl<T> SafeList<T, NonEmpty> {
-    fn head(&self) -> &T {
-        &self.data[0]   // safe — we know it's non-empty by type
-    }
-}
-
-// Correct usage:
-let empty: SafeList<i32, Empty> = SafeList::new();
-let nonempty: SafeList<i32, NonEmpty> = empty.push(42);
-println!("{}", nonempty.head()); // ✓ compiles
-
-// This fails to compile:
-// let empty: SafeList<i32, Empty> = SafeList::new();
-// empty.head(); // error: method not found in `SafeList<i32, Empty>`
+OCaml's GADT approach is more elegant:
+```ocaml
+type empty = Empty
+type nonempty = Nonempty
+type ('a, 's) safe_list =
+  | Nil  : ('a, empty) safe_list
+  | Cons : 'a * ('a, _) safe_list -> ('a, nonempty) safe_list
+let head : ('a, nonempty) safe_list -> 'a = function Cons (x, _) -> x
 ```
-
-The `head` method doesn't exist on `SafeList<T, Empty>` — not "it exists but checks at runtime," but literally doesn't exist in that `impl` block. The compiler catches the mistake before the program runs.
-
-## What This Unlocks
-
-- **Queue/deque operations** — `dequeue` only available on a `Queue<NonEmpty>`, eliminating a whole class of defensive checks.
-- **Parsing combinators** — a match result that carries whether it consumed any input, used to detect infinite loops in grammars at compile time.
-- **Resource protocols** — file handles, database cursors, anything that must be populated before reading; the "has data" state is tracked in the type.
+Pattern matching on `Nil` in `head` is rejected by the compiler — OCaml's GADT exhaustiveness checker knows `nonempty` lists are never `Nil`.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Mechanism | GADT constructors: `SNil : ('a, empty) safe_list` vs `SCons : 'a * ... -> ('a, nonempty) safe_list` | `PhantomData<Empty>` vs `PhantomData<NonEmpty>` with separate `impl` blocks |
-| Pattern matching | Compiler knows `SCons` branch is `nonempty`; `SNil` branch in `safe_head` is exhaustively impossible | No match-level type refinement; safety enforced by only having methods on one impl block |
-| State transition on push | Implicit via constructor choice | Explicit: `push` consumes `SafeList<T, S>` and returns `SafeList<T, NonEmpty>` |
-| Ergonomics | Natural in GADT pattern matching | Method-based API; transitions clear from signatures |
-| Zero-cost | Yes | Yes — PhantomData has no runtime representation |
+1. **Exhaustiveness**: OCaml's GADT `head` on `nonempty` lists has no `Nil` case — it's impossible; Rust's `impl SafeList<T, NonEmpty>` block achieves the same by not defining the method on `Empty`.
+2. **Transition type**: OCaml's `Cons` constructor changes the type index directly; Rust's `push` consumes the old value and returns a new type.
+3. **Runtime cost**: Both are zero-cost — `PhantomData`/phantom types vanish at runtime.
+4. **Practical use**: Rust's typestate is used in the `rusqlite` crate (transaction states), `tokio` (task states), and custom protocol implementations.
+
+## Exercises
+
+1. Add a `tail(self) -> (T, SafeList<T, ...>)` method that returns a `SafeList<T, NonEmpty>` if the original had 2+ elements, or `SafeList<T, Empty>` if exactly 1.
+2. Implement `first_two(&self) -> (&T, &T)` only on lists with at least two elements — requiring a `TwoOrMore` phantom state.
+3. Implement a `safe_dequeue` for a `SafeQueue` type with `Enqueue` and `Dequeue` operations that prevent dequeuing from an empty queue.

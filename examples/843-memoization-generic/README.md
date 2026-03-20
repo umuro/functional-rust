@@ -2,89 +2,63 @@
 
 ---
 
-# 843: Generic Memoization with HashMap Cache
+# Generic Memoization
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Cache pure function results in a `HashMap` to turn exponential recursion into polynomial time — and learn the `RefCell` workaround for recursive self-memoization.
+Recursive functions with overlapping subproblems waste exponential time recomputing the same results. Memoization wraps a function with a cache: on the first call with given arguments, compute and store the result; on subsequent calls, return the cached value. While specific DP algorithms hard-code their memoization tables, generic memoization provides a reusable cache wrapper for any pure function. This pattern is fundamental in functional languages (Haskell's `memoize`, OCaml's `Hashtbl`-based wrappers) and enables transparent DP without restructuring code. Real-world uses: web request caching, computed property memoization in UI frameworks, and expensive query result caching.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Recursive algorithms with overlapping subproblems recompute the same values exponentially. `fib(50)` with naive recursion makes ~10^10 calls; with memoization, exactly 50 unique calls. This is the same transformation as dynamic programming, but expressed top-down as memoized recursion rather than bottom-up table-filling. Both yield the same asymptotic complexity; the choice between them is engineering preference.
+- Implement a `HashMap`-backed memoizer that wraps any `Fn(K) -> V` where K is hashable
+- Handle recursive memoization using `RefCell<HashMap>` for interior mutability
+- Understand the challenge: recursive memoized functions cannot easily call themselves through the cache
+- Apply memoization to Fibonacci, LCS, and graph shortest paths to see exponential → polynomial speedup
+- Recognize the difference from tabulation: memoization is top-down and lazy; tabulation is bottom-up and eager
 
-Memoization appears beyond just Fibonacci: parsing with Earley or CYK algorithms memoizes subparse results, making context-free parsing O(n³) instead of exponential. Edit distance, optimal matrix chain multiplication, longest common subsequence — all are exponential without memo, polynomial with it. Understanding memoization lets you convert any recursive solution into an efficient one.
-
-The harder challenge in Rust: how do you memoize a *recursive* function where the memo table must be accessible during the recursive call? The `HashMap` can't be borrowed mutably while a recursive call is happening. The solutions: pass `&mut HashMap` as a parameter (cleanest for Rust), or use `RefCell<HashMap>` for interior mutability when you need the memo table in a closure or struct method.
-
-## The Intuition
-
-The time-space tradeoff: pay O(n) memory to reduce O(2^n) computation to O(n). Each unique argument is computed exactly once; subsequent calls return the cached value immediately. The memo table is a `HashMap<K, V>` where K is the argument type and V is the return type.
-
-For recursive memoization in Rust: pass `&mut HashMap` down through all recursive calls. This is zero-overhead — no locks, no reference counting — and the borrow checker ensures no aliasing. The `RefCell` pattern is for cases where you can't thread the `&mut` through (e.g., implementing a memoized method on a struct).
-
-OCaml's `Hashtbl` has the same interface; OCaml closures can close over mutable state more naturally, making recursive memoization slightly simpler syntactically.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
 use std::collections::HashMap;
-
-// Pattern 1: Pass &mut cache explicitly — cleanest Rust idiom
-fn fib(n: u64, cache: &mut HashMap<u64, u64>) -> u64 {
-    if n <= 1 { return n; }
-    if let Some(&v) = cache.get(&n) { return v; }  // Cache hit: O(1)
-    let v = fib(n - 1, cache) + fib(n - 2, cache);  // Recursive: each n computed once
-    cache.insert(n, v);                               // Store result
-    v
-}
-
-// Pattern 2: RefCell for interior mutability (when &mut threading is impractical)
 use std::cell::RefCell;
 
-fn fib_refcell(n: u64) -> u64 {
-    thread_local! {
-        static CACHE: RefCell<HashMap<u64, u64>> = RefCell::new(HashMap::new());
-    }
-    if n <= 1 { return n; }
-    if let Some(&v) = CACHE.with(|c| c.borrow().get(&n).copied()) {
-        return v;  // Borrow immutably to check
-    }
-    let v = fib_refcell(n - 1) + fib_refcell(n - 2);
-    CACHE.with(|c| c.borrow_mut().insert(n, v));  // Borrow mutably to insert
-    v
+pub struct Memoize<K, V> {
+    cache: RefCell<HashMap<K, V>>,
+    func: Box<dyn Fn(K, &Self) -> V>,
 }
-
-// Coin change: minimum coins to make `amount` — O(amount × |coins|)
-fn coin_change(coins: &[u64], amount: u64) -> Option<u64> {
-    let mut cache: HashMap<u64, Option<u64>> = HashMap::new();
-    fn rec(coins: &[u64], amount: u64, cache: &mut HashMap<u64, Option<u64>>) -> Option<u64> {
-        if amount == 0 { return Some(0); }
-        if let Some(&v) = cache.get(&amount) { return v; }
-        let result = coins.iter()
-            .filter(|&&c| c <= amount)
-            .filter_map(|&c| rec(coins, amount - c, cache).map(|n| n + 1))
-            .min();
-        cache.insert(amount, result);
-        result
+impl<K: Eq + std::hash::Hash + Clone, V: Clone> Memoize<K, V> {
+    pub fn call(&self, key: K) -> V {
+        if let Some(v) = self.cache.borrow().get(&key) {
+            return v.clone();
+        }
+        let v = (self.func)(key.clone(), self);
+        self.cache.borrow_mut().insert(key, v.clone());
+        v
     }
-    rec(coins, amount, &mut cache)
 }
 ```
 
-`thread_local!` + `RefCell` is the standard pattern when you want a memoized function without passing the cache explicitly — commonly used in competitive programming where you want global memoization of a recursive function.
+`RefCell<HashMap>` provides interior mutability — the cache can be mutated through a shared reference, enabling recursive calls. The function receives `&Self` as a second argument, allowing it to call `self.call(subproblem)` for recursive memoization. `K: Clone` is needed to insert the key after the computation (the borrow check prevents holding a borrow during computation). This pattern avoids the "cannot borrow as mutable because it's behind a shared reference" compile error that naive approaches hit.
 
-## What This Unlocks
+## OCaml Approach
 
-- **Dynamic programming without the DP state table**: Memoized recursion expresses the same recurrence as DP but in the natural recursive structure — often easier to derive and verify correctness.
-- **Parsing and NLP**: CYK and Earley parsers memoize subparse results; chart parsing in NLP is memoization applied to formal grammars.
-- **Game tree evaluation**: Minimax with memoization (transposition tables in chess engines) avoids re-evaluating the same board position from different move sequences — standard in game AI.
+OCaml memoization is simpler: `let memoize f = let tbl = Hashtbl.create 16 in fun x -> match Hashtbl.find_opt tbl x with Some v -> v | None -> let v = f x in Hashtbl.add tbl x v; v`. Recursive memoization uses a `ref` for the function: `let rec_memo f = let r = ref (fun _ -> assert false) in let m = memoize (fun x -> f !r x) in r := m; m`. OCaml's first-class mutability makes this straightforward. The `Weak.t` module enables cache eviction for memory-constrained situations.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Hash table | `Hashtbl.create 16` | `HashMap::new()` |
-| Lookup | `Hashtbl.find_opt tbl key` | `cache.get(&key)` → `Option<&V>` |
-| Insert | `Hashtbl.replace tbl key v` | `cache.insert(key, v)` |
-| Recursive memo | Close over `tbl` ref — natural | Pass `&mut cache` or use `RefCell` |
-| Thread-local cache | Not applicable (single-threaded) | `thread_local! { static CACHE: RefCell<HashMap<...>> }` |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Interior mutability | `RefCell<HashMap>` | `Hashtbl` (inherently mutable) |
+| Recursive wrapper | `&Self` second arg | `ref` to function |
+| Key constraint | `Eq + Hash + Clone` | `Hashtbl` equality |
+| Thread safety | Use `Mutex<HashMap>` instead | Not needed for single-threaded |
+| Eviction | Manual `HashMap::retain` | `Weak.t` for GC integration |
+| Lazy vs eager | Lazy (top-down) | Same |
+
+## Exercises
+
+1. Implement thread-safe memoization using `Arc<Mutex<HashMap>>` and measure the synchronization overhead.
+2. Add a cache eviction policy: LRU (evict least recently used) or LFU (evict least frequently used).
+3. Implement `memoize_recursive` that allows the function to call itself via the memoized wrapper without `&Self` threading.
+4. Benchmark memoized Fibonacci(50) vs. tabulated DP and compare code clarity.
+5. Implement memoization with TTL (time-to-live): entries expire after a configurable duration.

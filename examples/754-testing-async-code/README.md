@@ -2,100 +2,37 @@
 
 ---
 
-# 754: Testing Async Functions Conceptually
+# 754-testing-async-code — Testing Async Code
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Test concurrent, time-sensitive logic using the same assertion patterns as sync tests — async tests are just functions with `async fn` and `#[tokio::test]`.
+Async code introduces new testing challenges: futures must be driven to completion, timeouts must be tested without real waits, and concurrent operations must be coordinated. In production Rust, `#[tokio::test]` provides a single-threaded or multi-threaded test runtime. This example uses threads and channels as a sync-compatible substitute to demonstrate the core patterns: driving async work to completion, testing timeouts, and injecting controllable fake implementations.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Async code is hard to test for several reasons. First, you need a runtime to drive futures to completion — you can't just call `my_async_fn()` and get a result; you have to `.await` it inside an async context. Second, tests involving timeouts, background tasks, or channels can be flaky if not structured carefully. Third, error messages from panicking inside async tasks are often confusing.
+- Test thread-based concurrent code using channels as synchronization primitives
+- Simulate timeout behavior with `recv_timeout` and verify timeout errors
+- Use dependency injection to replace real async clients with controllable fakes
+- Understand why `#[tokio::test]` is needed for real async code and how it relates to sync patterns
+- Structure tests that verify both success and error paths through concurrent code
 
-Many developers skip async tests entirely and only test the synchronous parts of their application. This leaves the wiring — the actual async coordination — untested, and bugs in that layer only show up in production.
+## Rust Application
 
-The good news: with `#[tokio::test]`, async tests look almost identical to sync tests. The runtime manages the event loop; you write `async fn my_test()` and use `.await` normally.
+`HttpClient` spawns a thread per request, simulating async IO. The test client uses `recv_timeout` to implement timeouts. `Response` carries `status` and `body`. Tests cover: successful 200 response, 404 response, timeout when the server does not respond, and correct body content. A `MockHttpClient` trait-based substitute is used for service-level tests to avoid thread spawning in fast unit tests.
 
-## The Intuition
+## OCaml Approach
 
-In Python's `asyncio`, you'd use `pytest-asyncio` and mark tests with `@pytest.mark.asyncio`. In JavaScript, Jest handles `async` test functions natively — just `return` a Promise or use `await`.
-
-In Rust, the `#[tokio::test]` attribute (or `#[async_std::test]`) wraps your test function in a single-threaded or multi-threaded runtime. Inside, everything works exactly like production async code. Channels, timeouts, `spawn` — all available.
-
-This example demonstrates the *structural pattern* using threads as a concrete analog, so the concepts are visible without a runtime dependency. The real production pattern uses `#[tokio::test]` directly.
-
-## How It Works in Rust
-
-Real async testing with Tokio:
-
-```rust
-// In Cargo.toml:
-// [dev-dependencies]
-// tokio = { version = "1", features = ["full", "test-util"] }
-
-#[tokio::test]
-async fn handler_returns_correct_response() {
-    let result = my_async_handler("GET", "/health").await;
-    assert_eq!(result.status, 200);
-}
-
-#[tokio::test]
-async fn timeout_returns_error() {
-    use tokio::time::{timeout, Duration};
-    let result = timeout(
-        Duration::from_millis(100),
-        slow_operation(),
-    ).await;
-    assert!(result.is_err(), "should time out");
-}
-
-#[tokio::test]
-async fn channel_delivers_messages_in_order() {
-    let (tx, mut rx) = tokio::sync::mpsc::channel(10);
-    for i in 0..5u64 {
-        tx.send(i).await.unwrap();
-    }
-    for expected in 0..5u64 {
-        assert_eq!(rx.recv().await.unwrap(), expected);
-    }
-}
-```
-
-The thread-based analog (this example's approach — no runtime dependency):
-
-```rust
-#[test]
-fn worker_processes_single_request() {
-    let worker = Worker::start();          // spawns a background thread
-    worker.send(Request { id: 1, body: "hello".into() });
-    let resp = worker.recv_timeout(Duration::from_secs(2))
-        .expect("timed out waiting for response");
-    assert_eq!(resp.id, 1);
-    assert_eq!(resp.result, "processed:HELLO");
-    worker.shutdown();                     // clean teardown
-}
-```
-
-Key points:
-- `#[tokio::test]` creates a single-threaded Tokio runtime per test by default
-- `tokio::test(flavor = "multi_thread")` for multi-threaded runtime
-- `tokio::time::pause()` + `tokio::time::advance()` for deterministic time-based tests
-- Always call `shutdown` or `drop` on workers to avoid test hanging
-- Use `tokio::spawn` for background tasks; `JoinHandle::await` to collect results
-
-## What This Unlocks
-
-- **Test async handlers directly**: HTTP handlers, message processors, database queries — test them as `async fn` with `.await`, using the same `assert_eq!` macros as sync tests
-- **Deterministic time**: `tokio::time::pause()` freezes the clock; `advance(Duration)` moves it forward — test timeouts without actually waiting
-- **Rate limiters and background cleanup**: spawn a task, let it run, verify side effects, shut down cleanly
+OCaml's `Lwt` and `Eio` (effect-based) runtimes require their own test runners. `Lwt_main.run` drives a promise to completion in tests. `Alcotest_lwt` provides `Alcotest_lwt.test_case` for async test cases. OCaml's `Mock_clock` from `Core_kernel` allows time manipulation in tests without real sleeps. The `eio` library's `Eio_mock` provides controllable IO for testing.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Async test runner | `Lwt_main.run` in test | `#[tokio::test]` attribute |
-| Async channels | `Lwt_mvar`, `Lwt_stream` | `tokio::sync::mpsc`, `watch`, `broadcast` |
-| Timeouts in tests | `Lwt_unix.sleep` | `tokio::time::timeout` + `pause`/`advance` |
-| Parallel test tasks | `Lwt.both` | `tokio::join!` or `tokio::spawn` |
-| Teardown | `Lwt_main.run (cleanup ())` | `worker.shutdown()` or `Drop` impl |
-| No-runtime analog | Threads + channels | `std::sync::mpsc` + `thread::spawn` |
+1. **Runtime**: Rust uses `#[tokio::test]` or `#[async_std::test]` to run async tests; OCaml uses `Lwt_main.run (test_fn ())` or `Eio_main.run`.
+2. **Timeout testing**: Rust's `tokio::time::pause/advance` enables time manipulation without real waits; OCaml's `Core.Time_ns` with mocked clock serves the same purpose.
+3. **Mock ease**: Both languages use trait/module injection for mock HTTP clients; Rust's trait objects give runtime flexibility while OCaml's functor approach is compile-time.
+4. **Cancellation**: Tokio provides structured cancellation via `CancellationToken`; OCaml/Lwt uses promise cancellation; this example uses thread-join timeouts.
+
+## Exercises
+
+1. Add a `retry` wrapper that retries a failed HTTP request up to N times with exponential backoff, and write tests that verify retry counts using a `CountingMockClient`.
+2. Implement a `Circuit Breaker` that opens after 3 consecutive failures and write tests that verify the open/half-open/closed state transitions.
+3. Write a test for concurrent requests using `thread::scope` to spawn 10 parallel requests and verify all responses are received correctly.

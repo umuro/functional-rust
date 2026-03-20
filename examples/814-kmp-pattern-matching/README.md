@@ -2,79 +2,37 @@
 
 ---
 
-# 814: KMP — Knuth-Morris-Pratt Pattern Matching
+# 814-kmp-pattern-matching — KMP Pattern Matching
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Linear-time exact string search: build the failure function once in O(m), then scan text in O(n), never stepping back.
+Knuth-Morris-Pratt (1977) finds all occurrences of a pattern in a text in O(n+m) time, avoiding redundant comparisons. Naive search backtracks to the beginning on mismatch; KMP uses the Failure Function (LPS array) to skip ahead. It is used in `grep`, text editors (search/replace), network intrusion detection systems (signature matching), and bioinformatics (exact sequence matching). KMP is the foundational substring search algorithm that all others build upon.
 
-## The Problem This Solves
+## Learning Outcomes
 
-When searching for a pattern in a long text, the naïve approach compares character-by-character and backtracks on mismatch — giving O(n×m) worst case. This is catastrophic for repetitive patterns on repetitive text (e.g., searching "aaab" in "aaaaaaa…"), a real problem in DNA sequence alignment, log parsing, and network intrusion detection.
+- Compute the LPS (Longest Proper Prefix-Suffix) array for a pattern in O(m)
+- Use the LPS array to avoid re-examining characters in the text
+- Implement `kmp_search` returning all starting positions of pattern occurrences
+- Understand the invariant: at each mismatch, jump to `lps[j-1]` to skip known matches
+- Compare with naive O(nm) search and Boyer-Moore O(n/m) average
 
-KMP eliminates all backtracking in the text. After a partial match of length `k` fails, KMP knows exactly how much of the already-matched prefix can be reused — because it precomputed this information in the failure function. You never re-examine a text character you've already passed.
+## Rust Application
 
-The result: O(n + m) guaranteed, where n is text length and m is pattern length. For the bioinformatics case of searching a 3-billion-character genome, this difference is the difference between seconds and hours.
+`compute_lps(pattern)` fills the failure function array: when `p[i] == p[len]`, extend; when mismatch and `len > 0`, jump to `lps[len-1]`. `kmp_search(text, pattern)` uses `lps` to drive the matching: on mismatch, if `j > 0` jump to `lps[j-1]`, else advance `i`. On full match (`j == m`), record the position and jump to `lps[j-1]`. Tests verify multiple occurrences and no-match cases.
 
-## The Intuition
+## OCaml Approach
 
-The failure function `pi[i]` stores the length of the longest proper prefix of `pattern[0..=i]` that is also a suffix. On mismatch at position `j` in the pattern, jump to `pi[j-1]` — you already know the first `pi[j-1]` characters of the pattern match, so resume from there. The text pointer never moves backwards. Total work is O(n + m) because the pattern pointer can only advance n times total across the whole search.
-
-In OCaml the same algorithm is expressed recursively; Rust's iterative version is identical in structure but more explicit about state.
-
-## How It Works in Rust
-
-```rust
-// Step 1: Build the prefix/failure table in O(m)
-fn build_prefix(pattern: &[u8]) -> Vec<usize> {
-    let m = pattern.len();
-    let mut pi = vec![0usize; m];
-    let mut k = 0usize;
-    for i in 1..m {
-        // Walk back through the failure chain until a match or k==0
-        while k > 0 && pattern[k] != pattern[i] { k = pi[k - 1]; }
-        if pattern[k] == pattern[i] { k += 1; }
-        pi[i] = k;  // Longest proper prefix-suffix of pattern[0..=i]
-    }
-    pi
-}
-
-// Step 2: Search in O(n) — text pointer only moves forward
-fn kmp_search(text: &str, pattern: &str) -> Vec<usize> {
-    let (t, p) = (text.as_bytes(), pattern.as_bytes());
-    let (n, m) = (t.len(), p.len());
-    if m == 0 { return vec![]; }
-
-    let pi = build_prefix(p);
-    let mut matches = Vec::new();
-    let mut q = 0usize;  // Characters matched so far
-
-    for i in 0..n {
-        while q > 0 && p[q] != t[i] { q = pi[q - 1]; }  // Failure link
-        if p[q] == t[i] { q += 1; }
-        if q == m {
-            matches.push(i + 1 - m);  // Match at this position
-            q = pi[m - 1];            // Prepare for overlapping matches
-        }
-    }
-    matches
-}
-```
-
-Key Rust idiom: `as_bytes()` gives a `&[u8]` with O(1) indexing and no UTF-8 overhead — always use this for byte-level string algorithms.
-
-## What This Unlocks
-
-- **Bioinformatics**: Search DNA/protein sequences for motifs; KMP is the baseline before BLAST/BWA.
-- **Log analysis**: Find error patterns in multi-gigabyte log streams without loading them fully into memory.
-- **Aho-Corasick**: KMP extended to multiple patterns simultaneously — the foundation of intrusion detection systems and text sanitizers.
+OCaml implements KMP with `Array.make m 0` for LPS and `Buffer.t` or direct position list for results. The recursive functional style: `let rec fill i len = ...` computes LPS cleanly. OCaml's `String.get` provides O(1) character access. The `Re.execp` function in the `re` library uses a different but related approach for regex matching. OCaml's `Str` module uses NFA-based matching.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Failure table build | Recursive helper with `pi` array | Iterative `vec![0; m]`, same logic |
-| Pattern as bytes | `Bytes.of_string pattern` | `pattern.as_bytes()` — zero-cost |
-| Match state | `ref` integer or functional threading | `let mut q = 0usize` |
-| Collect results | `List.rev` accumulator | `Vec::push`, no reversal needed |
-| Overlap handling | `pi.(m-1)` after match | `q = pi[m - 1]` — identical |
+1. **LPS computation**: Both languages implement the same KMP failure function loop; the logic is language-independent.
+2. **String iteration**: Rust collects to `Vec<char>` for indexed access (O(1) per char); OCaml's `String.get` is O(1) for bytes; both handle ASCII correctly.
+3. **Multiple matches**: Both return `Vec<usize>` / `int list` of starting positions; the jump after match (`lps[m-1]`) enables overlapping matches.
+4. **Production use**: Rust's `memchr` crate uses SIMD-accelerated byte search for single characters; KMP is used for multi-character patterns.
+
+## Exercises
+
+1. Implement `kmp_count(text, pattern) -> usize` that counts non-overlapping occurrences efficiently.
+2. Extend to 2D pattern matching: search for a 2D pattern in a 2D text by running KMP on each row to find column matches, then KMP on columns.
+3. Use KMP to find the shortest string period: compute LPS of `pattern` and use it to determine if `pattern` has a period `p = m - lps[m-1]`.

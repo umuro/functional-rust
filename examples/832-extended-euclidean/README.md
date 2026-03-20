@@ -2,86 +2,58 @@
 
 ---
 
-# 832: Extended Euclidean Algorithm
+# Extended Euclidean Algorithm
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Find integers x, y such that ax + by = gcd(a, b) — the foundation of modular inverses and the Chinese Remainder Theorem.
+The basic Euclidean algorithm finds gcd(a, b) but not the coefficients. The extended version also finds Bezout coefficients x, y such that `a*x + b*y = gcd(a, b)`. These coefficients are essential for computing modular inverses (when gcd(a, m) = 1, x is a's inverse mod m), solving linear Diophantine equations `ax + by = c`, and implementing CRT. Without the extended algorithm, modular inverse requires Fermat's little theorem (only works for prime moduli) or Euler's theorem (requires phi(m), harder to compute). Extended GCD works for any modulus, not just primes.
 
-## The Problem This Solves
+## Learning Outcomes
 
-The extended Euclidean algorithm computes not just gcd(a, b) but also the Bézout coefficients x and y satisfying ax + by = gcd(a, b). These coefficients are the key to modular arithmetic: if gcd(a, m) = 1, then ax ≡ 1 (mod m), making x the modular inverse of a.
+- Understand the recursive structure: if `extended_gcd(b, a%b) = (g, x1, y1)`, then for the original pair: `x = y1`, `y = x1 - (a/b)*y1`
+- Derive Bezout coefficient update via the recurrence relationship
+- Apply to modular inverse: `mod_inv(a, m) = x mod m` where `(g, x, _) = extended_gcd(a, m)` and g = 1
+- Solve general linear Diophantine `ax + by = c`: has solution iff gcd(a,b) divides c
+- Understand sign handling: Bezout coefficients can be negative
 
-Modular inverses are essential in RSA (computing the private key d = e⁻¹ mod φ(n)), in the Chinese Remainder Theorem (CRT) for combining solutions to simultaneous congruences, in polynomial interpolation over finite fields, and in any modular division a/b mod m (computed as a · b⁻¹ mod m). Without extended GCD, you'd need Fermat's little theorem (which only works when m is prime) or Euler's theorem.
-
-This example computes `(gcd, x, y)` iteratively and derives the modular inverse as a clean wrapper, with correct handling of negative coefficients.
-
-## The Intuition
-
-Standard Euclidean: gcd(a, b) = gcd(b, a mod b), unwinding until b = 0.
-
-Extended: as we unwind, track how each remainder is a linear combination of the original a and b. At each step: `r[i] = r[i-2] - q[i] · r[i-1]`, and the same relation holds for the Bézout coefficients: `x[i] = x[i-2] - q[i] · x[i-1]`.
-
-The iterative version maintains `(old_r, r, old_s, s)` where s tracks the x-coefficient (the y-coefficient follows from the equation). When r reaches 0, old_r = gcd and old_s = x.
-
-The result x may be negative — normalise with `(x % m + m) % m` for a positive modular inverse.
-
-O(log min(a,b)) steps — same as standard GCD, with constant extra work per step.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-// Returns (gcd, x, y) where a*x + b*y = gcd
-fn extended_gcd(a: i64, b: i64) -> (i64, i64, i64) {
+pub fn extended_gcd(a: i64, b: i64) -> (i64, i64, i64) {
     if b == 0 {
-        return (a, 1, 0); // a*1 + 0*0 = a
-    }
-    // Iterative — avoids recursion and is easier to follow
-    let (mut old_r, mut r) = (a, b);
-    let (mut old_s, mut s) = (1i64, 0i64); // x-coefficients
-    let (mut old_t, mut t) = (0i64, 1i64); // y-coefficients
-
-    while r != 0 {
-        let q = old_r / r;
-        // Advance remainder: r_{i+1} = r_{i-1} - q * r_i
-        (old_r, r) = (r, old_r - q * r);
-        // Same recurrence for Bézout coefficients
-        (old_s, s) = (s, old_s - q * s);
-        (old_t, t) = (t, old_t - q * t);
-    }
-    // old_r = gcd, old_s = x, old_t = y
-    (old_r, old_s, old_t)
-}
-
-// Modular inverse of a mod m (requires gcd(a,m) = 1)
-fn mod_inverse(a: i64, m: i64) -> Option<i64> {
-    let (g, x, _) = extended_gcd(a.rem_euclid(m), m);
-    if g != 1 {
-        None // a and m are not coprime — inverse doesn't exist
+        (a, 1, 0)  // gcd, x, y: a*1 + 0*0 = a
     } else {
-        Some(x.rem_euclid(m)) // normalise to [0, m)
+        let (g, x1, y1) = extended_gcd(b, a % b);
+        (g, y1, x1 - (a / b) * y1)
     }
+}
+pub fn mod_inverse(a: i64, m: i64) -> Option<i64> {
+    let (g, x, _) = extended_gcd(a.rem_euclid(m), m);
+    if g != 1 { None } else { Some(x.rem_euclid(m)) }
 }
 ```
 
-Rust's tuple destructuring in assignments `(old_r, r) = (r, old_r - q * r)` is clean and avoids temporary variables. The right-hand side is fully evaluated before assignment — equivalent to a swap with computation, no aliasing risk.
+Using `i64` handles negative Bezout coefficients naturally. The `rem_euclid` method computes the mathematical modulo (always non-negative), avoiding negative result issues from Rust's `%` operator on negative numbers. The triple return `(g, x, y)` is a natural Rust pattern for multiple related outputs. The iterative version avoids stack depth issues for large inputs: maintain `(old_r, r)`, `(old_s, s)`, `(old_t, t)` and update simultaneously.
 
-`rem_euclid(m)` is preferred over `% m` for negative numbers: `(-3i64).rem_euclid(7) == 4`, while `(-3i64) % 7 == -3`. Always use `rem_euclid` for modular arithmetic with potentially negative values.
+## OCaml Approach
 
-For the Chinese Remainder Theorem: given x ≡ a₁ (mod m₁) and x ≡ a₂ (mod m₂) with gcd(m₁, m₂) = 1, the solution is `x = a₁ + m₁ · (a₂ - a₁) · mod_inverse(m₁, m₂)`.
-
-## What This Unlocks
-
-- **RSA private key**: `d = mod_inverse(e, phi_n)` — the decryption exponent is a modular inverse via extended GCD.
-- **Chinese Remainder Theorem**: combine simultaneous congruences using Bézout coefficients to find a unique solution mod (m₁ · m₂ · … · mₖ).
-- **Modular division in finite fields**: `a / b mod p` = `a * mod_inverse(b, p)` — used in polynomial interpolation, Reed-Solomon codes, and cryptographic protocols.
+OCaml's recursive extended GCD returns `(int * int * int)` exactly as in Rust. The pattern `let (g, x1, y1) = extended_gcd b (a mod b) in (g, y1, x1 - (a / b) * y1)` is identical in structure. OCaml handles negative remainders from `mod` differently: `(-7) mod 3 = -1` in OCaml (truncating division), requiring explicit adjustment. The `((x mod m) + m) mod m` idiom ensures non-negative modular inverse. OCaml's `Int.rem` has the same truncating behavior.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Simultaneous assignment | `let (a, b) = (b, a-q*b)` | `(old_r, r) = (r, old_r - q * r)` — same pattern |
-| Negative modulo | `((x mod m) + m) mod m` | `x.rem_euclid(m)` — built-in, correct for negative x |
-| Recursive vs iterative | Natural recursion | Iterative with `(old_r, r, old_s, s, old_t, t)` |
-| Inverse existence check | `if g <> 1 then failwith ...` | `Option<i64>` — idiomatic `None` for non-coprime case |
-| i64 overflow | `Int64` or 63-bit int | `i64` — explicit, safe for numbers up to ~9.2 × 10¹⁸ |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Negative modulo | `rem_euclid` for mathematical mod | `((x mod m) + m) mod m` |
+| Return type | Tuple `(i64, i64, i64)` | Tuple `(int * int * int)` |
+| Stack safety | Tail-recursive iter preferred | TCO makes recursion safe |
+| Modular inverse | Returns `Option<i64>` | Returns `int option` |
+| Bezout signs | Can be negative (correct) | Same |
+| Integer size | `i64` for 64-bit inputs | `int` (63-bit) or `Int64` |
+
+## Exercises
+
+1. Verify the extended GCD output: for all tested pairs (a, b), check that `a*x + b*y == gcd(a,b)`.
+2. Implement iterative extended GCD to avoid stack depth issues for large inputs.
+3. Solve the linear Diophantine equation `ax + by = c` or report no solution, using extended GCD.
+4. Use the extended GCD to implement CRT for two congruences without explicitly computing phi.
+5. Implement a batch modular inverse computation for a list of values mod p using the recurrence `inv[i] = -(p/i) * inv[p%i] mod p`.

@@ -4,69 +4,48 @@
 
 # 257: Pairing Elements with zip()
 
-**Difficulty:** 1  **Level:** Beginner
+## Problem Statement
 
-Combine two iterators element-by-element into pairs — stops at the shorter one, never panics on length mismatch.
+Many algorithms operate on two parallel sequences simultaneously: pairing keys with values, computing dot products, correlating time-series data, or combining two streams element-by-element. The naive approach uses index-based access (`a[i]`, `b[i]`) which is error-prone and requires bounds checking. The `zip()` combinator solves this by producing pairs `(a_i, b_i)` lazily, stopping when the shorter source is exhausted — eliminating off-by-one errors entirely.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You have two parallel sequences and you need to process them together: names and scores, keys and values, timestamps and readings. The naive approach is an index loop: `for i in 0..n { process(a[i], b[i]); }` — but you need to know `n`, you need bounds checking, and the intent ("process in parallel") is buried in the mechanics.
+- Understand how `zip()` pairs elements from two iterators, stopping at the shorter one
+- Use `zip()` to build `HashMap` from key and value iterators
+- Recognize the truncation behavior as a feature for handling mismatched-length sources
+- Combine `zip()` with `map()` to compute pairwise operations like dot products
 
-`zip()` expresses this directly: "pair up these two sequences, one element at a time." No indices, no bounds, no off-by-one. The result is an iterator of tuples `(a_item, b_item)` that you can pass to any iterator adapter — `map`, `filter`, `collect`, `for_each`.
+## Rust Application
 
-The length handling is important: `zip()` stops at the shorter iterator. This is the safe choice — you never get an out-of-bounds access or a panic. OCaml's `List.combine` raises `Invalid_argument` on length mismatch. Know which behaviour you need; in most cases, silent truncation is correct.
-
-## The Intuition
-
-Zip is like a zipper: two separate rows of teeth, interlocked one pair at a time. You get as many pairs as the shorter side allows. After that, the zipper stops.
-
-Each call to `next()` on the zip iterator calls `next()` on both inner iterators and pairs the results. If either returns `None`, the zip returns `None`. The whole thing is lazy — nothing is computed until you consume the zip.
-
-Building a `HashMap` from two parallel slices (one of keys, one of values) is idiomatic: `keys.into_iter().zip(values).collect::<HashMap<_,_>>()`. This is the canonical Rust idiom for constructing a map from two independent lists.
-
-## How It Works in Rust
+`Iterator::zip()` takes any `IntoIterator` and returns a `Zip<A, B>` struct. Each `next()` call advances both inner iterators and returns `Some((a, b))` — or `None` if either is exhausted.
 
 ```rust
-// Iterate two slices in parallel
-let names = ["Alice", "Bob", "Carol"];
-let scores = [95u32, 87, 92];
-for (name, score) in names.iter().zip(scores.iter()) {
-    println!("{}: {}", name, score);
-}
-
-// Build a HashMap from two iterators — canonical idiom
-let keys   = vec!["a", "b", "c"];
-let values = vec![1i32, 2, 3];
-let map: HashMap<_, _> = keys.into_iter().zip(values).collect();
-
-// zip truncates at the shorter — no panic, no error
-let long  = [1i32, 2, 3, 4, 5];
-let short = ["x", "y"];
-let pairs: Vec<_> = long.iter().zip(short.iter()).collect();
-// pairs.len() == 2  (not 5)
-
-// Enumerate is zip with 0..
-let items = ["a", "b", "c"];
-for (i, item) in items.iter().enumerate() {
-    println!("{}: {}", i, item);  // 0:a  1:b  2:c
-}
-// enumerate() is equivalent to (0..).zip(items.iter())
+let keys = vec!["a", "b", "c"];
+let vals = vec![1i32, 2, 3];
+let map: HashMap<_, _> = keys.into_iter().zip(vals).collect();
 ```
 
-`zip` is lazy: calling `.zip()` doesn't compute anything. Elements are produced only when consumed by a `for` loop, `.collect()`, or another adapter.
+The dot product pattern is particularly clean: `a.iter().zip(b.iter()).map(|(x, y)| x * y).sum()`.
 
-## What This Unlocks
+## OCaml Approach
 
-- **Parallel iteration** — process two or more sequences together without index arithmetic or manual bounds checking.
-- **HashMap construction** — `keys.into_iter().zip(values).collect()` is the idiomatic way to build a map from two parallel lists.
-- **Pairing with indices** — `.enumerate()` is built-in zip with `0..`; no manual counter needed.
+OCaml provides `List.combine` for zipping two lists into a list of pairs, and `List.map2` for applying a binary function pairwise. These are strict and raise `Invalid_argument` on length mismatch, unlike Rust's truncation:
+
+```ocaml
+let pairs = List.combine [1;2;3] ["a";"b";"c"]
+(* [(1,"a"); (2,"b"); (3,"c")] — strict, raises on unequal lengths *)
+let dot = List.fold_left (+) 0 (List.map2 ( * ) a b)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Syntax | `List.combine xs ys` | `xs.iter().zip(ys.iter())` |
-| Result type | `('a * 'b) list` — eager | `Zip<IterA, IterB>` — lazy iterator |
-| Length mismatch | Raises `Invalid_argument` | Silent truncation at shorter |
-| Laziness | Eager (computes all pairs) | Lazy — produces pairs on demand |
-| Index-based | Manual `List.nth` or `Array.get` | `.enumerate()` for `(index, item)` |
+1. **Length mismatch**: Rust's `zip()` silently truncates to the shorter iterator; OCaml's `List.map2` raises `Invalid_argument`.
+2. **Laziness**: Rust's `zip()` is lazy; OCaml's `List.combine` immediately creates a new list.
+3. **Pair type**: Rust yields Rust tuples `(A, B)` which are unnamed; OCaml produces named-field or anonymous tuples identically.
+4. **Unzip**: Rust has `Iterator::unzip()` as the inverse; OCaml uses `List.split`.
+
+## Exercises
+
+1. Zip a list of student names with their grades and compute the average grade using `zip()` and `map()`.
+2. Implement a dot product function `dot(a: &[f64], b: &[f64]) -> f64` using `zip()` and `sum()`.
+3. Use `zip()` with `enumerate()` to pair every element with both its index and a label from a separate labels slice.

@@ -2,85 +2,51 @@
 
 ---
 
-# 588: Finite Automata with Match
+# Pattern State Automata
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Model state machines with enums and match — states carry data, transitions are exhaustively verified.
+Pattern matching in Rust goes beyond simple value checks — it enables powerful dispatch mechanisms for type-safe command processing, visitor-pattern traversals, state machine transitions, and recursive data structure manipulation. This example demonstrates advanced pattern matching techniques that arise in compiler construction, game engines, protocol implementations, and functional programming idioms applied to real systems code.
 
-## The Problem This Solves
+## Learning Outcomes
 
-State machines are everywhere: connection lifecycle, order status, UI flows, protocol parsers. Most implementations use either an integer/string state field (fragile, no compiler help) or a class hierarchy with polymorphic dispatch (lots of boilerplate, easy to forget transitions).
+- Advanced pattern matching constructs specific to this example's domain
+- How Rust's exhaustiveness checking prevents missed cases in complex dispatch
+- How patterns interact with ownership — matching by value vs by reference
+- How recursive enum patterns (trees, ASTs) work with  variants
+- Where this technique appears in real-world Rust: compilers, game engines, CLI tools
 
-The classic bug: you add a new state but forget to handle the transition from it in one of your event handlers. The machine silently drops events or enters an invalid state. You find out at runtime.
+## Rust Application
 
-The enum approach makes states first-class types. States can carry data (a `Running` state carries the tick count, a `Paused` state remembers where it was). The `match (state, event)` pattern is a 2D transition table. The compiler checks every combination — if you add a state or event variant, every unhandled combination is a compile error.
+The source demonstrates the core technique with working examples that can be run directly. Key constructs include enum variant matching, guard conditions, nested destructuring, and composition of multiple pattern types. The match expressions are exhaustive — adding new variants requires updating all match sites, making the code refactor-safe.
 
-## The Intuition
+Key patterns demonstrated:
+- Named constant patterns using `const` values in match arms
+- Type-dispatch via enum variants carrying different payload types
+- `Box<T>` deref patterns for recursive data structures
+- Or-pattern grouping for related variants in dispatch tables
 
-A finite automaton has states, events, and a transition function: `transition(state, event) -> state`. In Rust: one enum for states, one enum for events, one function that matches on `(state, event)` pairs. The tuple match reads like a transition table.
+## OCaml Approach
 
-States that carry data are the key upgrade over traditional FSMs. `Running(tick_count)` isn't just a state — it's a state with embedded context. `Paused(where_we_stopped)` remembers history. When you transition back to `Running` from `Paused`, you resume with the correct tick count automatically. No separate fields to keep in sync.
+OCaml's ML heritage makes it the reference implementation for these patterns. Variant types, exhaustive matching, and recursive type handling in OCaml are equivalent in power:
 
-The catch-all arm `(s, _) => s` handles all unrecognized transitions: ignore the event, stay in current state. This is a deliberate design choice made visible in the code.
-
-## How It Works in Rust
-
-```rust
-#[derive(Debug, Clone)]
-enum State { Idle, Running(u32), Paused(u32), Done(u32) }
-
-#[derive(Debug, Clone, Copy)]
-enum Event { Start, Tick, Pause, Resume, Stop }
-
-// Transition table as match on (state, event) tuple
-fn transition(state: State, event: Event) -> State {
-    match (state, event) {
-        (State::Idle,       Event::Start)  => State::Running(0),
-        (State::Running(n), Event::Tick)   => State::Running(n + 1),  // increment counter
-        (State::Running(n), Event::Pause)  => State::Paused(n),       // save position
-        (State::Running(n), Event::Stop)   => State::Done(n),
-        (State::Paused(n),  Event::Resume) => State::Running(n),      // restore position
-        (State::Paused(n),  Event::Stop)   => State::Done(n),
-        (s, _)                             => s,  // ignore invalid events
-    }
-}
-
-// Drive the machine through a sequence of events
-let events = [Event::Start, Event::Tick, Event::Tick, Event::Pause,
-              Event::Resume, Event::Tick, Event::Stop];
-let mut state = State::Idle;
-for event in events {
-    state = transition(state, event);
-    println!("{:?} -> {:?}", event, state);
-}
-// Output: Running(0), Running(1), Running(2), Paused(2), Running(2), Running(3), Done(3)
-
-// Simple cyclic automaton — no data needed
-#[derive(Clone, Copy)]
-enum Traffic { Red, Green, Yellow }
-
-fn next_traffic(t: Traffic) -> Traffic {
-    match t {
-        Traffic::Red    => Traffic::Green,
-        Traffic::Green  => Traffic::Yellow,
-        Traffic::Yellow => Traffic::Red,
-    }
-}
+```ocaml
+(* Pattern matching in OCaml handles:
+   - Variant constructors with data: Cmd (arg1, arg2) -> ...
+   - Guards: | x when x > threshold -> ...  
+   - Nested patterns: Node { left; right } -> ...
+   - Recursive cases: the natural form for tree traversal *)
 ```
-
-## What This Unlocks
-
-- **Data-carrying states** — states embed their context; no separate fields to keep in sync with the state variable.
-- **Compiler-verified transitions** — add `State::Crashed` and every unhandled `(Crashed, Event)` pair is a compile error.
-- **Readable transition table** — each match arm is literally a row in your state machine diagram.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| State type | `type state = Idle \| Running of int \| ...` | `enum State { Idle, Running(u32), ... }` |
-| Transition | `let transition state event = match (state, event) with` | `fn transition(state: State, event: Event) -> State { match (state, event) { ... } }` |
-| Data in state | `Running of int` | `Running(u32)` |
-| Catch-all transition | `\| (s, _) -> s` | `(s, _) => s` |
-| Ownership of state | GC — state can be aliased | Moved in transition; no accidental sharing |
+1. **Box deref**: Rust requires `Box<T>` for recursive types and Rust's patterns transparently deref through `Box`; OCaml's GC manages recursive variant pointers automatically.
+2. **Const patterns**: Rust allows named `const` values in patterns; OCaml can use `let open Consts in` to bring constants into scope for pattern matching.
+3. **Visitor pattern**: OCaml's idiomatic style uses recursive functions directly; Rust often uses both direct recursion and the trait-based visitor pattern for separation of concerns.
+4. **State machines**: Both languages naturally express state machines with variant enums + match — this is one of the strongest arguments for algebraic types over OOP class hierarchies.
+
+## Exercises
+
+1. **Extend the data type**: Add a new variant or field to the main data structure and trace all the match expressions that need updating — practice the exhaustiveness feedback loop.
+2. **Accumulating visitor**: Write a traversal function that collects all leaf values into a `Vec<T>` using only pattern matching and recursion.
+3. **State machine validation**: Implement an invalid-transition error: when the state/event combination is unexpected, return `Err("invalid transition")` instead of panicking.

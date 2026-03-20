@@ -33,3 +33,9 @@ Rust expresses the same ideas with a `Monoid` trait and generic functions bounde
 2. **Multiple instances:** OCaml defines separate named modules; Rust uses newtypes to give distinct `impl Monoid` blocks to the same base type.
 3. **Identity element:** OCaml's `val empty : t` is a value; Rust's `fn empty() -> Self` is a static method (required because Rust has no top-level `val`).
 4. **Law checking:** OCaml's `MonoidLaws` functor is instantiated per type; Rust's law functions are generic over `M: Monoid + PartialEq + Clone`, applied at call site.
+
+## Exercises
+
+1. Show that any type with a `Monoid` instance induces a category with a single object by implementing the `Category` trait where morphisms are monoid elements and composition is the monoid operation.
+2. Implement the free monoid on a type `T` (i.e., `Vec<T>`) and demonstrate the universal property: any function `T -> M` (where `M` is a monoid) extends uniquely to a monoid homomorphism `Vec<T> -> M`.
+3. Define a `Monoid` instance for endomorphisms `T -> T` (composition as operation, identity function as unit) and use it to build a pipeline of string transformations via `mconcat`.

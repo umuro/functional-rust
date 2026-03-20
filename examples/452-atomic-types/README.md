@@ -2,79 +2,39 @@
 
 ---
 
-# 452: Atomic Types — Lock-Free Operations on Single Values
+# 452: Atomic Types — Lock-Free Concurrent Primitives
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Use `AtomicUsize`, `AtomicBool`, and friends for thread-safe counters and flags without any mutex — single CPU instructions, no kernel involvement.
+Mutex-based synchronization has overhead: kernel entry, thread scheduling, potential contention. For simple operations on single values — incrementing a counter, setting a flag, tracking a maximum — atomic hardware instructions provide the same guarantee without a lock. Modern CPUs support atomic read-modify-write operations (fetch_add, compare_and_swap) that execute atomically from all other cores' perspectives. Rust's `std::sync::atomic` module exposes these directly.
 
-## The Problem This Solves
+Atomics power reference counting (`Arc`'s inner counter), lock-free data structures, metrics counters, progress tracking, and any concurrent primitive where one CPU instruction is sufficient.
 
-`Arc<Mutex<u64>>` for a counter is correct but heavyweight. Every increment takes a lock: a compare-and-swap to acquire, the increment, another to release. On a busy system this means threads queuing, kernel involvement, and cache line bouncing. For a simple counter or a shutdown flag, that's enormous overhead for what could be a single instruction.
+## Learning Outcomes
 
-The subtler problem is contention. With a mutex-protected counter shared by 16 threads, most threads spend their time waiting. Throughput plateaus. The mutex becomes the bottleneck. Atomic operations fix this: `fetch_add` is a single `LOCK XADD` x86 instruction. Hardware handles the mutual exclusion at the CPU level — faster than any software lock, no context switching.
+- Understand atomic operations: fetch_add, fetch_sub, load, store, compare_and_swap
+- Learn the `Ordering` parameter: `SeqCst`, `Acquire`, `Release`, `Relaxed` and when each is appropriate
+- See how `AtomicCounter`, `AtomicBool`, and `AtomicUsize` enable lock-free concurrent primitives
+- Understand why `Arc`'s reference counting uses `AtomicUsize` not `Mutex<usize>`
+- Learn the performance advantage: no kernel calls, no lock contention, no scheduling
 
-Atomic types also prevent a subtle class of bugs: torn reads and writes. On a 64-bit system, reading a `u64` that's being written by another thread without synchronisation can produce a value where the high 32 bits are the old value and the low 32 bits are the new value. This is undefined behavior in C/C++. Rust's `AtomicU64` makes such reads safe by using the platform's atomic load instruction.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `AtomicCounter` wraps `AtomicUsize` with `fetch_add(1, Ordering::SeqCst)` for increment and `load(Ordering::SeqCst)` for read. `AtomicBool` provides a flag for shutdown signaling. Multiple threads increment the counter concurrently without any locking. `SeqCst` (sequentially consistent) ordering is used throughout — the safest but most conservative choice; `Relaxed` ordering would be sufficient for independent counters.
 
-An atomic operation is indivisible from every other thread's perspective. No thread can observe a half-completed fetch-add. The CPU's memory bus or cache coherency protocol handles this. Atomics are the lowest-level synchronisation primitive — everything else (mutexes, channels, condvars) is built on top of them.
+## OCaml Approach
 
-In Java: `AtomicInteger`, `AtomicBoolean`. In Python: integers are protected by the GIL, but that disappears with true parallelism. In Go: `sync/atomic` package. Rust's `std::sync::atomic` is a direct mapping to CPU atomic instructions, with the ordering argument (more on that in example 453) controlling cross-CPU visibility.
-
-## How It Works in Rust
-
-```rust
-use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
-use std::sync::Arc;
-use std::thread;
-
-// Lock-free counter — no Mutex needed
-let counter = Arc::new(AtomicUsize::new(0));
-
-let handles: Vec<_> = (0..4).map(|_| {
-    let c = Arc::clone(&counter);
-    thread::spawn(move || {
-        for _ in 0..1000 {
-            c.fetch_add(1, Ordering::Relaxed); // single LOCK XADD instruction
-        }
-    })
-}).collect();
-for h in handles { h.join().unwrap(); }
-println!("{}", counter.load(Ordering::SeqCst)); // 4000 — correct
-
-// Shutdown flag — avoid spinning on a Mutex
-let running = Arc::new(AtomicBool::new(true));
-let r = Arc::clone(&running);
-let worker = thread::spawn(move || {
-    while r.load(Ordering::Relaxed) {  // cheap: just a load instruction
-        // do work
-    }
-});
-running.store(false, Ordering::Relaxed); // signal shutdown
-worker.join().unwrap();
-
-// fetch_add returns the OLD value
-let a = AtomicUsize::new(10);
-let old = a.fetch_add(5, Ordering::SeqCst);
-println!("old={} new={}", old, a.load(Ordering::SeqCst)); // old=10 new=15
-```
-
-The `Ordering` argument controls memory visibility across CPUs — not correctness of the atomic operation itself. For independent counters, `Relaxed` is correct and fastest. For operations that need to synchronise other memory (like the shutdown flag above), use `Release`/`Acquire` or `SeqCst`. See example 453.
-
-## What This Unlocks
-
-- **High-performance counters** — request counts, bytes transferred, cache hits — updated by many threads without locking.
-- **Shutdown and cancellation flags** — a background thread checks `AtomicBool::load(Relaxed)` in its loop; the main thread signals stop with `store(false, Relaxed)`.
-- **Lock-free algorithms** — the foundation for compare-exchange loops, lock-free stacks, and reference counting (what `Arc` uses internally).
+OCaml 5.x provides `Atomic.make`, `Atomic.get`, `Atomic.set`, `Atomic.compare_and_set`, and `Atomic.fetch_and_add` for atomic operations. OCaml 4.x doesn't need atomics for reference counting since the GIL handles it. The `Atomic.t` type in OCaml 5.x is similar to Rust's `AtomicT` types but without explicit ordering specification — OCaml uses sequentially consistent semantics by default.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Atomic int | `Atomic.make 0` (OCaml 5+) | `AtomicUsize::new(0)` |
-| Fetch-add | `Atomic.fetch_and_add a 1` | `a.fetch_add(1, Ordering::Relaxed)` |
-| Returns old value | yes | yes |
-| Stop flag | `Atomic.make false` | `AtomicBool::new(false)` |
-| Ordering | implicit (sequential) | explicit `Relaxed` / `Acquire` / `Release` / `SeqCst` |
-| Available types | `int`, `bool`, `float` | `AtomicU8/16/32/64/Usize`, `AtomicI*`, `AtomicBool`, `AtomicPtr<T>` |
+1. **Ordering control**: Rust exposes `Ordering` explicitly enabling optimization; OCaml 5.x's atomics use sequential consistency without user control.
+2. **Type variety**: Rust has `AtomicBool`, `AtomicI8`/`U8` through `AtomicI64`/`U64`, `AtomicIsize`/`Usize`, `AtomicPtr`; OCaml has a single `'a Atomic.t`.
+3. **Performance model**: Rust's `Relaxed` ordering is the cheapest; OCaml's fixed SeqCst has consistent but potentially higher cost.
+4. **Arc counter**: Rust's `Arc` uses `AtomicUsize` for reference counting directly; OCaml's GC handles reference counting transparently.
+
+## Exercises
+
+1. **Lock-free max**: Implement `fn update_max(current: &AtomicUsize, value: usize)` that atomically updates the stored maximum. Use `compare_exchange` in a loop. Test with 16 threads each trying to set the max.
+2. **Ordering experiment**: Write a test demonstrating that `Relaxed` ordering on two independent counters can produce results that would be impossible with sequential consistency. (Hint: requires specific CPU architectures — document why x86 may not show the effect.)
+3. **Arc from scratch**: Implement a simplified `MyArc<T>` using a raw pointer to `(T, AtomicUsize)`. Implement `Clone` (increment count with `fetch_add`) and `Drop` (decrement with `fetch_sub`, free if zero). Verify correctness with 4 threads sharing the same value.

@@ -33,3 +33,9 @@ Rust requires `Box<T>` for recursive enum variants since the compiler needs to k
 2. **Comparison:** OCaml uses built-in `<`, `>`, `=` for all types; Rust requires `Ord` trait bound
 3. **Persistence cost:** OCaml shares unchanged subtrees via GC; Rust must `.clone()` explicitly
 4. **Type parameters:** OCaml uses `'a` with no constraints; Rust needs `T: Ord + Clone`
+
+## Exercises
+
+1. Implement `delete` for the BST: remove an arbitrary node while maintaining the BST invariant (use in-order successor replacement for nodes with two children).
+2. Write an `is_valid_bst` checker that verifies the BST property holds for every node (not just locally), using range constraints propagated through the recursion.
+3. Implement a balanced BST construction from a sorted `Vec<T>` using divide-and-conquer (select the median as root), and verify the resulting tree has O(log n) height.

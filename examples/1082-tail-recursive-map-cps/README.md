@@ -29,3 +29,9 @@ Rust does not guarantee TCO, so even structurally tail-recursive functions can o
 2. **List construction:** OCaml cons (`::`) prepends in O(1), requiring `List.rev` at the end. Rust's `Vec::push` appends in O(1) amortized — no reverse needed.
 3. **Continuations:** OCaml closures are lightweight GC-managed values. Rust requires `Box<dyn FnOnce>` heap allocation for each continuation in the chain.
 4. **Idiomatic solution:** OCaml developers write `List.map`. Rust developers write `iter().map(f).collect()` — both are zero-overhead abstractions over the same pattern.
+
+## Exercises
+
+1. Rewrite `filter` in CPS style so it is tail-recursive without relying on Rust's stack; verify it handles a list of 100,000 elements without stack overflow.
+2. Implement `fold_left` using CPS transformation, then compare its performance to the direct iterative version on a list of one million integers.
+3. Combine CPS-style `map` and `filter` into a single CPS `filter_map` that applies a `T -> Option<U>` function and collects `Some` results, avoiding intermediate allocations.

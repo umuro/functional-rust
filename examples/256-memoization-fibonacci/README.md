@@ -44,3 +44,9 @@ giving call-site transparency identical to the OCaml version.
 2. **Mutual recursion:** OCaml's `let rec … and` allows closures to reference each other at definition time; Rust requires explicit cache parameter passing or global state
 3. **Interior mutability:** OCaml's GC handles aliasing freely; Rust uses `RefCell` to borrow-check at runtime inside otherwise-immutable closures
 4. **Thread safety:** OCaml's `Hashtbl` is not thread-safe; Rust's `thread_local!` makes the scope explicit, and `Mutex<HashMap>` would be needed for sharing
+
+## Exercises
+
+1. Generalize the memoization approach into a reusable `memoize` higher-order function that wraps any `Fn(u64) -> u64` with a `HashMap` cache.
+2. Implement memoized mutual recursion: two functions `is_even` and `is_odd` that call each other, each with its own cache, and verify they produce correct results for large inputs without redundant calls.
+3. Implement bottom-up dynamic programming for Fibonacci using a fixed-size array instead of a `HashMap`, compare memory and performance with the top-down memoized version, and explain the trade-offs.

@@ -2,88 +2,53 @@
 
 ---
 
-# 593: Interpreter Pattern
+# Interpreter Pattern
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Define a grammar as an enum (AST) and write multiple interpreters over it — evaluator, pretty-printer, and optimizer are all separate functions.
+Building a small interpreter is the classic exercise in language implementation and a demonstration of algebraic data types at their most powerful. An AST (Abstract Syntax Tree) is a recursive enum; evaluation is a recursive function over it. This pattern underpins every compiler, template engine, query language, and rule engine. The `Expr` enum with `Lit`, `Var`, `Add`, `Mul`, `Let`, `If` variants covers the core of any expression language.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You need to process structured data in multiple ways: evaluate a math expression, pretty-print it, optimize it, compile it to bytecode. In OOP, the Visitor pattern solves this, but it requires a double-dispatch class hierarchy — boilerplate-heavy and fragile when you add new variants.
+- How a recursive `Expr` enum models an arithmetic expression language
+- How `eval(expr: &Expr, env: &HashMap<String, f64>) -> Result<f64, Error>` interprets the AST
+- How `Let` binding and `If` conditional work in the evaluator
+- How `Box<Expr>` enables recursive types without infinite size
+- Where interpreter pattern appears: template engines, config DSLs, query languages, scripting
 
-The functional approach is simpler: define the grammar as a recursive enum (the AST), then write one function per interpretation. Each interpreter is a recursive `match` over the enum. Adding a new interpreter (e.g., a type-checker) means adding one function — no existing code changes.
+## Rust Application
 
-This is how real compilers are built. Rust's own compiler represents the language as a tree of enum variants and passes it through dozens of transformations. The power is in the clean separation: the grammar (enum) is defined once; behaviors (interpreters) are defined separately and can be added independently.
+`Expr` has `Lit(f64)`, `Var(String)`, `Add(Box<Expr>, Box<Expr>)`, `Sub`, `Mul`, `Div`, `Let { name, value, body }`, and `If { cond, then_, else_ }`. `eval` recursively matches each variant — `Add` evaluates both subexpressions and adds. `Let` evaluates `value`, inserts it into a clone of the environment, and evaluates `body`. Division checks for zero and returns an error.
 
-## The Intuition
+Key patterns:
+- `Box<Expr>` for recursive variants — prevents infinite-size type
+- `eval(expr, env) -> Result<f64, Error>` — recursive evaluation
+- Pattern matching on variants with nested patterns
+- `HashMap` environment for variable lookup
 
-A Rust `enum` + recursive `match` *is* the interpreter pattern — no abstract classes, no visitor infrastructure, no interface hierarchy: just data and functions that transform it. The trade-off: adding a new AST variant requires updating all interpreters; adding a new interpreter requires no changes to existing code (the opposite trade-off from OOP's open/closed principle per axis).
+## OCaml Approach
 
-## How It Works in Rust
+OCaml's ADTs make this the canonical example — LISP interpreters, mini-ML, and tutorial compilers all use this structure:
 
-```rust
-// The grammar — defined once
-#[derive(Debug, Clone)]
-enum Expr {
-    Num(f64),
-    Var(String),
-    Add(Box<Expr>, Box<Expr>),
-    Mul(Box<Expr>, Box<Expr>),
-}
-
-use std::collections::HashMap;
-
-// Interpreter 1: evaluate to a number
-fn eval(expr: &Expr, env: &HashMap<String, f64>) -> f64 {
-    match expr {
-        Expr::Num(n)    => *n,
-        Expr::Var(name) => *env.get(name).unwrap_or(&0.0),
-        Expr::Add(l, r) => eval(l, env) + eval(r, env),
-        Expr::Mul(l, r) => eval(l, env) * eval(r, env),
-    }
-}
-
-// Interpreter 2: pretty-print (no env needed)
-fn pretty(expr: &Expr) -> String {
-    match expr {
-        Expr::Num(n)    => n.to_string(),
-        Expr::Var(name) => name.clone(),
-        Expr::Add(l, r) => format!("({} + {})", pretty(l), pretty(r)),
-        Expr::Mul(l, r) => format!("({} * {})", pretty(l), pretty(r)),
-    }
-}
-
-// Interpreter 3: constant folding optimizer
-fn optimize(expr: Expr) -> Expr {
-    match expr {
-        Expr::Add(l, r) => match (optimize(*l), optimize(*r)) {
-            (Expr::Num(a), Expr::Num(b)) => Expr::Num(a + b),  // fold constants
-            (l, r) => Expr::Add(Box::new(l), Box::new(r)),
-        },
-        other => other,
-    }
-}
-
-// All three work on the same AST — no changes to Expr needed
-let ast = Expr::Add(Box::new(Expr::Num(1.0)), Box::new(Expr::Num(2.0)));
-assert_eq!(eval(&ast, &HashMap::new()), 3.0);
-assert_eq!(pretty(&ast), "(1 + 2)");
+```ocaml
+type expr = Lit of float | Var of string | Add of expr * expr
+  | Let of { name: string; value: expr; body: expr }
+let rec eval env = function
+  | Lit n -> Ok n
+  | Var x -> (match List.assoc_opt x env with Some v -> Ok v | None -> Error ("unbound: " ^ x))
+  | Add (a, b) -> let* va = eval env a in let* vb = eval env b in Ok (va +. vb)
+  | Let { name; value; body } -> let* v = eval env value in eval ((name, v) :: env) body
 ```
-
-## What This Unlocks
-
-- **DSL engines**: define a query language as an enum, write SQL and NoSQL backends as separate interpreters.
-- **Multi-target compilers**: one AST, multiple backends (WASM, native, bytecode) — each is an interpreter.
-- **Testing**: test the optimizer and evaluator independently; the AST is pure data, easy to construct in tests.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| AST definition | Recursive variant type | Recursive `enum` with `Box` for indirection |
-| Interpreter | Recursive function + pattern match | Recursive `fn` + `match` |
-| Environment | Association list / `Map` | `HashMap<String, f64>` |
-| Adding interpreter | New function | New function — no existing code changes |
-| Adding variant | Update all interpreters | Update all interpreters (same trade-off) |
-| OOP equivalent | Visitor pattern | Not needed — `match` handles dispatch |
+1. **Box requirement**: Rust requires `Box<Expr>` for recursive types (to bound the size); OCaml's heap-allocated values make recursive types natural without boxing annotation.
+2. **Environment cloning**: Rust's immutable HashMap requires cloning for `Let` extension or using a persistent map; OCaml uses association lists or functional maps with O(1) consing.
+3. **Error propagation**: Rust uses `?` and `Result` for division-by-zero and unbound variable; OCaml uses `result` with `let*` or exceptions.
+4. **Type inference**: Both languages infer the type of the `eval` function without annotation in most cases.
+
+## Exercises
+
+1. **Add function calls**: Extend `Expr` with `Call { func: String, args: Vec<Expr> }` and add built-in functions `sqrt`, `abs`, `max` to the evaluator.
+2. **Pretty printer**: Write `fn pretty(expr: &Expr) -> String` that produces readable infix notation for arithmetic expressions with minimal parentheses.
+3. **Type checker**: Write `fn type_check(expr: &Expr) -> Result<Type, TypeError>` where `Type` is `Num | Bool` — detect type mismatches before evaluation.

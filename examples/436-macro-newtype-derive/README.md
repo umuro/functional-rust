@@ -2,90 +2,39 @@
 
 ---
 
-# 436: Deriving Traits for Newtypes
+# 436: Newtype Derive Patterns
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Propagate trait implementations through newtype wrappers automatically — so your `UserId(u64)` behaves like a `u64` where you want it to, while staying distinct where you don't.
+Newtypes provide type safety but impose an implementation burden: you must re-derive or re-implement every trait the inner type has. `Email(String)` should support `Display`, `FromStr`, `Deref<Target=str>`, `AsRef<str>`, and more — all of which `String` already provides. The `derive_more` crate and custom macros generate these delegating implementations automatically. Without them, every newtype requires dozens of boilerplate impl blocks that simply forward to the inner type.
 
-## The Problem This Solves
+Newtype derive patterns appear in domain modeling (`UserId`, `OrderId`, `Email`), unit systems (`Meters`, `Kilograms`), and any codebase that uses newtypes extensively for type safety.
 
-The newtype pattern — `struct Meters(f64)` — gives you type safety: you can't accidentally pass `Seconds` where `Meters` is expected. But it comes with a cost: all the traits the inner type implements (`Display`, `Add`, `Hash`, `Ord`, `PartialEq`) are now missing from the wrapper. You have to re-implement or delegate each one manually. For a simple newtype with five or six useful traits, that's fifty lines of boilerplate.
+## Learning Outcomes
 
-Macro-generated delegation solves this. A derive macro (or `macro_rules!`) inspects the newtype's inner type and generates forwarding implementations: `impl Display for Meters` that calls `self.0.fmt(f)`, `impl Add for Meters` that calls `self.0 + other.0`, and so on. The `derive_more` crate in the ecosystem provides `#[derive(Add, Display, From, Into)]` exactly for this purpose.
+- Understand the boilerplate burden of newtypes and how derive macros reduce it
+- Learn which traits are derivable and which require custom `impl` for newtypes
+- See how `derive_more::Display`, `derive_more::From`, `derive_more::Deref` work
+- Understand validated newtypes (constructor returns `Result`/`Option`) vs. transparent newtypes
+- Learn how `#[derive(PartialOrd, Ord)]` on newtypes provides comparison via the inner type
 
-Understanding how to build this yourself teaches you both the newtype pattern's ergonomics and the macro technique for generating delegating impls.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `Email(String)` uses standard derives for `Debug, Clone, PartialEq, Eq, Hash`. The constructor `Email::new` validates the string, returning `Result<Self, &'static str>`. `as_str()` provides access to the inner string. `PositiveInt(u32)` derives `PartialOrd, Ord` — comparison delegates to `u32` automatically. The `derive_more` crate (not used here) would add `Display`, `From<String>`, `Deref`, and `Into<String>` with single attributes.
 
-A newtype derive macro generates `impl Trait for Wrapper` that delegates directly to the inner field — so your newtype gets the trait without the boilerplate.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-// Manual newtype delegation — what macros generate
-struct Meters(f64);
-
-impl std::fmt::Display for Meters {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}m", self.0)  // delegate to inner, add context
-    }
-}
-
-impl std::ops::Add for Meters {
-    type Output = Meters;
-    fn add(self, other: Meters) -> Meters { Meters(self.0 + other.0) }
-}
-
-impl From<f64> for Meters {
-    fn from(v: f64) -> Self { Meters(v) }
-}
-
-// With derive_more crate (what the proc macro does):
-use derive_more::{Add, Display, From, Into};
-
-#[derive(Debug, Clone, Copy, Add, Display, From, Into)]
-#[display(fmt = "{}m", _0)]
-struct Meters(f64);
-
-// Now:
-let a = Meters(1.5);
-let b = Meters(2.0);
-let c = a + b;          // Add works
-println!("{}", c);      // Display works: "3.5m"
-let raw: f64 = c.into();// Into<f64> works
-
-// DIY macro for delegation
-macro_rules! newtype_display {
-    ($name:ident) => {
-        impl std::fmt::Display for $name {
-            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                self.0.fmt(f)
-            }
-        }
-    };
-}
-
-newtype_display!(Meters);
-```
-
-1. Identify which traits you want to delegate to the inner type.
-2. Each delegation is `self.0.method()` — just forwarding through the wrapper.
-3. Use `derive_more` for common traits (`Add`, `Display`, `From`, `Into`, `Deref`).
-4. Write custom `macro_rules!` or proc macros for project-specific delegation patterns.
-
-## What This Unlocks
-
-- **Zero-cost type safety**: `Meters` and `Seconds` are distinct types; arithmetic between them is a compile error.
-- **Full trait ecosystem**: Newtypes participate in `Hash` maps, `Display` formatting, operator overloading — without boilerplate.
-- **Selective exposure**: Derive `Add` but not `Mul` — control exactly which operations make semantic sense.
+OCaml's newtype equivalent is an abstract type in a module: `module Email : sig type t; val of_string : string -> t option; val to_string : t -> string end`. The module hides the `string` inside, requiring explicit conversion. OCaml's `ppx_deriving` can generate comparison and hash functions. The module system enforces the type boundary more strictly than Rust's newtypes, which are just single-field structs.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Newtype pattern | `type meters = Meters of float` | `struct Meters(f64)` |
-| Automatic delegation | Module sharing / functor application | `derive_more`, manual `impl`, or custom macro |
-| Type alias (no safety) | `type meters = float` | `type Meters = f64` (alias, not newtype) |
-| Operator overloading | Not supported | `impl Add for Meters` |
-| Display formatting | `Printf` format functions | `impl Display` — `{}` in format strings |
+1. **Derive vs. module**: Rust newtypes derive traits selectively; OCaml modules hide the type and provide only explicitly exposed functions.
+2. **Deref transparency**: Rust newtypes can implement `Deref<Target=Inner>` for transparency; OCaml provides only the functions defined in the module signature.
+3. **Field access**: Rust newtypes with `pub` fields expose the inner value directly; OCaml's abstract types require accessor functions.
+4. **Derive more**: The `derive_more` crate reduces newtype boilerplate; OCaml's `ppx_deriving` serves the same role.
+
+## Exercises
+
+1. **derive_more usage**: Add `derive_more` as a dependency and rewrite `Email` using `#[derive(Display, From, Deref, Into)]`. Remove the manual `as_str` method and verify the same functionality works through `Deref`.
+2. **Newtype stack**: Create a stack of newtypes: `RawId(u64)`, `UserId(RawId)`, `AdminId(UserId)`. Implement `From<u64> for UserId` via `RawId`. Show that `AdminId` can't be accidentally used where `UserId` is expected.
+3. **Comprehensive newtype**: Implement `Percentage(f64)` with validation (0.0..=100.0), `Display` showing `42.5%`, `Add`/`Sub` operations that clamp results to valid range, and `From<f64>` with saturation.

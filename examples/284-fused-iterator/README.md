@@ -2,80 +2,62 @@
 
 ---
 
-# 284: FusedIterator
+# 284: FusedIterator for Stable Termination
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-A zero-cost marker trait that guarantees your iterator returns `None` forever once it first returns `None` — enabling optimizer skips and safe adapter composition.
+The `Iterator` specification in Rust says that after `next()` returns `None`, subsequent behavior is undefined — some iterators might return `Some` again if called further (a "restart"). This makes it unsafe to call `next()` after termination without an explicit check. The `FusedIterator` marker trait solves this by promising that once `next()` returns `None`, all future calls also return `None` — enabling safe and optimized composition in adapters that call `next()` multiple times.
 
-## The Problem This Solves
+## Learning Outcomes
 
-The `Iterator` contract says: once `next()` returns `None`, all future calls *should* return `None`. But this is a convention, not enforced by the type system. A buggy or deliberately weird iterator can return `Some` after returning `None` — and some iterator adapters have to guard against this with extra checks.
+- Understand `FusedIterator` as a marker trait guaranteeing "once None, always None"
+- Implement `FusedIterator` correctly (only when the implementation actually fuses)
+- Recognize that standard library adapters like `filter()`, `map()`, and `zip()` require `FusedIterator` for correctness guarantees
+- Use `fuse()` on any iterator to wrap it in a guaranteed-fused adapter
 
-`FusedIterator` is the compiler-enforced version of that guarantee. Once you implement it on your type, the optimizer knows it can eliminate redundant "is this iterator done?" checks in adapter pipelines. More practically, it's a signal to callers: "this iterator terminates cleanly, you don't need to worry about use-after-done weirdness."
+## Rust Application
 
-All standard library iterators already implement `FusedIterator`. When writing custom iterators that naturally terminate (counters, finite sequences, data readers), implementing it costs nothing and gives your users the same guarantee.
-
-If you have a non-fused iterator and need a fused wrapper, `.fuse()` wraps it in an adapter that tracks the first `None` and returns `None` forever after.
-
-## The Intuition
-
-A marker trait that promises "once I return `None`, I'll return `None` on every subsequent call" — letting adapters skip redundant termination checks.
-
-## How It Works in Rust
+Implementing `FusedIterator` is a marker — it has no methods. You simply declare `impl FusedIterator for Countdown {}` after ensuring your `next()` implementation never returns `Some` after a `None`:
 
 ```rust
 use std::iter::FusedIterator;
 
-struct Countdown { n: i32 }
+pub struct Countdown { n: i32 }
 
 impl Iterator for Countdown {
     type Item = i32;
     fn next(&mut self) -> Option<i32> {
-        if self.n <= 0 { return None; }  // once None...
+        if self.n <= 0 { return None; }
         let val = self.n;
         self.n -= 1;
         Some(val)
     }
 }
 
-// Declare that Countdown never returns Some after returning None
-impl FusedIterator for Countdown {}  // empty impl — just the marker
+impl FusedIterator for Countdown {} // safe: n never increases after reaching 0
 
-// Now callers have the guarantee:
-let mut cd = Countdown::new(3);
-cd.next();  // Some(3)
-cd.next();  // Some(2)
-cd.next();  // Some(1)
-cd.next();  // None
-cd.next();  // None — guaranteed by FusedIterator
-cd.next();  // None — always
-
-// Non-fused iterator: can return Some after None (surprising!)
-// Use .fuse() to wrap any iterator with the guarantee:
-let safe = weird_iterator.fuse();
-while let Some(x) = safe.next() { /* ... */ }
-safe.next();  // None, guaranteed — even if weird_iterator would have returned Some
-
-// All std iterators are already fused:
-let mut v = vec![1, 2, 3].into_iter();
-v.next(); v.next(); v.next();
-v.next();  // None
-v.next();  // None — fused
+// fuse() wraps any iterator to guarantee this property:
+let fused = some_iterator.fuse(); // FusedIterator regardless of original
 ```
 
-## What This Unlocks
+## OCaml Approach
 
-- **Custom iterator correctness:** Mark your counters, readers, and generators as `FusedIterator` to give callers the standard guarantee — costs nothing to implement.
-- **Optimizer hints:** Iterator adapters can skip the "check if done" step for fused iterators, reducing branching in hot loops.
-- **Safe composition:** `.fuse()` wraps any iterator as a safety net when you're unsure whether a third-party iterator is well-behaved after termination.
+OCaml's `Seq` type is inherently fused — once a sequence node is `Nil`, there is no way to call `next` again (sequences are values, not objects). The concept of "calling next after None" does not apply to OCaml's immutable sequence type:
+
+```ocaml
+(* OCaml Seq terminates structurally — the empty sequence is just Seq.empty *)
+let seq = Seq.empty  (* calling next "again" is impossible by construction *)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Termination guarantee | Convention only | `FusedIterator` marker trait |
-| Enforcement | Not enforced by type system | Compiler-checked via trait |
-| Standard iterators | All well-behaved (convention) | All implement `FusedIterator` |
-| Custom iterators | Programmer's responsibility | `impl FusedIterator for MyIter {}` — empty impl |
-| Safety wrapper | N/A | `.fuse()` adapter |
+1. **Structural vs behavioral**: OCaml's `Seq.Nil` terminates the sequence structurally (you can't call it again); Rust requires an explicit contract via `FusedIterator`.
+2. **Adapter safety**: Standard library adapters like `peekable()` and `chain()` explicitly document whether they require or provide `FusedIterator`.
+3. **`fuse()` adapter**: Rust provides `Iterator::fuse()` to wrap any iterator in a fused version — `FusedIterator` is the opt-in promise, `fuse()` is the runtime enforcement.
+4. **Performance**: Well-implemented `FusedIterator` types allow adapter code to skip the "check if already exhausted" bookkeeping.
+
+## Exercises
+
+1. Implement a non-fused iterator (one that sometimes returns `Some` after `None`) and demonstrate the incorrect behavior, then fix it by fusing.
+2. Show that `iterator.fuse()` wraps the iterator in a type that implements `FusedIterator` regardless of whether the original did.
+3. Implement `FusedIterator` on a bounded random-number generator that stops after generating exactly N values.

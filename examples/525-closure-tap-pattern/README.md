@@ -2,89 +2,49 @@
 
 ---
 
-# 525: Tap Pattern for Side Effects
+# Tap Pattern for Side Effects
 
-**Difficulty:** 2  **Level:** Beginner-Intermediate
+## Problem Statement
 
-Insert logging, debugging, or instrumentation into a pipeline without breaking the data flow.
+Data pipelines built with iterator chains or method chaining have a readability problem: inserting debug logging or instrumentation requires breaking the chain into temporary `let` bindings. The tap pattern solves this by injecting a side-effecting function at any point in a chain without disrupting the data flow — the function runs, but the original value passes through unchanged. This pattern appears in JavaScript's `.tap()` in lodash, Ruby's `Object#tap`, Haskell's `(<$)` for constant functors, and is commonly needed when debugging long iterator chains.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You have a clean functional pipeline: `data.iter().filter(pred).map(transform).collect()`. You need to debug it — but adding a `println!` breaks the chain. You'd have to split the pipeline into separate `let` bindings, add the print, then continue. Now your clean one-liner is four lines.
+- How `tap<T, F: FnOnce(&T)>(value: T, f: F) -> T` threads a value through a side effect
+- How to implement `tap` as an extension trait for ergonomic chaining with dot notation
+- The difference between `tap` (immutable peek), `tap_mut` (mutable modification), and `tap_dbg` (debug printing)
+- How `tap_if(condition, f)` enables conditional side effects without breaking the chain
+- Where tap appears: logging pipelines, metrics instrumentation, test assertions in chains
 
-The same problem in production: you want to log intermediate values, emit metrics, or trigger side effects at specific points in a transformation chain without restructuring the chain or touching the data flowing through it.
+## Rust Application
 
-Without tap, debugging a functional pipeline requires either restructuring it (breaking the flow) or switching to an imperative loop (losing the composition benefits).
+`tap<T, F: FnOnce(&T)>(value: T, f: F) -> T` runs `f(&value)` then returns `value`. The `Tap` trait is a blanket impl over all `T: Sized`, providing `.tap()`, `.tap_mut()`, and `.tap_dbg(label)` as methods. `tap_dbg` requires `T: Debug` and prints `"label: {:?}"` to stderr. `tap_if(value, condition, f)` calls `f` only when `condition` is `true`. These combinators compose naturally in iterator chains: `iter.map(...).tap(|x| log(x)).filter(...).collect()`.
 
-## The Intuition
+Key patterns:
+- Blanket `impl<T> Tap for T {}` — zero-cost extension for all types
+- `FnOnce(&T)` for immutable peek, `FnOnce(&mut T)` for mutation
+- `tap_dbg` gated on `T: Debug` using a where clause
 
-Tap is the functional programmer's `println!` that doesn't interrupt the flow. It's inspired by the Unix `tee` command — pipe data through, copy it somewhere else, let the original flow continue untouched.
+## OCaml Approach
 
-`tap(value, |v| println!("{:?}", v))` returns `value` unchanged after running the closure. The value flows through as if tap wasn't there; the side effect happens invisibly.
+OCaml achieves tap via a simple helper that is idiomatic and common in pipelines using `|>`:
 
-In Ruby, `.tap` is a built-in method on every object. In JavaScript and Python, you'd write `(x => { console.log(x); return x; })(value)` — a tap lambda. Rust's extension trait approach gives you `.tap(|v| ...)` as a method on any type.
-
-## How It Works in Rust
-
-```rust
-// Free function version: run side effect, return value unchanged
-fn tap<T, F: FnOnce(&T)>(value: T, f: F) -> T {
-    f(&value);   // side effect — observe but don't consume
-    value        // return original
-}
-
-// Extension trait: adds .tap() to EVERY type
-trait Tap: Sized {
-    fn tap(self, f: impl FnOnce(&Self)) -> Self {
-        f(&self);
-        self
-    }
-    fn tap_mut(mut self, f: impl FnOnce(&mut Self)) -> Self {
-        f(&mut self);
-        self
-    }
-    fn tap_if(self, condition: bool, f: impl FnOnce(&Self)) -> Self {
-        if condition { f(&self); }
-        self
-    }
-}
-impl<T> Tap for T {}   // blanket impl: works on all types
-
-// Usage in a transformation chain
-let result = vec![3, 1, 4, 1, 5, 9, 2, 6]
-    .tap(|v| println!("input: {:?}", v))      // observe raw input
-    .tap_mut(|v| v.sort())                    // sort in place
-    .tap(|v| println!("sorted: {:?}", v))     // observe sorted
-    .tap_mut(|v| v.dedup())                   // deduplicate
-    .tap(|v| println!("deduped: {:?}", v));   // observe deduped
-
-// In an iterator pipeline — map acts as tap for individual elements
-let sum: i32 = (1..=5)
-    .map(|x| tap(x, |v| print!("in:{} ", v)))     // observe: before filter
-    .filter(|&x| x % 2 != 0)                       // keep odds
-    .map(|x| tap(x * x, |v| print!("sq:{} ", v))) // observe: after squaring
-    .sum();
-
-// Conditional tap — only active in debug builds
-let debug = cfg!(debug_assertions);
-let x = compute_value()
-    .tap_if(debug, |v| log::debug!("value: {:?}", v));
+```ocaml
+let tap f x = f x; x
+let tap_debug label x = Printf.eprintf "%s: %s\n" label (Obj.repr x |> ...); x
+(* usage *)
+value |> tap (fun x -> log x) |> transform |> tap (fun x -> assert_ok x)
 ```
-
-The `FnOnce` bound (not `Fn`) reflects that tap is called exactly once per value — this is the minimum required bound, accepting the widest range of closures.
-
-## What This Unlocks
-
-- **Non-destructive debugging** — insert `dbg!` or `println!` anywhere in a pipeline without breaking the chain or restructuring your code.
-- **Instrumentation without pollution** — emit metrics or trace spans at pipeline stages; remove them by deleting one line with no structural change.
-- **Conditional logging** — `tap_if(debug_mode, log)` or `tap_if(cfg!(test), assert)` adds behavior that compiles away in release mode.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Tap | `let () = f x in x` | `x.tap(\|v\| side_effect(v))` |
-| Extension method | Module-level function | Blanket `impl<T> Tap for T` |
-| Mutable tap | Rebind with `let` | `.tap_mut(\|v\| v.sort())` — in place |
-| Conditional | `if debug then f x` | `.tap_if(condition, f)` |
-| Iterator tap | Map then ignore result | `.map(\|x\| tap(x, inspect))` |
+1. **Method vs function**: Rust's `Tap` trait enables `value.tap(f)` dot-notation in method chains; OCaml uses `|>` with `tap f` as a free function — both achieve the same pipeline clarity.
+2. **Mutable tap**: Rust `tap_mut` can modify the value in-place before it passes through; OCaml's `tap` with a `ref` or mutable record achieves the same but requires explicit `ref` cells.
+3. **Debug constraint**: Rust's `tap_dbg` requires `T: Debug` at compile time; OCaml's `tap_debug` uses `Obj.repr` or format functions at runtime with less type safety.
+4. **Blanket impl**: Rust's blanket `impl<T> Tap for T` adds methods to every type in scope; OCaml achieves this through the module system by opening a `Tap` module.
+
+## Exercises
+
+1. **Logged pipeline**: Build a pipeline that reads integers from a slice, doubles them, taps to log each doubled value, filters for values over 10, then collects — all in one method chain.
+2. **Metric tap**: Implement `tap_count(counter: &mut usize)` that increments `counter` on each call through the chain — useful for profiling how many items pass a filter.
+3. **Conditional mutation**: Use `tap_mut` to normalize strings (trim whitespace, lowercase) inside a pipeline without breaking the chain, then verify the final collected values are normalized.

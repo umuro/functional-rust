@@ -2,79 +2,62 @@
 
 ---
 
-# 848: Big-O Reasoning and Complexity Analysis in Rust
+# Algorithm Complexity Guide
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-A practical reference for algorithmic complexity in Rust: every complexity class illustrated with idiomatic code, plus Rust-specific constants that make O() analysis misleading.
+Understanding time and space complexity is essential for writing software that scales. A function that runs in 1ms for n=100 might take 10 seconds for n=10,000 if it's O(n^2) — and 3 years for n=1,000,000. Engineers need an intuitive grasp of which complexity class their code falls into, and which operations trigger which class. This reference guide concretizes the abstract Big-O notation with real Rust examples: constant-time array access, logarithmic binary search, linear scans, O(n log n) sorting, quadratic nested loops, exponential backtracking. Each example demonstrates not just the code but why it achieves its complexity class.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Knowing an algorithm is O(n log n) is necessary but not sufficient. Two O(n log n) algorithms can differ by 10× in practice because of cache behavior, branch prediction, allocator overhead, and SIMD potential. Rust's zero-cost abstractions mean high-level iterator code is *often* as fast as hand-written C — but that "often" has precise conditions you need to understand.
+- Recognize O(1), O(log n), O(n), O(n log n), O(n^2), O(n^3), O(2^n), O(n!) from code structure
+- Understand how recursion depth, loop nesting, and problem halving determine complexity
+- Apply Master Theorem to divide-and-conquer recurrences: T(n) = aT(n/b) + f(n)
+- Calculate the practical limit for each complexity class: O(n^2) for n=10,000 (~10^8 ops) is borderline
+- Recognize amortized complexity: Vec push is O(1) amortized despite occasional O(n) reallocation
 
-This guide answers: when does O(n²) actually beat O(n log n)? (Answer: for n < ~32, insertion sort beats merge sort because of cache and branch predictor advantages.) When does O(1) HashMap::get actually degrade? (Answer: under adversarial keys with SipHash collision, though this is rare by design.) When should you use BTreeMap over HashMap? (When you need ordered iteration — BTreeMap's O(log n) with cache-friendly B-tree nodes can beat HashMap's O(1) for small maps.)
-
-For Rust specifically: iterator chains are lazy and fuse into a single pass — `v.iter().filter(...).map(...).collect()` is O(n) with no intermediate allocations. Understanding this prevents unnecessary micro-optimizations.
-
-## The Intuition
-
-Complexity classes form a hierarchy: O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2^n) < O(n!). For n = 10^6: O(log n) ≈ 20 ops, O(n) = 10^6 ops, O(n log n) ≈ 2×10^7, O(n²) = 10^12 — effectively impossible. The boundary between "fast" and "slow" is roughly O(n log n) for n up to 10^7 in a 1-second time limit.
-
-The master theorem handles D&C recurrences: T(n) = a×T(n/b) + f(n). Three cases: when f dominates (Case 3), when log dominates (Case 1), when they're equal (Case 2, gives the n log n result for merge sort).
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-// O(1): Direct array access, HashMap lookup (amortized)
-fn constant_access(v: &[i32], i: usize) -> i32 { v[i] }
-
-// O(log n): Binary search — halves search space each step
-fn binary_search(arr: &[i32], target: i32) -> Option<usize> {
-    arr.binary_search(&target).ok()  // std library: use this, not your own
+// O(1) - Constant
+pub fn constant_time_example(arr: &[i32]) -> Option<i32> {
+    arr.first().copied()  // Index access regardless of arr.len()
 }
-
-// O(n): Single linear scan — iterate lazily, no intermediate alloc
-fn linear_max(v: &[i32]) -> Option<i32> { v.iter().copied().max() }
-
-// O(n log n): Sort — Rust uses pdqsort (unstable) or timsort (stable)
-// pdqsort is O(n) for nearly-sorted, O(n log n) worst case
-fn sort_demo(mut v: Vec<i32>) -> Vec<i32> {
-    v.sort_unstable();  // Faster than sort() when stability not needed
-    v
+// O(log n) - Binary search
+pub fn logarithmic_example(sorted: &[i32], target: i32) -> bool {
+    sorted.binary_search(&target).is_ok()  // Halves problem each step
 }
-
-// O(n²): Insertion sort — optimal for n < ~32 due to cache/branch predictor
-fn insertion_sort(v: &mut [i32]) {
-    for i in 1..v.len() {
-        let key = v[i];
-        let mut j = i;
-        while j > 0 && v[j - 1] > key { v[j] = v[j - 1]; j -= 1; }
-        v[j] = key;
-    }
+// O(n) - Linear scan
+pub fn linear_example(arr: &[i32]) -> i32 {
+    arr.iter().sum()  // Visits each element exactly once
 }
-
-// Rust-specific: iterator chains are O(n), NOT O(k×n) for k operations
-// This is one pass, zero intermediate allocations:
-fn process(v: &[i32]) -> Vec<i32> {
-    v.iter()
-        .filter(|&&x| x > 0)    // Lazy: no allocation
-        .map(|&x| x * 2)         // Lazy: no allocation
-        .collect()               // One allocation for final Vec
+// O(n^2) - Nested loops
+pub fn quadratic_example(arr: &[i32]) -> Vec<(i32, i32)> {
+    arr.iter().flat_map(|&x| arr.iter().map(move |&y| (x, y))).collect()
 }
 ```
 
-## What This Unlocks
+Each example pairs the implementation with a brief comment explaining why it achieves its complexity class. `first()` is O(1) because Vec/slice has a pointer to the first element. `binary_search` is O(log n) because it halves the search space each step. `sum()` via `iter()` is O(n) because it visits each element once. The nested `flat_map` + `map` creates O(n^2) pairs. The code serves as a reference: when you see these patterns, you know the complexity.
 
-- **Algorithm selection**: The complexity class table (O(1) through O(n!)) with concrete op-counts for n=10^6 tells you immediately which algorithms are viable for a given input size and time budget.
-- **Rust performance model**: Zero-cost iterator chains, pdqsort vs timsort trade-offs, HashMap vs BTreeMap, `Vec::push` amortization — the constants behind the asymptotics.
-- **Master theorem application**: Given any D&C recurrence, derive the complexity in 30 seconds — essential for designing new algorithms or analyzing contest problems.
+## OCaml Approach
+
+OCaml's complexity guide mirrors Rust's: `List.hd` for O(1), `List.nth` for O(n) (lists are not random-access!), array `.(i)` for O(1), `Array.binary_search` for O(log n). OCaml's lazy `Seq` enables O(1) per-element consumption of infinite sequences. `List.length` is O(n) in OCaml (not cached), unlike Rust's `Vec::len()` which is O(1). This highlights a critical difference: OCaml lists don't cache length; `Array.length` is O(1). Understanding the OCaml stdlib's complexity is essential for writing efficient OCaml.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Sort stability | `List.sort` is stable | `sort` stable (timsort), `sort_unstable` faster (pdqsort) |
-| HashMap | `Hashtbl` — open addressing | `HashMap` — SipHash by default, swap for `FxHashMap` if speed needed |
-| Iterator chains | Eager by default; use `Seq` for lazy | Lazy by default — fuse without allocation |
-| `Vec::push` | `Array.append` — O(1) amortized | Same amortized O(1); doubling strategy |
-| BTreeMap | `Map` module (AVL tree) | `BTreeMap` — B-tree, better cache behavior than AVL for sequential access |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| `len()` | `Vec::len()` is O(1) | `List.length` is O(n), `Array.length` is O(1) |
+| Indexing | `slice[i]` is O(1) | `array.(i)` is O(1), `List.nth` is O(n) |
+| Sort | `slice.sort()` is O(n log n) | `List.sort` is O(n log n) |
+| HashMap | `O(1)` amortized insert/lookup | `Hashtbl` O(1) average |
+| BTreeMap | `O(log n)` insert/lookup | `Map.t` O(log n) |
+| Stack overflow | Happens at ~8KB stack depth | TCO prevents for tail calls |
+
+## Exercises
+
+1. Write a benchmark that empirically measures sorting time for n=100,1000,10000,100000 and verify O(n log n) by fitting a curve.
+2. Find an example in this codebase where the actual complexity differs from what the code appears to be.
+3. Analyze the amortized complexity of `Vec::push`: prove that n pushes cost O(n) total despite occasional O(n) copies.
+4. Implement and benchmark a function with O(n^3) complexity and find the practical n where it exceeds 1 second.
+5. Explain why `HashMap::get` is O(1) amortized but has O(n) worst case, and when worst case can be triggered.

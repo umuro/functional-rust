@@ -2,82 +2,50 @@
 
 ---
 
-# 607: Fixed-Point Types and Recursion Schemes
+# Fixed-Point Types
 
-**Difficulty:** 5  **Level:** Master
+## Problem Statement
 
-Express recursive types as `Fix<F>` — the fixed point of a functor — to get catamorphism, anamorphism, and hylomorphism for free.
+A fixed point of a type function F is a type T where T = F(T). In Haskell, Fix F = F (Fix F) captures the recursive structure common to all recursive types. This abstraction enables writing functions over any recursive type generically. In Rust, fixed points require Box or Rc for heap indirection. This pattern is the theoretical foundation for catamorphisms, anamorphisms, and the morphism zoo.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Every time you define a recursive type (`List`, `Tree`, `Expr`), you end up writing the same fold and unfold patterns from scratch. A tree fold and a list fold look structurally identical — but there's no abstraction that captures both without duplicating the recursion logic.
+- The categorical definition and the mathematical laws that must hold
+- How to implement this pattern in Rust despite the lack of higher-kinded types
+- The relationship to more familiar functional idioms (fold, unfold, map)
+- Key concepts: Fix, unfix, recursive types as fixed points, recursive schemes
+- Where this pattern appears in production systems and when simpler alternatives suffice
 
-The root cause is that recursive types bake recursion into their definition: `enum List<A> { Nil, Cons(A, Box<List<A>>) }`. What if you separated the "shape" of the type from the "recursion" itself? Define a non-recursive base functor `ListF<A, R>` where `R` is a placeholder for the recursive position. Then `Fix<ListF<A>>` is the recursive type.
+## Rust Application
 
-This separation is the key insight of recursion schemes: write your algebra once (`T → A`), apply `cata` to get a fold over any `Fix<F>` type. The recursive plumbing (traverse the structure, apply the algebra) is shared across all types. `Fix` is not academic — it's the formal basis for `serde`, AST transformations, and any library that needs generic traversal.
+Fix = F(Box<Fix<F>>), tree as Fix<TreeF>, fold over Fix. The source demonstrates the concept with a concrete data type — typically a simple tree or list — showing the pattern in a form that can be run and verified. Due to Rust's type system limitations, the implementation is more verbose than Haskell but the core idea is preserved.
 
-## The Intuition
+Key patterns:
+- The defining operation and its type signature
+- The laws it must satisfy (verified in tests)
+- Composition with other morphisms in the scheme
+- Concrete examples with traversable data types
 
-`Fix<F>` is the type where `Fix<F> = F<Fix<F>>` — it's the type that equals its own functor application, which is exactly what a recursive type is. The payoff: define your type as a non-recursive functor `F`, and you get `cata` (fold) and `ana` (unfold) for free, without re-implementing the recursion each time.
+## OCaml Approach
 
-## How It Works in Rust
+OCaml's pattern matching and recursive types make morphism implementations natural. The `Fix` type and F-algebra/coalgebra patterns translate directly, though without Haskell's typeclass machinery:
 
-```rust
-// The fixed-point wrapper — wraps one layer of F
-struct Fix<F: Functor>(Box<F::Applied<Fix<F>>>);
-
-// A trait for types that can map their recursive position
-trait Functor {
-    type Applied<T>;
-    fn fmap<A, B>(fa: Self::Applied<A>, f: impl Fn(A) -> B) -> Self::Applied<B>;
-}
-
-// Base functor for List<A> — R is the recursive position
-enum ListF<A, R> {
-    Nil,
-    Cons(A, R),
-}
-
-// Manual Fixed-point for List — simplified (Rust GATs make this easier in nightly)
-enum ListFix<A> {
-    Nil,
-    Cons(A, Box<ListFix<A>>),  // in practice: Fix<ListF<A>>
-}
-
-impl<A> ListFix<A> {
-    // Catamorphism: fold using an algebra (ListF<A, B> → B)
-    fn cata<B>(self, alg: &impl Fn(Option<(A, B)>) -> B) -> B {
-        match self {
-            ListFix::Nil        => alg(None),
-            ListFix::Cons(a, t) => {
-                let tb = t.cata(alg);   // recurse first — bottom-up
-                alg(Some((a, tb)))       // then apply algebra
-            }
-        }
-    }
-}
-
-// Using cata — algebra defines the computation, recursion is handled by cata
-let list = ListFix::Cons(1, Box::new(ListFix::Cons(2, Box::new(ListFix::Nil))));
-let sum = list.cata(&|node| match node {
-    None        => 0,
-    Some((a, b)) => a + b,
-});
+```ocaml
+(* OCaml recursive schemes use:
+   - Recursive variant types for F-algebras
+   - Higher-order functions for the morphism
+   - GADTs for type-safe fixed points in advanced cases *)
 ```
-
-## What This Unlocks
-
-- **Generic traversals**: write `cata` once per type; all folds share the structure.
-- **Anamorphisms** (`ana`): the dual — unfold a seed value into a recursive structure.
-- **Hylomorphisms** (`hylo = cata . ana`): build and immediately fold — fuses two traversals into one without intermediate allocation.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Fixed point | `type 'f fix = Fix of 'f fix 'f` | `struct Fix<F>(Box<F::Applied<Fix<F>>>)` |
-| Base functor | Type parameter in functor | `trait Functor` with `type Applied<T>` |
-| Recursive position | Type variable | GAT `Applied<T>` (stable since 1.65) |
-| `cata` | `let rec cata alg = function ...` | Method on `Fix<F>` or free function |
-| Boxing overhead | GC-managed | `Box<T>` — one heap alloc per node |
-| Practical use | `ppx_deriving` can generate folds | Manual or via `recursion` crate |
+1. **HKT requirement**: These morphisms ideally require higher-kinded types for full generality; Rust uses GATs or associated types as approximations.
+2. **Performance**: Rust's implementations are more verbose but compile to efficient machine code; OCaml's implementations are more concise with similar runtime performance.
+3. **Practical adoption**: In Haskell, recursive schemes from `recursion-schemes` are widely used; in Rust and OCaml, direct recursion is more common in practice.
+4. **Theoretical value**: Understanding these patterns deepens intuition for all recursive programming, even when direct recursion is used in production code.
+
+## Exercises
+
+1. **Laws verification**: Write tests that verify the categorical laws for this morphism on a specific data type.
+2. **New data type**: Apply the morphism to a different recursive data type (e.g., apply catamorphism to a rose tree instead of a binary tree).
+3. **Comparison**: Implement the same computation using direct recursion and the morphism — measure whether the morphism version composes more cleanly.

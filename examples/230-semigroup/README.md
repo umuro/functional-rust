@@ -33,3 +33,9 @@ Rust uses a trait `Semigroup` with a single `fn append(self, other: Self) -> Sel
 2. **Failure mode:** OCaml `failwith` on empty list vs Rust `Option::None` — Rust makes partial functions explicit in the type.
 3. **Multiple instances per type:** OCaml uses distinct named modules; Rust uses newtypes (`Min`, `Max`) to avoid orphan/coherence violations.
 4. **Ownership:** `append(self, other: Self)` consumes both values — idiomatic for value types; `Clone` bound lets combinators work on slices.
+
+## Exercises
+
+1. Implement a `NonEmptyVec<T>` type and give it a `Semigroup` instance (concatenation); verify that unlike `Vec`, the semigroup has no identity element so it cannot form a monoid.
+2. Define a `Max<T: Ord>` and `Min<T: Ord>` semigroup (not monoid — no identity for unbounded types) and implement `sconcat` over a non-empty list to find the maximum/minimum.
+3. Implement the free semigroup: a non-empty list type, and prove that any semigroup homomorphism from it is uniquely determined by the image of each generator.

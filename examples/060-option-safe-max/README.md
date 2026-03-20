@@ -37,3 +37,9 @@ OCaml's `option` type (`Some x | None`) is the idiomatic way to represent partia
 3. **The `?` operator:** Rust can propagate `None` with `?` (like `split_first()?`); OCaml uses `match` or `Option.bind`
 4. **Copying:** Rust needs `.copied()` to go from `Option<&T>` to `Option<T>`; OCaml doesn't distinguish
 5. **Iterator integration:** Rust's `max()` returns `Option` natively — no need for a custom function
+
+## Exercises
+
+1. Implement `safe_min` alongside `safe_max`, then write `safe_range` that returns `Option<(T, T)>` with the min and max in a single pass.
+2. Write `safe_max_by_key` that accepts a key extraction function `f: &T -> K` and returns the element with the greatest key, returning `None` for an empty list.
+3. Implement `top_n` that returns the `n` largest elements from a slice as a sorted `Vec<T>`, using `Option` throughout to handle edge cases (empty slice, `n > len`).

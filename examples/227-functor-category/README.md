@@ -33,3 +33,9 @@ Rust lacks higher-kinded types, so `Functor` cannot be expressed as a trait para
 2. **Natural transformations:** OCaml writes `'a list -> 'a option` and the polymorphism is implicit; Rust writes `fn<T>(list: &[T]) -> Option<&T>` with explicit generic parameters.
 3. **Ownership:** `list_to_option` returns `Option<&T>` — a borrow into the slice — rather than cloning the first element, reflecting Rust's zero-copy preference.
 4. **Naturality verification:** OCaml uses `assert` inline; Rust encodes it as a typed generic function `naturality_holds<T, U, F>` with `T: Clone, U: PartialEq` bounds, making the contract explicit.
+
+## Exercises
+
+1. Implement a `Compose<F, G>` type that applies functor `G` inside functor `F` and implement `fmap` for it, demonstrating that the composition of two functors is a functor.
+2. Write a natural transformation from `Option<T>` to `Vec<T>` (empty vec for `None`, singleton vec for `Some`) and verify it satisfies the naturality condition: `fmap(f) . nat_transform == nat_transform . fmap(f)`.
+3. Implement `const_functor` — a functor that ignores the `fmap` function and always returns the same wrapped value — and use it to count the number of elements in any functor context.

@@ -2,91 +2,46 @@
 
 ---
 
-# 526: Pipe Operator Simulation
+# Pipe Operator Simulation
 
-**Difficulty:** 2  **Level:** Beginner-Intermediate
+## Problem Statement
 
-Simulate OCaml's `|>` operator in Rust — left-to-right function application that reads like a sentence.
+OCaml's `|>` (pipe) operator, F#'s `|>`, and Elixir's `|>` all solve the same readability problem: deeply nested function calls read inside-out, but data transformations are conceptually left-to-right. `f(g(h(x)))` is hard to read; `x |> h |> g |> f` reads as a pipeline. Rust does not have a native pipe operator, but the pattern can be simulated with an extension trait `Pipe` that adds `.pipe(f)` to every type. This lets Rust code express transformation pipelines in the same left-to-right style as functional languages.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Nested function calls read inside-out: `format_output(normalize(parse(input)))` — you have to read right-to-left to understand the order of operations. With three transformations it's manageable; with five it's a puzzle.
+- How to implement `|>` semantics using an extension trait with a blanket impl
+- How `pipe`, `pipe_ref`, and `pipe_mut` handle different ownership scenarios
+- How function composition with `compose` and `compose_n` relates to piping
+- Where the pipe pattern appears: data transformation, validation chains, error propagation
+- Why Rust does not have a native pipe operator and what RFC proposals exist
 
-Rust's method chaining solves this for types that own their methods. But what about free functions? `parse(input)` followed by `normalize(...)` followed by `format_output(...)` — there are no methods to chain because these aren't methods.
+## Rust Application
 
-Also: sometimes you want to apply a function from an external crate, pass through a generic utility, or change the type at each step. None of these fit method chaining. You need a way to write free-function pipelines left-to-right.
+The `Pipe` trait provides three methods: `pipe<B, F: FnOnce(Self) -> B>(self, f: F) -> B` (consuming), `pipe_ref<B, F: FnOnce(&Self) -> B>(&self, f: F) -> B` (borrowing), and `pipe_mut<B, F: FnOnce(&mut Self) -> B>(&mut self, f: F) -> B` (mutable). A blanket `impl<T> Pipe for T {}` adds these to every type. `compose<A, B, C, F, G>(f: F, g: G) -> impl Fn(A) -> C` creates a combined function. Helper functions `double`, `add1`, `square`, `to_string`, and `prefix` demonstrate chaining: `5.pipe(double).pipe(add1).pipe(square).pipe(to_string).pipe(prefix)`.
 
-## The Intuition
+Key patterns:
+- `fn pipe<B, F: FnOnce(Self) -> B>(self, f: F) -> B { f(self) }` — trivial but powerful
+- Blanket `impl<T> Pipe for T {}` — zero-cost, no allocation, inlined by compiler
+- `compose` for creating reusable combined transformations
 
-OCaml's `|>` pipe operator is just function application flipped: `x |> f` means `f(x)`. The power comes from chaining: `x |> f |> g |> h` means `h(g(f(x)))` — but reads left-to-right like a recipe: "start with x, apply f, then g, then h."
+## OCaml Approach
 
-Elixir, F#, and Haskell all have this operator. Rust's RFC for `|>` was declined (method chaining is preferred). But a `Pipe` extension trait achieves the same result: `x.pipe(f).pipe(g).pipe(h)`.
+OCaml has `|>` as a built-in operator in the standard library since OCaml 4.01. It is simply defined as `let (|>) x f = f x`. No extension traits or special syntax are needed — it is universally available and composes with every function.
 
-Think of it as reversing the function call: instead of `f(x)`, you write `x.pipe(f)`. Now the data flows left-to-right, and each transformation step is equally visible.
-
-## How It Works in Rust
-
-```rust
-// Extension trait: adds .pipe() to every type
-trait Pipe: Sized {
-    fn pipe<B, F: FnOnce(Self) -> B>(self, f: F) -> B {
-        f(self)    // simply calls f with self — all the magic is in the type
-    }
-    fn pipe_ref<B, F: FnOnce(&Self) -> B>(&self, f: F) -> B {
-        f(self)    // non-consuming: self remains usable after
-    }
-    fn pipe_mut<B, F: FnOnce(&mut Self) -> B>(&mut self, f: F) -> B {
-        f(self)
-    }
-}
-impl<T> Pipe for T {}  // blanket impl: works on all types
-
-fn double(x: i32) -> i32 { x * 2 }
-fn add1(x: i32) -> i32 { x + 1 }
-fn square(x: i32) -> i32 { x * x }
-
-// Without pipe: right-to-left reading (backward)
-let r1 = square(add1(double(3)));   // read: square of (add1 of (double of 3))
-
-// With pipe: left-to-right reading (natural)
-let r2 = 3i32.pipe(double).pipe(add1).pipe(square);  // 3 → 6 → 7 → 49
-
-// Type changes work naturally
-let result = 42i32
-    .pipe(|x| x.to_string())           // i32 → String
-    .pipe(|s| format!("value={}", s))  // String → String
-    .pipe(|s| s.to_uppercase());       // String → String
-
-// Closures capture context
-let offset = 10;
-let result2 = 5i32
-    .pipe(|x| x + offset)    // captures offset
-    .pipe(|x| x * 3)
-    .pipe(|x| x.to_string());  // "45"
-
-// Non-consuming pipe_ref — data stays owned
-let data = vec![5, 3, 8, 1, 9, 2];
-let max = data.pipe_ref(|v| v.iter().max().copied()); // data still owned
-println!("{:?}", data); // still usable
-
-// Complex pipeline with type changes at each step
-let word_lengths: Vec<usize> = "hello world rust"
-    .pipe(|s| s.split_whitespace().collect::<Vec<_>>())  // &str → Vec<&str>
-    .pipe(|words| words.iter().map(|w| w.len()).collect()); // → Vec<usize>
+```ocaml
+5 |> double |> add1 |> square |> string_of_int |> (fun s -> "Result: " ^ s)
 ```
-
-## What This Unlocks
-
-- **Readable linear pipelines** — multi-step transformations that read in execution order, not reverse order.
-- **Free function integration** — chain functions from any crate without needing them to be methods on the type.
-- **Type-changing pipelines** — `String → usize → bool` chains work naturally where method chaining would fail on type boundaries.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Pipe operator | `x \|> f \|> g` — built-in syntax | `x.pipe(f).pipe(g)` — extension trait |
-| Availability | Always available | Import the `Pipe` trait |
-| Type change | `x \|> (fun x -> x + 1)` — natural | `x.pipe(\|x\| x + 1)` — same |
-| Consume vs borrow | `\|>` always consumes | `.pipe()` consumes; `.pipe_ref()` borrows |
-| Point-free style | `let f = g \|> h` | Composable with closures |
+1. **Language support**: OCaml has `|>` as a stdlib operator available everywhere; Rust requires either an extension trait (library-level) or the nightly `|>` RFC (not yet stabilized).
+2. **Ownership variants**: Rust needs three pipe variants (`pipe`, `pipe_ref`, `pipe_mut`) for owned, borrowed, and mutable cases; OCaml has one `|>` since all values are GC-managed.
+3. **Composition**: Rust's `compose` returns `impl Fn` — an anonymous type; OCaml function composition with `>>` or `@@` returns a plain function value visible to the type system.
+4. **Inline cost**: Rust's blanket `impl<T> Pipe for T` is always inlined at zero cost; OCaml's `|>` is a regular function call, optimized away by the compiler in most cases.
+
+## Exercises
+
+1. **Pipe with error**: Implement `pipe_result<T, U, E, F: FnOnce(T) -> Result<U, E>>(self: Result<T, E>, f: F) -> Result<U, E>` as a method on `Result` to chain fallible transformations.
+2. **Three-stage pipeline**: Write a validation pipeline using `.pipe` that parses a string to integer, multiplies by 2, and formats as `"value: N"` — all expressed as a left-to-right chain.
+3. **Compose chain**: Use `compose` to build a single `fn(i32) -> String` that triples, negates, adds 100, and converts to string, then benchmark it against the equivalent direct call.

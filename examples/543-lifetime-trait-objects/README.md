@@ -2,114 +2,51 @@
 
 ---
 
-# 543: Lifetimes in dyn Trait
+# Lifetimes in dyn Trait
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-`Box<dyn Trait>` defaults to `Box<dyn Trait + 'static>`. If you want to store a trait object that borrows, you must say so explicitly with a lifetime bound.
+Trait objects (`dyn Trait`) are Rust's mechanism for runtime polymorphism — a single `Box<dyn Renderer>` can hold any type implementing `Renderer`. But trait objects carry an implicit lifetime bound: `Box<dyn Renderer>` is shorthand for `Box<dyn Renderer + 'static>`, meaning the underlying type must contain no non-static references. When you need a trait object that borrows from an external scope, you must write `Box<dyn Renderer + 'a>` explicitly. This is critical for middleware stacks, plugin systems, and any architecture that stores trait objects.
 
-## The Problem This Solves
+## Learning Outcomes
 
-This is a common beginner stumble: you create a struct implementing a trait, but it borrows from some data. Then you try to box it:
+- Why `Box<dyn Trait>` is `Box<dyn Trait + 'static>` by default
+- How to create `Box<dyn Trait + 'a>` for trait objects borrowing from a scope
+- How `BorrowingRenderer<'a>` implementing `Renderer` can be stored as `Box<dyn Renderer + 'a>`
+- How lifetime-annotated trait objects work in function signatures and structs
+- Where this pattern appears: plugin systems, middleware, egui/druid widget trees
 
-```rust
-struct BorrowedRenderer<'a> {
-    content: &'a str,
-}
-impl Renderer for BorrowedRenderer<'_> { ... }
+## Rust Application
 
-let text = String::from("hello");
-let r = BorrowedRenderer { content: &text };
-let boxed: Box<dyn Renderer> = Box::new(r);
-// ERROR: `BorrowedRenderer<'_>` doesn't satisfy `'static`
-// The default Box<dyn Renderer + 'static> requires the trait object to own all its data
+`HtmlRenderer` owns its `template: String` — it is `'static` and fits in `Box<dyn Renderer>`. `BorrowingRenderer<'a>` holds `content: &'a str` — it is not `'static` and must be stored as `Box<dyn Renderer + 'a>`. `store_renderer(r: Box<dyn Renderer>) -> Box<dyn Renderer>` works with static renderers. Functions accepting borrowed renderers must write `Box<dyn Renderer + 'a>` and propagate the `'a` lifetime through their own signature.
+
+Key patterns:
+- `Box<dyn Trait>` — implicit `+ 'static` bound on the contained type
+- `Box<dyn Trait + 'a>` — explicit lifetime bound for borrowing trait objects
+- `dyn Renderer + 'a` in function parameters and struct fields
+
+## OCaml Approach
+
+OCaml achieves runtime polymorphism through first-class modules or abstract types. There are no lifetime constraints on module values — the GC ensures all referenced data remains valid:
+
+```ocaml
+module type Renderer = sig
+  val render : unit -> string
+end
+let store_renderer (module R : Renderer) = (module R : Renderer)
 ```
 
-The fix is either to use an owned type (satisfying `'static`), or to add a lifetime bound to the trait object: `Box<dyn Renderer + 'a>`.
-
-## The Intuition
-
-`dyn Trait` erases the concrete type but *not* the lifetime information. The compiler needs to know: "can this trait object outlive some scope?" Without a bound, it assumes you want the most flexible option — `'static`, meaning "no borrowed data."
-
-When you write `Box<dyn Trait + 'a>`, you're saying: "this trait object may borrow from a source that lives for `'a`. It can only be used as long as `'a` is alive."
-
-The `+ 'a` on `dyn Trait` is a *lifetime bound*, not a lifetime parameter of the trait itself. It constrains the trait *object's* validity, not the trait's interface.
-
-## How It Works in Rust
-
-**The default — `'static` required:**
-
-```rust
-// Box<dyn Renderer> is Box<dyn Renderer + 'static>
-fn store_renderer(r: Box<dyn Renderer>) {
-    // r must contain no borrowed data with limited lifetime
-}
-
-// OK: OwnedRenderer satisfies 'static (owns its String)
-store_renderer(Box::new(OwnedRenderer { content: "hello".to_string() }));
-
-// FAILS: BorrowedRenderer borrows &str — doesn't satisfy 'static
-let text = String::from("hello");
-// store_renderer(Box::new(BorrowedRenderer { content: &text })); // ERROR
-```
-
-**Explicit lifetime bound — allows borrowed trait objects:**
-
-```rust
-// 'a bound: trait object can borrow from data with lifetime 'a
-struct Screen<'a> {
-    renderer: Box<dyn Renderer + 'a>,  // can borrow — not required to be 'static
-}
-
-impl<'a> Screen<'a> {
-    fn new(r: impl Renderer + 'a) -> Self {
-        Screen { renderer: Box::new(r) }
-    }
-    fn draw(&self) {
-        println!("{}", self.renderer.render());
-    }
-}
-
-let text = String::from("borrowed content");
-let screen = Screen::new(BorrowedRenderer { content: &text });
-screen.draw(); // works — BorrowedRenderer satisfies Renderer + '_ (borrows text)
-```
-
-**`&dyn Trait` vs `Box<dyn Trait>`:**
-
-```rust
-// &dyn Trait already implies a lifetime — no explicit + 'a needed for references
-fn use_borrowed(r: &dyn Renderer) {
-    println!("{}", r.render()); // r is a reference — lifetime is the borrow's lifetime
-}
-
-let r = BorrowedRenderer { content: "hello" };
-use_borrowed(&r); // works — reference carries implicit lifetime
-```
-
-**Vec of mixed trait objects:**
-
-```rust
-let data = String::from("shared");
-let renderers: Vec<Box<dyn Renderer + '_>> = vec![
-    Box::new(BorrowedRenderer { content: &data }),
-    Box::new(OwnedRenderer { content: "owned".to_string() }),
-    // 'static satisfies '_, owned satisfies '_ (no restricted borrows)
-];
-```
-
-## What This Unlocks
-
-- **Zero-allocation trait object collections** — a `Vec<Box<dyn Trait + 'a>>` can hold objects that borrow from an arena or input buffer. No need to clone data just to satisfy `'static`.
-- **Temporary strategy objects** — a `dyn Visitor + '_` can borrow configuration state for one pass over a tree, then be discarded. Clean, zero-cost.
-- **Plugin systems with mixed ownership** — some plugins own their state (`'static`), others borrow shared config (`+ 'a`). The `+ 'a` bound handles both.
+Any module satisfying `Renderer` can be stored regardless of what data it references.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Dynamic dispatch | First-class values + GC — no lifetime concern | `dyn Trait` needs a lifetime bound — defaults to `'static` |
-| Heterogeneous collections | `('a list)` or similar — GC handles validity | `Vec<Box<dyn Trait + 'a>>` — compiler enforces all elements valid for `'a` |
-| Interface with borrowed state | GC manages — no distinction | `dyn Trait + 'a` explicitly declares the borrow scope of the trait object |
-| Storing callbacks | First-class functions, closures — GC | `Box<dyn Fn() + 'static>` for stored closures; `Box<dyn Fn() + 'a>` if they capture borrowed data |
-| `'static` requirement | No equivalent — GC prevents dangling | `Box<dyn Trait>` defaults to `'static`; must relax with `+ 'a` for borrowed objects |
+1. **Implicit 'static**: Rust's `Box<dyn Trait>` silently requires `'static` — a common source of confusion for beginners; OCaml has no implicit constraint on stored modules or closures.
+2. **Lifetime propagation**: When a Rust trait object borrows from a scope, that `'a` propagates through every type that stores or passes the object; OCaml has no propagation.
+3. **Plugin systems**: Rust plugins stored as `Box<dyn Plugin>` must be `'static` or carefully parameterized; OCaml plugins have no such restriction.
+4. **Error messages**: Missing lifetime on `Box<dyn Trait + 'a>` gives cryptic "does not live long enough" errors; the fix is always to add `+ 'a` to the trait object type.
+
+## Exercises
+
+1. **Scoped renderer**: Write a function `fn render_with<'a>(content: &'a str, renderer: &dyn Renderer) -> String` that uses a borrowed trait object — verify it compiles without a `+ 'a` bound on the renderer since the renderer doesn't capture `content`.
+2. **Vec of renderers**: Create `Vec<Box<dyn Renderer>>` (static) and add multiple renderer types — then try creating `Vec<Box<dyn Renderer + '_>>` containing a `BorrowingRenderer` and observe the lifetime constraint.
+3. **Trait object field**: Implement `struct Screen<'a> { components: Vec<Box<dyn Renderer + 'a>> }` with a `render_all` method that collects all renders into a `Vec<String>`.

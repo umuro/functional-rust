@@ -47,3 +47,9 @@ as a stable return type. Function pipelines use `.fold()` over a slice of
    in closures to fix specific arguments.
 4. **Operator sections:** OCaml's `( * ) 2` is natural currying; Rust writes
    `|x| x * 2` or defines a named function.
+
+## Exercises
+
+1. Write a curried `zip_with: (A -> B -> C) -> [A] -> [B] -> [C]` and use partial application to create a vector addition function from a curried add.
+2. Implement `uncurry` that converts a curried function `A -> B -> C` back into a two-argument function `(A, B) -> C`.
+3. Use currying, partial application, and composition together to build a small expression evaluator: a curried `eval_binop` parameterized by operator and operands, composed with a parser that splits an infix expression string.

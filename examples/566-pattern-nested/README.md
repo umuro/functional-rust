@@ -2,78 +2,53 @@
 
 ---
 
-# 566: Nested Pattern Matching
+# Nested Patterns
 
-**Difficulty:** 2  **Level:** Beginner
+## Problem Statement
 
-Match deeply nested structures in one expression — no intermediate bindings, no nested ifs.
+Real data structures are rarely flat — they are trees: enums containing structs containing options containing results. Nested patterns allow matching deeply nested structures in a single expression, extracting values from multiple levels simultaneously. Without nested patterns, extracting a value from `Some(Some(Point { x, y }))` would require multiple nested `match` statements. Nested patterns are essential in AST traversal, JSON processing, configuration parsing, and any domain with layered data.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Imagine a card game. You want to check: is this `Hand::One`, and does it contain an `Ace`, and is the suit specifically `Spades`? In a language without nested patterns, you write three levels of if/instanceof checks. You pull `.r` then check its type, then pull `.s`, and the logic dissolves into scaffolding.
+- How `Outer { inner: Inner { value } }` matches and extracts from nested structs
+- How `Some(Some(v))` matches and extracts from nested `Option`
+- How `Ok(Ok(v))` and `Ok(Err(msg))` handle nested `Result`
+- How to combine struct destructuring, enum variants, and tuple patterns in one expression
+- Where nested patterns appear: AST traversal, JSON manipulation, nested configuration
 
-With nested patterns, you write the shape of what you're looking for and Rust either matches it or doesn't. The logic reads like a description: "a hand of one card, where the rank is Ace and the suit is Spades." No intermediaries.
+## Rust Application
 
-The second problem is combinatorial matching. You want to handle `(Some(x), Some(y))` differently from `(Some(x), None)`, `(None, Some(y))`, and `(None, None)`. Nested if-let chains get unwieldy fast. A tuple pattern in a `match` handles all four cases in four arms, each self-describing.
+`get_value(o: &Outer)` uses `Outer { inner: Inner { value } } => *value` — two levels of struct destructuring in one pattern. `unwrap_nested(opt: Option<Option<i32>>)` matches `Some(Some(v))`, `Some(None)`, and `None` — two levels of `Option`. `process_nested(res: Result<Result<i32, &str>, &str>)` handles all four combinations of nested `Result`. These patterns avoid deep nesting of `match` and `if let` chains.
 
-## The Intuition
+Key patterns:
+- `Outer { inner: Inner { value } }` — nested struct
+- `Some(Some(v))` — nested Option unwrap
+- `Ok(Err(msg))` — nested Result pattern
+- Combining: `Some(Struct { field: Some(v) })`
 
-Nested patterns work because patterns can be composed: any place you'd write a value, you can write a pattern instead. `Hand::One(Card { r: Rank::A, s: Suit::S })` is just a pattern nested inside a pattern nested inside a pattern. Rust evaluates them inside-out and either all match or none do.
+## OCaml Approach
 
-Python's `match` (3.10+) has this too, though it uses class patterns. OCaml has it natively and it's one of the most productive features of the language. The concept is the same: instead of querying an object layer by layer, you describe the shape you want and let the runtime/compiler check it in one shot.
+OCaml nested patterns are identical in expressive power:
 
-The key insight: Rust can match on tuples too, so `match (opt1, opt2) { (Some(x), Some(y)) => ... }` gives you a 2D dispatch table in a few clean arms.
-
-## How It Works in Rust
-
-```rust
-enum Rank { N(u8), J, Q, K, A }
-enum Suit { C, D, H, S }
-struct Card { r: Rank, s: Suit }
-enum Hand { Empty, One(Card), Two(Card, Card) }
-
-fn describe(h: &Hand) -> &'static str {
-    match h {
-        // Nested three levels deep in one arm
-        Hand::One(Card { r: Rank::A, s: Suit::S }) => "ace of spades!",
-
-        // Match the outer shape, ignore inner details
-        Hand::One(Card { r: Rank::A, .. })          => "an ace",
-
-        // Pattern guard on destructured inner fields
-        Hand::Two(Card { r: r1, .. }, Card { r: r2, .. }) if r1 == r2 => "a pair",
-
-        Hand::Two(_, _) => "two cards",
-        Hand::Empty     => "nothing",
-    }
-}
-
-// Tuple patterns: dispatch on two values simultaneously
-match (left, right) {
-    (Some(x), Some(y)) => format!("both: {} {}", x, y),
-    (Some(x), None)    => format!("only left: {}", x),
-    (None, Some(y))    => format!("only right: {}", y),
-    (None, None)       => "neither".into(),
-}
-
-// Nested array/slice patterns
-if let [[a, _], [_, d]] = [[1, 2], [3, 4]] {
-    println!("Diagonal: {} {}", a, d);  // a=1, d=4
-}
+```ocaml
+let get_value { inner = { value } } = value
+let unwrap_nested = function
+  | Some (Some v) -> v
+  | Some None -> -1
+  | None -> -2
 ```
 
-## What This Unlocks
-
-- **Readable multi-condition branches** — describe the exact shape you need rather than a chain of guards.
-- **Tuple dispatch** — match on multiple independent values in a single `match`, exhaustively.
-- **Deeply nested extraction** — pull values out of `Option<Result<Vec<T>>>` style structures in one arm.
+The syntax differs slightly but the capability is the same.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Nested record patterns | `{ r = A; s = S }` | `Card { r: Rank::A, s: Suit::S }` |
-| Tuple match | `match (a, b) with (Some x, Some y) ->` | `match (a, b) { (Some(x), Some(y)) => }` |
-| Pattern guard | `when r1 = r2` | `if r1 == r2` |
-| Skip fields | `{ r = A; _ }` | `Card { r: Rank::A, .. }` |
-| Array pattern | `[a; _; b]` (list) | `[a, _, b]` (array/slice) |
+1. **Struct syntax**: Rust `Outer { inner: Inner { value } }` uses braces; OCaml `{ inner = { value } }` uses `=` for record fields.
+2. **Pattern depth**: Both languages support arbitrarily deep nested patterns with the same compile-time exhaustiveness checking.
+3. **Readability**: Very deep nesting can become hard to read in both — the `?` operator and `and_then` chains are often cleaner for nested `Option`/`Result`.
+4. **Performance**: Nested patterns compile to nested conditional jumps — the same as explicit nested `match` but without the code duplication.
+
+## Exercises
+
+1. **Three-level nest**: Create `struct A { b: Option<B> }; struct B { c: Vec<C> }; struct C { value: i32 }` and write a function that extracts the first `C.value` if all levels are present.
+2. **Nested config**: Implement a `Config { database: Option<DbConfig { host: String, port: u16 }> }` and write `fn db_host(c: &Config) -> Option<&str>` using a single nested pattern.
+3. **AST node**: Define a simple arithmetic AST `Expr { Add(Box<Expr>, Box<Expr>), Lit(i32) }` and write an `eval` function using nested match patterns.

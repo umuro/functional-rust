@@ -2,45 +2,51 @@
 
 ---
 
-# 586: Consolidating Match Arms
+# Pattern Multiple Arms
 
-**Difficulty:** 2  **Level:** Beginner
+## Problem Statement
 
-Collapse variants with the same result into a single arm using `|`.
+Pattern matching in Rust goes beyond simple value checks — it enables powerful dispatch mechanisms for type-safe command processing, visitor-pattern traversals, state machine transitions, and recursive data structure manipulation. This example demonstrates advanced pattern matching techniques that arise in compiler construction, game engines, protocol implementations, and functional programming idioms applied to real systems code.
 
-## The Problem This Solves
+## Learning Outcomes
 
-A `match` with many variants quickly becomes repetitive if several variants share the same outcome. Writing a separate arm for `Token::Plus`, `Token::Minus`, `Token::Star`, and `Token::Slash` — all returning `"arithmetic"` — duplicates the body and makes the match harder to read and maintain.
+- Advanced pattern matching constructs specific to this example's domain
+- How Rust's exhaustiveness checking prevents missed cases in complex dispatch
+- How patterns interact with ownership — matching by value vs by reference
+- How recursive enum patterns (trees, ASTs) work with  variants
+- Where this technique appears in real-world Rust: compilers, game engines, CLI tools
 
-OR patterns (`|`) solve this: list all the variants on one arm, separated by `|`, and share a single body. The result is a match that reads like a classification table — groups of related cases mapped to their outcome. Add a new `Token::Percent` variant? One line in the right group, and the compiler ensures exhaustiveness.
+## Rust Application
 
-Range patterns (`100..=199 =>`) are OR patterns taken to the extreme for numeric types: they match an inclusive range of integer values, enabling HTTP status code routing or score bucketing in a single expression.
+The source demonstrates the core technique with working examples that can be run directly. Key constructs include enum variant matching, guard conditions, nested destructuring, and composition of multiple pattern types. The match expressions are exhaustive — adding new variants requires updating all match sites, making the code refactor-safe.
 
-## The Intuition
+Key patterns demonstrated:
+- Named constant patterns using `const` values in match arms
+- Type-dispatch via enum variants carrying different payload types
+- `Box<T>` deref patterns for recursive data structures
+- Or-pattern grouping for related variants in dispatch tables
 
-`Token::Plus | Token::Minus | Token::Star | Token::Slash => "arithmetic"` reads like a rule: "if it's any of these, it's arithmetic." The `|` here is the same as in a regular `|` in boolean logic — it's OR. The compiler checks that together all the arms are exhaustive.
+## OCaml Approach
 
-Range patterns are syntactic sugar for "any value from X to Y inclusive." They only work on integer and `char` types, and they compose with OR: `400..=499 | 500..=599 => "client or server error"` is valid.
+OCaml's ML heritage makes it the reference implementation for these patterns. Variant types, exhaustive matching, and recursive type handling in OCaml are equivalent in power:
 
-## How It Works in Rust
-
-1. **OR arm** — `Token::Plus | Token::Minus | Token::Star | Token::Slash => "arithmetic"` — any of the listed variants matches this arm.
-2. **Multi-line OR arm** — split across lines with `|` at the start for readability; style choice, not required.
-3. **Range pattern** — `100..=199 => "informational"` — matches any integer in that inclusive range; only for integers and `char`.
-4. **Catch-all** — `_ => -1` catches everything not matched above; with OR arms the catch-all is rarely needed for full exhaustiveness.
-5. **Binding in OR arms** — if any variant in an OR arm carries data, *all* variants in that arm must bind the same names with the same types.
-
-## What This Unlocks
-
-- Write classification logic as a readable table: groups of related cases mapped to their outcome.
-- Use range patterns for HTTP status codes, score buckets, Unicode ranges — any integer-categorization problem.
-- Keep `match` arms maintainable: add new variants to the right group without touching the body.
+```ocaml
+(* Pattern matching in OCaml handles:
+   - Variant constructors with data: Cmd (arg1, arg2) -> ...
+   - Guards: | x when x > threshold -> ...  
+   - Nested patterns: Node { left; right } -> ...
+   - Recursive cases: the natural form for tree traversal *)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| OR patterns | `Plus \| Minus \| Star -> "arithmetic"` — identical | `Plus \| Minus \| Star => "arithmetic"` |
-| Range patterns | `n when n >= 100 && n <= 199 -> ...` (guard) | `100..=199 => ...` — dedicated range pattern syntax |
-| Exhaustiveness with OR | Compiler checks; missing case is a warning | Compile error; must cover all variants |
-| Data binding in OR arms | All variants must bind same names | Same requirement |
+1. **Box deref**: Rust requires `Box<T>` for recursive types and Rust's patterns transparently deref through `Box`; OCaml's GC manages recursive variant pointers automatically.
+2. **Const patterns**: Rust allows named `const` values in patterns; OCaml can use `let open Consts in` to bring constants into scope for pattern matching.
+3. **Visitor pattern**: OCaml's idiomatic style uses recursive functions directly; Rust often uses both direct recursion and the trait-based visitor pattern for separation of concerns.
+4. **State machines**: Both languages naturally express state machines with variant enums + match — this is one of the strongest arguments for algebraic types over OOP class hierarchies.
+
+## Exercises
+
+1. **Extend the data type**: Add a new variant or field to the main data structure and trace all the match expressions that need updating — practice the exhaustiveness feedback loop.
+2. **Accumulating visitor**: Write a traversal function that collects all leaf values into a `Vec<T>` using only pattern matching and recursion.
+3. **State machine validation**: Implement an invalid-transition error: when the state/event combination is unexpected, return `Err("invalid transition")` instead of panicking.

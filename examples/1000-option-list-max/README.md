@@ -41,3 +41,9 @@ cargo test -p example-1000-option-list-max
 ```
 
 Expected: 12 tests passing (4 for list_max, 4 for list_max_recursive, 2 for safe_head, 2 for option_map).
+
+## Exercises
+
+1. Write `safe_sum` that returns `None` for an empty list and `Some(total)` otherwise, using only a fold.
+2. Implement `safe_max_by` that finds the maximum element according to a comparator closure `f: (&T, &T) -> std::cmp::Ordering`, returning `None` for empty input.
+3. Chain several `Option`-returning operations together with `?\/and_then` to parse a comma-separated list of integers, find the max, double it, and return `None` at any step that fails.

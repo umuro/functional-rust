@@ -4,60 +4,63 @@
 
 # 307: Error Propagation in Closures
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-`?` works in closures — but only when the closure itself returns `Result`, and that changes how you write iterators.
+The `?` operator propagates errors from the enclosing function. Inside a closure passed to `map()` or `and_then()`, `?` propagates from the closure, not the outer function. This distinction matters for `Iterator::map()`: the closure returns `Result<T, E>`, not `T`, and the results must be collected or handled. Understanding how errors flow through closures is essential for writing correct iterator pipelines over fallible operations.
 
-## The Problem This Solves
+## Learning Outcomes
 
-The `?` operator is Rust's answer to early return on error — concise, ergonomic, readable. But `?` only works inside functions (or closures) whose return type is `Result` or `Option`. When you pass a closure to `.map()`, the closure's return type is whatever the outer iterator chain expects — and that's usually just `T`, not `Result<T, E>`.
+- Understand that `?` inside a closure propagates from the closure, not the outer function
+- Use `map(|s| s.parse::<i32>())` to produce `Iterator<Item = Result<i32, E>>`
+- Collect results with short-circuiting via `collect::<Result<Vec<_>, _>>()`
+- Use `filter_map(|s| s.parse().ok())` to silently drop errors
 
-This creates a genuine tension: iterator adapters like `.map()` are your most powerful compositional tool, but they fight the error-handling model you rely on everywhere else. The common mistake is trying to use `?` in a `.map()` closure and hitting a confusing type error. The fix isn't to abandon iterators — it's to learn the idioms that restore both ergonomics and correctness.
+## Rust Application
 
-This tension is fundamental: Rust's iterators assume success by default, but the real world produces failures. Several patterns exist, each with different trade-offs between early exit, error collection, and silent skipping.
-
-## The Intuition
-
-The key insight: if you want `?` inside a closure, make the closure return `Result`. Then `.collect::<Result<Vec<_>, _>>()` does the rest — it short-circuits on the first error and either gives you a clean `Vec` or the first failure. If you want to skip failures silently, use `.filter_map(|r| r.ok())`. If you want to accumulate until failure, use `.try_fold()`.
-
-## How It Works in Rust
+The key insight is that closures returning `Result` make the iterator yield `Result` values:
 
 ```rust
-// Pattern 1: collect into Result — fail-fast
-let numbers: Result<Vec<i32>, _> = ["1", "2", "bad"]
-    .iter()
-    .map(|s| s.parse::<i32>())   // each closure returns Result<i32, _>
-    .collect();                   // short-circuits on first Err
+// collect::<Result<Vec<_>, _>>() short-circuits on first error
+pub fn parse_all(inputs: &[&str]) -> Result<Vec<i32>, String> {
+    inputs.iter().map(|s| parse_number(s)).collect()
+}
 
-// Pattern 2: filter_map — silently drop failures
-let valid: Vec<i32> = ["1", "bad", "3"]
-    .iter()
-    .filter_map(|s| s.parse::<i32>().ok())
-    .collect();  // → [1, 3]
+// filter_map with .ok() silently drops parse errors
+pub fn parse_valid(inputs: &[&str]) -> Vec<i32> {
+    inputs.iter().filter_map(|s| s.parse::<i32>().ok()).collect()
+}
 
-// Pattern 3: closure uses ? explicitly (return type must be Result)
-let doubled: Vec<Result<i32, _>> = inputs.iter()
-    .map(|s| -> Result<i32, _> { Ok(s.parse::<i32>()? * 2) })
-    .collect();
-
-// Pattern 4: try_fold for stateful accumulation
-let sum = inputs.iter().try_fold(0i32, |acc, s| {
-    Ok(acc + s.parse::<i32>()?)
-});
+// ? inside a closure propagates from the closure:
+fn process(inputs: &[&str]) -> Result<Vec<i32>, String> {
+    let doubled: Result<Vec<i32>, String> = inputs.iter()
+        .map(|s| { let n = parse_number(s)?; Ok(n * 2) })
+        .collect();
+    doubled
+}
 ```
 
-## What This Unlocks
+## OCaml Approach
 
-- **Idiomatic fallible pipelines** — process collections of strings, lines, or bytes with full error handling and zero boilerplate
-- **Fine-grained control** — choose between fail-fast (`.collect::<Result<_,_>>()`), silent skip (`.filter_map`), or accumulate-all (`.partition`)
-- **Named function escape hatch** — when closure syntax gets awkward, extract a named function that freely uses `?`, then pass it to `.map()`
+OCaml's `let*` binding with `Seq` or `List` functions provides similar behavior — errors propagate within the `let*` chain, not from closures:
+
+```ocaml
+let parse_all inputs =
+  List.fold_right (fun s acc ->
+    let* lst = acc in
+    let* n = parse_number s in
+    Ok (n :: lst)
+  ) inputs (Ok [])
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Error in map | `List.filter_map` or `List.map` with `Result` | Multiple patterns |
-| Fail-fast collection | Manual `fold` with early return | `.collect::<Result<Vec<_>,_>>()` |
-| Skip errors | `List.filter_map` | `.filter_map(\|r\| r.ok())` |
-| Early return in closure | Natural with `let*` / `Result.bind` | Closure must return `Result` for `?` |
-| Stateful short-circuit | Recursive or `fold` with option | `.try_fold()` |
+1. **Closure boundary**: `?` propagates to the enclosing function; inside a closure passed to `map()`, it propagates from the closure (making the closure return `Result`).
+2. **Two strategies**: Collect-with-short-circuit vs filter-and-continue are the two fundamental choices for handling errors in iterator pipelines.
+3. **Closure return type**: The `?` operator requires the closure to return `Result<T, E>` or `Option<T>` — it doesn't work in closures returning plain `T`.
+4. **Accumulating errors**: To collect all errors (not just the first), use `fold()` building up a `Vec<E>` instead of `collect::<Result<_, _>>`.
+
+## Exercises
+
+1. Write a pipeline that parses `&[&str]` into numbers, doubles them, and collects both parsed values and unparseable strings into separate `Vec`s in a single pass.
+2. Implement `try_map<T, U, E>(v: Vec<T>, f: impl Fn(T) -> Result<U, E>) -> Result<Vec<U>, E>` using iterator combinators.
+3. Demonstrate the closure boundary rule: show that `?` inside a closure does NOT propagate to the outer function by using it inside a `map()` closure.

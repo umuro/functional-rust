@@ -2,73 +2,39 @@
 
 ---
 
-# 419: cfg! and cfg_attr for Conditional Code
+# 419: `cfg!` and Conditional Compilation
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Compile-time conditional compilation — include code only for specific targets, features, or test builds.
+Cross-platform libraries must support Linux, macOS, Windows, and embedded targets — each with different APIs, file paths, and system calls. Feature flags enable shipping a core library with optional capabilities that users opt into. Compiling debug-only code into release builds wastes binary space and performance. Conditional compilation solves all of these: `#[cfg(target_os = "linux")]` includes code only on Linux, `#[cfg(feature = "advanced")]` only when the feature is enabled, `#[cfg(debug_assertions)]` only in debug builds. The compiler eliminates excluded branches entirely — zero runtime cost.
 
-## The Problem This Solves
+`#[cfg(...)]` powers `tokio`'s platform backends, `std`'s OS-specific implementations, `serde`'s feature-gated formats, and any multi-platform Rust library.
 
-A single codebase needs to run on Linux and Windows, in debug and release, with and without optional features, and in test builds that need extra derives for mocking. Duplicating code per target is unmanageable. Runtime `if cfg!(target_os = "windows")` works but wastes binary space compiling both branches. You need compile-time branching.
+## Learning Outcomes
 
-`#[cfg(...)]` annotations remove items from compilation entirely — the excluded code doesn't exist in the binary. `cfg_attr` goes further: conditionally apply *attributes* based on the same predicates. The common use is `#[cfg_attr(test, derive(Mock))]` — only derive the test-heavy mock implementation in test builds, keeping production binaries lean.
+- Understand `#[cfg(condition)]` for item-level conditional compilation
+- Learn `cfg!()` macro for inline conditional expressions
+- See how `target_os`, `target_arch`, `feature`, `debug_assertions` are used
+- Understand how `#[cfg_attr(condition, attribute)]` conditionally applies attributes
+- Learn how cargo features enable/disable code paths via `#[cfg(feature = "name")]`
 
-`cfg!` (with `!`) works inside expressions, returning a `bool` at compile time. It's useful for conditional logic within a function body. But prefer `#[cfg]` on whole items where possible — it eliminates dead code entirely instead of just branching over it.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `path_separator()` uses `if cfg!(windows)` for runtime-branch-based conditional (the compiler still eliminates the dead branch). `debug_log` uses two separate `#[cfg(debug_assertions)]` and `#[cfg(not(debug_assertions))]` items — one exists in debug, the other in release. `advanced_feature()` is similarly gated by `#[cfg(feature = "advanced")]`. `os_name()` uses nested `#[cfg(target_os = "...")]` return statements.
 
-`#[cfg(condition)]` is a compile-time `if` that removes the entire item from the binary when the condition is false; `cfg_attr` conditionally applies attributes like `derive` based on the same conditions.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-// #[cfg] — include item only when condition holds
-#[cfg(target_os = "linux")]
-fn platform_info() -> &'static str { "Running on Linux" }
-
-#[cfg(target_os = "windows")]
-fn platform_info() -> &'static str { "Running on Windows" }
-
-// cfg_attr — apply derive only in test builds
-#[derive(Debug, Clone)]
-#[cfg_attr(test, derive(PartialEq))]  // PartialEq only for tests
-struct Config { host: String, port: u16 }
-
-// Feature flags (Cargo.toml: [features] async-support = [])
-#[cfg(feature = "async-support")]
-async fn fetch_data() -> String { todo!() }
-
-// cfg! macro — inline boolean expression
-fn describe_build() -> &'static str {
-    if cfg!(debug_assertions) { "debug" } else { "release" }
-}
-
-// Combine conditions
-#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
-fn optimized_path() { /* x86_64 Linux only */ }
-
-#[cfg(any(target_os = "macos", target_os = "ios"))]
-fn apple_only() { /* macOS or iOS */ }
-```
-
-1. `#[cfg(condition)]` on an item — item vanishes from binary if false.
-2. `#[cfg_attr(condition, attribute)]` — apply `attribute` only when condition holds.
-3. `cfg!()` in expressions — compile-time `bool`, both branches still compiled.
-4. Conditions: `target_os`, `target_arch`, `feature = "..."`, `test`, `debug_assertions`.
-
-## What This Unlocks
-
-- **Test-only derives**: `#[cfg_attr(test, derive(PartialEq, Mock))]` — zero test infrastructure in production binaries.
-- **Platform-specific code**: Clean per-OS implementations without `if/else` runtime checks.
-- **Feature flags**: Optional features in libraries that users opt into via `Cargo.toml`.
+OCaml achieves conditional compilation through the `dune` build system. `(libraries (select lib.ml from (linux -> linux_impl.ml) (windows -> windows_impl.ml)))` selects platform-specific files. The `Sys.os_type` variable provides runtime OS detection. Feature flags are handled through dune's `(flags ...)` and C preprocessor `#ifdef` for C stubs. OCaml has no built-in `cfg!` equivalent — all conditional compilation is at the file/module level.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Conditional compilation | `#ifdef` via C preprocessor (FFI) or Dune conditions | `#[cfg(...)]` built into language |
-| Feature flags | opam optional dependencies, Dune `(enabled_if ...)` | `Cargo.toml` `[features]`, `#[cfg(feature="...")]` |
-| Platform detection | `Sys.os_type` at runtime | `cfg!(target_os)` at compile time |
-| Conditional attributes | Not applicable | `#[cfg_attr(test, derive(...))]` |
-| Test-only code | `let%test` or `(test (libraries ...))` | `#[cfg(test)]` module |
+1. **Granularity**: Rust conditions can wrap individual items, expressions, or attributes; OCaml's conditional compilation is file-level.
+2. **Cargo integration**: Rust `#[cfg(feature = "x")]` integrates directly with `Cargo.toml`'s `[features]`; OCaml requires dune configuration.
+3. **Dead code elimination**: Rust's compiler guarantees that `#[cfg(not(...))]` items are completely absent from the binary; OCaml's `if Sys.os_type = "Unix"` branches exist in the binary.
+4. **Attribute conditionals**: Rust's `#[cfg_attr(condition, derive(Serialize))]` conditionally applies attributes; OCaml has no equivalent.
+
+## Exercises
+
+1. **Platform utilities**: Write a `platform_temp_dir() -> &'static str` function returning `"/tmp"` on Unix and `"C:\\Temp"` on Windows using `#[cfg(target_family = "unix")]` and `#[cfg(target_family = "windows")]`.
+2. **Feature-gated struct**: Define a `MetricsCollector` struct that is only compiled when feature `"metrics"` is enabled. For the non-metrics build, provide a zero-size stub with the same API that compiles away entirely.
+3. **Debug assertions**: Implement a `safe_divide(a: i32, b: i32) -> i32` that uses `debug_assert!(b != 0)` to catch division by zero in debug builds, panicking with a message. In release, skip the check for performance.

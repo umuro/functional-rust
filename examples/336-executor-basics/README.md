@@ -4,47 +4,35 @@
 
 # 336: Executor Basics
 
-**Difficulty:** 5  **Level:** Master
+## Problem Statement
 
-A minimal async executor — the engine that drives futures to completion by polling them.
+`async fn` and `Future` trait implementations don't run themselves — they need an executor to drive them to completion by calling `poll()` repeatedly until `Poll::Ready`. Understanding how an executor works explains the behavior of `tokio`, `async-std`, and other runtimes. This example builds a minimal single-threaded executor from scratch, demonstrating task queueing, waker implementation, and the poll loop.
 
-## The Problem This Solves
+## Learning Outcomes
 
-`async fn` compiles into state machines that implement `Future`. But futures are inert — something must call `poll()` to drive them. That something is an *executor*.
+- Understand that an executor drives futures by polling them until `Poll::Ready`
+- Implement a minimal task queue using `mpsc::sync_channel` for the ready queue
+- Build a `Waker` using the `RawWaker` vtable API for custom wake behavior
+- Recognize the event loop: poll task → if Pending, park; on wake, re-queue and re-poll
 
-This example builds a real executor from scratch: task queue, waker that reschedules tasks, and a run loop.
+## Rust Application
 
-## The Intuition
-
-Imagine a to-do list manager:
-1. Add tasks to a queue
-2. Pick a task and run it until it says "I'm blocked" (`Poll::Pending`)
-3. When unblocked, the task re-adds itself to the queue
-4. Keep working until the queue is empty
-
-## How It Works in Rust
+A minimal executor with a channel-based task queue:
 
 ```rust
-struct Task {
-    future: Mutex<Option<BoxFuture>>,
-    sender: mpsc::SyncSender<Arc<Task>>,
+pub struct Executor {
+    ready_queue: mpsc::Receiver<Arc<Task>>,
 }
 
-impl Task {
-    fn schedule(self: &Arc<Self>) {
-        let _ = self.sender.send(Arc::clone(self));
-    }
-}
-
-impl SimpleExecutor {
-    fn run(self) {
-        drop(self.tx);  // when no more tasks, recv() ends
-        while let Ok(task) = self.rx.recv() {
-            let mut slot = task.future.lock().unwrap();
-            if let Some(mut f) = slot.take() {
-                let w = make_waker(Arc::clone(&task));
-                if f.as_mut().poll(&mut Context::from_waker(&w)) == Poll::Pending {
-                    *slot = Some(f);
+impl Executor {
+    pub fn run(&self) {
+        while let Ok(task) = self.ready_queue.recv() {
+            let mut future_slot = task.future.lock().unwrap();
+            if let Some(mut future) = future_slot.take() {
+                let waker = make_waker(Arc::clone(&task));
+                let context = &mut Context::from_waker(&waker);
+                if future.as_mut().poll(context).is_pending() {
+                    *future_slot = Some(future); // Not done yet, put it back
                 }
             }
         }
@@ -52,10 +40,28 @@ impl SimpleExecutor {
 }
 ```
 
+## OCaml Approach
+
+OCaml's Lwt has a similar event loop internally, but it uses a cooperative scheduling model based on callbacks. The "scheduler" in Lwt processes ready callbacks in a queue:
+
+```ocaml
+(* Lwt's internal loop, simplified: *)
+let () =
+  while not (Queue.is_empty ready_callbacks) do
+    let callback = Queue.pop ready_callbacks in
+    callback ()
+  done
+```
+
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Executor | Lwt scheduler (implicit) | Explicit `block_on` or `run` |
-| Task scheduling | Internal Lwt queue | `mpsc::SyncSender<Arc<Task>>` |
-| Wakeup | Lwt resolver | `Waker::wake()` |
+1. **Poll vs callback**: Rust's executor poll-based model is more explicit about state; OCaml's Lwt uses implicit callback registration.
+2. **Thread model**: A single-threaded executor processes futures sequentially; Tokio's multi-threaded executor uses work-stealing.
+3. **RawWaker vtable**: The `RawWaker` API requires unsafe code for custom wakers — production code uses the `waker_fn` or `futures::task::noop_waker` helpers.
+4. **Production runtimes**: Tokio, async-std, and smol all implement this loop with I/O multiplexing (epoll/kqueue/IOCP) for true async I/O.
+
+## Exercises
+
+1. Extend the minimal executor to support spawning new tasks from within futures.
+2. Add a counter to the executor that tracks how many times each task was polled — useful for performance debugging.
+3. Implement a `block_on(future)` function that runs a single future to completion using the minimal executor.

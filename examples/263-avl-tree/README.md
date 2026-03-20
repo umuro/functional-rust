@@ -33,3 +33,9 @@ Rust uses named struct fields in the `Node` variant for clarity. Rotations consu
 2. **Named fields:** Rust's `Node { left, value, right, height }` is more readable than OCaml's positional tuple
 3. **Nested destructuring:** OCaml matches two levels in one arm; Rust needs nested `match` blocks
 4. **Height caching:** Both store height in nodes; Rust's `i32` vs OCaml's `int` — same idea, explicit type
+
+## Exercises
+
+1. Add a `rank` method that returns how many elements in the tree are strictly less than a given value, by augmenting each node with its subtree count.
+2. Implement `split` that divides the AVL tree into two balanced trees: one with all elements less than a pivot, and one with all elements greater.
+3. Write a property-based test suite that verifies: (1) BST ordering, (2) balance factor ≤ 1 at every node, and (3) `to_vec` returns elements in sorted order — all after a random sequence of inserts and deletes.

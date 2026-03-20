@@ -2,87 +2,37 @@
 
 ---
 
-# 800. Floyd-Warshall: All-Pairs Shortest Paths
+# 800-floyd-warshall — Floyd-Warshall Algorithm
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Compute shortest paths between every pair of nodes in O(V³) — with path reconstruction via a `next` matrix and negative-cycle detection.
+Floyd-Warshall (1962) computes shortest paths between ALL pairs of vertices in a weighted graph in O(V³) time. Unlike Dijkstra (single source) or Bellman-Ford (single source with negative weights), Floyd-Warshall solves the all-pairs problem directly. It is used in network distance matrices, routing table computation, social graph analysis (degree of separation), and computing transitive closures.
 
-## The Problem This Solves
+## Learning Outcomes
 
-When you need distances between *all* pairs of nodes — not just from one source — Floyd-Warshall is the right tool. Network latency matrices, road distance tables, transitive closure of reachability, and "six degrees of separation" style social network analysis all need all-pairs distances. Floyd-Warshall is simpler to implement than running Dijkstra V times (especially when negative edges are present), and for dense graphs where E ≈ V², it's asymptotically comparable.
+- Initialize the distance matrix from edges and set `dist[i][i] = 0`
+- Apply the DP recurrence: `dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])`
+- Understand why the order of loops (k outer, then i, j) is correct
+- Detect negative cycles via `dist[i][i] < 0` after the algorithm
+- Use Floyd-Warshall as a transitive closure algorithm (boolean variant)
 
-The `next` matrix variant makes path reconstruction O(path length) after O(V³) preprocessing — extremely useful when you're building a routing table that will be queried many times.
+## Rust Application
 
-## The Intuition
+`floyd_warshall(n, edges)` initializes `dist: Vec<Vec<i32>>` with `i32::MAX/2` (to avoid overflow on addition) and zeros on the diagonal. Edges are loaded directly. The triple loop `k, i, j` updates `dist[i][j] = min(dist[i][j], dist[i][k]+dist[k][j])`. The test verifies that `dist[0][2] == 5` for a 3-node graph. The division-by-2 of MAX prevents overflow when adding two "infinity" values.
 
-Ask: "does routing through node k improve the path from i to j?" Do this for every k from 0 to V-1. After considering all intermediate nodes, `dist[i][j]` holds the shortest path. This is the "intermediate node induction" insight: after the outer loop over k, `dist[i][j]` is the shortest path that only uses nodes 0..=k as intermediates. The diagonal check `dist[i][i] < 0` after the main loop reveals negative cycles. OCaml implements this with three nested loops on a 2D array; Rust uses exactly the same structure with `Vec<Vec<i64>>`.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-const INF: i64 = i64::MAX / 2;
-
-// O(V³) time, O(V²) space
-fn floyd_warshall(
-    n: usize,
-    edges: &[(usize, usize, i64)],
-) -> (Vec<Vec<i64>>, Vec<Vec<Option<usize>>>, bool) {
-    let mut dist = vec![vec![INF; n]; n];
-    let mut next: Vec<Vec<Option<usize>>> = vec![vec![None; n]; n];
-
-    for i in 0..n { dist[i][i] = 0; }
-    for &(u, v, w) in edges {
-        if w < dist[u][v] {
-            dist[u][v] = w;
-            next[u][v] = Some(v);
-        }
-    }
-
-    // Main loop: try routing through each intermediate node k
-    for k in 0..n {
-        for i in 0..n {
-            for j in 0..n {
-                if dist[i][k] < INF && dist[k][j] < INF {
-                    let via = dist[i][k] + dist[k][j];
-                    if via < dist[i][j] {
-                        dist[i][j] = via;
-                        next[i][j] = next[i][k];  // route through k
-                    }
-                }
-            }
-        }
-    }
-
-    // Negative cycle: any node with negative self-distance
-    let neg_cycle = (0..n).any(|i| dist[i][i] < 0);
-    (dist, next, neg_cycle)
-}
-
-// Path reconstruction: follow next[src][dst] until we arrive
-fn reconstruct(next: &Vec<Vec<Option<usize>>>, src: usize, dst: usize) -> Option<Vec<usize>> {
-    if next[src][dst].is_none() { return None; }
-    let mut path = vec![src];
-    let mut v = src;
-    while v != dst { v = next[v][dst]?; path.push(v); }
-    Some(path)
-}
-```
-
-The `next[i][j] = next[i][k]` update in the reconstruction matrix is subtle: when you route i→j through k, the *first hop* from i is still `next[i][k]` — because the full path from k to j is already encoded in the `next` matrix.
-
-## What This Unlocks
-
-- **Network latency tables**: precompute latency between all datacenter pairs for SLA routing decisions; rebuild when topology changes.
-- **Transitive closure**: set all edge weights to 1, run Floyd-Warshall, then `reachable[i][j] = dist[i][j] < INF`. Simpler than DFS/BFS for static dense graphs.
-- **Social network analysis**: "degrees of separation" between all user pairs, or finding the node that minimises average distance to all others (graph centre).
+OCaml uses `Array.make_matrix n n max_int` with `max_int/2` as the convention. The triple for-loop is identical. OCaml's `min` function and array mutation follow the same structure. For transitive closure, replace `int` with `bool` and `min` with `||`. The `Ocamlgraph` library implements Floyd-Warshall as part of its path algorithms suite.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| 2D matrix | `Array.make_matrix n n inf` | `vec![vec![INF; n]; n]` |
-| `next` matrix | `int option array array` | `Vec<Vec<Option<usize>>>` |
-| Loop order | `for k`, `for i`, `for j` | Identical — order is critical |
-| Negative cycle | Check diagonal after loop | `.any(|i| dist[i][i] < 0)` |
-| Path reconstruction | Recursive via `next` | Iterative `while v != dst` with `?` propagation |
+1. **All-pairs vs single-source**: Floyd-Warshall is the only practical all-pairs algorithm; Rust programs that need all-pairs often run Dijkstra V times instead for sparse graphs.
+2. **Overflow prevention**: Both languages divide the infinity sentinel by 2; Rust's `i32::MAX/2` and OCaml's `max_int/2` serve the same purpose.
+3. **Negative cycles**: `dist[v][v] < 0` after the algorithm indicates a negative cycle; both languages detect this the same way.
+4. **Transitive closure**: Boolean Floyd-Warshall (with `||` instead of min) computes reachability; OCaml's `Ocamlgraph.Fixpoint` does this automatically for labeled graphs.
+
+## Exercises
+
+1. Implement the boolean transitive closure variant: replace `i32` with `bool` and use `||` and `&&` instead of min/add.
+2. Detect and report all negative cycles: after running Floyd-Warshall, find all vertices v where `dist[v][v] < 0` and trace which cycle they belong to.
+3. Use Floyd-Warshall to compute "six degrees of separation" in a social network: load a friend graph and find the average shortest path length between all pairs.

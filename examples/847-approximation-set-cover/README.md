@@ -2,53 +2,61 @@
 
 ---
 
-# 847: Approximation Algorithms — Greedy Set Cover
+# Approximation Algorithm — Set Cover
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Solve an NP-hard problem within a provable factor of optimal using a greedy strategy — the foundation of approximation algorithm design.
+Set cover is NP-hard: given a universe U of elements and a collection S of subsets, find the minimum number of subsets whose union equals U. The greedy approximation picks the subset covering the most uncovered elements at each step, achieving an O(log n) approximation — proven optimal assuming P ≠ NP. This approximation is used in: network monitoring (minimum sensor placement to cover all traffic), advertising (minimum campaigns to reach all demographics), feature selection in machine learning, and compiler register allocation. Understanding approximation algorithms — which sacrifice optimality for polynomial time — is essential for NP-hard optimization.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Set cover is NP-hard: given a universe U and a collection of sets, find the smallest sub-collection that covers every element. Optimal solutions require exponential search. But many real-world instances are huge — covering all customers with minimum sales territories, covering all network nodes with minimum monitoring points, covering all genes with minimum probes.
+- Implement the greedy set cover approximation: at each step, pick the set covering most uncovered elements
+- Understand the O(ln n) approximation ratio: greedy covers at least 1/OPT fraction at each step
+- Recognize when approximation is appropriate: NP-hard problems in practice
+- Compare greedy approximation ratio against brute-force optimal on small instances
+- Apply the technique to vertex cover, dominating set, and other NP-hard problems with similar guarantees
 
-The greedy algorithm gives a practical escape: always pick the set that covers the most currently uncovered elements. This runs in polynomial time and achieves a ln(|U|)+1 approximation ratio — meaning it uses at most ln(|U|) times as many sets as the optimal solution. Crucially, this is essentially optimal: no polynomial algorithm can do better (unless P=NP).
-
-The weighted variant extends naturally: instead of maximizing elements covered per set, minimize cost per newly covered element. This is greedy in a different direction but carries the same approximation guarantee.
-
-## The Intuition
-
-Greedy is locally optimal at each step. The insight is that "locally optimal" compounds nicely: at each round, the uncovered universe shrinks by at least a factor of (1 - 1/OPT). After k rounds the uncovered fraction is at most (1 - 1/OPT)^k ≤ e^(-k/OPT). Setting this below 1 gives k < OPT·ln(|U|). This harmonic series argument is the core of the approximation proof.
-
-For the weighted case, the greedy rule "minimum cost per element covered" is the fractional relaxation of the LP, which gives the same ln approximation.
-
-## How It Works in Rust
-
-1. **`greedy_set_cover`** — maintains `uncovered: HashSet<usize>`. Each round uses `.max_by_key(|(_, s)| s.intersection(&uncovered).count())` to find the best set.
-2. **Mark and remove** — add chosen set's index to `chosen`, mark it `used`, remove its elements from `uncovered`.
-3. **Terminate** when `uncovered.is_empty()` — guaranteed if the input sets cover the universe.
-4. **Weighted variant** — `filter_map` computes `cost / new_covered` for each unused set, then `.min_by` picks the cheapest per-element option.
-5. **`verify_cover`** — confirms correctness: union of chosen sets must be a superset of the universe.
+## Rust Application
 
 ```rust
-let best = sets.iter()
-    .enumerate()
-    .filter(|(i, _)| !used[*i])
-    .max_by_key(|(_, s)| s.intersection(&uncovered).count());
+pub fn greedy_set_cover(universe: &HashSet<u32>, sets: &[HashSet<u32>]) -> Vec<usize> {
+    let mut uncovered = universe.clone();
+    let mut chosen = vec![];
+    while !uncovered.is_empty() {
+        // Find set covering most uncovered elements
+        let best = sets.iter().enumerate()
+            .max_by_key(|(_, s)| s.intersection(&uncovered).count())
+            .map(|(i, _)| i);
+        if let Some(idx) = best {
+            uncovered.retain(|e| !sets[idx].contains(e));
+            chosen.push(idx);
+        } else { break; } // no progress possible
+    }
+    chosen
+}
 ```
 
-## What This Unlocks
+The `intersection(&uncovered).count()` computes the coverage score for each set. `max_by_key` selects the best set in O(n * |S|) per iteration. `uncovered.retain` removes covered elements efficiently. Rust's `HashSet::intersection` returns an iterator, making the count lazy and allocation-free. The `break` handles the case where universe cannot be fully covered. The result is the list of chosen set indices in selection order.
 
-- **Provable approximation** — ln(|U|)+1 ratio is a mathematical guarantee, not empirical hope.
-- **Weighted generalization** — the same framework handles heterogeneous set costs with minimal code change.
-- **Blueprint for approximation design** — greedy + local-optimality argument works for vertex cover, facility location, and scheduling variants.
+## OCaml Approach
+
+OCaml implements greedy set cover with a `Hashtbl` for the uncovered set or a `Set.Make(Int)` balanced BST. `List.fold_left` finds the maximum-coverage set. `Set.inter uncovered s |> Set.cardinal` counts intersections. OCaml's `Set.diff uncovered chosen_set` removes covered elements immutably. The `while` loop or tail recursion drives iteration. `List.rev` restores selection order if building the list by prepending.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Set operations | `Set.S` functor | `HashSet<T>` |
-| Intersection count | `Set.cardinal (Set.inter a b)` | `a.intersection(&b).count()` |
-| Greedy loop | Recursive with list fold | `while !uncovered.is_empty()` |
-| Max by key | `List.fold_left` comparison | `.max_by_key(...)` iterator adapter |
-| Approximation ratio | ln(n)+1 — math identical | Same guarantee, same algorithm |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Universe set | `HashSet<u32>` | `Set.Make(Int).t` or `Hashtbl` |
+| Intersection count | `.intersection().count()` | `Set.inter \|> Set.cardinal` |
+| Best set selection | `max_by_key` | `List.fold_left` with max |
+| Uncovered removal | `retain(|e| !contains)` | `Set.diff uncovered chosen` |
+| Approximation ratio | O(ln n) provable | Same |
+| Brute force comparison | Exponential search | Same |
+
+## Exercises
+
+1. Implement brute-force optimal set cover (exponential) for small instances and compare with greedy approximation ratio.
+2. Implement the LP relaxation of set cover and show its integrality gap matches the greedy bound.
+3. Apply greedy set cover to a sensor placement problem: cover all n points in a plane with minimum unit-radius circles.
+4. Implement a weighted set cover: each subset has a cost, minimize total cost using the cost-effectiveness greedy.
+5. Measure approximation quality empirically: for random instances, how close does greedy come to optimal?

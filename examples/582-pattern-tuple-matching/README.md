@@ -2,45 +2,53 @@
 
 ---
 
-# 582: Tuple Pattern Matching
+# Tuple Pattern Matching
 
-**Difficulty:** 2  **Level:** Beginner
+## Problem Statement
 
-Match on multiple values simultaneously by wrapping them in a tuple.
+Many decisions depend on the combination of multiple conditions. FizzBuzz is the canonical example: the output depends on two independent Boolean conditions. Without tuple matching, you need nested `if` statements. Matching on a tuple `(cond1, cond2)` expresses the decision matrix declaratively: each arm covers exactly one combination. This pattern is used in state transition tables, game logic, protocol state machines, and any logic where multiple independent conditions determine the outcome.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Sometimes a decision depends on the combination of two or more values, not either one alone. FizzBuzz depends on divisibility by 3 *and* 5. A traffic light transition depends on the current light *and* whether it's an emergency. A comparison result depends on `a > b` *and* `a < b` together.
+- How `match (a, b) { (true, true) => ... }` matches all combinations of two conditions
+- How tuple patterns scale to three or more conditions
+- How to combine tuples with other patterns: `match (opt_a, opt_b) { (Some(a), Some(b)) => ... }`
+- How `_` in tuple positions allows partial matching: `(true, _) => ...`
+- Where tuple matching replaces nested if/else: FizzBuzz, state transitions, validation matrices
 
-Writing this as nested `if/else` or nested `match` statements is verbose and error-prone. Tuple patterns solve it: combine the values into a tuple, then match on the tuple. Every combination of values can be a distinct arm. The compiler checks exhaustiveness across all combinations.
+## Rust Application
 
-This is the Rust equivalent of matching on a product of cases — the same technique that makes FizzBuzz elegant in functional languages.
+`fizzbuzz(n: u32)` matches `(n % 3 == 0, n % 5 == 0)` — all four Boolean combinations cleanly expressed. `fizzbuzz_if` shows the equivalent `if/else` chain — more verbose and harder to verify complete coverage. Tuple matching on `Option` pairs: `match (opt_a, opt_b) { (Some(a), Some(b)) => ..., (Some(a), None) => ..., (None, Some(b)) => ..., (None, None) => ... }`. The tuple is created inline — no temporary variable needed.
 
-## The Intuition
+Key patterns:
+- `match (a, b) { (true, true) => ... }` — two-condition matrix
+- `match (opt_a, opt_b)` — Option combination dispatch
+- `(val, _)` — partial match ignoring one dimension
+- Three-way: `match (a, b, c)` — 8-combination matrix (use guards to collapse)
 
-A tuple is just multiple values grouped together. Matching on a tuple is matching on all of them simultaneously. `match (a % 3 == 0, a % 5 == 0)` creates a `(bool, bool)` tuple; the four arms cover all four combinations of `(true/false, true/false)`. Wildcards (`_`) let you collapse cases: `(_, true)` matches any light in emergency mode.
+## OCaml Approach
 
-The compiler guarantees you've covered every combination. Add a new variant to one of the enums? The match breaks — the compiler tells you exactly which combinations are now missing.
+OCaml tuple pattern matching is identical:
 
-## How It Works in Rust
+```ocaml
+let fizzbuzz n = match (n mod 3 = 0, n mod 5 = 0) with
+  | (true, true) -> "FizzBuzz"
+  | (true, false) -> "Fizz"
+  | (false, true) -> "Buzz"
+  | (false, false) -> string_of_int n
+```
 
-1. **Boolean product** — `match (n % 3 == 0, n % 5 == 0) { (true, true) => ..., (true, false) => ..., ... }` — four exhaustive arms.
-2. **Enum + bool** — `match (light, emergency) { (_, true) => ..., (Light::Red, false) => ..., ... }` — wildcard collapses "any light in emergency" into one arm.
-3. **Comparison result** — `match (a > b, a < b) { (true, false) => "gt", (false, true) => "lt", _ => "eq" }` — cleaner than nested ifs.
-4. **Exhaustiveness** — the compiler verifies all combinations are covered; missing a case is a compile error, not a runtime bug.
-5. **Guards in tuple arms** — `(Light::Green, false) if timer_expired => Light::Yellow` — guards work inside tuple arms.
-
-## What This Unlocks
-
-- Express multi-condition dispatch as a clean, exhaustive table instead of nested conditionals.
-- Catch missing cases at compile time when new enum variants are added.
-- Write FizzBuzz, state machines, and protocol logic in a form that reads like a truth table.
+This is one of the most natural examples of OCaml pattern matching — the code reads exactly like a truth table.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Tuple pattern match | `match (a, b) with (true, true) -> ...` — identical | `match (a, b) { (true, true) => ... }` — same pattern |
-| Exhaustiveness | Compiler warns on missing cases | Compile error on missing cases |
-| Wildcard in tuple | `(_, true) -> ...` | `(_, true) => ...` |
-| Multi-value dispatch | Product types matched naturally | Same; no extra syntax needed |
+1. **Syntax**: Rust `match (a, b)` and OCaml `match (a, b) with` are nearly identical — the pattern is universal across ML-family languages.
+2. **Decision matrix readability**: Both languages make the decision matrix explicit and self-documenting; imperative `if/else` chains obscure the structure.
+3. **Exhaustiveness**: Both compilers verify all `(bool, bool)` combinations are covered — adding a case for `(_, _)` or relying on exhaustiveness is clear.
+4. **Tuple creation cost**: Rust tuples are stack-allocated — the `(a, b)` expression has zero heap overhead; OCaml tuples are heap-allocated GC values.
+
+## Exercises
+
+1. **Three-way FizzBuzz**: Extend FizzBuzz to also handle multiples of 7 as "Bazz" — match on `(n%3==0, n%5==0, n%7==0)` and use `_` to collapse irrelevant combinations.
+2. **State + event matrix**: Implement `fn transition(state: State, event: Event) -> State` for a traffic light using tuple matching on `(state, event)`.
+3. **Option matrix**: Write `fn combine(a: Option<i32>, b: Option<i32>) -> Option<i32>` that returns `Some(a + b)` if both are `Some`, `Some(a)` if only `a`, `Some(b)` if only `b`, `None` otherwise.

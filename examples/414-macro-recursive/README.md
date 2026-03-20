@@ -4,102 +4,37 @@
 
 # 414: Recursive Macro Patterns
 
-**Difficulty:** 4  **Level:** Expert
+## Problem Statement
 
-Macros that call themselves — process token lists one element at a time to implement algorithms purely at compile time.
+Some computations and code generation tasks have naturally recursive structure: counting elements, reversing lists, checking if a value equals any of N options. In functions, recursion is straightforward. In macros, recursion works by having one arm handle the base case (empty input) and another arm peel off one element and recursively invoke the macro on the remainder. This compile-time recursion is bounded by Rust's `macro_recursion_limit` (default 128) and computes entirely at compile time, producing efficient code with no runtime recursion.
 
-## The Problem This Solves
+Recursive macros are used in `matches!`, compile-time string concatenation, recursive DSL parsers, and any macro needing to process a variable-length input sequentially.
 
-Some macro operations are inherently sequential: count elements, reverse a list, build a computation step by step. Repetition patterns (`$(...)*`) handle parallel expansion well, but they can't accumulate state across iterations — there's no loop variable, no counter, no accumulator. For algorithms that need to process elements one at a time and carry state, recursion is the answer.
+## Learning Outcomes
 
-Recursive macros also let you implement conditional logic: "if this pattern matches, do X; otherwise, recurse and try Y." This is the basis of complex macro DSLs — grammars that can't be expressed with a single match arm but unfold naturally through recursive matching.
+- Understand how recursive macros use base case and inductive step arms
+- Learn the `@acc` (accumulator) pattern for building up results recursively
+- See how `count!` uses `1 + count!(rest)` to count at compile time
+- Understand the `reverse_list!(@acc [...] ...)` pattern for tail-recursive macros
+- Learn about the `recursion_limit` attribute and when to increase it
 
-The standard library uses recursive macros for `vec![]`, `println!` argument parsing, and the `matches!` macro. Third-party crates use them to implement entire embedded languages inside Rust syntax.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `count!()` returns 0 for empty input (base case) and `1 + count!(tail)` for non-empty (inductive). `reverse_list!` uses the accumulator pattern with `@acc` internal arms — the public entry point initializes an empty accumulator, each step moves the head to the front of the accumulator, and the base case emits the array. `one_of!` recursively expands to `val == first || one_of!(val, rest)` until the single-element base case.
 
-Recursive macro patterns mirror recursive functions: there's a base case (the simplest input, no recursion) and a recursive case (consume one element, recurse on the rest). The "accumulator" pattern is common: an internal arm carries state forward through a private `@tag` to distinguish internal calls from the public entry point.
+## OCaml Approach
 
-The `@tag` convention (e.g., `@acc`) is unofficial but universal — it's a common token that won't appear in normal user code, preventing accidental matches. The entry arm is the clean public interface; the `@acc` arms are the implementation.
-
-## How It Works in Rust
-
-```rust
-// Count elements by recursing and adding 1 per element
-macro_rules! count {
-    () => { 0usize };                          // base case: empty → 0
-    ($head:expr $(, $tail:expr)*) => {
-        1 + count!($($tail),*)                 // consume head, recurse on tail
-    };
-}
-
-// Reverse a list using an accumulator
-// @acc carries the reversed list built so far
-macro_rules! reverse_list {
-    // Base: accumulator is the result
-    (@acc [$($acc:expr),*]) => {
-        [$($acc),*]
-    };
-    // Recursive: move head to front of accumulator
-    (@acc [$($acc:expr),*] $head:expr $(, $tail:expr)*) => {
-        reverse_list!(@acc [$head $(, $acc)*] $($tail),*)
-    };
-    // Public entry: start with empty accumulator
-    ($($x:expr),* $(,)?) => {
-        reverse_list!(@acc [] $($x),*)
-    };
-}
-
-// Match a value against multiple options
-macro_rules! one_of {
-    ($val:expr, $first:expr) => { $val == $first };  // base: single option
-    ($val:expr, $first:expr $(, $rest:expr)+) => {
-        $val == $first || one_of!($val $(, $rest)+)  // recurse on remaining
-    };
-}
-
-// Join strings with a separator, recursively
-macro_rules! concat_with {
-    ($sep:expr; $a:expr) => { $a.to_string() };  // base: single element
-    ($sep:expr; $a:expr $(, $rest:expr)+) => {
-        format!("{}{}{}", $a, $sep, concat_with!($sep; $($rest),+))
-    };
-}
-
-fn main() {
-    // count: 0, 1, 3, 5 elements
-    assert_eq!(count!(), 0);
-    assert_eq!(count!(a), 1);
-    assert_eq!(count!(a, b, c), 3);
-
-    // reverse
-    let rev = reverse_list![1, 2, 3, 4, 5];
-    println!("reversed: {:?}", rev);  // [5, 4, 3, 2, 1]
-
-    // one_of: membership test
-    let x = 5;
-    println!("x in {{1,3,5}}: {}", one_of!(x, 1, 3, 5));   // true
-    println!("x in {{2,4,6}}: {}", one_of!(x, 2, 4, 6));   // false
-
-    // concat_with separator
-    println!("{}", concat_with!(", "; "one", "two", "three"));
-    // "one, two, three"
-}
-```
-
-**Recursion depth**: the compiler limits macro recursion (default 128 levels). Deep DSLs can hit this; `#![recursion_limit = "256"]` raises it. Recursion is evaluated at compile time — no runtime stack involvement.
-
-## What This Unlocks
-
-- **Compile-time algorithms** — count, reverse, sum, zip — run at zero runtime cost; results are constants or stack-allocated arrays.
-- **Pattern-driven DSLs** — recursive matching enables grammars: parse `a + b * c` by consuming one operator at a time, building AST nodes at compile time.
-- **Self-contained boilerplate elimination** — `one_of!(x, A, B, C, D)` expands to `x == A || x == B || x == C || x == D` — cleaner than writing it out, and scales to any length.
+OCaml PPX generates recursive code via recursive OCaml functions operating on AST nodes. A compile-time list-reversal PPX processes the actual list data during compilation. OCaml's `let[@unrolled] rec` attribute can unroll recursive functions. For true compile-time computation, OCaml uses its `module` system with recursive functors, though these are rarer than Rust's macro recursion.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Recursive list processing | `let rec f acc = function [] -> acc \| x::xs -> f (x::acc) xs` — runtime | `macro_rules!` recursion — compile time, expands to flat code |
-| Accumulator pattern | `reverse_acc acc list` — standard recursion style | `@acc` tagged arm — internal convention, same concept |
-| Recursion depth | Stack depth (runtime) | Compiler macro recursion limit (default 128, configurable) |
-| Result type | OCaml value | Rust tokens → any Rust construct (expressions, types, items) |
+1. **Compile vs. runtime**: Rust macro recursion is compile-time token transformation; OCaml's equivalent would use module system recursion or PPX, both more heavyweight.
+2. **Recursion limit**: Rust imposes a `recursion_limit` (default 128, adjustable with `#![recursion_limit = "512"]`); OCaml has no equivalent constraint.
+3. **Accumulator pattern**: The `@acc` arm naming convention is a Rust macro idiom for internal state; OCaml uses standard accumulating function parameters.
+4. **Error locality**: Rust macro recursion errors can produce deep expansion traces; OCaml recursive function errors appear at the function definition or call site.
+
+## Exercises
+
+1. **Compile-time sum**: Implement `const_sum!(1, 2, 3, 4, 5)` that expands to the literal sum `1 + 2 + 3 + 4 + 5` and verify with `const SUM: i32 = const_sum!(1, 2, 3)`.
+2. **Unique macro**: Write `unique_types!(i32, f64, i32, String, f64)` using recursive macro expansion to deduplicate types and generate a tuple type containing only unique types from the list.
+3. **Zip lists**: Implement `zip!(($a1, $a2, ...), ($b1, $b2, ...))` using recursive macro arms that peel one element from each list per step and accumulate `($a1, $b1)` pairs.

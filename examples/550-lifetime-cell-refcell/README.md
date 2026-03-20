@@ -2,45 +2,50 @@
 
 ---
 
-# 550: Interior Mutability — Cell and RefCell
+# Cell and RefCell for Interior Mutability
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Mutate data through a shared reference by moving borrow checks to runtime.
+Rust's ownership rules normally require `&mut T` for mutation — impossible when a value is shared via `Rc<T>` or multiple references. Interior mutability provides a controlled escape hatch: types that allow mutation through a shared reference (`&T`). `Cell<T>` works for `Copy` types by get/set semantics. `RefCell<T>` works for non-`Copy` types by moving the borrow check to runtime — it panics on violation rather than failing at compile time. These types are foundational in GUI frameworks, mock objects, memoization, and any structure requiring shared mutable access without a `Mutex`.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Rust's normal rules say: you can have many shared `&T` references or one `&mut T`, but not both. This is safe and efficient, but sometimes it's too restrictive. A stats counter embedded in a struct that's shared across many places shouldn't require `&mut self` just to increment a field. A tree node needs to store children that can be updated even when the tree is accessed through shared references.
+- How `Cell<T>` enables mutation through `&self` for `Copy` types using `get`/`set`
+- How `RefCell<T>` enables runtime borrow checking via `borrow()` and `borrow_mut()`
+- Why `RefCell` panics on borrow violations that `&mut T` would catch at compile time
+- How `Rc<RefCell<T>>` is the standard single-threaded shared mutable container
+- Where interior mutability is used: `Rc<RefCell<T>>` trees, caches, test mocks, Gtk/egui widgets
 
-`Cell<T>` and `RefCell<T>` are the standard solution: they move the borrow check from compile time to runtime (or eliminate it entirely for `Copy` types), letting you mutate through `&self`. The trade-off is explicit: `Cell` has no borrow overhead but only works for `Copy` types, while `RefCell` tracks borrows at runtime and panics (or returns `Err`) if you violate the rules.
+## Rust Application
 
-This is the foundation for `Rc<RefCell<T>>` — the idiomatic pattern for shared-ownership mutable graphs, trees, and event systems in single-threaded Rust.
+`Counter` uses `Cell<i32>` — `increment(&self)` mutates through a shared reference by calling `self.value.set(self.value.get() + 1)`. `Cache` uses `RefCell<Vec<String>>` — `add(&self, s)` calls `self.data.borrow_mut().push(s)`, dynamically acquiring a mutable borrow. If two `borrow_mut()` calls were active simultaneously, `RefCell` would panic. `Rc<RefCell<T>>` is shown as the building block for shared ownership with mutation — the pattern for tree nodes, graph vertices, and observer lists in single-threaded code.
 
-## The Intuition
+Key patterns:
+- `Cell<T>: get() + set()` — copy in/out, no references issued
+- `RefCell<T>: borrow() -> Ref<T>`, `borrow_mut() -> RefMut<T>` — runtime borrow checks
+- `Rc::clone(&shared)` + `RefCell` — shared ownership with interior mutability
 
-`Cell<T>` is like a lockbox for `Copy` types. You can call `.get()` to copy out the value and `.set()` to replace it, all through a shared reference. No borrow is created — just a copy. It's zero overhead.
+## OCaml Approach
 
-`RefCell<T>` is like a runtime borrow checker you carry around. `.borrow()` returns a smart pointer that acts like `&T` and increments a counter. `.borrow_mut()` does the same for `&mut T`. If you try to get a mutable borrow while a shared one exists, it panics. The rule is the same as the compile-time rule — it's just enforced at runtime instead.
+OCaml's `ref` and mutable record fields provide interior mutability natively — no wrapper type needed:
 
-## How It Works in Rust
+```ocaml
+type counter = { mutable value: int }
+let increment c = c.value <- c.value + 1
+let get c = c.value
+```
 
-1. **`Cell<T>` for `Copy` types** — `cell.get()` copies the value out, `cell.set(v)` writes a new value in; all through `&self`, zero runtime overhead.
-2. **`RefCell<T>` borrows** — `data.borrow()` returns a `Ref<T>` (acts like `&T`); `data.borrow_mut()` returns a `RefMut<T>` (acts like `&mut T`); both are dropped normally.
-3. **Runtime enforcement** — two simultaneous `borrow_mut()` calls panic; use `try_borrow_mut()` for non-panicking fallible access.
-4. **`Rc<RefCell<T>>`** — combine for shared ownership *plus* interior mutability; standard pattern for tree nodes, graph adjacency, observer lists.
-5. **Single-threaded only** — `Cell` and `RefCell` are `!Sync`; for multi-threaded use `Mutex<T>` or `RwLock<T>`.
-
-## What This Unlocks
-
-- Embed counters, caches, and lazy fields in structs that are accessed through `&self` — no `&mut self` needed.
-- Build mutable trees and graphs with `Rc<RefCell<T>>` without fighting the borrow checker.
-- Bridge the gap between Rust's strict compile-time rules and dynamic data structure requirements.
+Since OCaml does not track ownership, all values are freely mutable through any reference with no special wrapper.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Shared mutable state | `ref` and mutable record fields; GC-backed | Requires `Cell` or `RefCell`; explicit interior mutability |
-| Borrow checking | None; runtime errors for aliasing | Compile-time by default; `RefCell` moves check to runtime |
-| Thread safety | GC handles it | `Cell`/`RefCell` are `!Sync`; use `Mutex` for threads |
-| Shared ownership + mutation | Mutable records shared freely | `Rc<RefCell<T>>` — explicit, composable, single-threaded |
+1. **Compile-time vs runtime**: Rust's `&mut T` rule is compile-time; `RefCell<T>` moves the same check to runtime (with panic on violation); OCaml has no borrow check — only runtime type safety.
+2. **Performance**: `Cell<T>` is zero overhead for `Copy` types; `RefCell<T>` adds a borrow counter; both are cheaper than `Mutex<T>` (which requires OS involvement).
+3. **Thread safety**: `Cell` and `RefCell` are `!Send` — single-threaded only; `Mutex` or `RwLock` are the thread-safe equivalents; OCaml's `ref` is accessible from any domain in OCaml 5.x (with race conditions possible).
+4. **API style**: `RefCell::borrow()` returns a smart pointer `Ref<T>` that releases the borrow when dropped; OCaml `ref` reading is just `!x` — a simple dereference.
+
+## Exercises
+
+1. **Memoize with Cell**: Implement `struct Memoized<T: Copy> { computed: Cell<Option<T>>, compute: Box<dyn Fn() -> T> }` with a `get()` method that lazily computes and caches the value.
+2. **Observer with RefCell**: Build an `Observable<T: Clone>` struct using `RefCell<Vec<Box<dyn Fn(&T)>>>` for the listener list, so listeners can be added through `&self`.
+3. **Rc<RefCell<T>> tree**: Implement a simple linked list using `type Node<T> = Rc<RefCell<NodeInner<T>>>; struct NodeInner<T> { value: T, next: Option<Node<T>> }` with append and traverse methods.

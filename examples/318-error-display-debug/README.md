@@ -4,71 +4,66 @@
 
 # 318: Display vs Debug for Errors
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Two audiences, two formats — know which one to use where.
+Error messages have two audiences: end users who need human-readable descriptions ("Cannot connect to server"), and developers who need complete diagnostic information including internal state (field names, codes, stack frames). Rust encodes this distinction in two traits: `Display` for user-facing messages, `Debug` for developer diagnostics. Both are required by `std::error::Error`, and using them correctly separates user experience from debugging information.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You implement an error type, derive `Debug`, and ship it. Then a user reports that your error message is `DbError::ConnectionFailed("db.prod")` — the raw Debug format leaking internal struct names. Meanwhile, your logging framework is printing beautiful human messages for other errors. The difference is whether `Display` is implemented.
+- Understand `Display` as user-facing output (error messages shown to end users)
+- Understand `Debug` as developer-facing output (detailed diagnostic information)
+- Implement both traits on the same error type for different audiences
+- Recognize that `{:?}` uses `Debug`, `{}` uses `Display` in format strings
 
-`Debug` and `Display` serve different audiences. `Debug` is for developers: it should show the full internal structure, variant names, and any details useful for diagnosing a bug. It's what appears in `{:?}` format strings, in test failure output, and in `dbg!()` calls. `Display` is for users: it should be a clean, natural-language sentence with no Rust syntax — the message that might appear in a UI or be spoken aloud.
+## Rust Application
 
-The `Error` trait requires both: you need `Debug` (usually derived for free) and `Display` (always implemented manually). If you only derive `Debug`, your error messages look like Rust code. If you implement only `Display`, you can't print the full debug representation. You need both, serving different purposes.
-
-## The Intuition
-
-`Debug` is for developers (`{:?}` in logs and tests), `Display` is for users (`{}` in messages) — every error type needs both, and they should say different things.
-
-## How It Works in Rust
+Same error type, two different outputs:
 
 ```rust
-#[derive(Debug)]  // generates: DbError::ConnectionFailed("db.prod") — useful for devs
-enum DbError {
+#[derive(Debug)]  // auto-derives detailed struct/enum representation
+pub enum DbError {
     ConnectionFailed(String),
     QueryTimeout(f64),
     NotFound(String),
 }
 
-impl fmt::Display for DbError {  // implement manually — this is what users see
+impl fmt::Display for DbError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::ConnectionFailed(h) => write!(f, "Cannot connect to {h}"),
-            Self::QueryTimeout(s)     => write!(f, "Query timed out after {s:.1}s"),
-            Self::NotFound(k)         => write!(f, "Record not found: {k}"),
+            Self::QueryTimeout(s) => write!(f, "Query timed out after {s:.1}s"),
+            Self::NotFound(k) => write!(f, "Record not found: {k}"),
         }
     }
 }
 
-impl std::error::Error for DbError {}  // requires Display + Debug
-
-// In practice:
-let e = DbError::ConnectionFailed("db.prod".into());
-println!("{e}");    // Display: "Cannot connect to db.prod"
-println!("{e:?}");  // Debug:   "ConnectionFailed(\"db.prod\")"
-
-// Log structured errors with both:
-eprintln!("error: {e}");          // user-facing
-log::error!("db error: {e:?}");   // developer log with full debug info
-
-// Box<dyn Error> preserves both:
-let boxed: Box<dyn std::error::Error> = Box::new(e);
-println!("{boxed}");  // calls Display
+// User sees: "Cannot connect to db.example.com"
+// Developer sees: DbError::ConnectionFailed("db.example.com")
 ```
 
-The Display message should work as part of a sentence: "failed to connect: {e}" should read naturally. Avoid trailing periods (callers may add context after it), and avoid leading capital letters in library errors (callers control the framing).
+## OCaml Approach
 
-## What This Unlocks
+OCaml distinguishes `pp` (pretty-printer for structured output) from `to_string` (human-readable). `ppx_sexp_conv` auto-derives structured output similar to `#[derive(Debug)]`:
 
-- **User-friendly error messages** — `{}` gives clean natural language; no Rust syntax leaks to end users
-- **Developer diagnostics** — `{:?}` exposes full internal state for debugging; the derive covers 90% of cases
-- **Error ecosystem integration** — `Box<dyn Error>`, `anyhow`, and every logging framework use `Display` — you must implement it
+```ocaml
+(* ppx_sexp_conv generates structured output like Debug *)
+[@@deriving sexp_of]
+
+(* Manual display function like Display *)
+let to_user_string = function
+  | ConnectionFailed h -> Printf.sprintf "Cannot connect to %s" h
+  | QueryTimeout s -> Printf.sprintf "Query timed out after %.1fs" s
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Human-readable message | `Format.pp` or `to_string` | `impl fmt::Display` — required by `Error` |
-| Debug representation | `[@@deriving show]` / `Printexc` | `#[derive(Debug)]` — structural output |
-| Required by Error | No standard error trait | Both `Display` and `Debug` required |
-| Format specifier | N/A | `{}` = Display; `{:?}` = Debug; `{:#?}` = pretty Debug |
+1. **Two required traits**: Rust's `std::error::Error` requires both `Display` and `Debug`; OCaml has no such requirement — any type can be an error.
+2. **Auto-derive Debug**: `#[derive(Debug)]` generates a complete structural representation; implementing it manually is rarely needed.
+3. **Error propagation format**: `eprintln!("Error: {}", e)` shows user message; `eprintln!("Debug: {:?}", e)` shows developer details.
+4. **Testing**: Use `assert_eq!(format!("{}", err), "expected user message")` to test `Display`; use `{:?}` for debugging assertions.
+
+## Exercises
+
+1. Implement `Display` for an error type that produces a one-line user message, and verify that `format!("{}", err)` produces the expected output.
+2. Show the difference between `format!("{}", err)` and `format!("{:?}", err)` output for the same `DbError` value.
+3. Write a test that verifies both `Display` and `Debug` outputs meet their respective format expectations for all variants.

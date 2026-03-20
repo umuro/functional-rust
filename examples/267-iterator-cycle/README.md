@@ -4,73 +4,54 @@
 
 # 267: Infinite Cycling with cycle()
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Repeat a finite iterator endlessly — round-robin scheduling, color cycling, repeating patterns.
+Repeating a pattern indefinitely is needed in round-robin scheduling, alternating colors in UI tables, repeating short sequences to fill longer ones, or generating periodic signals. The `cycle()` adapter creates an infinite iterator by cloning the source iterator each time it is exhausted. Combined with `take()` or `zip()`, it produces exactly as many repetitions as needed without manually computing modular indices.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You need to pair each item in a longer list with elements from a shorter repeating pattern: assign roles in a round-robin, alternate row colors, apply repeating weights for a checksum. Without `cycle()`, you'd use modular indexing — `pattern[i % pattern.len()]` — which requires the pattern to be indexable (arrays, vecs) and scatters the logic through your code.
+- Understand that `cycle()` repeats a finite iterator infinitely by cloning it at exhaustion
+- Combine `cycle()` with `take(n)` to consume exactly `n` elements from the cycled source
+- Use `cycle()` with `zip()` to assign repeating labels or colors to a longer sequence
+- Recognize that `cycle()` requires the source iterator to implement `Clone`
 
-Cycling is especially useful when `zip`-ping: pair each element of a long list with the corresponding element of a short list, wrapping around automatically. `cycle()` turns that into a single expression.
+## Rust Application
 
-OCaml doesn't have a built-in cycle for lists, but `Seq` supports infinite sequences. In Rust, `cycle()` works on any iterator that implements `Clone` — the iterator is cloned at the start of each repetition.
-
-## The Intuition
-
-`cycle()` returns an iterator that, once it reaches the end of the underlying sequence, resets to the beginning and starts again — forever. Use `take(n)` or `zip()` to bound consumption.
-
-```rust
-let colors = ["red", "green", "blue"];
-let cycled: Vec<_> = colors.iter().cycle().take(7).collect();
-// → ["red", "green", "blue", "red", "green", "blue", "red"]
-```
-
-## How It Works in Rust
+`Iterator::cycle()` requires `Clone` on the iterator itself (not just the elements). It calls `clone()` each time the inner iterator is exhausted and restarts it:
 
 ```rust
-let colors = ["red", "green", "blue"];
+// Repeat [1,2,3] indefinitely, take first 7
+let result: Vec<i32> = [1, 2, 3].iter().copied().cycle().take(7).collect();
+// [1, 2, 3, 1, 2, 3, 1]
 
-// Take a bounded prefix of the infinite cycle
-let cycled: Vec<_> = colors.iter().cycle().take(9).collect();
-// → [red, green, blue, red, green, blue, red, green, blue]
-
-// Round-robin role assignment: zip a long list with a cycling short list
-let items = ["a", "b", "c", "d", "e"];
-let roles = ["leader", "follower"];
-let assigned: Vec<String> = items.iter()
-    .zip(roles.iter().cycle())               // cycle roles to match items length
-    .map(|(item, role)| format!("{}->{}", item, role))
-    .collect();
-// → ["a->leader", "b->follower", "c->leader", "d->follower", "e->leader"]
-
-// Alternating boolean pattern
-let alternating: Vec<bool> = [true, false].iter().copied()
-    .cycle().take(8).collect();
-// → [true, false, true, false, true, false, true, false]
-
-// Repeating weights for a checksum
-let weights = [1u32, 3, 7];
-let data = [4u32, 5, 6, 7, 8, 9];
-let checksum: u32 = data.iter()
-    .zip(weights.iter().cycle())
-    .map(|(d, w)| d * w)
-    .sum();
+// Round-robin labeling: assign alternating "a"/"b" labels to longer sequence
+let items = [1i32, 2, 3, 4];
+let labels = ["a", "b"];
+let labeled: Vec<_> = items.iter().zip(labels.iter().cycle()).collect();
+// [(1,"a"), (2,"b"), (3,"a"), (4,"b")]
 ```
 
-The inner iterator must implement `Clone` — `cycle()` clones the iterator to replay it from the start each cycle.
+## OCaml Approach
 
-## What This Unlocks
+OCaml's `Seq` module can model cycling with a recursive lazy function:
 
-- **Round-robin scheduling** — assign tasks, colors, or labels from a short repeating list to a longer sequence.
-- **Repeating test data** — generate patterns for property tests without manual modulo arithmetic.
-- **Weighted cycling** — pair data with cyclically repeating weights for checksums or transforms.
+```ocaml
+let rec cycle xs () = match Seq.uncons xs with
+  | None -> cycle xs ()  (* restart when exhausted *)
+  | Some (x, rest) -> Seq.Cons (x, cycle rest)
+```
+
+For lists, cycling is typically handled with modular index arithmetic: `lst.(i mod List.length lst)`.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Infinite repetition | `Seq.cycle` (OCaml 4.14+) / manual unfold | `iter.cycle()` |
-| Bound consumption | `Seq.take n` | `.take(n)` or `.zip(finite_iter)` |
-| Requires `Clone` | N/A | Yes — iterator cloned at each cycle boundary |
-| Works on any iterator | `Seq` only | Any `Iterator + Clone` |
+1. **Clone requirement**: Rust's `cycle()` requires `Clone` on the iterator — slices' iterators are `Clone`, but consuming iterators typically are not.
+2. **Infinite by design**: The result iterator never terminates; always pair with `take()`, `zip()`, or `take_while()` to bound it.
+3. **Lazy evaluation**: Both Rust's `cycle()` and OCaml's lazy sequence approach avoid materializing the repeated sequence; only the original source is stored.
+4. **Real-world uses**: CSS `:nth-child` patterns, round-robin load balancing, repeating background tiles, periodic waveform generation.
+
+## Exercises
+
+1. Implement a round-robin scheduler that distributes tasks among N workers using `cycle()` and `zip()`.
+2. Generate the alternating sequence `[true, false, true, false, ...]` for 20 elements using `[true, false].iter().cycle()`.
+3. Use `cycle()` to pad a shorter slice to match the length of a longer one by repeating the shorter slice's elements.

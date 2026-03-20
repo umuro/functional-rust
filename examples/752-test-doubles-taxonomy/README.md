@@ -2,86 +2,37 @@
 
 ---
 
-# 752: Stubs, Mocks, Fakes, Spies Taxonomy
+# 752-test-doubles-taxonomy — Test Doubles Taxonomy
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-The four kinds of test doubles — Stub, Fake, Mock, Spy — and when to use each in Rust using traits.
+Gerard Meszaros coined the term "test doubles" in 2007 to categorize the different ways to replace real dependencies in tests. Confusingly, many people call all test doubles "mocks." The taxonomy — Stub, Spy, Mock, Fake, Dummy — has precise meanings that guide which technique to use. Using the wrong double leads to tests that are either too coupled to implementation details (mocks everywhere) or too permissive (stubs that hide bugs). This example implements all five categories for a `Logger` dependency.
 
-## The Problem This Solves
+## Learning Outcomes
 
-When testing code that depends on external systems (databases, loggers, HTTP clients, clocks), you replace those dependencies with **test doubles** — objects that stand in for the real thing during testing. But "mock" has been overloaded to mean everything; the precise taxonomy (Stub, Fake, Mock, Spy) helps you pick the right tool for each testing goal.
+- Implement a `NullLogger` stub that silently discards all log calls
+- Build a `SpyLogger` that records all calls for later assertion
+- Create a `MockLogger` that has pre-configured expectations and verifies them on drop
+- Implement a `FakeLogger` that is a real working logger (writes to a Vec instead of a file)
+- Know when to use each double: Dummy (don't care), Stub (canned return), Spy (verify calls), Mock (verify interactions), Fake (real implementation)
 
-In Rust, all test doubles are implemented by defining a trait for the dependency, then writing multiple implementations: one for production, several for tests. The trait boundary is the key — it's what makes your code testable without changing its logic.
+## Rust Application
 
-This pattern is ubiquitous in enterprise Rust: web handlers that accept `&dyn Database`, CLIs that accept `&dyn Clock`, event processors that accept `&dyn Queue`. Dependency injection via traits is how you make code testable without reaching for DI frameworks.
+`Logger` trait has `log`, `error`, and `warn` methods. `NullLogger` discards everything (stub/dummy). `SpyLogger` uses `RefCell<Vec<String>>` to record calls, exposing `log_count()`, `error_count()`, and `contains()` for assertions. `MockLogger` records calls and provides `assert_called_with` for interaction verification. `FakeLogger` writes to an in-memory `Vec<String>` — it's a real logger without the file system. Tests demonstrate when each type is appropriate.
 
-## The Intuition
+## OCaml Approach
 
-The four test doubles serve different purposes:
-
-- **Stub** (`NullLogger`): returns nothing / ignores everything. Use when you don't care about the dependency's behavior at all — just want the code to run.
-- **Fake** (`InMemoryLogger`): a working but simplified implementation. Use when you need the dependency to actually store/process data, but not with real infrastructure.
-- **Mock** (`MockLogger`): records calls and asserts on them. Use when you want to verify *what* was called, *how many times*, and *with what arguments*.
-- **Spy** (`SpyLogger`): wraps a real implementation and adds call recording. Use when you need both real behavior *and* observability.
-
-## How It Works in Rust
-
-```rust
-pub trait Logger {
-    fn log(&self, message: &str);
-    fn error(&self, message: &str);
-    fn warn(&self, message: &str);
-}
-
-// 1. Stub: no-op implementation
-pub struct NullLogger;
-impl Logger for NullLogger {
-    fn log(&self, _: &str) {}
-    fn error(&self, _: &str) {}
-    fn warn(&self, _: &str) {}
-}
-
-// 2. Fake: real logic, simplified storage
-pub struct InMemoryLogger { logs: RefCell<Vec<String>>, errors: RefCell<Vec<String>> }
-impl Logger for InMemoryLogger {
-    fn log(&self, msg: &str) { self.logs.borrow_mut().push(msg.to_owned()); }
-    // ...
-}
-
-// 3. Mock: records calls for assertion
-pub struct MockLogger { calls: RefCell<Vec<LogCall>> }
-impl MockLogger {
-    pub fn assert_called_with(&self, level: &str, msg: &str) { /* ... */ }
-    pub fn assert_call_count(&self, expected: usize) { /* ... */ }
-}
-
-// 4. Spy: delegates to inner + counts calls
-pub struct SpyLogger<Inner: Logger> { inner: Inner, call_count: RefCell<usize> }
-impl<I: Logger> Logger for SpyLogger<I> {
-    fn log(&self, msg: &str) {
-        *self.call_count.borrow_mut() += 1;
-        self.inner.log(msg);  // real behavior preserved
-    }
-}
-
-// Business logic accepts &dyn Logger — works with any double
-pub fn process_items(items: &[i32], logger: &dyn Logger) -> (usize, usize) { ... }
-```
-
-`RefCell` enables interior mutability: the `Logger` trait takes `&self`, but the fake/mock/spy need to mutate their recorded state. `RefCell` provides runtime-checked `&mut` access through a shared reference — safe in single-threaded test code.
-
-## What This Unlocks
-
-- **Trait-based dependency injection** — accepting `&dyn Trait` instead of concrete types makes every function unit-testable without real infrastructure; it's zero-cost (monomorphization) in production when generics are used instead of trait objects.
-- **`RefCell` for interior mutability in tests** — the standard pattern for test doubles that need to record state through `&self`; for multi-threaded tests, use `Mutex` instead.
-- **Mock-less assertion style** — Rust doesn't have a `mockall`-style DSL built in, but `RefCell`-based mocks with `assert_called_with` helpers provide the same power with explicit, readable test code.
+OCaml uses module types and functors for the same purpose. A `NULL_LOGGER` module discards calls (stub). A spy implementation uses `Queue.t ref` to accumulate calls. OCaml's `Alcotest` checks are made after the function under test returns, inspecting the recorded calls. The `ppx_mock` package auto-generates mock implementations from module signatures.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Test double mechanism | Module substitution or first-class functions | Trait implementations — compile-time checked |
-| Interior mutability | Mutable references always explicit | `RefCell<T>` — runtime-checked `borrow_mut()` |
-| Trait objects | First-class modules, functors | `&dyn Trait` (dynamic) or `impl Trait` (static) |
-| Call recording | Imperative mutation in closures | `RefCell<Vec<LogCall>>` — standard pattern |
+1. **Drop-based verification**: Rust's `MockLogger` can verify expectations in `Drop` when the mock goes out of scope — OCaml has no automatic cleanup hook.
+2. **Interior mutability**: Rust needs `RefCell` for mutable spy state accessed via `&self`; OCaml uses `ref` cells naturally.
+3. **Expectation DSL**: Rust's `mockall` provides a rich `.expect().times(2).returning(...)` DSL; OCaml has no equivalent mature library.
+4. **Fake implementations**: Both languages implement fakes as real implementations against a test backend (in-memory vs file); Rust's approach is structurally identical to OCaml's.
+
+## Exercises
+
+1. Implement a `ThrottledLogger` fake that is a real logger but rate-limits to N messages per second, and write tests that verify the throttling behavior.
+2. Extend `MockLogger` to support `expect_log("message")` that asserts a specific log message was recorded, and `expect_no_errors()` that asserts no `error()` calls occurred.
+3. Build a `CompositeLogger` that forwards to multiple loggers simultaneously, and write a test using a `SpyLogger` + `NullLogger` to verify all messages reach both.

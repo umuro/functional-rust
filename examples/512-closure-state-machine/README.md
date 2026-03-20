@@ -2,45 +2,92 @@
 
 ---
 
-# 512: Closures as State Machine Transitions
+# Closure State Machine
 
-**Difficulty:** 3  **Level:** Intermediate
+A state machine where each state is a `Box<dyn Fn(char) -> StateResult>` — transitions are closures that return the next state or accept/reject — implementing a recogniser for the regex `a*b+`.
 
-Encode automaton states as closures that return their own successor.
+## Problem Statement
 
-## The Problem This Solves
+State machines appear in: lexers (tokenising source code), protocol parsers (HTTP state machine), UI event systems (button: idle → pressed → released), and regex engines. The traditional implementation uses an enum of states with a `match` on transitions. A functional alternative represents each state as a closure that takes input and returns the next state — the **continuation-passing** style. This approach is compositional: states are values that can be passed, stored, and combined.
 
-A finite automaton has states and transitions. The naive approach is a loop over an enum with a match statement inside — functional but verbose, and the state logic is spread across a flat match. An alternative is to make each *state* a function (or closure) that consumes one input character and returns the *next* state. The "current state" is just the current closure. Transitioning is calling it.
+## Learning Outcomes
 
-This pattern keeps state logic co-located: all the rules for `state_after_a` live in one place. It's easy to add states without touching others. And because Rust closures can capture mutable variables via `move`, you can build stateful recognizers that accumulate values or counters as they run — no separate state struct needed.
+- Represent states as `Box<dyn Fn(char) -> StateResult>` — closures as transitions
+- Define `StateResult` as an enum: `Accept | Reject | Continue(Box<dyn Fn(char) -> StateResult>)`
+- Drive the machine with a `run_machine(input: &str) -> bool` loop
+- Understand how `Continue(next_state)` is the continuation-passing equivalent of `goto state`
+- Recognise that free functions `state_start`, `state_after_a`, `state_after_b` serve as state closures
 
-The `make_lexer()` pattern in this example is the practical version: a single closure captures a mutable `LexState` enum, and each call advances the state. The closure *is* the state machine. Hand it characters, collect results.
+## Rust Application
 
-## The Intuition
+`StateResult` carries the next state inline:
 
-Imagine each state as a room. You enter a room, show it a character, and it points you to the next room. The rooms are closures. Moving between rooms is calling the current closure with the next input. The machine has "accepted" when it lands in a room labeled "Accept."
+```rust
+pub enum StateResult {
+    Accept,
+    Reject,
+    Continue(Box<dyn Fn(char) -> StateResult>),
+}
+```
 
-The stateful closure variant (`make_lexer`) is even simpler: there's one closure, it remembers where it is, and you just keep feeding it characters. State is hidden inside the closure's captured environment.
+State functions return the next state as a `Continue`:
 
-## How It Works in Rust
+```rust
+pub fn state_start(c: char) -> StateResult {
+    match c {
+        'a' => StateResult::Continue(Box::new(state_after_a)),
+        'b' => StateResult::Continue(Box::new(state_after_b)),
+        _ => StateResult::Reject,
+    }
+}
+```
 
-1. **State as closure** — each state is a `fn(char) -> StateResult`; `StateResult::Continue(Box<dyn Fn(char) -> StateResult>)` carries the next state.
-2. **Fold over input** — `chars.fold(initial_state, |state, c| match state { Continue(f) => f(c), other => other })` runs the machine.
-3. **Stateful closure** — `make_lexer()` returns `impl FnMut(char) -> LexState`; the `LexState` is captured as a `move` variable and updated on each call.
-4. **`FnMut` for mutation** — since the lexer writes to its captured state, it's `FnMut`, not `Fn`.
-5. **Acceptance check** — after folding, check whether the final state is the accepted terminal state (`InB` for the `a*b+` pattern).
+`run_machine` iterates characters, updating the current state function:
 
-## What This Unlocks
+```rust
+let mut state: Box<dyn Fn(char) -> StateResult> = Box::new(state_start);
+for c in input.chars() {
+    match state(c) {
+        Continue(next) => state = next,
+        Accept => return true,
+        Reject => return false,
+    }
+}
+```
 
-- Build lexers and parsers where each state's logic is isolated in its own closure.
-- Compose state machines from smaller pieces — each state can delegate to sub-machines.
-- Carry accumulated output (tokens, counts) inside the closure's captured environment with no external state struct.
+## OCaml Approach
+
+OCaml's algebraic types and first-class functions make this pattern natural:
+
+```ocaml
+type result = Accept | Reject | Continue of (char -> result)
+
+let rec state_start c = match c with
+  | 'a' -> Continue state_after_a
+  | 'b' -> Continue state_after_b
+  | _ -> Reject
+
+and state_after_b c = match c with
+  | 'b' -> Continue state_after_b
+  | _ -> Reject
+
+let run input =
+  String.fold_left (fun state c -> match state c with
+    | Continue next -> next
+    | other -> Fun.const other) state_start input = Accept
+```
+
+OCaml's `and` (mutually recursive definitions) is cleaner than Rust's free functions here.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| State as function | Natural; functions are first-class | Same; closures are first-class, can capture mutable state |
-| Recursive state types | `type state = char -> state` (with `rec`) | Must box: `Box<dyn Fn(char) -> StateResult>` — no recursive type alias |
-| Stateful closures | Mutable closures via `ref` capture | `move` capture + `FnMut` for closures that mutate their environment |
-| Fold-based automaton | `List.fold_left` | `Iterator::fold` — identical pattern |
+1. **`Box` overhead**: Each state transition in Rust allocates a `Box`; OCaml's closures are GC-managed without explicit boxing.
+2. **Mutual recursion**: OCaml uses `let rec ... and ...` for mutually recursive state functions; Rust uses separately defined free functions (no mutual `fn` recursion syntax needed).
+3. **Type-state alternative**: For compile-time state machine verification, Rust's type-state pattern (using distinct types for each state) is preferred over runtime closures.
+4. **`Debug` for `StateResult`**: Rust must manually implement `Debug` for `StateResult` because `Box<dyn Fn>` is not `Debug`; OCaml's polymorphic printing handles this automatically.
+
+## Exercises
+
+1. **Extend the DFA**: Add `StateResult::Error(String)` for states that can provide error messages, and implement a new state that recognises `(a|b)*c` (any sequence ending in `c`).
+2. **State machine builder**: Design a `DfaBuilder` that accepts a `HashMap<(StateId, char), StateId>` transition table and generates the corresponding closure-based state machine.
+3. **Type-state comparison**: Rewrite the `a*b+` recogniser using the type-state pattern (each state is a distinct struct type, transitions are methods) and compare the compile-time guarantees vs. the closure approach.

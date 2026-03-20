@@ -38,3 +38,9 @@ Three approaches:
 3. **Ownership matters**: The consuming version (`flatten_owned`) avoids all cloning by taking ownership — impossible in GC languages where sharing is implicit
 4. **Clone bound**: Borrowing versions need `T: Clone` to extract values; OCaml copies freely under GC
 5. **Memory layout**: Rust's `Vec<Node<T>>` is a contiguous heap buffer; OCaml's list is a chain of heap-allocated cons cells
+
+## Exercises
+
+1. Implement `flatten_depth` that flattens a nested list structure only up to a specified depth `d`, leaving deeper nesting intact.
+2. Write `flatten_unique` that flattens a list-of-lists and removes duplicates, preserving the first occurrence of each element.
+3. Implement `flatten_with` that flattens a nested structure while applying a transformation function to each leaf element before collecting results.

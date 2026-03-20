@@ -2,43 +2,50 @@
 
 ---
 
-# 523: Event Handler Pattern
+# Event Handler Pattern
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-A priority-ordered event bus with multiple `FnMut` handlers and propagation control.
+Event-driven programming is the foundation of GUI toolkits (GTK, Qt, winit), async runtimes (Tokio, async-std), and game engines (Bevy). The central challenge is routing typed events to the correct handlers in priority order, while allowing handlers to stop propagation — preventing lower-priority handlers from seeing an event already consumed by a higher-priority one. This example implements a typed event dispatcher with priority-ordered handler chains using closures as the handler mechanism.
 
-## The Problem This Solves
+## Learning Outcomes
 
-UI frameworks, game engines, and plugin systems all need a way to register multiple callbacks for the same event, run them in a defined order, and let high-priority handlers cancel further processing. A flat `Vec<Box<dyn FnMut(&Event) -> bool>>` gets you halfway there, but you also need priority ordering, named handlers for debugging, and the ability to short-circuit propagation.
+- How `FnMut(&UiEvent) -> bool` closures model stateful handlers with propagation control
+- How to sort handlers by a `Priority` enum using `Ord` derivation
+- How to implement a dispatcher that calls handlers in priority order and respects stop-propagation
+- How typed event enums (`UiEvent`) enable exhaustive handling with `match`
+- Where this pattern appears in real frameworks: winit, egui, Bevy's event system
 
-This is the classic "event bus" or "signal-slot" pattern. In Rust, the key challenge is that handlers must be `FnMut` (they carry mutable state like `click_count`), must be owned by the bus (so the bus controls their lifetime), and must be type-erased so different handlers can coexist in the same `Vec`. `Box<dyn FnMut>` handles all of this.
+## Rust Application
 
-## The Intuition
+`Handler` stores a `Box<dyn FnMut(&UiEvent) -> bool>` alongside its `Priority` and name. `EventDispatcher` holds a `Vec<Handler>` sorted by priority on each `dispatch` call. Handlers returning `true` stop further propagation. The `UiEvent` enum with `Click { x, y }`, `KeyPress(char)`, and `Scroll(f32)` variants shows how typed events enable exhaustive matching inside handlers. `Priority` derives `Ord` enabling `handlers.sort_by_key(|h| h.priority)`.
 
-Each handler is a closure stored in a `Box`. The bus sorts them by priority on registration and iterates in order on each event. If a handler returns `true`, the bus stops — that handler "consumed" the event. This mirrors how browser DOM event propagation and GTK signal handling work.
+Key patterns:
+- `Box<dyn FnMut(&UiEvent) -> bool>` — type-erased stateful handler
+- Returning `bool` from handlers for propagation control
+- Priority-based sort with `Ord`-derived enum
 
-The `move` capture in `click-counter` is the key: the closure owns `click_count`, increments it on each call, and the bus never sees the counter directly. State is private to the closure.
+## OCaml Approach
 
-## How It Works in Rust
+OCaml event systems use lists of `priority * (event -> bool)` tuples sorted by priority. A dispatch function applies each handler in order and stops when one returns `true`. The `event` type is typically a variant type matching Rust's enum.
 
-1. **`Box<dyn FnMut(&Event) -> bool>`** — type-erased, heap-allocated, mutable closure; the bus owns it via `Vec<Handler>`.
-2. **Priority enum** — `enum Priority { High, Normal, Low }` with `Ord` derived; `sort_by_key` on registration ensures correct dispatch order.
-3. **Propagation control** — return `true` from a handler to stop the bus from calling subsequent handlers; `false` to continue.
-4. **Stateful handler** — `move |event| { click_count += 1; ... }` captures the counter by value; the `FnMut` trait allows mutation on each call.
-5. **Dispatch loop** — iterate `&mut self.handlers`, call each with `(handler.handle)(event)`, break on first `true`.
-
-## What This Unlocks
-
-- Build plugin and middleware systems where independent components register handlers without knowing about each other.
-- Implement priority-based input routing: high-priority handlers (e.g., bounds checking) run before low-priority ones (e.g., logging).
-- Encapsulate per-handler state (counters, buffers) privately inside closures — no shared struct needed.
+```ocaml
+type event = Click of int * int | KeyPress of char | Scroll of float
+type priority = High | Normal | Low
+let dispatch handlers event =
+  List.sort (fun (p1,_) (p2,_) -> compare p1 p2) handlers
+  |> List.exists (fun (_,h) -> h event)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Heterogeneous callback list | `(event -> bool) list`; GC-managed | `Vec<Box<dyn FnMut(&Event) -> bool>>`; heap-allocated, owned |
-| Stateful handlers | Mutable closures via `ref` capture | `FnMut` + `move` capture; state is private to closure |
-| Priority ordering | Manual sort or priority queue | `sort_by_key` on `Priority` enum |
-| Propagation stop | Return value checked in fold/loop | Return `bool`; bus `break`s on `true` |
+1. **Handler state**: Rust uses `FnMut` to allow handlers to maintain state between events (e.g., drag tracking); OCaml would use `ref` inside the closure for the same effect.
+2. **Priority ordering**: Rust derives `Ord` on an enum to enable `sort_by_key`; OCaml would use `compare` on a custom type or manual ordering.
+3. **Type-erased storage**: Rust's `Box<dyn FnMut>` erases the concrete closure type; OCaml closures are already type-erased at the value level, no boxing annotation required.
+4. **Stop-propagation**: Rust models this as `bool` in the return type — expressive and visible; OCaml uses the same approach or raises an exception for non-local control flow.
+
+## Exercises
+
+1. **Async handlers**: Modify `EventDispatcher` to store `Box<dyn FnMut(&UiEvent) -> Pin<Box<dyn Future<Output = bool>>>>` and implement an async dispatch loop.
+2. **Wildcard handler**: Add a `subscribe_all(handler: impl FnMut(&UiEvent) -> bool + 'static)` that registers a handler for every event type regardless of variant.
+3. **Handler removal by name**: Implement `remove(name: &str)` on `EventDispatcher` that finds and removes the first handler with a matching name, returning whether one was found.

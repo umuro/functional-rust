@@ -2,89 +2,37 @@
 
 ---
 
-# 756: Testing with Temporary Files and Directories
+# 756-tempfile-testing — Tempfile Testing
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-RAII temporary directories for filesystem tests — automatic cleanup even on panic, with per-test isolation.
+Code that reads or writes files cannot be tested with in-memory mocks alone — you need real filesystem semantics. Temporary directories solve this: they provide real file paths, get cleaned up on test completion, and are isolated per test process. Without proper cleanup, failing tests leave debris in `/tmp` that accumulates over time. The `Drop`-based `TempDir` type ensures cleanup even when tests panic.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Functions that read from or write to disk require a real filesystem to test properly. But tests shouldn't leave debris: leftover files in `/tmp` accumulate, pollute other test runs, and can cause flaky failures when a test assumes a clean directory. The solution is a `TempDir` struct: it creates a unique directory in `new()`, your test uses it, and `Drop` removes it when the test ends — even if the test panics.
+- Implement a `TempDir` RAII type that creates a unique temporary directory on construction
+- Use `Drop` to recursively delete the directory after the test completes
+- Create and read files within the `TempDir` for realistic filesystem testing
+- Generate unique directory names using PID + nanosecond timestamp to avoid collisions
+- Test file-processing code (CSV reading, log rotation, config loading) against real files
 
-This is the RAII pattern applied to filesystem resources. The same approach powers the `tempfile` crate (the standard library for this in production Rust), but understanding the hand-rolled version makes the pattern clear. It's also more portable across environments where you can't add dependencies.
+## Rust Application
 
-Every test gets its own unique directory (using `AtomicU64` + process ID), so parallel test execution (`cargo test -- --test-threads 4`) never has contention. The test writes into its own isolated space, and cleanup is automatic.
+`TempDir::new(prefix)` creates a directory under `std::env::temp_dir()` with a unique name `{prefix}-{pid}-{nanos}`. `create_file` writes content and returns the path. `read_file` reads content back. `Drop` calls `fs::remove_dir_all` to clean up. Tests exercise writing multiple files, reading them back, verifying content, and checking that the directory is removed after the `TempDir` drops. A `process_files` integration test reads CSV-like data from real temp files.
 
-## The Intuition
+## OCaml Approach
 
-A `TempDir` struct holds a `PathBuf`. `new()` creates a directory at a unique path under `std::env::temp_dir()`. `path()` and `child()` return paths inside it. `Drop::drop()` calls `fs::remove_dir_all()` — the equivalent of `rm -rf`. Since `Drop` runs on scope exit *and* on panic, you get guaranteed cleanup with no try/finally needed.
-
-## How It Works in Rust
-
-```rust
-static COUNTER: AtomicU64 = AtomicU64::new(0);
-
-pub struct TempDir { path: PathBuf }
-
-impl TempDir {
-    pub fn new() -> io::Result<Self> {
-        // Unique name: combines process ID + atomic counter
-        let id = COUNTER.fetch_add(1, Ordering::Relaxed);
-        let name = format!("rust_test_{}_{}", std::process::id(), id);
-        let path = std::env::temp_dir().join(name);
-        fs::create_dir_all(&path)?;
-        Ok(TempDir { path })
-    }
-
-    pub fn path(&self) -> &Path { &self.path }
-    pub fn child(&self, name: &str) -> PathBuf { self.path.join(name) }
-}
-
-impl Drop for TempDir {
-    fn drop(&mut self) {
-        if self.path.exists() {
-            let _ = fs::remove_dir_all(&self.path);  // ignore errors in Drop
-        }
-    }
-}
-
-// Using it in a test
-#[test]
-fn test_write_and_read() {
-    let dir = TempDir::new().unwrap();        // creates /tmp/rust_test_12345_0/
-    let file = dir.child("data.txt");
-
-    write_lines(&file, &["line1", "line2"]).unwrap();
-    assert_eq!(count_lines(&file).unwrap(), 2);
-    // dir drops here → /tmp/rust_test_12345_0/ deleted automatically
-}
-
-#[test]
-fn cleanup_on_drop() {
-    let path = {
-        let dir = TempDir::new().unwrap();
-        let p = dir.path().to_path_buf();
-        assert!(p.exists());
-        p   // dir dropped here
-    };
-    assert!(!path.exists()); // directory is gone
-}
-```
-
-`let _ = fs::remove_dir_all(...)` in `Drop` ignores errors — it's considered bad practice to panic in `Drop`, since panicking during a panic causes abort.
-
-## What This Unlocks
-
-- **Filesystem tests without side effects** — any function that reads/writes files can be tested cleanly without manual setup/teardown; tests are hermetic and can run in parallel.
-- **`Drop` as the universal cleanup hook** — this pattern extends beyond files: database connections, lock files, test servers, and any scoped resource that needs release on scope exit.
-- **Unique paths via `AtomicU64`** — combining process ID with an atomic counter is the standard technique for generating unique names in multi-process, multi-threaded environments without coordination.
+OCaml's `Filename.temp_dir` and `Filename.temp_file` create temporary files. Cleanup requires explicit `Sys.remove` or `FileUtil.rm` from the `fileutils` library. Jane Street's `Core.Unix` provides `with_temp_dir` as a bracket that guarantees cleanup even on exception. The `Bos` library wraps filesystem operations with typed paths and safer error handling.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Temp directory | `Filename.temp_dir` + manual cleanup | `TempDir` struct with `Drop` — automatic |
-| Unique ID generation | `Unix.getpid ()` + counter | `std::process::id()` + `AtomicU64` |
-| Panic-safe cleanup | `Fun.protect ~finally:` | `Drop` — always runs, no special syntax |
-| Ignore errors in Drop | `try _ with _ -> ()` | `let _ = expr;` — explicit discard |
+1. **Cleanup guarantee**: Rust's `TempDir::Drop` guarantees cleanup even on panic; OCaml requires explicit `try ... finally` or a `with_temp_dir` bracket function.
+2. **Uniqueness**: Rust uses PID + nanoseconds; OCaml's `Filename.temp_file` uses a similar internal counter.
+3. **Ecosystem**: Rust's `tempfile` crate is the standard — it uses OS-provided secure temp creation; OCaml uses `Filename.temp_dir` from stdlib.
+4. **Parallel tests**: Rust's parallel tests each get their own `TempDir` with unique names; OCaml's sequential tests can reuse the same named temp dir safely.
+
+## Exercises
+
+1. Extend `TempDir` with a `create_subdir(name)` method that creates a subdirectory and returns its path, for testing code that reads from a directory tree.
+2. Implement a `log_rotation_test` that creates 5 log files, runs a rotation function (rename oldest, create new), and verifies the final directory contains exactly 5 files with correct names.
+3. Write a test for a config file parser that loads from a real `TempDir`/config.toml file, including testing error behavior when the file is missing or malformed.

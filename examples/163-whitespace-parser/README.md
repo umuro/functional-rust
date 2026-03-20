@@ -2,83 +2,41 @@
 
 ---
 
-# 163: Whitespace Parser
+# Whitespace Parser
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Skip, require, and wrap whitespace — the invisible plumbing every real parser needs.
+Most text formats are whitespace-insensitive: `{"key": "value"}` and `{ "key" : "value" }` are equivalent JSON. Parsers must skip whitespace between tokens without interfering with token recognition. `ws0` (zero or more whitespace characters) and `ws1` (one or more) are standard utilities. Wrapping content parsers with `ws_wrap` allows callers to ignore whitespace concerns entirely, keeping individual token parsers clean and focused.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Almost every language has whitespace between tokens: spaces between keywords, newlines between statements, indentation before blocks. A parser that doesn't handle whitespace will fail on `if x` because after parsing `"if"` it sees `" x"` — not `"x"`.
+- Implement `ws0`, `ws1`, and `ws_wrap` as standard whitespace-handling utilities
+- Understand why whitespace parsers always succeed (zero whitespace is valid)
+- Learn the "wrap with whitespace" pattern for building whitespace-insensitive parsers
+- See how comment-skipping extends whitespace handling for real languages
 
-The naive fix is to manually call a whitespace-skipper before every token. That gets tedious fast and clutters your parser logic with noise. What you want is a small set of primitives: `ws0` (skip any amount), `ws1` (require at least one space), and `ws_wrap` (sandwich a parser in optional whitespace). Add `line_comment` and you can skip `// ...` lines too.
+## Rust Application
 
-These four combinators are so fundamental that virtually every real parser written in this style starts here. Once you have them, you can compose them with any other parser and whitespace becomes invisible.
+`ws0()` is `many0(satisfy(|c| c.is_whitespace(), "whitespace"))` followed by `map(|_| ())` to discard the results — whitespace is consumed but not kept. `ws1()` uses `many1` to require at least one whitespace character. `ws_wrap(p)` is `preceded(ws0(), terminated(p, ws0()))` — skip leading whitespace, run `p`, skip trailing whitespace. This pattern wraps individual token parsers rather than inserting whitespace skipping everywhere.
 
-## The Intuition
+## OCaml Approach
 
-`ws0` consumes zero or more whitespace characters and returns the trimmed input — it never fails. `ws_wrap(p)` runs `ws0`, then `p`, then `ws0` again, so `ws_wrap(number)` parses `"  42  "` just fine.
-
+Angstrom provides `skip_while : (char -> bool) -> unit t` for efficient whitespace skipping without character-by-character overhead:
+```ocaml
+let ws = skip_while (fun c -> c = ' ' || c = '\t' || c = '\n' || c = '\r')
+let ws_wrap p = ws *> p <* ws
 ```
-input: "   hello world"
-ws0  → consumes "   " → remaining: "hello world"
-
-input: "( 1 + 2 )"
-ws_wrap(tag("+")) → matches "+" even with spaces around it
-```
-
-## How It Works in Rust
-
-```rust
-// ws0: trim leading whitespace, never fail
-fn ws0(input: &str) -> ParseResult<()> {
-    let rest = input.trim_start();  // built-in, O(n) over whitespace only
-    Ok(((), rest))
-}
-
-// ws1: at least one whitespace character required
-fn ws1(input: &str) -> ParseResult<()> {
-    if input.starts_with(|c: char| c.is_ascii_whitespace()) {
-        Ok(((), input.trim_start()))
-    } else {
-        Err(format!("expected whitespace, got {:?}", &input[..4.min(input.len())]))
-    }
-}
-
-// ws_wrap: run ws0 → parser → ws0
-fn ws_wrap<'a, T>(
-    parser: impl Fn(&'a str) -> ParseResult<T>,
-) -> impl Fn(&'a str) -> ParseResult<T> {
-    move |input| {
-        let (_, rest) = ws0(input)?;
-        let (value, rest) = parser(rest)?;
-        let (_, rest) = ws0(rest)?;
-        Ok((value, rest))
-    }
-}
-
-// line_comment: skip "// ..." or "# ..." to end of line
-fn line_comment(input: &str) -> ParseResult<()> {
-    // find() scans to the newline — no char-by-char loop needed
-    let rest = input.find('\n')
-        .map(|i| &input[i + 1..])
-        .unwrap_or("");  // comment at EOF → consume everything
-    Ok(((), rest))
-}
-```
-
-## What This Unlocks
-
-- **Token parsers that ignore spacing** — parse `"key = value"` and `"key=value"` with the same parser.
-- **Comment-aware parsing** — skip `# config comment` lines before trying to parse a key.
-- **Readable grammar rules** — `ws_wrap(keyword("fn"))` reads like the grammar, not like a scanner.
+OCaml's `skip_while` scans the buffer without constructing `char` values, making whitespace skipping more efficient than `many0(satisfy(...))`.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Whitespace skip | `many0 (satisfy is_ws ...)` builds a char list | `trim_start()` — direct slice, zero allocation |
-| At least one | `many1 (satisfy is_ws ...)` | Check first char, then `trim_start()` |
-| Comment scan | Index arithmetic | `str::find('\n')` |
-| Unicode whitespace | Manual char list | `char::is_whitespace()` or `is_ascii_whitespace()` |
+1. **Efficiency**: OCaml's `skip_while` skips bytes without constructing values; Rust's `many0(satisfy(...))` creates `Vec<char>` and discards it.
+2. **Optimization**: A production Rust parser would use `input.trim_start()` directly or scan with `str::find(|c: char| !c.is_whitespace())` — bypassing the combinator overhead.
+3. **Line counting**: Neither basic `ws0` tracks line numbers; adding line/column tracking requires threading a position state through the parser.
+4. **Comment handling**: Both can extend `ws0` to also skip comments; the typical approach is `many0(choice([whitespace, line_comment, block_comment]))`.
+
+## Exercises
+
+1. Extend `ws0` to also skip line comments: `// ...until end of line`.
+2. Implement `ws_between(open: Parser<A>, sep: Parser<B>, close: Parser<C>) -> Parser<Vec<B>>` that handles whitespace around separators.
+3. Write a `lexeme(p: Parser<T>) -> Parser<T>` combinator that skips whitespace after `p` (a common pattern in language parsers).

@@ -2,100 +2,60 @@
 
 ---
 
-# 836: Line Segment Intersection Detection
+# Line Segment Intersection
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Determine whether two line segments intersect using cross-product orientation tests — robust, branchless, and degenerate-case aware.
+Testing whether two line segments intersect is a building block of computational geometry: polygon union/intersection, road network analysis, PCB trace routing, robot obstacle detection, and sweep line algorithms all reduce to repeated segment intersection tests. The cross product orientation test determines which side of a directed line a point lies on; two segments intersect if and only if each segment's endpoints straddle the other segment's line. Degenerate cases (collinear segments, touching at endpoints) require careful handling. This is one of the most error-prone geometric primitives due to floating-point precision issues.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Given two line segments AB and CD in the plane, do they intersect? This elementary computational geometry primitive appears in collision detection (game physics, robotics), map overlay algorithms (GIS), circuit board routing (do two wire segments cross?), and as the inner test in sweep-line algorithms for the general line segment intersection problem.
+- Implement the orientation test using cross products: left turn, right turn, or collinear
+- Test segment intersection: two segments AB and CD intersect iff orientations disagree properly
+- Handle the collinear overlap case: segments lie on the same line and may share a range
+- Understand the "straddle" test: A and B on opposite sides of line CD, AND C and D on opposite sides of line AB
+- Compute the actual intersection point using parametric line equations when intersection is confirmed
 
-The naïve approach — compute the intersection point by solving the linear system — fails on parallel segments and requires careful handling of the collinear case. The cross-product orientation approach is cleaner: it works purely with sign tests, handles all degenerate cases naturally, and avoids division entirely (important for exact arithmetic with integer coordinates).
-
-This example implements the complete intersection test including the collinear overlap case, and also computes the intersection point when segments properly cross.
-
-## The Intuition
-
-The orientation of three points P, Q, R is determined by the sign of the cross product (Q-P) × (R-P):
-- Positive: P→Q→R is counter-clockwise
-- Negative: clockwise
-- Zero: collinear
-
-Two segments AB and CD intersect if and only if:
-1. A and B have opposite orientations with respect to CD (C and D are on opposite sides of line AB), **and**
-2. C and D have opposite orientations with respect to AB
-
-Special case: if any orientation is zero, points are collinear — check if the segment endpoint lies within the other segment's bounding box.
-
-No division, no floating-point edge cases for the orientation test itself. When you *do* need the intersection point, a single parameterised formula works after verifying intersection.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-#[derive(Clone, Copy, Debug)]
-struct Point { x: f64, y: f64 }
-
-// Cross product of vectors (b-a) and (c-a)
-// Positive: counter-clockwise; negative: clockwise; zero: collinear
-fn cross(a: Point, b: Point, c: Point) -> f64 {
-    (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
+pub fn orientation(p: Point, q: Point, r: Point) -> i32 {
+    let val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+    if val == 0.0 { 0 } else if val > 0.0 { 1 } else { 2 }
 }
-
-fn on_segment(p: Point, a: Point, b: Point) -> bool {
-    // Is p on segment AB, given p is collinear with A and B?
-    p.x >= a.x.min(b.x) && p.x <= a.x.max(b.x) &&
-    p.y >= a.y.min(b.y) && p.y <= a.y.max(b.y)
-}
-
-fn segments_intersect(a: Point, b: Point, c: Point, d: Point) -> bool {
-    let d1 = cross(c, d, a); // orientation of A w.r.t. CD
-    let d2 = cross(c, d, b); // orientation of B w.r.t. CD
-    let d3 = cross(a, b, c); // orientation of C w.r.t. AB
-    let d4 = cross(a, b, d); // orientation of D w.r.t. AB
-
-    // Proper intersection: A and B on opposite sides of CD, and vice versa
-    if d1 * d2 < 0.0 && d3 * d4 < 0.0 { return true; }
-
-    // Degenerate: collinear cases — check if endpoint lies on other segment
-    if d1 == 0.0 && on_segment(a, c, d) { return true; }
-    if d2 == 0.0 && on_segment(b, c, d) { return true; }
-    if d3 == 0.0 && on_segment(c, a, b) { return true; }
-    if d4 == 0.0 && on_segment(d, a, b) { return true; }
-
+pub fn segments_intersect(p1: Point, q1: Point, p2: Point, q2: Point) -> bool {
+    let o1 = orientation(p1, q1, p2);
+    let o2 = orientation(p1, q1, q2);
+    let o3 = orientation(p2, q2, p1);
+    let o4 = orientation(p2, q2, q1);
+    if o1 != o2 && o3 != o4 { return true; }
+    // Collinear cases: check if point lies on segment
+    // ...
     false
-}
-
-// Compute intersection point (assumes segments properly intersect)
-fn intersection_point(a: Point, b: Point, c: Point, d: Point) -> Option<Point> {
-    let denom = (b.x - a.x) * (d.y - c.y) - (b.y - a.y) * (d.x - c.x);
-    if denom.abs() < 1e-12 { return None; } // parallel
-
-    let t = ((c.x - a.x) * (d.y - c.y) - (c.y - a.y) * (d.x - c.x)) / denom;
-    Some(Point {
-        x: a.x + t * (b.x - a.x),
-        y: a.y + t * (b.y - a.y),
-    })
 }
 ```
 
-`d1 * d2 < 0.0` elegantly tests "opposite signs" without branching on which is positive. For integer coordinates, use `i64` cross products and `d1 * d2 < 0` to avoid any floating-point error entirely.
+Integer coordinates eliminate floating-point precision issues entirely. With `f64` coordinates, near-collinear cases require an epsilon comparison. Rust's `f64` comparison `val == 0.0` is exact only for integer-valued floats; robust code uses `val.abs() < EPSILON`. The four orientation tests cover all non-degenerate cases; the collinear overlap case requires additional `on_segment` checks. The orientation value encodes the sign of the cross product — the key invariant for computational geometry.
 
-The four collinear checks handle all degenerate configurations: T-intersections, endpoint touching, and collinear overlap. Skipping them causes subtle bugs in sweep-line algorithms.
+## OCaml Approach
 
-## What This Unlocks
-
-- **Sweep-line intersection**: Shamos-Hoey and Bentley-Ottmann algorithms use this test as their O(1) inner operation.
-- **Polygon inside test**: the ray-casting algorithm fires a ray from the query point and counts segment intersections.
-- **Collision detection**: convex polygon intersection (GJK, SAT) reduces to segment intersection tests on polygon edges.
+OCaml uses the same cross-product orientation test with `float` arithmetic. The `compare` function on floats respects IEEE 754. OCaml's polymorphic comparison works on `(float * float)` point tuples directly. The `on_segment` collinear check uses `min/max` range tests. OCaml's pipe operator `|>` chains the four orientation computations readably. The `Gg` library provides production-quality 2D geometry primitives.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Point type | Record `{ x: float; y: float }` | `#[derive(Clone, Copy)] struct Point { x: f64, y: f64 }` |
-| Cross product | Same formula | Identical — geometry is language-agnostic |
-| `Copy` semantics | Records copy by default | Requires explicit `#[derive(Copy)]` — opt-in, not default |
-| Float comparison | `<> 0.0` is fine for exact cases | `== 0.0` for collinear check (exact orientation test output) |
-| Opposite-sign test | `d1 *. d2 < 0.0` | `d1 * d2 < 0.0` — same, no dot notation for `f64` |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Point representation | `struct Point` or `(f64, f64)` | Record or tuple |
+| Orientation return | `i32` (0,1,2 or -1,0,1) | `int` |
+| Epsilon handling | `val.abs() < f64::EPSILON` | Same |
+| Collinear check | Separate `on_segment` function | Same |
+| Integer coords | `i64` for exact arithmetic | `int` for exact |
+| Production library | `geo` crate | `Gg` library |
+
+## Exercises
+
+1. Compute the exact intersection point (as `Option<Point>`) when two segments do intersect.
+2. Implement the sweep line algorithm using segment intersection tests to find all intersections among n segments in O((n + k) log n).
+3. Handle collinear overlapping segments by returning the overlap interval as `Option<(Point, Point)>`.
+4. Implement with integer coordinates and compare robustness vs. floating-point on near-collinear cases.
+5. Use your segment intersection test to implement a simple polygon clip against a rectangular window (Cohen-Sutherland).

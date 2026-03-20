@@ -4,53 +4,58 @@
 
 # 306: ok_or and ok_or_else
 
-**Difficulty:** 1  **Level:** Beginner
+## Problem Statement
 
-Convert `Option` to `Result` — the bridge between "missing value" and "actionable error."
+Code often needs to convert an `Option<T>` to a `Result<T, E>` — treating absence as an error with a specific message. A missing configuration key is an `Option<&str>`, but the caller expects a `Result` with a descriptive error. The `ok_or()` and `ok_or_else()` methods convert `Option<T>` to `Result<T, E>`, supplying an error value for the `None` case. This is the bridge between optionality and error handling.
 
-## The Problem This Solves
+## Learning Outcomes
 
-`Option<T>` says "value or nothing." `Result<T, E>` says "value or error with a reason." These two types live in different worlds, but real code constantly moves between them. A `HashMap` lookup returns `Option`, but your function signature expects `Result`. You need to cross that bridge without losing information.
+- Use `ok_or(err)` to convert `None` to `Err(err)` — eager error value
+- Use `ok_or_else(|| err)` to convert `None` to `Err(f())` — lazy error computation
+- Chain `ok_or_else` with `?` to propagate missing values as typed errors
+- Recognize the pattern: HashMap lookup → `ok_or_else` → `?` for "required key" semantics
 
-The naive approach — `match opt { Some(v) => Ok(v), None => Err(MyError) }` — is verbose and gets repetitive fast. Every function that wraps an `Option` source into a `Result` return type would need this boilerplate.
+## Rust Application
 
-`ok_or` and `ok_or_else` collapse this into a single method call. They name the reason for absence, turning "maybe nothing" into "error with context" — exactly what callers need to handle failures gracefully.
-
-## The Intuition
-
-Think of `ok_or` as adding a label to `None`. When a lookup fails, you don't just get silence — you get `Err("key 'port' not found")`. The `_else` variant is the lazy version: it only builds the error message *if* it's actually needed, which matters when error construction is expensive (formatting, allocating, syscalls).
-
-## How It Works in Rust
+`ok_or` is the primary tool for "required lookup" patterns:
 
 ```rust
-// ok_or: eager — error value always evaluated
-let port: Result<&str, &str> = config.get("port").ok_or("port not configured");
+pub fn lookup<'a>(map: &'a HashMap<&str, &str>, key: &str) -> Result<&'a str, String> {
+    map.get(key)
+       .copied()
+       .ok_or_else(|| format!("key '{}' not found", key))
+}
 
-// ok_or_else: lazy — closure only called when None
-let port: Result<&str, String> = config.get("port")
-    .ok_or_else(|| format!("key 'port' missing from {:?}", config.keys()));
-
-// Chain with ? for ergonomic propagation
-fn get_port(config: &HashMap<&str, &str>) -> Result<u16, String> {
-    let s = config.get("port").ok_or_else(|| "port not set".to_string())?;
+pub fn get_port(config: &HashMap<&str, &str>) -> Result<u16, String> {
+    let s = config.get("port").copied().ok_or("port not set")?;
     s.parse::<u16>().map_err(|e| format!("invalid port: {}", e))
 }
 ```
 
-The reverse direction — `Result` → `Option` — uses `.ok()` (keeps the value, discards error) or `.err()` (keeps the error, discards value).
+## OCaml Approach
 
-## What This Unlocks
+OCaml uses `Option.to_result ~none:err` (Base library) or `Option.fold`:
 
-- **Seamless integration** between Option-returning APIs (HashMap, Vec, str) and Result-based error propagation with `?`
-- **Descriptive errors** instead of `None` — callers get context, not just silence
-- **Lazy error construction** with `ok_or_else` avoids wasted allocation when the happy path is common
+```ocaml
+let lookup map key =
+  Hashtbl.find_opt map key
+  |> Option.to_result ~none:(Printf.sprintf "key '%s' not found" key)
+
+(* Or manually: *)
+let require_some msg = function
+  | None -> Error msg
+  | Some v -> Ok v
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Option → Result | `Option.to_result ~error:e v` | `opt.ok_or(e)` |
-| Lazy error | Manual `match` | `opt.ok_or_else(f)` |
-| Result → Option | `Result.to_option` | `result.ok()` |
-| Error → Option | N/A (use pattern match) | `result.err()` |
-| Common use | Monadic bind with `let*` | Chaining with `?` operator |
+1. **Naming**: `ok_or` maps `None -> Err(e)`, `Some(v) -> Ok(v)` — the name reads as "convert to Ok, or use this error".
+2. **Eagerness**: `ok_or(err)` always evaluates `err` (even for `Some`); `ok_or_else(|| err)` is lazy — prefer `ok_or_else` for format strings or allocations.
+3. **Standard library**: `ok_or` is a standard method on `Option` in Rust; OCaml's `Option.to_result` is in the `Base` library or requires manual wrapping.
+4. **Inverse**: `Result::ok()` converts `Result<T, E>` to `Option<T>` — `ok_or` and `ok()` are inverses (with loss of error detail in the `ok()` direction).
+
+## Exercises
+
+1. Write a function that validates a `HashMap<String, String>` config, using `ok_or_else` to produce descriptive errors for each missing required key.
+2. Implement a `required<T: Clone>(map: &HashMap<&str, T>, key: &str) -> Result<T, String>` helper that extracts required map values.
+3. Chain three `ok_or_else` calls with `?` to look up `host`, `port`, and `path` from a config map, failing with a descriptive error if any is missing.

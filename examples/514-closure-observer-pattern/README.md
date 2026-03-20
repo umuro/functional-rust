@@ -2,90 +2,50 @@
 
 ---
 
-# 514: Observer/Callback Pattern
+# Closure Observer Pattern
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Register closures as event handlers that fire with state — no interface boilerplate, just `Box<dyn FnMut>`.
+The observer (publish-subscribe) pattern originated in GUI frameworks of the 1980s and became one of the Gang of Four behavioral design patterns. The core problem: how do you notify multiple independent components when a value changes, without tightly coupling them together? Traditional OOP solutions require implementing an `EventListener` interface and registering objects. Closures eliminate the need for a class hierarchy — any callable that matches the signature can be registered as a handler, making the pattern far more composable and concise.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You're building a UI widget, a game event system, or a data pipeline that needs to notify multiple parties when something happens. The classic Observer pattern requires an `Observer` trait, a registration method, and concrete implementors. For simple callbacks — "log this", "count that", "update the UI" — you end up with a file-per-observer.
+- How `FnMut` closures serve as stateful event handlers stored in a `Vec`
+- Why `Box<dyn FnMut(&E)>` is needed to store heterogeneous closures together
+- How to implement subscribe/emit mechanics with mutable interior dispatch
+- How `Observable<T>` notifies listeners with both old and new values
+- Why `'static` bounds are required when storing closures beyond the current scope
 
-In C, callbacks use `void (*callback)(void* userdata)` — you manually pass context around through opaque pointers. Type safety is gone. In Java, anonymous inner classes or lambdas solve this but still need `@FunctionalInterface` declarations.
+## Rust Application
 
-Rust closures with `FnMut` give you stateful callbacks that *carry their own context*. The counter closure remembers its count. The accumulator closure remembers what it's accumulated. No userdata pointers, no separate context structs.
+`EventEmitter<E>` stores handlers as `Vec<Box<dyn FnMut(&E)>>`. Each `subscribe` call boxes an `FnMut` closure and appends it; `emit` iterates `&mut self.handlers` calling each one. `Observable<T>` calls `FnMut(&T, &T)` listeners on every value change. The `'static` bound on subscribed closures ensures they can outlive the registration site — essential for long-lived event systems like GUI loops.
 
-## The Intuition
+Key patterns:
+- `Box<dyn FnMut(&E)>` — type-erased mutable closures in a homogeneous collection
+- `for handler in &mut self.handlers` — mutable reborrow enabling `FnMut` dispatch
+- `impl FnMut(&E) + 'static` — accepting any compatible closure at the call site
 
-Think of an event emitter as a mailing list. When you subscribe (`subscribe(handler)`), you add your email address. When an event fires (`emit(event)`), everyone on the list gets a copy. Each subscriber (closure) independently decides what to do with the event.
+## OCaml Approach
 
-The critical trait choice: `FnMut` rather than `Fn`. Observers are often *stateful* — they count events, accumulate data, update local caches. `FnMut` allows mutation of captured variables on each call. `Fn` would require all observers to be read-only.
+OCaml implements observers with mutable reference lists holding function values. A `ref` holds a list of `'a -> unit` functions; subscribers cons onto the list; emit iterates with `List.iter`. Since OCaml functions are first-class and garbage collected, there is no boxing overhead or lifetime tracking — the runtime handles memory automatically.
 
-In JavaScript, `element.addEventListener('click', (e) => count++)` is exactly this pattern. The arrow function captures `count` and mutates it. Rust's equivalent: a `FnMut` closure.
-
-## How It Works in Rust
-
-```rust
-struct EventEmitter<E> {
-    handlers: Vec<Box<dyn FnMut(&E)>>,   // FnMut: handlers can have state
-}
-
-impl<E> EventEmitter<E> {
-    fn new() -> Self { EventEmitter { handlers: Vec::new() } }
-
-    fn subscribe(&mut self, handler: impl FnMut(&E) + 'static) -> usize {
-        self.handlers.push(Box::new(handler));
-        self.handlers.len() - 1   // return ID for potential removal
-    }
-
-    fn emit(&mut self, event: &E) {
-        for handler in &mut self.handlers {
-            handler(event);        // FnMut: &mut self required on call
-        }
-    }
-}
-
-let mut emitter: EventEmitter<ButtonEvent> = EventEmitter::new();
-
-// Stateless logger
-emitter.subscribe(|event| println!("[LOG] {:?}", event));
-
-// Stateful click counter — captures mut count by move
-let mut click_count = 0usize;
-emitter.subscribe(move |event| {
-    if let ButtonEvent::Click { .. } = event {
-        click_count += 1;                          // mutates captured state
-        println!("Click #{}", click_count);
-    }
-});
-
-// One-time handler: wraps any FnMut to fire only once
-fn once<E, F: FnMut(&E) + 'static>(mut f: F) -> impl FnMut(&E) {
-    let mut fired = false;
-    move |event| {
-        if !fired { fired = true; f(event); }
-    }
-}
-emitter.subscribe(once(|_| println!("First event only!")));
-
-emitter.emit(&ButtonEvent::Click { x: 10, y: 20 });
-emitter.emit(&ButtonEvent::Click { x: 30, y: 40 });
-// "Click #1", "Click #2", "First event only!" fires only once
+```ocaml
+let make_emitter () =
+  let handlers = ref [] in
+  let subscribe h = handlers := h :: !handlers in
+  let emit e = List.iter (fun h -> h e) !handlers in
+  (subscribe, emit)
 ```
-
-## What This Unlocks
-
-- **UI event systems** — button clicks, hover events, and keyboard input with stateful handlers that don't need shared mutable state across handlers.
-- **Plugin hooks** — register `Box<dyn FnMut>` handlers for lifecycle events; each plugin maintains its own state in its closure's captures.
-- **Reactive data pipelines** — emit data events; handlers filter, transform, and store results independently.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Event handler type | `'event -> unit` function | `Box<dyn FnMut(&Event)>` |
-| Stateful handler | `ref` variable captured in closure | `FnMut` — mutable captures |
-| Register handler | `handlers := f :: !handlers` | `handlers.push(Box::new(f))` |
-| Fire event | `List.iter (fun h -> h event) !handlers` | `handlers.iter_mut().for_each(\|h\| h(&event))` |
-| Thread-safe version | Mutex around handler list | `Box<dyn Fn + Send + Sync>` + `Mutex` |
+1. **Storage**: Rust requires `Box<dyn FnMut>` with a `'static` bound to store closures in a collection; OCaml closures are heap-allocated and GC-managed with no annotation needed.
+2. **Mutability tracking**: Rust distinguishes `Fn`, `FnMut`, and `FnOnce` — using `FnMut` explicitly signals handlers may modify captured state; OCaml has no such distinction.
+3. **Propagation control**: Returning `bool` from Rust handlers to stop propagation is natural and type-safe; OCaml uses exceptions or a mutable flag for the same effect.
+4. **Generic events**: Rust uses a single generic `EventEmitter<E>` working for any event type at compile time; OCaml uses polymorphic variants or a dedicated GADT for type-safe event dispatch.
+
+## Exercises
+
+1. **Unsubscribe support**: Extend `EventEmitter` so `subscribe` returns an index handle and add `unsubscribe(handle: usize)` that removes that handler by swapping in a no-op closure.
+2. **Filtered subscription**: Add `subscribe_filtered(pred, handler)` that only calls `handler` when `pred(&event)` returns `true`, composing the predicate inside the stored closure.
+3. **Once handler**: Add `subscribe_once` that automatically unregisters the handler after it fires once, using an `Option` inside the closure that is taken on first call.

@@ -2,109 +2,39 @@
 
 ---
 
-# 407: Default Trait and Initialization
+# 407: The Default Trait
 
-**Difficulty:** 1  **Level:** Beginner
+## Problem Statement
 
-The `Default` trait provides a standard way to create "zero value" instances of your types.
+Large configuration structs become painful to construct when callers must specify every field. Languages with named parameters or optional fields handle this naturally, but Rust requires all fields to be specified in struct literals. The `Default` trait solves this: implementing `Default` for a struct lets callers use `..Default::default()` to fill in unspecified fields, and the struct update syntax to customize only what differs from the default. This is the idiomatic Rust approach to optional constructor parameters.
 
-## The Problem This Solves
+`Default` appears everywhere: `HashMap::new()` uses `Default::default()` internally, `Vec::new()` returns an empty vec (the default), and derive macros require `Default` for many generated methods.
 
-Every type needs a sensible starting state. Counters start at zero. Strings start empty. Config structs have sane defaults (host: "localhost", port: 8080, retries: 3). Without a standard way to express this, every API that needs a default must either hardcode it internally or require the caller to provide all fields.
+## Learning Outcomes
 
-`Default` solves this by giving every type a canonical zero value. The standard library uses it everywhere: `Option::unwrap_or_default()`, `HashMap::entry().or_default()`, struct update syntax `Config { port: 9090, ..Config::default() }`. Without `Default`, all of these APIs would need separate workarounds.
+- Understand the `Default` trait as the standard way to create "empty" or "starter" values
+- Learn the difference between derived `Default` (zeros/empty) and custom `Default` implementations
+- See the struct update syntax `..Default::default()` for partial initialization
+- Understand how `Default` enables the builder pattern and `#[derive(Default)]` on config types
+- Learn which standard types implement `Default` and what they return
 
-For simple types, `#[derive(Default)]` works automatically: numbers get 0, booleans get false, strings get empty, Options get None, Vecs get empty. For types with domain-specific sensible defaults, you implement `Default` manually and set meaningful values.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `ServerConfig` derives `Default` — getting empty string, 0 port, 0 connections, false, and 0.0 timeout. `AppConfig` implements `Default` manually with sensible defaults: "localhost", port 8080, 100 connections, 30 second timeout. The `with_port` constructor uses `..Default::default()` to copy all defaults except port. A `HashMap<String, AppConfig>` demonstrates `Default` integration with collections.
 
-`Default` is a trait with a single method: `fn default() -> Self`. That's it. Implementing it says "this type has a canonical empty/zero/initial state." The `#[derive(Default)]` macro generates this automatically by calling `Default::default()` on each field — so every field type must also implement `Default`.
+## OCaml Approach
 
-The real value is composability: once your type implements `Default`, the entire standard library ecosystem that uses `Default` bounds works with your type automatically.
-
-## How It Works in Rust
-
-```rust
-// Derive: fields get language-level zero values
-#[derive(Debug, Default)]
-struct ServerConfig {
-    host: String,        // ""
-    port: u16,           // 0
-    max_connections: u32, // 0
-    debug: bool,         // false
-}
-
-// Manual: domain-specific sensible defaults
-#[derive(Debug)]
-struct AppConfig {
-    host: String,
-    port: u16,
-    max_connections: u32,
-    debug: bool,
-    timeout_secs: f64,
-    retry_count: u8,
-}
-
-impl Default for AppConfig {
-    fn default() -> Self {
-        AppConfig {
-            host: "localhost".to_string(),
-            port: 8080,
-            max_connections: 100,
-            debug: false,
-            timeout_secs: 30.0,
-            retry_count: 3,
-        }
-    }
-}
-
-fn main() {
-    // Struct update syntax: override only what changes
-    let custom = AppConfig {
-        port: 9090,
-        debug: true,
-        ..AppConfig::default()  // fill remaining fields from default
-    };
-    println!("{:?}", custom);
-
-    // or_default() in collections — elegant, no unwrap needed
-    use std::collections::HashMap;
-    let mut word_count: HashMap<&str, u32> = HashMap::new();
-    for word in ["hello", "world", "hello", "rust", "hello"] {
-        *word_count.entry(word).or_default() += 1;
-        // or_default() returns &mut u32, creating 0 if key absent
-    }
-    println!("{:?}", word_count); // {"hello": 3, "world": 1, "rust": 1}
-
-    // unwrap_or_default: None becomes the type's default
-    let opt: Option<Vec<i32>> = None;
-    let v = opt.unwrap_or_default();
-    println!("unwrap_or_default: {:?}", v); // []
-}
-```
-
-A useful pattern — generic builders that fill missing fields with defaults:
-```rust
-fn configure(overrides: impl FnOnce(&mut AppConfig)) -> AppConfig {
-    let mut cfg = AppConfig::default();
-    overrides(&mut cfg);
-    cfg
-}
-
-let cfg = configure(|c| { c.port = 9000; c.debug = true; });
-```
-
-## What This Unlocks
-
-- **Struct update syntax** — `MyStruct { field: value, ..MyStruct::default() }` lets callers specify only what's non-default; essential for large config structs.
-- **Collection ergonomics** — `entry().or_default()`, `unwrap_or_default()`, and `Option::get_or_insert_default()` eliminate boilerplate initialization patterns.
-- **Generic zero-value construction** — `fn reset<T: Default>(&mut self) { self.state = T::default(); }` works for any `Default` type without knowing the concrete type.
+OCaml achieves default values through optional parameters with `~` and `?` syntax: `let make_config ?(host="localhost") ?(port=8080) () = { host; port }`. This is more flexible than Rust's `Default` since each field can have an independent default without a special trait. OCaml's named optional arguments eliminate the need for a builder pattern or `Default` trait entirely in most cases.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Default value | `default_config` record literal — a value, not a trait | `Default` trait — standardized, works with generics and `#[derive]` |
-| Struct update | `{ default_config with port = 9090 }` — same record-update syntax | `Config { port: 9090, ..Config::default() }` — identical idiom |
-| Collection defaults | `Hashtbl.find_opt` + manual `Option.value` | `entry().or_default()` — single method, uses `Default` |
-| Propagation | Manual in each module | `#[derive(Default)]` propagates — works if all fields are `Default` |
+1. **Mechanism**: Rust uses a trait with a single `default()` method; OCaml uses optional function parameters — fundamentally different approaches.
+2. **Granularity**: Rust's `Default` returns the entire struct; OCaml's optional params default each field independently at the call site.
+3. **Struct update**: Rust's `..Default::default()` copies all remaining fields; OCaml has no equivalent (you specify each field).
+4. **Derive**: Rust's `#[derive(Default)]` works for any struct where all fields implement `Default`; OCaml's `deriving` requires a ppx extension.
+
+## Exercises
+
+1. **HTTP request builder**: Create `HttpRequest { method: String, url: String, headers: Vec<(String, String)>, body: Option<Vec<u8>>, timeout: Duration }` with a custom `Default` (GET, empty url, no headers, no body, 30s timeout). Show construction with `..Default::default()`.
+2. **Nested defaults**: Create a nested config `DatabaseConfig` with `Default` and use it as a field in `AppConfig`. Show that `AppConfig::default()` initializes the nested struct correctly.
+3. **Default impl for custom types**: Implement `Default` for a `Matrix<f64>` type that returns a 3x3 identity matrix. Explain in a comment why the identity matrix is the appropriate default for numeric matrix operations.

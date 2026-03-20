@@ -2,96 +2,49 @@
 
 ---
 
-# 622: Classy Optics (Typeclass-Style)
+# Optics: classy optics
 
-**Difficulty:** 5  **Level:** Master
+## Problem Statement
 
-Express optics as traits so functions can declare "I work on any type with a `name` field" without knowing the concrete type.
+Optics are composable data accessors originating from Haskell's lens library (Edward Kmett, 2012). They solve the deeply-nested update problem in immutable data: updating a field three levels deep requires rebuilding all intermediate values. Optics compose — a lens into a struct field composed with a prism for an enum variant gives a combined accessor that can get, set, and modify deeply nested optional values. The optic hierarchy includes Lens (exactly one focus), Prism (zero or one focus on enum variants), Traversal (zero or more foci), and Iso (lossless bidirectional conversion).
 
-## The Problem This Solves
+## Learning Outcomes
 
-Concrete optics (`Lens<User, String>`) bind you to a specific struct. But a logging function that needs a `user_id` field shouldn't care whether the struct is `HttpRequest`, `GrpcRequest`, or `WebSocketEvent`. In Haskell, this is the `HasX` typeclass pattern: `HasUserId s => s -> String`. Any struct that implements `HasUserId` works, and the compiler resolves the lens at the call site.
+- The specific optic demonstrated in this example and what it focuses on
+- How to implement the optic manually using closures or structs in Rust
+- How this optic composes with others in the hierarchy
+- The laws the optic must satisfy for correct behavior
+- Where optics are used: state management, config manipulation, nested data transformation
 
-Without classy optics, you either: (1) pass concrete lenses as parameters — boilerplate, hard to compose; (2) use a shared trait that returns the field directly — works but is just normal traits, loses the get/set/modify composability; or (3) duplicate the function for each struct — obviously wrong.
+## Rust Application
 
-Classy optics combine traits and optics: define a trait with a `lens()` method that returns the optic. Any struct implements the trait. Generic code bounds on `HasField` and uses `.lens()` to get/set/modify. The result is Haskell-style polymorphic access with Rust's zero-cost trait dispatch.
+The source implements the optic concept using Rust's closure system. Due to lack of higher-kinded types, Rust uses explicit struct wrappers with Box<dyn Fn> fields or monomorphized versions with generic parameters. The examples show: the core get/set/preview/review operations, composition of two optics, and the laws verified in tests.
 
-## The Intuition
+Key patterns:
+- Core optic struct with closure fields
+- Composition: combining optics for deeper focus
+- Laws verification: identity, roundtrip, idempotence
+- Practical example: modifying nested struct/enum data
 
-Classy optics are traits where the associated method returns an optic — so any function can say "I need a type that has a `name` lens" via a trait bound, and the concrete struct provides the lens implementation, giving you polymorphic field access with full `get`/`set`/`modify` composability. The trade-off: more setup than concrete lenses, but functions become reusable across unrelated struct types.
+## OCaml Approach
 
-## How It Works in Rust
+OCaml optics use the same record-with-function approach:
 
-```rust
-// A concrete lens type
-struct Lens<S, A> {
-    get: fn(&S) -> A,
-    set: fn(S, A) -> S,
-}
-
-impl<S, A: Clone> Lens<S, A> {
-    fn view<'a>(&self, s: &'a S) -> A where A: 'a { (self.get)(s) }
-    fn over(&self, s: S, f: impl FnOnce(A) -> A) -> S {
-        let a = (self.get)(&s);
-        (self.set)(s, f(a))
-    }
-}
-
-// "Classy" trait: any type that has a `name` field
-trait HasName {
-    fn name_lens() -> Lens<Self, String> where Self: Sized;
-    fn get_name(&self) -> String { (Self::name_lens().get)(self) }
-}
-
-// Two unrelated structs both implement HasName
-struct User  { name: String, email: String }
-struct Group { name: String, members: usize }
-
-impl HasName for User {
-    fn name_lens() -> Lens<Self, String> {
-        Lens {
-            get: |u| u.name.clone(),
-            set: |mut u, n| { u.name = n; u },
-        }
-    }
-}
-
-impl HasName for Group {
-    fn name_lens() -> Lens<Self, String> {
-        Lens {
-            get: |g| g.name.clone(),
-            set: |mut g, n| { g.name = n; g },
-        }
-    }
-}
-
-// Generic function — works on ANY HasName type
-fn uppercase_name<T: HasName>(thing: T) -> T {
-    let lens = T::name_lens();
-    lens.over(thing, |n| n.to_uppercase())
-}
-
-// Polymorphic call site — compiler resolves the right lens
-let user  = User  { name: "alice".into(), email: "a@x.com".into() };
-let group = Group { name: "admins".into(), members: 5 };
-
-let u2 = uppercase_name(user);   // User::name_lens() used
-let g2 = uppercase_name(group);  // Group::name_lens() used
+```ocaml
+type ('s, 'a) lens = { get: 's -> 'a; set: 's -> 'a -> 's }
+let name_lens = { get = (fun u -> u.name); set = (fun u n -> { u with name = n }) }
+let compose l1 l2 = { get = (fun s -> l2.get (l1.get s)); set = (fun s a -> l1.set s (l2.set (l1.get s) a)) }
 ```
-
-## What This Unlocks
-
-- **`Has*` trait polymorphism**: write `fn log_request<R: HasRequestId + HasUserId>(r: &R)` — works on any request type in your system.
-- **Optics libraries**: `lens-rs` and similar crates use this pattern — derive `Lens` on structs, then use trait bounds to write generic transformers.
-- **Cross-cutting concerns**: authentication, logging, metrics — all need user IDs or correlation IDs from various types. Classy optics let you write the concern once and apply it everywhere.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| `HasX` typeclass | Module type / functor with accessor | Trait with `lens()` method |
-| Polymorphic lens | `module type HasName = sig val name : (t, string) Lens.t end` | `trait HasName { fn name_lens() -> Lens<Self, String> }` |
-| Generic function | `module type HasName => S -> S` | `fn f<T: HasName>(t: T) -> T` |
-| Type inference | Good in OCaml 5 | Excellent — monomorphized at call site |
-| Composition | Functor / module application | Trait + blanket `impl` for composed bounds |
-| Zero-cost | GC overhead | Monomorphized — no runtime dispatch needed |
+1. **HKT requirement**: Haskell's van Laarhoven encoding uses Functor/Applicative for optic unification requiring HKT; Rust uses explicit struct types per optic kind.
+2. **Operator syntax**: Haskell uses `^.`, `.~`, `%~` for terse optic use; Rust uses method calls, more verbose but explicit.
+3. **Derive macros**: `lens-rs` and similar crates provide derive macros for automatic lens generation; OCaml uses `ppx_lens` for the same.
+4. **Performance**: Boxed closure implementations have runtime overhead; monomorphized generic versions compile to zero-cost abstractions.
+
+## Exercises
+
+1. **Lens laws**: Write tests for all three lens laws: get-set (get after set returns set value), set-get (set to current value is identity), set-set (second set wins).
+2. **Prism laws**: Write tests for prism laws: preview after review returns Some, set via review then preview round-trips.
+3. **Compose two levels**: Create a lens for a struct field and a prism for an enum variant in that field — compose them and modify the inner value when the variant is present.

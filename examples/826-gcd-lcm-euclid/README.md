@@ -2,87 +2,52 @@
 
 ---
 
-# 826: GCD, LCM, and the Euclidean Algorithm
+# GCD and LCM — Euclidean Algorithm
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-The oldest non-trivial algorithm (300 BC): compute GCD in O(log min(a,b)) — the cornerstone of all modular arithmetic and number theory.
+The greatest common divisor (GCD) and least common multiple (LCM) are foundational operations in arithmetic: reducing fractions, synchronizing periodic events, solving linear Diophantine equations, and implementing modular arithmetic all depend on them. The Euclidean algorithm computes GCD in O(log min(a,b)) — exponentially faster than trial factorization. Extended Euclidean finds Bezout coefficients (x, y such that ax + by = gcd(a,b)), enabling modular inverse computation essential for RSA and other cryptographic operations. These functions appear in virtually every number theory library.
 
-## The Problem This Solves
+## Learning Outcomes
 
-GCD and LCM appear in every corner of computer science: fraction simplification, scheduling (when do two periodic events coincide?), modular inverse computation, Chinese Remainder Theorem, RSA key generation, and competitive programming problem after problem. The Euclidean algorithm is the prerequisite for all of these.
+- Implement the recursive Euclidean algorithm: `gcd(a, b) = gcd(b, a % b)`, base case `gcd(a, 0) = a`
+- Derive LCM from GCD: `lcm(a, b) = (a / gcd(a, b)) * b` (divide before multiply to avoid overflow)
+- Implement the extended Euclidean algorithm returning Bezout coefficients
+- Understand the connection: `gcd(a,b) = 1` implies a has a modular inverse mod b
+- Apply to: fraction reduction, Stern-Brocot tree, continued fractions, CRT
 
-The seemingly simple `gcd(a, b) = gcd(b, a mod b)` recurrence is deceptively powerful: it runs in O(log min(a, b)) steps because the remainder shrinks by at least half every two steps (Fibonacci analysis). For 64-bit integers, this means at most ~93 iterations. No algorithm with fewer comparisons exists.
-
-The Extended Euclidean algorithm (see #832) produces Bézout coefficients — integers x, y such that ax + by = gcd(a, b) — enabling modular inverses and CRT. Understanding plain GCD first makes the extension straightforward.
-
-## The Intuition
-
-`gcd(a, b)` = any common divisor of a and b also divides `a mod b` (because `a mod b = a - ⌊a/b⌋ × b`), and the common divisors of (b, a mod b) are exactly the common divisors of (a, b). So `gcd(a, b) = gcd(b, a mod b)`. Base case: `gcd(a, 0) = a`. Efficiency: `a mod b < a/2` whenever `b ≤ a/2`, so the problem halves every two recursive calls.
-
-LCM: `lcm(a, b) = a / gcd(a, b) × b`. Divide *before* multiplying to prevent overflow — a common bug to know and avoid.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-// Recursive: mirrors OCaml's one-liner elegantly
-fn gcd(a: u64, b: u64) -> u64 {
+pub fn gcd(a: u64, b: u64) -> u64 {
     if b == 0 { a } else { gcd(b, a % b) }
 }
-
-// Iterative: preferred for large inputs (no stack concerns)
-// Rust does NOT guarantee tail-call optimization — always provide iterative version
-fn gcd_iter(mut a: u64, mut b: u64) -> u64 {
-    while b != 0 {
-        let r = a % b;  // Save remainder before overwriting
-        a = b;
-        b = r;
-    }
-    a
-}
-
-// LCM: divide first to prevent overflow — critical for large u64 values
-fn lcm(a: u64, b: u64) -> u64 {
-    if a == 0 || b == 0 { return 0; }
-    a / gcd(a, b) * b  // NOT: a * b / gcd(a, b) — would overflow for large a, b
-}
-
-// GCD of a slice: fold with neutral element 0 (gcd(0, x) = x)
-fn gcd_slice(xs: &[u64]) -> u64 {
-    xs.iter().fold(0u64, |acc, &x| gcd(acc, x))
-}
-
-// Binary GCD (Stein's): replaces modulo with bit shifts
-// Faster on CPUs where division is expensive; same O(log n) asymptotically
-fn binary_gcd(mut a: u64, mut b: u64) -> u64 {
-    if a == 0 { return b; }
-    if b == 0 { return a; }
-    let shift = (a | b).trailing_zeros();
-    a >>= a.trailing_zeros();
-    loop {
-        b >>= b.trailing_zeros();          // Remove factors of 2
-        if a > b { std::mem::swap(&mut a, &mut b); }
-        b -= a;                             // b = b - a, now even
-        if b == 0 { break; }
-    }
-    a << shift
+pub fn lcm(a: u64, b: u64) -> u64 {
+    if a == 0 || b == 0 { 0 } else { (a / gcd(a, b)) * b }
 }
 ```
 
-Note: Rust does not guarantee tail-call optimization. The recursive `gcd` is fine in practice (max ~93 stack frames for u64), but for production code handling untrusted inputs, prefer `gcd_iter`.
+The recursive `gcd` is tail-recursive; Rust doesn't guarantee TCO but the compiler often optimizes it. For guaranteed no-stack-overflow, an iterative version with `while b != 0 { let t = b; b = a % b; a = t; }` is preferred. The LCM formula divides `a` by GCD first (not last) to prevent overflow when `a * b` would exceed `u64::MAX`. Rust's type system enforces `u64` throughout, preventing signed/unsigned mixups. The `gcd` of signed integers needs careful handling of the sign; using `u64` avoids this entirely.
 
-## What This Unlocks
+## OCaml Approach
 
-- **Modular inverse and cryptography**: GCD = 1 is the prerequisite for modular inverse; the Extended Euclidean algorithm (built on this) is the foundation of RSA, ElGamal, and ECDSA.
-- **Fraction arithmetic**: Simplify `a/b` to lowest terms with `gcd(a, b)` in O(log min(a,b)) — used in symbolic math, exact arithmetic, and rendering pipelines.
-- **Scheduling and LCM**: "When do two tasks with period p1 and p2 synchronize?" → LCM(p1, p2). Used in real-time OS scheduling and animation frame synchronization.
+OCaml's recursive GCD is identical in structure: `let rec gcd a b = if b = 0 then a else gcd b (a mod b)`. OCaml's optimizer performs tail call elimination, so deep recursion is stack-safe. The `Int.abs` handles negative inputs for signed `int`. OCaml's standard library includes `Int.gcd` in recent versions. The `Zarith` library provides GCD for arbitrary-precision integers. OCaml's `let lcm a b = (a / gcd a b) * b` mirrors Rust exactly. The extended Euclidean algorithm uses a pair return type `(int * int * int)` for `(gcd, x, y)`.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Recursive GCD | `let rec gcd a b = if b=0 then a else gcd b (a mod b)` | Identical structure; same risk of deep recursion |
-| Tail recursion | OCaml compiler optimizes tail calls | Rust does NOT guarantee TCO; use iterative for safety |
-| LCM overflow | `a * b / gcd a b` (risky) | `a / gcd(a, b) * b` — divide first |
-| Slice fold | `List.fold_left gcd 0` | `iter().fold(0u64, gcd)` |
-| Binary GCD | External implementation | `trailing_zeros()` makes Stein's idiomatic |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Recursion | Tail-recursive, TCO not guaranteed | TCO guaranteed |
+| Signed integers | Use `i64` with `abs()` | `Int.abs` or `abs` |
+| Standard library | `num::integer::gcd` (crate) | `Int.gcd` (recent OCaml) |
+| Return type | Single `u64` | Single `int` |
+| Extended GCD | Returns `(i64, i64, i64)` | `(int * int * int)` |
+| Overflow prevention | Divide before multiply | Same idiom |
+
+## Exercises
+
+1. Implement the extended Euclidean algorithm returning `(gcd, x, y)` such that `a*x + b*y = gcd(a,b)`.
+2. Use extended GCD to compute the modular inverse of a mod m when gcd(a, m) = 1.
+3. Compute GCD of a list of numbers: verify `gcd(a, b, c) = gcd(gcd(a, b), c)`.
+4. Implement a `Fraction` type with automatic reduction using GCD on construction.
+5. Benchmark recursive vs. iterative GCD and the binary GCD algorithm (using bit operations) on 64-bit integers.

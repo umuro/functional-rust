@@ -36,3 +36,9 @@ threads ownership through a recursive helper with `.fold()` mirroring OCaml exac
 2. **Distance map:** OCaml's `Map` is persistent (each update creates a new map); Rust's `HashMap` is mutable and updated in place
 3. **Stale entry handling:** OCaml's `Set` guarantees uniqueness so stale entries don't arise; Rust's heap may hold duplicates — filtered with a `d > best` guard
 4. **Ownership:** Rust node names are `&'a str` slices borrowing from the graph; OCaml strings are heap-allocated and shared by the GC
+
+## Exercises
+
+1. Modify the implementation to return the full shortest path as a `Vec<NodeId>` in addition to the distance, by tracking predecessors during relaxation.
+2. Add support for finding shortest paths from a single source to all reachable nodes, returning a `HashMap<NodeId, u64>` of distances.
+3. Extend the graph representation to support negative-weight detection: run a Bellman–Ford pass after Dijkstra and verify results agree on non-negative graphs.

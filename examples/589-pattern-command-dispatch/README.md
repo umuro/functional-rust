@@ -2,87 +2,51 @@
 
 ---
 
-# 589: Command Dispatch with Enums
+# Pattern Command Dispatch
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Represent commands as enum variants and dispatch them with match — type-safe, extensible, and testable.
+Pattern matching in Rust goes beyond simple value checks — it enables powerful dispatch mechanisms for type-safe command processing, visitor-pattern traversals, state machine transitions, and recursive data structure manipulation. This example demonstrates advanced pattern matching techniques that arise in compiler construction, game engines, protocol implementations, and functional programming idioms applied to real systems code.
 
-## The Problem This Solves
+## Learning Outcomes
 
-String-based command dispatch is the quick way out: `match cmd.name { "set" => ..., "remove" => ..., _ => unknown }`. It compiles regardless of what strings you have. Add a new command? Hope you don't typo. Rename a command? Grep-and-pray. The `_` arm silently swallows anything unrecognized.
+- Advanced pattern matching constructs specific to this example's domain
+- How Rust's exhaustiveness checking prevents missed cases in complex dispatch
+- How patterns interact with ownership — matching by value vs by reference
+- How recursive enum patterns (trees, ASTs) work with  variants
+- Where this technique appears in real-world Rust: compilers, game engines, CLI tools
 
-HashMap-based dispatch (function pointers or boxed closures indexed by string) is slightly better for extensibility, but the types get messy and the commands themselves can't carry typed payloads. A `"set"` command needs a key and a value; how do you pass those safely through a `HashMap<String, fn(...)>`?
+## Rust Application
 
-Enum command dispatch solves both. Each command is a variant that carries its own payload — strongly typed, named, checked by the compiler. Adding a new command means adding a variant and an arm; the compiler points you to every match that needs updating. No magic strings, no type erasure.
+The source demonstrates the core technique with working examples that can be run directly. Key constructs include enum variant matching, guard conditions, nested destructuring, and composition of multiple pattern types. The match expressions are exhaustive — adding new variants requires updating all match sites, making the code refactor-safe.
 
-## The Intuition
+Key patterns demonstrated:
+- Named constant patterns using `const` values in match arms
+- Type-dispatch via enum variants carrying different payload types
+- `Box<T>` deref patterns for recursive data structures
+- Or-pattern grouping for related variants in dispatch tables
 
-Think of the command enum as a type-safe message protocol. `Cmd::Set(key, value)`, `Cmd::Increment(key, delta)`, `Cmd::Remove(key)`, `Cmd::Clear`. Each variant encodes exactly what the command needs, no more, no less.
+## OCaml Approach
 
-The executor is a match: "what shape is this command? do the right thing." The match is also the audit log — you can see every command the system handles at a glance. No dynamic dispatch, no virtual functions, no trait objects needed.
+OCaml's ML heritage makes it the reference implementation for these patterns. Variant types, exhaustive matching, and recursive type handling in OCaml are equivalent in power:
 
-An important bonus: pure replay. Store the commands as a `Vec<Cmd>`. Replay them with `fold` over an empty state. You get an event-sourcing architecture for free — the history *is* the state. OCaml's functional approach naturally supports this with immutable stores.
-
-## How It Works in Rust
-
-```rust
-#[derive(Debug, Clone)]
-enum Cmd {
-    Set(String, i64),
-    Remove(String),
-    Increment(String, i64),
-    Clear,
-}
-
-#[derive(Debug, Default)]
-struct Store {
-    data: HashMap<String, i64>,
-    history: Vec<Cmd>,
-}
-
-impl Store {
-    fn execute(&mut self, cmd: Cmd) {
-        // Dispatch on variant — each arm handles one command
-        match &cmd {
-            Cmd::Set(k, v)        => { self.data.insert(k.clone(), *v); }
-            Cmd::Remove(k)        => { self.data.remove(k); }
-            Cmd::Increment(k, d)  => { *self.data.entry(k.clone()).or_default() += d; }
-            Cmd::Clear            => { self.data.clear(); }
-        }
-        self.history.push(cmd);  // record every command
-    }
-}
-
-// Pure command application — no side effects, returns new state
-fn apply(mut data: HashMap<String, i64>, cmd: &Cmd) -> HashMap<String, i64> {
-    match cmd {
-        Cmd::Set(k, v)       => { data.insert(k.clone(), *v); }
-        Cmd::Remove(k)       => { data.remove(k); }
-        Cmd::Increment(k, d) => { *data.entry(k.clone()).or_default() += d; }
-        Cmd::Clear           => { data.clear(); }
-    }
-    data
-}
-
-// Replay history from scratch — event sourcing
-let final_state = store.history
-    .iter()
-    .fold(HashMap::new(), |acc, cmd| apply(acc, cmd));
+```ocaml
+(* Pattern matching in OCaml handles:
+   - Variant constructors with data: Cmd (arg1, arg2) -> ...
+   - Guards: | x when x > threshold -> ...  
+   - Nested patterns: Node { left; right } -> ...
+   - Recursive cases: the natural form for tree traversal *)
 ```
-
-## What This Unlocks
-
-- **Type-safe command encoding** — each command carries its exact payload; no stringly-typed argument unpacking.
-- **Event sourcing** — the command history is the source of truth; replay any time to reconstruct state.
-- **Compiler-guided extension** — add `Cmd::SetIfAbsent` and the compiler finds every match that needs a new arm.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Command type | `type cmd = Add of string * int \| ...` | `enum Cmd { Set(String, i64), ... }` |
-| Dispatch | `let execute store = function \| Add(k,v) -> ...` | `match cmd { Cmd::Set(k,v) => ... }` |
-| Mutable state | Immutable store + new value returned | `&mut self` — mutate in place |
-| Pure replay | Natural — fold over immutable commands | `fn apply(data, cmd) -> data` — explicit pure form |
-| History | Functional: list of commands is natural | `Vec<Cmd>` in the store struct |
+1. **Box deref**: Rust requires `Box<T>` for recursive types and Rust's patterns transparently deref through `Box`; OCaml's GC manages recursive variant pointers automatically.
+2. **Const patterns**: Rust allows named `const` values in patterns; OCaml can use `let open Consts in` to bring constants into scope for pattern matching.
+3. **Visitor pattern**: OCaml's idiomatic style uses recursive functions directly; Rust often uses both direct recursion and the trait-based visitor pattern for separation of concerns.
+4. **State machines**: Both languages naturally express state machines with variant enums + match — this is one of the strongest arguments for algebraic types over OOP class hierarchies.
+
+## Exercises
+
+1. **Extend the data type**: Add a new variant or field to the main data structure and trace all the match expressions that need updating — practice the exhaustiveness feedback loop.
+2. **Accumulating visitor**: Write a traversal function that collects all leaf values into a `Vec<T>` using only pattern matching and recursion.
+3. **State machine validation**: Implement an invalid-transition error: when the state/event combination is unexpected, return `Err("invalid transition")` instead of panicking.

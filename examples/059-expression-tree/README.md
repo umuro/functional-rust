@@ -37,3 +37,9 @@ OCaml's recursive variants are natural — `type expr = Num of float | Add of ex
 3. **Display trait:** Rust's `Display` impl replaces OCaml's `to_string` function — enables `format!("{expr}")`
 4. **Error handling:** Rust can return `Result` for safe division; OCaml's version silently produces `infinity`
 5. **Ownership in recursion:** Rust's `eval(&self)` borrows the tree; OCaml pattern matching doesn't distinguish owned vs borrowed
+
+## Exercises
+
+1. Add a `Let { name: String, value: Box<Expr>, body: Box<Expr> }` variant to the expression tree and extend the evaluator to handle variable binding with a simple environment map.
+2. Implement a pretty-printer for the expression tree that adds parentheses only where needed based on operator precedence.
+3. Write a `fold_expr` function analogous to `fold` on lists, and use it to implement both evaluation and pretty-printing without writing recursive `match` in each function.

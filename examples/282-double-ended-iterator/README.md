@@ -2,79 +2,65 @@
 
 ---
 
-# 282: DoubleEndedIterator
+# 282: DoubleEndedIterator and rev()
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Traverse from both ends simultaneously; implement `next_back()` to unlock `.rev()` on your custom iterators.
+Some traversal algorithms need to process elements from both ends of a sequence — reversing a sequence, checking palindromes, implementing a two-pointer algorithm, or finding the last matching element efficiently. `DoubleEndedIterator` extends the `Iterator` trait with a `next_back()` method, enabling traversal from the back end without reversing the sequence in memory. The `rev()` adapter wraps a `DoubleEndedIterator` to produce a forward iterator that yields elements from back to front.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You want to reverse an iterator. `rev()` sounds simple, but it requires knowing *where the back of the iterator is*. A filtered iterator over an arbitrary sequence can't support `rev()` — it doesn't know where it ends without consuming everything first. Only iterators that can efficiently access their back end can be reversed lazily.
+- Understand `DoubleEndedIterator` as adding `next_back()` to enable consumption from both ends
+- Use `rev()` to iterate a bidirectional collection in reverse without allocating a reversed copy
+- Implement `DoubleEndedIterator` on a custom struct with independent front and back pointers
+- Recognize which standard iterators implement `DoubleEndedIterator`: slice iterators, `Range`, `Vec`, but not `Chain` by default
 
-`DoubleEndedIterator` is the trait that expresses "I know both my front and my back." Implementing `next_back()` alongside `next()` lets the runtime consume from either end. This is how `rev()` works under the hood: it swaps the roles of `next` and `next_back`, giving you backward traversal with zero allocation.
+## Rust Application
 
-The advanced use case is consuming from both ends simultaneously — zip the front and back of a sequence to compare outer elements, or fold from the outside in. This is the foundation for algorithms like two-pointer approaches expressed functionally.
-
-## The Intuition
-
-Extend your iterator with a `next_back()` method that consumes from the *end* instead of the front — enabling both `rev()` and simultaneous front/back traversal.
-
-## How It Works in Rust
+A custom `Counter` iterator implements both `Iterator` and `DoubleEndedIterator` using `front` and `back` index fields. When `front > back`, both ends have met and iteration terminates:
 
 ```rust
-// Any range or slice iter already implements DoubleEndedIterator
-let reversed: Vec<i32> = (1..=5).rev().collect();  // [5, 4, 3, 2, 1]
-
-// rev() on a string — collects backwards
-let reversed: String = "hello".chars().rev().collect();  // "olleh"
-
-// Implement DoubleEndedIterator for a custom type
-struct Counter { front: i32, back: i32 }
-
 impl Iterator for Counter {
     type Item = i32;
     fn next(&mut self) -> Option<i32> {
         if self.front > self.back { return None; }
-        let v = self.front;
+        let val = self.front;
         self.front += 1;
-        Some(v)
+        Some(val)
     }
 }
-
 impl DoubleEndedIterator for Counter {
     fn next_back(&mut self) -> Option<i32> {
-        if self.front > self.back { return None; }  // same termination check
-        let v = self.back;
-        self.back -= 1;  // consume from the back
-        Some(v)
+        if self.front > self.back { return None; }
+        let val = self.back;
+        self.back -= 1;
+        Some(val)
     }
 }
-
-// Now .rev() works:
-Counter::new(5).rev().collect::<Vec<_>>();  // [5, 4, 3, 2, 1]
-
-// Consume from both ends simultaneously
-let mut counter = Counter::new(5);
-counter.next();       // Some(1) — front
-counter.next_back();  // Some(5) — back
-counter.next();       // Some(2) — front
-counter.next_back();  // Some(4) — back
-counter.next();       // Some(3) — middle (front == back)
+// c.rev() now works — no allocation
 ```
 
-## What This Unlocks
+## OCaml Approach
 
-- **Lazy reversal:** `.rev()` on ranges, slices, and custom iterators with zero allocation — no reversed copy, just swapped traversal direction.
-- **Two-pointer patterns:** Process elements from both ends inward, like palindrome checks or meeting-in-the-middle algorithms, without indexing.
-- **Adapter composition:** `.filter().rev()` — wait, this requires the *filtered* iterator to know its back, which it doesn't. Knowing *when* rev works guides you toward `collect()` first when needed.
+OCaml's `Seq` module is inherently forward-only. Bidirectional iteration typically requires converting to an array (`Array.of_seq`) and using index-based access from both ends, or using a doubly-linked data structure:
+
+```ocaml
+let reverse_seq seq =
+  let arr = Array.of_seq seq in
+  Array.to_seq (Array.init (Array.length arr)
+    (fun i -> arr.(Array.length arr - 1 - i)))
+(* Allocates: no zero-copy reverse *)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Reverse a list | `List.rev lst` — allocates new reversed list | `.rev()` on DEI — zero allocation |
-| Mechanism | Builds new list | Swaps `next`/`next_back` roles |
-| Custom reverse | Implement manually | Implement `next_back()`, get `.rev()` free |
-| Not all iterators | N/A (lists are always reversible) | Only types implementing `DoubleEndedIterator` |
-| Both ends | Manual recursion | `next()` + `next_back()` simultaneously |
+1. **Zero-copy reverse**: Rust's `rev()` on a `DoubleEndedIterator` is zero-allocation; OCaml's sequence reversal requires materializing into an array.
+2. **Two-pointer idiom**: Rust's `DoubleEndedIterator` enables the classic two-pointer algorithm without materializing the full sequence.
+3. **Adapter compatibility**: `rev()` composes with `map`, `filter`, and other adapters; OCaml requires restructuring the algorithm.
+4. **Standard collections**: `Vec`, slices, `BTreeMap`, `LinkedList` implement `DoubleEndedIterator` in Rust; hash maps and forward-only structures do not.
+
+## Exercises
+
+1. Use `rev()` to compare a `Vec<char>` with its reverse, implementing a palindrome checker without allocating a reversed copy.
+2. Implement `DoubleEndedIterator` on a custom `GridRow` type that iterates over a 2D matrix row from either end.
+3. Use the two-pointer pattern: simultaneously consume elements from both ends of a `DoubleEndedIterator` to check if all pairs sum to the same value.

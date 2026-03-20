@@ -4,101 +4,37 @@
 
 # 415: Token Tree Munching
 
-**Difficulty:** 4  **Level:** Expert
+## Problem Statement
 
-Consume an arbitrary token stream one token at a time to implement complex DSLs and parsers inside `macro_rules!`.
+Complex macro DSLs need to parse arbitrary syntax that doesn't fit standard repetition patterns. Token tree (TT) munching processes input one token tree at a time: one arm peels off the first `$tt` and processes it, recursing with the remainder. This enables parsing heterogeneous sequences, implementing mini-parsers within macros, and supporting complex field definition syntax like `field: Type = default`. TT munching is the technique behind the `bitflags!`, `clap::arg!`, and `pest` grammar macros.
 
-## The Problem This Solves
+Understanding TT munching unlocks the ability to write DSL macros that parse natural, human-readable syntax rather than forcing callers into rigid comma-separated patterns.
 
-Standard `macro_rules!` patterns work well when input has a fixed structure. But what if you're implementing a DSL where the grammar is complex or context-sensitive? What if you want to define a struct with field defaults (`port: u16 = 8080,`), or parse a mini arithmetic expression (`2 + 3 * 4`), or process a list of heterogeneous token sequences?
+## Learning Outcomes
 
-Simple repetition patterns (`$(...)*`) match uniform sequences. They can't handle inputs where each element has a different structure, or where you need to accumulate state across elements in complex ways. Token tree munching (TTM) is the technique that handles this: use `$head:tt` to consume one token tree at a time, match on its shape, and recurse with the remaining tokens. It's essentially hand-written parser combinators, operating at compile time, inside `macro_rules!`.
+- Understand the token tree munching technique: peel one `$tt` per recursive step
+- Learn how `@internal_name` naming conventions mark internal macro arms
+- See how `define_config!` parses `field: Type = default,` syntax incrementally
+- Understand when TT munching is needed vs. simpler repetition patterns
+- Learn the trade-off: TT munching is powerful but slower to compile than simple repetition
 
-This is how complex macro libraries work: `serde` attribute parsing, `clap` command-line DSLs, async frameworks. When the grammar is too rich for simple patterns, TTM is the tool.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `define_config!` uses TT munching to parse a struct definition with defaults. The `@fields` internal arm processes one `$field: $ty = $default,` at a time, accumulating field declarations and default values separately. The base case emits the struct and `Default` impl. The public entry point `(struct $name:ident { $($body:tt)* })` captures the entire body as `tt` tokens, which the internal arms then parse incrementally.
 
-Token tree munching gets its name from the pattern: eat one token tree (`tt`), decide what to do with it, emit output, then recurse on the rest. Each recursive call "munches" one more token tree from the front of the input.
+## OCaml Approach
 
-The key insight: `tt` matches any single token (identifier, operator, literal) OR any balanced group (`(...)`, `[...]`, `{...}` with everything inside). By matching `$head:tt $($rest:tt)*`, you can peel off the front of any token stream and process it.
-
-State between recursive calls is carried in accumulated output (internal arms build up a result). The entry point sets up the initial accumulator; the base case returns the accumulated result.
-
-## How It Works in Rust
-
-```rust
-// Define a struct from a DSL: "field: type = default,"
-// TTM processes one field at a time
-macro_rules! define_struct {
-    // Base case: no more fields — emit the struct
-    (@fields $name:ident {} -> { $($fields:tt)* }) => {
-        #[derive(Debug, Default)]
-        struct $name {
-            $($fields)*
-        }
-    };
-
-    // Recursive case: consume one "field: ty = default," and continue
-    (@fields $name:ident {
-        $field:ident : $ty:ty = $default:expr ,  // munch one field
-        $($rest:tt)*                              // remaining input
-    } -> { $($fields:tt)* }) => {
-        define_struct!(@fields $name { $($rest)* } -> {
-            $($fields)*
-            $field: $ty,  // accumulate field declarations
-        });
-    };
-
-    // Entry point
-    (struct $name:ident { $($body:tt)* }) => {
-        define_struct!(@fields $name { $($body)* } -> {});
-    };
-}
-
-define_struct!(struct Config {
-    port: u16 = 8080,
-    debug: bool = false,
-    max_connections: u32 = 100,
-});
-
-// Simple arithmetic DSL — munch one operator+operand at a time
-macro_rules! calc {
-    ($n:literal) => { $n };                           // base: single number
-    ($a:literal + $($rest:tt)+) => { $a + calc!($($rest)+) };
-    ($a:literal - $($rest:tt)+) => { $a - calc!($($rest)+) };
-    ($a:literal * $b:literal) => { $a * $b };
-    ($a:literal * $b:literal + $($rest:tt)+) => { ($a * $b) + calc!($($rest)+) };
-}
-
-fn main() {
-    let c = Config { port: 9090, ..Default::default() };
-    println!("{:?}", c);
-
-    // calc DSL — evaluated at compile time
-    println!("2 + 3 * 4 = {}", calc!(2 + 3 * 4));  // 14 (left-to-right)
-    println!("10 - 3 + 2 = {}", calc!(10 - 3 + 2));
-    println!("3 * 4 = {}", calc!(3 * 4));
-}
-```
-
-**The TTM pattern anatomy:**
-1. Internal arm tagged with `@tag` — carries accumulated state
-2. Match `$next:tt` (or a more specific pattern) — consume one token tree
-3. Emit output for this token
-4. Recurse with `$($rest:tt)*` — process remaining tokens
-5. Base case — when input is empty, emit the final accumulated result
-
-## What This Unlocks
-
-- **Custom DSL grammars** — parse `routes! { GET /api => handler }`, `sql! { SELECT * FROM users WHERE age > 18 }` — any syntax you can describe with pattern matching.
-- **Struct/enum generation with metadata** — `define_struct!` with types, defaults, documentation, validation attributes — all from a compact macro call.
-- **Complex repetition with context** — process pairs, triples, or context-dependent sequences that `$(...)*` can't handle uniformly.
+OCaml's PPX approach to DSL parsing is more direct: it operates on the already-parsed OCaml AST. A PPX extension receives a `Parsetree.structure` (sequence of items) and transforms it. For custom syntax, OCaml uses Menhir parser generators or `angstrom` combinator parsers at runtime. True DSL parsing during OCaml compilation requires `camlp5` or ppx extensions, which are more powerful than `macro_rules!` TT munching but require more infrastructure.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Token-based parsing | Lexer/parser functions — runtime | TTM — compile time, inside `macro_rules!` |
-| Accumulator | `let rec f acc tokens = ...` — runtime function | `@acc` internal arm — compile-time recursion |
-| Token types | `token` variants in a type | `tt` fragment — any single token or balanced group |
-| Parser combinators | `angstrom`, `menhir` — runtime or code-gen | TTM — in-language, no dependencies, zero runtime cost |
+1. **Token level**: Rust TT munching operates on raw tokens; OCaml PPX operates on parsed AST nodes, making it more structured.
+2. **Accumulation**: Rust uses `$($acc:tt)*` accumulator arms; OCaml PPX uses mutable buffers or immutable list accumulation in OCaml code.
+3. **Compile time**: TT munching macros can be slow to compile for large inputs due to recursive expansion; OCaml PPX runs as a separate program once.
+4. **Error messages**: TT munching errors appear as "no rules matched" at the point of failure; OCaml PPX can emit custom error messages using `Location.error`.
+
+## Exercises
+
+1. **Enum with methods**: Write `define_enum!(Status { Active => "active", Inactive => "inactive" })` that generates an enum and a `fn as_str(&self) -> &str` method using TT munching to parse each variant-to-string mapping.
+2. **Builder DSL**: Implement `build_struct!(Point { x: f64 required, y: f64 required, label: String optional = "".to_string() })` where `required` fields must be set and `optional` fields have defaults.
+3. **State machine**: Create `state_machine!(start: Idle { on(Event::Start) => Running }, Running { on(Event::Stop) => Idle })` using TT munching to generate a state enum and `transition` method.

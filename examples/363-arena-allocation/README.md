@@ -2,69 +2,99 @@
 
 ---
 
-# 363: Arena / Bump Allocation Pattern
+# 363: Arena Allocation
 
-**Difficulty:** 4  **Level:** Expert
+## Problem Statement
 
-Allocate many objects into a single memory region and free them all at once — bypassing individual drop overhead.
+General-purpose allocators (malloc/jemalloc) have overhead: each allocation needs bookkeeping metadata, thread-local allocation caches, and potentially lock contention. For workloads that allocate thousands of small objects and free them all at once — AST nodes during parsing, temporary nodes in a graph algorithm, frame data in a game loop — arena allocation (bump allocation) is dramatically faster. The arena pre-allocates one large block and serves allocations by simply advancing a pointer. "Freeing" individual objects is a no-op; the entire arena resets in O(1). This pattern powers programming language parsers, game engines, and database query planners.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Rust's ownership model is precise: every value is dropped exactly when its owner goes out of scope. For long-lived programs with millions of small allocations, this is usually fine. But for batch-processing workloads — parsing a file, compiling source code, running a game tick — paying per-object allocation and deallocation overhead adds up.
+- Implement a bump allocator arena using a pre-allocated `Vec<u8>` and `Cell<usize>` offset
+- Handle alignment by rounding the offset up to the required alignment boundary
+- Use `Cell<usize>` for interior mutability so `&self` methods can mutate the offset
+- Count allocations with a second `Cell<usize>` for diagnostics
+- Reset the arena in O(1) by setting offset back to zero
+- Understand that arena allocation trades allocation/free speed for batch-free semantics
 
-Compilers are the canonical example. During a parse pass, you allocate thousands of AST nodes. All of them share the same lifetime: the lifetime of the parse. When parsing is done, you want to free all of them at once, not walk a tree and drop each node individually. An arena (also called a "bump allocator" or "region allocator") does exactly this.
-
-The pattern appears everywhere performance-critical batch allocation is needed: game ECS systems that reset each frame, query planners that build and discard execution trees, web servers that allocate per-request and reset at response time.
-
-## The Intuition
-
-An arena is a big memory slab with a bump pointer. To allocate an object: check if it fits, advance the pointer, return a reference. That's it. Deallocation is free — you just reset the pointer to the start. No per-object bookkeeping, no linked free lists, no GC pressure.
-
-The constraint: everything allocated in the arena has the same lifetime. You can't free individual objects — you free the whole arena. This sounds limiting but maps perfectly onto "build a thing, use it, throw it all away."
-
-Rust makes this safe via lifetime annotations. The `typed-arena` and `bumpalo` crates attach the arena's lifetime to every returned reference, so the borrow checker enforces that you can't use arena memory after the arena is dropped.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-use typed_arena::Arena;
+use std::cell::Cell;
 
-struct Node<'a> {
-    value: i32,
-    next: Option<&'a Node<'a>>,
+pub struct Arena {
+    data: Vec<u8>,
+    offset: Cell<usize>,
+    allocations: Cell<usize>,
 }
 
-let arena = Arena::new();
+impl Arena {
+    pub fn new(capacity: usize) -> Self {
+        Self {
+            data: vec![0u8; capacity],
+            offset: Cell::new(0),
+            allocations: Cell::new(0),
+        }
+    }
 
-// Allocate — returns &'arena Node, not Box<Node>
-let a = arena.alloc(Node { value: 1, next: None });
-let b = arena.alloc(Node { value: 2, next: Some(a) });
+    pub fn alloc_bytes(&self, size: usize, align: usize) -> Option<usize> {
+        let offset = self.offset.get();
+        let aligned = (offset + align - 1) & !(align - 1); // round up
+        let new_offset = aligned + size;
+        if new_offset > self.data.len() { return None; }
+        self.offset.set(new_offset);
+        self.allocations.set(self.allocations.get() + 1);
+        Some(aligned)
+    }
 
-// Use the linked structure
-println!("{}", b.value); // 2
-println!("{}", b.next.unwrap().value); // 1
+    pub fn allocated(&self) -> usize { self.offset.get() }
 
-// Drop arena → all nodes freed at once, no individual drops
+    pub fn reset(&mut self) {
+        self.offset.set(0);
+        self.allocations.set(0);
+    }
+}
 ```
 
-For untyped bump allocation with `bumpalo`:
-```rust
-let bump = bumpalo::Bump::new();
-let x: &mut i32 = bump.alloc(42);
-let s: &str = bump.alloc_str("hello");
+`(offset + align - 1) & !(align - 1)` is the standard power-of-2 alignment calculation. For `align = 8`: if offset is 5, `(5 + 7) & !7 = 12 & 0b...11111000 = 8`. The `Cell<usize>` (not `RefCell`) is used because `usize` is `Copy` — `Cell` works for `Copy` types without borrowing overhead.
+
+## OCaml Approach
+
+OCaml's GC serves as a kind of arena — you can allocate objects freely and the GC handles collection. For explicit arena semantics, `Bigarray` or `Bytes` with a ref-based offset:
+
+```ocaml
+type arena = {
+  data: bytes;
+  mutable offset: int;
+}
+
+let create capacity = { data = Bytes.create capacity; offset = 0 }
+
+let alloc a size align =
+  let aligned = (a.offset + align - 1) land (lnot (align - 1)) in
+  if aligned + size > Bytes.length a.data then None
+  else begin
+    a.offset <- aligned + size;
+    Some aligned
+  end
+
+let reset a = a.offset <- 0
 ```
 
-## What This Unlocks
-
-- **Compiler/parser design** — AST nodes allocated into an arena, freed in one shot after code generation.
-- **Game ECS frames** — allocate all frame state into a bump arena, reset at frame boundary.
-- **Zero-fragmentation allocation** — linear packing means no heap fragmentation ever.
+In practice, OCaml's generational GC already provides fast allocation for short-lived objects (minor heap bump allocation). Explicit arenas are less common in OCaml than in Rust, where every allocation is explicit and arena-vs-per-object is a meaningful choice.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Memory management | GC (mark-and-sweep or minor/major heap) | Ownership + drop, or arena for batch |
-| Arena equivalent | Minor heap (GC manages short-lived objects) | `typed_arena::Arena` or `bumpalo::Bump` |
-| Object lifetime | GC-determined | Tied to arena's Rust lifetime (`'arena`) |
-| Free all at once | GC major collection | `drop(arena)` — O(1) |
+| Aspect | Rust arena | OCaml GC / manual arena |
+|--------|-----------|-------------------------|
+| Allocation cost | O(1) pointer bump | O(1) GC minor heap (usually) |
+| Deallocation | O(1) arena reset (all at once) | GC-managed individually |
+| Safety | `unsafe` needed for typed access | Safe (GC handles lifetime) |
+| Alignment | Manual calculation required | GC handles alignment |
+| Use case | Parsers, compilers, games | Rarely needed; GC does it |
+
+## Exercises
+
+1. **Typed allocation**: Using `unsafe`, implement `alloc<T>(&self) -> Option<*mut T>` that returns a properly aligned pointer into the arena's buffer for type `T` using `std::mem::size_of::<T>()` and `std::mem::align_of::<T>()`.
+2. **AST arena**: Build a simple expression parser where all AST nodes are allocated into a single arena; reset the arena after each parse to reuse memory for the next input.
+3. **Fragmentation analysis**: Allocate a mix of 1-byte, 4-byte, and 8-byte values and measure internal fragmentation (wasted alignment padding) as a percentage of total allocated bytes.

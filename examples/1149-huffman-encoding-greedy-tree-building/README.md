@@ -29,3 +29,9 @@ The idiomatic Rust version wraps `HTree` in a `MinHeapNode` newtype that reverse
 2. **Priority queue:** OCaml uses `List.sort` (O(n log n) per merge); idiomatic Rust uses `BinaryHeap` (O(log n) per merge) with a reversed-comparison wrapper.
 3. **Or-patterns:** `match self { Leaf(_, f) | Node(_, _, f) => *f }` is a direct parallel to OCaml's `match t with Leaf (_,f) -> f | Node (_,_,f) -> f`, available since Rust 1.53.
 4. **String concatenation:** OCaml uses `^` for string append; Rust uses `prefix.to_string() + "0"` or `format!`, returning owned `String` from each recursive call.
+
+## Exercises
+
+1. Compute the average code length of the Huffman encoding and compare it to the theoretical entropy of the input distribution.
+2. Implement canonical Huffman coding: assign code lengths using the greedy tree, then generate lexicographically ordered canonical codes to simplify the decoder.
+3. Build a file compressor that reads a file, computes Huffman codes for each byte, encodes the file, and writes a binary output with a length-prefixed code table header; then implement the matching decompressor.

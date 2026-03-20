@@ -4,67 +4,54 @@
 
 # 265: Conditional Skipping with skip_while()
 
-**Difficulty:** 1  **Level:** Beginner
+## Problem Statement
 
-Skip elements from the front of an iterator until a condition fails, then yield everything that remains.
+Data streams often begin with a preamble, header, or leading values that should be ignored before processing begins. Log files start with timestamps; CSV files may have metadata rows; sorted lists may have leading zeros. The `skip_while()` adapter solves this by discarding elements from the front of an iterator until the predicate first returns false, then yielding all remaining elements unconditionally — including any that would again match the original predicate.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You have a stream with a header or leading junk you want to discard. CSV files with comment lines starting with `#`. Log files where the first N lines are metadata. A number sequence with leading zeros. A string with leading whitespace. Without `skip_while`, you'd use a flag variable and a manual check inside a for loop — or you'd `enumerate()` and check the index, which only works when you know the prefix length in advance.
+- Understand that `skip_while(pred)` discards elements until predicate first fails, then yields everything after
+- Distinguish `skip_while()` from `filter()`: later matching elements are still included
+- Use `skip_while()` to skip headers, leading whitespace, or sentinel values
+- Combine `skip_while()` with `take_while()` to extract a middle segment of a sequence
 
-`skip_while` is the dual of `take_while`: instead of consuming up to a point, it discards up to a point. The critical semantic to internalize is that it stops skipping at the *first* failure and then yields *everything* after — including later elements that match the predicate.
+## Rust Application
 
-This "once it switches, it doesn't switch back" behavior is what makes it useful for ordered prefixes and what distinguishes it from `filter()`.
-
-## The Intuition
-
-`skip_while(pred)` discards elements as long as the predicate returns `true`. The first time it returns `false`, skipping stops and *all remaining elements* are yielded — regardless of whether they match the predicate.
-
-```rust
-let nums = [0, 0, 0, 1, 2, 3, 0, 4];
-let result: Vec<_> = nums.iter().skip_while(|&&x| x == 0).collect();
-// → [1, 2, 3, 0, 4]   the trailing 0 is kept — skipping already stopped
-```
-
-## How It Works in Rust
+`Iterator::skip_while(pred)` yields elements after the first `false`. Crucially, once the predicate fails, subsequent elements are never tested again — they pass through regardless:
 
 ```rust
-// Strip leading whitespace (idiomatic ltrim)
-let input = "   hello world";
-let stripped: String = input.chars()
-    .skip_while(|c| c.is_whitespace())
-    .collect();
-// → "hello world"
-
-// Skip leading zeros — later zeros are preserved
-let with_zeros = [0i32, 0, 0, 1, 2, 3, 0, 4];
-let no_leading: Vec<i32> = with_zeros.iter().copied()
+// Skip leading zeros, include everything after first non-zero (even later zeros)
+let result: Vec<i32> = [0, 0, 1, 0, 2, 0].iter().copied()
     .skip_while(|&x| x == 0)
     .collect();
-// → [1, 2, 3, 0, 4]
+// [1, 0, 2, 0] — later zeros are included
 
-// skip_while + take_while to extract a range from a sorted sequence
-let nums = [1i32, 2, 3, 4, 5, 4, 3, 2, 1];
-let range: Vec<i32> = nums.iter().copied()
-    .skip_while(|&x| x < 3)   // skip prefix below 3
-    .take_while(|&x| x < 6)   // stop when >= 6
-    .collect();
-// → [3, 4, 5, 4, 3, 2, 1]   note: take_while stops at 6, but everything up to it passes
+// Skip a CSV header row
+let lines = ["name,age", "alice,30", "bob,25"];
+let data: Vec<_> = lines.iter().skip_while(|l| l.contains(',') && l.contains("name")).collect();
 ```
 
-`skip_while` sees the whole remaining iterator once skipping stops. Unlike `filter`, it doesn't inspect every element — it reads forward only until the predicate fails, then hands off the rest as-is.
+## OCaml Approach
 
-## What This Unlocks
+OCaml's `List.drop_while` (in `Base`/`Core`) or a recursive equivalent serves this role:
 
-- **Header/prefix removal** — skip comment lines, BOM bytes, metadata rows in a stream.
-- **Whitespace/zero stripping** — implement `ltrim` or `lstrip` idiomatically.
-- **Range extraction with `take_while`** — skip a prefix, then consume a middle section.
+```ocaml
+let rec skip_while pred = function
+  | [] -> []
+  | x :: xs -> if pred x then skip_while pred xs else x :: xs
+```
+
+`Seq.drop_while` provides the lazy equivalent for sequences, identical semantically to Rust's `skip_while`.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Skip prefix by predicate | `Seq.drop_while` (lazy) / manual for lists | `iter.skip_while(pred)` |
-| Resumes after first failure | Yes (same semantics) | Yes — all remaining elements yielded |
-| vs. `filter` | `filter` checks every element | `skip_while` checks only the prefix |
-| Pair with `take_while` | Manual composition | `.skip_while(p1).take_while(p2)` for ranges |
+1. **"Then all"**: Both languages' `skip_while` yield everything after the first false, including later matches — this is by design for ordered prefix stripping.
+2. **Standard library**: Built into Rust's `Iterator`; OCaml's standard `List` module lacks it (third-party `Base` provides `List.drop_while`).
+3. **Complementary to `take_while`**: Together they split a sequence: `take_while(p)` takes the prefix, `skip_while(p)` takes the suffix.
+4. **Stateful termination**: Like `take_while`, it is stateful and not equivalent to a filter — order matters.
+
+## Exercises
+
+1. Strip leading whitespace from a character iterator using `skip_while(|c| c.is_whitespace())`.
+2. Implement a function that extracts the body of a log file by skipping all lines that start with `#` (comment lines at the top).
+3. Combine `skip_while()` and `take_while()` to extract only the elements between two sentinel values in a sequence.

@@ -4,80 +4,66 @@
 
 # 314: Validated — Accumulating All Errors
 
-**Difficulty:** 4  **Level:** Expert
+## Problem Statement
 
-Collect every validation failure at once — instead of stopping at the first one.
+User registration forms, configuration validation, and batch processing all share a need: show all errors at once, not just the first one. When a form has 10 invalid fields, showing only the first error forces the user to submit nine more times. The `Validated` type addresses this with applicative composition: validate all fields independently, then combine results — accumulating every error if multiple validations fail simultaneously.
 
-## The Problem This Solves
+## Learning Outcomes
 
-A user submits a registration form with an invalid name, a malformed email, and an out-of-range age. With `Result`, you'd validate the name, get an `Err`, and return immediately — the user sees only the first error, fixes it, resubmits, and gets the second error. This "one error at a time" UX is frustrating and broken.
+- Understand the difference between monadic (`Result`) and applicative (`Validated`) error handling
+- Implement `Validated<T, E>` with `valid()`, `invalid()`, `map()`, and `combine()` operations
+- Use `Validated` to validate multiple independent fields simultaneously
+- Recognize when accumulation (show all errors) vs short-circuit (stop at first) is the right strategy
 
-The fundamental issue is that `Result` is a *monad* — it chains operations sequentially, and one failure stops the chain. But form validation doesn't have sequential dependencies: name validity is independent of email validity is independent of age validity. You want to run all three, collect all failures, and return everything at once.
+## Rust Application
 
-This is the `Validated` pattern — sometimes called the applicative functor approach. The key operation is `combine`: merge two `Validated` values where if both fail, the error lists are concatenated (not short-circuited). The result is the functional programming equivalent of "gather all errors and show them all."
-
-## The Intuition
-
-`Validated` is `Result` with error accumulation: `combine` merges two independent results, collecting all errors from both sides instead of returning the first.
-
-## How It Works in Rust
+Validation of multiple fields simultaneously collects all errors:
 
 ```rust
-#[derive(Debug)]
-enum Validated<T, E> {
+#[derive(Debug, PartialEq)]
+pub enum Validated<T, E> {
     Valid(T),
-    Invalid(Vec<E>),  // multiple errors, not just one
+    Invalid(Vec<E>),
 }
 
-// The key function — this is what makes it applicative, not monadic
-fn combine<A, B, E>(a: Validated<A, E>, b: Validated<B, E>) -> Validated<(A, B), E> {
-    match (a, b) {
-        (Validated::Valid(a), Validated::Valid(b)) =>
-            Validated::Valid((a, b)),                    // both succeed
-        (Validated::Invalid(mut e1), Validated::Invalid(e2)) => {
-            e1.extend(e2);                               // BOTH fail: accumulate errors
-            Validated::Invalid(e1)
-        }
-        (Validated::Invalid(e), _) | (_, Validated::Invalid(e)) =>
-            Validated::Invalid(e),                       // one fails: carry forward
-    }
+pub fn validate_age(age: i32) -> Validated<i32, String> {
+    if age >= 0 && age <= 150 { Validated::valid(age) }
+    else { Validated::invalid(format!("age {} out of range", age)) }
 }
 
-// Usage: validate all fields independently, then combine
-fn validate_registration(name: &str, email: &str, age: &str)
-    -> Validated<(String, String, u8), String>
-{
-    // All three run — no short-circuiting
-    combine(
-        combine(validate_name(name), validate_email(email)),
-        validate_age(age),
-    ).map(|((n, e), a)| (n, e, a))
+pub fn validate_name(name: &str) -> Validated<String, String> {
+    if !name.is_empty() { Validated::valid(name.to_string()) }
+    else { Validated::invalid("name cannot be empty".to_string()) }
 }
 
-// With all fields invalid: returns 3 errors, not 1
-match validate_registration("", "bad", "999") {
-    Validated::Invalid(errs) => println!("All {} errors: {:?}", errs.len(), errs),
-    Validated::Valid(_) => unreachable!(),
+// Both validations run; both errors collected if both fail:
+pub fn validate_user(name: &str, age: i32) -> Validated<(String, i32), String> {
+    validate_name(name).and(validate_age(age))
 }
 ```
 
-The contrast with `Result`:
-- `Result` with `?`: "validate name — if bad, stop. validate email — if bad, stop. validate age."
-- `Validated` with `combine`: "validate name AND email AND age — collect all failures."
+## OCaml Approach
 
-Don't use `and_then` on `Validated` when you want accumulation — `and_then` is sequential and discards later errors, defeating the purpose.
+OCaml's `Ppx_let` and applicative functors support this pattern. `Lwt.both` and similar functions provide concurrent validation with error accumulation:
 
-## What This Unlocks
+```ocaml
+type ('a, 'e) validated = Valid of 'a | Invalid of 'e list
 
-- **Complete form validation** — show all errors in one response; standard UX expectation for web forms and CLI tools
-- **Batch input validation** — validate a CSV row, report all column errors at once
-- **API request validation** — return a structured list of field errors to the client in one round-trip
+let and_validate v1 v2 = match (v1, v2) with
+  | (Valid x, Valid y) -> Valid (x, y)
+  | (Invalid es1, Invalid es2) -> Invalid (es1 @ es2)
+  | (Invalid es, _) | (_, Invalid es) -> Invalid es
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Category theory | Applicative functor | Custom `Validated` type with `combine` |
-| Error accumulation | `Validation` library or manual | Custom `combine` function |
-| Monad vs applicative | `let*` = monadic (sequential) | `and_then` = monadic; `combine` = applicative |
-| Short-circuits? | Monad: yes; Applicative: no | `Result`/`?`: yes; `Validated`/`combine`: no |
+1. **Applicative vs monadic**: `Validated` is applicative (both sides computed); `Result` is monadic (short-circuits on `Err`).
+2. **Semantic choice**: Short-circuit when errors are dependent (step 2 requires step 1); accumulate when errors are independent (all form fields).
+3. **Production use**: The Rust `garde` and `validator` crates use accumulation for struct validation — all field errors are collected and returned together.
+4. **Conversion**: `Validated<T, E>` can be converted to `Result<T, Vec<E>>` by taking the first error or collecting all errors into a summary.
+
+## Exercises
+
+1. Extend the user validator with a third field (email must contain `@`) and verify that invalid name + invalid email reports both errors.
+2. Implement a `traverse` function: `fn traverse<T, U, E>(items: Vec<T>, f: impl Fn(T) -> Validated<U, E>) -> Validated<Vec<U>, E>` that validates all items and accumulates all errors.
+3. Compare the output of `Validated` vs `Result` on the same validation logic — show that `Result` stops at first failure while `Validated` collects all.

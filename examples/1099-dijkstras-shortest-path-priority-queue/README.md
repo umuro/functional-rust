@@ -29,3 +29,9 @@ The idiomatic Rust solution uses `BinaryHeap<Reverse<(u64, &str)>>` as a min-hea
 2. **Distance map:** OCaml's `Map` is a persistent balanced tree; Rust's `HashMap` provides O(1) amortized lookups with in-place mutation
 3. **State threading:** OCaml recurses with `go pq dist` passing immutable structures; Rust mutates `dist` and `heap` in a `while let` loop
 4. **Missing keys:** OCaml catches `Not_found` exceptions; Rust uses `.get().unwrap_or(&u64::MAX)` — no exceptions needed
+
+## Exercises
+
+1. Extend Dijkstra's implementation to reconstruct the full shortest path (not just the distance) by recording predecessor nodes during relaxation.
+2. Modify the algorithm to find the shortest path with at most `k` hops and return `None` if no such path exists within the hop limit.
+3. Implement Bellman–Ford on the same graph representation and compare results with Dijkstra on a graph that contains negative-weight edges (but no negative cycles).

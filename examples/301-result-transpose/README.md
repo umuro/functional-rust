@@ -4,63 +4,58 @@
 
 # 301: Result::transpose() — Flipping Nested Types
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Convert `Result<Option<T>, E>` into `Option<Result<T, E>>` — or back again.
+When mapping over an `Option<&str>` to parse it, the result is `Option<Result<T, E>>` — an option containing a result. But many APIs expect `Result<Option<T>, E>` — a result containing an optional value. The `transpose()` method converts between these two nested forms, enabling clean composition when optionality and fallibility interact. This is a common need when parsing optional configuration values or handling nullable database fields.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You're calling a function that returns `Result<Option<T>, E>` — perhaps a database lookup that might fail (IO error) or find nothing (the `None` case). Now you want to use it in a context that expects `Option<Result<T, E>>` — for example, to feed it into `Iterator::filter_map`. You end up writing a four-arm `match` to manually rearrange the two wrapper types.
+- Understand `Result<Option<T>, E>::transpose()` → `Option<Result<T, E>>`
+- Understand `Option<Result<T, E>>::transpose()` → `Result<Option<T>, E>`
+- Use `transpose()` to convert between `Option<Result<_,_>>` and `Result<Option<_>,_>`
+- Apply `transpose()` after mapping over an `Option` to parse a value
 
-This awkward nesting comes up constantly when combining fallible operations with optional values. A config key might not exist (`None`) *or* parsing it might fail (`Err`). A cache lookup might miss (`None`) *or* deserializing the cached value might fail (`Err`). The two layers compose in predictable ways — and `transpose()` encodes those rules.
+## Rust Application
 
-Once you know the rules, the conversion is mechanical: `Ok(None)` means "success, no value" → `None`. `Ok(Some(v))` means "success, got value" → `Some(Ok(v))`. `Err(e)` means "failure" → `Some(Err(e))`. `transpose()` just applies these rules so you don't have to write the match.
-
-## The Intuition
-
-`transpose()` swaps the `Result` and `Option` wrappers — commuting the two layers in a predictable way that preserves all information.
-
-## How It Works in Rust
+`transpose()` is available on both `Result<Option<T>, E>` and `Option<Result<T, E>>`:
 
 ```rust
-// Result::transpose() rules:
-let ok_some: Result<Option<i32>, &str> = Ok(Some(42));
-let ok_none: Result<Option<i32>, &str> = Ok(None);
-let err:     Result<Option<i32>, &str> = Err("bad");
-
-ok_some.transpose()  // => Some(Ok(42))   — success with a value
-ok_none.transpose()  // => None            — success with no value (becomes None)
-err.transpose()      // => Some(Err("bad")) — failure becomes Some(Err)
-
-// Option::transpose() goes the other direction:
-let some_ok: Option<Result<i32, &str>> = Some(Ok(5));
-let some_err: Option<Result<i32, &str>> = Some(Err("fail"));
-let none: Option<Result<i32, &str>> = None;
-
-some_ok.transpose()  // => Ok(Some(5))    — value present, no error
-some_err.transpose() // => Err("fail")    — error propagates out
-none.transpose()     // => Ok(None)       — absent is treated as success with no value
-
-// Practical: parse an optional config value cleanly
-let config_val: Option<&str> = Some("42");
-let result: Result<Option<i32>, _> = config_val
-    .map(|s| s.parse::<i32>())  // Option<Result<i32, ParseIntError>>
-    .transpose();                // Result<Option<i32>, ParseIntError>
+// Parse an optional string into an optional number
+pub fn maybe_parse(s: Option<&str>) -> Result<Option<i32>, ParseIntError> {
+    s.map(|s| s.parse::<i32>()).transpose()
+    // s.map gives Option<Result<i32, _>>
+    // .transpose() gives Result<Option<i32>, _>
+}
+// maybe_parse(Some("42")) -> Ok(Some(42))
+// maybe_parse(Some("x"))  -> Err(parse error)
+// maybe_parse(None)       -> Ok(None)
 ```
 
-The `Option::transpose()` direction is the more commonly useful one — it lets you use `?` on an `Option<Result<T,E>>` after transposing.
+## OCaml Approach
 
-## What This Unlocks
+OCaml does not have a standard `transpose` function. It is implemented manually as a pattern match:
 
-- **Clean iterator pipelines** — `filter_map(|opt| opt.map(parse).transpose())` filters `None` and propagates errors
-- **Optional config parsing** — turn "key might not exist AND parsing might fail" into a single `Result<Option<T>>`
-- **`?` on optional results** — after transposing, use `?` normally
+```ocaml
+let transpose_opt_result = function
+  | None -> Ok None
+  | Some (Ok v) -> Ok (Some v)
+  | Some (Error e) -> Error e
+
+let transpose_result_opt = function
+  | Ok None -> None
+  | Ok (Some v) -> Some (Ok v)
+  | Error e -> Some (Error e)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| `Ok(None)` → `None` | Manual match | `Result::transpose()` |
-| `Ok(Some(v))` → `Some(Ok(v))` | Manual match | `Result::transpose()` |
-| `Some(Ok(v))` → `Ok(Some(v))` | Manual match | `Option::transpose()` |
-| Use case | Manual unwrapping | Composing optional + fallible operations |
+1. **Standard library**: Rust provides `transpose()` as a standard method on both `Option` and `Result`; OCaml requires manual pattern matching.
+2. **Nullability interaction**: The pattern arises naturally when optional values are parsed — extremely common in config parsing and database nullable field handling.
+3. **Composition**: `transpose()` makes it possible to use `collect::<Result<Vec<Option<_>>, _>>()` patterns cleanly.
+4. **Symmetry**: The two directions are inverses: `Option::transpose` and `Result::transpose` compose to identity.
+
+## Exercises
+
+1. Parse a `Vec<Option<&str>>` of optional number strings into `Result<Vec<Option<i32>>, E>` using `map`, `transpose`, and `collect`.
+2. Write a function that reads optional database fields (represented as `Option<&str>`) and parses them into a struct, using `transpose()` for each field.
+3. Demonstrate that `opt.transpose()` and `result.transpose()` are inverses by applying both in sequence and verifying the result.

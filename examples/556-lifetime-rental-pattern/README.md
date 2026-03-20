@@ -2,78 +2,50 @@
 
 ---
 
-# 556: Rental / Self-Referential Pattern
+# Rental Pattern
 
-**Difficulty:** 4  **Level:** Intermediate-Advanced
+## Problem Statement
 
-Store parsed tokens alongside their source string — without self-referential pointers — using byte-span indices or shared ownership.
+The rental pattern addresses a common need: a type that owns its data and provides borrowing access to it — "renting out" references into its own storage. This is a structured version of the owning-reference problem. The `rental` crate (now deprecated) automated this with macros; the `ouroboros` and `self_cell` crates provide safe modern alternatives. Understanding the manual implementation helps explain why the borrow checker prevents naive self-referential structs and what makes the pattern sound.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Parsers face a tension: they want to return borrowed `&str` slices pointing into the input buffer (zero-copy), but they also want to *own* that input buffer so the caller doesn't need to keep the original alive. This is the classic "self-referential struct" problem — a struct that holds both data and a reference into that same data.
+- How `Rental` owns a `String` and provides `&str` views via `rent(&self) -> &str`
+- How `ParsedRental` stores raw data and indices derived from it, computing views on demand
+- Why the returned `&str` from `rent` is tied to `self`'s lifetime (cannot outlive the rental)
+- How lazy parsing separates expensive work from construction
+- Where rental appears: HTTP request parsing, JSON tree traversal, configuration loading
 
-The `rental` crate attempted to solve this with macros. The `ouroboros` crate does it more safely with proc-macros. But both add complexity and compile-time overhead. In most real code, the cleanest solution is the one demonstrated here: **store byte spans instead of `&str` slices**, reconstruct slices on demand.
+## Rust Application
 
-The `Arc<String>` alternative shown in `SharedDocument` is useful when you need to share the source across threads or return owned values cheaply — but it trades zero-copy for the overhead of reference-counted cloning.
+`Rental` stores `data: String` and `rent(&self) -> &str` returns `&self.data` — the lifetime of the returned reference is tied to `self`. `rent_slice(&self, start, end) -> &str` returns a windowed view. `ParsedRental` stores `raw: String` and `parsed: Vec<usize>` (indices into `raw`) — parsing computes indices but stores no `&str` references, avoiding self-referential issues. Methods compute `&str` slices from stored indices on demand.
 
-## The Intuition
+Key patterns:
+- `fn rent(&self) -> &str { &self.data }` — borrowing from self
+- `Vec<usize>` of indices into owned `String` — lazy parsing without self-reference
+- Lifetime: the rented `&str` cannot outlive the `Rental` that owns the data
 
-The borrow checker forbids storing a `&str` that points into a field of the same struct — the struct would need to borrow from itself before it's finished being constructed. Byte indices solve this: `(usize, usize)` pairs are plain data with no lifetime, and `&self.source[s..e]` reconstructs the view at call time with the correct lifetime.
+## OCaml Approach
 
-Think of `ParsedDocument` as a database: the `source` field is the backing store, and `token_spans` is an index. Queries into the index (`get_token`, `tokens()`) produce `&str` results borrowed from `self`, not stored in `self`.
+OCaml makes the rental pattern trivial — a record holding a `string` and methods returning slices of it are straightforward:
 
-## How It Works in Rust
-
-**Span-indexed document** — parse stores `(start, end)` pairs:
-```rust
-struct ParsedDocument {
-    source: String,
-    token_spans: Vec<(usize, usize)>,
-}
-
-impl ParsedDocument {
-    fn tokens(&self) -> impl Iterator<Item = &str> {
-        self.token_spans.iter().map(|&(s, e)| &self.source[s..e])
-    }
-    fn get_token(&self, i: usize) -> Option<&str> {
-        self.token_spans.get(i).map(|&(s, e)| &self.source[s..e])
-    }
-}
-```
-The returned `&str` values borrow from `self.source` through `&self` — the compiler sees this as a normal field borrow. No unsafe, no macros.
-
-**Building the index during parsing:**
-```rust
-for (i, b) in source.bytes().enumerate() {
-    let is_space = b == b' ' || b == b'\n' || b == b'\t';
-    if !is_space && !in_word { word_start = i; in_word = true; }
-    else if is_space && in_word { token_spans.push((word_start, i)); in_word = false; }
-}
-if in_word { token_spans.push((word_start, source.len())); }
+```ocaml
+type rental = { raw: string; mutable parsed: int list }
+let rent r = r.raw
+let rent_slice r s e = String.sub r.raw s (e - s)  (* copies *)
 ```
 
-**`Arc<String>` alternative** — when tokens need to outlive the parser:
-```rust
-struct SharedDocument {
-    source: Arc<String>,
-    tokens: Vec<Arc<String>>,  // cloned substrings, reference-counted
-}
-```
-`Arc::clone` is cheap (atomic increment), but each token is an allocation. Use when you need `Send + Sync` or need tokens to outlive `self`.
-
-**When to use `ouroboros`** — if you genuinely need `&str` fields (e.g., for a zero-copy `serde` deserializer that borrows from a parsed buffer), `ouroboros` generates safe self-referential structs with proc-macro magic. Reach for it only when index-based approaches don't fit.
-
-## What This Unlocks
-
-- **Zero-allocation parsing** — parse a 100MB log file and serve token slices without copying any strings.
-- **Lifetime-safe APIs** — callers get `&str` with a lifetime tied to the document, preventing use-after-free.
-- **Arc-based sharing** — distribute parsed tokens across threads or into async tasks without lifetime constraints.
+The GC ensures the `raw` string stays alive as long as any view exists.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Self-referential struct | Natural (GC, everything is a ref) | Forbidden without `Pin`/`unsafe`/`ouroboros` |
-| Zero-copy sub-string | `Bytes.sub` (O(1) but lib-specific) | `&source[s..e]` — zero-copy, lifetime-checked |
-| Shared ownership | Natural (GC shares freely) | `Arc<T>` — reference counted, `clone` is cheap |
-| Span indexing pattern | Less necessary (no borrow checker) | Idiomatic workaround for self-referential structs |
+1. **Lifetime enforcement**: Rust's type system ensures `rent(&self) -> &str` cannot outlive `self`; OCaml's GC achieves the same guarantee dynamically.
+2. **Lazy parse**: Rust's lazy parse stores `Vec<usize>` indices, computing `&str` views on demand — a common pattern to avoid self-reference; OCaml stores lazy `Lazy.t` computations.
+3. **Crate ecosystem**: `ouroboros`, `self_cell`, and `yoke` provide macro-generated safe rental APIs for complex cases; OCaml has no equivalent because the problem does not exist.
+4. **Slice copying**: `rent_slice` in OCaml (`String.sub`) copies the data; Rust `&str` slices are zero-copy views into the owned `String`.
+
+## Exercises
+
+1. **CSV rental**: Implement `struct CsvRental { raw: String, row_offsets: Vec<(usize, usize)> }` where `row_offsets` stores `(start, end)` pairs; `row(&self, n: usize) -> &str` returns a zero-copy view.
+2. **Lazy parsed rental**: Add a `fields(&self, row: usize) -> Vec<&str>` method to `CsvRental` that splits the row on commas and returns field slices — all zero-copy from the owned `String`.
+3. **Parse-on-demand**: Implement a `Config` struct that stores a raw `String` and parses it into a `HashMap<String, String>` lazily using `OnceLock`, providing `get(&self, key: &str) -> Option<&str>`.

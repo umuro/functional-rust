@@ -33,3 +33,9 @@ Rust uses empty structs (`struct True;` and `struct False;`) as type-level label
 2. **Type-level logic:** OCaml reaches for GADTs or module functors for type-level AND/OR; Rust uses traits with associated types (`trait And<B> { type Output: Bool }`).
 3. **Enforcement mechanism:** OCaml hides constructors via module signatures; Rust simply doesn't define the method on the wrong type instantiation.
 4. **Safety guarantees:** Both approaches make invalid states *unrepresentable*, but Rust's error messages point directly to the missing method call, while OCaml's point to a type mismatch.
+
+## Exercises
+
+1. Implement type-level `And`, `Or`, and `Not` operations on your `True`/`False` types and write tests that verify them at compile time using trait bounds.
+2. Build a type-level natural number system (Peano encoding) that allows expressing `Succ<Succ<Zero>>` for two, and implement type-level `Add` that resolves to the correct type at compile time.
+3. Use type-level booleans to implement a permission system: define `CanRead`, `CanWrite` marker types and restrict API methods to only compile when the phantom type parameter satisfies the required capability trait.

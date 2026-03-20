@@ -2,83 +2,44 @@
 
 ---
 
-# 221: Apomorphism
+# Apomorphism — Ana that Can Short-Circuit
 
-**Difficulty:** ⭐⭐⭐  **Level:** Recursion Schemes
+## Problem Statement
 
-Anamorphism upgraded: unfold a structure but short-circuit by injecting a pre-built subtree instead of continuing.
+An anamorphism unfolds a seed step by step until the base case. But some unfolding algorithms know partway through that the rest of the structure is already built — they want to "embed" an existing structure rather than continuing to unfold. Apomorphisms extend anamorphisms with this short-circuit capability: the coalgebra can return either a new seed (continue unfolding) or an existing `Fix<F>` value (embed directly). This is the dual of a paramorphism.
 
-## The Problem This Solves
+## Learning Outcomes
 
-An anamorphism (plain unfold) builds a recursive structure step by step — at each point you return a seed for the next step. But sometimes you want to *stop early* and embed an already-built subtree instead of continuing to unfold. The classic example is inserting into a sorted list: once you find the right position, you want to splice in the entire remaining tail as-is, not re-unfold it element by element.
+- Understand apomorphisms as anamorphisms with early termination (embedding existing structures)
+- Learn how `Either<Fix<F>, S>` in the coalgebra return type enables short-circuiting
+- See list insertion as the canonical example: insert an element, then embed the tail
+- Understand the duality: `apo` is to `ana` as `para` is to `cata`
 
-With plain `ana`, there's no way to say "stop here and use this pre-existing structure." You'd have to keep unfolding until you reach the end even when you already have the rest of the list ready. This is wasteful and — more importantly — loses the intent of the algorithm.
+## Rust Application
 
-Apomorphism solves this with an `Either` type in the coalgebra's output: return `Right(new_seed)` to continue unfolding as normal, or return `Left(existing_fix)` to short-circuit and embed a pre-built subtree immediately.
+`apo<S>(coalg: impl Fn(S) -> ListF<Either<FixList, S>>) -> impl Fn(S) -> FixList`. The coalgebra returns `Either<FixList, S>` for children: `Left(existing_list)` embeds the existing structure directly, `Right(new_seed)` continues unfolding. Insertion into a sorted list: `insert(x, list)` — if `x <= head`, return `ConsF(x, Left(list))` (prepend `x` and embed the rest); if `x > head`, return `ConsF(head, Right((x, tail)))` (keep `head`, continue inserting into tail).
 
-## The Intuition
+## OCaml Approach
 
-Think of building a list like laying bricks one by one. Anamorphism forces you to lay each brick from your raw materials. Apomorphism lets you grab a pre-assembled wall section (an existing `FixList`) and slot it in directly.
-
-When inserting `3` into the sorted list `[1, 2, 4, 5]`:
-- At `1`: `3 > 1`, so continue — `Right([2, 4, 5])` (keep unfolding)
-- At `2`: `3 > 2`, so continue — `Right([4, 5])` (keep unfolding)
-- At `4`: `3 ≤ 4`, so we found the position — output `3` and then inject `[4, 5]` directly as `Left([4, 5])`
-
-Without short-circuit, you'd have to "unfold" `[4, 5]` element by element even though you already have it. With apomorphism, you say "stop — here's the rest."
-
-`Either::Left(fix)` = "done, embed this"  
-`Either::Right(seed)` = "continue from this seed"
-
-## How It Works in Rust
-
-```rust
-// Either: Left = pre-built Fix (stop), Right = seed (continue)
-enum Either<L, R> { Left(L), Right(R) }
-
-// apo: coalgebra returns F<Either<Fix, Seed>>
-fn apo<S>(coalg: &dyn Fn(S) -> ListF<Either<FixList, S>>, seed: S) -> FixList {
-    FixList(Box::new(coalg(seed).map(|either| match either {
-        Either::Left(fix) => fix,          // short-circuit: use pre-built subtree
-        Either::Right(s) => apo(coalg, s), // continue unfolding from new seed
-    })))
-}
+OCaml's apomorphism:
+```ocaml
+let rec apo coalg seed =
+  Fix (map_list_f (function
+    | Left existing -> existing
+    | Right new_seed -> apo coalg new_seed)
+  (coalg seed))
 ```
-
-Insert into sorted list:
-```rust
-fn insert(x: i64, lst: FixList) -> FixList {
-    apo(&|fl: FixList| match fl.0.as_ref() {
-        ListF::NilF =>
-            // Reached the end: insert x before the empty list
-            ListF::ConsF(x, Either::Left(nil())),
-        ListF::ConsF(y, rest) => {
-            if x <= *y {
-                // Found position: output x, then inject the rest unchanged
-                ListF::ConsF(x, Either::Left(fl.clone()))  // ← short-circuit here
-            } else {
-                // Keep going: output y, continue from rest
-                ListF::ConsF(*y, Either::Right(rest.clone())) // ← continue
-            }
-        }
-    }, lst)
-}
-```
-
-The `Either::Left(fl.clone())` is the key: instead of re-unfolding the tail, we hand back the existing `FixList` directly.
-
-## What This Unlocks
-
-- **Sorted insertion** — the prototypical use: insert one element without disturbing the already-sorted tail.
-- **`take` / `replace-first`** — any operation that wants to stop after a condition is met and preserve the rest structurally.
-- **Efficient list transformations** — avoid redundant unfolding when a suffix is already computed; share structure explicitly.
+The `Either` (called `result` or a custom type in OCaml) is the mechanism for short-circuiting. OCaml's pattern matching on `Left`/`Right` is direct and readable.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Either type | Custom `('a, 'b) either` sum type | Custom `Either<L, R>` enum |
-| Short-circuit syntax | `Left fix` (shared reference) | `Left(fix.clone())` (clone required) |
-| Coalgebra output | `'f (fix either seed)` | `ListF<Either<FixList, S>>` |
-| vs anamorphism | No early exit possible | `Either::Left` = early exit |
-| Memory model | GC shares the injected subtree | Clone at injection point |
+1. **Short-circuit power**: `apo` terminates early by embedding existing structures; `ana` must unfold everything from scratch — `apo` is strictly more expressive.
+2. **Duality with para**: `apo : Seed -> Fix` mirrors `para : Fix -> Result` dually; the "embed" vs. "expose" distinction is the symmetric difference.
+3. **Practical use**: Sorted list insertion, search tree insertion with path copying, and "insert and replace" operations in functional structures are natural apomorphisms.
+4. **Either in coalgebra**: The `Either<Fix<F>, S>` return type is the key innovation; `Right(seed)` continues, `Left(fix_value)` short-circuits.
+
+## Exercises
+
+1. Implement sorted insertion for a `Vec<i64>` using `apo` and verify the result is sorted.
+2. Write `apo_take(n, seed)` that generates at most n elements from an infinite coalgebra by short-circuiting after n steps.
+3. Implement `replace_first(pred, new_val, list)` using `apo`: replace the first element satisfying `pred`, then embed the rest unchanged.

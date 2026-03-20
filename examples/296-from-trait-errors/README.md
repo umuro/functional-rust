@@ -4,69 +4,64 @@
 
 # 296: From Trait for Error Conversion
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Make `?` automatically convert between error types — no manual `map_err` needed.
+Functions calling multiple libraries encounter multiple error types. Unifying them into a single application error type with `match` on every `?` usage is boilerplate. The `From<SourceError>` trait enables automatic conversion: when `impl From<ParseIntError> for AppError` is defined, the `?` operator automatically calls `AppError::from(e)` when propagating a `ParseIntError`. This is how Rust achieves zero-boilerplate error type unification.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You're calling three functions that each return a different error type: `ParseIntError`, `io::Error`, and your own `DbError`. To propagate them all with `?`, you'd normally write a `map_err` at every call site — wrapping each error into your unified type by hand. Ten call sites means ten `map_err` chains.
+- Understand that `impl From<E> for AppError` enables automatic `?` conversion from `E`
+- Implement `From` for each error type a function might encounter
+- Recognize the `?` desugaring as `Err(AppError::from(e))`
+- Use `From` to build layered error hierarchies without explicit mapping at each call site
 
-The `From` trait eliminates all of that. When you implement `From<ParseIntError> for AppError`, the `?` operator sees it and calls the conversion automatically. Your call sites stay clean.
+## Rust Application
 
-This is how the Rust standard library is designed to be used. Any real application has a unified error enum at the top and `From` impls for each source error type. Once that boilerplate exists, every function in the module can use `?` freely regardless of which subsystem it touches.
-
-## The Intuition
-
-`impl From<SpecificError> for MyError` teaches `?` how to convert that error type — automatically, at every call site.
-
-## How It Works in Rust
+Each `From` implementation unlocks one error source for `?` in functions returning `Result<_, AppError>`:
 
 ```rust
-use std::num::ParseIntError;
-
 #[derive(Debug)]
-enum AppError {
+pub enum AppError {
     Parse(ParseIntError),
     Logic(String),
 }
 
-// Step 1: impl From for each source error type
 impl From<ParseIntError> for AppError {
-    fn from(e: ParseIntError) -> Self {
-        AppError::Parse(e)  // wrap it in the right variant
-    }
+    fn from(e: ParseIntError) -> Self { AppError::Parse(e) }
 }
 
-// Step 2: ? calls From::from() automatically when the types don't match
-fn process(input: &str) -> Result<i32, AppError> {
-    let n: i32 = input.parse()?;  // ParseIntError -> AppError via From, no map_err needed
-    if n <= 0 { return Err(AppError::Logic(format!("{} is not positive", n))); }
+// Now ? works automatically:
+fn process(s: &str) -> Result<i32, AppError> {
+    let n: i32 = s.parse()?;  // ParseIntError -> AppError::Parse automatically
+    if n < 0 { return Err(AppError::Logic("negative".to_string())); }
     Ok(n * 2)
 }
 ```
 
-The `?` operator desugars to something like:
-```rust
-match result {
-    Ok(v) => v,
-    Err(e) => return Err(AppError::from(e)),  // calls your From impl
-}
+## OCaml Approach
+
+OCaml does not have automatic error conversion. Each call site must explicitly wrap errors:
+
+```ocaml
+let process s =
+  match int_of_string_opt s with
+  | None -> Error (`Parse "not a number")
+  | Some n ->
+    if n < 0 then Error (`Logic "negative")
+    else Ok (n * 2)
 ```
 
-The compiler selects the correct `From` impl based on the error type at each `?` site.
-
-## What This Unlocks
-
-- **Clean function bodies** — no `map_err` noise; every `?` just works, regardless of the source error
-- **Unified error type for a module** — one enum captures all failure modes; callers match on variants
-- **Composable pipelines** — mix calls to the filesystem, parser, and database in one function without manual wrapping
+Libraries like `Error_monad` (from Tezos) provide richer error composition, but there is no standard mechanism for automatic conversion.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Error conversion | `Result.map_error` at every call site | `impl From<E> for MyErr` once, then `?` everywhere |
-| How it triggers | Explicit, manual | Implicit — `?` calls `From::from()` |
-| Type inference | N/A | Compiler selects the right `From` impl per call site |
-| Boilerplate location | Scattered at call sites | Centralized in one `From` impl |
+1. **Automatic conversion**: Rust's `?` calls `From::from()` at every error propagation point — zero boilerplate after the `impl From`; OCaml requires manual wrapping.
+2. **Type hierarchy**: `From` implementations create a directed conversion graph; adding a new library error requires one new `impl From`.
+3. **Conflict prevention**: Only one `From<E>` impl per target type is allowed — prevents ambiguous conversions.
+4. **`Into` derived**: `impl From<A> for B` automatically provides `impl Into<B> for A` — both directions are covered.
+
+## Exercises
+
+1. Define an `AppError` with four variants and implement `From` for each of: `std::io::Error`, `std::num::ParseIntError`, `serde_json::Error` (simulated), and `String`.
+2. Show that without a `From` impl, the `?` operator fails to compile, then add the impl and verify it compiles.
+3. Implement a function that calls three different libraries and propagates all their errors through a single `AppError` using `?` without any explicit `map_err`.

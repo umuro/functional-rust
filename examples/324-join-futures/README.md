@@ -4,50 +4,57 @@
 
 # 324: Running Futures Concurrently with join!
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-`join!` runs multiple futures at the same time and waits for *all* of them — total time is `max(individual)`, not their sum.
+Sequential async execution wastes time when multiple operations are independent: fetching user data and fetching their posts can happen simultaneously. `join!` (or `tokio::join!`) starts all futures concurrently and waits for all to complete. The total time equals the slowest task, not the sum of all tasks. This is the fundamental tool for parallelizing independent I/O operations in async Rust.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You have three database queries to run, each taking 50ms. Done sequentially: 150ms. Done with `join!`: 50ms. That's a 3× speedup for free — no architecture changes, no callback pyramids, just telling Rust "these can run at the same time."
+- Understand that `join!` starts all futures simultaneously and waits for all to complete
+- Distinguish `join!` (wait for all) from `select!` (wait for first)
+- Recognize that total time is `max(task_times)` not `sum(task_times)` with `join!`
+- Apply `join!` to fetch independent data sources concurrently
 
-Without `join!`, the alternative is spawning threads (expensive) or writing manual synchronization with channels. `join!` gives you concurrency for independent work with zero boilerplate.
+## Rust Application
 
-## The Intuition
-
-`join!` is like Python's `asyncio.gather()` or JavaScript's `Promise.all()` — start everything, wait for everything.
-
-```
-Sequential:  [task1: 50ms] → [task2: 30ms] → [task3: 10ms] = 90ms total
-join!:       [task1: 50ms]
-             [task2: 30ms]  (all running simultaneously)
-             [task3: 10ms]
-             = 50ms total (the slowest one)
-```
-
-## How It Works in Rust
+Thread-based simulation demonstrates the concept before a Tokio runtime is available:
 
 ```rust
-fn join_all<T: Send + 'static>(tasks: Vec<Box<dyn FnOnce()->T+Send>>) -> Vec<T> {
-    // Phase 1: spawn everything (all start running now)
-    let handles: Vec<_> = tasks.into_iter()
-        .map(|f| thread::spawn(f))
-        .collect();
-
-    // Phase 2: collect results (wait for each to finish)
-    handles.into_iter()
-        .map(|h| h.join().unwrap())
-        .collect()
+// Phase 1: spawn all tasks simultaneously (all start now)
+pub fn join_all<T, F>(tasks: Vec<F>) -> Vec<T>
+where
+    T: Send + 'static,
+    F: FnOnce() -> T + Send + 'static,
+{
+    let handles: Vec<_> = tasks.into_iter().map(|f| thread::spawn(f)).collect();
+    handles.into_iter().map(|h| h.join().unwrap()).collect()
 }
+// Total time: max(individual times), not sum
 ```
 
-The two-phase pattern (spawn all, then collect) is important. If you did `spawn(f).join()` in a single loop, you'd be sequential again.
+In Tokio: `let (a, b) = tokio::join!(fetch_a(), fetch_b())` — both futures polled concurrently.
+
+## OCaml Approach
+
+OCaml's `Lwt.both` and `Lwt.all` provide equivalent concurrent execution:
+
+```ocaml
+(* Wait for both: total time = max(a, b) *)
+let* (a, b) = Lwt.both (fetch_a ()) (fetch_b ())
+
+(* Wait for all: Lwt.all returns list of results *)
+let* results = Lwt.all [fetch_a (); fetch_b (); fetch_c ()]
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Run all concurrently | `Lwt.join_all [p1; p2; p3]` | `join!(f1, f2, f3)` or `futures::join_all` |
-| Collect results | `list of 'a Lwt.t` → `'a list Lwt.t` | tuple from `join!` or `Vec<T>` from `join_all` |
-| Time complexity | max of all | max of all |
+1. **Macro vs function**: Rust's `tokio::join!` is a macro enabling heterogeneous future types; `futures::join_all()` is a function for homogeneous types.
+2. **Error propagation**: `try_join!` fails fast if any future returns `Err`; `join!` returns a tuple including errors.
+3. **Structured concurrency**: `join!` enforces a structured scope — all spawned work completes before proceeding; `spawn()` allows detached tasks.
+4. **vs parallel**: `join!` is concurrent (single thread, cooperative), not necessarily parallel; `rayon::join!` is parallel (multi-thread).
+
+## Exercises
+
+1. Time the difference between sequential and `join_all` concurrent execution of 5 tasks with varying delays — measure wall-clock time.
+2. Implement a `fetch_all(urls: Vec<Url>) -> Vec<Result<Response, Error>>` that fetches all URLs concurrently using `join_all`.
+3. Show that `join!` with 3 tasks of 100ms, 200ms, and 300ms takes ~300ms total, not ~600ms as sequential would.

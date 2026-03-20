@@ -4,64 +4,37 @@
 
 # 441: Thread Basics — Spawn and Join
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Launch OS threads with `std::thread::spawn`, collect results with `JoinHandle::join`, and catch panics without crashing the process.
+Modern CPUs have multiple cores that sit idle when code runs single-threaded. `std::thread::spawn` creates OS threads that run truly in parallel on separate cores. Unlike async tasks (which are lightweight but still single-core unless you use an async runtime with a thread pool), OS threads run independently and can leverage all available cores for CPU-bound work. The challenge is safely sharing data between threads — Rust's type system enforces this at compile time via `Send` and `Sync` bounds.
 
-## The Problem This Solves
+Thread spawning is the foundation of parallel computing in Rust: used in build tools, data processing pipelines, game engines, scientific computing, and any CPU-bound workload.
 
-Without threads, your program uses one CPU core. A 4-core machine sitting at 25% utilisation while your computation churns through a list is a missed opportunity. The classic fix — "just use a thread" — comes with a trap: data races. Two threads writing the same memory without coordination produces corrupted results that are silent and timing-dependent.
+## Learning Outcomes
 
-In Python or Java you reach for a lock and hope you remember to release it. In Go you get goroutines and channels but the race detector is optional and ships separately. Rust takes a different approach: if your code doesn't statically guarantee that no two threads touch the same data unsafely, **it doesn't compile**. Thread safety is a property proved at compile time, not checked at runtime.
+- Understand how `thread::spawn` creates OS threads with `move` closures
+- Learn how `JoinHandle::join()` waits for thread completion and propagates panics
+- See how `T: Send + 'static` bounds enforce safe thread-boundary crossing
+- Understand the parallel_compute pattern: map work items to threads, collect results
+- Learn how thread panics are handled via `Result<T, Box<dyn Any + Send>>`
 
-`JoinHandle` also gives you panic containment for free. A child thread panic does not crash the parent — it becomes an `Err` on `.join()`. Your process stays alive and can report the failure cleanly.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `parallel_compute` maps each item to a thread using `thread::spawn(move || f(item))`. The `F: Clone` bound enables cloning the function for each thread. All threads are joined in order, collecting results into a `Vec`. The `T: Send + 'static` bounds on the function signature are compile-time guarantees that the data can safely cross thread boundaries. `spawn_and_join` shows the simpler single-thread pattern.
 
-`thread::spawn` maps directly to an OS thread — heavier than Go goroutines, lighter than processes. The closure captures its environment by value (`move`) so the thread owns everything it needs. The `JoinHandle` is your receipt: call `.join()` to wait for the thread and get its return value back. Drop the handle without joining and the thread keeps running detached.
+## OCaml Approach
 
-In Python you'd write `t = threading.Thread(target=f); t.start(); t.join()`. The Rust version is similar in shape but the compiler statically verifies the captured data is safe to send to another thread.
-
-## How It Works in Rust
-
-```rust
-use std::thread;
-
-// spawn returns a JoinHandle<T> where T is the closure's return type
-let handles: Vec<_> = (0..4u32).map(|i| {
-    thread::spawn(move || {   // move: closure takes ownership of i
-        i * i                 // return value — available via .join()
-    })
-}).collect();
-
-// join blocks until the thread finishes; returns Result<T, Box<dyn Any>>
-let results: Vec<u32> = handles
-    .into_iter()
-    .map(|h| h.join().unwrap())
-    .collect();
-
-// Panic in a child thread → Err, not a process crash
-let h = thread::spawn(|| -> i32 { panic!("boom") });
-match h.join() {
-    Ok(v)  => println!("got {}", v),
-    Err(_) => println!("child panicked — caught safely"),
-}
-```
-
-`move` before the closure is required whenever you capture variables — the thread might outlive the current stack frame. The compiler rejects non-`move` captures that would leave dangling references.
-
-## What This Unlocks
-
-- **Parallel computation** — split a workload into N chunks, spawn N threads, join and merge results.
-- **Background tasks** — spawn a thread to handle I/O or logging while the main thread continues.
-- **Panic isolation** — run untrusted or unstable code in a thread and handle failures gracefully without aborting the process.
+OCaml 4.x uses `Thread.create f arg` to spawn threads, but the GIL limits true parallelism to I/O-bound work. OCaml 5.x introduces `Domain.spawn` for true parallel domains without GIL. `Thread.join t` waits for completion. Unlike Rust, OCaml has no compile-time `Send` checking — any value can cross thread boundaries, and data races are possible in OCaml 5.x without explicit synchronization.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Spawn | `Thread.create f arg` | `thread::spawn(move \|\| { ... })` |
-| Join | `Thread.join handle` | `handle.join().unwrap()` |
-| Return value | unit only | any `Send + 'static` type |
-| Panic safety | uncaught exception crashes domain | `Err(Box<dyn Any>)` returned to joiner |
-| Data capture | GC handles lifetimes | `move` closure — compiler enforces ownership |
+1. **GIL**: OCaml 4.x threads share a GIL preventing parallel execution; Rust threads run truly in parallel for both CPU and I/O bound work.
+2. **Type safety**: Rust's `Send + 'static` bounds prevent data races at compile time; OCaml threads can share any value without type-system enforcement.
+3. **Panic handling**: Rust's `JoinHandle::join()` returns `Result` — panics are caught and returned; OCaml's `Thread.create` propagates exceptions differently.
+4. **Performance**: Rust OS threads match C pthreads in performance; OCaml 5.x domains are slightly heavier than pthreads.
+
+## Exercises
+
+1. **Parallel sort**: Implement parallel merge sort using `thread::spawn`. Split the array in half, sort each half in a separate thread, then merge. Verify it produces the same result as `sort()` and benchmark the speedup on 10M elements.
+2. **Thread pool manual**: Without using a crate, build a simple `ThreadPool` with N threads that processes jobs from a `Arc<Mutex<VecDeque<Box<dyn FnOnce() + Send>>>>`. Verify it processes all jobs.
+3. **Panic recovery**: Spawn 10 threads where some randomly panic. Use `JoinHandle::join()` to collect both successful results and panics, returning a `Vec<Result<T, String>>` where errors show the panic message.

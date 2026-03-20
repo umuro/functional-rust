@@ -2,71 +2,106 @@
 
 ---
 
-# 361: Rope for Efficient String Operations
+# 361: Rope Data Structure
 
-**Difficulty:** 4  **Level:** Expert
+## Problem Statement
 
-A tree-based string representation enabling O(1) concatenation and O(log n) splits — without copying.
+Concatenating strings with `String::push_str` or `+` is O(n) — it copies all bytes each time. For a text editor that concatenates hundreds of small edits, this becomes O(n²) across all operations. A rope (Boehm, Atkinson & Plass, 1995) solves this with a binary tree of string fragments: concatenation is O(1) (just create a new tree node), and converting to a flat string is O(n) (tree traversal). Text editors (VS Code's Monaco uses ropes), version control systems, and collaborative editing frameworks use ropes to handle large documents with frequent insertions and deletions efficiently.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Strings are immutable byte arrays in most languages. Concatenating two strings means allocating a new buffer and copying both inputs — `O(n)`. For small strings this is fine. For text editors handling megabytes of source code, this is catastrophic. Every keystroke, every undo, every paste would trigger a massive copy.
+- Implement a `Rope` enum with `Leaf(String)` and `Node { left, right, length }` variants
+- Achieve O(1) concatenation by creating a new `Node` wrapping two sub-ropes
+- Cache the `length` in each `Node` to avoid recomputing it on every query
+- Flatten a rope to `String` with a recursive tree traversal in O(n)
+- Implement O(log n) index access via `char_at` by comparing index to subtree sizes
+- Understand the tradeoff: constant factors favor `String` for small texts
 
-Real text editors (Vim, VS Code, Emacs) use specialized data structures to avoid this. The rope is the classic solution. A rope represents a string as a binary tree of string slices. Concatenation just creates a new root node pointing to both trees — no copying. Splitting walks the tree and restructures it — `O(log n)`. Index lookup traverses down the tree by accumulated length — also `O(log n)`.
-
-The tradeoff: random character access is slower than a flat string (`O(log n)` vs `O(1)`), and memory overhead is higher. But for workloads dominated by insertions, deletions, and concatenations of large strings, ropes win decisively.
-
-## The Intuition
-
-Think of a rope as a linked list of string chunks, but organized as a balanced binary tree for efficient splitting and indexing. Each leaf holds a string slice. Each internal node holds the total length of its left subtree — enough information to navigate to any character position in `O(log n)` steps.
-
-When you concatenate two ropes, you create a new root. When you split, you walk down and restructure. The key insight: you never modify existing nodes, so sharing subtrees between versions is safe — this is how persistent text buffers work.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-#[derive(Clone)]
-enum Rope {
+#[derive(Debug, Clone)]
+pub enum Rope {
     Leaf(String),
-    Node {
-        left: Box<Rope>,
-        right: Box<Rope>,
-        len: usize,  // total length for navigation
-    },
+    Node { left: Box<Rope>, right: Box<Rope>, length: usize },
 }
 
 impl Rope {
-    fn concat(left: Rope, right: Rope) -> Rope {
-        let len = left.len() + right.len();
-        Rope::Node {
-            left: Box::new(left),
-            right: Box::new(right),
-            len,
+    pub fn leaf(s: impl Into<String>) -> Self {
+        Self::Leaf(s.into())
+    }
+
+    pub fn length(&self) -> usize {
+        match self {
+            Self::Leaf(s) => s.len(),
+            Self::Node { length, .. } => *length,
         }
     }
 
-    fn len(&self) -> usize {
+    pub fn concat(left: Rope, right: Rope) -> Rope {
+        if left.length() == 0 { return right; }
+        if right.length() == 0 { return left; }
+        let length = left.length() + right.length();
+        Rope::Node {
+            left: Box::new(left),
+            right: Box::new(right),
+            length, // cached — O(1) length query
+        }
+    }
+
+    pub fn to_string(&self) -> String {
         match self {
-            Rope::Leaf(s) => s.len(),
-            Rope::Node { len, .. } => *len,
+            Self::Leaf(s) => s.clone(),
+            Self::Node { left, right, .. } => {
+                let mut result = left.to_string();
+                result.push_str(&right.to_string());
+                result
+            }
         }
     }
 }
 ```
 
-In practice, use the `ropey` crate for a production-quality implementation with Unicode support and rebalancing.
+The `length` field in `Node` is crucial — without it, `length()` would be O(n) (full tree traversal). With it, it's O(1) since the value was precomputed at construction. The `Box` indirection is required because `Rope` would otherwise have infinite size (recursive type).
 
-## What This Unlocks
+## OCaml Approach
 
-- **Text editors** — efficient insert/delete at arbitrary positions without copying the whole buffer.
-- **Persistent strings** — share subtrees between versions; structural sharing for undo/redo.
-- **Diff engines** — split and merge large texts efficiently during patch application.
+OCaml's algebraic types map directly to this structure:
+
+```ocaml
+type rope =
+  | Leaf of string
+  | Node of { left: rope; right: rope; length: int }
+
+let leaf s = Leaf s
+
+let length = function
+  | Leaf s -> String.length s
+  | Node { length; _ } -> length
+
+let concat left right =
+  let length = length left + length right in
+  Node { left; right; length }
+
+let rec to_string = function
+  | Leaf s -> s
+  | Node { left; right; _ } -> to_string left ^ to_string right
+```
+
+OCaml's pattern matching and algebraic types make rope implementation especially clean. The structure is identical to Rust's enum — both languages excel at recursive algebraic data type definitions. Persistent (immutable) ropes are natural in OCaml; in Rust you need explicit `Clone` or use `Rc`/`Arc`.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| String concat | `^` operator, `O(n)` copy | `+` operator (`O(n)`), or `Rope::concat` (`O(1)`) |
-| Persistent string | Immutable strings, but still copies | `Rope` with `Arc` subtree sharing |
-| Text buffer | `Buffer.t` (gap buffer in editors) | `ropey::Rope` (tree-based) |
-| Split/slice | `String.sub`, `O(n)` copy | `Rope::split` `O(log n)`, no copy |
+| Aspect | Rust `Rope` enum | OCaml `rope` type |
+|--------|----------------|-------------------|
+| Recursive box | Explicit `Box<Rope>` | Automatic (GC-managed) |
+| Immutability | `&self` methods, `Clone` for copies | Immutable by default |
+| Pattern matching | `match` on enum | `match` on variant |
+| Memory | Heap allocation per node | Heap allocation per node (GC) |
+| Production library | `ropey` crate | `Rope` in `containers` library |
+
+## Exercises
+
+1. **char_at**: Implement `char_at(&self, index: usize) -> Option<char>` that navigates the tree: if `index < left.length()`, recurse left; else recurse right with `index - left.length()`.
+2. **Rebalancing**: After many concatenations, the tree may be unbalanced (skewed right if always appending). Implement `rebalance(rope) -> Rope` using `to_string().chars().collect()` plus a divide-and-conquer tree builder.
+3. **Insert at position**: Implement `insert(rope, pos, text) -> Rope` by splitting the rope at `pos` (two halves) and concatenating `left + leaf(text) + right` — no copying of original content.

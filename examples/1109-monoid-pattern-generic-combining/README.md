@@ -29,3 +29,9 @@ Rust uses a **trait** (`Monoid`) in place of the module type. `concat_all` is ge
 2. **Multiple instances per type:** OCaml freely permits `module Sum` and `module Product` over the same `int`; Rust requires distinct newtypes (`Sum(i32)` vs `Product(i32)`) because a type can have at most one implementation of any given trait.
 3. **Fold vs recursion:** `List.fold_left` is idiomatic OCaml; Rust's `Iterator::fold` is its exact counterpart, but works over any `IntoIterator`, not only lists.
 4. **Ownership in `combine`:** OCaml's `combine : t -> t -> t` passes by value naturally; Rust's `fn combine(self, other: Self) -> Self` expresses the same ownership semantics — both arguments are consumed.
+
+## Exercises
+
+1. Implement a `Max<T: Ord>` monoid (identity = minimum possible value) and a `Min<T: Ord>` monoid, and use them with `concat_all` to find extremes in a list.
+2. Write a `Stats` monoid that accumulates count, sum, and sum-of-squares in one pass so that `concat_all` over a list of single-element `Stats` values yields mean and variance.
+3. Demonstrate monoid homomorphisms: split a large list in half, compute `concat_all` on each half in parallel using `rayon`, then combine the two partial results — and prove the answer equals running `concat_all` on the full list.

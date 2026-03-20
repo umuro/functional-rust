@@ -4,54 +4,65 @@
 
 # 322: The Future Trait and Poll
 
-**Difficulty:** 4  **Level:** Expert
+## Problem Statement
 
-A Future is just one method: `poll`. The runtime calls it. If the work is done, return `Ready`. If not, return `Pending` and arrange to be woken later.
+The `async`/`.await` syntax in Rust is syntactic sugar over the `Future` trait. A `Future` is a state machine with a single `poll()` method that either returns `Poll::Ready(output)` or `Poll::Pending`. Understanding the underlying `Future` trait is essential for implementing custom async primitives, debugging async code, and understanding why `.await` cannot be used in non-async contexts. This is the foundation that all async Rust is built on.
 
-## The Problem This Solves
+## Learning Outcomes
 
-When you write `async fn` and `.await`, the compiler generates state machine code for you. But what *is* a Future, actually? Understanding the `Future` trait answers this — and it matters when you need to implement your own async primitive, integrate non-async code into an async runtime, or debug why a future is never waking up.
+- Understand `Future::poll()` as returning `Poll::Ready(T)` or `Poll::Pending`
+- Implement a custom `Future` manually to understand the state machine model
+- Recognize that `async fn` generates a `Future` impl automatically
+- Understand the role of `Waker` in signaling the executor to re-poll
 
-Without understanding `poll`, async code feels like magic. You don't know why `await` suspends, how the runtime knows when to resume, or what the `Waker` is for. This leads to subtle bugs: futures that never wake, busy-polling that wastes CPU, or deadlocks from holding locks across `.await`.
+## Rust Application
 
-## The Intuition
-
-Imagine a restaurant. You order food (create a future). The waiter doesn't stand next to the kitchen watching — they go serve other tables. The kitchen calls the waiter when the order is ready (the `Waker`). The waiter comes back and delivers (returns `Poll::Ready`).
-
-The `poll` method is: "Is the food ready?" The answer is either `Ready(food)` or `Pending` (with a promise to call you when it is). The runtime keeps a list of pending tasks and polls them when they signal readiness.
-
-```
-poll() → Poll::Ready(value)   ← work done, here's the result
-poll() → Poll::Pending        ← not done yet, we'll wake you when ready
-```
-
-## How It Works in Rust
+The `DelayedValue` future demonstrates manual `Future` implementation:
 
 ```rust
+pub struct DelayedValue {
+    value: i32,
+    remaining_polls: u32,
+}
+
 impl Future for DelayedValue {
     type Output = i32;
 
-    fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
-        if self.remaining == 0 {
-            Poll::Ready(self.value)         // work is done
+    fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<i32> {
+        if self.remaining_polls == 0 {
+            Poll::Ready(self.value)
         } else {
-            self.remaining -= 1;
-            cx.waker().wake_by_ref();       // tell the runtime: try again soon
-            Poll::Pending                   // not ready yet
+            self.remaining_polls -= 1;
+            cx.waker().wake_by_ref();  // Tell executor to re-poll
+            Poll::Pending
         }
     }
 }
 ```
 
-`Pin<&mut Self>` prevents the future from being moved in memory while it's being polled — important for self-referential state machines.
+## OCaml Approach
 
-`cx.waker().wake_by_ref()` is how you tell the runtime "I'll be ready soon, poll me again."
+OCaml's `Lwt` uses continuations (callbacks) rather than a poll-based model. A Lwt "promise" is fulfilled when a callback is registered:
+
+```ocaml
+(* Lwt: promise-based rather than poll-based *)
+let delayed_value n =
+  let p, r = Lwt.wait () in
+  Lwt.on_success (Lwt_unix.sleep 0.1) (fun () -> Lwt.wakeup r n);
+  p
+```
+
+OCaml 5's `Effect` system provides even lower-level primitives for custom async runtimes.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Core async abstraction | `Lwt.t` (promise/thread) | `Future` trait with `poll` |
-| State transition | implicit in Lwt machinery | explicit `Poll::Ready` / `Poll::Pending` |
-| Wakeup mechanism | callback registered on promise | `Waker::wake()` via `Context` |
-| Pinning | not needed | `Pin<&mut Self>` prevents moves |
+1. **Poll vs callback**: Rust's `Future` is pull-based (executor calls `poll`); OCaml's `Lwt` is push-based (completion triggers callbacks).
+2. **Zero-cost**: Rust's state machine generation produces zero-allocation futures (often); Lwt uses heap-allocated closures for continuations.
+3. **Waker contract**: Rust requires the future to call `waker().wake()` when it can make progress — without this, the executor won't re-poll.
+4. **Composability**: Both models compose well for concurrent execution; Rust's model allows more compiler optimization due to its static nature.
+
+## Exercises
+
+1. Implement a `ReadyFuture<T>` that always returns `Poll::Ready(value)` immediately without ever returning `Pending`.
+2. Implement a `CountdownFuture` that returns `Pending` exactly N times before returning `Poll::Ready(())`.
+3. Write a simple single-threaded executor that drives a `Future` to completion by calling `poll` repeatedly until `Ready`.

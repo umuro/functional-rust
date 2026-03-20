@@ -2,95 +2,42 @@
 
 ---
 
-# 223: Zygomorphism
+# Zygomorphism — Two Mutually Dependent Folds
 
-**Difficulty:** ⭐⭐⭐  **Level:** Recursion Schemes
+## Problem Statement
 
-Run two fold algebras simultaneously in one pass, where the main algebra can see both its own results and the helper algebra's results at each step.
+Sometimes two fold operations are interdependent: "compute the average" requires both the sum and the count simultaneously. Running two separate catamorphisms would traverse the structure twice. A zygomorphism runs two algebras in a single pass: a "helper" algebra computes auxiliary data, and the "main" algebra uses that auxiliary data alongside the recursive results. Named after the Greek for "yoke," it couples two folds together.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Sometimes you need two things from one fold, and they're not independent — one depends on the other. Computing the *average* of a list in one pass requires both the sum and the count. But if you write two separate folds, you traverse the structure twice. And if you just pair up the results with a plain fold, the two computations can't see each other's intermediate values.
+- Understand zygomorphisms as paired catamorphisms sharing one traversal
+- Learn how the helper algebra provides auxiliary data to the main algebra
+- See "average" as a canonical example: sum and count computed together
+- Understand the performance benefit: one traversal instead of two
 
-Zygomorphism solves this: run a *helper* fold and a *main* fold simultaneously. The helper runs independently. The main fold sees its own accumulated values **and** the helper's values at every node. They share one traversal, and the main algebra gets the richer information it needs.
+## Rust Application
 
-The name comes from Greek *zygo* (yoke) — two computations yoked together, sharing the burden of a single traversal.
+`zygo<A, B>(helper: impl Fn(ExprF<A>) -> A, main: impl Fn(ExprF<(A, B)>) -> B) -> impl Fn(FixExpr) -> B`. The `helper` algebra computes auxiliary data (node count, depth, size). The `main` algebra receives `ExprF<(A, B)>` — pairs of helper result and recursive main result. Average: `helper` computes `(sum, count)` pairs; `main` divides sum by count at the top. The traversal runs once; both algebras execute at each node.
 
-## The Intuition
+## OCaml Approach
 
-Picture a spreadsheet with two computed columns. Column B uses only the raw data. Column A uses both the raw data and column B's values. Zygomorphism computes both columns in one left-to-right pass.
-
-Classic example: pretty-printing an expression tree with correct precedence. The *helper* computes the numeric value (or precedence level) of each subexpression. The *main* printer uses those values to decide whether to add parentheses. Without zygomorphism, you'd traverse twice or thread awkward state.
-
-Another example: safety-checking a calculation. The helper evaluates the expression to get actual numbers. The main checker looks at those numbers to decide if any division-by-zero risk exists. The helper's intermediate evaluations guide the main checker's decisions.
-
-**Algebra shapes:**
-- Helper: `ExprF<B> -> B` — sees only helper results below it
-- Main: `ExprF<(A, B)> -> A` — sees (main_result, helper_result) pairs below it
-
-## How It Works in Rust
-
-```rust
-// zygo: compute (main_result, helper_result) simultaneously
-fn zygo_both<A: Clone, B: Clone>(
-    helper: &dyn Fn(ExprF<B>) -> B,      // independent helper fold
-    main:   &dyn Fn(ExprF<(A, B)>) -> A, // main fold sees both
-    fix: &Fix,
-) -> (A, B) {
-    // For each child: recurse to get (A, B) pair
-    let paired: ExprF<(A, B)> = fix.0.map_ref(|child| zygo_both(helper, main, child));
-
-    // Extract only B values for the helper
-    let b_layer = paired.map_ref(|(_, b)| b.clone());
-
-    // Run both algebras at this node
-    let a = main(paired.clone());   // main sees (A, B) pairs
-    let b = helper(b_layer);        // helper sees only B values
-    (a, b)
-}
+OCaml's zygomorphism:
+```ocaml
+let rec zygo helper main (Fix ef) =
+  let pairs = map_expr_f (fun child -> (helper_result child, zygo helper main child)) ef in
+  main pairs
 ```
-
-Safety-check example — helper evaluates, main checks for danger:
-```rust
-// Helper: plain evaluator
-fn eval_helper(e: ExprF<i64>) -> i64 {
-    match e {
-        ExprF::LitF(n)     => n,
-        ExprF::AddF(a, b)  => a + b,
-        ExprF::MulF(a, b)  => a * b,
-        ExprF::NegF(a)     => -a,
-    }
-}
-
-// Main: safety check — uses helper's computed values to detect overflow risk
-fn safe_check(e: ExprF<(String, i64)>) -> String {
-    match e {
-        ExprF::LitF(n) => format!("safe({})", n),
-        ExprF::AddF((sa, va), (sb, vb)) =>
-            if va.saturating_add(vb) != va + vb {
-                format!("OVERFLOW({} + {})", sa, sb)  // va available from helper!
-            } else {
-                format!("safe({} + {})", sa, sb)
-            },
-        // ...
-    }
-}
-```
-
-The main algebra uses `va` and `vb` — the helper's computed values — to make decisions a pure structural fold couldn't make.
-
-## What This Unlocks
-
-- **One-pass average** — helper computes `(sum, count)`, main formats the result. No second traversal.
-- **Pretty-printing with precedence** — helper computes precedence level, main uses it to decide parentheses. No separate precedence pass.
-- **Validation + transformation** — helper validates, main transforms using validation results. Errors and transformations interleaved in one pass.
+The recursion threads both results together. OCaml's `let rec` handles the mutual recursion. In practice, OCaml code often uses `para` or plain `let rec` instead of named recursion schemes, but the `zygo` pattern is useful for demonstrating the concept.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Helper algebra | `ExprF 'b -> 'b` | `ExprF<B> -> B` |
-| Main algebra | `ExprF ('a * 'b) -> 'a` | `ExprF<(A, B)> -> A` |
-| Pair extraction | `map_f snd` | `.map_ref(\|(_, b)\| b.clone())` |
-| Clone overhead | None (GC) | Clone paired layer for split |
-| vs two separate folds | Two traversals | One traversal, shared |
+1. **Two passes vs. one**: `zygo` combines two passes into one — equivalent to computing `cata alg1 . cata alg2` but more efficient (one traversal, not two).
+2. **Dependency direction**: The helper algebra's results feed into the main algebra, not vice versa — one-directional coupling.
+3. **Specialization**: `zygo` specializes to `cata` when the main algebra ignores the helper (no dependency) and to `para` when the helper is the original structure (identity algebra).
+4. **Practical use**: Statistics computation (mean + variance in one pass), tree balancing checks, and "labeled fold" patterns use zygomorphisms.
+
+## Exercises
+
+1. Implement a `zygo` that computes both the sum and the product of a list in one traversal.
+2. Write a tree zygomorphism that computes the average leaf value: helper computes `(sum, count)`, main divides.
+3. Implement "is balanced?" using a zygomorphism: helper computes height, main checks balance condition per node.

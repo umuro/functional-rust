@@ -4,85 +4,67 @@
 
 # 286: Creating Iterators with from_fn()
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Create a stateful iterator from a closure — the lightweight alternative to implementing the `Iterator` trait.
+Building a custom iterator by defining a struct and implementing `Iterator` is powerful but verbose for simple cases. `std::iter::from_fn()` provides a lightweight alternative: create an iterator directly from a closure returning `Option<T>`. The closure captures its own mutable state, and each call produces the next element or `None` to terminate. This is the functional approach to generators — describing iteration as a stateful function.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You need a custom iterator but implementing a full struct with `Iterator` is overkill. You want to generate a Fibonacci sequence for a test. Parse tokens from a string one at a time. Simulate reading from a buffer. For these one-off sequences, defining a named struct feels like ceremony — you name a type that's used once, define fields, implement a trait, and repeat a lot of boilerplate.
+- Understand `from_fn(f)` as creating an iterator from a `FnMut() -> Option<T>` closure
+- Use captured mutable variables in the closure to maintain iteration state
+- Implement Fibonacci and other stateful sequences with less boilerplate than a struct
+- Recognize `from_fn` as the bridge between stateful computation and the iterator ecosystem
 
-`std::iter::from_fn` lets you skip all of that: pass a closure that captures its mutable state and returns `Option<T>`. Return `Some(value)` to yield, `None` to terminate. The closure *is* the iterator.
+## Rust Application
 
-In OCaml, you'd use `Seq.unfold` or `Seq.of_dispenser`. In Haskell, `unfoldr`. In Rust, `from_fn` is the direct equivalent for the case where each step doesn't need the previous value to compute the next.
-
-## The Intuition
-
-`std::iter::from_fn(closure)` creates an iterator that calls the closure on each `next()`. The closure captures its mutable state in the closure environment. Return `Some(value)` to emit; return `None` to stop.
-
-```rust
-let mut n = 0;
-let counter = std::iter::from_fn(move || {
-    n += 1;
-    if n <= 5 { Some(n) } else { None }
-});
-// → yields 1, 2, 3, 4, 5
-```
-
-## How It Works in Rust
+`std::iter::from_fn(f)` takes a `FnMut() -> Option<T>` and produces an iterator. The closure captures state:
 
 ```rust
-// Fibonacci — state lives inside the closure (no struct needed)
-let fib = {
+// Counter from 1 to max
+pub fn counter(max: i32) -> impl Iterator<Item = i32> {
+    let mut n = 0;
+    std::iter::from_fn(move || {
+        n += 1;
+        if n <= max { Some(n) } else { None }
+    })
+}
+
+// Fibonacci with overflow protection
+pub fn fibonacci() -> impl Iterator<Item = u64> {
     let (mut a, mut b) = (0u64, 1u64);
     std::iter::from_fn(move || {
         let val = a;
-        let next = a + b;
-        a = b;       // advance state
+        let next = a.checked_add(b)?; // None on overflow terminates iterator
+        a = b;
         b = next;
-        Some(val)    // always Some — infinite sequence, use take()
+        Some(val)
     })
-};
-let first_10: Vec<u64> = fib.take(10).collect();
-// → [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
-
-// Parse tokens one at a time from an external iterator
-let input = "42 17 99 3 55";
-let mut words = input.split_whitespace();
-let numbers: Vec<u32> = std::iter::from_fn(|| {
-    words.next().and_then(|w| w.parse().ok())  // None on parse fail or exhaustion
-}).collect();
-// → [42, 17, 99, 3, 55]
-
-// Simulate buffer reads
-let buffer = vec![1u8, 2, 3, 4, 5];
-let mut idx = 0;
-let reader = std::iter::from_fn(|| {
-    if idx < buffer.len() {
-        let v = buffer[idx];
-        idx += 1;
-        Some(v)
-    } else {
-        None
-    }
-});
-let bytes: Vec<u8> = reader.collect();
+}
 ```
 
-`from_fn` requires the closure to be `FnMut` — it's called repeatedly. Use `move` to capture owned state. For sequences where each element depends on the previous, also consider `successors()`.
+## OCaml Approach
 
-## What This Unlocks
+OCaml's `Seq.unfold` is the direct equivalent: it takes an initial state and a function `state -> (element * state) option`:
 
-- **Throwaway generators** — Fibonacci, counters, random sequences without defining a named struct.
-- **Wrapping external state** — turn a mutable external cursor (database row pointer, file position) into an iterator.
-- **On-demand parsing** — consume tokens from a shared iterator inside the closure, producing parsed results.
+```ocaml
+let counter max =
+  Seq.unfold (fun n -> if n > max then None else Some (n, n+1)) 1
+
+let fibonacci =
+  Seq.unfold (fun (a, b) -> Some (a, (b, a+b))) (0, 1)
+```
+
+`Seq.unfold` and `from_fn` are semantically equivalent — both produce lazy sequences from stateful generators.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Iterator from closure | `Seq.of_dispenser` | `std::iter::from_fn(closure)` |
-| Infinite sequence | `Seq.unfold` | `from_fn(|| Some(next))` + `.take(n)` |
-| State storage | Closure captures / `ref` | Closure captures (via `move`) |
-| vs. custom struct | `Seq.unfold` is more general | `from_fn` for no prev-value dependency; `successors` for chained |
-| Termination | Return `None` node | Return `None` from closure |
+1. **State style**: Rust's `from_fn` uses captured mutable variables (mutable closure captures); OCaml's `unfold` passes state as a pure value through each step.
+2. **Functional vs imperative**: OCaml's `unfold` is purely functional (state is passed explicitly); Rust's `from_fn` is imperative (state is mutated in place).
+3. **Termination**: Both return `None`/`None` to signal exhaustion; `checked_add` in Rust enables overflow-safe termination.
+4. **Composability**: Both integrate with their respective adapter ecosystems — `from_fn` iterators get all `Iterator` adapters, `Seq.unfold` gets all `Seq` functions.
+
+## Exercises
+
+1. Use `from_fn` to implement a random number generator iterator that produces pseudo-random numbers using an LCG (linear congruential generator) with captured seed state.
+2. Implement the Collatz sequence using `from_fn`, terminating when the value reaches 1.
+3. Build a `retry_until_success` iterator using `from_fn` that calls a fallible function and keeps retrying until it returns `Ok`, yielding the attempts.

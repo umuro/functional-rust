@@ -2,91 +2,50 @@
 
 ---
 
-# 614: Histomorphism
+# Histomorphism
 
-**Difficulty:** 5  **Level:** Master
+## Problem Statement
 
-A fold where the algebra sees the *entire history* of previously computed results — enabling dynamic programming without a memoization table.
+A histomorphism (histo) is a catamorphism where the fold function has access to the entire history of previous fold results, not just the immediate result. The cofree comonad of the base functor carries the history. This enables computing Fibonacci in O(n) with a single pass, longest increasing subsequence, and dynamic programming patterns that need previous computed values.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Computing Fibonacci numbers with a naive catamorphism is O(2^n): `fib(n) = fib(n-1) + fib(n-2)` recomputes every sub-problem exponentially. The standard fix is memoization — a lookup table you build alongside the recursion. But maintaining a separate `HashMap` is boilerplate, error-prone, and not composable.
+- The categorical definition and the mathematical laws that must hold
+- How to implement this pattern in Rust despite the lack of higher-kinded types
+- The relationship to more familiar functional idioms (fold, unfold, map)
+- Key concepts: histo, fold with history, cofree comonad, dynamic programming
+- Where this pattern appears in production systems and when simpler alternatives suffice
 
-The histomorphism makes memoization structural: the algebra receives a `Cofree F A` value at each step, which is a *comonad* that carries the full history of all previously computed results. To compute `fib(n)`, the algebra simply looks up `fib(n-1)` and `fib(n-2)` from the history — both are already computed at that point because `histo` processes bottom-up.
+## Rust Application
 
-This is the categorical basis of dynamic programming: the `Cofree` structure is the memoization table, built automatically by the recursion scheme. Any DP problem that fills a table from base cases upward maps directly to a histomorphism.
+fibonacci via histo, LIS with histo, DP patterns. The source demonstrates the concept with a concrete data type — typically a simple tree or list — showing the pattern in a form that can be run and verified. Due to Rust's type system limitations, the implementation is more verbose than Haskell but the core idea is preserved.
 
-## The Intuition
+Key patterns:
+- The defining operation and its type signature
+- The laws it must satisfy (verified in tests)
+- Composition with other morphisms in the scheme
+- Concrete examples with traversable data types
 
-A histomorphism is a fold (like `cata`) where the algebra receives a `Cofree` comonad instead of a plain value — `Cofree` is a pair of `(current_result, history_of_all_sub_results)`, so the algebra can look back at any previously computed result in O(1) without a separate memo table. The trade-off: you pay O(n) memory for the history, but get O(n) time instead of O(2^n).
+## OCaml Approach
 
-## How It Works in Rust
+OCaml's pattern matching and recursive types make morphism implementations natural. The `Fix` type and F-algebra/coalgebra patterns translate directly, though without Haskell's typeclass machinery:
 
-```rust
-// Cofree F A: the history comonad
-// At each step, contains the current computed value AND a pointer to previous history
-struct Cofree<A> {
-    value: A,
-    prev: Option<Box<Cofree<A>>>,  // full chain of previous results
-}
-
-impl<A: Clone> Cofree<A> {
-    // Extract the current value
-    fn extract(&self) -> &A { &self.value }
-
-    // Look back N steps
-    fn lookback(&self, n: usize) -> Option<&A> {
-        if n == 0 { return Some(&self.value); }
-        self.prev.as_ref()?.lookback(n - 1)
-    }
-}
-
-// Histomorphism over natural numbers
-// Algebra receives Cofree<A> — can access all previous results
-fn histo<A: Clone>(n: usize, base: A, alg: &impl Fn(&Cofree<A>) -> A) -> A {
-    let mut history = Cofree { value: base, prev: None };
-    for _ in 0..n {
-        let new_val = alg(&history);
-        history = Cofree {
-            value: new_val,
-            prev: Some(Box::new(history)),
-        };
-    }
-    history.value
-}
-
-// Fibonacci — O(n), no HashMap needed
-// The algebra looks back 1 and 2 steps — both are in the Cofree history
-let fib_100 = histo(100, 1u64, &|hist| {
-    let prev1 = hist.extract();           // fib(n-1) — current top
-    let prev2 = hist.lookback(1)          // fib(n-2) — one step back
-        .unwrap_or(prev1);
-    prev1 + prev2
-});
-println!("fib(100) = {}", fib_100);
-
-// Tribonacci — needs 3 previous values — same pattern, look back 0, 1, 2
-let trib = histo(20, 1u64, &|hist| {
-    let a = hist.lookback(0).copied().unwrap_or(1);
-    let b = hist.lookback(1).copied().unwrap_or(1);
-    let c = hist.lookback(2).copied().unwrap_or(1);
-    a + b + c
-});
+```ocaml
+(* OCaml recursive schemes use:
+   - Recursive variant types for F-algebras
+   - Higher-order functions for the morphism
+   - GADTs for type-safe fixed points in advanced cases *)
 ```
-
-## What This Unlocks
-
-- **DP without memoization tables**: longest common subsequence, edit distance, coin change — the `Cofree` history IS the DP table, populated automatically.
-- **Sliding window computations**: `Cofree` lets the algebra peek back N steps — moving average, rolling max, and similar patterns become direct lookups.
-- **Dual to futumorphism**: while `futu` generates multiple future steps in one call, `histo` consumes all past results in one lookup.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Catamorphism algebra | `F<A> → A` | `F<A> → A` |
-| Histo algebra | `Cofree<F, A> → A` | `&Cofree<A> → A` |
-| `Cofree F A` | `type ('f, 'a) cofree = { extract: 'a; unwrap: ('f, 'a) cofree 'f }` | `struct Cofree<A> { value: A, prev: Option<Box<Cofree<A>>> }` |
-| Fibonacci | O(2^n) with naive cata | O(n) with histo |
-| Memo table | Explicit `Hashtbl` | Implicit in `Cofree` chain |
-| Dual | Futumorphism | Futumorphism |
+1. **HKT requirement**: These morphisms ideally require higher-kinded types for full generality; Rust uses GATs or associated types as approximations.
+2. **Performance**: Rust's implementations are more verbose but compile to efficient machine code; OCaml's implementations are more concise with similar runtime performance.
+3. **Practical adoption**: In Haskell, recursive schemes from `recursion-schemes` are widely used; in Rust and OCaml, direct recursion is more common in practice.
+4. **Theoretical value**: Understanding these patterns deepens intuition for all recursive programming, even when direct recursion is used in production code.
+
+## Exercises
+
+1. **Laws verification**: Write tests that verify the categorical laws for this morphism on a specific data type.
+2. **New data type**: Apply the morphism to a different recursive data type (e.g., apply catamorphism to a rose tree instead of a binary tree).
+3. **Comparison**: Implement the same computation using direct recursion and the morphism — measure whether the morphism version composes more cleanly.

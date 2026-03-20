@@ -4,99 +4,64 @@
 
 # 285: Building Custom Iterator Adapters
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Wrap an existing iterator in a struct to transform its output — the same pattern used by `map`, `filter`, and `zip` in the standard library.
+The standard library's `map`, `filter`, and `zip` adapters cover many cases, but domain-specific transformations often need their own adapters — a rate limiter that throttles output, a deduplicator that removes consecutive duplicates, or a strider that yields every nth element. Building custom adapters in Rust follows the same pattern as the standard library: wrap an inner iterator in a struct and implement `Iterator` on it, making the adapter composable with the entire ecosystem.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You've written the same `.filter(...).map(...).step_by(...)` chain in five places in your codebase. Or you need a transformation that doesn't exist in the standard library — emitting adjacent pairs, sampling every Nth element, annotating elements with their distance from a reference point. You could write a function that returns a `Vec`, but that forces eager evaluation and allocates even when your caller might only need the first element.
+- Understand the adapter pattern: wrap `I: Iterator` in a struct, implement `Iterator` on the wrapper
+- Build a `EveryNth` adapter that yields every nth element from any iterator
+- Recognize that custom adapters gain the full standard library API for free
+- Use generic struct parameters `<I: Iterator>` to make adapters work with any iterator source
 
-The iterator adapter pattern solves this: wrap your transformation in a struct that holds the inner iterator, then implement `Iterator` on it. Your adapter is now lazy, composable, and chains seamlessly with every other iterator adapter. This is exactly how `std::iter::Map`, `std::iter::Filter`, and `std::iter::Zip` are implemented in the standard library.
+## Rust Application
 
-The extension trait pattern (adding your adapter as a method on all iterators via a trait) makes the API ergonomic — callers write `.every_nth(3)` instead of `EveryNth::new(iter, 3)`.
-
-## The Intuition
-
-An iterator adapter is a struct `MyAdapter<I>` that wraps an inner iterator `I: Iterator` and transforms what `next()` returns. Implement `Iterator for MyAdapter<I>` — call `self.inner.next()` internally, apply your transformation, and return the result.
-
-```rust
-struct MyAdapter<I> { inner: I }
-impl<I: Iterator> Iterator for MyAdapter<I> {
-    type Item = I::Item;  // (or a different type)
-    fn next(&mut self) -> Option<I::Item> {
-        self.inner.next().map(|x| transform(x))
-    }
-}
-```
-
-## How It Works in Rust
+The `EveryNth<I>` struct wraps an inner iterator and tracks a modular counter. Each call to `next()` loops until it finds an element to yield:
 
 ```rust
-// Adapter 1: yield every Nth element
-struct EveryNth<I> { inner: I, n: usize, count: usize }
+pub struct EveryNth<I> { inner: I, n: usize, count: usize }
 
 impl<I: Iterator> Iterator for EveryNth<I> {
     type Item = I::Item;
     fn next(&mut self) -> Option<I::Item> {
         loop {
-            let item = self.inner.next()?;  // ? propagates None (exhausted)
+            let item = self.inner.next()?;
             let emit = self.count % self.n == 0;
             self.count += 1;
             if emit { return Some(item); }
-            // otherwise loop: skip this element, try the next
         }
     }
 }
-
-// Adapter 2: yield adjacent pairs (sliding window of 2)
-struct Pairs<I: Iterator> { inner: I, prev: Option<I::Item> }
-
-impl<I: Iterator> Iterator for Pairs<I> where I::Item: Clone {
-    type Item = (I::Item, I::Item);
-    fn next(&mut self) -> Option<Self::Item> {
-        let next = self.inner.next()?;
-        let prev = self.prev.replace(next.clone())?;  // swap prev with next
-        Some((prev, next))
-    }
-}
-
-// Extension trait: add adapters as methods on all iterators
-trait IteratorExt: Iterator + Sized {
-    fn every_nth(self, n: usize) -> EveryNth<Self> {
-        EveryNth { inner: self, n, count: 0 }
-    }
-    fn pairs(self) -> Pairs<Self> where Self::Item: Clone {
-        let mut inner = self;
-        let prev = inner.next();  // prime with first element
-        Pairs { inner, prev }
-    }
-}
-impl<I: Iterator> IteratorExt for I {}  // blanket impl for all iterators
-
-// Usage: chain custom adapters with standard ones
-let thirds: Vec<i32> = (0..12).every_nth(3).collect();
-// → [0, 3, 6, 9]
-
-let pairs: Vec<(i32, i32)> = [10, 20, 30, 40, 50].iter().copied().pairs().collect();
-// → [(10,20), (20,30), (30,40), (40,50)]
-
-// Adapters compose with each other and with standard adapters
-let result: Vec<(i32, i32)> = (0i32..20).every_nth(2).pairs().collect();
 ```
 
-## What This Unlocks
+This pattern is identical to how `std::iter::Filter`, `std::iter::Map`, etc. are implemented.
 
-- **Reusable lazy transformations** — package any multi-step adapter chain into a named, composable unit.
-- **Library-quality API** — expose your domain's natural iteration patterns as chainable methods on all iterators.
-- **Zero-allocation pipelines** — adapters are structs on the stack; no `Vec` is created until `.collect()`.
+## OCaml Approach
+
+OCaml's `Seq` module allows custom adapters as functions returning new sequences. Since `Seq.t` is just `unit -> node`, a custom adapter is simply a function that wraps the original sequence:
+
+```ocaml
+let every_nth n seq =
+  let rec go i s () = match s () with
+    | Seq.Nil -> Seq.Nil
+    | Seq.Cons (x, rest) ->
+      if i mod n = 0 then Seq.Cons (x, go (i+1) rest)
+      else go (i+1) rest ()
+  in go 0 seq
+```
+
+Both approaches create composable, lazy transformations.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Custom adapter | Higher-order function over `Seq` | Struct + `impl Iterator` |
-| Extension method | Module or `|>` pipeline | Extension trait with blanket impl |
-| Lazy by default | `Seq` is lazy, `List` is not | All iterators are lazy |
-| Composability | `Seq` functions compose via `|>` | All adapters chain via method calls |
-| Type | `'a Seq.t -> 'b Seq.t` | `AdapterStruct<I>` where `I: Iterator` |
+1. **State storage**: Rust adapters store state in struct fields; OCaml adapters capture state in closure variables.
+2. **Type system integration**: Rust adapters implement the `Iterator` trait and gain all standard adapters; OCaml functions on `Seq.t` gain all `Seq` module functions.
+3. **Zero-cost**: Rust's struct-based adapters are monomorphized and inlined by the compiler; OCaml's functional adapters use closures with potential allocation.
+4. **Ecosystem integration**: Custom Rust adapters work with `Rayon` parallel iterators if they also implement the right parallel traits.
+
+## Exercises
+
+1. Build a `Deduplicate<I>` adapter that yields consecutive elements only when they differ from the previous one (run-length deduplication).
+2. Build a `Buffered<I>` adapter that collects elements into batches of size N and yields `Vec<T>` per batch.
+3. Build a `TimeoutIterator<I>` adapter that stops yielding elements after a `Duration` has elapsed (simulated with an iteration count).

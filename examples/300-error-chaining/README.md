@@ -4,80 +4,62 @@
 
 # 300: Chaining Errors with source()
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Build a traversable causal chain — reconstruct the full story of what went wrong.
+Errors in real systems are causal chains: a configuration loading failure is caused by a file read failure, which is caused by a permissions denial. Displaying only the top-level error loses the root cause. The `Error::source()` method creates a linked list of errors from high-level to low-level, enabling tools and users to see the complete causal chain. This is the Rust equivalent of Java's exception chaining (`getCause()`) and Python's `raise X from Y`.
 
-## The Problem This Solves
+## Learning Outcomes
 
-An application fails at startup. The error message says "application startup failed." That tells you nothing useful. The actual cause — a missing config file — is buried three layers down in an error that was wrapped and re-wrapped as it propagated up through the call stack.
+- Implement `Error::source()` to expose a wrapped inner error as the cause
+- Traverse an error chain using the `source()` method iteratively
+- Build a `print_error_chain` function that displays the full causal hierarchy
+- Understand the ownership model: `source()` returns `&(dyn Error + 'static)`
 
-Without error chaining, each wrapper discards the inner error to produce a new message. You get the high-level "what" but lose the low-level "why." In production, you need both: the context at each layer to understand the sequence of events, and the root cause to know what actually needs to be fixed.
+## Rust Application
 
-`Error::source()` creates a singly-linked list. Each error points to the error that caused it. A log formatter can walk this chain — `StartupError → ConfigError → FileError` — and print every layer. `anyhow`'s pretty-printer does exactly this. So does a well-written error reporter in any production codebase.
-
-## The Intuition
-
-`source()` links each error to its cause like nodes in a linked list — walk it from front to back to reconstruct "startup failed because config failed because file not found."
-
-## How It Works in Rust
+Each error in the chain implements `source()` pointing to the next lower-level error:
 
 ```rust
-// Layer 1: root cause — no source
-#[derive(Debug)]
-struct FileError { path: String }
-impl Error for FileError {}  // source() returns None by default
+pub struct AppError {
+    pub message: String,
+    pub source: Option<Box<dyn Error + Send + Sync>>,
+}
 
-// Layer 2: wraps FileError
-#[derive(Debug)]
-struct ConfigError { source: FileError }
-impl Error for ConfigError {
+impl Error for AppError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
-        Some(&self.source)  // points to FileError
+        self.source.as_deref()
     }
 }
 
-// Layer 3: wraps ConfigError
-#[derive(Debug)]
-struct StartupError { source: ConfigError }
-impl Error for StartupError {
-    fn source(&self) -> Option<&(dyn Error + 'static)> {
-        Some(&self.source)  // points to ConfigError
-    }
-}
-
-// Traverse the chain — standard pattern for logging/debugging
-fn print_chain(e: &dyn Error) {
+// Traverse the chain:
+fn print_error_chain(e: &dyn Error) {
     println!("Error: {}", e);
-    let mut cause = e.source();
-    while let Some(c) = cause {
-        println!("  Caused by: {}", c);
-        cause = c.source();
+    let mut source = e.source();
+    while let Some(cause) = source {
+        println!("Caused by: {}", cause);
+        source = cause.source();
     }
-}
-
-// Collect chain into Vec<String> for structured logging
-fn error_chain(e: &dyn Error) -> Vec<String> {
-    let mut chain = vec![e.to_string()];
-    let mut cause = e.source();
-    while let Some(c) = cause { chain.push(c.to_string()); cause = c.source(); }
-    chain
 }
 ```
 
-The root cause is always `chain.last()`. The depth of the chain tells you how many layers of abstraction the error crossed.
+## OCaml Approach
 
-## What This Unlocks
+OCaml has no standard error chaining. Exceptions have a `Printexc.raise_with_backtrace` for preserving stack traces, but error values in `Result` require explicit nesting:
 
-- **Full diagnostic context** — every `?` that wraps an error can preserve the causal chain; no information is lost
-- **Root cause analysis** — `chain.last()` gives the lowest-level error; no more guessing which file or which operation
-- **Log-friendly** — structured error chains map naturally to log fields: `error`, `caused_by`, `root_cause`
+```ocaml
+type 'a with_cause = { error: 'a; cause: exn option }
+(* Custom traversal required; no standard chain protocol *)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Exception chaining | Manual `cause` field, no standard | `Error::source()` — stdlib standard |
-| Chain traversal | Manual recursion | `while let Some(c) = e.source()` loop |
-| Root cause | `Option.value (exn.cause)` recursively | `chain.last()` after collecting |
-| Pretty printing | Manual format | Traverse `source()` chain in a loop |
+1. **Standard protocol**: `source()` is a standard trait method — any library that implements it participates in the chain automatically.
+2. **Traversal**: Rust provides no built-in chain display; users write `while let Some(s) = e.source()` loops.
+3. **Ownership**: `source()` returns a borrowed reference `&(dyn Error + 'static)` — the chain is borrowed, not owned, preventing double-free issues.
+4. **Future**: The `Backtrace` type (stabilized in Rust 1.73) captures stack traces at error creation, complementing the causal chain.
+
+## Exercises
+
+1. Build a three-level error chain (`AppError -> ConfigError -> IoError`) and implement `source()` at each level to expose the next.
+2. Write a `collect_error_chain(e: &dyn Error) -> Vec<String>` function that collects all error messages in the chain as a vector.
+3. Implement an `error_root_cause(e: &dyn Error) -> &dyn Error` function that traverses `source()` links until it reaches the last error with no source.

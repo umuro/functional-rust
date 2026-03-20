@@ -2,87 +2,39 @@
 
 ---
 
-# 439: assert_matches! and Variant Assertions
+# 439: Assert Variant Macros
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Use `matches!` and `assert_matches!` to write pattern-match assertions — checking enum variants and guard conditions in one readable expression without manually destructuring.
+Testing enum variants is verbose: `assert!(matches!(result, Ok(_)))` requires knowing the `matches!` macro, wrapping in `assert!`, and loses the ability to extract the inner value. `unwrap_variant!(result, Ok(v) => v)` provides a cleaner pattern: assert that the value matches a variant and extract the inner data in one operation. For test suites heavily using `Result` and enum-heavy domain models, these macros significantly reduce test boilerplate while providing better error messages.
 
-## The Problem This Solves
+Variant assertion macros appear in `assert_matches!` (stabilized in Rust 1.73), `unwrap_variant`, testing framework helper crates, and any codebase testing enum-heavy APIs.
 
-Testing functions that return enums is awkward with `assert_eq!`. You either need to derive `PartialEq` on every enum (including ones where equality semantics are unclear), or you write verbose destructuring in every test:
+## Learning Outcomes
 
-```rust
-match parse("42") {
-    Parsed::Int(n) => assert_eq!(n, 42),
-    other => panic!("Expected Int(42), got {:?}", other),
-}
-```
+- Understand how `matches!($val, $pattern)` provides a boolean pattern check
+- Learn how `assert_matches!` combines `matches!` with assertion and error message
+- See how `unwrap_variant!` uses `match` with a wildcard arm to extract or panic
+- Understand the `stringify!($pattern)` technique for showing the pattern in error messages
+- Learn that `assert_matches!` was stabilized in `std` in Rust 1.73
 
-That's five lines for one assertion. Multiply by a dozen tests and your test suite is more boilerplate than logic. It also doesn't compose — you can't use it inside `assert!()` or `all()`.
+## Rust Application
 
-`matches!($val, Pattern)` solves this: it's a boolean expression that evaluates to `true` if `$val` matches the pattern. You can add guards (`if n > 50`), use it in `assert!`, compose it with `.all()` over iterators, or use it in `if` conditions without creating a separate variable.
+In `src/lib.rs`, `assert_matches!($value, $pattern)` wraps `matches!($value, $pattern)` in `assert!` with a descriptive message including both the actual value (`{:?}`) and the expected pattern text (via `stringify!`). `unwrap_variant!($value, $pattern => $extracted)` uses a match expression where only the expected variant succeeds and any other variant panics. `Message` and the custom `Result` enum demonstrate usage.
 
-## The Intuition
+## OCaml Approach
 
-`matches!(expr, pattern)` is a syntactic shorthand for:
-
-```rust
-match expr { pattern => true, _ => false }
-```
-
-The compiler desugars it exactly that way — no overhead, no allocation, just a match expression. The `if` guard syntax works too: `matches!(x, Some(n) if n > 0)` becomes `match x { Some(n) if n > 0 => true, _ => false }`.
-
-`assert_matches!` (stabilised in Rust 1.82) adds a panic message when the match fails, showing both the pattern and the actual value. For earlier Rust versions, `assert!(matches!(...))` gives the same effect with a slightly less informative message.
-
-## How It Works in Rust
-
-```rust
-#[derive(Debug, PartialEq)]
-enum Parsed { Int(i64), Float(f64), Invalid(String) }
-
-fn parse(s: &str) -> Parsed { /* ... */ }
-
-// ── matches! in assertions ────────────────────────────────────────────────────
-assert!(matches!(parse("42"), Parsed::Int(42)));
-assert!(matches!(parse("3.14"), Parsed::Float(_)));    // _ matches any value
-assert!(matches!(parse("abc"), Parsed::Invalid(_)));
-
-// ── With guard conditions ─────────────────────────────────────────────────────
-assert!(matches!(parse("100"), Parsed::Int(n) if n > 50));
-assert!(matches!(parse("3.14"), Parsed::Float(f) if f > 3.0));
-
-// ── In if conditions — no binding variable needed ────────────────────────────
-if matches!(parse("3.14"), Parsed::Float(f) if f > 3.0) {
-    println!("Got float > 3");
-}
-
-// ── Composing with iterators ──────────────────────────────────────────────────
-let results: Vec<Result<u32, String>> = vec![Ok(1), Ok(2), Ok(3)];
-assert!(results.iter().all(|r| matches!(r, Ok(n) if *n > 0)));
-
-// ── assert_matches! (Rust 1.82+) — shows pattern in failure message ──────────
-// #![feature(assert_matches)]  // or stable in 1.82+
-// use std::assert_matches::assert_matches;
-// assert_matches!(parse("42"), Parsed::Int(_));  // better failure message
-
-// ── Pattern matching without extracting the value ────────────────────────────
-fn is_valid(s: &str) -> bool {
-    !matches!(parse(s), Parsed::Invalid(_))
-}
-```
-
-## What This Unlocks
-
-- **Enum-returning function tests** — assert on shape without deriving `PartialEq` on the whole enum or writing multi-line destructuring.
-- **Iterator assertions** — `assert!(results.iter().all(|r| matches!(r, Ok(_))))` — concise whole-collection checks.
-- **Readable conditionals** — `if matches!(state, State::Ready | State::Idle)` is clearer than nested `if let` chains for multi-variant checks.
+OCaml's `alcotest` provides `check (module Message) "msg" expected actual` with custom testable modules. `assert_failure "message"` in OUnit2 handles failure. For pattern-based tests, OCaml's `match ... with _ -> assert false` is the equivalent of `unwrap_variant!`. OCaml's pattern matching is a language feature, so tests are often just `let Message.Text s = msg in assert_string s`.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Pattern-match assertion | `OUnit: assert_equal` with custom equality; or `match ... | _ -> assert_failure` | `matches!` macro — inline boolean; `assert_matches!` in 1.82+ |
-| Guard in assertion | Inline `when` clause in pattern | `matches!(x, Pat if guard)` |
-| Composing with iterators | `List.for_all (fun x -> match x with ...) lst` | `.all(|x| matches!(x, Pattern))` |
-| Partial match (ignore variant data) | `match x with Foo _ -> true | _ -> false` | `matches!(x, Foo(_))` |
+1. **Std stabilization**: Rust's `assert_matches!` is now in `std` (1.73+); OCaml's test assertions are always library-based.
+2. **Pattern syntax**: Rust's `assert_matches!($v, Ok(x) if x > 0)` supports guard conditions; OCaml's inline pattern matching does too.
+3. **Error messages**: Rust's custom `assert_matches!` can include the actual value; OCaml's pattern match failures show the match expression location.
+4. **Extraction**: Rust's `unwrap_variant!` extracts the inner value; OCaml's `let Pattern x = val` achieves the same with more concise syntax.
+
+## Exercises
+
+1. **Nested variant assertion**: Extend `assert_matches!` to support nested patterns: `assert_matches!(response, Response::Ok(Body::Json(json)) if json.contains("id"))`. Verify it produces clear failure messages showing the actual value.
+2. **Result helpers**: Create `assert_ok!(result)` and `assert_err!(result)` macros that assert the appropriate variant and return the inner value. Also create `assert_ok_eq!(result, expected)` that combines the assertion with value equality checking.
+3. **Collection variant test**: Implement `assert_all_match!(items, $pattern)` that asserts every element in a `Vec` matches the pattern, reporting the index of the first non-matching element.

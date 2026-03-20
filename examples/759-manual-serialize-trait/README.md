@@ -2,105 +2,37 @@
 
 ---
 
-# 759: Manual Serialize/Deserialize Trait Implementation
+# 759-manual-serialize-trait — Manual Serialize Trait
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Implement `Serialize` and `Deserialize` traits by hand — understand what `serde` generates, build a custom wire format, and see the visitor pattern in action.
+Before `serde` existed, Rust programmers wrote serialization by hand. Understanding manual serialization reveals what `#[derive(Serialize)]` generates and why `serde`'s design is what it is. Manual serialization is still needed when: the format has custom requirements, you target `no_std` environments, you need maximum performance without abstraction overhead, or you are implementing a wire protocol like MessagePack or Protocol Buffers.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Most Rust projects use `serde` with `#[derive(Serialize, Deserialize)]` — which is excellent for JSON, TOML, bincode, and dozens of other formats. But there are situations where you need a custom wire format: a binary protocol, a legacy text format, a space-constrained embedded system, or a format that serde doesn't support.
+- Design a `Serialize` trait with `serialize(&self, out: &mut Output)` method
+- Implement an `Output` buffer with typed write methods (`write_u32`, `write_string`, `write_byte`)
+- Implement `Serialize` for primitives, strings, and nested structs manually
+- Create a corresponding `Deserialize` trait and `Input` buffer
+- Understand the difference between text serialization (JSON) and binary serialization (this example)
 
-Even when you use serde, understanding what it *does* makes you a better user of it. The `Serialize` trait, the `Serializer` interface, and the visitor pattern are the same whether the framework generates them or you write them. When serde's derive macro doesn't do what you need, you implement the trait manually — and this example shows exactly how.
+## Rust Application
 
-There's also a practical need for lightweight serialization that avoids `serde`'s compilation overhead. If you're writing a library with minimal dependencies, rolling a simple key=value format can be the right call.
+`Output` wraps `Vec<u8>` with typed write methods: `write_byte`, `write_u32` (little-endian), `write_string` (length-prefixed). The `Serialize` trait provides `serialize(&self, out: &mut Output)` and a convenience `to_bytes(&self) -> Vec<u8>`. Implementations cover `u8`, `u32`, `bool`, `String`, `&str`, and composite structs. Roundtrip tests verify `from_bytes(to_bytes(x)) == x` for all types.
 
-## The Intuition
+## OCaml Approach
 
-Think of Python's `__repr__` and custom `json.JSONEncoder` — you define how your type serializes to a string, and a matching parser that reconstructs it. In Rust, you formalize this as a pair of traits with a wire format contract between them.
-
-The key insight is the *round-trip property*: `deserialize(serialize(x)) == x` must hold for all valid values. This is what you test. Once the round-trip holds — including for edge cases like strings containing the delimiter — you can trust the format.
-
-Escape handling is where custom formats usually fail. If your delimiter is `|` and your string can contain `|`, you need escaping. This example shows a complete escape/unescape cycle.
-
-## How It Works in Rust
-
-```rust
-// The trait pair — serialize to String, deserialize from &str
-pub trait Serialize {
-    fn serialize(&self) -> String;
-}
-
-pub trait Deserialize: Sized {
-    fn deserialize(input: &str) -> Result<Self, SerError>;
-}
-
-// Implement for your domain type
-#[derive(Debug, PartialEq)]
-pub struct Person { pub name: String, pub age: u32, pub active: bool }
-
-impl Serialize for Person {
-    fn serialize(&self) -> String {
-        // name=Alice|Wonder → escape | in name as \|
-        format!("name={}|age={}|active={}",
-            escape(&self.name),
-            self.age,
-            self.active)
-    }
-}
-
-impl Deserialize for Person {
-    fn deserialize(input: &str) -> Result<Self, SerError> {
-        let fields = parse_fields(input);  // splits on unescaped |, then on =
-
-        let name = fields.get("name")
-            .ok_or_else(|| SerError::MissingField("name".into()))?
-            .clone();
-
-        let age = fields.get("age")
-            .ok_or_else(|| SerError::MissingField("age".into()))?
-            .parse::<u32>()
-            .map_err(|e| SerError::ParseError(e.to_string()))?;
-
-        // ... active field similarly
-        Ok(Person { name, age, active })
-    }
-}
-
-// Generic round-trip — works for any Serialize + Deserialize type
-fn round_trip<T: Serialize + Deserialize + Debug>(value: &T) -> Result<T, SerError> {
-    T::deserialize(&value.serialize())
-}
-
-// Test: special characters in string fields survive the round-trip
-#[test]
-fn round_trip_special_chars() {
-    let p = Person { name: "Pi|pe".to_string(), age: 1, active: false };
-    let decoded = round_trip(&p).unwrap();
-    assert_eq!(p, decoded);  // "|" in name must survive escape/unescape
-}
-```
-
-Key points:
-- Design the wire format first; implement escape/unescape before serialization
-- The `parse_fields` helper returns a `HashMap<&str, String>` — look up each field, report missing as a specific error
-- `SerError` has distinct variants for `MissingField` vs `ParseError` — callers know whether data was absent or malformed
-- The `Deserialize: Sized` bound is needed because you're returning `Self` by value
-
-## What This Unlocks
-
-- **Custom protocols**: implement any text or binary wire format — legacy systems, compact embedded formats, domain-specific protocols
-- **Understand serde**: after writing this by hand, `#[derive(Serialize, Deserialize)]` stops being magic and starts being familiar
-- **No-dependency serialization**: embed a simple format in a library without pulling in `serde`, `serde_json`, and their transitive dependencies
+OCaml's `Marshal` module provides automatic binary serialization of any value, including closures and mutable references. For typed serialization, `Bin_prot` (Jane Street) provides a manual trait-like approach: `bin_write_t`, `bin_read_t`, and `bin_size_t` functions per type. `sexplib` (also Jane Street) does the same for S-expression serialization. These are the OCaml equivalents of Rust's `serde`.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Serialization | `yojson`, `marshal`, or custom ppx | `serde` with `#[derive]` or manual trait impl |
-| Trait pair | Module signature with `encode`/`decode` | `Serialize` + `Deserialize` traits |
-| Missing field error | Exception or `Not_found` | `SerError::MissingField(field_name)` |
-| Parse error | `Failure` exception | `SerError::ParseError(msg)` |
-| Round-trip test | Custom equality check | `assert_eq!(original, round_trip(&original).unwrap())` |
-| Escape handling | Manual string manipulation | Same — no magic, must be explicit |
+1. **Trait vs function**: Rust uses a `Serialize` trait with method dispatch; OCaml's `Bin_prot` uses module values (`bin_writer_t`) without a unified trait.
+2. **derive**: Both languages have derive macros for automatic implementation; Rust's `#[derive(Serialize)]` and OCaml's `[@@deriving bin_io]` generate similar code.
+3. **Generic containers**: Rust's `impl<T: Serialize> Serialize for Vec<T>` is idiomatic; OCaml uses parametrized `bin_write_list` functions.
+4. **no_std**: Rust's manual serialization works in `no_std` environments; OCaml's runtime always requires a full GC.
+
+## Exercises
+
+1. Implement `Serialize` for `Option<T: Serialize>` using a one-byte discriminant (0 for None, 1 for Some) followed by the serialized value.
+2. Add `Serialize` for `Vec<T: Serialize>` using a 4-byte length prefix, and write a roundtrip test for a struct containing a `Vec<String>`.
+3. Implement a length-delimited framing layer: write `[4 bytes: total_len][serialized_data]` and read it back, enabling streaming protocols over TCP.

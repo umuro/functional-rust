@@ -2,72 +2,37 @@
 
 ---
 
-# 793: Minimum Path Sum in Grid
+# 793-minimum-path-sum — Minimum Path Sum
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Find the path from top-left to bottom-right of a grid (moving only right or down) that minimizes the sum of cell values.
+Finding the minimum-cost path through a grid from the top-left to the bottom-right (moving only right or down) is a fundamental 2D DP problem. It models route planning in robotics, game pathfinding with terrain costs, circuit board wiring, and is a building block for more complex grid DP problems. The constraint of only moving right or down makes it solvable in O(mn) with O(1) extra space (modifying the grid in place).
 
-## The Problem This Solves
+## Learning Outcomes
 
-Given an `m×n` grid of non-negative integers, find the path from `(0,0)` to `(m-1, n-1)` that minimizes the total cost. You can only move right or down. This problem appears directly in robotics path planning (minimize energy over a terrain grid), image seam carving (Photoshop's content-aware scaling removes "minimum cost seams"), game map traversal, and any optimization over a DAG that has a natural grid structure.
+- Initialize boundary conditions: first row and column are prefix sums (no choice)
+- Apply the 2D recurrence: `dp[i][j] = grid[i][j] + min(dp[i-1][j], dp[i][j-1])`
+- Optimize space by modifying the grid in-place or using a rolling row
+- Understand the difference from A* pathfinding (no heuristic needed here)
+- Reconstruct the actual path by backtracking from `dp[m-1][n-1]`
 
-The DP approach is elegant: since you can only move right or down, each cell `(i,j)` can only be reached from `(i-1,j)` or `(i,j-1)`. The minimum cost to reach `(i,j)` is therefore `grid[i][j] + min(cost_to_reach(i-1,j), cost_to_reach(i,j-1))`. This gives an O(m×n) solution that overwrites the grid in-place — O(1) extra space.
+## Rust Application
 
-This is one of the simplest DP patterns on a 2D grid, but it introduces the key ideas: memoization via overwriting, boundary initialization, and path reconstruction from the final DP table.
+`min_path_sum(grid)` creates a `dp: Vec<Vec<i32>>` copy, initializes first row and column as prefix sums, then fills the rest with `grid[i][j] + min(dp[i-1][j], dp[i][j-1])`. Returns `dp[m-1][n-1]`. The classic test grid `[[1,3,1],[1,5,1],[4,2,1]]` has minimum path sum 7 (1→3→1→1→1). Tests cover the base cases: single cell, single row, single column.
 
-## The Intuition
+## OCaml Approach
 
-Initialize the first row (only rightward moves possible) and first column (only downward moves). Then fill the rest: `dp[i][j] = grid[i][j] + min(dp[i-1][j], dp[i][j-1])`. The answer is `dp[m-1][n-1]`. To reconstruct the path, backtrack from the bottom-right corner: at each step, move toward whichever neighbor has the smaller accumulated cost. O(m×n) time, O(1) space (in-place variant).
-
-## How It Works in Rust
-
-```rust
-fn min_path_sum(grid: &[Vec<u64>]) -> u64 {
-    let m = grid.len();
-    let n = grid[0].len();
-    let mut g: Vec<Vec<u64>> = grid.to_vec();  // working copy
-
-    // Initialize edges: only one way to reach cells on first row/column
-    for j in 1..n { g[0][j] += g[0][j - 1]; }   // top row: sum left-to-right
-    for i in 1..m { g[i][0] += g[i - 1][0]; }   // left col: sum top-to-bottom
-
-    // Fill interior: come from whichever neighbor is cheaper
-    for i in 1..m {
-        for j in 1..n {
-            g[i][j] += g[i - 1][j].min(g[i][j - 1]);
-        }
-    }
-    g[m - 1][n - 1]
-}
-
-// Backtrack from (m-1, n-1) to reconstruct the path
-let mut path = Vec::new();
-let (mut i, mut j) = (m - 1, n - 1);
-loop {
-    path.push((i, j));
-    if i == 0 && j == 0 { break; }
-    if i == 0 { j -= 1; }          // stuck on top row: can only go left
-    else if j == 0 { i -= 1; }     // stuck on left col: can only go up
-    else if g[i-1][j] < g[i][j-1] { i -= 1; }  // came from above
-    else { j -= 1; }               // came from the left
-}
-path.reverse();  // collected bottom-up, need top-down order
-```
-
-The in-place trick (`grid.to_vec()` then overwrite) avoids a separate DP array. The reconstruction handles edge cases (being on a boundary row/column) before the general case.
-
-## What This Unlocks
-
-- **In-place DP** — overwriting the input grid (or a copy) is the standard O(1) extra space technique for 2D grid DP; the same trick applies to unique paths, edit distance row-by-row, and triangle DP.
-- **Boundary initialization** — always initializing the first row and column separately is the pattern that prevents off-by-one errors in grid DP.
-- **Backtracking from cost table** — the reconstructed path comes "for free" once you have the DP table; no extra tracking array needed if the recurrence is reversible.
+OCaml implements with `Array.make_matrix m n 0` and fills boundary conditions explicitly. The 2D iteration uses nested `for` loops. Functional style can use `Array.init m (fun i -> Array.init n (fun j -> ...))` but requires careful ordering for dependency correctness. The OCaml `min` function and array access patterns are idiomatic.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| 2D array copy | `Array.copy` / `Array.map Array.copy` | `grid.to_vec()` (deep clone of `Vec<Vec<T>>`) |
-| `min` of two values | `min a b` | `a.min(b)` — method syntax on numeric types |
-| Mutable 2D indexing | `g.(i).(j) <- v` | `g[i][j] = v` |
-| Path reconstruction | Usually functional with `List.rev` | `Vec::push` then `reverse()` — same pattern |
+1. **In-place optimization**: Rust can modify the input grid directly (if mutable) to achieve O(1) extra space; OCaml's immutable arrays require a copy.
+2. **Rolling array**: Both languages support a rolling 1D array optimization reducing space from O(mn) to O(n).
+3. **Path reconstruction**: Both backtrack from the bottom-right, comparing neighbors to trace the minimum path.
+4. **Generalization**: This problem generalizes to arbitrary DAG shortest paths — the 2D grid DAG constraint makes it DP-solvable; general DAGs require Bellman-Ford.
+
+## Exercises
+
+1. Implement `min_path_sum_with_path(grid) -> (i32, Vec<(usize,usize)>)` that returns both the minimum sum and the actual path as a list of coordinates.
+2. Modify to allow movement in all four directions (with a cycle-detection constraint) and compare the complexity with the restricted problem.
+3. Implement the in-place variant that modifies `grid` directly and uses O(1) extra space. Note any aliasing concerns.

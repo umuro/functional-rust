@@ -36,3 +36,9 @@ All three preserve order and handle empty lists correctly. The iterator version 
 2. **Recursion safety:** OCaml's immutable recursion is safe by default; Rust requires `fn(&T)` to avoid mutable predicates
 3. **Cloning:** Rust must `.clone()` elements when moving them into the result vector; OCaml lists share structure via references
 4. **Laziness:** Rust iterators are lazy (elements processed on-demand); fold is eager (processes all elements immediately)
+
+## Exercises
+
+1. Implement `reject` — the inverse of `filter`: keep only elements for which the predicate returns `false`.
+2. Write `filter_map` from scratch: apply a function `f: T -> Option<U>` to each element and collect only the `Some` results into a new `Vec<U>`.
+3. Implement `partition` from scratch that splits a list into a pair `(Vec<T>, Vec<T>)` — elements satisfying the predicate and those that do not — in a single pass.

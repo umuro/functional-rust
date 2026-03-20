@@ -41,3 +41,9 @@ for pipeline processing with `fold`.
 2. **Partial application syntax:** OCaml: `add 5`; Rust: `move |y| add(5, y)` or `partial_add(5)`.
 3. **Generic higher-order converters:** OCaml's `curry`/`uncurry` are naturally polymorphic; Rust requires `Box<dyn Fn>` for the inner returned closure due to unnameable closure types.
 4. **Operator sections:** OCaml uses `( * ) 2` or `Fun.flip ( / ) 2`; Rust uses named `fn` items or inline closures like `|x| x * 2`.
+
+## Exercises
+
+1. Use partial application to create a family of multiplier functions (`double`, `triple`, `times_n`) from a single curried `multiply: i32 -> i32 -> i32`.
+2. Implement `section_left` and `section_right` combinators that fix the left or right argument of a binary function, and use them to adapt `str::contains` into prefix/suffix checkers.
+3. Write a pipeline that reads a list of raw log strings, uses partially applied predicates to filter by severity level, partially applied formatters to normalize each line, and outputs the result — with each step expressed as a point-free composition.

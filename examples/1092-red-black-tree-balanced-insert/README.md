@@ -29,3 +29,9 @@ Rust uses `enum Color` and `enum RBTree<T>` with `Box` for heap children. The `b
 2. **Or-patterns:** OCaml collapses four cases with `|`; Rust needs separate arms with guards
 3. **Ownership:** Rust's `balance` takes ownership of subtrees, reusing boxes in rotation
 4. **Persistence cost:** OCaml shares structure freely via GC; Rust must `.clone()` unchanged subtrees
+
+## Exercises
+
+1. Add a `min` and `max` method to the red-black tree that return the smallest and largest elements as `Option<&T>` in O(log n).
+2. Implement `rank` — given a value, return how many elements in the tree are strictly less than it.
+3. Build a sorted set on top of the red-black tree and implement `union`, `intersection`, and `difference` operations functionally.

@@ -2,80 +2,37 @@
 
 ---
 
-# 794. Word Break (Dictionary DP)
+# 794-word-break-dp — Word Break
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Determine whether a string can be segmented into dictionary words — and enumerate all valid segmentations.
+Given a string and a dictionary of words, determine if the string can be segmented into a sequence of dictionary words. This is used in natural language processing (Chinese word segmentation — Chinese text has no spaces), search engine query parsing, and code tokenization. The DP approach avoids the exponential backtracking of a naive recursive search by caching whether each prefix is breakable.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Word break is the algorithmic core of text tokenisation: given a sequence of characters with no spaces, can it be decomposed into known tokens? Input method editors (Chinese/Japanese/Korean text input) use exactly this to segment character streams into words. Search engine query processing, URL slug parsing, and natural language processing pipelines all need efficient word segmentation when whitespace is absent or unreliable.
+- Model word break as `dp[i]` = whether `s[:i]` can be formed from dictionary words
+- Apply the recurrence: `dp[i] = any j: dp[j] && s[j..i] in dict`
+- Use a `HashSet` for O(1) word lookups vs. O(k) linear scan
+- Understand the O(n²) time and O(n) space complexity
+- Extend to count all possible segmentations (exponential output)
 
-The enumeration variant (all valid segmentations) is relevant for parser generators and grammar checkers that need to explore ambiguous parses — the same O(n²) DP structure, extended to collect all parse trees.
+## Rust Application
 
-## The Intuition
+`word_break(s, dict)` builds `HashSet` from `dict`. `dp[0] = true` (empty prefix). For each i from 1 to n, scans all j from 0 to i: if `dp[j]` and `s[j..i]` is in the dictionary, set `dp[i] = true`. The example `word_break("leetcode", ["leet","code"])` returns true; `word_break("catsandog", [...])` returns false. Tests cover both cases.
 
-`dp[i]` is true if `s[0..i]` can be segmented from the dictionary. For each position `i`, scan all earlier positions `j`; if `dp[j]` is true and `s[j..i]` is a dictionary word, then `dp[i]` is true. Once `dp[n]` is true, you know a segmentation exists. The `HashSet` lookup makes each substring check O(1) on average, giving O(n²) overall. OCaml would express this recursively with memoisation via `Hashtbl`; Rust uses a `HashSet<&str>` for the dictionary and a `Vec<bool>` for the DP table. The `prev` array variant stores all `j` values that contributed to each `dp[i]`, enabling full reconstruction.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-// O(n²) time — HashSet lookup is O(1) average
-fn word_break(s: &str, dict: &[&str]) -> bool {
-    let dict_set: HashSet<&str> = dict.iter().copied().collect();
-    let n = s.len();
-    let mut dp = vec![false; n + 1];
-    dp[0] = true;
-
-    for i in 1..=n {
-        for j in 0..i {
-            if dp[j] && dict_set.contains(&s[j..i]) {
-                dp[i] = true;
-                break;  // found one valid split, no need to continue
-            }
-        }
-    }
-    dp[n]
-}
-
-// Enumerate all segmentations: replace bool dp with Vec<Vec<usize>>
-// prev[i] = all j values such that dp[j] && s[j..i] is in dict
-fn word_break_all(s: &str, dict: &[&str]) -> Vec<String> {
-    let mut prev: Vec<Vec<usize>> = vec![vec![]; n + 1];
-    // ... same DP, no early break, collect all j in prev[i]
-
-    // Recursive reconstruction from prev
-    fn collect(s: &str, prev: &Vec<Vec<usize>>, i: usize) -> Vec<String> {
-        if i == 0 { return vec![String::new()]; }
-        let mut results = Vec::new();
-        for &j in &prev[i] {
-            let word = &s[j..i];
-            for base in collect(s, prev, j) {
-                results.push(if base.is_empty() { word.into() }
-                             else { format!("{base} {word}") });
-            }
-        }
-        results
-    }
-    if dp[n] { collect(s, &prev, n) } else { vec![] }
-}
-```
-
-Note the `break` in the boolean variant — once one valid split is found, there's no need to check the rest. The `all` variant omits this to collect every parse path.
-
-## What This Unlocks
-
-- **Input method editors**: segment CJK character streams into morpheme candidates; combine with a language model to rank ambiguous parses.
-- **URL routing**: parse slug-based URLs against a route dictionary, identifying valid path component boundaries.
-- **Compiler lexers**: tokenise identifier-heavy languages without whitespace delimiters, verifying that token streams decompose into valid lexemes.
+OCaml implements with `Array.make (n+1) false` and uses `Hashtbl` for the dictionary. The inner loop uses `try` with `Hashtbl.find` or `Hashtbl.mem`. Functional style uses `Array.init` + `List.exists` over the dictionary. The `words` list can be sorted by length to prune impossible substrings early. OCaml's `Re` library provides regex-based word segmentation as an alternative approach.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Dictionary lookup | `Hashtbl.mem` or `Set.mem` | `HashSet<&str>::contains` — zero-copy `&str` slices |
-| DP array | `Array.make (n+1) false` | `vec![false; n+1]` |
-| Substring slice | `String.sub s j (i-j)` | `&s[j..i]` — O(1) slice, no allocation |
-| All-parses backtrack | Recursive with list accumulator | Recursive inner fn on `&Vec<Vec<usize>>` |
-| Early termination | `raise Exit` or boolean flag | `break` in inner loop |
+1. **HashSet vs Hashtbl**: Rust uses `HashSet<&str>` for O(1) lookup; OCaml's `Hashtbl.mem` provides the same.
+2. **Slice comparison**: Rust's `s[j..i]` string slice is a `&str`; OCaml's `String.sub` creates a new string allocation on each check — a minor performance difference.
+3. **Early termination**: Rust's `break` exits the inner loop once `dp[i]` is true; OCaml uses a boolean flag or exception-based early exit.
+4. **Segmentation**: The all-segmentations variant uses DFS with memoization; both languages implement it similarly.
+
+## Exercises
+
+1. Implement `word_break_all(s, dict) -> Vec<String>` that returns all valid space-separated segmentations (e.g., `["cat sand dog", "cats and dog"]`).
+2. Add word length bounds to the inner loop: only check substrings of length between `min_word_len` and `max_word_len` in the dictionary, reducing the inner loop iterations.
+3. Implement a streaming version that breaks a text input into words on the fly, maintaining the DP state as new characters arrive.

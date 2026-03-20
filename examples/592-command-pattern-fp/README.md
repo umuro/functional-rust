@@ -2,86 +2,51 @@
 
 ---
 
-# 592: Command Pattern as Data
+# Command Pattern (Functional Style)
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Encode operations as enum variants so they can be queued, replayed, undone, or logged — separating intent from execution.
+The OOP command pattern encapsulates actions as objects with `execute` and `undo` methods. The functional version is simpler: commands are data (enum variants), interpretation is a separate function. This separation — data from behavior — makes commands serializable, loggable, testable, and replayable without coupling them to execution context. It is the foundation of event sourcing, undo/redo systems, game replay, and distributed systems that need to log and replay operations.
 
-## The Problem This Solves
+## Learning Outcomes
 
-In most codebases, "do X" and "doing X right now" are the same thing — you call the function and it runs immediately. This is fine until you need to queue operations for later, replay a sequence of actions, implement undo/redo, log what happened for audit, or synchronize state between distributed nodes.
+- How commands as enum variants separate data from execution
+- How a `DrawState` interpreter executes commands against mutable state
+- How storing `Vec<DrawCmd>` enables replay, undo, and serialization
+- How functional commands differ from OOP commands (no `dyn Trait` needed)
+- Where functional command pattern appears: event sourcing, game replay, undo history, CQRS
 
-The functional command pattern decouples *describing* an operation from *executing* it. Commands are enum variants — plain data. They can be stored in a `Vec`, sent over a channel, serialized to disk, filtered, or inspected before execution. The executor is a separate function that pattern-matches on variants.
+## Rust Application
 
-This is the foundation of event sourcing (your database is a log of commands), CQRS (commands and queries are separate), undo/redo systems (maintain a history stack), and remote procedure calls (serialize the command, send it, execute on the other side).
+`DrawCmd` enum variants represent all possible drawing operations. `DrawState` holds the current rendering state. `interpret(state: &mut DrawState, cmd: &DrawCmd)` matches on the command and updates state. A `Vec<DrawCmd>` is a complete "script" that can be replayed identically. Commands can be serialized (with `serde`), filtered, compressed, and distributed.
 
-## The Intuition
+Key patterns:
+- Enum variants as command data: `DrawCmd::MoveTo(x, y)`
+- `fn interpret(state: &mut State, cmd: &Cmd)` — pure command execution
+- `Vec<Cmd>` as a replayable log
+- Undo: store inverse commands or snapshot state before each command
 
-When a command is data (an enum variant), "now" vs "later" is just a matter of when you pass it to the executor — the operation itself is fully described, storable, and inspectable before it runs. The trade-off: you add a layer of indirection (describe then execute) which costs a little in simplicity but gains enormous flexibility.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-use std::collections::VecDeque;
-
-// Commands are data — fully described, no side effects yet
-#[derive(Debug, Clone)]
-enum EditorCommand {
-    InsertChar { pos: usize, ch: char },
-    DeleteChar { pos: usize },
-    MoveCursor { delta: i32 },
-}
-
-struct Editor {
-    text: String,
-    cursor: usize,
-    history: Vec<EditorCommand>,    // undo stack
-}
-
-impl Editor {
-    fn execute(&mut self, cmd: EditorCommand) {
-        self.history.push(cmd.clone());   // record before executing
-        match cmd {
-            EditorCommand::InsertChar { pos, ch } => self.text.insert(pos, ch),
-            EditorCommand::DeleteChar { pos } => { self.text.remove(pos); }
-            EditorCommand::MoveCursor { delta } => {
-                self.cursor = (self.cursor as i32 + delta).max(0) as usize;
-            }
-        }
-    }
-
-    fn undo(&mut self) {
-        if let Some(cmd) = self.history.pop() {
-            // apply inverse — commands are data so we can reason about inverses
-            match cmd {
-                EditorCommand::InsertChar { pos, .. } => { self.text.remove(pos); }
-                EditorCommand::DeleteChar { pos } => { /* restore from somewhere */ }
-                _ => {}
-            }
-        }
-    }
-}
-
-// Commands can be queued, replayed, filtered
-let mut queue: VecDeque<EditorCommand> = VecDeque::new();
-queue.push_back(EditorCommand::InsertChar { pos: 0, ch: 'H' });
-queue.push_back(EditorCommand::InsertChar { pos: 1, ch: 'i' });
+```ocaml
+type draw_cmd = MoveTo of float * float | LineTo of float * float | SetColor of string
+type state = { mutable x: float; mutable y: float; mutable color: string }
+let interpret state = function
+  | MoveTo (x, y) -> state.x <- x; state.y <- y
+  | LineTo (x, y) -> (* draw line from state.{x,y} to x,y *) state.x <- x; state.y <- y
+  | SetColor c -> state.color <- c
+let replay state cmds = List.iter (interpret state) cmds
 ```
-
-## What This Unlocks
-
-- **Undo/redo**: history stack is a `Vec<Command>` — replay forward or apply inverses backward.
-- **Event sourcing**: persist the command log to disk; rebuild state by replaying from any checkpoint.
-- **Distributed sync**: serialize commands (with `serde`), send to peers, execute in order — CRDTs and OT are elaborations of this.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Command as value | Variant type | `enum` variant |
-| Undo | Inverse variant or delta | Inverse variant or stored old state |
-| History queue | `list` or `Queue.t` | `Vec` or `VecDeque` |
-| Serialization | `ppx_serde` / `ppx_yojson` | `#[derive(Serialize, Deserialize)]` |
-| Execution | Pattern match function | `match cmd { ... }` in executor method |
-| Replay | Re-execute list | Iterate history and re-execute |
+1. **Enum vs class hierarchy**: Rust enum variants are the natural command representation; OCaml uses variant types identically; OOP would use `interface Command` with subclasses.
+2. **Interpreter as function**: Both languages use a plain function for interpretation — no `dyn Trait` indirection or virtual dispatch needed for the simple case.
+3. **Serialization**: Rust commands with `#[derive(serde::Serialize)]` become JSON-serializable; OCaml uses `ppx_serde` or manual serialization.
+4. **Undo**: Both languages handle undo by storing inverse commands or snapshots — the data-oriented approach makes this straightforward.
+
+## Exercises
+
+1. **Undo stack**: Add an `undo_stack: Vec<DrawCmd>` to `DrawState` that stores inverse commands; implement `undo(state: &mut DrawState)` that pops and executes the inverse.
+2. **Command filter**: Write `fn remove_color_changes(cmds: Vec<DrawCmd>) -> Vec<DrawCmd>` that removes all `SetColor` commands from a command list.
+3. **Command serialization**: Add `#[derive(serde::Serialize, serde::Deserialize)]` to `DrawCmd` and write functions to save/load a command sequence to/from JSON.

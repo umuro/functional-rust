@@ -2,54 +2,39 @@
 
 ---
 
-# 448: Rayon Parallel Iterators
+# 448: Rayon Parallel Iterators — Data Parallelism
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-`.par_iter()` — swap one word and your loop runs on all CPU cores.
+Converting sequential code to parallel is usually complex: thread management, load balancing, result collection. Rayon's parallel iterators solve this: replace `.iter()` with `.par_iter()` and Rayon handles thread spawning, work distribution, and result aggregation. The library implements parallel `map`, `filter`, `fold`, `sum`, and 40+ other operations. This example demonstrates the underlying pattern using `thread::scope` to show what Rayon does internally.
 
-## The Problem This Solves
+Rayon is used in data processing pipelines, image rendering, scientific simulations, build systems (Cargo uses Rayon for compilation), and any CPU-bound iteration over large datasets.
 
-Sequential iterators are elegant but single-threaded. When you're processing millions of items — image pixels, log lines, simulation steps — you're leaving N−1 cores idle. Manually splitting work across threads, joining them, and merging results is tedious and error-prone.
+## Learning Outcomes
 
-Rayon's `par_iter()` parallelises iterator pipelines automatically. It uses a global work-stealing thread pool tuned to your hardware. You write the same functional chain you'd write for serial code; Rayon decides how to split and schedule it.
+- Understand the parallel iterator pattern: chunk data, process in parallel, collect results
+- Learn how `thread::available_parallelism()` determines the optimal thread count
+- See how chunk-based parallel map avoids the overhead of one-thread-per-element
+- Understand how parallel reduce/fold works: local reductions joined in a tree
+- Learn the data parallelism model vs. task parallelism (different granularity)
 
-Because ownership and `Send`/`Sync` bounds are enforced at compile time, data races are impossible. The compiler rejects parallel code that would be unsafe.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `parallel_map` chunks input data into `num_threads` chunks using `thread::available_parallelism()`. Each chunk is processed by a scoped thread using the function `f`. Results are pre-allocated and each thread fills its slice in-place. `parallel_sum` splits the array in half recursively down to a threshold, then sums sequentially. This demonstrates the divide-and-conquer reduction tree used by `rayon::sum()`.
 
-You have a conveyor belt (your iterator) processing items one at a time. With `.par_iter()` you're replacing it with N parallel conveyor belts, each handling a slice of items, feeding results into a single final collection. You don't manage the belts — you just describe what to do with each item.
+## OCaml Approach
 
-## How It Works in Rust
-
-1. **Switch to parallel** — call `.par_iter()` instead of `.iter()` (requires `rayon::prelude::*`).
-2. **Same API** — `.map()`, `.filter()`, `.flat_map()`, `.fold()`, `.reduce()` all work identically.
-3. **Collect results** — `.collect::<Vec<_>>()` merges partial results from all threads.
-4. **Automatic chunking** — Rayon splits the input adaptively using its work-stealing scheduler. You never size chunks manually.
-
-```rust
-use rayon::prelude::*;
-
-let sum: i64 = (0..1_000_000_i64)
-    .into_par_iter()
-    .filter(|n| n % 2 == 0)
-    .map(|n| n * n)
-    .sum();
-```
-
-5. **Custom thread pool** — `rayon::ThreadPoolBuilder::new().num_threads(4).build_global()` if defaults don't suit.
-
-## What This Unlocks
-
-- **Zero-boilerplate parallelism** — the migration from serial to parallel is often a one-character change.
-- **Composability** — parallel and sequential iterators chain together; switch back with `.collect()` then `.iter()`.
-- **Safety by construction** — if your closures aren't `Send`, Rayon won't compile. The type system enforces thread safety.
+OCaml 5.x's `Domainslib.Task.parallel_for` divides a range among domains: `Task.parallel_for pool ~start:0 ~finish:n ~body:(fun i -> process arr.(i))`. `Domainslib.Task.async` + `Task.await` provide future-style composition. OCaml 4.x has no true parallel iteration due to the GIL. The functional style makes parallel operations natural — pure functions with no shared state are trivially parallelizable.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Parallel iteration | `Parmap` / `Domainslib.Task.parallel_for` | `rayon::par_iter()` |
-| Thread pool | `Domainslib` pool, explicit | Implicit global pool |
-| Safety | Runtime checks | Compile-time `Send`/`Sync` bounds |
-| Chunk sizing | Manual or library heuristic | Adaptive work-stealing |
+1. **API ergonomics**: Rayon's `.par_iter()` requires zero code change beyond the method name; this example requires manual chunking. OCaml's `Domainslib.parallel_for` is also low-level.
+2. **Work stealing**: Rayon uses work stealing for load balancing; this example's fixed-chunk approach can be imbalanced.
+3. **Composability**: Rayon's parallel iterators compose: `.par_iter().filter(pred).map(f).sum()` is all parallel; manual chunking requires re-chunking at each stage.
+4. **Overhead**: Rayon's global thread pool amortizes startup costs; `thread::scope` creates threads per scope (but with scoped thread caching in some implementations).
+
+## Exercises
+
+1. **Image processing**: Load a grayscale image as `Vec<u8>`. Apply a blur filter to each pixel in parallel using the chunked parallel_map pattern. Verify the result matches sequential processing.
+2. **Word count**: Given `Vec<String>` of sentences, count total words in parallel using parallel_map (count per sentence) followed by a parallel sum. Compare performance vs. sequential for 1M sentences.
+3. **Matrix transpose**: Implement parallel matrix transpose using `thread::scope`. Divide rows among threads; each thread writes its assigned rows to the transposed positions. Verify correctness and benchmark vs. sequential.

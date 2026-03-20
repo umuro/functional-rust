@@ -2,81 +2,37 @@
 
 ---
 
-# 749: Fuzzing Concepts: cargo fuzz Approach
+# 749-fuzzing-concepts — Fuzzing Concepts
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Generate random inputs automatically to find crashes — `cargo fuzz` with libFuzzer finds bugs that hand-written tests miss.
+Fuzzing sends random or mutated inputs to a program to find panics, crashes, and assertion failures. It has discovered thousands of security vulnerabilities in parsers, decoders, and protocol implementations. AFL++ and libFuzzer are the dominant fuzzers; Rust's `cargo-fuzz` wraps libFuzzer for Rust code. The key design principle for fuzzer-safe code is: never panic on any input — return `Err` instead of unwrapping. This example demonstrates how to write fuzz-safe parsers.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Hand-written unit tests cover the cases you thought of. Fuzzing covers the cases you didn't. A fuzzer generates thousands of random (and semi-random, mutation-based) inputs per second and reports any input that causes a panic, assertion failure, or undefined behavior. Parser bugs, off-by-one errors in length checks, integer overflows, and logic errors in edge cases are all prime fuzzing targets.
+- Write parsers that return `Result`/`Option` on all invalid inputs instead of panicking
+- Understand the Rust fuzzing workflow: `cargo fuzz add target`, `cargo fuzz run target`
+- See why `unwrap()` in parsers is a security vulnerability (forced panic = DoS)
+- Implement boundary checks before every slice index operation
+- Write basic fuzz harness structure for a binary packet parser
 
-In Rust, `cargo fuzz` integrates libFuzzer — a coverage-guided fuzzer that steers mutations toward unexplored code paths. It's particularly powerful for parsing code: binary formats, text parsers, network protocol handlers, and anything that touches untrusted input. A fuzz corpus grows over time, building up a library of interesting inputs that continuously test your code.
+## Rust Application
 
-The critical discipline: your fuzz target must *never panic on any input*. Panics are bugs in fuzz targets. All invalid inputs should return `Err(...)`, not panic. This forces the "defensive parsing" mindset that makes production parsers robust.
+`parse_packet` handles a three-field binary format: version byte, length byte, payload. It checks every precondition before accessing data: `data.len() < 2` returns `TooShort`, invalid version returns `InvalidVersion`, insufficient payload data returns `TruncatedPayload`. No `unwrap()` or `expect()` is used. The `roundtrip_property` test verifies that parsing a re-encoded packet produces the original — a classic fuzz invariant. `fuzz_parse` demonstrates the harness signature for `cargo fuzz`.
 
-## The Intuition
+## OCaml Approach
 
-A fuzz target is a function `fn fuzz_target(data: &[u8])` that accepts arbitrary bytes and must not panic. The fuzzer calls it millions of times with mutations of a seed corpus, tracking code coverage to find inputs that exercise new branches. When it finds a crash (panic), it saves the minimal reproducing input. Writing a good fuzz target means: (1) call your parser, (2) if it returns `Ok`, check invariants (roundtrip, etc.), (3) if it returns `Err`, that's fine. Never `unwrap()` in a fuzz target.
-
-## How It Works in Rust
-
-```rust
-// In a real project: fuzz/fuzz_targets/parse_packet.rs
-// #![no_main]
-// use libfuzzer_sys::fuzz_target;
-// fuzz_target!(|data: &[u8]| {
-//     let _ = my_crate::parse_packet(data);  // must NEVER panic
-// });
-
-// The code being fuzzed — defensive parsing, no panics on bad input
-pub fn parse_packet(data: &[u8]) -> Result<Packet, ParseError> {
-    if data.len() < 2 {
-        return Err(ParseError::TooShort);        // not panic!
-    }
-    let version = data[0];
-    if version == 0 || version > 5 {
-        return Err(ParseError::InvalidVersion(version));
-    }
-    let payload_len = data[1] as usize;
-    let available = data.len().saturating_sub(2);
-    if available < payload_len {
-        return Err(ParseError::TruncatedPayload {
-            expected: payload_len,
-            got: available,
-        });
-    }
-    Ok(Packet { version, payload_len: payload_len as u8,
-                payload: data[2..2 + payload_len].to_vec() })
-}
-
-// Simulate the fuzz target in regular tests
-fn fuzz_target(data: &[u8]) {
-    let result = parse_packet(data);
-    if let Ok(ref p) = result {
-        // Invariant: encode then decode = identity
-        let encoded = encode_packet(p);
-        let decoded = parse_packet(&encoded).unwrap();
-        assert_eq!(decoded.version, p.version);
-        assert_eq!(decoded.payload, p.payload);
-    }
-}
-```
-
-To set up real fuzzing: `cargo install cargo-fuzz`, then `cargo fuzz init` and `cargo fuzz add parse_packet`. Run with `cargo fuzz run parse_packet`. The corpus and crash artifacts are saved in `fuzz/corpus/` and `fuzz/artifacts/`.
-
-## What This Unlocks
-
-- **Crash-free parsers** — the discipline of "no panics on arbitrary input" forces proper error handling that also benefits production robustness (no user can crash your service with a malformed packet).
-- **Roundtrip invariants as fuzz oracles** — checking that `decode(encode(x)) == x` catches serialization bugs that unit tests with specific inputs often miss.
-- **Corpus-driven regression** — a fuzz corpus of interesting inputs becomes a regression suite; `cargo fuzz run --jobs 4` runs continuously in CI to find new bugs as code changes.
+OCaml's `afl` library integrates with American Fuzzy Lop. The `crowbar` library provides property-based fuzzing using libFuzzer. OCaml's exception-based error handling means uncaught exceptions crash the fuzz target similarly to Rust's `unwrap`. The key discipline is the same: use `result`-based parsing and avoid `failwith`/`assert false` in parser code paths.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Fuzz framework | `crowbar` (QCheck-based) or AFL wrappers | `cargo fuzz` — first-class tooling, libFuzzer built-in |
-| No-panic contract | Raised exceptions caught at top level | `Result<T, E>` return type enforces explicit error handling |
-| Coverage guidance | AFL uses compile-time instrumentation | libFuzzer uses LLVM SanitizerCoverage — integrated with `rustc` |
-| Roundtrip testing | Property-based via QCheck | Same pattern; `assert_eq!` in the fuzz target body |
+1. **Panic vs exception**: Rust's `unwrap()` panics (caught by libFuzzer as a crash); OCaml's `failwith` raises an exception (also caught as a crash).
+2. **Memory safety**: Rust's memory safety guarantees eliminate entire classes of fuzzer-discovered bugs (buffer overflow, use-after-free); OCaml's GC provides similar protection.
+3. **Fuzzer integration**: Rust has `cargo-fuzz` with first-class libFuzzer support; OCaml uses `afl.sh` wrappers or `crowbar` with more setup.
+4. **Speed**: Rust fuzz targets run 2–5x faster than equivalent OCaml targets due to no GC overhead, finding more coverage per second.
+
+## Exercises
+
+1. Add a `parse_json_number` function that handles integers, floats, and scientific notation — ensure it never panics on any byte sequence and write a roundtrip property test.
+2. Write a fuzz harness that tests the invariant: `parse_packet(encode_packet(p)) == Ok(p)` for all valid packets generated by the fuzzer.
+3. Implement `parse_packet_v2` with a checksum field at the end, verifying the checksum before returning `Ok` — make it fuzz-safe with proper error handling.

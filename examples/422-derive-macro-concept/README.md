@@ -2,77 +2,39 @@
 
 ---
 
-# 422: Derive Macros: Concept and Usage
+# 422: Derive Macro Concepts
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Demystify `#[derive(Debug)]` by showing what code it actually generates — and understand when to use derive vs write implementations by hand.
+Many trait implementations are entirely mechanical: `Debug` for a struct just prints each field name and value, `Clone` copies each field, `PartialEq` compares each field. Writing these by hand for every type is tedious, error-prone (especially when fields are added later), and distracts from the actual logic. `#[derive(Debug, Clone, PartialEq)]` instructs the compiler to generate these mechanical implementations automatically based on the type's structure. Understanding what derive macros generate is essential for debugging unexpected behavior.
 
-## The Problem This Solves
+Derive macros are the most common form of code generation in Rust: `serde::Deserialize`, `Debug`, `Clone`, `PartialEq`, `Hash`, `Default` — virtually every struct uses them.
 
-Every Rust beginner writes `#[derive(Debug, Clone, PartialEq)]` and it magically works. But when something goes wrong — a custom type doesn't derive, a newtype wraps a non-`Hash` type, an enum variant breaks `Ord` ordering — you're stuck. You can't debug what you don't understand.
+## Learning Outcomes
 
-Beyond debugging, derive macros are the entry point to a deeper capability: procedural macros. `#[derive(Serialize)]` from serde, `#[derive(Error)]` from thiserror, `#[derive(Component)]` from Bevy — all of these are proc macros that generate substantial code from a struct definition. Understanding what `#[derive(Debug)]` actually emits teaches you to reason about what any derive macro might emit.
+- Understand what code `#[derive(Debug)]`, `#[derive(Clone)]`, and `#[derive(PartialEq)]` generate
+- Learn how derive macros inspect the struct/enum structure to generate field-by-field code
+- See the equivalence between `ManualDebug`'s hand-written impl and the derived version
+- Understand when derived implementations are insufficient (custom comparison, non-standard display)
+- Learn the requirements: all fields must implement the derived trait
 
-The manual equivalents also matter in practice. You'll hand-write `PartialEq` when two structs are equal only when a subset of fields match, or `Debug` when you want to redact a password field. Knowing what derive would have generated makes writing the custom version straightforward.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `Point` derives `Debug, Clone, Copy, PartialEq, Eq, Hash, Default` — all seven traits from a single line. `ManualDebug` shows what `#[derive(Debug)]` actually generates: `f.debug_struct("ManualDebug").field("value", &self.value).finish()`. The manual `Clone` for `ManualDebug` shows `ManualDebug { value: self.value }` — identical to what the derive would produce. Tests verify both produce the same output.
 
-`#[derive(Debug)]` is a code generator. Before compilation, the Rust compiler hands the macro your struct definition and says "generate the `Debug` impl." The macro produces something like what you'd write yourself — `f.debug_struct("Point").field("x", &self.x).field("y", &self.y).finish()` — and that generated code is compiled alongside your own.
+## OCaml Approach
 
-All standard derive traits follow the same pattern: they inspect each field or variant and compose the implementation recursively. `#[derive(Clone)]` calls `.clone()` on each field. `#[derive(PartialEq)]` compares fields pairwise. `#[derive(Ord)]` compares fields left to right, using the first non-equal result.
-
-## How It Works in Rust
-
-```rust
-// What you write:
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
-struct Point { x: i32, y: i32 }
-
-// What #[derive(Debug)] generates (simplified):
-impl fmt::Debug for Point {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.debug_struct("Point")
-            .field("x", &self.x)   // calls Debug on each field
-            .field("y", &self.y)
-            .finish()
-    }
-}
-
-// What #[derive(PartialEq)] generates:
-impl PartialEq for Point {
-    fn eq(&self, other: &Self) -> bool {
-        self.x == other.x && self.y == other.y
-    }
-}
-
-// What #[derive(Default)] generates:
-impl Default for Point {
-    fn default() -> Self {
-        Point { x: i32::default(), y: i32::default() }
-    }
-}
-```
-
-**Practical outcomes of derived traits:**
-- `Debug` → `{:?}` formatting and `dbg!()` macro
-- `Hash + Eq` → use as `HashMap` key
-- `Ord` → `.sort()` on `Vec<T>`
-- `Clone` → `.clone()` method
-- `Default` → `..Default::default()` struct update syntax
-
-## What This Unlocks
-
-- **Custom derives for your own types** — understanding the pattern leads directly to writing proc macros with `syn` + `quote` that generate any code from a struct definition.
-- **Knowing when NOT to derive** — hand-write `Debug` to redact secrets, hand-write `PartialEq` for semantic equality (two `HashMap`s with same entries but different capacities are equal).
-- **Third-party derives** — `serde::Serialize`, `thiserror::Error`, `clap::Parser` all follow this same expansion model; you can reason about what they generate.
+OCaml uses `ppx_deriving` or `ppx_compare`/`ppx_hash` from Jane Street for equivalent code generation. `[@@deriving show, eq, ord]` after a type definition generates `show`, `equal`, and `compare` functions. The `show` ppx generates `pp` functions for `Format.formatter`. Unlike Rust's integrated derive system, OCaml's derivers are separate ppx plugins that must be listed as build dependencies.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Code generation from type | `ppx_deriving` (show, eq, ord) — third-party, requires opam pkg | `#[derive(...)]` — built into compiler, no deps for std traits |
-| Manual equivalent | Write `show_point`, `equal_point` functions | Implement `fmt::Debug`, `PartialEq` traits |
-| Syntax | `[@@deriving show, eq]` attribute | `#[derive(Debug, PartialEq)]` attribute |
-| Ordering | `compare` polymorphic function | `PartialOrd` + `Ord` traits; field order matters for derived `Ord` |
-| Hash map key | Any type with structural equality | Requires `Hash + Eq` both derived or both implemented |
+1. **Integrated vs. plugins**: Rust's `Debug`, `Clone`, `PartialEq`, `Hash` are built into `rustc`; OCaml requires external ppx plugins in `dune` configuration.
+2. **Trait vs. function**: Rust derives implement traits (uniform interface); OCaml ppx generates standalone functions (`show`, `equal`, `compare`).
+3. **Field traversal**: Both generate field-by-field code; Rust's version uses the trait interface (`Debug::fmt` per field), OCaml's uses pattern matching.
+4. **Error when field lacks trait**: Rust compile error says "field `x` of type `T` doesn't implement `Debug`"; OCaml ppx gives similar errors.
+
+## Exercises
+
+1. **Expand and study**: Add `#[allow(unused)]` and a new field `pub label: Option<String>` to `Point`. Predict what the derived `Debug` output will look like, then verify with `format!("{:?}", p)`. Add a field of a type that doesn't implement `Debug` and study the compile error.
+2. **Custom debug**: Implement a `struct Password(String)` where the derived `Debug` would expose the secret. Write a custom `Debug` that outputs `Password("***")` regardless of the actual value.
+3. **Partial derive**: Implement a struct where `PartialEq` should compare only some fields (e.g., a `User` where equality is by `id` only). Write the manual implementation and add a comment explaining why the derived version would be wrong.

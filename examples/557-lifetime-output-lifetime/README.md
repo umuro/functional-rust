@@ -2,84 +2,50 @@
 
 ---
 
-# 557: Output Lifetimes in Traits
+# Output Lifetime Patterns
 
-**Difficulty:** 4  **Level:** Intermediate-Advanced
+## Problem Statement
 
-Specify which input a trait method's return value borrows from — so the compiler can track validity across trait boundaries.
+Every function returning a reference must express where that reference comes from — the output lifetime. In simple cases, elision handles this. In complex cases, understanding which input the output borrows from is essential for correctness. Three distinct patterns cover most use cases: (1) output tied to a single input, (2) output tied to the shortest common lifetime of multiple inputs, (3) output with a lifetime independent of inputs (`'static`). Getting the output lifetime wrong causes either compile errors or unnecessarily restrictive APIs.
 
-## The Problem This Solves
+## Learning Outcomes
 
-When a trait method returns a reference, the compiler needs to know which input it borrows from. For simple cases (one input, `&self`), lifetime elision handles it. But when a method has both `&self` and a `&'a str` input, and the output borrows from the *string argument* rather than `self`, you must be explicit — elision gets it wrong.
+- How `first_char(s: &str) -> Option<&str>` ties the output to the single input via elision
+- How `common_prefix<'a>(a: &'a str, b: &'a str) -> &'a str` uses one lifetime for both inputs
+- How `static_str(_s: &str) -> &'static str` returns data independent of the input
+- How struct methods can return `&self`-lifetime vs stored-data-lifetime references
+- When choosing the correct output lifetime affects API ergonomics
 
-This pattern appears constantly in extractors, parsers, adapters, and any abstraction over "give me a view into this data." Without explicit output lifetimes in traits, you either over-restrict callers (requiring both to live equally long) or end up copying data unnecessarily.
+## Rust Application
 
-The lifetime parameter on the trait itself (`trait Extractor<'a>`) vs on the method is the key design decision, and each choice has different tradeoffs for implementors.
+`first_char(s: &str) -> Option<&str>` — elision ties the output to `s`. `common_prefix<'a>(a: &'a str, b: &'a str) -> &'a str` — output tied to the intersection of `a` and `b`'s lifetime (same `'a`). `static_str(_s: &str) -> &'static str` — ignores the input lifetime, returns program-duration data. `Container::get(&self, i: usize) -> Option<&str>` returns a reference to items stored in `self` — tied to `self`'s lifetime by Rule 3.
 
-## The Intuition
+Key patterns:
+- Single input → output tied to it (elision)
+- `'a` covering multiple inputs → output is valid when both inputs are
+- `&'static str` return — independent of any input
 
-Think of a lifetime annotation on the output as a label: "this return value was carved out of *that* input." When you write `fn extract(&self, source: &'a str) -> Vec<&'a str>`, you're saying "the returned slices point into `source`, not into `self`." The caller can then drop `self` while still using the returned slices — as long as `source` lives.
+## OCaml Approach
 
-Putting `'a` on the *trait* (`trait Extractor<'a>`) instead of on the method means the lifetime is fixed when you implement the trait, not when you call the method. This is useful for implementors that need to store `'a`-lived data.
+OCaml functions return GC-managed values — there are no output lifetimes. The equivalent functions are:
 
-## How It Works in Rust
-
-**Lifetime on the trait** — fixed at impl time:
-```rust
-trait Extractor<'a> {
-    type Output;
-    fn extract(&self, source: &'a str) -> Self::Output;
-}
-
-impl<'a> Extractor<'a> for WordExtractor {
-    type Output = Vec<&'a str>;
-    fn extract(&self, source: &'a str) -> Vec<&'a str> {
-        source.split_whitespace().collect()
-    }
-}
-```
-The associated type `Output` is generic over `'a`, so callers get `Vec<&'a str>` — slices of the input string.
-
-**Using the trait generically** — the bound ties input and output lifetimes:
-```rust
-fn extract_and_print<'a>(
-    extractor: &impl Extractor<'a, Output = Vec<&'a str>>,
-    text: &'a str,
-) {
-    let words = extractor.extract(text);
-    println!("{:?}", words);
-}
+```ocaml
+let first_char s = if String.length s = 0 then None else Some (String.sub s 0 1)
+let common_prefix a b = (* find and return common prefix as new string *)
+let static_str _ = "static"
 ```
 
-**`&self` lifetime in output** — elision works here:
-```rust
-trait AsRef2 {
-    fn as_str(&self) -> &str;  // implicitly: fn as_str<'a>(&'a self) -> &'a str
-}
-```
-Elision rule 3: when `&self` is the only input, the output borrows from `self`.
-
-**Proving the output borrows from the argument, not `self`:**
-```rust
-let text = String::from("hello world rust");
-let extractor = WordExtractor;
-let words = extractor.extract(&text);
-// extractor can be dropped here — words only borrow from text
-drop(extractor);
-println!("{:?}", &words[..2]);  // still valid
-```
-
-## What This Unlocks
-
-- **Zero-copy trait abstractions** — extractors, parsers, splitters that return slices of their input without allocation.
-- **Lifetime-polymorphic trait objects** — by putting `'a` on the trait, implementors can vary the output lifetime.
-- **Documenting borrow sources** — explicit lifetime annotations in trait signatures are machine-checked documentation of "this output came from that input."
+All returned values are GC-managed; no lifetime annotation describes where they came from.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Trait with lifetime | N/A (no lifetimes) | `trait Foo<'a>` or method-level `'a` |
-| Return borrows from argument | GC tracks implicitly | Explicit `'a` on both input and output |
-| Associated type with lifetime | N/A | `type Output;` resolved at `impl` with `'a` in scope |
-| Elision for `&self` output | N/A | Rule 3: output inherits `self`'s lifetime automatically |
+1. **Output source tracing**: Rust requires the programmer to specify which input a returned reference borrows from; OCaml returns owned or GC-managed values with no source annotation needed.
+2. **Performance**: Rust `first_char` returns a `&str` slice — zero allocation; OCaml `String.sub` copies the character into a new string.
+3. **Independent output**: Rust `-> &'static str` is a common optimization for returning compile-time constants; OCaml constants are also zero-allocation but through GC interning.
+4. **Error source**: When output lifetime is wrong in Rust, the compiler reports "does not live long enough" at the use site; OCaml never reports lifetime errors.
+
+## Exercises
+
+1. **Multiple output lifetimes**: Write `fn split_first<'a>(s: &'a str, sep: char) -> (&'a str, &'a str)` returning the part before and after the first occurrence of `sep` as zero-copy slices.
+2. **Independent static**: Implement `fn status_message(code: u16) -> &'static str` using a `match` expression returning string literal branches — verify no heap allocation occurs.
+3. **Container iterator**: Add a method `fn iter(&self) -> impl Iterator<Item = &str>` to `Container` and verify the returned iterator's lifetime is tied to `&self`.

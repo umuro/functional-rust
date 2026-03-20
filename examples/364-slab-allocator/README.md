@@ -2,65 +2,104 @@
 
 ---
 
-# 364: Slab Pattern for Indexed Storage
+# 364: Slab Allocator
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Pre-allocated pool with stable integer indices — insert returns an index, not a reference.
+Graph nodes, AST nodes, and ECS (Entity Component System) game entities all need stable references that don't invalidate when other items are added or removed. Raw indices into a `Vec` are unstable — removing element 5 shifts all subsequent elements, invalidating stored indices. A slab allocator solves this: it maintains a `Vec<Option<T>>` where items occupy stable slots identified by integer keys. Removed slots are tracked in a free list and reused for future allocations. Keys remain valid across insertions and removals of other elements. The `slab` crate is the production implementation; this example shows the pattern from scratch.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Sometimes you want a collection of objects where each object has a stable, reusable identity even as items come and go. A game engine with entities being created and destroyed. A network server tracking open connections. A graph implementation where nodes need stable IDs.
+- Implement a slab with `Vec<Option<T>>` for stable-key storage
+- Maintain a `Vec<usize>` free list to reuse vacated slots
+- Return stable integer keys from `insert` that remain valid after other removals
+- Retrieve, remove, and iterate entries using the key-based API
+- Understand that slab allocation is O(1) amortized for insert and O(1) for get/remove
+- Recognize slab as the foundation for ECS, graph adjacency, and memory pools
 
-You could use `Vec` with a "tombstone" marker for deleted slots, but you'd need to manage free-list recycling yourself. You could use `HashMap<usize, T>`, but that's heap allocation per entry plus hash overhead. You could use `Box<T>` handles, but then the borrow checker makes passing handles around painful.
-
-The `slab` crate gives you a pre-allocated pool that returns integer keys on insert, recycles slots on remove, and guarantees `O(1)` insert, remove, and lookup. No heap allocation per element after the initial slab creation. No fragmentation.
-
-## The Intuition
-
-A slab maintains a `Vec<Slot<T>>` where each slot is either `Occupied(T)` or `Vacant(next_free_index)`. The vacant slots form a linked list via their stored indices — the "free list." Insert finds the next free slot (or grows the Vec), puts your value in, and returns the slot index. Remove marks the slot vacant and prepends it to the free list. Lookup is just `vec[index]`.
-
-The key property: indices are stable. When you remove entry 5, entry 6's index doesn't change. This makes slabs ideal for graph nodes, entity IDs, and any structure where external code holds references by integer key.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-use slab::Slab;
+pub struct Slab<T> {
+    entries: Vec<Option<T>>,
+    free: Vec<usize>,
+}
 
-let mut slab = Slab::new();
+impl<T> Slab<T> {
+    pub fn new() -> Self {
+        Self { entries: Vec::new(), free: Vec::new() }
+    }
 
-// Insert returns a stable key
-let alice = slab.insert("Alice");   // key: 0
-let bob   = slab.insert("Bob");     // key: 1
-let carol = slab.insert("Carol");   // key: 2
+    pub fn insert(&mut self, val: T) -> usize {
+        if let Some(key) = self.free.pop() {
+            self.entries[key] = Some(val); // reuse freed slot
+            key
+        } else {
+            let key = self.entries.len();
+            self.entries.push(Some(val)); // grow
+            key
+        }
+    }
 
-// O(1) lookup by key
-println!("{}", slab[bob]);  // "Bob"
+    pub fn get(&self, key: usize) -> Option<&T> {
+        self.entries.get(key)?.as_ref()
+    }
 
-// Remove — key 1 is now free
-slab.remove(bob);
+    pub fn remove(&mut self, key: usize) -> Option<T> {
+        let val = self.entries.get_mut(key)?.take()?;
+        self.free.push(key); // reclaim slot for future inserts
+        Some(val)
+    }
 
-// Next insert reuses key 1
-let dave = slab.insert("Dave");
-assert_eq!(dave, 1);
-
-// Iterate occupied entries
-for (key, name) in &slab {
-    println!("{key}: {name}");
+    pub fn contains(&self, key: usize) -> bool {
+        self.entries.get(key).map_or(false, |e| e.is_some())
+    }
 }
 ```
 
-## What This Unlocks
+`take()` replaces `Some(val)` with `None` in-place and returns the value — a single method that removes and returns atomically. The free list is a LIFO stack (`pop`/`push`) — most recently freed keys are reused first, which tends to improve cache locality.
 
-- **Entity-component systems** — entities are slab keys; components stored in parallel slabs indexed by same key.
-- **Connection pools** — each connection gets a stable ID; closed connections' slots are recycled.
-- **Graph representations** — nodes stored in slabs, edges stored as `(usize, usize)` pairs — no lifetime juggling.
+## OCaml Approach
+
+OCaml's garbage collector provides automatic stable references (object identity). For explicit slab behavior with integer keys, use an array with an option type:
+
+```ocaml
+type 'a slab = {
+  mutable entries: 'a option array;
+  mutable free: int list;
+  mutable next: int;
+}
+
+let insert s val =
+  match s.free with
+  | k :: rest -> s.free <- rest; s.entries.(k) <- Some val; k
+  | [] ->
+    let k = s.next in
+    s.next <- k + 1;
+    (* resize if needed *)
+    s.entries.(k) <- Some val; k
+
+let remove s k =
+  let v = s.entries.(k) in
+  s.entries.(k) <- None;
+  s.free <- k :: s.free;
+  v
+```
+
+In OCaml, stable object references are just values tracked by the GC — the slab pattern is mainly useful when you need integer keys for serialization, inter-process communication, or C FFI.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Object pool | Manual with array + free list | `slab::Slab<T>` — handles free list automatically |
-| Stable identity | Integer index into array | `slab.insert(v)` returns `usize` key |
-| Slot recycling | Manual | Automatic via internal free list |
-| Access | `array.(index)` | `slab[key]` or `slab.get(key)` |
+| Aspect | Rust `Slab<T>` | OCaml `'a option array` |
+|--------|---------------|------------------------|
+| Key stability | Integer key (stable across mutations) | Object reference (GC-stable) |
+| Free list | `Vec<usize>` LIFO | `int list` |
+| Memory | Contiguous array (cache-friendly) | Array of boxed options |
+| Iteration | Filter `Some` entries | Filter `Some` entries |
+| Production | `slab` crate | No standard equivalent |
+
+## Exercises
+
+1. **Iteration**: Implement `fn iter(&self) -> impl Iterator<Item = (usize, &T)>` that yields `(key, &value)` pairs for all occupied slots, filtering out `None` entries.
+2. **Graph with slab**: Represent a directed graph where nodes are slab-allocated; `remove_node(key)` removes the node and all edges referencing it from other nodes' adjacency lists.
+3. **Generation counter**: Add a generation counter per slot to detect use-after-free: keys become `(index, generation)` pairs; removing increments the generation, and `get` checks that the stored generation matches.

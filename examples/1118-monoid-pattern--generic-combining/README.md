@@ -36,3 +36,9 @@ runtime dispatch, no allocation, zero overhead.
 2. **Multiple instances per type:** OCaml creates distinct modules; Rust uses newtype wrappers to avoid conflicting impls on `i64`.
 3. **Identity element:** OCaml stores `empty` as a module value; Rust uses an associated function `fn empty() -> Self`.
 4. **Recursion vs iterator:** OCaml's `fold_left` is a library function; Rust's `Iterator::fold` works on any `IntoIterator`, accepting slices, arrays, or lazy chains.
+
+## Exercises
+
+1. Implement a `Product<T>` newtype monoid wrapping a numeric type and verify `concat_all` correctly computes the product of a list of numbers.
+2. Build a `Dual<M>` monoid that reverses the order of the binary operation (i.e., `Dual(x).combine(Dual(y)) = y.combine(x)`) and use it to find the minimum of a list using the same `concat_all` machinery.
+3. Compose two monoids into a product monoid `(M1, M2)` whose operation applies each component monoid independently, then use it to compute the count and sum of a list simultaneously in one pass.

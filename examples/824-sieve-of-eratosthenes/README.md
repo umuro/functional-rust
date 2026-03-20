@@ -2,74 +2,60 @@
 
 ---
 
-# 824: Sieve of Eratosthenes
+# Sieve of Eratosthenes
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Generate all primes up to N in O(n log log n) by iteratively marking composites — the oldest and most cache-friendly batch prime algorithm.
+Generating all prime numbers up to N is a fundamental operation in number theory with applications in cryptography (RSA key generation requires large primes), competitive programming, and mathematical software. Trial division for each number takes O(sqrt(n)) per number, giving O(n*sqrt(n)) total. The Sieve of Eratosthenes achieves O(n log log n) by marking multiples of each prime in bulk: once 2's multiples are marked, 3's multiples, 5's multiples, etc. Every composite number gets eliminated exactly once. For N up to 10^7, the sieve runs in milliseconds and uses O(n) memory. Segmented variants extend this to arbitrary ranges without holding all of 0..N in memory.
 
-## The Problem This Solves
+## Learning Outcomes
 
-When you need many primes — RSA key generation, primality sieves in cryptographic libraries, competitive programming precomputation, prime-counting functions — you need a batch algorithm, not per-number testing. Trial division checks one number in O(√n); the sieve amortizes this across all numbers up to N and achieves O(n log log n) total, which in practice is nearly linear.
+- Implement the classic sieve: initialize all to true, mark multiples of each prime starting from p^2
+- Understand why we start marking from p^2: smaller multiples were already marked by earlier primes
+- Recognize the time complexity: each composite is marked exactly once by its smallest prime factor
+- Learn the segmented sieve for memory-efficient prime generation for very large N
+- Apply the sieve to number-theoretic computations: Euler's totient, smallest prime factor table
 
-The sieve is also the canonical example of a simple, cache-friendly computation that benefits enormously from modern CPU memory hierarchies. The inner marking loop is a stride-p write over a contiguous boolean array — exactly the access pattern that hardware prefetchers handle well. Using `Vec<bool>` (or a bit-vector) over a `HashSet` can be 10-50× faster in practice because of this.
-
-The segmented sieve variant (also shown) processes the range `[lo, hi]` using only O(√hi) base primes — essential when N is too large for a single array (e.g., primes up to 10^12 in a problem).
-
-## The Intuition
-
-Mark every multiple of p starting from p² as composite. Start from p² because all smaller multiples of p have already been marked by smaller primes. Only sieve up to √N because any composite ≤ N has a prime factor ≤ √N. The inner loop runs `N/p` times per prime p; summing over all primes gives Σ N/p ≈ N × log log N by Mertens' theorem — the source of the O(n log log n) complexity.
-
-OCaml uses `Array.make n true` with a for loop; Rust's `.step_by(p)` range is identical in behavior, slightly more idiomatic.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-fn sieve(limit: usize) -> Vec<usize> {
-    if limit < 2 { return vec![]; }
-    let mut is_prime = vec![true; limit + 1];
+pub fn sieve(n: usize) -> Vec<bool> {
+    let mut is_prime = vec![true; n + 1];
     is_prime[0] = false;
-    is_prime[1] = false;
-
-    let sqrt_limit = (limit as f64).sqrt() as usize;
-    for p in 2..=sqrt_limit {
+    if n >= 1 { is_prime[1] = false; }
+    let mut p = 2;
+    while p * p <= n {
         if is_prime[p] {
-            // Start at p² — all smaller multiples already marked
-            // step_by(p): stride-p access is cache-prefetcher-friendly
-            for j in (p * p..=limit).step_by(p) {
-                is_prime[j] = false;  // O(1) per mark, N/p total
-            }
+            let mut m = p * p;
+            while m <= n { is_prime[m] = false; m += p; }
         }
+        p += 1;
     }
-
-    // Collect: enumerate gives (index, value) — filter_map keeps only primes
-    is_prime.iter().enumerate()
-        .filter_map(|(i, &b)| if b { Some(i) } else { None })
-        .collect()
-}
-
-// Returns the sieve itself for O(1) primality queries
-fn prime_sieve(limit: usize) -> Vec<bool> {
-    // Same construction; returns the boolean array
-    // O(1) per query after O(n log log n) build — the key practical advantage
-    // ...
+    is_prime
 }
 ```
 
-For memory-critical applications: replace `Vec<bool>` with a `Vec<u64>` bit-packed manually or the `bit-vec` crate — reduces memory by 8×, improving L1/L2 cache utilization dramatically for large N.
+Rust's `Vec<bool>` stores one boolean per byte; for large N, a `BitVec` (from the `bitvec` crate) gives 8x memory reduction. The `while p * p <= n` loop condition avoids floating-point with `sqrt`. Starting inner loop at `p * p` (not `2*p`) saves marking already-marked composites. The function returns the sieve array rather than the prime list, letting callers enumerate primes lazily with `enumerate().filter()`. This is more flexible than returning a `Vec<usize>` — callers can ask for count, nth prime, or primality test without rebuilding.
 
-## What This Unlocks
+## OCaml Approach
 
-- **Cryptography precomputation**: Generate primes for RSA/DSA parameter selection; sieve to 10^7 takes ~40ms and fits in L2 cache.
-- **Competitive programming**: The segmented sieve finds primes in `[lo, hi]` using O(√hi) memory — essential for problems where N > 10^9.
-- **Prime-counting and analytic number theory**: `π(n)` (number of primes ≤ n) is computed by counting `true` values after sieving; used in cryptanalysis and theoretical CS.
+OCaml implements the sieve with `Array.make (n+1) true` and two nested loops using `for` and `while`. The functional equivalent uses `Array.iteri` for the outer loop, though mutable array mutation is idiomatic here. OCaml's `Array.to_seqi |> Seq.filter_map (fun (i, b) -> if b then Some i else None)` generates prime sequences lazily. The `Bigarray` module provides compact bit arrays for memory efficiency. OCaml's `Printf.printf` easily prints prime counts for verification.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Boolean array | `Array.make (n+1) true` | `vec![true; n + 1]` |
-| Mark multiples | `for j = p*p to n step p do` | `(p*p..=n).step_by(p)` — lazy range |
-| Integer sqrt | `int_of_float (sqrt (float_of_int n))` | `(n as f64).sqrt() as usize` |
-| Collect primes | `Array.to_seqi |> Seq.filter_map` | `.enumerate().filter_map(...)` |
-| Bit-packing | External library needed | Manual `Vec<u64>` or `bit-vec` crate |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Array init | `vec![true; n+1]` | `Array.make (n+1) true` |
+| Outer loop | `while p * p <= n` | `for p = 2 to isqrt n` |
+| Inner loop | `while m <= n { m += p }` | `let m = ref (p*p); while !m <= n` |
+| Memory (bool) | 1 byte/bool (8x waste) | 1 word/bool (worse) |
+| Result type | `Vec<bool>` (sieve) or `Vec<usize>` | `bool array` or `int list` |
+| Segmented variant | Manual chunk iteration | Same approach |
+
+## Exercises
+
+1. Implement a segmented sieve that generates primes in the range [L, R] using only O(sqrt(R)) memory.
+2. Build the smallest prime factor table: `spf[i]` = smallest prime dividing i, useful for fast factorization.
+3. Compute Euler's totient function for all n ≤ N using a sieve-like approach.
+4. Count twin primes (pairs p, p+2 both prime) up to 10^7 and compare with pi(n) estimates.
+5. Implement a `BitVec`-backed sieve and measure memory and speed improvement vs `Vec<bool>`.

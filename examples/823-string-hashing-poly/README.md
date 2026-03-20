@@ -2,95 +2,58 @@
 
 ---
 
-# 823: Polynomial Rolling Hash
+# Polynomial String Hashing
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Hash any substring in O(1) after O(n) preprocessing — enabling fast string matching, deduplication, and similarity detection.
+Comparing strings character by character takes O(m) time. When you need to compare many substrings — checking if a string is a rotation of another, finding duplicate substrings, comparing all n^2 pairs of substrings — naive comparison becomes O(n^2 * m). Polynomial hashing reduces substring comparison to O(1) with O(n) preprocessing: compute prefix hashes, then any substring hash is `(prefix[r] - prefix[l] * base^(r-l)) % mod`. This enables O(n log n) string sorting, O(n) duplicate detection, and O(n log n) LCP (longest common prefix) binary search. It's the hash function behind rolling hash algorithms, string fingerprinting, and near-duplicate document detection.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Computing and comparing substrings naïvely is O(length) per comparison. Polynomial rolling hashes precompute prefix hash values so that the hash of any substring `s[l..r]` can be computed in O(1) using a simple formula — enabling O(n) or O(n log n) algorithms where the naïve approach would be O(n²).
+- Build prefix hash array `h[i] = h[i-1]*base + s[i]` for O(1) substring hash queries
+- Precompute powers of base for the rolling subtraction formula
+- Handle hash collisions using double hashing (two independent hash functions)
+- Understand the polynomial hash formula and why prime moduli reduce collision probability
+- Apply hashing to O(n log n) LCP computation via binary search + hash comparison
 
-Rolling hashes power the Rabin-Karp string search algorithm (find all occurrences of a pattern in O(n+m) expected time), duplicate substring detection (longest repeated substring in O(n log n)), and similarity detection in plagiarism checkers. They're also used in rolling checksums for rsync-style file synchronisation and in competitive programming for string problems that would otherwise require suffix arrays.
-
-This example implements double hashing (two independent hash functions) to reduce collision probability, and exposes `substring_hash(l, r)` as the primary API.
-
-## The Intuition
-
-Hash a string by treating it as a polynomial: `h(s) = s[0]·B^(n-1) + s[1]·B^(n-2) + ... + s[n-1]` (mod P). Precompute prefix hashes `H[i] = h(s[0..i])`. Then: `h(s[l..r]) = (H[r] - H[l] · B^(r-l)) mod P`.
-
-This is O(1) per query after O(n) setup. The base `B` and modulus `P` are chosen to make collisions unlikely. A single hash has ~1/P collision probability; double hashing reduces this to ~1/(P₁·P₂) ≈ 10⁻¹⁸ with 64-bit moduli.
-
-In OCaml, you'd use `Int64` or `Zarith` for modular arithmetic. In Rust, `u64` wrapping arithmetic with explicit `% MOD` is clean and fast — no bignum overhead, and `wrapping_mul` avoids overflow panics in debug mode.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-const B1: u64 = 131;
-const M1: u64 = 1_000_000_007;
-const B2: u64 = 137;
-const M2: u64 = 998_244_353;
-
-struct RollingHash {
-    h1: Vec<u64>, // prefix hashes mod M1
-    h2: Vec<u64>, // prefix hashes mod M2
-    p1: Vec<u64>, // B1^i mod M1
-    p2: Vec<u64>, // B2^i mod M2
+pub struct PolyHash {
+    h: Vec<u64>,
+    pw: Vec<u64>,
+    base: u64,
+    modulus: u64,
 }
-
-impl RollingHash {
-    fn new(s: &str) -> Self {
-        let n = s.len();
-        let bytes: Vec<u8> = s.bytes().collect();
-
-        let mut h1 = vec![0u64; n + 1];
-        let mut h2 = vec![0u64; n + 1];
-        let mut p1 = vec![1u64; n + 1];
-        let mut p2 = vec![1u64; n + 1];
-
-        for i in 0..n {
-            // Shift left by one base position and add new character
-            h1[i+1] = (h1[i] * B1 + bytes[i] as u64) % M1;
-            h2[i+1] = (h2[i] * B2 + bytes[i] as u64) % M2;
-            p1[i+1] = p1[i] * B1 % M1;
-            p2[i+1] = p2[i] * B2 % M2;
-        }
-        RollingHash { h1, h2, p1, p2 }
-    }
-
-    // Hash of s[l..r] (inclusive l, exclusive r)
-    fn get(&self, l: usize, r: usize) -> (u64, u64) {
-        let len = r - l;
-        // Subtract the contribution of the prefix s[0..l]
-        let v1 = (self.h1[r] + M1 - self.h1[l] * self.p1[len] % M1) % M1;
-        let v2 = (self.h2[r] + M2 - self.h2[l] * self.p2[len] % M2) % M2;
-        (v1, v2)
-    }
-
-    // Check if s[l1..r1] == s[l2..r2] probabilistically
-    fn equal(&self, l1: usize, r1: usize, l2: usize, r2: usize) -> bool {
-        r1 - l1 == r2 - l2 && self.get(l1, r1) == self.get(l2, r2)
+impl PolyHash {
+    pub fn get(&self, l: usize, r: usize) -> u64 {
+        // (h[r] - h[l] * pw[r - l]) % modulus
+        (self.h[r] + self.modulus * self.modulus - self.h[l] * self.pw[r - l] % self.modulus) % self.modulus
     }
 }
 ```
 
-The `+ M - x % M` idiom avoids underflow when subtracting modular values: adding M before the subtraction ensures the result stays positive before taking `% M`. This is standard in competitive programming and necessary because Rust's `u64` doesn't wrap on subtraction in debug mode.
+Rust's `u64` arithmetic prevents overflow from intermediate products when `modulus < 2^32`. The subtraction formula adds `modulus * modulus` before subtracting to avoid underflow — a common trick in modular arithmetic. The `pw` array precomputes `base^i mod modulus` so `get(l, r)` is O(1). Double hashing uses two `PolyHash` instances with different `(base, modulus)` pairs, reducing collision probability to `1/(mod1 * mod2)`. Rust's struct ensures base, modulus, and arrays stay coupled, preventing mismatch bugs.
 
-Choosing coprime primes for M1 and M2 maximises the collision resistance of the double hash pair.
+## OCaml Approach
 
-## What This Unlocks
-
-- **Rabin-Karp pattern search**: hash the pattern, slide a window of the same length over the text, compare hashes in O(1) — O(n+m) expected total with O(n·m) worst case on hash collision.
-- **Longest repeated substring**: binary search on length + hash-based deduplication gives O(n log n) — versus O(n²) naïve.
-- **Plagiarism detection / document fingerprinting**: MinHash over rolling window hashes identifies similar documents in large corpora.
+OCaml uses `Int64` or native `int` (63-bit on 64-bit systems) for modular arithmetic. The prefix hash array is `Array.make (n+1) 0` and powers array is `Array.make (n+1) 1`. OCaml's `lsl`, `land`, and `mod` operators handle modular arithmetic. The `get` function is a simple pure function over the arrays. For double hashing, a record `{ h1: int array; h2: int array; pw1: int array; pw2: int array }` keeps both hash functions bundled. OCaml's polymorphic comparison avoids the need for custom hash combination.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| 64-bit modular arithmetic | `Int64` operators or `Zarith` | `u64` with explicit `% MOD` — native, no overhead |
-| Underflow guard | `(a - b + m) mod m` | `(h[r] + M - h[l] * p[len] % M) % M` — same pattern |
-| Byte access | `Char.code s.[i]` | `s.bytes().collect::<Vec<u8>>()` then index |
-| Double hash | Two separate functions or tuples | `(u64, u64)` pair — struct fields, compared as tuple |
-| Prefix array init | `Array.make (n+1) 0L` | `vec![0u64; n + 1]` — same concept |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Arithmetic type | `u64` (64-bit unsigned) | `int` (63-bit signed) or `Int64` |
+| Underflow prevention | Add `modulus^2` before subtract | Use absolute value or unsigned |
+| Double hashing | Two `PolyHash` structs | Record with two hash arrays |
+| Power precomputation | `Vec<u64>` with loop | `Array.init` or loop |
+| Collision rate | `1/mod` per hash | Same; `1/(mod1*mod2)` for double |
+| String access | `.as_bytes()[i]` | `Char.code (String.get s i)` |
+
+## Exercises
+
+1. Implement O(n log n) LCP array computation using binary search + polynomial hashing.
+2. Use double hashing to find the longest duplicate substring with high confidence and no false positives.
+3. Detect all anagram windows: substrings of length k that are permutations of a query string.
+4. Implement string sorting using hash-based radix sort on hashed prefixes.
+5. Measure empirical collision rate for single vs. double hashing on a large random string corpus.

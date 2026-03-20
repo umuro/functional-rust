@@ -43,3 +43,9 @@ than pattern-matching on sorted values). FourOfAKind uses iterator
 2. **Fixed-length data:** OCaml uses `'a list` for dice; Rust uses `[u8; 5]`, making the "exactly five dice" invariant a compile-time guarantee.
 3. **Error handling:** OCaml `List.find` raises `Not_found`; Rust `Iterator::find` returns `Option`, handled with `.map().unwrap_or(0)` — no exceptions.
 4. **FullHouse detection:** OCaml matches sorted patterns; Rust builds a frequency table and checks sorted frequency counts equal `[2, 3]` — avoids fragile guard expressions that clippy flags.
+
+## Exercises
+
+1. Add the missing scoring categories `FullHouse`, `SmallStraight`, and `LargeStraight` if not already present, and handle edge cases (e.g., a five-of-a-kind counts as a full house by some rules).
+2. Implement a `best_category` function that, given a set of five dice, returns the category that yields the highest score for that roll.
+3. Build a simple Yacht game simulator: roll five dice, choose the best unscored category for 13 rounds, and return the final total score — using your scoring functions throughout.

@@ -2,123 +2,60 @@
 
 ---
 
-# 821: Trie for Autocomplete and Prefix Search
+# Trie Autocomplete
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Build a prefix tree for O(|prefix|) insert, lookup, and prefix enumeration — the backbone of autocomplete engines.
+Autocomplete and prefix search are fundamental to user interfaces: search bars, IDE completion, spell checkers, and IP routing tables all need to answer "what words start with this prefix?" efficiently. A hash map of all words answers exact lookups in O(1) but cannot answer prefix queries. A trie (prefix tree) organizes strings by shared prefixes, enabling prefix queries in O(m) time where m is the prefix length — independent of how many words are stored. This also makes insertion, deletion, and "does any word start with X?" all O(m). Tries power the autocomplete in Google Search, the routing table lookup in routers, and the dictionary in word games.
 
-## The Problem This Solves
+## Learning Outcomes
 
-A trie (prefix tree) stores strings so that all strings sharing a common prefix share the same path from the root. This makes prefix queries — "find all words starting with `com`" — cost O(|prefix| + number of results) rather than O(n × |word|) for a linear scan.
+- Build a trie where each node maps characters to children and marks word endings
+- Implement insert in O(m) by traversing/creating nodes character by character
+- Implement prefix search by traversing to the prefix endpoint then collecting all completions via DFS
+- Understand memory tradeoffs: tries use more memory than hash maps but enable prefix operations
+- Recognize compressed tries (patricia/radix tries) as space optimization for sparse tries
 
-Use tries for autocomplete (type-ahead search), IP routing tables (longest prefix match), spell-check suggestion, and dictionary compression. Any system where you need fast prefix lookup over a set of strings benefits from a trie. Unlike a hash map, a trie can enumerate all words with a given prefix efficiently and supports ordered iteration naturally.
-
-This implementation supports `insert`, exact `search`, `starts_with` (prefix existence), and `autocomplete` (enumerate all completions for a prefix). It stores complete words at terminal nodes.
-
-## The Intuition
-
-Each node represents a character position. The path from the root to a node spells out a prefix. Each node has a map from characters to child nodes, and a flag indicating whether this node ends a complete word.
-
-Insert: walk character by character, creating nodes as needed. Mark the final node as a word ending.
-Search: walk character by character; if any step has no matching child, the word isn't present.
-Autocomplete: find the node for the prefix, then DFS the subtree collecting all paths to word-ending nodes.
-
-O(|word|) for insert/search. O(|prefix| + total_matching_chars) for autocomplete. Space: O(total chars across all words) in the worst case, but shared prefixes save memory proportionally.
-
-In OCaml, you'd define a recursive type `type node = { children: (char, node) Hashtbl.t; is_end: bool }`. In Rust, `HashMap<char, Box<TrieNode>>` achieves the same — boxed children to handle the recursive type with known size.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-use std::collections::HashMap;
-
 #[derive(Default)]
-struct TrieNode {
-    children: HashMap<char, Box<TrieNode>>,
+pub struct TrieNode {
+    children: HashMap<char, TrieNode>,
     is_end: bool,
 }
-
-struct Trie { root: TrieNode }
-
-impl Trie {
-    fn new() -> Self { Trie { root: TrieNode::default() } }
-
-    fn insert(&mut self, word: &str) {
-        let mut node = &mut self.root;
+impl TrieNode {
+    pub fn insert(&mut self, word: &str) {
+        let mut node = self;
         for ch in word.chars() {
-            // entry API: insert if absent, then navigate into child
-            node = node.children
-                .entry(ch)
-                .or_insert_with(|| Box::new(TrieNode::default()));
+            node = node.children.entry(ch).or_default();
         }
         node.is_end = true;
-    }
-
-    fn search(&self, word: &str) -> bool {
-        let mut node = &self.root;
-        for ch in word.chars() {
-            match node.children.get(&ch) {
-                Some(child) => node = child,
-                None => return false,
-            }
-        }
-        node.is_end
-    }
-
-    fn starts_with(&self, prefix: &str) -> bool {
-        let mut node = &self.root;
-        for ch in prefix.chars() {
-            match node.children.get(&ch) {
-                Some(child) => node = child,
-                None => return false,
-            }
-        }
-        true // reached end of prefix — it exists
-    }
-
-    fn autocomplete(&self, prefix: &str) -> Vec<String> {
-        // Navigate to prefix node
-        let mut node = &self.root;
-        for ch in prefix.chars() {
-            match node.children.get(&ch) {
-                Some(child) => node = child,
-                None => return vec![], // prefix not in trie
-            }
-        }
-        // DFS the subtree, collecting completions
-        let mut results = vec![];
-        Self::collect(node, &mut prefix.to_string(), &mut results);
-        results
-    }
-
-    fn collect(node: &TrieNode, current: &mut String, results: &mut Vec<String>) {
-        if node.is_end { results.push(current.clone()); }
-        for (&ch, child) in &node.children {
-            current.push(ch);
-            Self::collect(child, current, results);
-            current.pop(); // backtrack
-        }
     }
 }
 ```
 
-The `entry().or_insert_with()` pattern is idiomatic Rust for "insert-if-absent then get reference." It avoids a double lookup compared to `get` + `insert`. The recursive `collect` uses a mutable `current` string with `push`/`pop` — the same backtracking pattern as tree enumeration.
+`HashMap<char, TrieNode>` at each node handles arbitrary Unicode characters. The `entry().or_default()` pattern creates missing nodes lazily — idiomatic Rust that avoids double lookup. The `is_end` boolean flags complete words vs. internal nodes. Autocomplete starts at the prefix endpoint and does DFS collecting words; this naturally extends with `Vec<String>` accumulation and a `prefix` string parameter that grows during descent. Rust's ownership prevents accidental aliasing between nodes, ensuring the tree structure stays valid.
 
-`Box<TrieNode>` is required because the recursive type would otherwise be infinite size. The compiler cannot determine `TrieNode`'s stack size without the indirection.
+## OCaml Approach
 
-## What This Unlocks
-
-- **Search engine autocomplete**: index all query suggestions in a trie; retrieve completions in O(prefix length + results).
-- **IP routing (longest prefix match)**: routers use binary tries to find the most specific matching route for a destination IP.
-- **Spell checker suggestions**: walk the trie with edit-distance tolerance to find near-matches for misspelled words.
+OCaml represents trie nodes as `{ children: (char * node) list; is_end: bool }` or with a `Hashtbl`. Functional insertion creates a new node path, relying on structural sharing for efficiency. With mutable `Hashtbl`, insertion mutates like Rust's approach. OCaml's `Map.Make(Char)` creates a balanced BST per node for sorted child iteration — convenient for alphabetical autocomplete results. The DFS for completions uses continuation-passing or an accumulator list. OCaml's algebraic types make `is_end` a natural `bool` field.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Recursive node type | `type node = { ... }` (size known by GC) | `Box<TrieNode>` — explicit indirection for recursive type |
-| Child map | `Hashtbl.t` or `Map.Make(Char)` | `HashMap<char, Box<TrieNode>>` |
-| Insert idiom | Pattern match + `Hashtbl.replace` | `entry().or_insert_with()` — single lookup |
-| Autocomplete DFS | Recursive with accumulator | Mutable `current: &mut String` + `push`/`pop` backtrack |
-| Ownership of subtree | GC-managed | `Box` owns child; parent owns `Box` via `HashMap` value |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Node storage | `HashMap<char, TrieNode>` | `Hashtbl` or `Map.Make(Char).t` |
+| Insertion | Mutable traversal with `entry()` | Mutable `Hashtbl` or immutable path copy |
+| Completions DFS | Recursive with `&mut Vec<String>` | Accumulator list or `Buffer` |
+| Memory | Each node heap-allocated | GC-managed, similar cost |
+| Sorted output | Extra sort step | `Map` gives sorted iteration free |
+| End marker | `bool` field | `bool` field or `unit option` |
+
+## Exercises
+
+1. Implement `delete(word)` that removes a word while preserving words that share its prefix.
+2. Add a frequency count per word and implement autocomplete returning the top-k most frequent completions.
+3. Implement fuzzy search: return all words within Levenshtein distance 1 from a query.
+4. Build a compressed radix trie (patricia trie) that merges single-child chains into single edges.
+5. Measure memory usage of trie vs. sorted `Vec<String>` + binary search for a dictionary of 100k words.

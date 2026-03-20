@@ -2,85 +2,39 @@
 
 ---
 
-# 429: Macro Scoping and #[macro_export]
+# 429: Macro Scoping and Visibility
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-`macro_rules!` macros follow textual scoping within a file, but `#[macro_export]` hoists them to the crate root — understanding this distinction prevents confusing "macro not found" errors.
+Macros have complex scoping rules in Rust that differ from both functions and types. A `macro_rules!` without `#[macro_export]` is only visible within the file it's defined in and below in the same module tree. `#[macro_export]` exports to the crate root, making it accessible as `crate::my_macro!`. The 2018 edition introduced module-path importing (`use crate::my_macro`). Understanding these rules is essential for structuring crates with macros and for importing macros from dependencies.
 
-## The Problem This Solves
+Macro scoping rules explain why `use std::collections::HashMap` doesn't export macros, why `#[macro_use] extern crate` was the old way to import macros, and how `pub use crate_name::macro_name` re-exports work.
 
-Macros in Rust have a scoping model that surprises everyone the first time. Unlike functions and types, which are scoped to modules, `macro_rules!` macros are visible only from the point of definition downward in the source file. Define a macro at the bottom of a file and try to use it at the top — you get a "cannot find macro" error. Move it up and it works. This ordering dependency feels arbitrary and trips up developers used to module-based scoping.
+## Learning Outcomes
 
-The second surprise is cross-module use. A macro defined in `mod inner` is not automatically visible in the parent module. And when you want to export a macro for use by other crates, `pub use` doesn't work — you need `#[macro_export]`, which bypasses the module tree entirely and puts the macro at the crate root.
+- Understand `#[macro_export]` and how it places macros at crate root
+- Learn that macro visibility is lexical — macros defined later in a file are visible earlier (unlike functions)
+- See how module-local macros (without `#[macro_export]`) are restricted to their module
+- Understand the `use crate::macro_name` path for importing macros in Rust 2018+
+- Learn how `pub use dependency::macro_name` re-exports macros from dependencies
 
-Understanding these rules is essential for library authors. A library that exports macros must either use `#[macro_export]` (the modern way) or the old `#[macro_use]` extern crate pattern.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `public_macro!` has `#[macro_export]` making it available crate-wide as `crate::public_macro!`. `private_macro!` has no export, restricting it to this file. The `inner` module defines `local_macro!` visible only within the module. `use_private()` calls the private macro, demonstrating it works within the crate. `use_public()` demonstrates the exported macro.
 
-Think of `macro_rules!` as a textual find-replace rule that the compiler registers as it reads the file top to bottom. Once registered, it's available for the rest of the file. If a macro is in a submodule, it's registered in that module's namespace only — unreachable from outside unless exported.
+## OCaml Approach
 
-`#[macro_export]` teleports the macro to the crate's top-level namespace, as if you had defined it in `lib.rs`. Other crates can then use it with `use your_crate::your_macro!` (Rust 2018+) or the older `#[macro_use] extern crate your_crate`.
-
-`$crate::` inside a macro is the counterpart: it refers to the defining crate regardless of where the macro is used, ensuring that helper functions the macro calls are correctly resolved.
-
-## How It Works in Rust
-
-```rust
-// Local macro — visible only from here downward in this file/module
-macro_rules! add {
-    ($a:expr, $b:expr) => { $a + $b };
-}
-
-// Exported macro — hoisted to crate root, importable from other crates
-#[macro_export]
-macro_rules! assert_approx_eq {
-    ($a:expr, $b:expr, $tolerance:expr) => {{
-        let diff = ($a - $b).abs();
-        assert!(diff < $tolerance);
-    }};
-    ($a:expr, $b:expr) => {
-        assert_approx_eq!($a, $b, 1e-9f64);  // calls itself — same crate
-    };
-}
-
-// $crate:: resolves to THIS crate even when macro is used from another crate
-#[macro_export]
-macro_rules! my_debug {
-    ($val:expr) => {
-        // Without $crate::, 'log_impl' would be looked up in the CALLER's crate
-        $crate::log_impl($val)
-    };
-}
-
-mod inner {
-    // Visible only inside 'inner' module:
-    macro_rules! inner_only { ($x:expr) => { $x + 1 }; }
-
-    // #[macro_export] hoists even from a nested module to crate root:
-    #[macro_export]
-    macro_rules! inner_exported { ($x:expr) => { $x * 2 }; }
-
-    pub fn compute(x: i32) -> i32 {
-        inner_only!(x) // fine — same module
-    }
-}
-
-// inner_only!(5); // ERROR: not visible outside 'inner'
-inner_exported!(5); // fine — hoisted to crate root
-```
-
-## What This Unlocks
-
-- **Library macros** — export utility macros (`assert_approx_eq!`, `bail!`, `ensure!`) for users of your crate with `#[macro_export]`.
-- **Cross-crate safety** — use `$crate::` to reference your crate's items inside exported macros, preventing broken lookups when users import the macro.
-- **Structured macro organisation** — keep macros in dedicated files, use `#[macro_use] mod macros;` (with `#[macro_export]` inside) to make them available crate-wide.
+OCaml modules naturally scope functions. A `module Private = struct let helper = ... end` creates a private scope. `module type S = sig val public_fn : unit -> string end` restricts what's exported. OCaml doesn't distinguish macros from functions in scoping — PPX extensions are build-time only and don't have runtime scope. Library users access PPX features through dune configuration, not `use` statements.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Macro visibility | `ppx` transformations apply globally during compilation | `macro_rules!` textually scoped; must define before use |
-| Export to other modules | Functions/types follow module system naturally | `#[macro_export]` required — bypasses module tree |
-| Cross-crate references inside macros | N/A | Use `$crate::` to reference the defining crate |
-| Importing macros | Module opens (`open`) | Rust 2018+: `use crate::my_macro!`; older: `#[macro_use]` |
+1. **Path-based import**: Rust 2018 macros use `use crate::macro_name`; older Rust required `#[macro_use] extern crate name`.
+2. **Crate root export**: `#[macro_export]` always places macros at the crate root regardless of module nesting; OCaml exports are always at the module they're defined in.
+3. **No runtime scope**: Macros don't exist at runtime; OCaml module functions do. The scoping rules serve compile-time resolution only.
+4. **Re-export**: Rust re-exports macros with `pub use crate_dep::macro_name`; OCaml re-exports with `include Module` or explicit `let fn = Mod.fn`.
+
+## Exercises
+
+1. **Module-gated macro**: Define a macro inside a `mod internal { macro_rules! my_macro { ... } }` and verify it's not accessible outside the module. Then add `#[macro_export]` and verify it becomes accessible via `crate::my_macro`.
+2. **Re-export chain**: Create a crate A with `#[macro_export] macro_rules! helper!`. In crate B, `pub use crate_a::helper`. In crate C using crate B, verify `use crate_b::helper` makes the macro available.
+3. **Conditional export**: Use `#[cfg(feature = "macros")] #[macro_export]` to make a macro only available when a feature is enabled. Write a doc comment explaining the feature flag to users.

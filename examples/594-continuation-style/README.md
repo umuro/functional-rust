@@ -2,68 +2,51 @@
 
 ---
 
-# 594: Continuation-Passing Style (CPS)
+# Continuation-Passing Style (CPS)
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Instead of returning a value, pass a callback to receive it — making control flow explicit and enabling trampolining.
+Continuation-Passing Style (CPS) is a program transformation where instead of returning a value, a function passes its result to a callback (continuation). Every function takes an extra argument `k: impl FnOnce(T) -> R` and calls `k(result)` instead of returning. CPS has deep roots in compiler theory (CPS IR is used in LLVM, GHC, and OCaml's backend), enables explicit control flow manipulation, and is the foundation for implementing coroutines, async/await, generators, and exception handling. It also eliminates stack overflow in recursive functions.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Normal functions *return* values. The caller decides what to do next. In deeply recursive code this means the call stack encodes the "what to do next" information — and the stack is finite. Stack overflows are the failure mode.
+- How direct-style functions are transformed to CPS using continuation arguments
+- How `fact_k<R>(n, k: Box<dyn FnOnce(u64) -> R>) -> R` passes results to continuations
+- How CPS makes the call stack explicit as a chain of closures
+- How CPS is related to trampolining for stack-safe recursion
+- Where CPS appears: compilers (CPS IR), async/await desugaring, effect systems
 
-Continuation-passing style (CPS) makes the *continuation* — "what happens next" — an explicit argument to every function. Instead of `fn factorial(n) -> u64`, you write `fn fact_k(n, k: impl FnOnce(u64))` where `k` is called with the result instead of returning it. The function never returns a meaningful value — it always calls its continuation.
+## Rust Application
 
-CPS is how compilers model control flow internally (every intermediate language is in CPS). It's how async/await works: the continuation is the code after the `.await`. It enables trampolining (example 595), structured error handling without exceptions, and coroutines.
+`fact(n) -> u64` is direct style. `fact_k<R: 'static>(n, k: Box<dyn FnOnce(u64) -> R>) -> R` is CPS — it calls `k(1)` for the base case, or recursively calls itself with a continuation that multiplies and calls the original `k`. The continuation chain builds up as closures. `fib_k` shows CPS for a function with two recursive calls — the continuation captures the first result while computing the second.
 
-## The Intuition
+Key patterns:
+- `k: Box<dyn FnOnce(T) -> R>` — continuation argument
+- `k(result)` — "return" by calling the continuation
+- `fact_k(n-1, Box::new(move |r| k(n * r)))` — building continuation chains
+- CPS transform: every call becomes a tail call
 
-You're ordering at a restaurant. Normally you say "give me the soup" and wait for it. CPS is like saying "here's my phone number — call me when the soup is ready, I'll be working on other things." The kitchen (the function) doesn't return soup; it calls you back with soup. The entire control flow is explicit in who calls whom.
+## OCaml Approach
 
-## How It Works in Rust
+OCaml's CPS is natural and the OCaml compiler uses CPS as its intermediate representation:
 
-1. **CPS factorial** — the continuation `k` receives the result:
-   ```rust
-   fn fact_k<R>(n: u64, k: impl FnOnce(u64) -> R) -> R {
-       if n <= 1 { k(1) }
-       else { fact_k(n - 1, move |r| k(n * r)) }
-   }
+```ocaml
+let rec fact_k n k = if n <= 1 then k 1 else fact_k (n-1) (fun r -> k (n * r))
+(* Usage: *)
+let result = fact_k 10 (fun x -> x)
+```
 
-   fact_k(10, |n| println!("10! = {}", n));
-   ```
-2. **The continuation captures context** — `move |r| k(n * r)` captures both `n` and the outer continuation `k`. The chain of closures represents the remaining computation.
-3. **CPS for error handling** — two continuations: success and failure:
-   ```rust
-   fn safe_div_k<R>(a: f64, b: f64,
-       ok: impl FnOnce(f64) -> R,
-       err: impl FnOnce(&str) -> R) -> R {
-       if b == 0.0 { err("division by zero") } else { ok(a / b) }
-   }
-   ```
-4. **Boxed continuations** for dynamic dispatch (needed for mutual recursion):
-   ```rust
-   fn fib_k<R: 'static>(n: u64, k: Box<dyn FnOnce(u64) -> R>) -> R {
-       if n <= 1 { k(n) }
-       else {
-           fib_k(n - 1, Box::new(move |r1| {
-               fib_k(n - 2, Box::new(move |r2| k(r1 + r2)))
-           }))
-       }
-   }
-   ```
-5. **Limitation** — naive CPS still builds a closure chain on the heap proportional to recursion depth. To truly eliminate stack overflow, combine with trampolining (example 595).
-
-## What This Unlocks
-
-- **Explicit control flow** — every possible outcome is visible in the function signature; no hidden exceptions.
-- **Composable pipelines** — chaining continuations is function composition with data flowing forward.
-- **Foundation for trampolining** — returning a thunk from a continuation instead of calling it immediately gives you the trampoline pattern.
+OCaml's tail-call optimization ensures CPS functions do not stack overflow — a key advantage over Rust where CPS chains of `Box<dyn FnOnce>` still allocate on the heap.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| CPS function | `let fact_k n k = if n<=1 then k 1 else fact_k (n-1) (fun r -> k (n*r))` | Same structure; `impl FnOnce` or `Box<dyn FnOnce>` |
-| Tail calls | Optimised by compiler (TCO) | Not guaranteed; use trampoline |
-| Heap allocation | GC-managed closures | `Box<dyn FnOnce>` for dynamic continuation chains |
-| Async equivalent | `lwt` callbacks | `async/await` (compiler-generated CPS) |
+1. **TCO**: OCaml optimizes tail calls — CPS factorial in OCaml is O(1) stack; Rust does not guarantee TCO, so heap-boxed continuations are needed for large `n`.
+2. **Continuation type**: OCaml continuations are plain function values; Rust requires `Box<dyn FnOnce(T) -> R>` to store them dynamically.
+3. **Practical use**: OCaml's compiler backend genuinely uses CPS IR; Rust's async/await desugars to state machines rather than CPS.
+4. **Allocation**: Rust's CPS with `Box` allocates one heap object per continuation frame; OCaml's GC manages continuation closures but also allocates.
+
+## Exercises
+
+1. **CPS identity**: Write a direct-style `identity(x: i32) -> i32` and its CPS version `identity_k<R>(x: i32, k: impl FnOnce(i32) -> R) -> R` — verify they produce the same results.
+2. **CPS addition**: Transform `fn add(a: i32, b: i32) -> i32` to CPS and use it to build `fn sum_list_k(items: &[i32], k: impl FnOnce(i32)) -> ()` that passes the total to `k`.
+3. **Defunctionalize**: Transform the CPS `fact_k` to use an explicit stack of `enum Cont { Identity, MultAndCall(u64, Box<Cont>) }` instead of closures — this is defunctionalization.

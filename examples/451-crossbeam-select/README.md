@@ -2,67 +2,39 @@
 
 ---
 
-# 451: Crossbeam select!
+# 451: Crossbeam Select — Multiplexing Channels
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Wait on multiple channels simultaneously and handle whichever fires first — Rust's answer to Go's `select`.
+A thread watching multiple channels needs to respond to whichever has data first, without blocking on one while the other has messages. Go's `select` statement solves this natively. Rust's `std::sync::mpsc` has no select mechanism — you'd need to poll with `try_recv` in a loop, wasting CPU. `crossbeam::select!` provides efficient blocking select across multiple channels: the calling thread blocks until any channel has a message, then executes the matching arm.
 
-## The Problem This Solves
+Channel select appears in event-driven systems, timeouts combined with work channels, message routing, and any pattern where a thread must respond to multiple event sources.
 
-In concurrent systems a thread often needs to react to *whichever event arrives first*: a work item from the job queue, a shutdown signal from the control channel, or a timeout. Without `select!` you're left with `try_recv` polling loops — burning CPU and adding arbitrary latency — or complex `Mutex`/`Condvar` arrangements.
+## Learning Outcomes
 
-Go programmers reach for `select` constantly; it's a first-class language construct there. Crossbeam brings the same power to Rust as a macro. You declare a set of channel operations; the runtime blocks until one is ready and executes exactly that branch. Fairness and correct wakeup are handled for you.
+- Understand why channel select is needed (avoid blocked on wrong channel)
+- Learn how `crossbeam::select!` blocks efficiently until any channel is ready
+- See the polling approach as the naive alternative with busy-wait overhead
+- Understand how to combine select with timeouts using a timeout channel
+- Learn the use cases: event loops, control channels, multi-source aggregation
 
-This is the primitive that makes event-driven concurrent code clean without async.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `poll_select` implements select via polling `try_recv` in a loop with a 1ms sleep — correct but wasteful. The test demonstrates receiving from whichever of two channels has a message first. The real `crossbeam::select!` macro would replace this with a blocking efficient wait: `select! { recv(rx1) -> v => ..., recv(rx2) -> v => ... }`. The `SelectResult` enum captures which channel produced the message.
 
-You're a dispatcher waiting by several phones. You don't check each one in turn — you'd miss calls. Instead you sit with all phones in front of you, waiting. The moment *any* one rings, you answer it and handle that call. That's `select!`.
+## OCaml Approach
 
-## How It Works in Rust
-
-1. **Import and set up channels**:
-   ```rust
-   use crossbeam_channel::{select, bounded, tick};
-   let (jobs_tx, jobs_rx) = bounded::<String>(10);
-   let (stop_tx, stop_rx) = bounded::<()>(1);
-   ```
-2. **Write the `select!` block**:
-   ```rust
-   loop {
-       select! {
-           recv(jobs_rx) -> msg => {
-               println!("job: {:?}", msg);
-           }
-           recv(stop_rx) -> _ => {
-               println!("shutting down");
-               break;
-           }
-       }
-   }
-   ```
-3. **Tick channels** — `crossbeam_channel::tick(Duration)` produces a message every N seconds, useful as a timeout arm:
-   ```rust
-   let ticker = tick(Duration::from_secs(1));
-   select! {
-       recv(jobs_rx) -> msg => process(msg),
-       recv(ticker)  -> _   => println!("heartbeat"),
-   }
-   ```
-4. **Send arms** — `select!` also supports `send(tx) -> result` for non-blocking sends to any ready receiver.
-
-## What This Unlocks
-
-- **Clean shutdown patterns** — a dedicated stop channel pairs naturally with `select!`; workers exit the moment the signal arrives.
-- **Timeout handling** — `tick` or `after(Duration)` as a select arm eliminates ad-hoc `recv_timeout` calls.
-- **Fan-in** — merge multiple channels into one handler without a dedicated merger thread.
+OCaml's `Event` module has `Event.select [Event.receive ch1; Event.receive ch2]` for channel-level select — blocking until any event is ready. `Async.choose` and `Lwt.pick` provide async-style select. `Domainslib.Chan.recv_poll` enables non-blocking attempts in OCaml 5.x. Event-driven OCaml programming uses these primitives to multiplex across I/O, timers, and inter-domain communication.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Multi-channel wait | `Event.choose` / `Event.sync` | `crossbeam::select!` macro |
-| Syntax | First-class event algebra | Macro with `recv`/`send` arms |
-| Timeout arm | `Event.wrap` + timer | `tick()` or `after()` channel |
-| Fairness | Library-defined | Crossbeam: pseudo-random fair |
+1. **Blocking vs. polling**: `crossbeam::select!` blocks without CPU waste; the std polling approach wastes CPU on the spin loop.
+2. **Fairness**: `crossbeam::select!` handles fairness for multiple ready channels; the polling approach picks the first channel it checks.
+3. **Timeout integration**: `crossbeam::select!` with `crossbeam_channel::after(duration)` adds timeout cleanly; polling needs explicit `Instant::now()` tracking.
+4. **Go comparison**: Go's `select` is built into the language; Rust requires the `crossbeam` crate or `tokio::select!` for async code.
+
+## Exercises
+
+1. **Control channel**: Add a "shutdown" channel to a long-running worker. Use `crossbeam::select!` to receive either work items or shutdown signals, stopping when shutdown arrives.
+2. **Timeout with select**: Implement `receive_with_timeout<T>(rx: &Receiver<T>, timeout: Duration) -> Option<T>` using `crossbeam::select!` with a `crossbeam_channel::after(timeout)` timeout channel.
+3. **Priority channels**: Use two channels (high_priority, low_priority) and `select!`. First always check high_priority; only check low_priority when high_priority is empty. Implement this fairly (low priority eventually served even with continuous high-priority traffic).

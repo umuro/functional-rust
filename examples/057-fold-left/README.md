@@ -37,3 +37,9 @@ OCaml's `fold_left` is tail-recursive — the recursive call is in tail position
 3. **Mutability:** Rust's fold accumulator is moved on each step (ownership transfer); OCaml's is copied/shared
 4. **Specialization:** Rust's `.sum()` and `.product()` use traits (`Sum`, `Product`) for type-safe folding
 5. **Reverse:** OCaml reverses by consing (`x :: acc`); Rust can reverse in-place with `.reverse()` (O(1) extra space)
+
+## Exercises
+
+1. Implement `running_sum` using `fold_left` that returns a `Vec` of prefix sums (e.g., `[1,2,3]` → `[1,3,6]`).
+2. Use `fold_left` to implement `group_by_first_char` that builds a `HashMap<char, Vec<String>>` grouping strings by their first character.
+3. Implement a left fold over a binary tree (not a list) and use it to compute the sum of all node values; compare with a right fold version and explain the traversal order difference.

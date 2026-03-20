@@ -33,3 +33,9 @@ Rust uses `&dyn Fn` trait objects as parameters to fold, mirroring OCaml's appro
 2. **Heap allocation:** OCaml's recursive types are heap-allocated transparently; Rust needs explicit `Box<Expr>`
 3. **Visitor pattern:** OCaml doesn't need it — fold is more natural. Rust can use either fold or a Visitor trait
 4. **Pattern matching:** Both languages pattern match on the enum/variant; Rust requires `&` for references
+
+## Exercises
+
+1. Add a `simplify` visitor pass that constant-folds the expression tree (e.g., `Add(Lit(1), Lit(2))` → `Lit(3)`) before evaluation.
+2. Implement a `count_operations` visitor that counts the total number of arithmetic operations in an expression tree.
+3. Extend the expression tree with `Let` bindings and a variable lookup visitor, demonstrating how the fold/visitor approach handles multiple interpretations without modifying the core data type.

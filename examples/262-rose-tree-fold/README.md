@@ -33,3 +33,9 @@ Rust uses a struct with a `Vec<Rose<T>>` for children (no Box needed since Vec a
 2. **Higher-order functions:** OCaml's fold returns a partially-applied function; Rust needs explicit function signatures
 3. **Children storage:** OCaml uses a linked list; Rust uses Vec (better cache locality, random access)
 4. **Fold closure:** OCaml passes closures freely; Rust uses `&dyn Fn` trait objects for recursive fold
+
+## Exercises
+
+1. Implement a `map` for the rose tree that transforms every node value using a provided function, analogous to `Vec::iter().map()`.
+2. Write a `depth` function that returns the maximum depth of the rose tree using a fold.
+3. Implement `flatten` for the rose tree that returns all values in pre-order traversal order, and use `fold` as the underlying mechanism.

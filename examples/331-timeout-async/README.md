@@ -4,52 +4,62 @@
 
 # 331: Timeouts with time::timeout
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Wrap any async operation with a deadline — if it doesn't complete in time, get a structured error instead of waiting forever.
+Network operations that hang indefinitely freeze applications. A DNS lookup, database query, or HTTP request that never responds must be bounded by a deadline. Timeouts are the fundamental resilience mechanism for distributed systems — every external call should have one. The `TimeoutError<E>` pattern distinguishes operation failures (the operation ran but failed) from timeout failures (the deadline expired), enabling different recovery strategies for each.
 
-## The Problem This Solves
+## Learning Outcomes
 
-External services fail in two ways: they return an error, or they go silent. An error you can handle. Silence hangs your service indefinitely. Without timeouts, a slow database or network partition can bring down your entire application.
+- Implement a `TimeoutError<E>` type with `Elapsed` and `TaskFailed(E)` variants
+- Use `mpsc::channel` with a recv deadline to implement synchronous timeouts
+- Distinguish timeout (deadline expired) from task failure (operation failed with error)
+- Recognize the `tokio::time::timeout(dur, future)` pattern for async timeouts
 
-The second problem is error types: you need to distinguish "we never got a response" from "the operation returned an error" for different handling strategies.
+## Rust Application
 
-## The Intuition
-
-```
-Python asyncio:    asyncio.wait_for(coro, timeout=1.0)
-Rust (tokio):      timeout(Duration::from_secs(1), async_op()).await
-Rust (std/sync):   rx.recv_timeout(Duration::from_secs(1))
-```
-
-This example uses `mpsc::recv_timeout` as the synchronous analogy.
-
-## How It Works in Rust
+A `TimeoutError<E>` with structured discrimination:
 
 ```rust
-#[derive(Debug)]
-enum TimeoutError<E> {
-    Elapsed,              // operation took too long
-    TaskFailed(E),        // operation ran but returned an error
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum TimeoutError<E> {
+    Elapsed,         // Deadline expired
+    TaskFailed(E),   // Operation ran but failed
 }
 
-fn with_timeout<T, E>(timeout: Duration, f: impl FnOnce() -> Result<T, E>) -> Result<T, TimeoutError<E>> {
+pub fn run_with_timeout<T, E, F>(f: F, timeout: Duration) -> Result<T, TimeoutError<E>>
+where
+    F: FnOnce() -> Result<T, E> + Send + 'static,
+    T: Send + 'static, E: Send + 'static,
+{
     let (tx, rx) = mpsc::channel();
     thread::spawn(move || { let _ = tx.send(f()); });
-
     match rx.recv_timeout(timeout) {
-        Ok(Ok(v))  => Ok(v),
+        Ok(Ok(v)) => Ok(v),
         Ok(Err(e)) => Err(TimeoutError::TaskFailed(e)),
-        Err(mpsc::RecvTimeoutError::Timeout) => Err(TimeoutError::Elapsed),
-        Err(_) => Err(TimeoutError::TaskFailed(...)),
+        Err(_) => Err(TimeoutError::Elapsed),
     }
 }
 ```
 
+## OCaml Approach
+
+OCaml's `Lwt_unix.with_timeout` provides timeout functionality. In `Async`, `Clock.with_timeout` serves the same purpose:
+
+```ocaml
+let* result =
+  Lwt_unix.with_timeout 5.0 (fun () -> perform_operation ())
+(* Returns Error `Timeout on expiry, propagates other errors *)
+```
+
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Timeout | `Lwt_unix.with_timeout` | `tokio::time::timeout` |
-| Sync timeout | `Thread.delay` + flag | `rx.recv_timeout(dur)` |
-| Result type | Exception | `Err(Elapsed)` enum |
+1. **Structured timeout error**: `TimeoutError<E>` preserves the operation's error type; raw timeout functions often just use string errors.
+2. **Cancellation**: Rust's thread-based timeout doesn't cancel the spawned thread (it continues); `tokio::time::timeout` genuinely cancels the future.
+3. **Cascading timeouts**: In distributed systems, outer timeouts should be smaller than the sum of inner ones — a common design error.
+4. **Production**: Every `reqwest`, `sqlx`, and `tokio` operation should have a timeout — ungated external calls are a reliability risk.
+
+## Exercises
+
+1. Add a retry parameter: if the operation times out, retry up to N times before giving up.
+2. Implement a `deadline_from_now(secs)` function that creates a timeout computed from the current moment.
+3. Distinguish between "timed out waiting for response" and "operation failed with error" in a client function, using `TimeoutError<AppError>`.

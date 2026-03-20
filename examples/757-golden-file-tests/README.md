@@ -2,80 +2,37 @@
 
 ---
 
-# 757: Golden File Testing Pattern
+# 757-golden-file-tests — Golden File Tests
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Capture the output of a function to a `.txt` file on first run; on subsequent runs, compare against the saved "golden" output and fail if it changes.
+Snapshot testing and golden file testing are closely related: both compare actual output against stored expected output. Golden files differ in that the expected output is stored as human-readable files you commit to version control, making output changes visible in code review. This pattern is standard in compilers (test output for each source file), documentation generators, and code formatters. It makes regressions visible as diffs rather than assertion failures.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Some outputs are too complex to write expected values for by hand. Pretty-printed ASTs, formatted reports, rendered templates, compiler diagnostic text — you want to ensure these outputs don't *change* accidentally, but writing `assert_eq!(output, "Add\n  Mul\n    Num(2)\n    Var(x)\n  Num(3)\n")` is painful and brittle.
+- Store expected output in `tests/golden/` files committed to version control
+- Compare rendered output against golden files with informative diff-like error messages
+- Use an `UPDATE_GOLDEN=1` environment variable to regenerate golden files
+- Test complex transformations (Markdown-to-HTML, JSON formatting) against stable golden output
+- Understand the golden file review workflow: generate, review diff, commit
 
-Golden file tests (also called snapshot tests) solve this: run the function once, save the output as the "expected" file, commit it to version control. Every subsequent run compares against that file. If the output changes — intentionally or by accident — the test fails, and you review the diff. If the change is intentional, update with `UPDATE_GOLDEN=1 cargo test`.
+## Rust Application
 
-This pattern is widely used in compilers (LLVM's `FileCheck`), CLI tools, formatters, and any code with complex human-readable output.
+`render_markdown` converts `#`, `##`, and `- ` prefixed lines to HTML elements. `pretty_json` adds indentation to a JSON string. Each function has a corresponding golden file in `tests/golden/`. The `assert_golden` helper reads the expected file, compares against actual output, and either fails with a message showing the first difference, or writes the new content if `UPDATE_GOLDEN=1`. Tests for both functions verify complete input-to-output transformations.
 
-## The Intuition
+## OCaml Approach
 
-The golden file *is* the test assertion. You write the code, run it once to generate the golden files, commit them. Now your test is "does the current output match what it looked like when I last said it was correct?"
-
-The `UPDATE_GOLDEN=1` environment variable acts as an explicit "accept this output" signal — you must deliberately choose to update, which prevents accidental regressions being silently accepted.
-
-## How It Works in Rust
-
-**The infrastructure** — compare or update based on `UPDATE_GOLDEN`:
-```rust
-pub fn assert_golden(name: &str, actual: &str) {
-    let path = PathBuf::from("tests/golden").join(format!("{}.txt", name));
-    let update = std::env::var("UPDATE_GOLDEN").map(|v| v == "1").unwrap_or(false);
-
-    if !path.exists() || update {
-        std::fs::create_dir_all("tests/golden").unwrap();
-        std::fs::write(&path, actual).unwrap();
-        return;
-    }
-
-    let expected = std::fs::read_to_string(&path).unwrap();
-    // Normalize line endings (Windows ↔ Unix)
-    assert_eq!(
-        actual.replace("\r\n", "\n"),
-        expected.replace("\r\n", "\n"),
-        "Golden file mismatch for '{}'. Run with UPDATE_GOLDEN=1 to update.", name
-    );
-}
-```
-
-**Using it in tests:**
-```rust
-#[test]
-fn golden_tree_render() {
-    let expr = make_expr();
-    assert_golden("expr_tree", &render_tree(&expr, 0));
-}
-```
-
-**Generating the golden file** (first run or after intentional change):
-```bash
-UPDATE_GOLDEN=1 cargo test
-```
-The `tests/golden/expr_tree.txt` file is created or updated.
-
-**Committing golden files** — add `tests/golden/` to version control. The diff in your PR shows exactly what output changed, making code review of rendering logic much easier.
-
-**Normalizing line endings** — always strip `\r\n` to `\n` before comparison to avoid false failures on Windows CI runners.
-
-## What This Unlocks
-
-- **Complex output regression prevention** — catch accidental changes to AST rendering, report formatting, or diagnostic text.
-- **Readable test maintenance** — update golden files intentionally with a single env var, then `git diff` shows exactly what changed.
-- **Documentation by example** — golden files in version control are living examples of what the function produces.
+OCaml's compiler test suite uses golden files extensively — each `.ml` test file has a corresponding `.expected` file. `dune runtest` and `dune promote` manage the workflow. The `expect_test` framework (Jane Street) is an inline variant. For standalone golden tests, OCaml uses `read_file`, runs the transformation, and calls `assert_equal ~pp_diff` with `Alcotest` for pretty diff output on failure.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Snapshot testing | `ppx_expect` (Jane Street) | Manual golden-file infra, or `insta` crate |
-| File I/O in tests | `open_in` / `output_string` | `std::fs::read_to_string` / `std::fs::write` |
-| Environment variable | `Sys.getenv` | `std::env::var("KEY")` → `Result<String, VarError>` |
-| Test update workflow | `PPXEXPECT_UPDATE=true` | `UPDATE_GOLDEN=1 cargo test` |
+1. **Inline vs file**: OCaml's `expect_test` stores expected output inline; Rust's golden file approach uses separate files (closer to the compiler testing tradition).
+2. **Review workflow**: Both use a "promote/update" workflow; Rust uses `UPDATE_GOLDEN=1` env var; OCaml uses `dune promote`.
+3. **Diff output**: OCaml's `Alcotest.check string` provides colored line diffs; this example shows the first differing line; the `insta` crate provides full colored diffs.
+4. **Granularity**: Golden files are per-transformation; `expect_test` is per-assertion within a test function.
+
+## Exercises
+
+1. Add a `render_csv_to_markdown_table` function and create a golden file for its output. Write a test that regenerates it with `UPDATE_GOLDEN=1 cargo test`.
+2. Implement `assert_golden_json` that normalizes JSON whitespace before comparing, so formatting changes don't cause spurious golden file failures.
+3. Write a script `scripts/update_golden.sh` that runs all tests with `UPDATE_GOLDEN=1` and prints the number of golden files updated.

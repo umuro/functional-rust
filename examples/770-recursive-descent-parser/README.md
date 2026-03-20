@@ -2,132 +2,37 @@
 
 ---
 
-# 770: Recursive Descent Parser from Scratch
+# 770-recursive-descent-parser — Recursive Descent Parser
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Turn a context-free grammar directly into mutually recursive functions — each grammar rule becomes a method, and the parser walks the input building an evaluatable AST.
+Recursive descent parsing is the simplest technique for parsing context-free grammars. It was invented in the 1960s and remains the dominant approach for hand-written parsers in production compilers: Clang, GCC, rustc, and Go's parser are all recursive descent. The idea is elegant: each grammar rule becomes a function; parsing is calling that function. Operator precedence is handled by a hierarchy of mutually recursive functions (or the Pratt technique in the next example).
 
-## The Problem This Solves
+## Learning Outcomes
 
-Regular expressions can match patterns, but they can't parse nested structure. `"(1 + 2) * (3 + 4)"` has parentheses that can be arbitrarily deep — you need a parser that calls itself recursively to handle them. Recursive descent is the most readable parsing technique: each grammar rule maps to one function, and you can read the code as documentation of the grammar.
+- Implement a lexer that tokenizes an arithmetic expression into `Token` variants
+- Build a recursive descent parser for `expr → term ('+' | '-' term)*` grammar
+- Handle operator precedence via grammar rule hierarchy: expr → term → factor → atom
+- Evaluate expressions directly during parsing (no separate AST phase)
+- Understand why left-recursive grammars cannot be directly parsed by recursive descent
 
-Understanding recursive descent unlocks a whole class of tools: you can write calculators, template engines, configuration DSLs, query languages, and custom command parsers. It's also the foundation for understanding how Rust's own compiler parses source code, and how tools like `nom` and `winnow` organize their combinators.
+## Rust Application
 
-The grammar for arithmetic expressions also teaches operator precedence by structure. `*` binds tighter than `+` because multiplication is handled at a deeper recursion level. This structural encoding of precedence is cleaner than looking up a precedence table.
+`Lexer<'a>` scans `input: &'a str` character by character, producing `Token` variants: `Number(f64)`, `Plus`, `Minus`, `Star`, `Slash`, `LParen`, `RParen`, `Eof`. `Parser` holds a `Lexer` and the current token. `parse_expr` → `parse_term` → `parse_factor` → `parse_primary` implements the precedence hierarchy. Each level handles one precedence class. `parse_primary` handles numbers and parenthesized expressions.
 
-## The Intuition
+## OCaml Approach
 
-Imagine the grammar written out:
-```
-expr   → term  (('+'|'-') term)*
-term   → factor (('*'|'/') factor)*
-factor → '(' expr ')' | number
-```
-
-Each line becomes one method. `parse_expr` calls `parse_term`. `parse_term` calls `parse_factor`. `parse_factor` either calls `parse_expr` (for parentheses) or reads a number. The recursion in the grammar becomes recursion in the code.
-
-In Python, you'd write the same structure — a class with methods for each rule. The difference in Rust is that the parser is position-tracking (`pos: usize`) and all error cases return `Result`. This matches production parsers like `syn` (Rust's macro parser) exactly.
-
-## How It Works in Rust
-
-```rust
-// Grammar:
-// expr   → term (('+'|'-') term)*
-// term   → factor (('*'|'/') factor)*
-// factor → '(' expr ')' | number
-
-#[derive(Debug, Clone)]
-pub enum Expr {
-    Num(f64),
-    BinOp { op: char, left: Box<Expr>, right: Box<Expr> },
-}
-
-pub struct Parser<'a> { input: &'a [u8], pos: usize }
-
-impl<'a> Parser<'a> {
-    // expr: lowest precedence — handles + and -
-    pub fn parse_expr(&mut self) -> Result<Expr, ParseError> {
-        let mut left = self.parse_term()?;        // always parse a term first
-        self.skip_ws();
-        while matches!(self.peek(), Some('+') | Some('-')) {
-            let op = self.advance_op();
-            let right = self.parse_term()?;       // right side is also a term
-            left = Expr::BinOp {
-                op, left: Box::new(left), right: Box::new(right)
-            };
-        }
-        Ok(left)
-    }
-
-    // term: higher precedence — handles * and /
-    fn parse_term(&mut self) -> Result<Expr, ParseError> {
-        let mut left = self.parse_factor()?;      // always parse a factor first
-        self.skip_ws();
-        while matches!(self.peek(), Some('*') | Some('/')) {
-            let op = self.advance_op();
-            let right = self.parse_factor()?;
-            left = Expr::BinOp { op, left: Box::new(left), right: Box::new(right) };
-        }
-        Ok(left)
-    }
-
-    // factor: highest precedence — parentheses or a literal number
-    fn parse_factor(&mut self) -> Result<Expr, ParseError> {
-        self.skip_ws();
-        if self.peek() == Some('(') {
-            self.advance();                        // consume '('
-            let expr = self.parse_expr()?;         // RECURSE — full expression inside parens
-            self.skip_ws();
-            self.expect(')')?;                     // consume ')'
-            return Ok(expr);
-        }
-        Ok(Expr::Num(self.parse_number()?))        // base case: a literal
-    }
-}
-
-// The AST evaluates itself
-impl Expr {
-    pub fn eval(&self) -> f64 {
-        match self {
-            Expr::Num(n) => *n,
-            Expr::BinOp { op, left, right } => {
-                let (l, r) = (left.eval(), right.eval());
-                match op { '+' => l+r, '-' => l-r, '*' => l*r, '/' => l/r, _ => 0.0 }
-            }
-        }
-    }
-}
-
-// Usage
-pub fn eval(input: &str) -> Result<f64, ParseError> {
-    Ok(Parser::new(input).parse_expr()?.eval())
-}
-
-// "2 + 3 * 4" → 14 (not 20 — precedence is correct because term is called before +)
-// "(2 + 3) * 4" → 20
-```
-
-Key points:
-- `Box<Expr>` is required for recursive enum variants — otherwise the type would be infinitely sized
-- The precedence hierarchy is: `expr` → `term` → `factor` → number/`(expr)` — tighter binding = deeper recursion level
-- `parse_factor` calling `parse_expr` creates the recursive cycle that handles nested parentheses
-- Error type `ParseError(String)` keeps it simple — production parsers add span information (byte offset, line/column)
-- `while matches!(...)` handles left-associativity: `1 - 2 - 3` = `(1-2)-3`, not `1-(2-3)`
-
-## What This Unlocks
-
-- **Custom DSLs**: a query language, template engine, or expression evaluator follows this exact pattern — grammar → rules → methods → AST → evaluator
-- **Foundation for Pratt parsing**: once you understand recursive descent, the Pratt technique (example 771) is a natural evolution for handling operator precedence tables
-- **Production parsing**: `syn` (Rust macro AST), `swc` (JavaScript compiler), and many language servers use recursive descent — this is the same technique at scale
+OCaml is an excellent language for recursive descent parsers because functions are first-class and tail-call optimization prevents stack overflow on deep recursion. `Menhir` is OCaml's standard LALR parser generator, used in the OCaml compiler itself. Hand-written recursive descent parsers in OCaml look nearly identical to Rust: `let rec parse_expr () = ... and parse_term () = ...`. The `angstrom` combinator library provides an alternative that avoids hand-rolling lexers.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Parser state | Functional: thread input through returns | Mutable `Parser` struct with `pos: usize` |
-| AST recursive type | `type expr = Num of float \| BinOp of ...` | `enum Expr` with `Box<Expr>` for recursion |
-| Precedence | Separate parser functions per level | Same — `parse_expr` calls `parse_term` calls `parse_factor` |
-| Error handling | Exceptions or `result` | `Result<Expr, ParseError>` — propagated with `?` |
-| Left associativity | Accumulate via function recursion | `while` loop with left-accumulation |
-| Production library | `menhir`, `angstrom` | `nom`, `winnow`, `pest`, `lalrpop` |
+1. **Mutual recursion**: Both languages handle mutual recursion naturally; Rust requires `fn parse_expr(&mut self)` calling `self.parse_term()`, while OCaml uses `let rec ... and ...`.
+2. **Error recovery**: Rust parsers typically panic on errors in simple implementations; production parsers return `Result` and synchronize on recovery tokens.
+3. **Parser generators**: Rust has `lalrpop`, `pest`, and `nom`; OCaml has `Menhir` (LALR), `sedlex` (lexer), and `angstrom` (combinator).
+4. **Grammar expression**: OCaml's `Menhir` uses BNF-like rules; Rust's `lalrpop` uses a similar notation with action code in Rust.
+
+## Exercises
+
+1. Add a `^` power operator (right-associative, highest precedence) by adding a `parse_power` level between `parse_factor` and `parse_primary`.
+2. Extend the parser to build an AST (`Expr` enum) instead of evaluating directly, then write a separate `eval(expr: &Expr) -> f64` function.
+3. Add error recovery: instead of panicking on unexpected tokens, emit an error message and try to continue parsing from the next `+` or `)` token.

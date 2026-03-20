@@ -2,79 +2,39 @@
 
 ---
 
-# 405: Iterator Adapters and Combinators
+# 405: Iterator Trait Deep Dive
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-The full depth of Rust's iterator protocol — implementing custom iterators and composing complex lazy pipelines.
+Rust's `Iterator` trait is one of the most carefully designed APIs in the standard library. Implementing just `fn next(&mut self) -> Option<Self::Item>` unlocks 75+ adapter methods: `map`, `filter`, `fold`, `take`, `skip`, `chain`, `zip`, `enumerate`, `flat_map`, and more — all built as default methods on top of `next`. This design means any custom data structure that implements `Iterator` gains the entire rich functional pipeline for free, with zero-cost abstraction through lazy evaluation and monomorphization.
 
-## The Problem This Solves
+Iterators power Rust's approach to functional programming without allocations: entire processing pipelines execute lazily, only materializing with `.collect()` or `.fold()`.
 
-Processing collections is the bulk of most programs. Without a composable abstraction, you write explicit loops, temporary allocations, and imperative index-tracking code that obscures intent. Even with basic `map`/`filter` you hit a ceiling: you need custom step sizes, stateful transformations, early termination, or generating data on the fly.
+## Learning Outcomes
 
-Rust's `Iterator` trait is minimal by design — implement just `next()` and you get the entire adapter ecosystem for free. `map`, `filter`, `flat_map`, `take_while`, `scan`, `zip`, `chain`, and 70+ other adapters compose lazily. Nothing allocates until you call a *consuming* adapter like `collect()`, `sum()`, or `for_each()`. The entire pipeline is a single zero-allocation state machine.
+- Understand how implementing only `fn next` unlocks the entire iterator adapter library
+- Learn how to create stateful iterators using struct fields
+- See how `size_hint` enables efficient pre-allocation in `.collect()`
+- Understand lazy evaluation: adapters are zero-cost until consumed by `for` or a terminal operation
+- Learn how custom iterators compose with `std` adapters (`take`, `zip`, `enumerate`)
 
-Building your own iterator is how you express domain-specific iteration: Fibonacci sequences, file-line readers, tree traversals, tokenizers. Once it implements `Iterator`, every consumer in the language can use it.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `Fibonacci` and `Countdown` each implement `Iterator` with a single `next` method. `Fibonacci` uses two `u64` fields for state. `Countdown` overrides `size_hint()` returning an exact count — enabling `Vec::with_capacity` optimizations in `.collect()`. Both immediately work with `take(10).collect::<Vec<_>>()`, `zip`, `sum`, `enumerate`, and all other adapters. The `Default` derive enables `Fibonacci::default()` construction.
 
-Implement `next()` on your type and you get the whole iterator machinery for free — every adapter, every consumer, all lazy.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-// The entire Iterator trait — just one required method
-trait Iterator {
-    type Item;
-    fn next(&mut self) -> Option<Self::Item>;
-    // ...100+ provided methods built on next()
-}
-
-// Custom iterator: Fibonacci
-struct Fib { a: u64, b: u64 }
-impl Fib { fn new() -> Self { Fib { a: 0, b: 1 } } }
-
-impl Iterator for Fib {
-    type Item = u64;
-    fn next(&mut self) -> Option<u64> {
-        let next = self.a + self.b;
-        self.a = self.b;
-        self.b = next;
-        Some(self.a)  // infinite — never returns None
-    }
-}
-
-// Now it works with the whole ecosystem
-let sum: u64 = Fib::new().take(10).sum();  // 143
-let evens: Vec<u64> = Fib::new().take(20).filter(|x| x % 2 == 0).collect();
-
-// Lazy pipeline — nothing runs until consumed
-let pipeline = (1..=1000)
-    .filter(|x| x % 3 == 0)
-    .map(|x| x * x)
-    .take_while(|&x| x < 10_000);
-// No work done yet ↑
-
-let result: Vec<i32> = pipeline.collect(); // work happens here
-```
-
-1. Define a struct with iteration state.
-2. `impl Iterator for YourStruct` — implement only `next()`.
-3. Return `Some(value)` to continue, `None` to end.
-4. Compose with any adapter: `.map()`, `.filter()`, `.flat_map()`, `.scan()`.
-
-## What This Unlocks
-
-- **Domain iterators**: Express any sequence — ranges, tree nodes, parsed tokens — as a first-class iterator.
-- **Zero-allocation pipelines**: Chain 10 adapters; only the final `collect()` allocates.
-- **Infinite iterators**: `Fib::new().take(n)` — generate lazily, consume exactly what you need.
+OCaml's `Seq.t` is the lazy sequence type: `type 'a t = unit -> 'a node` where `node = Nil | Cons of 'a * 'a t`. A Fibonacci sequence is `let rec fib a b = fun () -> Seq.Cons (a, fib b (a+b))`. The `Seq` module provides `map`, `filter`, `take`, `fold_left` adapters. Unlike Rust's iterator, OCaml sequences are persistent (can be consumed multiple times). The `Iter` module provides mutable imperative iterators closer to Rust's model.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Sequence abstraction | `Seq.t` (lazy), `List.t` (strict) | `Iterator` trait — always lazy |
-| Custom sequence | `let rec gen () = fun () -> Seq.Cons(...)` | `impl Iterator for MyStruct` |
-| Adapter composition | `Seq.map`, `Seq.filter` (limited) | 70+ adapters, all composable |
-| Allocation | `List` allocates; `Seq` defers | Adapters zero-alloc; `collect()` allocates |
-| Infinite sequences | `Seq` supports infinite | `Iterator` supports infinite naturally |
+1. **One method**: Rust requires implementing only `next`; OCaml's `Seq.t` is a recursive type that requires understanding the `node` type structure.
+2. **Mutability**: Rust's iterators are mutable (progress is tracked in `&mut self`); OCaml's `Seq.t` is immutable and persistent.
+3. **Eagerness**: Both are lazy by default; Rust materializes with `.collect()`, OCaml with `Seq.to_list` or `Seq.fold_left`.
+4. **Adapter count**: Rust's `Iterator` has 75+ adapters as defaults; OCaml's `Seq` has ~20 functions, with more in `Base.Sequence`.
+
+## Exercises
+
+1. **Primes iterator**: Implement `struct Primes { current: u64 }` implementing `Iterator<Item = u64>` using trial division. The iterator yields successive prime numbers. Write a test collecting the first 10 primes.
+2. **Zip with index (enumerate)**: Without using `.enumerate()`, implement a `Numbered<I: Iterator>` wrapper that implements `Iterator<Item = (usize, I::Item)>`. Verify it matches `.enumerate()` output exactly.
+3. **Infinite spiral**: Implement a `Spiral` iterator that yields `(i32, i32)` coordinates in a clockwise spiral from (0,0): (0,0), (1,0), (1,-1), (0,-1), (-1,-1), (-1,0), (-1,1), (0,1), (1,1), (2,1), ... Use it with `.take(25)` to verify the spiral pattern.

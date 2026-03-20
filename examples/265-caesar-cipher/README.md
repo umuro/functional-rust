@@ -33,3 +33,9 @@ Rust uses `as u8` / `as char` for character arithmetic and range patterns `'a'..
 2. **Pattern matching:** OCaml uses `if/else` on char comparisons; Rust uses range patterns `'a'..='z'`
 3. **String mapping:** OCaml's `String.map` applies a function per char; Rust uses `.chars().map().collect()`
 4. **Partial application:** OCaml's `let decrypt n = caesar (26 - n)` is more concise; Rust needs a full function definition
+
+## Exercises
+
+1. Implement `caesar_crack` that performs brute-force decryption: try all 25 shifts and return the one whose output most closely matches English letter frequencies.
+2. Extend the Caesar cipher to the Vigenère cipher: accept a keyword and apply a different shift for each position, cycling through the keyword letters.
+3. Implement ROT13 as a special case of Caesar cipher with shift 13 and verify that applying it twice returns the original text; then generalize to an arbitrary involution cipher.

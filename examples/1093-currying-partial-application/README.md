@@ -29,3 +29,9 @@ Rust functions take all arguments at once. To get partial application, you retur
 2. **Type signatures:** OCaml infers `int -> int -> int`; Rust needs `impl Fn(i64) -> i64` return type
 3. **Capture semantics:** OCaml closures capture by GC reference; Rust uses `move` for ownership transfer
 4. **Polymorphism:** OCaml uses parametric polymorphism implicitly; Rust requires `<T: Add + Copy>` bounds
+
+## Exercises
+
+1. Write a curried `add3` function `i32 -> i32 -> i32 -> i32` and use partial application to create an `increment` and a `add10` specialization.
+2. Implement `flip` — a higher-order function that takes `f: A -> B -> C` and returns `B -> A -> C` — and use it to partially apply the second argument of a binary function.
+3. Use currying and partial application to build a configurable string formatter: a curried `format_field` that accepts a padding width, an alignment, and finally a value, returning the formatted string.

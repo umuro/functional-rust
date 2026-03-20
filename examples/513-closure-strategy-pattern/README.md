@@ -2,96 +2,76 @@
 
 ---
 
-# 513: Strategy Pattern via Closures
+# Closure Strategy Pattern
 
-**Difficulty:** 3  **Level:** Intermediate
+The Strategy pattern replaces object hierarchies with closures stored as `Box<dyn Fn>` fields — the algorithm is a runtime-swappable value rather than a compile-time type, enabling clean separation of structure and behaviour.
 
-Replace interchangeable algorithms with closures stored in structs — no interfaces, no inheritance, no boilerplate.
+## Problem Statement
 
-## The Problem This Solves
+The classic Strategy pattern (GoF) uses an interface with multiple implementations: `SortStrategy`, `PriceStrategy`. In languages without closures, this requires class hierarchies. In Rust, a `Box<dyn Fn(&T, &T) -> Ordering>` is a strategy — any comparator logic works, including closures created inline. This eliminates boilerplate: no traits, no implementations, no dispatch indirection beyond what `Box<dyn Fn>` already provides. The pattern applies to: sorting, pricing rules, validation, logging, retry policies, and any algorithm that varies independently of the structure using it.
 
-The classic Gang-of-Four Strategy pattern requires: a `Strategy` interface, one concrete class per algorithm, dependency injection plumbing, and often a factory. In Java this is 5 files for what amounts to "sometimes do A, sometimes do B."
+## Learning Outcomes
 
-Without closures, Rust still requires traits and multiple implementing types. That's appropriate for complex strategies, but overkill when the "strategy" is just a comparison function, a discount calculation, or a formatting rule.
+- Store a strategy as `Box<dyn Fn>` in a struct field
+- Accept `impl Fn + 'static` in constructors and box internally
+- Apply the strategy via `(self.strategy)(args)`
+- Build factory functions for common strategies (`no_discount`, `percentage_discount`, `fixed_discount`)
+- Compose multiple validation rules in a `Validator` that collects all errors
 
-When behavior varies but the *shape* of the algorithm is fixed (same inputs, same output type), closures let you express strategy as configuration data rather than code structure.
+## Rust Application
 
-## The Intuition
-
-A strategy closure is a behavior stored as a value. Instead of calling `discount_strategy.apply(price)` on an object, you call `(self.discount)(price)` on a struct field. The closure *is* the strategy — no interface needed.
-
-In Python, you'd pass a function: `sorter = Sorter(key=lambda x: x.name)`. In JavaScript, `array.sort((a, b) => a.price - b.price)` passes the comparison strategy inline. Rust's closures work the same way, with the addition that the closure type is checked at compile time.
-
-Use `F: Fn(...)` generics when the strategy is fixed at construction time. Use `Box<dyn Fn(...)>` when you need to store different strategies in the same struct or swap them at runtime.
-
-## How It Works in Rust
+`Sorter` stores a comparator strategy:
 
 ```rust
-// Struct with a boxed closure strategy field
-struct Sorter<T> {
-    compare: Box<dyn Fn(&T, &T) -> std::cmp::Ordering>,
+pub struct Sorter<T> {
+    compare: Box<dyn Fn(&T, &T) -> Ordering>,
 }
 
 impl<T: Clone> Sorter<T> {
-    fn new(compare: impl Fn(&T, &T) -> std::cmp::Ordering + 'static) -> Self {
+    pub fn new(compare: impl Fn(&T, &T) -> Ordering + 'static) -> Self {
         Sorter { compare: Box::new(compare) }
     }
-    fn sort(&self, mut data: Vec<T>) -> Vec<T> {
-        data.sort_by(|a, b| (self.compare)(a, b));
-        data
+    pub fn sort(&self, mut data: Vec<T>) -> Vec<T> {
+        data.sort_by(|a, b| (self.compare)(a, b)); data
     }
 }
-
-let nums = vec![3, 1, 4, 1, 5, 9];
-// Three sorters — same struct, different strategies
-let asc  = Sorter::new(|a: &i32, b| a.cmp(b));
-let desc = Sorter::new(|a: &i32, b| b.cmp(a));
-let abs_desc = Sorter::new(|a: &i32, b| b.abs().cmp(&a.abs()));
-
-// Runtime strategy selection
-let use_premium = true;
-let discount: Box<dyn Fn(f64) -> f64> = if use_premium {
-    Box::new(|p| p * 0.70)   // 30% off
-} else {
-    Box::new(|p| p * 0.95)   // 5% off
-};
-println!("${:.2}", discount(200.0)); // $140.00
-
-// Composable validation strategies — add_rule chains multiple strategies
-struct Validator<T> {
-    rules: Vec<Box<dyn Fn(&T) -> bool>>,
-}
-impl<T> Validator<T> {
-    fn new() -> Self { Validator { rules: Vec::new() } }
-    fn add_rule(mut self, rule: impl Fn(&T) -> bool + 'static) -> Self {
-        self.rules.push(Box::new(rule));
-        self
-    }
-    fn validate(&self, value: &T) -> bool {
-        self.rules.iter().all(|rule| rule(value))  // ALL rules must pass
-    }
-}
-
-let validator = Validator::new()
-    .add_rule(|&x: &i32| x > 0)
-    .add_rule(|&x| x < 1000)
-    .add_rule(|&x| x % 2 == 0);
-println!("{}", validator.validate(&42));   // true
-println!("{}", validator.validate(&1001)); // false (> 1000)
 ```
 
-## What This Unlocks
+Interchangeable pricing strategies:
 
-- **Configurable algorithms** — sort orders, pricing rules, validation chains, and formatters as closure fields that callers swap without subclassing.
-- **Runtime behavior switching** — read strategy from config at startup, store as `Box<dyn Fn>`, use throughout the program's lifetime.
-- **Composable rule systems** — accumulate validation, transformation, or routing rules in a `Vec<Box<dyn Fn>>` and apply them as a pipeline.
+```rust
+let calc = PriceCalculator::new(percentage_discount(20.0));
+assert_eq!(calc.calculate(100.0), 80.0);
+
+let calc = PriceCalculator::new(fixed_discount(15.0));
+assert_eq!(calc.calculate(100.0), 85.0);
+```
+
+## OCaml Approach
+
+OCaml's first-class functions make the strategy pattern trivial:
+
+```ocaml
+let sort compare data = List.sort compare data
+let sorter_asc = sort compare
+let sorter_desc = sort (fun a b -> compare b a)
+
+type 'a price_calc = { discount: float -> float }
+let percentage_discount pct = { discount = fun p -> p *. (1.0 -. pct /. 100.0) }
+let fixed_discount amt = { discount = fun p -> max 0.0 (p -. amt) }
+```
+
+OCaml's `List.sort` already accepts a comparator — no wrapper struct is needed. Records with function fields serve as lightweight strategy objects.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Strategy | Higher-order function | `F: Fn(T) -> U` or `Box<dyn Fn>` |
-| Struct with strategy | `{ strategy: int -> int }` | `struct S { f: Box<dyn Fn(i32) -> i32> }` |
-| Runtime swap | Pass a different function | Replace `Box<dyn Fn>` field value |
-| Multiple strategies | `('a -> 'b) list` | `Vec<Box<dyn Fn(A) -> B>>` |
-| Interface requirement | Modules / functors | None — closure type serves as interface |
+1. **Struct vs. record**: Rust uses a `struct` with `Box<dyn Fn>` fields; OCaml uses a record with function fields — semantically identical, syntactically different.
+2. **`'static` bound**: Rust's `impl Fn + 'static` prevents strategies from capturing references to local variables with finite lifetimes; OCaml's GC manages all lifetimes.
+3. **Trait objects vs. closures**: The classic OOP strategy uses a trait (`trait PricingStrategy`) with separate `struct NoDiscount`, `struct PercentageDiscount` implementations; the closure approach collapses both into a single `Box<dyn Fn>`.
+4. **Validator composition**: Rust's `Validator` stores a `Vec<Box<dyn Fn(&T) -> Result<(), String>>>` collecting all rule failures; OCaml would use `List.filter_map` over a list of validation functions.
+
+## Exercises
+
+1. **Swap strategies at runtime**: Implement `fn PriceCalculator::set_strategy(&mut self, new: impl Fn(f64)->f64 + 'static)` and verify that the new strategy takes effect immediately.
+2. **Validation pipeline**: Extend `Validator<String>` with rules: `must_not_be_empty`, `max_length(n)`, `must_match_regex(pattern)` — all composed at runtime and all errors collected.
+3. **Strategy registry**: Build a `HashMap<String, Box<dyn Fn(f64) -> f64>>` discount registry and implement a `apply_named_discount(name: &str, price: f64) -> Option<f64>` lookup.

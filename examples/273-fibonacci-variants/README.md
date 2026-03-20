@@ -33,3 +33,9 @@ Rust mirrors each OCaml variant directly. `fib_naive` is a straightforward `matc
 2. **Fold target:** OCaml folds over a `List.init n Fun.id` dummy list; Rust folds over a `0..n` range — no allocation needed.
 3. **Pattern matching on integers:** Both languages support it, but Rust's `match` arm `n => …` binds the same variable name, which is clean and identical in structure to OCaml's function clauses.
 4. **Mutability:** `fib_iter` uses two `mut` locals, which would be unidiomatic in OCaml; in Rust it is perfectly natural and zero-cost.
+
+## Exercises
+
+1. Implement the Tribonacci sequence (each term is the sum of the three preceding terms) using the same structural techniques as the Fibonacci variants.
+2. Implement a `generalized_fibonacci` that takes an initial pair `(a, b)` and computes the `n`-th term, then verify that `golden_ratio` emerges from `fib(n+1) / fib(n)` as `n` grows.
+3. Compare the performance of the recursive, memoized, iterative, and matrix-exponentiation Fibonacci variants for computing `fib(50)` and explain the asymptotic complexity of each.

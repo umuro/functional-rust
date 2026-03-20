@@ -4,88 +4,48 @@
 
 # 256: Chaining Iterators with chain()
 
-**Difficulty:** 1  **Level:** Beginner
+## Problem Statement
 
-Combine multiple sequences into one seamless iterator — lazily, with zero extra allocation.
+Sequential processing of multiple separate collections is a universal programming need. Before lazy iterator composition, programmers allocated a new combined collection just to iterate over it — wasteful in both time and memory. The `chain()` combinator solves this by creating a single iterator that moves through one source, then continues with another, producing zero intermediate allocations. This is the functional programming principle of iterator composition: build complex traversal logic from small, single-purpose pieces.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You have two lists and you want to process them together: all the items from list A, then all the items from list B. The obvious approach is to create a new combined list — but that allocates memory just to iterate. For large datasets, that's wasteful.
+- Understand how `chain()` concatenates two iterators lazily with no intermediate allocation
+- Recognize when to use `chain()` instead of concatenating into a new `Vec`
+- Combine `chain()` with other adapters (`map`, `filter`, `sum`) in pipelines
+- Chain more than two sources by applying `chain()` multiple times
 
-Maybe you want to iterate over the default config values followed by the user-provided overrides. Or process log entries from multiple files. Or combine the results of two database queries. The naive approach concatenates them into a new `Vec` first, but you only need the combination long enough to iterate once.
+## Rust Application
 
-Rust's `.chain()` is the elegant solution: it creates a single iterator that goes through the first sequence, then the second, without allocating any storage for the combined result. The two original iterators stay exactly where they are; `.chain()` just connects them. This is a key example of how Rust iterators are *lazy* — they describe what to do, not the result.
-
-## The Intuition
-
-In Python you'd use `itertools.chain()` for exactly this:
-```python
-from itertools import chain
-combined = list(chain([1, 2, 3], [4, 5, 6]))
-```
-
-In JavaScript you might use spread syntax: `[...arr1, ...arr2]` — but that creates a new array immediately.
-
-Rust's `.chain()` is closer to Python's `itertools.chain`: nothing is materialized until you ask for it. You have to call `.collect()` (or loop with `for`) to actually run the computation:
+Rust's `Iterator::chain()` takes any `IntoIterator` and returns a `Chain<A, B>` struct implementing `Iterator`. The chain switches from the first source to the second only when the first is exhausted. No data is copied:
 
 ```rust
-// Nothing runs yet — this just describes the computation
-let lazy = first.iter().chain(second.iter());
-
-// NOW it runs — both iterators are consumed in sequence
-let combined: Vec<i32> = lazy.collect();
+let a = [1i32, 2, 3];
+let b = [4i32, 5, 6];
+let result: Vec<i32> = a.iter().chain(b.iter()).copied().collect();
+// [1, 2, 3, 4, 5, 6] — no intermediate allocation
 ```
 
-## How It Works in Rust
+Chaining with an empty iterator is always safe. The `sum()` example in the tests demonstrates that you can fold over chained iterators without ever collecting into a `Vec`.
 
-```rust
-let first  = [1, 2, 3];
-let second = [4, 5, 6];
+## OCaml Approach
 
-// .chain() connects two iterators — lazy, no allocation
-let chained: Vec<i32> = first.iter()
-    .chain(second.iter())
-    .copied()    // turn &i32 into i32 (copy the value out of the reference)
-    .collect();  // THIS is when the work actually happens
-// [1, 2, 3, 4, 5, 6]
+OCaml uses `List.append` (the `@` operator) for strict list concatenation, which copies the left spine. For lazy sequences, `Seq.append` is the true equivalent of `chain()`:
 
-// Works with any iterators — not just slices
-let greetings = vec!["hello", "hi", "hey"];
-let farewells = vec!["bye", "goodbye", "ciao"];
-let all: Vec<_> = greetings.iter().chain(farewells.iter()).collect();
-
-// Works with computed iterators too
-let evens = (0..10i32).filter(|x| x % 2 == 0);
-let odds  = (0..10i32).filter(|x| x % 2 != 0);
-let combined: Vec<i32> = evens.chain(odds).collect();
-// [0, 2, 4, 6, 8, 1, 3, 5, 7, 9]
-
-// Chain three iterators by chaining twice
-let a = vec![1i32];
-let b = vec![2i32];
-let c = vec![3i32];
-let abc: Vec<i32> = a.into_iter().chain(b).chain(c).collect();
-// [1, 2, 3]
-
-// chain() is just an iterator adapter — you can keep applying more operations
-let sum: i32 = first.iter().chain(second.iter()).copied().sum();
-// 21 — no Vec ever created
+```ocaml
+let chained = Seq.append (List.to_seq [1;2;3]) (List.to_seq [4;5;6])
+(* Lazy: nothing runs until consumed *)
 ```
-
-Note `into_iter()` vs `.iter()`: `.iter()` borrows the collection (giving `&T`), `into_iter()` consumes it (giving `T`). For the chain with three `Vec`s above, we use `into_iter()` because the Vecs are consumed into the chain.
-
-## What This Unlocks
-
-- **Multi-source processing** — combine events from multiple queues, merge log files, union query results without creating intermediate collections
-- **Fallback sequences** — iterate through primary results, then fallback results, stopping at the first match (with `.find()` after `.chain()`)
-- **Lazy pipelines** — chain multiple sources and then `.map()`, `.filter()`, `.take()` on the combined stream — all without materializing intermediate data
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Concatenate lists | `List.append xs ys` or `xs @ ys` | `xs.iter().chain(ys.iter())` |
-| Laziness | Eager (allocates immediately) | Lazy — nothing runs until consumed |
-| Memory cost | New list allocated | Zero allocation in the iterator |
-| Result type | `'a list` | `Chain<IterA, IterB>` — a new iterator type |
-| Materialize | Already materialized | `.collect()` when you need a `Vec` |
+1. **Laziness**: Rust's `chain()` is always lazy; OCaml's `List.append` / `@` is strict and allocates immediately.
+2. **Type homogeneity**: Both iterators must yield the same `Item` type in Rust; OCaml's polymorphic lists handle this naturally.
+3. **Source flexibility**: Rust's `chain()` works on any `Iterator` implementation — slices, ranges, custom types — not only lists.
+4. **Lifetime tracking**: Rust's borrow checker ensures chained references remain valid; OCaml relies on GC.
+
+## Exercises
+
+1. Chain three slices of strings and collect all words into a single `Vec<&str>` without allocating an intermediate combined slice.
+2. Use `chain()` to prepend a sentinel header element and append a footer element to an iterator of body items.
+3. Build a function `chain_n(slices: &[&[i32]]) -> Vec<i32>` that chains an arbitrary number of slices using `Iterator::flatten` or repeated `chain()` calls.

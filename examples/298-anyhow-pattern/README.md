@@ -4,63 +4,61 @@
 
 # 298: The anyhow Pattern — Boxed Errors
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Box any error type into a single container — trade type precision for ergonomics.
+Application code (as opposed to library code) often doesn't need to classify errors precisely — it just needs to propagate them to a top-level handler that logs or displays them. Defining a custom error enum for every function that calls multiple libraries is over-engineering. The `anyhow` pattern uses `Box<dyn Error + Send + Sync>` as a universal error container — any error can be boxed and propagated without defining wrapper types.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You're writing a CLI or application binary. It calls ten different libraries, each with its own error type. Writing a unified enum with `From` impls for all of them is theoretically correct — but also twenty minutes of boilerplate for code you'll never match on. You just want to propagate the error, log it, and exit. The type system is fighting you.
+- Understand `Box<dyn Error + Send + Sync>` as a type-erased error container
+- Implement a `Context` wrapper that adds descriptive messages to errors
+- Recognize when to use `anyhow` (applications) vs `thiserror` (libraries)
+- Traverse the error chain via `source()` to display full context
 
-`Box<dyn Error + Send + Sync>` solves this. Any type that implements `Error` can be boxed into it. The `?` operator will do the boxing automatically — no `From` impl needed. You lose the ability to match on specific error variants, but for application code that's often the right trade-off: you don't want to handle a parse error differently from a network error; you want to log both and stop.
+## Rust Application
 
-The `anyhow` crate packages this pattern with a `Result<T>` type alias, a `.context()` method for adding human-readable context, and a pretty error reporter. This example shows the same pattern using only `std` — so you understand what `anyhow` is actually doing under the hood.
-
-## The Intuition
-
-`Box<dyn Error + Send + Sync>` is a universal error container: any error that implements `Error` can go in, `?` does the boxing, and you get a clean propagation path without writing a single `From` impl.
-
-## How It Works in Rust
+The `AnyResult<T>` type alias is the foundation of the `anyhow` pattern:
 
 ```rust
-// Type alias — this is essentially what anyhow::Result<T> is
-type AnyResult<T> = Result<T, Box<dyn Error + Send + Sync>>;
+pub type AnyResult<T> = Result<T, Box<dyn Error + Send + Sync>>;
 
-fn parse_port(s: &str) -> AnyResult<u16> {
-    let n: u16 = s.parse()?;  // ParseIntError gets boxed automatically — no From impl needed
-    if n == 0 { return Err("port cannot be zero".into()); }  // &str -> Box<dyn Error> via .into()
-    Ok(n)
+// Any error can be boxed and propagated:
+fn process(s: &str) -> AnyResult<i32> {
+    let n: i32 = s.parse()?;  // ParseIntError boxes automatically
+    Ok(n * 2)
 }
 
-// Adding context: wrap the box in another box with a message
-fn load_config(port_str: &str) -> AnyResult<String> {
-    let port = parse_port(port_str)
-        .map_err(|e| format!("invalid port: {}", e))?;  // contextual message wraps the box
-    Ok(format!("localhost:{}", port))
-}
-
-// main() can return Box<dyn Error> too — Rust prints it on failure
-fn main() -> Result<(), Box<dyn Error>> {
-    let addr = load_config("8080")?;
-    println!("{}", addr);
-    Ok(())
+// WithContext wraps any error with a descriptive message:
+pub fn with_context<E: Error + Send + Sync + 'static>(
+    result: Result<(), E>,
+    msg: impl Into<String>
+) -> AnyResult<()> {
+    result.map_err(|e| Box::new(WithContext { context: msg.into(), source: Box::new(e) }) as _)
 }
 ```
 
-The `Send + Sync` bounds matter: without them, you can't send the error across threads, which kills async code. Always use `Box<dyn Error + Send + Sync>`.
+## OCaml Approach
 
-## What This Unlocks
+OCaml uses `result` with string errors for simple cases, or `Printexc` for exceptions. The `Error_monad` from Tezos and `Lwt`'s error handling provide richer composable errors, but there is no standard `Box<dyn Error>` equivalent:
 
-- **Zero-boilerplate error propagation** — any `?` in the function body works, regardless of the error type
-- **`main()` as an error handler** — return `Result<(), Box<dyn Error>>` from `main` and Rust prints the error on failure
-- **String literals as errors** — `"something went wrong".into()` is a valid `Box<dyn Error>` for quick prototyping
+```ocaml
+(* Simple approach: use string as universal error *)
+type 'a result_with_context = ('a, string) result
+
+let with_context ctx = function
+  | Error e -> Error (ctx ^ ": " ^ e)
+  | Ok v -> Ok v
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Untyped error | `exn` — exceptions are polymorphic by default | `Box<dyn Error>` — explicit type erasure |
-| Any error | Raise any exception | Any type implementing `Error` can be boxed |
-| Context | Wrap in new exception | Wrap with `map_err` or `.context()` extension |
-| Library vs app | Same either way | Library: typed enum; App: `Box<dyn Error>` |
-| Matching on variants | Pattern match exceptions | Not possible after boxing — use typed errors for libraries |
+1. **Type erasure**: `Box<dyn Error>` erases the concrete error type at runtime; the dynamic dispatch allows uniform handling of any error.
+2. **Context chaining**: `anyhow` (and this pattern) preserves the original error as `source()` — the context wraps but doesn't replace.
+3. **Application vs library**: `anyhow`/boxed errors are appropriate for applications; libraries should use precise error types via `thiserror`.
+4. **Thread safety**: `Send + Sync` bounds enable using errors across async tasks and threads — essential for concurrent applications.
+
+## Exercises
+
+1. Implement a `context(msg)` extension method on `Result<T, E>` that wraps any error in a `WithContext` struct.
+2. Write a function that calls five different operations each returning different error types, using `AnyResult<T>` to unify them without any `map_err`.
+3. Traverse the full error chain of a nested `WithContext` error and display each level with its message.

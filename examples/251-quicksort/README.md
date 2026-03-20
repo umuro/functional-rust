@@ -33,3 +33,9 @@ The functional translation uses slice patterns (`[pivot, rest @ ..]`) and `.part
 2. **Pattern syntax:** OCaml `pivot :: rest` becomes Rust `[pivot, rest @ ..]` on slices.
 3. **`Clone` requirement:** Rust must explicitly annotate `T: Clone` when cloning elements out of a borrowed slice; OCaml's GC handles this transparently.
 4. **Production sort:** `slice::sort` is O(n log n) worst-case (introsort); the naïve functional quicksort is O(n²) on sorted input.
+
+## Exercises
+
+1. Implement a three-way partition quicksort (Dutch national flag) that handles equal elements efficiently and benchmarks better on lists with many duplicates.
+2. Write an in-place functional-style quicksort using only safe Rust (no `unsafe`) with an explicit stack to avoid recursion.
+3. Implement an introselect algorithm that uses quicksort's partition to find the `k`-th smallest element in expected O(n), then compare its performance to fully sorting the list.

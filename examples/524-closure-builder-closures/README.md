@@ -2,43 +2,50 @@
 
 ---
 
-# 524: Builder Pattern with Closures
+# Builder Pattern with Closures
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Accept closures as configuration steps in builder APIs.
+The builder pattern addresses the "telescoping constructor" problem: when a type has many optional fields, constructors become unwieldy and error-prone. Rust's builder idiom (fluent API) is widespread in production code — `reqwest::ClientBuilder`, `tokio::runtime::Builder`, `std::thread::Builder` all use it. Adding closures to builders enables behavior injection: instead of just configuring data fields, callers can inject callbacks for connection events, error handlers, or transformation pipelines. This makes APIs both configurable and extensible without requiring trait implementations.
 
-## The Problem This Solves
+## Learning Outcomes
 
-The builder pattern is idiomatic Rust for constructing complex objects. Usually each setter takes a value and returns `Self`. But sometimes you want to pass a block of configuration at once, or supply a callback that will be invoked later (on connect, on error, on request). Accepting closures in the builder API enables both: batch configuration via `configure(|c| { c.port = 3000; c.timeout = 1000; })`, and stored callbacks via `on_connect(|addr| println!("connected: {}", addr))`.
+- How to combine the builder pattern with closure callbacks for behavior injection
+- Why `Box<dyn Fn(&str)>` stores callbacks in builder structs without generics on the struct itself
+- How method chaining (`self -> Self`) works with closure-accepting methods
+- How `Default` provides sensible no-op closures for optional callbacks
+- Where this pattern appears: HTTP client builders, async runtime builders, test harnesses
 
-This matters because stored callbacks let you inject behavior into a struct without subclassing or trait objects on the caller's side. The caller just passes a closure. The struct stores it as `Box<dyn Fn(&str)>`. When the event fires, the stored closure runs. This is a common pattern in Rust servers, GUI libraries, and test harnesses.
+## Rust Application
 
-The `configure` step — accepting a `FnOnce(&mut Config)` — is particularly useful: it gives the caller direct access to the partial config to set multiple fields at once, without needing a method for each one.
+`ServerConfig` stores `on_connect: Box<dyn Fn(&str)>` alongside data fields. `ServerBuilder` wraps `ServerConfig` and provides fluent methods returning `Self`: `host(s)`, `port(n)`, `on_connect(f)`. The `Default` impl provides a no-op `Box::new(|_| {})` callback so builds without a callback compile and run silently. `on_connect` accepts `impl Fn(&str) + 'static`, boxing it internally so callers pass raw closures without explicit boxing.
 
-## The Intuition
+Key patterns:
+- `Box<dyn Fn(&str)>` on the struct — no generic parameter needed on `ServerConfig`
+- `pub fn on_connect(mut self, f: impl Fn(&str) + 'static) -> Self` — fluent builder method
+- `Box::new(|_| {})` default no-op callback in `Default` impl
 
-Each builder method either takes a value (`.port(9090)`) or takes a closure (`.on_connect(|addr| ...)` or `.configure(|c| { ... })`). Value setters are simple. Closure setters either store the closure for later invocation or run it immediately against the partial config. The builder chain reads like a configuration DSL.
+## OCaml Approach
 
-## How It Works in Rust
+OCaml builders are typically records with optional fields using `option` types for callbacks. A builder function takes a record and returns an updated copy using functional update syntax. Callbacks are plain functions stored in `option` fields:
 
-1. **Stored callback** — `on_connect(mut self, handler: impl Fn(&str) + 'static) -> Self` boxes the closure into `Box<dyn Fn(&str)>` and stores it in the config.
-2. **`configure` closure** — `configure(mut self, f: impl FnOnce(&mut ServerConfig)) -> Self` runs `f` against the partial config immediately; lets the caller set multiple fields in one step.
-3. **`'static` bound** — stored callbacks must be `'static` (no references to local variables) since the config outlives the builder call site.
-4. **Function-arg builder** — `fn build_server(configure: impl FnOnce(ServerBuilder) -> ServerBuilder) -> ServerConfig` lets callers write the entire chain as a lambda: `build_server(|b| b.port(3000).on_connect(...))`.
-5. **Captured environment** — closures passed to `on_connect` can capture local variables: `let log_prefix = "SERVER"; .on_connect(move |addr| println!("[{}] {}", log_prefix, addr))`.
-
-## What This Unlocks
-
-- Register behavior (connection handlers, error hooks, middleware) inline in builder chains.
-- Let callers batch-configure multiple fields with a single `configure(|c| { ... })` step.
-- Write test harnesses and mock servers where behavior is injected entirely via closures.
+```ocaml
+type server_config = {
+  host: string; port: int;
+  on_connect: (string -> unit) option;
+}
+let with_on_connect f cfg = { cfg with on_connect = Some f }
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Builder pattern | Not idiomatic; usually labeled arguments | Method-chaining builder with `Self` return is standard |
-| Stored callbacks | Function references in records | `Box<dyn Fn(...)>` field; `'static` lifetime bound |
-| Batch configuration | Record update syntax `{ cfg with port=3000 }` | `configure(FnOnce(&mut Config))` — runs closure against partial config |
-| Closure capture in config | Transparent; GC handles | `move` closure must be `'static` when stored in a struct |
+1. **Struct generics**: Rust builders often avoid generics on the struct by boxing callbacks (`Box<dyn Fn>`); OCaml records store functions directly without boxing annotation.
+2. **Fluent chaining**: Rust `self -> Self` enables `Builder::new().host("x").port(80).build()` in idiomatic Rust; OCaml achieves this with function composition or `|>` pipelines.
+3. **No-op defaults**: Rust's `Default` trait provides a no-op closure; OCaml uses `option` to represent absence, calling `Option.iter on_connect addr` at use time.
+4. **Ownership model**: Rust builders consume `self` on each step (`mut self` pattern) preventing reuse after building; OCaml records are immutable by default — functional update creates a new record each step.
+
+## Exercises
+
+1. **Retry builder**: Add an `on_retry(f: impl Fn(u32, &str) + 'static)` callback to `ServerBuilder` that receives the attempt number and error message, and a `max_retries(n: u32)` field.
+2. **Transform pipeline**: Add `add_transform(f: impl Fn(String) -> String + 'static)` to the builder that accumulates multiple transforms, applied in registration order when a request arrives.
+3. **Validation in build**: Make `ServerBuilder::build()` return `Result<ServerConfig, String>` that validates the port is in range `1..=65535` and the host is non-empty before returning the config.

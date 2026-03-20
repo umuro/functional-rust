@@ -2,65 +2,39 @@
 
 ---
 
-# 421: include! and include_str!
+# 421: `include!`, `include_str!`, `include_bytes!`
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Embed file contents as string or byte literals at compile time — SQL queries, HTML templates, Wasm bytecode — with zero runtime I/O.
+Binary assets (images, shaders, SQL queries, configuration files) can be embedded directly into executables. Instead of loading them from disk at runtime (which can fail if the file is missing or the path changes), `include_bytes!` and `include_str!` embed the file content as a compile-time constant. The resulting binary is self-contained: no external files needed, no file-not-found errors at runtime. `include!` includes arbitrary Rust source files, enabling code generation workflows where a `build.rs` produces Rust code that is then `include!`'d.
 
-## The Problem This Solves
+These macros are used by `rust-embed`, WASM binary bundlers, shader compilers, and any application embedding resources (game assets, localization strings, TLS certificates).
 
-Hard-coding multi-line strings inline makes code noisy and hard to maintain. Keeping them in separate files is cleaner, but reading files at runtime adds failure modes: the file might be missing, the path might be wrong, the read might fail. You also lose the performance of having the data baked into the binary.
+## Learning Outcomes
 
-For assets that never change between builds — SQL schemas, config templates, embedded certificates — you want the simplicity of a separate file combined with the reliability of a compile-time constant. You also want the IDE to recognise the string as a literal so it participates in dead-code and const-folding optimisations.
+- Understand how `include_bytes!` embeds a file as `&'static [u8]` at compile time
+- Learn how `include_str!` embeds a UTF-8 file as `&'static str`
+- See how `include!` includes generated Rust source code from `build.rs` workflows
+- Understand how Cargo tracks file dependencies via `println!("cargo:rerun-if-changed=...")`
+- Learn the trade-off: larger binary vs. zero runtime file I/O errors
 
-`include_str!` and `include_bytes!` solve exactly this: the compiler reads the file during compilation and replaces the macro call with a `&'static str` or `&'static [u8]` literal. If the file is missing, the build fails — not the running program.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `include_bytes!("../Cargo.toml")` embeds the Cargo.toml as a `&[u8]` byte slice. The `include_sql!` macro uses `concat!` to build SQL query strings at compile time. The path in `include_bytes!` is relative to the source file's location, resolved by the compiler. For `include_str!`, the file must be valid UTF-8. Cargo automatically rebuilds when included files change.
 
-Think of `include_str!("query.sql")` as copy-paste that the compiler does for you at build time. The SQL file stays readable and editable on disk; the binary acts as if you typed the string inline. The path is relative to the source file, so it travels with the crate.
+## OCaml Approach
 
-`include_bytes!` does the same for binary files: Wasm modules, compiled shaders, TLS certificates, small images. The result is a `&'static [u8]` — zero heap allocation, zero runtime loading.
-
-## How It Works in Rust
-
-```rust
-// In a real project these reference actual files:
-// const QUERY: &str = include_str!("queries/users.sql");
-// static WASM: &[u8] = include_bytes!("module.wasm");
-
-// Path is relative to the current source file, not the crate root.
-// If the file is missing, you get a COMPILE ERROR, not a runtime panic.
-
-const SQL_QUERY: &str =
-    "SELECT id, name, email FROM users WHERE active = true ORDER BY name";
-
-// include_bytes! gives a byte array — good for binary data
-static EMBEDDED_DATA: &[u8] = &[0x52, 0x75, 0x73, 0x74]; // "Rust"
-
-// Use the constant anywhere — it's just a &'static str
-fn render(template: &str, title: &str) -> String {
-    template.replace("{{title}}", title)
-}
-```
-
-**Key mechanics:**
-- `include_str!` — UTF-8 text → `&'static str`
-- `include_bytes!` — raw bytes → `&'static [u8]`
-- `include!` — includes a Rust source file (for code generation output)
-- The `CARGO_MANIFEST_DIR` env var is handy when build scripts generate the included file
-
-## What This Unlocks
-
-- **Embedded SQL / GraphQL schemas** — keep queries in `.sql` files, use them as constants at zero runtime cost.
-- **Embedded HTML / config templates** — ship a self-contained binary that renders pages without touching the filesystem.
-- **Binary asset embedding** — Wasm modules, compiled shaders, certificates embedded directly in the binary; no installation step required.
+OCaml achieves file embedding through the `dune` build system's `(embed_file ...)` rule or through the `sedlex` and `menhir` grammar inclusion patterns. The `Crunch` library converts files into OCaml modules. For inline SQL, `ppx_rapper` generates type-safe queries from SQL strings in OCaml source. OCaml has no built-in equivalent of `include_bytes!` — file embedding requires build system configuration.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Embed file at compile time | Not built-in; use `ppx` or manual `read_file` at startup | `include_str!` / `include_bytes!` — standard macros, no deps |
-| Missing file | Runtime error (if read at startup) | Compile error |
-| Result type | `string` (heap) loaded at runtime | `&'static str` / `&'static [u8]` — baked into binary |
-| Binary files | Read with `Bytes.create` at runtime | `include_bytes!` → `&'static [u8]` |
+1. **Built-in**: Rust's `include_bytes!` and `include_str!` are language primitives; OCaml requires build system configuration or external libraries.
+2. **Path resolution**: Rust resolves paths relative to the source file; OCaml's approaches resolve relative to the dune build directory.
+3. **Rebuild tracking**: Cargo automatically re-builds when included files change; OCaml requires explicit `(deps ...)` in dune rules.
+4. **Code inclusion**: Rust's `include!` includes arbitrary Rust code; OCaml's `load_path` and dynamic loading serve similar purposes but differently.
+
+## Exercises
+
+1. **Embedded config**: Use `include_str!` to embed a TOML config file into your binary. Parse it at startup using the `toml` crate and expose configuration values as constants. Show that the binary works without the config file being present at runtime.
+2. **Shader embedding**: Embed a GLSL vertex and fragment shader as `include_str!` constants. Create a `ShaderSource { vert: &'static str, frag: &'static str }` and verify the strings contain valid GLSL keywords.
+3. **Code generation**: Write a `build.rs` that reads a `data/keywords.txt` file and generates `src/generated.rs` containing `pub const KEYWORDS: &[&str] = &[...];`. Use `include!("../src/generated.rs")` to include the generated code.

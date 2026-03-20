@@ -2,78 +2,49 @@
 
 ---
 
-# 572: ref Patterns and &
+# Ref Patterns
 
-**Difficulty:** 2  **Level:** Beginner
+## Problem Statement
 
-Understand how `ref`, `&`, and match ergonomics interact — borrow inside patterns without fighting the borrow checker.
+Before match ergonomics (Rust 2018), matching on a reference required explicit `ref` keywords in patterns to borrow rather than move the matched value. This was verbose and confusing, particularly for newcomers. Match ergonomics automated most cases, but explicit `ref` and `ref mut` still appear in older code, in code that must be explicit for clarity, and in specific contexts where ergonomics do not apply. Understanding both the old explicit style and the modern ergonomic style is essential for reading existing Rust codebases.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You have a `Vec<i32>` and you want to sum it. `values.iter()` gives you `&i32` references, and your closure gets `&&i32` — a reference to a reference. Adding `&&i32` values doesn't compile directly. You need to strip the outer reference.
+- How `Some(ref s)` explicitly borrows `s` from a match on `&Option<String>`
+- How match ergonomics (`Some(s)`) automatically infers `s: &String` when matching on `&Option<T>`
+- How `Some(ref mut s)` creates a mutable reference binding
+- How `ref` in struct patterns works: `Point { ref x, ref y }`
+- Why understanding explicit `ref` is needed for reading pre-2018 Rust code
 
-More commonly: you match on a `Vec<String>`, destructure the first element to a `String`, and suddenly the whole vector is partially moved. You only wanted to *look* at it.
+## Rust Application
 
-The confusion deepens because there are three overlapping tools for this: the `ref` keyword in patterns, the `&` pattern that dereferences, and *match ergonomics* (automatic `ref` insertion when matching a reference). They all exist for good historical and ergonomic reasons, and they all interact.
+`inspect(opt: &Option<String>)` uses `Some(ref s) => s.len()` — explicit `ref`, `s: &String`. `inspect_modern(opt: &Option<String>)` uses `Some(s) => s.len()` — ergonomics, same behavior. `append_exclaim(opt: &mut Option<String>)` uses `Some(ref mut s) => s.push('!')` — explicit `ref mut` needed for mutable modification. Both styles produce identical compiled code — `ref` is purely a syntactic annotation.
 
-## The Intuition
+Key patterns:
+- `Some(ref s)` — explicit borrow in pattern
+- `Some(s)` on `&Option<T>` — automatic borrow via ergonomics
+- `Some(ref mut s)` — explicit mutable borrow in pattern
+- `let ref x = val;` — ref binding in `let`
 
-When you match `&value` against `&T`, you're asking Rust to "open the reference" and give you what's inside. `let &x = &5` gives you `x: i32` — the dereference happens in the pattern.
+## OCaml Approach
 
-When you use `ref x` in a pattern, you're telling Rust: "bind `x` as a *reference to* the matched value, don't move it." `let ref x = s` is equivalent to `let x = &s`.
+OCaml always binds pattern variables by reference to the GC heap — there is no `ref`/`ref mut` distinction in patterns. Mutation requires `ref` cells in the value, not in the pattern:
 
-Modern Rust has *match ergonomics*: when you match a `&T` value against a non-reference pattern, Rust inserts the `ref` automatically. `if let Some(s) = &opt` gives you `s: &String` — no explicit `ref` needed. This covers 90% of cases.
-
-The cases where you still reach for `ref` explicitly: `let` bindings in non-reference contexts, or when you want clarity about what's happening.
-
-## How It Works in Rust
-
-```rust
-// & in closure pattern — strip one reference from iter()
-let values = vec![1, 2, 3, 4, 5];
-let sum: i32 = values.iter().map(|&x| x).sum();
-// values.iter() yields &i32; |&x| destructures it to i32
-
-// ref in let binding — explicit borrow without moving
-let s = String::from("hello");
-let ref r = s;   // r: &String; s still owned
-println!("r={} s={}", r, s);
-
-// Match ergonomics — matching &Option<String> auto-borrows
-let opt = Some(String::from("hello"));
-if let Some(s) = &opt {  // s: &String — ref inserted automatically
-    println!("borrowed: {}", s);
-}
-println!("opt still alive: {:?}", opt);  // not moved
-
-// ref in slice pattern — explicit when needed
-fn first_two_borrowed(v: &[String]) -> Option<(&str, &str)> {
-    match v {
-        [ref a, ref b, ..] => Some((a, b)),  // borrow elements, not move
-        _                  => None,
-    }
-}
-
-// ref mut — borrow first element mutably
-fn increment_first(v: &mut [i32]) {
-    if let [ref mut first, ..] = v {
-        *first += 1;
-    }
-}
+```ocaml
+let inspect opt = match opt with
+  | Some s -> String.length s  (* s is always a reference *)
+  | None -> 0
 ```
-
-## What This Unlocks
-
-- **Inspect collections without consuming them** — borrow fields and elements in patterns, leave the original intact.
-- **Closure-friendly iteration** — `|&x|` in closures over `.iter()` output gives you the value directly.
-- **Mutable targeted edits** — `ref mut` in a slice pattern lets you modify exactly one element without indexing.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Borrows in patterns | N/A (GC, no ownership) | `ref x` borrows; `&x` dereferences |
-| Mutable reference cell | `let x = ref v` (explicit cell) | `ref mut x` in pattern |
-| Automatic borrowing | N/A | Match ergonomics: `&T` against non-ref pattern inserts `ref` |
-| Iteration references | N/A | `iter()` yields `&T`; use `|&x|` or `.copied()` |
-| `ref` in let | N/A | `let ref x = value` ≡ `let x = &value` |
+1. **Explicit vs implicit**: Rust requires explicit `ref` (or relies on ergonomics) to borrow in patterns; OCaml always borrows implicitly.
+2. **`ref mut`**: Rust's `ref mut` creates a mutable reference — enables modifying the matched value in-place; OCaml uses mutable record fields or `ref` cells for the same effect.
+3. **Historical context**: Pre-2018 Rust code uses `ref` extensively; modern code relies on ergonomics; OCaml code never used `ref` in patterns.
+4. **Mental model**: Rust patterns explicitly model ownership and borrowing; OCaml patterns model structural decomposition without ownership concerns.
+
+## Exercises
+
+1. **Pre-ergonomics rewrite**: Take `inspect_modern` and rewrite it using explicit `ref` keywords — verify both versions compile and produce the same output.
+2. **Ref mut tree**: Write a function `fn negate_first(v: &mut Vec<i32>)` using `if let Some(ref mut first) = v.first_mut() { *first = -*first; }`.
+3. **Struct ref pattern**: Match on `&Point { x, y }` using both explicit `ref x, ref y` and ergonomic `x, y` — verify both bind `x: &i32, y: &i32`.

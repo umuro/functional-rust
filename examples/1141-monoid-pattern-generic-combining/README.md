@@ -29,3 +29,9 @@ Rust uses a `trait Monoid` with two methods: `empty() -> Self` (the identity) an
 2. **First-class modules vs generics:** OCaml passes modules as runtime values; Rust resolves monomorphization at compile time via trait bounds.
 3. **Identity element:** OCaml's `M.empty` is a module field; Rust's `M::empty()` is an associated function — both are zero-argument.
 4. **Newtype pattern:** Rust needs wrapper types (`Sum(i64)`) to implement the same trait differently for the same primitive; OCaml uses separate `module Sum` definitions.
+
+## Exercises
+
+1. Add an `All` boolean monoid (identity = `true`, operation = `&&`) and a `Any` boolean monoid (identity = `false`, operation = `||`), and use them with `concat_all` to check list-wide conditions.
+2. Implement `mconcat` (alias for `concat_all`) as a blanket implementation on `Iterator<Item: Monoid>`, allowing `iter.mconcat()` call syntax.
+3. Prove the monoid laws (identity and associativity) for each of your monoid implementations using `proptest` or `quickcheck`.

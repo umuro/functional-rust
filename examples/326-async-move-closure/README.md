@@ -4,54 +4,65 @@
 
 # 326: Capturing with async move
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-`async move { }` captures its environment by value — transferring ownership into the future so it can safely outlive its creating scope.
+Async tasks often need to use data from the surrounding scope — a user ID, a connection string, or a shared counter. Since async tasks may outlive the scope where they are created, they cannot borrow — they must own their data. The `async move { }` block (and `move ||` closure) captures all referenced variables by value, giving the async task ownership. This is required whenever a spawned task needs access to outer-scope data.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You create a future inside a function and want to send it to another thread or store it for later. But the future references local variables — when the function returns, those variables are gone. `async move` solves this by moving ownership into the future.
+- Understand `move ||` and `async move { }` as capturing environment by ownership
+- Recognize why spawned tasks require `'static` lifetime — they must own their data
+- Implement shared mutable state across tasks using `Arc<Mutex<T>>`
+- Understand the difference between `move` captures (one task per capture) and `Arc` clones (multiple tasks sharing)
 
-This pattern also enables sharing mutable state across concurrent tasks: clone an `Arc` before moving into each task.
+## Rust Application
 
-## The Intuition
-
-Regular closures can either borrow (`|| x + 1`) or own (`move || x + 1`) their captures. Async blocks work the same way, but `move` is far more common because futures often need to live longer than the scope that created them.
+`move` closures and `Arc` patterns for concurrent access:
 
 ```rust
-// Without move: borrows from current scope — can't outlive it
-let fut = async { compute(&local_var) };  // borrows local_var
+// move closure: captures `name` by ownership
+pub fn make_greeter(name: String) -> impl Fn() -> String {
+    move || format!("Hello, {}!", name)
+}
 
-// With move: owns the data — can live as long as needed
-let fut = async move { compute(local_var) };  // local_var moved into fut
+// Arc<Mutex<T>>: share mutable state across multiple closures
+pub fn shared_counter() -> impl FnMut() -> i32 {
+    let count = Arc::new(Mutex::new(0));
+    move || {
+        let mut c = count.lock().unwrap();
+        *c += 1;
+        *c
+    }
+}
 ```
 
-## How It Works in Rust
+In async code: `tokio::spawn(async move { use_data(captured_value) })`.
 
-```rust
-// move closure: owns `name`, can be called from anywhere
-fn make_greeter(name: String) -> impl Fn() {
-    move || println!("Hello, {name}!")
-}
+## OCaml Approach
 
-// Shared state across threads with Arc<Mutex<T>>
-fn shared_state_demo() -> i32 {
-    let shared = Arc::new(Mutex::new(0));
-    let handles: Vec<_> = (0..5).map(|_| {
-        let shared = Arc::clone(&shared);  // clone Arc before moving
-        thread::spawn(move || {
-            *shared.lock().unwrap() += 1;
-        })
-    }).collect();
-    for h in handles { h.join().unwrap(); }
-    *shared.lock().unwrap()
-}
+OCaml closures capture variables from the enclosing scope by reference (the GC handles lifetimes), so explicit `move` is not needed:
+
+```ocaml
+let make_greeter name = fun () -> "Hello, " ^ name ^ "!"
+(* `name` is captured by the closure — GC ensures it lives long enough *)
+```
+
+For Lwt concurrent tasks, `Lwt.async` with shared mutable refs:
+
+```ocaml
+let counter = ref 0
+let increment () = Lwt.return (incr counter; !counter)
 ```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Capture by value | `let x = x in fun () -> ...` | `move \|\| ...` |
-| Shared ownership | `ref` (mutable reference) | `Arc<T>` |
-| Mutual exclusion | `Mutex.create ()` | `Mutex<T>` |
+1. **Ownership transfer**: Rust's `move` explicitly transfers ownership to the closure — the original binding can no longer be used; OCaml closures share by reference with GC management.
+2. **Lifetime requirement**: Rust's `thread::spawn` / `tokio::spawn` require `'static` (owned) data; `move` is the primary tool to satisfy this.
+3. **Multi-consumer sharing**: When multiple tasks need the same data, `Arc::clone()` before each `move ||` gives each task its own reference-counted pointer.
+4. **FnOnce vs Fn**: `move ||` that captures an owned non-`Clone` value implements `FnOnce` — can only be called once; `Arc` enables `Fn` (callable many times).
+
+## Exercises
+
+1. Implement a factory function that creates N worker closures, each capturing a unique ID by value, and run them concurrently.
+2. Use `Arc<Mutex<Vec<String>>>` to collect results from multiple threads into a shared accumulator.
+3. Show the compilation error when trying to spawn a thread that borrows a local variable, then fix it using `move`.

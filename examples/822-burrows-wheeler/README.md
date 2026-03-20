@@ -2,112 +2,58 @@
 
 ---
 
-# 822: Burrows-Wheeler Transform
+# Burrows-Wheeler Transform
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Permute a string into a form that compresses dramatically better — the transformation at the heart of bzip2.
+Data compression algorithms like bzip2 achieve high compression ratios by first applying the Burrows-Wheeler Transform (BWT) to rearrange text so that similar characters cluster together, making run-length encoding and move-to-front coding highly effective. The BWT is a reversible transformation: it takes a string, generates all rotations, sorts them lexicographically, and returns the last column. The magic is that similar contexts cluster the last-column characters. The inverse BWT recovers the original string exactly. BWT is also used in bioinformatics for FM-index construction, enabling compressed full-text indexes that power genome alignment tools like BWA and Bowtie.
 
-## The Problem This Solves
+## Learning Outcomes
 
-The Burrows-Wheeler Transform (BWT) rearranges a string's characters so that identical characters cluster together, making the output far more compressible by run-length encoding or move-to-front coding. It's a reversible transformation — you can recover the original string exactly from the BWT output plus a single index.
+- Understand BWT as the last column of the sorted rotation matrix
+- Implement forward BWT: generate all rotations, sort, take last characters, record original row index
+- Implement inverse BWT using the first/last column correspondence and the rank property
+- Recognize why BWT aids compression: characters with similar contexts appear together
+- Connect BWT to the FM-index and suffix array for full-text search
 
-BWT is the core of bzip2 compression, widely used for compressing source code, log files, and biological sequences. It also underpins the FM-index, the data structure behind modern short-read DNA aligners (BWA, Bowtie). Understanding BWT is essential for anyone working with text compression algorithms or genomic data processing.
-
-This example implements both the forward transform (string → BWT + index) and the inverse (BWT + index → original string), allowing you to verify correctness and understand the structure.
-
-## The Intuition
-
-**Forward BWT**: append a sentinel character `$` (lexicographically smallest) to the string. Form all n+1 cyclic rotations. Sort them lexicographically. The BWT is the last column of this sorted matrix. The index tells you which row is the original string (the rotation starting with the real first character followed by `$` at the end).
-
-Why does this compress well? Rows with the same prefix (sorted together) tend to end with the same character — because strings with similar suffixes often have similar preceding characters. This creates runs of identical characters in the last column, which RLE and move-to-front compress efficiently.
-
-**Inverse BWT**: from the last column `L`, compute the first column `F` by sorting. Build `T[i]` = the rank of `L[i]` among equal characters in `L`. Then follow the chain: start at `index`, next = `T[index]`, until you've recovered all characters.
-
-O(n log n) for sorting rotations. In Rust, we avoid materializing all rotations (O(n²) space) by sorting indices with a custom comparator that compares rotations as slices.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-fn bwt_forward(s: &str) -> (Vec<u8>, usize) {
-    let mut bytes: Vec<u8> = s.bytes().collect();
-    bytes.push(b'$'); // sentinel — must be lexicographically smallest
-    let n = bytes.len();
-
-    // Sort rotation indices without materializing rotations (saves O(n²) space)
-    let mut indices: Vec<usize> = (0..n).collect();
-    indices.sort_unstable_by(|&a, &b| {
-        // Compare rotation a vs rotation b as circular slices
-        for k in 0..n {
-            let ca = bytes[(a + k) % n];
-            let cb = bytes[(b + k) % n];
-            if ca != cb { return ca.cmp(&cb); }
-        }
-        std::cmp::Ordering::Equal
+pub fn bwt_transform(s: &str) -> (String, usize) {
+    let n = s.len();
+    let mut rotations: Vec<usize> = (0..n).collect();
+    rotations.sort_by(|&a, &b| {
+        let ra = s[a..].chars().chain(s[..a].chars());
+        let rb = s[b..].chars().chain(s[..b].chars());
+        ra.cmp(rb)
     });
-
-    // Last column = character before each sorted rotation's start
-    let last_col: Vec<u8> = indices.iter()
-        .map(|&i| bytes[(i + n - 1) % n])
-        .collect();
-
-    // Original string is the rotation that starts with bytes[0]
-    // and has $ at position n-1, which sorts as the row where index=0
-    let orig_row = indices.iter().position(|&i| i == 0).unwrap();
-    (last_col, orig_row)
-}
-
-fn bwt_inverse(last_col: &[u8], orig_row: usize) -> Vec<u8> {
-    let n = last_col.len();
-
-    // First column = sort of last column
-    let mut first_col = last_col.to_vec();
-    first_col.sort_unstable();
-
-    // T[i] = where does last_col[i] map in first_col?
-    // i.e. rank of last_col[i] among equal characters (stable sort order)
-    let mut rank = vec![0usize; n];
-    let mut count = [0usize; 256];
-    for &b in last_col { count[b as usize] += 1; }
-
-    // Prefix sum to find start positions in first_col
-    let mut start = [0usize; 256];
-    for i in 1..256 { start[i] = start[i-1] + count[i-1]; }
-
-    // Assign T[i] based on occurrence rank
-    let mut seen = [0usize; 256];
-    let mut t = vec![0usize; n];
-    for (i, &b) in last_col.iter().enumerate() {
-        t[i] = start[b as usize] + seen[b as usize];
-        seen[b as usize] += 1;
-    }
-
-    // Follow T chain from orig_row to recover original string
-    let mut result = vec![0u8; n];
-    let mut row = orig_row;
-    for i in (0..n).rev() {
-        result[i] = last_col[row];
-        row = t[row];
-    }
-    // Remove sentinel $
-    result.into_iter().filter(|&b| b != b'$').collect()
+    let bwt: String = rotations.iter().map(|&i| s.chars().nth((i + n - 1) % n).unwrap()).collect();
+    let original_row = rotations.iter().position(|&i| i == 0).unwrap();
+    (bwt, original_row)
 }
 ```
 
-`sort_unstable_by` on indices is the key space optimization — comparing rotations via modular indexing `(a + k) % n` instead of allocating `n` separate strings. The `count`/`start`/`seen` arrays replace a full sort during inversion, running in O(n + |alphabet|).
+Rather than materializing all n rotations as strings (O(n^2) memory), we sort indices with a comparator that simulates rotation comparison using `chain`. This reduces memory from O(n^2) to O(n log n) for the sort. The last character of rotation i is at position `(i + n - 1) % n` in the original string. The `original_row` index is needed for inverse transformation. Rust's iterator chaining makes the rotation simulation clean and allocation-free.
 
-## What This Unlocks
+## OCaml Approach
 
-- **bzip2 compression**: BWT + move-to-front + Huffman coding achieves better compression ratios than deflate/gzip for text and source code.
-- **FM-index for DNA alignment**: the suffix array + BWT enables O(m) pattern search in a compressed index of the genome — used in BWA, Bowtie2, and HISAT2.
-- **Text index compression**: BWT-based indexes store the entire human genome in ~750MB while supporting fast substring search.
+OCaml implements BWT with `Array.init n (fun i -> i)` for rotation indices and `Array.sort` with a comparator simulating rotation. `String.get s ((i + n - 1) mod n)` gets the last character. OCaml's `String.init` builds the BWT string. The inverse BWT uses a `Array.sort`-built rank table mapping characters to their position in the first column. OCaml's functional style uses `Array.fold_left` for the inverse reconstruction loop. The `String.concat "" [s1; s2]` approach for rotation comparison is simpler but allocates O(n) per comparison.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Rotation representation | String list (allocates all rotations) | Sorted indices with modular indexing — O(1) space per rotation |
-| Sorting comparator | `String.compare` on explicit strings | Closure with `% n` arithmetic — no allocation |
-| Byte vs char | `Bytes.t` / `Char.code` | `u8` directly — BWT is inherently a byte operation |
-| Inversion T-array | Functional fold with counters | Mutable `count`/`start`/`seen` arrays — O(|alphabet|) |
-| Sentinel character | Any lexicographically minimal char | `b'$'` — explicit byte literal |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Rotation comparison | `chain` iterator, zero allocation | `String.sub` concat or simulated |
+| BWT string | `String` collected from iterator | `String.init` with `Array.get` |
+| Inverse LF-mapping | Rank array via counting | Array sort + index correspondence |
+| Memory (sort) | O(n) indices + O(n log n) sort | Same approach |
+| Rotation materialization | Avoided via index sort | Avoided similarly |
+| Compression use | Foundation for bzip2-like | Same theoretical role |
+
+## Exercises
+
+1. Implement the inverse BWT to recover the original string from `(bwt, original_row)`.
+2. Integrate BWT with move-to-front encoding and run-length encoding to build a simple compressor.
+3. Measure compression ratio on English text vs. random bytes to demonstrate BWT's effectiveness.
+4. Build a simplified FM-index using the BWT and a rank/select data structure for O(m) pattern search.
+5. Compare BWT-based compression ratios with deflate (gzip) on natural language text.

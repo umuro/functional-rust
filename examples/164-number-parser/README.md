@@ -2,95 +2,43 @@
 
 ---
 
-# 164: Number Parser
+# Number Parser
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Parse integers, floats, and scientific notation — the token every expression parser needs first.
+Floating-point numbers in text formats (JSON, CSV, scientific data) require parsing optional sign, integer digits, optional decimal point and fractional digits, and optional exponent notation (`1.5e-10`). Each component is optional or required in a specific combination. This example builds a full floating-point parser using combinators, demonstrating how complex lexical rules reduce to composed simple rules with clear, testable components.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Numbers show up everywhere: config files, JSON, CSV, math expressions. Parsing them correctly is surprisingly tricky. `-3.14` has an optional sign. `1.5e-3` has a decimal and an exponent. `.5` starts with a dot, not a digit. Any number parser you write will encounter all three.
+- Build a complete floating-point parser with sign, integral, fractional, and exponent parts
+- Learn how `opt` and `many1` combine to handle optional and required components
+- Understand the string-then-convert pattern: collect the number string, then call `str::parse`
+- See how combinator parsers map directly to BNF grammar rules
 
-The standard library's `str::parse::<f64>()` can parse the final string — but it can't tell you *where* the number ends in a larger input. If your input is `"3.14 + rest"`, you need to scan forward to find the number boundary first, then parse it.
+## Rust Application
 
-This example shows both an imperative scanning approach (fast, zero-copy) and a combinator approach (composable). The key insight: scan forward at the byte level, then hand the slice to the stdlib — best of both worlds.
+The grammar: `number := sign? digit+ ('.' digit+)? (('e'|'E') sign? digit+)?`. The parser collects all characters into a `String` buffer, then calls `.parse::<f64>()`. An imperative scanner in `parse_float` scans byte-by-byte for performance, avoiding the `Vec<char>` + join overhead of combinator-based collection. The signed integer version uses `opt(char_parser('-'))` + `many1(satisfy(is_digit))` + `map` to assemble the pieces.
 
-## The Intuition
+## OCaml Approach
 
-Walk the input character by character, collecting bytes that could be part of a number: optional sign, digits, optional dot + more digits, optional `e`/`E` + sign + digits. When you hit something that can't be part of a number, stop. Hand the collected slice to `str::parse::<f64>()`.
-
+Angstrom provides a direct approach:
+```ocaml
+let number =
+  take_while1 (fun c -> Char.is_digit c || c = '.' || c = 'e' || c = 'E'
+                        || c = '+' || c = '-')
+  >>| float_of_string
 ```
-input: "-3.14rest"
-scan:   ^ optional sign
-        ^ ^ ^ ^ digits and dot
-             ^ stop — 'r' is not numeric
-slice: "-3.14" → parse → -3.14f64
-remaining: "rest"
-```
-
-## How It Works in Rust
-
-```rust
-fn parse_number(input: &str) -> ParseResult<f64> {
-    let bytes = input.as_bytes();
-    let mut pos = 0;
-
-    // Optional sign
-    if pos < bytes.len() && (bytes[pos] == b'+' || bytes[pos] == b'-') {
-        pos += 1;
-    }
-
-    // Integer digits (or leading dot like ".5")
-    let digits_start = pos;
-    while pos < bytes.len() && bytes[pos].is_ascii_digit() {
-        pos += 1;
-    }
-
-    // Decimal part
-    if pos < bytes.len() && bytes[pos] == b'.' {
-        pos += 1;
-        while pos < bytes.len() && bytes[pos].is_ascii_digit() {
-            pos += 1;
-        }
-    }
-
-    // Must have consumed at least one digit
-    if pos == digits_start {
-        return Err("expected number".to_string());
-    }
-
-    // Exponent part: e-3, E+10, etc.
-    if pos < bytes.len() && (bytes[pos] == b'e' || bytes[pos] == b'E') {
-        pos += 1;
-        if pos < bytes.len() && (bytes[pos] == b'+' || bytes[pos] == b'-') {
-            pos += 1;
-        }
-        while pos < bytes.len() && bytes[pos].is_ascii_digit() {
-            pos += 1;
-        }
-    }
-
-    // Zero-copy: slice into original string, no allocation
-    let num_str = &input[..pos];
-    let value = num_str.parse::<f64>()
-        .map_err(|e| format!("invalid number: {}", e))?;
-
-    Ok((value, &input[pos..]))
-}
-```
-
-## What This Unlocks
-
-- **Expression parsers** — every arithmetic parser needs to parse number literals.
-- **Data formats** — JSON numbers, CSV columns, INI values — all need this.
-- **Zero-copy parsing** — the `&str` slice approach avoids heap allocation for the number string.
+This is a common shortcut, though it accepts invalid strings like `"1.2.3"` that `float_of_string` rejects with an exception. A stricter combinator parser follows the BNF more closely.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Float conversion | `float_of_string` | `str::parse::<f64>()` |
-| Byte access | `Bytes.get s i` or `s.[i]` | `s.as_bytes()[i]` |
-| String buffer | `Buffer.t` (dynamic allocation) | `&str` slice of original input (zero-copy) |
-| Scientific notation | Manual scan | Manual scan — both languages do the same work |
+1. **Precision shortcut**: OCaml's `take_while1` + `float_of_string` is concise but permissive; Rust's combinator parser is strict but verbose.
+2. **Exception vs. Result**: OCaml's `float_of_string` raises `Failure` on invalid input; Rust's `str::parse::<f64>()` returns `Result`, propagated via `?`.
+3. **Buffer efficiency**: OCaml's `take_while1` works directly on the buffer; Rust's combinator version collects `Vec<char>` before converting.
+4. **Locale**: Both use the C locale for decimal parsing (`.` as decimal separator); locale-aware parsing requires additional handling.
+
+## Exercises
+
+1. Add exponent parsing: `"1.5e-10"`, `"2.0E+3"` should parse correctly.
+2. Implement a strict JSON number parser that rejects leading zeros (`"01"` is invalid in JSON).
+3. Write a parser for rational numbers in the form `"3/4"` → `(3, 4)` as a pair of integers.

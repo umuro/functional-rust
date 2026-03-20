@@ -2,80 +2,37 @@
 
 ---
 
-# 762: Custom Deserialization with Visitor Pattern
+# 762-custom-deserialize-logic — Custom Deserialize Logic
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Implement the serde Visitor pattern from scratch — understand how `Deserialize` and type-driven dispatch work.
+Deserialization is where input data meets your domain model — it is the boundary where untrusted data enters the system. Custom deserialization lets you validate during parsing (not after), normalize data (trim whitespace, convert case), handle version differences (accept V1 and V2 formats), and reject invalid states before they reach business logic. This is the parse-don't-validate principle applied to serialization.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Deserialization is harder than serialization: you're converting untyped wire data into a strongly-typed value, and different types expect different input shapes. A `Person` expects a map; a `u32` expects an integer; a `bool` expects true/false. The **Visitor pattern** is how `serde` solves this: the type being deserialized describes what it expects, and the deserializer drives it through a type-specific visitor.
+- Implement an `Input` cursor that reads from a byte slice with bounds checking
+- Read length-prefixed strings and verify UTF-8 validity during deserialization
+- Validate field values during deserialization: reject empty names, negative ages
+- Handle deserialization errors with typed `DeserializeError` variants
+- Implement roundtrip tests: `deserialize(serialize(x)) == x`
 
-When `#[derive(Deserialize)]` falls short — non-standard wire formats, complex validation during parsing, types from other crates you can't annotate — you implement `Deserialize` manually. Understanding the visitor pattern is the key to doing this correctly. It also explains why serde's error messages mention "expected a map" or "expected a string": that's the `Visitor::expecting()` method at work.
+## Rust Application
 
-This example implements the core of serde's machinery from scratch: a `Token` type (what the deserializer emits), a `Visitor` trait (what the type being deserialized expects), a `SimpleDeserializer` (drives the visitor), and a concrete `PersonVisitor` that consumes a map token and constructs a `Person`.
+`Input<'a>` holds a `&'a [u8]` and a position cursor. `read_byte`, `read_bytes`, `read_u32`, and `read_string` advance the cursor and return `Option<T>` or `Option<String>` (validating UTF-8). The `Deserialize` trait has a `deserialize(input: &mut Input) -> Option<Self>` method. Custom `User` deserialization validates that `name` is non-empty and `age` is within a valid range during parsing, returning `None` for invalid data.
 
-## The Intuition
+## OCaml Approach
 
-The visitor pattern inverts the usual control flow. Instead of the caller saying "give me a map", the deserializer says "I have a map — call `visit_map`". The visitor implements only the methods for the types it can accept, returning `Err(InvalidType)` for everything else. This lets the same `Deserialize` impl work across different deserializers (JSON, TOML, binary) — they all call the same visitor methods with different underlying data.
-
-## How It Works in Rust
-
-```rust
-// The Visitor trait: a type says what it expects
-pub trait Visitor<'de>: Sized {
-    type Value;
-    fn expecting(&self) -> &'static str;  // human-readable type description
-
-    // Default: return InvalidType error — override the ones you accept
-    fn visit_str(self, v: &'de str) -> Result<Self::Value, DeError> {
-        Err(DeError::InvalidType { got: "str", expected: self.expecting() })
-    }
-    fn visit_map(self, m: Vec<(&'de str, &'de str)>) -> Result<Self::Value, DeError> {
-        Err(DeError::InvalidType { got: "map", expected: self.expecting() })
-    }
-    // ... visit_i64, visit_f64, visit_bool ...
-}
-
-// Concrete visitor for Person: accepts only a map
-pub struct PersonVisitor;
-impl<'de> Visitor<'de> for PersonVisitor {
-    type Value = Person;
-    fn expecting(&self) -> &'static str { "a map with name and age" }
-
-    fn visit_map(self, m: Vec<(&'de str, &'de str)>) -> Result<Person, DeError> {
-        let name = m.iter().find(|(k, _)| *k == "name")
-            .map(|(_, v)| v.to_string())
-            .ok_or(DeError::MissingField("name"))?;
-        let age = m.iter().find(|(k, _)| *k == "age")
-            .and_then(|(_, v)| v.parse().ok())
-            .ok_or(DeError::MissingField("age"))?;
-        Ok(Person { name, age })
-    }
-}
-
-// The Deserialize trait delegates to the visitor
-impl<'de> Deserialize<'de> for Person {
-    fn deserialize(de: SimpleDeserializer<'de>) -> Result<Self, DeError> {
-        de.deserialize_any(PersonVisitor)  // "drive this visitor with my data"
-    }
-}
-```
-
-The `'de` lifetime is the key: it ties the visitor's output lifetime to the input data, enabling zero-copy deserialization (borrowed `&str` slices from the wire data without allocation). When the visitor returns owned `String` values, `'de` is still needed to satisfy the trait bounds.
-
-## What This Unlocks
-
-- **Manual `serde::Deserialize` impl** — the real serde `Deserialize` trait has the same shape: `fn deserialize<D: Deserializer<'de>>(de: D) -> Result<Self, D::Error>`; you implement it by calling `de.deserialize_map(YourVisitor)`.
-- **`'de` lifetime** — the borrowed-data lifetime in serde is not magic; it's the lifetime that lets deserializers return `&'de str` slices pointing into the original input bytes, avoiding copies.
-- **Informative error messages** — `Visitor::expecting()` is exactly the string that appears in serde's "invalid type: expected X, got Y" error messages; implementing it well makes your types easy to debug.
+OCaml's `Angstrom` library is a parser combinator framework for binary and text deserialization with validation. `Bin_prot` generates direct binary readers with custom validation hooks. For JSON, `Yojson.Safe` provides typed decoding with custom validators. OCaml's `Result` monad (via `let*`) chains validation steps elegantly. `ppx_sexp_conv` allows custom `t_of_sexp` implementations for validation during deserialization.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Visitor pattern | Typically via first-class modules | Trait with default methods for each token type |
-| Lifetime in deserialization | Garbage collected — no lifetime tracking | `'de` ties output borrows to input data lifetime |
-| Error propagation | Exceptions or `Result` | `?` operator throughout — clean early-return style |
-| Type-driven dispatch | GADT or polymorphic variants | Trait objects / monomorphization via generics |
+1. **Cursor vs reader**: Rust's `Input` struct mirrors OCaml's `Angstrom` parser state; both track position through a byte stream.
+2. **Error handling**: Rust uses `Option<T>` for simplicity here (with `?` in production using `Result`); OCaml's `Angstrom` uses `Angstrom.t` parser monad with explicit error types.
+3. **Zero-copy**: Rust's `Input<'a>` borrows from the input; `serde` with Zerocopy support enables zero-copy string deserialization; OCaml requires copying for GC safety.
+4. **Validation placement**: Both approaches validate during deserialization rather than after, implementing parse-don't-validate at the deserialization layer.
+
+## Exercises
+
+1. Extend `Deserialize for User` to handle an optional `email` field: if the length prefix is `u32::MAX`, treat it as absent (`None`); otherwise decode it as a UTF-8 string.
+2. Implement `deserialize_versioned` that reads a `version: u8` byte first and dispatches to `deserialize_v1` or `deserialize_v2` accordingly.
+3. Write a `Stream<T: Deserialize>` that reads repeatedly from a byte slice, yielding deserialized values until the input is exhausted — handling partial/truncated records gracefully.

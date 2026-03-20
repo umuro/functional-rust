@@ -2,45 +2,52 @@
 
 ---
 
-# 552: Arena with Lifetimes
+# Arena Allocation Pattern
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Allocate many objects with a single lifetime and free them all at once.
+Arena allocation (also called region-based memory management) is a technique where all allocations live in a single region and are freed all at once when the region is dropped. This is dramatically faster than individual heap allocations: no per-object malloc overhead, excellent cache locality, and zero fragmentation. Compilers (LLVM, GCC), game engines, and web browsers use arenas for AST nodes, parse results, and per-frame allocations. In Rust, arenas elegantly tie allocated objects to the arena's lifetime, preventing use-after-arena-drop at compile time.
 
-## The Problem This Solves
+## Learning Outcomes
 
-When you're building a compiler, game engine, or parser, you often create thousands of small objects (AST nodes, entities, tokens) that all live until a specific phase ends. Individually allocating and dropping each one is slow and complicates ownership. You'd also like to give out references to these objects that the compiler can verify are valid as long as the arena is alive.
+- How `StringArena` stores all strings in a `Vec<String>` and returns `&str` references tied to the arena's lifetime
+- Why arena-allocated references cannot outlive the arena (lifetime enforcement)
+- How arenas eliminate per-object allocation overhead for batch workloads
+- How the `bumpalo` crate implements a production arena allocator
+- Where arenas are used: compilers (LLVM), parsers (nom ASTs), game engines, HTTP request processing
 
-An arena allocator solves this: bump-allocate into a backing store, hand out references with the arena's lifetime, and drop everything at once when the arena goes out of scope. There's no individual deallocation. The lifetime of every object in the arena is tied to the lifetime of the arena itself.
+## Rust Application
 
-In Rust, the borrow checker makes this particularly elegant: references into the arena carry the arena's lifetime `'a`, so the compiler statically proves they can't outlive the arena. If you keep objects separate (e.g., store indices rather than references), you avoid the borrow-check complexity of mutating the arena while holding references into it.
+`StringArena` stores strings in `storage: Vec<String>` and `alloc(&mut self, s: &str) -> &str` pushes a new `String` and returns a `&str` reference to it — the reference is valid as long as the arena exists and no more strings are pushed (which would reallocate the `Vec`). In practice, production arenas use `typed_arena::Arena<T>` or `bumpalo::Bump` which use bump allocation into pre-allocated slabs to avoid reallocation invalidating references.
 
-## The Intuition
+Key patterns:
+- `alloc(&mut self, ...) -> &str` — arena-tied lifetime via `&self` lifetime
+- `Vec<String>` as backing store — simple implementation, push-only
+- Production: `bumpalo::Bump` allocator, `typed_arena::Arena<T>`
 
-Think of an arena like a scratch pad. You write things on it. You can hand out addresses of things you wrote. When you're done with the whole session, you throw the pad away — in one move. You never erase individual entries. The address is valid as long as the pad exists.
+## OCaml Approach
 
-The index-based approach (storing positions instead of raw references) sidesteps the Rust rule that you can't mutate a container while holding references into it. Allocate first, then read — or just use indices and never hold references across mutations.
+OCaml's GC naturally acts as an arena — objects allocated during processing are collected together when they become unreachable. For performance-sensitive arenas, OCaml uses `Bigarray` or manual memory management via `Bigarray.Array1`:
 
-## How It Works in Rust
+```ocaml
+(* OCaml GC is effectively an automatic arena *)
+let parse_and_process input =
+  let ast = parse input in  (* AST nodes live until parse_and_process returns *)
+  analyze ast
+  (* ast and all its nodes are GC-collected after this *)
+```
 
-1. **Index-based arena** — `alloc(&mut self, value: T) -> usize` pushes into a `Vec`, returns the index; `get(&self, idx: usize) -> Option<&T>` returns a reference tied to `&self`.
-2. **Lifetime-tied references** — `fn alloc_and_get(&mut self, value: T) -> &T` borrows `&mut self` and returns `&T` with the arena's lifetime; valid as long as `&self` is not mutably borrowed again.
-3. **AST slices from source** — `AstNode<'src>` borrows `&'src str` from the source string; the arena (a `Vec`) and the source can have independent lifetimes, both tracked by the compiler.
-4. **Batch free** — when the arena drops, all its allocations drop simultaneously; no individual `drop` calls needed.
-5. **Borrow discipline** — to read many items simultaneously after allocation, finish all mutations first, then take references: the borrow checker enforces this ordering.
-
-## What This Unlocks
-
-- Build compilers and parsers where all AST nodes share a phase lifetime without per-node allocation.
-- Avoid the performance cost of many small heap allocations in tight inner loops.
-- Get static proof that no object outlives the phase that owns the arena.
+Explicit arenas in OCaml typically use `Buffer.t` for strings or custom allocators for performance.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Object lifetimes | GC; individual objects freed lazily | Arenas: explicit phase lifetime; freed in bulk |
-| References into collections | Safe; GC prevents dangling | Must borrow arena immutably to get refs; can't mutate while holding them |
-| AST node lifetimes | GC-backed; no annotation | Lifetime parameter `'src` ties node slices to source string |
-| Bump allocation | Libraries exist; GC still manages | Index-based arena avoids borrow conflicts; `typed-arena` crate for ref-based |
+1. **Lifetime enforcement**: Rust arena references are tied to the arena's lifetime at compile time — use-after-free is impossible; OCaml relies on the GC to prevent this at runtime.
+2. **Batch free**: Rust arenas (like `bumpalo`) support O(1) batch deallocation by dropping the arena; OCaml's GC defers collection until pressure warrants it.
+3. **Cache performance**: Bumpalo's bump allocation keeps objects contiguous in memory; OCaml's copying GC (in its minor heap) achieves similar cache locality for young objects.
+4. **Vec reallocation hazard**: The simple `StringArena` implementation can invalidate references if the `Vec` reallocates — production Rust arenas use slab allocation to prevent this.
+
+## Exercises
+
+1. **Fixed-capacity arena**: Implement an arena that pre-allocates a `Vec<String>` with a fixed capacity and returns `Err` when full, ensuring no reallocation can invalidate references.
+2. **AST arena**: Build a simple arena for AST nodes using `Vec<Box<AstNode>>` where each node is a heap allocation whose reference is valid for the arena's lifetime.
+3. **Benchmark comparison**: Compare allocating 10,000 strings with (a) individual `String::from`, (b) a simple arena, and (c) direct `Vec<String>` — measure and explain the performance differences.

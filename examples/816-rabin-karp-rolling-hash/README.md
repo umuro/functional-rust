@@ -2,79 +2,52 @@
 
 ---
 
-# 816: Rabin-Karp Rolling Hash Search
+# Rabin-Karp Rolling Hash
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Hash-based string search: slide a window in O(1) per step by subtracting the old character and adding the new one — enabling efficient multi-pattern search.
+Finding multiple patterns in a text, or detecting plagiarism across documents, requires more than single-pattern search. Rabin-Karp solves this using polynomial hashing: compute a hash for each window of text equal in size to the pattern, and compare hashes rather than characters. The rolling hash property means each step takes O(1) — subtract the contribution of the outgoing character and add the incoming one. This enables searching for k patterns simultaneously in O(n + k*m) expected time. Real-world uses: duplicate code detection, plagiarism detection, DNA fingerprinting, and detecting repeated substrings in large files.
 
-## The Problem This Solves
+## Learning Outcomes
 
-KMP and BMH excel at single-pattern search. But what if you need to search for thousands of patterns simultaneously — virus signatures in a file, a dictionary of forbidden words, or plagiarism detection across documents? Running KMP once per pattern costs O(patterns × text), which is unacceptable.
+- Understand polynomial rolling hash: `hash = (c0*b^(m-1) + c1*b^(m-2) + ... + c(m-1)) mod p`
+- Implement O(1) hash update by rolling: subtract old char contribution, multiply, add new char
+- Handle hash collisions with character-level verification (spurious hits)
+- Recognize Rabin-Karp's advantage for multi-pattern search vs single-pattern algorithms
+- Learn the importance of choosing prime modulus and base to minimize collision probability
 
-Rabin-Karp solves this by reducing each pattern to a hash value. Computing a hash for every m-length window in the text naïvely is O(n×m), but with a *rolling hash* — where you subtract the outgoing character's contribution and add the incoming one — each slide costs O(1). This gives O(n + m) expected time for single-pattern and O(n + k×m) for k patterns (or O(n + k) with a hash set).
-
-The practical application is document fingerprinting: Rabin fingerprinting (a variant) powers Google's copy detection, plagiarism checkers, and the rsync rolling checksum for efficient file synchronization.
-
-## The Intuition
-
-The hash is a polynomial: `H = s[0]×base^(m-1) + s[1]×base^(m-2) + … + s[m-1]`. To slide one position right: subtract `s[i]×base^(m-1)` (the leftmost character's contribution), multiply by `base` to shift everything left, then add `s[i+m]`. All operations are mod a large prime to keep values in u64 range. When hashes match, verify with a direct comparison to handle collisions. Expected O(n + m) because collisions are rare with a good prime.
-
-OCaml uses the same polynomial; Rust adds explicit `u64` wrapping and `+ PRIME` to avoid underflow in subtraction before taking mod.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-const BASE:  u64 = 256;
-const PRIME: u64 = 1_000_000_007;
-
-fn rabin_karp(text: &str, pattern: &str) -> Vec<usize> {
-    let (t, p) = (text.as_bytes(), pattern.as_bytes());
-    let (n, m) = (t.len(), p.len());
-    if m == 0 || m > n { return vec![]; }
-
-    // Precompute base^(m-1) mod PRIME — the weight of the leftmost character
-    let mut pow = 1u64;
-    for _ in 0..m - 1 { pow = pow * BASE % PRIME; }
-
-    // Initial hashes for pattern and first window
-    let (mut hash_p, mut hash_t) = (0u64, 0u64);
-    for i in 0..m {
-        hash_p = (hash_p * BASE + p[i] as u64) % PRIME;
-        hash_t = (hash_t * BASE + t[i] as u64) % PRIME;
-    }
-
-    let mut matches = Vec::new();
-    for i in 0..=n - m {
-        // Hash match → verify to eliminate collisions
-        if hash_t == hash_p && &t[i..i + m] == p {
-            matches.push(i);
-        }
-        if i < n - m {
-            // Rolling update: remove t[i], add t[i+m]
-            // +PRIME before subtracting prevents underflow in modular arithmetic
-            hash_t = (hash_t + PRIME - t[i] as u64 * pow % PRIME) % PRIME;
-            hash_t = (hash_t * BASE + t[i + m] as u64) % PRIME;
-        }
-    }
-    matches
+pub fn rabin_karp(text: &str, pattern: &str) -> Vec<usize> {
+    let base: u64 = 31;
+    let modulus: u64 = 1_000_000_007;
+    // Compute pattern hash and initial window hash
+    // Roll hash: hash = (hash - old_char * pow_base) * base + new_char
 }
 ```
 
-The `+ PRIME` before subtraction is the idiomatic Rust pattern for modular subtraction with unsigned integers — avoids wrapping panics in debug mode.
+Rust's `u64` arithmetic with explicit modulus prevents overflow that would occur with `usize`. The `wrapping_mul` or `% modulus` pattern keeps values in range. Collecting bytes via `.as_bytes()` makes the ASCII-level computation straightforward. The rolling update subtracts the outgoing byte's contribution (scaled by `base^(m-1) mod p`), multiplies by `base`, and adds the incoming byte — three operations per slide step. On collision, a full character comparison confirms the match, maintaining correctness at the cost of rare extra work.
 
-## What This Unlocks
+## OCaml Approach
 
-- **Multi-pattern search**: Store pattern hashes in a `HashSet`; one pass finds all patterns — the basis of Aho-Corasick alternatives for short patterns.
-- **Document fingerprinting and plagiarism detection**: Rabin-Karp fingerprinting powers Moss, Google's duplicate detection, and rsync's rolling checksum.
-- **Substring matching in competitive programming**: When you need overlapping match counts or 2D pattern matching, rolling hashes extend naturally to 2D grids.
+OCaml implements rolling hash with `int` arithmetic, relying on its 63-bit native integers to avoid overflow on most platforms. The `Char.code` function extracts byte values. The rolling hash state threads through a tail-recursive function rather than a loop, maintaining immutability. OCaml's `List.rev` collects match positions in reverse and reverses at the end. For multi-pattern Rabin-Karp, a `Hashtbl` maps hash values to pattern lists, checking all patterns with matching hashes.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Polynomial hash | `let h = h * base + c mod p` | Same; explicit `u64` types |
-| Modular subtraction | `(h - old*pow + prime) mod prime` | `(h + PRIME - old * pow % PRIME) % PRIME` |
-| Integer overflow | `Int64` for 64-bit safety | `u64` arithmetic; `u128` not needed here |
-| Sliding window | Manual loop with ref vars | Idiomatic `for i in 0..=n-m` |
-| Collision check | `String.sub` comparison | `&t[i..i+m] == p` slice equality |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Arithmetic | `u64` with explicit `% modulus` | `int` (63-bit) with `mod` |
+| Byte access | `.as_bytes()[i]` | `Char.code (String.get s i)` |
+| Hash state | Mutable variable in loop | Threaded through recursion |
+| Multi-pattern | `HashMap<u64, Vec<Pattern>>` | `Hashtbl` keyed by hash |
+| Overflow risk | None with `u64 % modulus` | Rare on 64-bit, possible on 32-bit |
+| False positives | Verified with `==` comparison | Same character-level check |
+
+## Exercises
+
+1. Implement 2D Rabin-Karp to find a pattern matrix inside a larger text matrix.
+2. Add multi-pattern support: search for all patterns in a set simultaneously in a single pass.
+3. Measure false positive rate empirically with random text and various base/modulus choices.
+4. Compare performance with Boyer-Moore on long text with many short patterns of equal length.
+5. Handle Unicode by hashing on code points rather than bytes and verify correctness.

@@ -37,3 +37,9 @@ Pattern matches on the list head, comparing consecutive elements. When `h1 = h2`
 3. **`windows(2)` is unique to Rust**: Efficient pairwise comparison over contiguous memory
 4. **Trait bounds**: Rust needs `PartialEq` explicitly; OCaml uses polymorphic equality
 5. **In-place vs functional**: Rust naturally offers both; OCaml is functional-first (no in-place dedup on lists)
+
+## Exercises
+
+1. Implement `deduplicate_all` (not just consecutive) — remove every duplicate from a list, keeping only the first occurrence of each element.
+2. Write `deduplicate_by` that removes consecutive duplicates using a key function `f: &T -> K` for comparison, so you can deduplicate case-insensitively or by a struct field.
+3. Implement `run_length_from_dedup` that uses `eliminate_consecutive` as a building block to produce run-length encoding in a single pipeline (no extra passes).

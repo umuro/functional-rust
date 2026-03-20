@@ -29,3 +29,9 @@ Rust uses a `Monoid` trait with `empty()` and `combine()` methods. Since Rust's 
 2. **Same-type disambiguation:** OCaml can have multiple modules with `type t = int`; Rust needs newtype wrappers (`Sum(i64)` vs `Product(i64)`) because a type can only implement a trait once.
 3. **Folding:** OCaml's `List.fold_left` takes a function and initial value; Rust's `Iterator::fold` is identical in spirit but works on any iterator, not just lists.
 4. **Identity resolution:** OCaml's `M.empty` is a module field access; Rust's `M::empty()` is an associated function call resolved through the trait.
+
+## Exercises
+
+1. Add a `First<T>` newtype monoid that always returns its left operand (identity = `None`) and a `Last<T>` that returns the right operand, and use them to find the first and last element of a list with `concat_all`.
+2. Implement the `Endo` monoid whose elements are functions `T -> T` and whose binary operation is composition, then use `concat_all` to compose a list of string transformations.
+3. Implement a `Validated` applicative using the monoid pattern: accumulate all validation errors (rather than short-circuiting) by combining `Vec<String>` error lists.

@@ -2,84 +2,37 @@
 
 ---
 
-# 809. Max Flow: Ford-Fulkerson with BFS (Edmonds-Karp)
+# 809-max-flow-ford-fulkerson — Max Flow (Ford-Fulkerson with BFS)
 
-**Difficulty:** 5  **Level:** Master
+## Problem Statement
 
-Find the maximum flow through a network from source to sink using BFS augmenting paths — O(V × E²) with guaranteed termination and integer-optimal solutions.
+Maximum flow (Ford-Fulkerson, 1956) finds the maximum amount that can flow from a source to a sink in a capacitated network. The Edmonds-Karp variant uses BFS (finding shortest augmenting paths) and runs in O(VE²). Applications include network traffic routing, image segmentation (min-cut = max-flow), bipartite matching (König's theorem), and supply chain optimization. It is one of the most practically important algorithms in operations research.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Maximum flow models any problem where you're maximising throughput through a constrained network: bandwidth allocation across internet links, pipeline capacity for oil or water, maximum number of edge-disjoint paths (for redundancy), and bipartite matching (which reduces to max-flow). The max-flow min-cut theorem — that maximum flow equals minimum cut capacity — is one of the most elegant results in combinatorial optimisation, with direct applications in computer vision (image segmentation as a graph cut problem).
+- Implement Edmonds-Karp: BFS to find shortest augmenting paths repeatedly
+- Maintain a residual capacity matrix `cap[u][v]` that decreases with forward flow and increases backward
+- Find path flow as the minimum capacity along the augmenting path
+- Update residual capacities: decrease forward, increase backward (enabling un-doing)
+- Apply the max-flow min-cut theorem: max flow = min cut capacity
 
-Edmonds-Karp specifies Fulkerson's algorithm with BFS to find the *shortest* augmenting path (by hop count). This eliminates the pathological cases of pure Ford-Fulkerson that can loop forever on irrational capacities, and gives the O(VE²) bound.
+## Rust Application
 
-## The Intuition
+`max_flow(n, edges, source, sink)` builds a capacity matrix `cap[u][v]`. BFS finds an augmenting path from source to sink using `parent[v]`. The path flow is the minimum capacity along the path. Forward edges decrease, backward edges increase. Repeats until no augmenting path exists (BFS returns without reaching sink). Tests cover a simple 4-node network.
 
-Maintain a residual capacity matrix: `cap[u][v]` is how much more flow can be sent from u to v. Initially this equals the original capacity. Find any path from source to sink with positive residual capacity (augmenting path). Send as much flow as possible along this path (bottleneck = minimum edge capacity). Update residuals: decrease forward edges, increase backward edges. Repeat until no augmenting path exists. The backward edge `cap[v][u] += flow` is the key insight — it allows "undoing" flow on a path by sending flow backwards. BFS finds shortest augmenting paths, giving the Edmonds-Karp variant.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-use std::collections::VecDeque;
-
-// O(V × E²) — BFS finds shortest augmenting paths each iteration
-// cap: V×V residual capacity matrix (modified in-place)
-fn max_flow(cap: &mut Vec<Vec<i64>>, src: usize, snk: usize) -> i64 {
-    let n = cap.len();
-    let mut total = 0i64;
-
-    loop {
-        // BFS to find an augmenting path
-        let mut parent = vec![usize::MAX; n];
-        parent[src] = src;
-        let mut deque = VecDeque::from([src]);
-
-        'bfs: while let Some(u) = deque.pop_front() {
-            for v in 0..n {
-                if parent[v] == usize::MAX && cap[u][v] > 0 {
-                    parent[v] = u;
-                    if v == snk { break 'bfs; }
-                    deque.push_back(v);
-                }
-            }
-        }
-
-        if parent[snk] == usize::MAX { break; }  // no augmenting path
-
-        // Find bottleneck: min capacity along the path
-        let mut flow = i64::MAX;
-        let mut v = snk;
-        while v != src { let u = parent[v]; flow = flow.min(cap[u][v]); v = u; }
-
-        // Update residual capacities
-        v = snk;
-        while v != src {
-            let u = parent[v];
-            cap[u][v] -= flow;   // forward edge: consume capacity
-            cap[v][u] += flow;   // backward edge: allow cancellation
-            v = u;
-        }
-        total += flow;
-    }
-    total
-}
-```
-
-The dense adjacency matrix `Vec<Vec<i64>>` is used here (O(V²) space) because max-flow algorithms naturally need to look up `cap[u][v]` and `cap[v][u]` in O(1). For sparse graphs, an edge-list representation with forward/backward edge pairs would be more memory-efficient.
-
-## What This Unlocks
-
-- **Bipartite matching**: model as a flow network (source → left nodes → right nodes → sink, all capacity 1); max-flow gives maximum matching. Hungarian algorithm is an alternative but max-flow generalises to weighted matching.
-- **Image segmentation (graph cuts)**: model pixels as nodes, similarity as edge capacities; min-cut separates foreground from background. The min-cut equals max-flow by the max-flow min-cut theorem.
-- **Network reliability**: maximum number of edge-disjoint paths equals max-flow with unit capacities — measuring how many link failures a network can survive.
+OCaml implements with `Array.make_matrix n n 0` for capacities and `Array.make n None` for parent tracking. The BFS uses `Queue.t`. OCaml's `Array.set` updates capacities. The `Ocamlgraph.Flow.Goldberg` module implements push-relabel (faster in practice). Flow applications in OCaml appear in network simulation and bioinformatics pipelines.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Residual matrix | `int array array` | `Vec<Vec<i64>>` modified in-place |
-| BFS queue | `Queue.t` | `VecDeque<usize>` |
-| Path tracking | `parent` array or `Hashtbl` | `Vec<usize>` with `usize::MAX` as sentinel |
-| Bottleneck scan | Recursive path walk | Iterative `while v != src` loop |
-| Break from inner BFS | `raise Exit` exception | `break 'bfs` labelled break |
+1. **Residual graph**: Both languages maintain residual capacities as a 2D matrix; the backward edge increase is the key insight enabling augmentation undoing.
+2. **BFS choice**: Edmonds-Karp (BFS augmenting paths) guarantees polynomial time; DFS (Ford-Fulkerson) can cycle with irrational capacities — BFS is strictly better.
+3. **Push-relabel**: The push-relabel algorithm (Goldberg-Tarjan) achieves O(V²E) and is faster in practice; available in `petgraph`'s flow module for Rust.
+4. **Image segmentation**: Min-cut (dual to max-flow) is used in `s-t graph cut` for image segmentation; computer vision libraries use this heavily.
+
+## Exercises
+
+1. Implement min-cut identification: after computing max flow, run BFS on the residual graph from source; the min cut is the set of edges from reachable to unreachable vertices.
+2. Use max-flow to solve maximum bipartite matching: create a source connected to all left vertices, all right vertices connected to sink, and run max-flow.
+3. Implement the push-relabel algorithm (preflow-push) and benchmark it against Edmonds-Karp on dense graphs with 100+ nodes.

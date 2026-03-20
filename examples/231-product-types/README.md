@@ -33,3 +33,9 @@ Rust structs are nominal (not structural) types. Tuples are moved on access, so 
 2. **Tuple consumption:** OCaml pairs can be projected freely; Rust tuple fields are moved on `fst`/`snd` unless the type is `Copy`.
 3. **Currying:** OCaml functions are automatically curried; Rust requires explicit closure wrapping and `Rc` for shared state.
 4. **Method vs free fn:** Rust encourages `impl Type { fn method(&self) }` for type-associated behaviour; OCaml uses modules.
+
+## Exercises
+
+1. Implement `bimap` for a product type `Pair<A, B>` that applies one function to the first component and another to the second.
+2. Define a generic `swap` function for product types and implement `curry` and `uncurry` as morphisms in the product category.
+3. Implement a heterogeneous record type using Rust tuples as a product type and write a lens for each field that allows reading and updating individual components.

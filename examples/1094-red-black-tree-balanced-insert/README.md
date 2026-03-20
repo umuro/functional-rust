@@ -29,3 +29,9 @@ Rust uses `enum` with `Box<RBTree<T>>` for heap-allocated children. The `balance
 2. **Pattern matching depth:** OCaml matches three levels deep in one pattern; Rust uses guard clauses (`if matches!`) then nested `if let` to destructure by value
 3. **Structural sharing cost:** OCaml shares subtrees for free via GC; Rust must `.clone()` unchanged subtrees along the insertion path
 4. **Type constraints:** OCaml's polymorphism is implicit; Rust requires `T: Ord + Clone` bounds to compare and copy values
+
+## Exercises
+
+1. Implement a `height` function that computes the maximum depth of the red-black tree and verify it stays within O(log n) bounds after bulk insertions.
+2. Add `predecessor` and `successor` methods that return the next smaller or larger element relative to a given value.
+3. Implement a persistent (immutable) set of integers backed by the red-black tree and demonstrate structural sharing: inserting a new value creates a new tree root while sharing unchanged subtrees.

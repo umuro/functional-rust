@@ -29,3 +29,9 @@ Rust uses a struct with `Box<dyn Fn>` closures for the same pattern. Composition
 2. **Closure sharing:** OCaml closures are GC-managed values; Rust needs `Arc` to share closures between composed getter and setter.
 3. **Type bounds:** OCaml's parametric polymorphism just works; Rust requires `'static + Clone` bounds to store closures in boxes and rebuild values.
 4. **Lifetime threading:** OCaml's GC makes composed getters trivial; Rust's composed getter must carefully thread lifetimes through two layers of boxed closures.
+
+## Exercises
+
+1. Implement a `modify` combinator for lenses that takes a lens and a function `f: A -> A` and returns a new value with the focused field updated in-place.
+2. Compose two lenses to focus on a nested field three levels deep, and use the composed lens to both read and update the value.
+3. Implement a `traversal` — a lens-like abstraction that focuses on multiple elements simultaneously (e.g., all items in a `Vec`) — and use it to uppercase all strings in a nested data structure.

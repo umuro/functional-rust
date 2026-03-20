@@ -2,76 +2,37 @@
 
 ---
 
-# 753: Benchmark Harness: Measuring Hot Functions
+# 753-bench-harness-pattern — Benchmark Harness Pattern
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Measure function performance with warmup, per-iteration timing, and percentile statistics — the pattern behind `cargo bench` and Criterion.
+Percentile latency matters more than mean latency for user-facing systems. A p99 of 50ms means 1% of requests are slow — unacceptable for interactive applications. Production benchmark frameworks like Criterion report p50, p90, p95, and p99. This example builds a stdlib-only harness that computes full percentile statistics from per-iteration samples, demonstrating the statistical foundation beneath tools like Criterion, Divan, and `hyperfine`.
 
-## The Problem This Solves
+## Learning Outcomes
 
-"My code is slow" is not actionable. "The p99 latency of `string_alloc` is 3× higher than `string_prealloc`" is. Performance measurement requires more care than functional testing: CPU frequency scaling, CPU cache warmup, branch predictor state, and OS scheduling all introduce noise. A naive timing loop produces misleading results. The standard solution is warmup iterations (let the CPU reach peak frequency and fill caches), many measurement iterations (statistical stability), and percentile reporting (p99 catches tail latency that mean hides).
+- Collect per-iteration `Duration` samples and sort them for percentile computation
+- Compute p50, p90, p99 as array index lookups after sorting
+- Use `std::hint::black_box` to prevent dead-code elimination of benchmarked functions
+- Understand why p99 matters more than mean for user-facing latency
+- Structure a reusable `bench(name, iterations, warmup, f)` function
 
-This pattern is exactly what Criterion (the standard Rust benchmarking crate) implements. Understanding the raw pattern — even without Criterion — teaches you what `#[bench]` and `criterion::Criterion::bench_function()` are doing internally. For quick comparisons between two implementations, a hand-rolled harness is often sufficient.
+## Rust Application
 
-`std::hint::black_box` is critical: it prevents the compiler from optimizing away the function call entirely when the result isn't used. Without it, the benchmark measures nothing.
+`compute_stats` takes a `Vec<Duration>`, sorts it, and extracts `min`, `p50`, `p90`, `p99`, `max`, and `mean`. The `bench` function runs warmup iterations (discarded), then measures each real iteration with `Instant::now()`. Results are passed through `black_box` to prevent optimization. The harness is used to compare `bubble_sort` and `stdlib sort` on random data, showing how the harness reveals performance differences across the distribution.
 
-## The Intuition
+## OCaml Approach
 
-Run the function `warmup` times to stabilize CPU state. Then run it `iters` times, recording the elapsed time for each call. Sort the timings and compute percentiles: min (best case), p50 (median), p90, p99, max (worst case). The mean can be misleading if there are occasional slow outliers; p99 reveals tail latency that affects real users in production systems.
-
-## How It Works in Rust
-
-```rust
-use std::hint::black_box;   // prevents dead-code elimination
-use std::time::Instant;
-
-fn bench<F, R>(name: &str, warmup: usize, iters: usize, mut f: F) -> Stats
-where F: FnMut() -> R
-{
-    // Warmup: allow CPU frequency scaling and cache filling
-    for _ in 0..warmup { black_box(f()); }
-
-    let mut samples = Vec::with_capacity(iters);
-    for _ in 0..iters {
-        let t0 = Instant::now();
-        black_box(f());    // black_box prevents optimizing f() away
-        samples.push(t0.elapsed());
-    }
-    compute_stats(samples)
-}
-
-fn compute_stats(mut samples: Vec<Duration>) -> Stats {
-    samples.sort_unstable();
-    let n = samples.len();
-    Stats {
-        mean: samples.iter().sum::<Duration>() / n as u32,
-        min:  samples[0],
-        p50:  samples[n * 50 / 100],
-        p90:  samples[n * 90 / 100],
-        p99:  samples[n * 99 / 100],
-        max:  *samples.last().unwrap(),
-    }
-}
-
-// Compare two implementations
-bench("sum_loop(1000)",    50, 5000, || sum_loop(black_box(1000)));
-bench("sum_formula(1000)", 50, 5000, || sum_formula(black_box(1000)));
-```
-
-For real-world benchmarking, use the `criterion` crate: it adds statistical significance testing, warm cache management, and HTML reports. The `cargo bench` command runs functions marked `#[bench]` in nightly, but Criterion works on stable.
-
-## What This Unlocks
-
-- **`black_box` discipline** — always wrap benchmark inputs in `black_box()` to prevent the compiler from constant-folding or dead-code-eliminating the code under test; without this, you're measuring zero.
-- **Percentile thinking** — mean latency is for dashboards; p99 is for SLAs; max is for debugging worst cases; understanding which to look at for which question is fundamental to performance engineering.
-- **Before/after comparison methodology** — always run both implementations in the same harness, on the same machine, with the same warmup, to get meaningful comparisons; micro-benchmark results are only valid relative to each other.
+OCaml's `core_bench` library provides `Bench.Test.create` with built-in percentile reporting. `Jane Street` uses it extensively in their trading systems. `bechamel` is an alternative with more statistical sophistication (R² goodness of fit). OCaml's GC adds noise to benchmarks that Rust avoids; `core_bench` accounts for this by measuring GC pressure separately.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Prevent optimization | `Sys.opaque_identity` | `std::hint::black_box` — stable since Rust 1.66 |
-| High-res timing | `Unix.gettimeofday` (µs) | `std::time::Instant` — nanosecond resolution |
-| Benchmark framework | `core_bench` (Jane Street) | `criterion` crate (de facto standard) |
-| Percentile computation | Manual sort + index | `sort_unstable()` then indexed access — same pattern |
+1. **GC noise**: Rust benchmarks are not affected by garbage collection; OCaml benchmarks must account for minor and major GC pauses.
+2. **Percentile support**: This example implements percentiles from scratch; Rust's `criterion` provides them via `Criterion::bench_function`. OCaml's `core_bench` provides similar output.
+3. **Warmup**: Both harnesses implement warmup phases; Criterion's warmup duration is configurable, while this example uses a fixed iteration count.
+4. **Statistical analysis**: Criterion performs regression analysis and outlier detection; this example provides raw percentiles without statistical significance testing.
+
+## Exercises
+
+1. Add an outlier detection step: remove samples more than 3 standard deviations from the mean and recompute statistics on the cleaned dataset.
+2. Implement a `compare_stats` function that prints a speedup table: for each percentile, shows the ratio between two `Stats` values and whether the difference is significant.
+3. Add throughput reporting: given a `bytes_processed` count per iteration, compute and display MB/s or million-ops/s alongside latency percentiles.

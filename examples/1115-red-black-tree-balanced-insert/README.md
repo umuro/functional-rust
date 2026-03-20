@@ -29,3 +29,9 @@ Rust uses `Box<RBTree<T>>` to break the recursive type. Because stable Rust cann
 2. **Pattern matching through boxes:** OCaml or-patterns cover all 4 cases in one match arm; Rust needs guard clauses to inspect boxed children.
 3. **Memory model:** OCaml shares unchanged subtrees via GC; Rust moves/owns subtrees — no implicit sharing.
 4. **Generics vs polymorphism:** OCaml's `'a rbtree` is implicitly polymorphic; Rust uses explicit `<T: Ord>` bounds.
+
+## Exercises
+
+1. Write a `fold` over the red-black tree that applies a binary function to accumulate a result in sorted order, and use it to produce a comma-separated string of all values.
+2. Implement `intersection` — return a new tree containing only elements present in both input trees — using the `contains` method and insertion.
+3. Profile insertion of 1 million random `u64` values into your red-black tree vs. `std::collections::BTreeSet` and explain performance differences in terms of allocation strategy and cache behavior.

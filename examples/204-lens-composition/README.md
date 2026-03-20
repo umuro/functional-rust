@@ -32,3 +32,9 @@ Rust stores each lens as a `struct` with two `Box<dyn Fn(...)>` fields. Composit
 2. **Shared ownership**: OCaml closures share captured values for free; Rust requires `Rc<Box<dyn Fn>>` when two closures must both own the same captured function.
 3. **Immutable update**: `{ p with address = a }` (OCaml) vs `Person { address: a, ..p.clone() }` (Rust) — both produce a new value; Rust needs `Clone` for struct update syntax.
 4. **Associativity**: Composition is associative in both languages: `(A ∘ B) ∘ C == A ∘ (B ∘ C)`. The test suite verifies this property explicitly.
+
+## Exercises
+
+1. Define a lens for every leaf field in a three-level nested struct and compose them to demonstrate that any deep field can be read and updated via a single composed lens.
+2. Implement `over` — a function that lifts a regular function `A -> A` into a lens update, and use it to increment a deeply nested numeric field.
+3. Implement an `iso` (isomorphism): a pair of functions `to: A -> B` and `from: B -> A`, compose it with a lens to transform the viewed type, and use it to treat a `String` field as `Vec<char>` through the lens.

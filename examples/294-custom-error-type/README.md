@@ -4,105 +4,67 @@
 
 # 294: Custom Error Types
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Define all the ways your function can fail as an enum — making errors part of your API, not an afterthought.
+Generic error strings (`String`, `&str`) lose information — callers cannot match on the error kind to handle different failures differently. Custom error enums document every possible failure mode in the type system, enabling exhaustive handling, machine-readable error codes, and structured error data. This is the standard approach in production Rust libraries and mirrors OCaml's algebraic error types.
 
-## The Problem This Solves
+## Learning Outcomes
 
-When a function can fail, beginners often use `String` as the error type: `Result<T, String>`. It works, but it has a serious drawback — the caller has no idea what errors to expect without reading your documentation. Did it fail because the input was empty? Because the number was out of range? Because of a network timeout? You can't tell from the type.
+- Define error types as enums with variants carrying relevant context data
+- Implement `Display` for user-facing error messages and `Debug` for developer diagnostics
+- Use `impl std::error::Error` to integrate with the Rust error ecosystem
+- Recognize when struct variants (with named fields) vs tuple variants are appropriate
 
-In Java and Python, exceptions work around this by having exception class hierarchies, but callers still have to read docs (or crash) to know what to catch. Rust's approach is different: you define a specific enum that lists every possible failure mode. Now the type signature itself documents what can go wrong. The compiler ensures you handle every case.
+## Rust Application
 
-Custom error types also let you carry data with the error — not just "value out of range" but "value 200 is out of range [0, 100]". That's actionable information for the caller.
-
-## The Intuition
-
-You've seen Rust's built-in error types like `ParseIntError`. A custom error type is just your own version of that. In Python you might write:
-
-```python
-class ParseError(Exception): pass
-class OutOfRangeError(Exception):
-    def __init__(self, value, min, max): ...
-```
-
-In Rust, you use an enum instead of class hierarchies:
+A custom error enum makes every failure mode visible in the function signature:
 
 ```rust
-enum ParseError {
+#[derive(Debug, PartialEq)]
+pub enum ParseError {
     InvalidNumber(String),
     OutOfRange { value: i64, min: i64, max: i64 },
     EmptyInput,
 }
-```
 
-Each variant can carry different data. Pattern matching on the variant gives you the exact data for that failure case. And `impl Display` is what turns your error into a human-readable message — the equivalent of Python's `__str__`.
-
-## How It Works in Rust
-
-```rust
-use std::fmt;
-
-// The enum lists every way this operation can fail
-#[derive(Debug, PartialEq)]
-enum ParseError {
-    InvalidNumber(String),                          // carries the bad input
-    OutOfRange { value: i64, min: i64, max: i64 }, // carries all three numbers
-    EmptyInput,                                     // no data needed
-}
-
-// impl Display = human-readable message (for end users, log files)
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ParseError::InvalidNumber(s) =>
-                write!(f, "invalid number: '{}'", s),
+            ParseError::InvalidNumber(s) => write!(f, "invalid number: '{}'", s),
             ParseError::OutOfRange { value, min, max } =>
                 write!(f, "value {} out of range [{}, {}]", value, min, max),
-            ParseError::EmptyInput =>
-                write!(f, "empty input"),
+            ParseError::EmptyInput => write!(f, "empty input"),
         }
     }
 }
-
-fn parse_bounded(s: &str, min: i64, max: i64) -> Result<i64, ParseError> {
-    if s.is_empty() {
-        return Err(ParseError::EmptyInput);  // specific variant, no guessing
-    }
-    let n: i64 = s.parse()
-        .map_err(|_| ParseError::InvalidNumber(s.to_string()))?;  // convert & propagate
-    if n < min || n > max {
-        return Err(ParseError::OutOfRange { value: n, min, max });
-    }
-    Ok(n)
-}
-
-// Callers can pattern-match on specific failure modes
-match parse_bounded("999", 0, 100) {
-    Ok(n) => println!("Got: {}", n),
-    Err(ParseError::OutOfRange { value, min, max }) =>
-        println!("{} is not in [{}, {}]", value, min, max),
-    Err(ParseError::InvalidNumber(s)) =>
-        println!("'{}' is not a number", s),
-    Err(ParseError::EmptyInput) =>
-        println!("please provide a value"),
-}
 ```
 
-`#[derive(Debug)]` gives you automatic `{:?}` formatting for debugging (just print the enum variant and data). `impl Display` is for the end-user-facing message. Both are useful, and both are separate concerns.
+## OCaml Approach
 
-## What This Unlocks
+OCaml uses polymorphic variants or regular variant types for errors, commonly with a single `error` type defined per module:
 
-- **API design** — your function signature becomes self-documenting: `Result<Config, ConfigError>` tells callers exactly what can go wrong
-- **Error recovery** — callers can match on `OutOfRange` specifically to ask the user to try again, while treating `EmptyInput` differently
-- **Composability with `?`** — combine with `impl From<OtherError> for YourError` to use `?` across your whole application
+```ocaml
+type parse_error =
+  | InvalidNumber of string
+  | OutOfRange of { value: int; min: int; max: int }
+  | EmptyInput
+
+let display_error = function
+  | InvalidNumber s -> Printf.sprintf "invalid number: '%s'" s
+  | OutOfRange {value; min; max} ->
+    Printf.sprintf "value %d out of range [%d, %d]" value min max
+  | EmptyInput -> "empty input"
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Error representation | Polymorphic variant or exception | Enum with named variants |
-| Human-readable message | Ad-hoc `pp_error` functions | `impl Display` trait |
-| Debug representation | Automatic with ppx | `#[derive(Debug)]` |
-| Composing error types | Manual wrapping | `impl From<X> for Y` + `?` |
-| Exhaustiveness | Compiler checks variant coverage | Compiler checks `match` arms |
+1. **Trait obligation**: Rust error types must implement `Display` and `Debug`; OCaml has no such requirement — any type can be an error.
+2. **Ecosystem integration**: Implementing `std::error::Error` makes Rust errors compatible with `Box<dyn Error>`, `anyhow`, and `thiserror`.
+3. **Structured data**: Both languages support carrying context data in error variants with field-carrying structs or tuples.
+4. **Exhaustive matching**: Both Rust and OCaml require exhaustive match on error variants — adding a variant is a compile-time breaking change.
+
+## Exercises
+
+1. Define a `NetworkError` enum with variants for connection refused, timeout, and authentication failure — each carrying relevant context.
+2. Implement a `ValidationError` type with variants for each field constraint violation and aggregate multiple validation failures.
+3. Add a `source() -> Option<&dyn Error>` implementation to wrap a lower-level `ParseError` inside a higher-level `ConfigError`.

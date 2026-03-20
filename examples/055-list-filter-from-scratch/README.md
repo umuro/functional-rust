@@ -42,3 +42,9 @@ specialized function from the generic one.
 3. **Slice patterns**: `[head, tail @ ..]` in Rust is the exact structural match of OCaml's `h :: t` on lists.
 4. **Iterator adaptor**: Rust's `Iterator::filter` IS this function — studying the from-scratch version reveals what the standard library does.
 5. **Order preservation**: Both languages guarantee left-to-right traversal; the recursive form builds in reverse and corrects by prepending, then the fold/iterator traverse naturally.
+
+## Exercises
+
+1. Implement `filter_not_none` from scratch: filter a `Vec<Option<T>>` to keep only `Some` values and unwrap them into a `Vec<T>`.
+2. Write `filter_with_count` that filters a list and also returns the number of elements that were removed.
+3. Implement `stable_partition` from scratch that separates elements into two groups (satisfying and not satisfying a predicate) while preserving original relative order in both groups.

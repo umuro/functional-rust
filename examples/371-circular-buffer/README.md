@@ -2,77 +2,123 @@
 
 ---
 
-# 371: Circular Buffer / Ring Buffer
+# 371: Circular Buffer (Ring Buffer)
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Fixed-capacity FIFO queue where new writes overwrite the oldest data when full.
+Audio processing, network packet buffering, logging with bounded history, and real-time telemetry all need fixed-size FIFO queues where old data is overwritten when the buffer is full. A circular buffer (ring buffer) achieves this with a fixed `Vec<Option<T>>` and two indices (`head`, `tail`) that wrap around modulo capacity. Operations are always O(1) with no allocation after construction. This is more efficient than `VecDeque` when the capacity is fixed at creation time — the modular arithmetic avoids the reallocation and copying that `VecDeque` might perform when growing.
 
-## The Problem This Solves
+## Learning Outcomes
 
-A sliding window of recent events: the last 1000 log lines, the last 60 seconds of sensor readings, the last N keystrokes for undo history. A `Vec` grows indefinitely and needs explicit truncation. A `VecDeque` works but doesn't enforce a capacity contract. What you want is a fixed-size buffer where pushing a new element automatically discards the oldest one — no allocation, no shifting, just a rotating write head.
+- Implement a circular buffer with `head`, `tail`, `size`, and `capacity` fields
+- Use modular arithmetic `(tail + 1) % capacity` for index wrapping
+- Track fullness with a separate `size` counter (avoids the "full vs empty" ambiguity)
+- Implement `push` returning `Err` when full and `pop` returning `None` when empty
+- Add `push_overwrite` that drops the oldest element when full
+- Understand why circular buffers are used in audio and network I/O
 
-Circular buffers are the classic solution for streaming data with bounded memory. They're used in network packet buffers, audio processing rings, real-time telemetry systems, and anywhere you need "most recent N" semantics without unbounded growth.
-
-## The Intuition
-
-A circular buffer is an array with two indices: `read_head` and `write_head`. Write advances `write_head % capacity`. Read advances `read_head % capacity`. When the buffer is full and you write, `write_head` laps `read_head`, overwriting the oldest slot. No allocation. No shifting. O(1) push and pop.
-
-The tricky part: distinguishing "buffer is full" from "buffer is empty" — both have `read_head == write_head` naively. Solutions: track a count separately, or use `capacity + 1` slots and never fill the last one.
-
-Rust's standard library provides `VecDeque` which is a heap-allocated ring buffer. For a fixed-capacity version that overwrites on overflow, use the `circular-buffer` crate or implement it yourself.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-use std::collections::VecDeque;
-
-struct RingBuffer<T> {
-    buf: VecDeque<T>,
+pub struct CircularBuffer<T> {
+    data: Vec<Option<T>>,
+    head: usize,
+    tail: usize,
+    size: usize,
     capacity: usize,
 }
 
-impl<T> RingBuffer<T> {
-    fn new(capacity: usize) -> Self {
-        Self { buf: VecDeque::with_capacity(capacity), capacity }
-    }
-
-    fn push(&mut self, item: T) {
-        if self.buf.len() == self.capacity {
-            self.buf.pop_front(); // discard oldest
+impl<T> CircularBuffer<T> {
+    pub fn new(capacity: usize) -> Self {
+        assert!(capacity > 0);
+        Self {
+            data: (0..capacity).map(|_| None).collect(),
+            head: 0, tail: 0, size: 0, capacity,
         }
-        self.buf.push_back(item);
     }
 
-    fn iter(&self) -> impl Iterator<Item = &T> {
-        self.buf.iter()
+    pub fn push(&mut self, val: T) -> Result<(), &'static str> {
+        if self.is_full() { return Err("buffer full"); }
+        self.data[self.tail] = Some(val);
+        self.tail = (self.tail + 1) % self.capacity;
+        self.size += 1;
+        Ok(())
     }
+
+    pub fn pop(&mut self) -> Option<T> {
+        if self.is_empty() { return None; }
+        let val = self.data[self.head].take();
+        self.head = (self.head + 1) % self.capacity;
+        self.size -= 1;
+        val
+    }
+
+    pub fn push_overwrite(&mut self, val: T) {
+        if self.is_full() {
+            self.head = (self.head + 1) % self.capacity; // discard oldest
+            self.size -= 1;
+        }
+        self.data[self.tail] = Some(val);
+        self.tail = (self.tail + 1) % self.capacity;
+        self.size += 1;
+    }
+
+    pub fn is_full(&self) -> bool { self.size == self.capacity }
+    pub fn is_empty(&self) -> bool { self.size == 0 }
+    pub fn len(&self) -> usize { self.size }
+}
+```
+
+The `size` counter avoids the classic ring buffer ambiguity: `head == tail` is ambiguous between "empty" and "full" without it. Alternative: reserve one slot (capacity - 1 usable) and use `(tail + 1) % capacity == head` for full — but tracking `size` is cleaner.
+
+## OCaml Approach
+
+```ocaml
+type 'a cbuf = {
+  data: 'a option array;
+  mutable head: int;
+  mutable tail: int;
+  mutable size: int;
+  capacity: int;
 }
 
-let mut ring = RingBuffer::new(3);
-ring.push(1);
-ring.push(2);
-ring.push(3);
-ring.push(4); // 1 is gone
-// Contains: [2, 3, 4]
+let make capacity =
+  { data = Array.make capacity None; head = 0; tail = 0; size = 0; capacity }
+
+let push buf v =
+  if buf.size = buf.capacity then Error "full"
+  else begin
+    buf.data.(buf.tail) <- Some v;
+    buf.tail <- (buf.tail + 1) mod buf.capacity;
+    buf.size <- buf.size + 1;
+    Ok ()
+  end
+
+let pop buf =
+  if buf.size = 0 then None
+  else begin
+    let v = buf.data.(buf.head) in
+    buf.data.(buf.head) <- None;
+    buf.head <- (buf.head + 1) mod buf.capacity;
+    buf.size <- buf.size - 1;
+    v
+  end
 ```
 
-For a zero-allocation fixed-size variant on the stack:
-```toml
-circular-buffer = "0.1"
-```
-
-## What This Unlocks
-
-- **Bounded log buffers** — keep last N log lines without ever allocating more.
-- **Audio/video processing** — constant-size frame windows with no GC pressure.
-- **Sliding window algorithms** — time-series averages, rate limiting, event debouncing.
+The algorithm is identical — circular buffers are inherently imperative, mapping cleanly to both languages' mutable array operations.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Queue | `Queue.t` (linked list, unbounded) | `VecDeque<T>` (ring buffer, growable) |
-| Fixed-size queue | Manual array + indices | `RingBuffer` wrapper or `circular-buffer` crate |
-| Overwrite-on-full | Manual logic | Encapsulated in `push()` method |
-| Memory layout | Heap-allocated, GC-managed | `VecDeque` is heap; `[T; N]` ring is stack |
+| Aspect | Rust `CircularBuffer<T>` | OCaml `'a cbuf` |
+|--------|-------------------------|-----------------|
+| Storage | `Vec<Option<T>>` | `'a option array` |
+| Index wrap | `% capacity` (modulo) | `mod capacity` |
+| Full detection | `size == capacity` | `size = capacity` |
+| Push error | `Result<(), &str>` | `Result` variant or exception |
+| Production | `VecDeque` or `ringbuf` crate | `Queue` module (unbounded) |
+
+## Exercises
+
+1. **Overwrite mode audio**: Implement a `AudioBuffer` with `push_overwrite` that holds the last 4096 samples; show that oldest samples are silently discarded when the buffer is full.
+2. **Peek without pop**: Add `peek(&self) -> Option<&T>` that returns a reference to the head element without removing it; useful for lookahead parsing.
+3. **Iterator**: Implement `IntoIterator` for `CircularBuffer<T>` that drains elements from head to tail in O(1) per step (no reallocation), consuming the buffer.

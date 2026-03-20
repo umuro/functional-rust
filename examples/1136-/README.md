@@ -49,3 +49,9 @@ Rust offers three equivalent perspectives:
    initial accumulator in `fold`.
 4. **Zero-cost generics:** Rust's `<M: Monoid>` generates one specialised copy per
    concrete type; OCaml's first-class modules use runtime dispatch.
+
+## Exercises
+
+1. Add a `Concat` string monoid alongside `Sum` and `Product` and verify that `concat_all` with identity `""` correctly joins a list of strings.
+2. Implement a generic `mconcat` function as a blanket impl on `IntoIterator<Item: Monoid>` so any iterable of monoidal values can be summed with a single call.
+3. Implement the writer monad using your `Monoid` abstraction: a `Writer<A, W: Monoid>` type that pairs a value with a log, where `bind` concatenates logs using the monoid operation.

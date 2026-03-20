@@ -37,3 +37,9 @@ First packs consecutive elements (reusing Problem 9's `pack`), then maps each gr
 3. **Single-pass efficiency**: The fold and direct versions avoid creating intermediate packed groups
 4. **`usize` vs `int`**: Rust uses `usize` for counts (unsigned, pointer-sized); OCaml uses `int` (signed, word-sized)
 5. **No intermediate allocation**: The direct version builds the result in one pass — important for large inputs
+
+## Exercises
+
+1. Implement the decoder: given a run-length encoded `Vec<(usize, T)>`, reconstruct the original `Vec<T>`.
+2. Write a modified RLE that only encodes runs of length greater than 1 — single elements are stored as-is using an enum `Rle<T> { Single(T), Run(usize, T) }`.
+3. Implement RLE for a stream of bytes and measure its compression ratio on a sample ASCII text; then try to compress already-compressed data and observe the result.

@@ -2,98 +2,37 @@
 
 ---
 
-# 768: Zero-Copy Deserialisation with Lifetime Tricks
+# 768-zero-copy-deserialize — Zero-Copy Deserialize
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Deserialize structured data into a struct whose string fields borrow directly from the input buffer — no heap allocation for string data.
+Deserialization normally copies data: the input bytes are parsed and new heap-allocated strings and vectors are created. Zero-copy deserialization avoids this by returning references (`&str`, `&[u8]`) that point directly into the input buffer. For high-throughput network servers processing thousands of requests per second, eliminating these copies can halve memory bandwidth usage. `serde`'s `#[serde(borrow)]` attribute enables zero-copy deserialization for string fields.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Every time you deserialize a JSON or CSV record into an owned `String`, you pay for an allocation and a copy of each string field. For parsing millions of records in a hot loop, this is a significant cost. Zero-copy deserialization eliminates it: the parsed struct holds `&str` slices that point directly into the original input bytes.
+- Return `&str` slices from parsing functions that borrow from the input
+- Understand lifetime parameters on parsed types: `Message<'a>`, `KeyValue<'a>`
+- Implement `parse_message`, `parse_kv`, and `parse_csv_row` returning borrowed references
+- See how Rust's lifetime system prevents use-after-free from zero-copy parsing
+- Understand the trade-off: zero-copy requires the input buffer to live as long as the parsed value
 
-This technique is the foundation of `serde`'s `Deserialize<'de>` design — the `'de` lifetime is exactly this: it ties the struct's fields to the lifetime of the deserialization input. Understanding how to implement it without `serde` first makes `serde`'s lifetime signature (`impl<'de> Deserialize<'de> for MyType`) intuitive rather than mysterious.
+## Rust Application
 
-The tradeoff: the input buffer must outlive the parsed struct. When you're done processing, convert to owned values with `PersonOwned::from(view)`.
+`Message<'a>` holds `header: &'a str` and `body: &'a str` — both point into the input string. `parse_message` finds the newline, slices the input, and returns references without copying. `KeyValue<'a>` has `key: &'a str` and `value: &'a str`. `CsvRow<'a>` holds `fields: Vec<&'a str>` — field strings point into the input. All parsing is done with `str::find` and slice indexing; no `String::from` or `to_owned` calls occur.
 
-## The Intuition
+## OCaml Approach
 
-A `PersonView<'de>` is a view into a specific input buffer — the `'de` lifetime parameter says "I was carved out of a buffer that lives at least as long as `'de`." The struct's `&'de str` fields are just pointers and lengths into that buffer — no allocation.
-
-The parser returns `PersonView<'_>` where `'_` is inferred from the input: the returned struct can't outlive the string passed to `parse_view`. The compiler enforces this automatically.
-
-## How It Works in Rust
-
-**The zero-copy struct** — fields borrow from `'de`:
-```rust
-#[derive(Debug)]
-pub struct PersonView<'de> {
-    pub name:    &'de str,
-    pub age_raw: &'de str,
-    pub city:    Option<&'de str>,
-}
-```
-No `String`, no allocation. Every field is a slice of the input.
-
-**The parser** — returns borrows from the input:
-```rust
-pub fn parse_view(input: &str) -> Result<PersonView<'_>, ParseError> {
-    fn find_field<'a>(input: &'a str, key: &str) -> Option<&'a str> {
-        for part in input.split('|') {
-            if let Some(v) = part.strip_prefix(&format!("{key}=")) {
-                return Some(v);  // slice of input, not a copy
-            }
-        }
-        None
-    }
-    // ...
-}
-```
-`'_` in the return type is shorthand for "borrows from `input`" — the compiler infers the lifetime.
-
-**Explicit lifetime version** — showing `'de` in full:
-```rust
-pub fn deserialize_person<'de>(input: &'de str) -> Result<PersonView<'de>, ParseError> {
-    parse_view(input)
-}
-```
-Input and output share the same lifetime `'de` — the struct fields will be valid exactly as long as `input` is.
-
-**Batch parsing** — multiple views from one buffer:
-```rust
-pub fn parse_many(input: &str) -> Vec<PersonView<'_>> {
-    input.lines()
-         .filter(|l| !l.is_empty())
-         .filter_map(|line| parse_view(line).ok())
-         .collect()
-}
-```
-All views share the same input buffer — one allocation (for `Vec`), no copies of string data.
-
-**Converting to owned when needed:**
-```rust
-impl<'de> From<PersonView<'de>> for PersonOwned {
-    fn from(v: PersonView<'de>) -> Self {
-        PersonOwned {
-            name: v.name.to_string(),  // allocate only when leaving the zero-copy context
-            age: v.age().unwrap_or(0),
-            city: v.city.map(|s| s.to_string()),
-        }
-    }
-}
-```
-
-## What This Unlocks
-
-- **High-throughput parsing** — process millions of records with zero string allocation per record.
-- **Understanding `serde`'s `'de` lifetime** — `impl<'de> Deserialize<'de>` is exactly this pattern, built into `serde`.
-- **View/owned duality** — parse as zero-copy views, convert to owned only for the records you actually need to store.
+OCaml's GC makes zero-copy more complex: since strings are GC-managed, returning a substring typically requires either a copy or using `String.sub` (which copies). `Bigstringaf` provides a mutable, GC-tracked byte buffer where substrings can be represented as offset-length pairs without copying. `Angstrom` uses this for zero-copy network parsing. The `Cstruct` library in MirageOS provides zero-copy buffer slices for network protocols.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Zero-copy string | `Bytes.sub` (view) or bigstring libs | `&'de str` — lifetime tracks input buffer |
-| Lifetime on struct | N/A (GC) | `struct Foo<'de>` — struct borrows from `'de` |
-| `serde`-style `'de` | `ppx_deriving`, `jsonaf` (own GC strings) | `impl<'de> Deserialize<'de>` — borrows from input |
-| Convert view to owned | `String.copy s` | `.to_string()` — explicit allocation at crossing point |
+1. **Lifetime tracking**: Rust's `'a` lifetime on returned references is checked at compile time; OCaml has no equivalent — the GC handles lifetime but cannot prevent logical errors.
+2. **String representation**: Rust's `&str` is a fat pointer (ptr + len) into an existing buffer; OCaml's substring always allocates a new string.
+3. **Production use**: Rust's `serde` with `#[serde(borrow)]` enables zero-copy JSON parsing; `serde_json::from_str::<Message<'_>>` avoids all string allocation for borrowed fields.
+4. **Buffer lifetime**: Rust enforces that the parsed value cannot outlive the input buffer; OCaml's GC keeps the buffer alive as long as any string derived from it exists.
+
+## Exercises
+
+1. Implement `parse_http_request<'a>(input: &'a str) -> Option<HttpRequest<'a>>` where `HttpRequest` borrows method, path, and header values from the input.
+2. Add a `split_fields<'a>(s: &'a str, delim: char) -> impl Iterator<Item = &'a str>` that returns borrowed field slices without allocating a `Vec`.
+3. Write a benchmark comparing `parse_message` (zero-copy, returns `&str`) against a copying version (returns `String`) for 1 million parses. Measure allocation count with a custom allocator.

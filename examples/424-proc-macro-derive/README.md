@@ -2,85 +2,39 @@
 
 ---
 
-# 424: Custom #[derive(MyTrait)]
+# 424: Proc Macro Derive
 
-**Difficulty:** 4  **Level:** Expert
+## Problem Statement
 
-Generate trait implementations automatically for any struct or enum — the same mechanism powering `#[derive(Debug, Serialize, Clone)]`.
+A custom derive macro generates trait implementations automatically from a type's definition. When you annotate `#[derive(MyTrait)]`, the proc macro receives the struct/enum definition as a token stream, parses it to find field names and types, and emits an `impl MyTrait for TheType` block. This is the mechanism behind `serde::Deserialize` — it inspects every field name and type, generating JSON deserialization code specific to that struct's shape, something impossible with `macro_rules!`.
 
-## The Problem This Solves
+Custom derive macros appear whenever library authors want users to opt-in to generated boilerplate: ORMs generating SQL mappings, test frameworks generating fixtures, protocol libraries generating serialization code.
 
-Some traits have an obvious mechanical implementation that depends only on a type's structure. `Debug` prints fields. `Serialize` iterates them. `Hash` combines field hashes. Writing these by hand for every new struct is tedious, error-prone (forget to update when adding a field), and produces hundreds of lines of boilerplate.
+## Learning Outcomes
 
-Custom derive macros solve this: annotate your struct with `#[derive(YourTrait)]` and the macro reads the struct's fields at compile time, generates the implementation, and inserts it as if you'd written it by hand. The generated code is visible via `cargo expand`, it's zero-overhead, and it stays in sync — add a field and the derive regenerates.
+- Understand the derive proc macro lifecycle: `TokenStream` in → parse with `syn` → generate with `quote!` → `TokenStream` out
+- Learn how `syn::DeriveInput` represents parsed struct definitions with field names and types
+- See how `quote::quote!` generates code with token interpolation using `#variable` syntax
+- Understand the crate separation requirement: proc macros in `proc-macro = true` crates
+- Learn how `#[proc_macro_derive(Name)]` registers the macro for use with `#[derive(Name)]`
 
-This is the mechanism the entire Rust ecosystem is built on. `serde`'s `Serialize`/`Deserialize`, `thiserror`'s `Error`, `clap`'s `Parser` — all derive macros. Learning to write one makes you fluent in how the ecosystem actually works.
+## Rust Application
 
-## The Intuition
+The `src/lib.rs` demonstrates what a derive proc macro generates. A real implementation would be in a separate crate with dependencies on `syn` and `quote`. The derive macro pattern: `pub fn my_derive(input: TokenStream) -> TokenStream`, call `syn::parse_macro_input!(input as DeriveInput)`, extract the `ident` (struct name) and fields, then `quote! { impl MyTrait for #name { ... } }`.
 
-A derive macro reads your struct's fields and generates an `impl YourTrait for YourStruct` block at compile time — like a code generator that runs every time you build.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-// In your proc-macro crate:
-use proc_macro::TokenStream;
-use quote::quote;
-use syn::{parse_macro_input, DeriveInput, Data, Fields};
-
-#[proc_macro_derive(Describe)]
-pub fn derive_describe(input: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(input as DeriveInput);
-    let name = &input.ident;  // struct name as Ident
-
-    // Extract named field names
-    let fields = match &input.data {
-        Data::Struct(s) => match &s.fields {
-            Fields::Named(f) => f.named.iter()
-                .map(|f| &f.ident)
-                .collect::<Vec<_>>(),
-            _ => vec![],
-        },
-        _ => panic!("Describe only works on structs"),
-    };
-
-    // Generate the impl
-    quote! {
-        impl Describe for #name {
-            fn describe(&self) -> String {
-                let mut parts = vec![format!("{}", stringify!(#name))];
-                #( parts.push(format!("{}: {:?}", stringify!(#fields), self.#fields)); )*
-                parts.join(", ")
-            }
-        }
-    }.into()
-}
-
-// Usage in another crate:
-#[derive(Describe)]
-struct User { name: String, age: u32 }
-
-let u = User { name: "Alice".into(), age: 30 };
-println!("{}", u.describe());  // "User, name: "Alice", age: 30"
-```
-
-1. `parse_macro_input!(input as DeriveInput)` — parse tokens into a structured AST.
-2. Navigate `data.fields` to find field names and types.
-3. `quote! { impl Trait for #name { ... } }` — generate the implementation.
-4. `#( ... )*` in `quote!` iterates over a collection, like `macro_rules!` repetition.
-
-## What This Unlocks
-
-- **Boilerplate elimination**: One `#[derive(YourTrait)]` replaces 50 lines of mechanical implementation per struct.
-- **Field-aware generation**: Access field names, types, attributes (`#[serde(rename = "...")]`) and generate accordingly.
-- **Ecosystem-level patterns**: Everything from `serde` to `sqlx` to `clap` is built exactly this way.
+OCaml's `ppx_deriving` library provides the framework for writing custom derivers. A deriver registers with `Ppx_deriving.register` providing `type_decl -> structure_item list` functions. The OCaml AST types (`type_declaration`, `label_declaration`) correspond to `syn::DeriveInput` and `syn::Field`. Code generation uses `Ast_builder.Default` module functions rather than `quote!`.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Auto-derived implementations | `[@@deriving show, eq]` via `ppx_deriving` | `#[derive(Trait)]` via proc macro |
-| Field introspection | `Ppxlib` AST traversal | `syn::DeriveInput` → `Data::Struct` → `Fields` |
-| Code generation | `Ppxlib.Ast_builder.Default` | `quote!` macro with `#name`, `#(...)* ` |
-| Separate crate | PPX is separate library | proc-macro crate required |
-| Attribute reading | `[@attr]` on fields | `field.attrs` in `syn` — parse with `syn::parse` |
+1. **Registration**: Rust registers via `#[proc_macro_derive(Name)]`; OCaml uses `Ppx_deriving.register "name" (module Deriver)`.
+2. **Code generation**: Rust uses `quote!` with `#` interpolation; OCaml uses `Ast_builder` with explicit AST node construction.
+3. **Error location**: Rust can use `span` from `syn` for precise error locations; OCaml uses `Location.t` values from the AST.
+4. **Testing**: Rust tests proc macros with `trybuild` crate (compile-fail tests); OCaml uses `ppx_deriving`'s test infrastructure.
+
+## Exercises
+
+1. **Describe trait**: Implement a `#[derive(Describe)]` that generates `impl Describe for T { fn describe() -> String { "T { field1: type1, field2: type2 }" } }` using field names and type names from `syn`. Test it on a two-field struct.
+2. **Getters derive**: Write `#[derive(Getters)]` generating `pub fn field_name(&self) -> &FieldType` for every field. Handle `pub` and private fields, skipping fields with `#[getter(skip)]` attribute.
+3. **Builder derive**: Implement `#[derive(Builder)]` that generates a `{StructName}Builder` with setter methods and a `build()` method. Handle `Option<T>` fields as optional, other fields as required.

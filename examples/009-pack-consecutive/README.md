@@ -37,3 +37,9 @@ Uses a tail-recursive helper with two accumulators: `current` (current group) an
 3. **Ownership spectrum**: Three levels offered — owned + cloned, owned + fold, borrowed slices
 4. **No `List.rev` needed**: Rust's `Vec::push` appends to the end (O(1) amortized); OCaml prepends to lists and reverses
 5. **Memory layout**: Rust's `Vec<Vec<T>>` is contiguous blocks; OCaml's `'a list list` is chains of cons cells
+
+## Exercises
+
+1. Implement `pack_by` — a variant that groups consecutive elements using a key function `f: &T -> K` instead of direct equality.
+2. Write `pack_into_counts` that converts a packed list into a list of `(usize, T)` pairs representing run lengths, using your pack function as a building block.
+3. Implement `unpack` — the inverse: given a list of `(usize, T)` pairs, produce the original expanded list.

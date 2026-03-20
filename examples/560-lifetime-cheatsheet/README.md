@@ -2,134 +2,52 @@
 
 ---
 
-# 560: Lifetime Annotation Cheatsheet
+# Lifetime Cheatsheet
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-All common lifetime annotation patterns in one place. Use this as a reference when you need the syntax and can't remember which form goes where.
+Lifetime annotations in Rust are a powerful but syntactically noisy feature. After learning each individual rule in isolation, programmers often struggle to apply them quickly when reading or writing real code. A cheatsheet consolidates the most common patterns — elision, structs with lifetimes, impl blocks, static lifetimes, HRTB, and subtyping — into a single reference with expanded forms and their practical interpretations.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Lifetime annotations appear in many different syntactic positions in Rust — function signatures, struct definitions, `impl` blocks, trait bounds, closures, and type positions. Each position has its own rules and idioms. Having them all in one place prevents the "I know what I need but forgot the syntax" slowdown.
+- Quick recall of all major lifetime annotation patterns in one place
+- How to read elided lifetimes and mentally expand them to explicit forms
+- Common struct, impl, and trait patterns with lifetimes side-by-side
+- When each pattern is appropriate and what it communicates about the API
+- Lifetime-related terminology: region, covariance, subtyping, HRTB, static
 
-This cheatsheet covers the 90% of cases you'll encounter in real Rust code, with brief notes on when to use each form.
+## Rust Application
 
-## The Intuition
+The source is structured as a reference: `trim(s: &str) -> &str` (elided), `longer<'a>(a, b) -> &'a str` (two inputs), `struct View<'a>` (struct), `impl<'a> View<'a>` (impl), `T: 'static` (outlives bound), `for<'a> Fn(&'a str)` (HRTB). Each pattern is annotated with its expanded form and when to use it. This example is reference material rather than a single algorithm — read alongside other lifetime examples for context.
 
-Lifetime annotations follow a consistent pattern: declare the lifetime parameter in `<>` at the item level, then use it on references within that item. The label `'a` is just a name — choose any name, though `'a`, `'b`, `'static`, and `'_` are idiomatic.
+Key patterns summarized:
+- `&'a T` — reference valid for lifetime `'a`
+- `T: 'a` — T outlives lifetime `'a` (contains no shorter-lived borrows)
+- `'a: 'b` — `'a` outlives `'b` (subtyping)
+- `for<'a>` — universal quantification (HRTB)
+- `'static` — valid for entire program duration
 
-- `&'a T` — reference valid for at least `'a`
-- `'a: 'b` — `'a` outlives `'b`
-- `for<'a>` — universally quantified over all lifetimes
-- `'_` — infer the lifetime (explicit elision marker)
-- `'static` — valid for the entire program
+## OCaml Approach
 
-## How It Works in Rust
+OCaml has no lifetime syntax — the cheatsheet concept does not apply. The equivalent reference for OCaml would cover GC semantics, weak references, and the `Gc` module rather than lifetime annotations.
 
-**Function signatures:**
-
-```rust
-// Most common: elided — compiler infers
-fn first_word(s: &str) -> &str { s.split_whitespace().next().unwrap_or("") }
-
-// Explicit: two inputs, one output — must annotate which source
-fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
-    if x.len() >= y.len() { x } else { y }
-}
-
-// Independent lifetimes: output from x only, y doesn't constrain result
-fn first_of<'a, 'b>(x: &'a str, _y: &'b str) -> &'a str { x }
-
-// Static: return lives forever (embedded in binary)
-fn greeting() -> &'static str { "Hello!" }
-
-// Anonymous: explicit elision — '_ means "infer it"
-fn get_first(v: &[i32]) -> Option<&'_ i32> { v.first() }
+```ocaml
+(* OCaml "lifetime cheatsheet": everything is GC-managed
+   - ref t: mutable reference, always valid while reachable
+   - Weak.t: non-retaining reference, becomes None after GC
+   - module Gc: control GC behavior
+*)
 ```
-
-**Struct definitions:**
-
-```rust
-// Struct with one borrowed field
-struct StrWrapper<'a> { value: &'a str }
-
-// Multiple independent borrowed fields
-struct PairRef<'a, 'b> { first: &'a str, second: &'b str }
-
-// Generic with lifetime
-struct Container<'a, T> { items: &'a [T], label: &'a str }
-```
-
-**impl blocks:**
-
-```rust
-impl<'a> StrWrapper<'a> {
-    fn new(s: &'a str) -> Self { StrWrapper { value: s } }
-    
-    // Rule 3 elision: &self method → return tied to self
-    fn get(&self) -> &str { self.value }
-    
-    // Explicit: tied to 'a (data lifetime), not self's borrow
-    fn get_explicit(&self) -> &'a str { self.value }
-}
-```
-
-**Trait bounds and where clauses:**
-
-```rust
-// T must not contain borrows shorter than 'static
-fn store<T: 'static>(value: T) { /* ... */ }
-
-// T must outlive 'a (T can contain refs, but they must be >= 'a)
-fn use_ref<'a, T: 'a>(r: &'a T) -> &'a T { r }
-
-// 'a outlives 'b
-fn constrained<'a: 'b, 'b>(x: &'a str, _y: &'b str) -> &'b str { x }
-```
-
-**Higher-ranked trait bounds:**
-
-```rust
-// F must work for ANY lifetime — not just one specific 'a
-fn apply<F>(s: &str, f: F) -> usize
-where F: for<'a> Fn(&'a str) -> usize
-{ f(s) }
-```
-
-**Closures:**
-
-```rust
-// Closure captures &'a str — valid for 'a
-fn make_logger<'a>(prefix: &'a str) -> impl Fn(&str) -> String + 'a {
-    move |s| format!("{}: {}", prefix, s)
-}
-```
-
-**dyn Trait:**
-
-```rust
-// Default: 'static (owns all data)
-fn store_renderer(r: Box<dyn Renderer>) { /* ... */ }
-
-// Explicit lifetime: can borrow from 'a
-fn use_renderer<'a>(r: Box<dyn Renderer + 'a>, data: &'a str) { /* ... */ }
-```
-
-## What This Unlocks
-
-- **Fast syntax lookup** — all forms in one place means you spend time writing code, not searching docs.
-- **Pattern recognition** — seeing all forms together reveals the consistent grammar: declare `'a` in `<>`, use `&'a` on references, add bounds where needed.
-- **Confident API design** — you'll know when to use `&'a str` vs `&str` (elided) vs `&'static str` and what each choice communicates to the caller.
 
 ## Key Differences
 
-| Annotation | Meaning | When to use |
-|------------|---------|-------------|
-| `&str` (elided) | Compiler infers via elision rules | 90% of cases — single input, `&self` method |
-| `&'a str` | Explicitly named lifetime | Multiple refs where output source is ambiguous |
-| `&'static str` | Lives for entire program | String literals, `static` variables |
-| `&'_ str` | Explicit elision marker | Type positions where you want to be explicit |
-| `T: 'static` | T owns its data | Thread spawning, global storage, `Box<dyn Trait>` |
-| `T: 'a` | T's refs live >= 'a | Generic functions that store refs |
-| `'a: 'b` | 'a outlives 'b | Lifetime ordering constraints |
-| `for<'a>` | Works for any lifetime | Generic callbacks, trait objects with reference arguments |
+1. **Annotation presence**: Rust requires lifetime annotations in many signatures; OCaml requires none — the entire domain of knowledge captured here is Rust-specific.
+2. **Learning curve**: Lifetimes are the most commonly cited Rust learning challenge; OCaml's GC model is simpler to learn but less powerful for systems programming.
+3. **Cheatsheet necessity**: Rust programmers frequently consult lifetime rules; OCaml programmers rarely need to look up memory management syntax.
+4. **Runtime vs compile-time**: Rust's lifetime system moves memory safety guarantees to compile time; OCaml's GC provides them at runtime — both are correct, with different performance profiles.
+
+## Exercises
+
+1. **Pattern classification**: Take five functions from previous examples and classify each lifetime parameter by its role: input constraint, output source, subtyping, or HRTB.
+2. **Expand elided forms**: Write the fully-explicit lifetime-annotated forms of `fn process(s: &str) -> &str`, `fn combine(a: &str, b: &str) -> String`, and a struct method returning `&str`.
+3. **Custom cheatsheet**: Add two more patterns not covered in the source: (a) a function with a `where T: 'a` bound, and (b) a function with an `impl Trait + 'a` return type — explain each in a comment.

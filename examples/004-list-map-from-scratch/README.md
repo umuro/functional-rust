@@ -35,3 +35,9 @@ Idiomatic Rust leverages iterators: `.iter().map(f).collect()` is the standard, 
 4. **Standard library idiom:** OCaml learners use `List.map`; Rust learners typically use the iterator `map` method. The explicit implementation teaches the abstraction, but production code uses iterators.
 
 5. **Function composition:** OCaml easily composes `map` with other list functions via piping; Rust chains methods or uses closure composition, reflecting different language paradigms.
+
+## Exercises
+
+1. Implement `map_index` — a variant of `map` that passes both the element and its index to the mapping function.
+2. Write `flat_map` from scratch: given a list and a function `f: T -> Vec<U>`, return a flattened `Vec<U>` without using `.flat_map()`.
+3. Implement `map_result` that applies a fallible function `f: T -> Result<U, E>` to each element, returning `Ok(Vec<U>)` if all succeed or the first `Err`.

@@ -2,43 +2,47 @@
 
 ---
 
-# 515: Lazy Evaluation with OnceLock
+# Lazy Evaluation with OnceLock
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Initialize a value exactly once, on first access, and cache it forever.
+Lazy initialization solves a fundamental tension: some values are expensive to compute but not always needed, and global mutable state is unsafe in concurrent programs. Before `OnceLock`, Rust programs used `unsafe` code or external crates like `lazy_static` for program-global lazy values. `std::sync::OnceLock` (stabilized in Rust 1.70) provides a safe, lock-free, thread-safe cell initialized exactly once. This pattern is ubiquitous in database connection pools, configuration parsers, and compiled regex caches.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Some values are expensive to compute but only needed sometimes, and when needed, needed many times. Computing them eagerly wastes resources if they're never used. Recomputing them every access wastes time. The solution is lazy initialization: compute once on first access, cache the result, return the cached value on all subsequent accesses.
+- How `OnceLock<T>` guarantees initialization happens exactly once, even under concurrent access
+- Why lazy initialization avoids paying the cost of computation when a value is never used
+- How to build structs with lazily computed derived fields using `OnceLock` members
+- The difference between `OnceLock` (runtime init) and `const`/`static` (compile-time init)
+- How the `Lazy<T, F>` pattern encapsulates initialization logic alongside the value
 
-In Rust, global statics can't be initialized with arbitrary runtime expressions. `OnceLock<T>` solves this: declare a `static` of type `OnceLock<T>`, and call `.get_or_init(|| ...)` to compute and store the value the first time it's accessed. Every subsequent call returns the cached value instantly. No `unsafe`, no external crates, thread-safe by design.
+## Rust Application
 
-The same pattern works for struct fields. A `LazyConfig` that parses its raw string only when `.items()` is first called — not in the constructor — uses `OnceLock` fields. The parse cost is paid once, on demand, and the result is cached for the struct's lifetime.
+`EXPENSIVE_VALUE: OnceLock<i64>` is a program-global static. The first call to `get_or_init` executes the closure and stores the result; subsequent calls return the cached value with no locking overhead. `LazyConfig` stores `OnceLock<Vec<String>>` and `OnceLock<usize>` fields — each initialized on first access via `get_or_init`, allowing struct construction to remain cheap. The custom `Lazy<T, F>` wraps both the cell and its initializer function, mimicking the `once_cell::Lazy` API.
 
-## The Intuition
+Key patterns:
+- `OnceLock::get_or_init(|| ...)` — run closure at most once, return reference to stored value
+- Multiple `OnceLock` fields for independent lazy derivations in one struct
+- `const fn new(init: F)` — allow `Lazy` to be used in static context
 
-Think of `OnceLock<T>` as a box with a one-way lock. It starts empty. The first person to call `get_or_init` runs the initializer, puts the result in the box, and locks it. Everyone after that just reads from the box — the lock prevents any second initialization. The box can never go back to empty.
+## OCaml Approach
 
-## How It Works in Rust
+OCaml uses `Lazy.t` — a built-in type for deferred computation. `lazy expr` creates a thunk; `Lazy.force` evaluates it on first call and memoizes the result. OCaml's garbage collector handles the memory, and the runtime ensures thread safety via a mutex per lazy cell in OCaml 5.x.
 
-1. **Global static** — `static VALUE: OnceLock<T> = OnceLock::new();` declares an uninitialized global.
-2. **`get_or_init`** — `.get_or_init(|| expensive_computation())` initializes on first call, returns a `&T`; subsequent calls return the same `&T` instantly.
-3. **Struct fields** — embed `OnceLock<T>` in a struct; initialize in a method that takes `&self`; the field is effectively a lazy-computed cached property.
-4. **Thread safety** — `OnceLock<T>` is `Sync`; multiple threads can race on `get_or_init`, only one will run the initializer, others will wait and then read the result.
-5. **`Arc<T>` compatible** — wrap a struct containing `OnceLock` in `Arc` for multi-threaded sharing; initialization is safe across threads.
-
-## What This Unlocks
-
-- Initialize expensive globals (regex, config, lookup tables) without `unsafe` or external crates.
-- Add lazy cached properties to structs without `RefCell` or `Mutex` — `OnceLock` is `Sync`.
-- Defer parsing, compilation, or database connection setup to first use without penalizing startup time.
+```ocaml
+let expensive = lazy ((List.fold_left (+) 0 (List.init 1000 (fun i -> i + 1))))
+let value = Lazy.force expensive  (* computed once *)
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Lazy evaluation | `lazy_t` library or `Lazy.t` (Jane Street); GC-managed | `OnceLock<T>` in std; `once_cell::Lazy<T>` crate for more ergonomics |
-| Global lazy values | `let x = lazy (fun () -> ...)` | `static X: OnceLock<T> = OnceLock::new()` + `get_or_init` |
-| Thread safety | GC handles memory; `Mutex` for concurrency | `OnceLock` is `Sync`; initializes exactly once across threads |
-| Lazy struct fields | Mutable record + option field manually | `OnceLock<T>` field; computed in `&self` methods |
+1. **Language integration**: OCaml has `lazy`/`Lazy.force` as first-class syntax and stdlib types; Rust uses `std::sync::OnceLock` as a library type without special syntax.
+2. **Thread safety model**: `OnceLock` uses atomic operations for lock-free initialization; OCaml's `Lazy.t` in 5.x uses a per-cell mutex, simpler but with more overhead.
+3. **Failure handling**: OCaml's `Lazy.force` can raise exceptions from the initializer; Rust's `get_or_init` panics if the initializer panics (poison), and `get_or_try_init` returns `Result`.
+4. **Struct fields**: Rust can have multiple independent `OnceLock` fields in one struct; OCaml wraps individual `Lazy.t` values in records with the same ergonomics.
+
+## Exercises
+
+1. **Lazy regex cache**: Build a struct `RegexCache` with a `OnceLock<Vec<String>>` field that lazily compiles a list of patterns from a raw comma-separated string on first access.
+2. **Cached factorial**: Implement a `FactorialCache` that computes and caches `n!` for `n` up to 20 using an array of `OnceLock<u64>`, ensuring each entry is computed only once.
+3. **Initialization error**: Modify `Lazy<T, F>` to use `OnceLock<Result<T, String>>` so initialization failures are stored and returned on every subsequent access instead of panicking.

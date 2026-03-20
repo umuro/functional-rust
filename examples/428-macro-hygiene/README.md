@@ -2,79 +2,39 @@
 
 ---
 
-# 428: Macro Hygiene Rules
+# 428: Macro Hygiene
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Variables introduced inside a macro body don't escape into the caller's scope — preventing silent name collisions that would otherwise make macros dangerous to use.
+C preprocessor macros are famously dangerous because they operate via text substitution: `#define DOUBLE(x) x * 2` expands `DOUBLE(a + b)` to `a + b * 2` — not `(a + b) * 2`. Variable name collisions are another hazard: a macro using `int result = ...` conflicts with any `result` variable in the expansion scope. Rust's `macro_rules!` is hygienic: identifiers introduced inside a macro expansion live in a separate scope from the call site. `let result = $val` inside a macro doesn't shadow `result` outside it.
 
-## The Problem This Solves
+Hygiene is what makes Rust's macros safe to use in large codebases without name collision nightmares — it's a fundamental property that distinguishes `macro_rules!` from C preprocessor macros.
 
-Imagine writing a `swap!` macro that needs a temporary variable. The naive implementation does `let tmp = $a; $a = $b; $b = tmp;`. If the caller happens to have a variable named `tmp`, you've just silently shadowed it. The caller's code now reads a different value, and the bug is nearly impossible to track down because the source of the shadow is hidden inside the macro.
+## Learning Outcomes
 
-This is the classic C preprocessor nightmare. A macro like `#define MIN(a,b) ({int tmp=a; tmp<b?tmp:b;})` will wreck any code that uses `tmp` nearby. C developers have worked around this for decades by using obscure names like `_swap_tmp_` — a hack, not a solution.
+- Understand what macro hygiene means: each macro expansion gets its own identifier scope
+- Learn how `let result = $val` inside a macro doesn't capture the caller's `result`
+- See the `with_counter!(|c| { c += 1; })` pattern for intentional hygiene-breaking
+- Understand when hygiene can be intentionally bypassed (passing identifier arguments)
+- Learn the difference between hygienic `macro_rules!` and non-hygienic proc macros
 
-Rust `macro_rules!` macros are **hygienic by default**. The compiler tracks which syntactic context each identifier comes from. A `let tmp` inside a macro body belongs to the macro's context, not the caller's. The caller's `tmp` is in a different context and is completely unaffected.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `hygienic_example!` creates a local `result` variable inside its block. The caller also has a `result` variable. The test in `test_hygiene` verifies that `result + doubled == 20` — the macro's `result = 5` doesn't affect the outer `result = 10`. The `with_counter!` macro takes `|$c:ident|` as an argument, letting the caller name the counter variable — explicit hygiene bypass.
 
-Hygiene means every identifier has a birthplace stamp. When the macro expands, the compiler sees two distinct `tmp`s: one born in the macro definition, one born in the caller's code. They are different variables even though they share a name. The macro's `tmp` is invisible to the caller, and the caller's `tmp` is invisible to the macro's internals.
+## OCaml Approach
 
-The one exception: identifiers introduced via `$name:ident` fragments come from the *caller's* context (that's the whole point — the caller is naming something). So `make_counter!(hits)` really does introduce `hits` into the caller's scope. Hygiene lets macros create invisible temporaries while still letting callers choose the names they expose.
-
-## How It Works in Rust
-
-```rust
-// Hygienic: the internal 'tmp' cannot clash with caller's 'tmp'
-macro_rules! swap {
-    ($a:expr, $b:expr) => {
-        {
-            let tmp = $a;  // this 'tmp' is in MACRO context — invisible to caller
-            $a = $b;
-            $b = tmp;
-        }
-    };
-}
-
-// Caller has their own 'tmp' — swap! doesn't touch it
-let tmp = "I am the caller's tmp";
-let mut x = 1;
-let mut y = 2;
-swap!(x, y);
-assert_eq!(tmp, "I am the caller's tmp"); // untouched!
-assert_eq!((x, y), (2, 1));              // correctly swapped
-
-// $name:ident comes from CALLER context — it appears in caller's scope
-macro_rules! make_counter {
-    ($name:ident) => { let mut $name = 0u32; };
-}
-make_counter!(hits); // introduces 'hits' in the caller's scope
-hits += 1;           // valid — 'hits' is in caller scope
-
-// Internal names in other macros don't collide with caller's 'result'
-macro_rules! log_and_double {
-    ($x:expr) => {{
-        let result = $x * 2;  // hygienic — not the caller's 'result'
-        println!("{} → {}", stringify!($x), result);
-        result
-    }};
-}
-let result = 42;               // caller's 'result'
-let doubled = log_and_double!(21); // macro's internal 'result' is separate
-assert_eq!(result, 42);        // caller's 'result' unchanged
-```
-
-## What This Unlocks
-
-- **Safe utility macros** — write `min!`, `max!`, `swap!`, `dbg_val!` without worrying about name collisions in user code.
-- **Internal temporaries** — macros can use descriptive internal names (`result`, `count`, `temp`) without the C convention of ugly prefixes.
-- **Proc macro hygiene** — when writing procedural macros with `quote!`, use `Span::call_site()` vs `Span::def_site()` to deliberately choose hygiene level for generated identifiers.
+OCaml's PPX extensions are not hygienic in the way Rust's `macro_rules!` is. Generated code identifiers can conflict with surrounding code. PPX authors must use `Ast_builder.gen_symbol` or `fresh_var` utilities to generate unique names. This is the same problem Rust's `macro_rules!` solves automatically. OCaml's `let open Module in` scoping provides some protection, but not systematic hygiene.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Macro hygiene | Not applicable — OCaml macros (ppx) operate at AST level with explicit name generation | `macro_rules!` hygienic by default; identifiers stamped with definition context |
-| Name collision in macros | C-style macros (cpp) in OCaml-C interop are unhygienic | Internal `let` bindings in `macro_rules!` never leak |
-| Caller-injected names | `ppx` can splice caller-provided names | `$name:ident` fragment — in caller's context by design |
-| Proc macros | N/A | Choose hygiene via `Span::call_site()` / `Span::def_site()` in `proc_macro2` |
+1. **Automatic hygiene**: Rust `macro_rules!` is automatically hygienic for introduced variables; OCaml PPX requires explicit fresh identifier generation.
+2. **Span-based**: Rust's hygiene is based on `Span` — identifiers have a "context" indicating which expansion created them; OCaml has no equivalent span-based hygiene.
+3. **Proc macro hygiene**: Rust's proc macros are not hygienic by default (they use `Span::call_site()`) but can opt into hygiene with `Span::def_site()`.
+4. **Fragment capture**: Rust's `$expr:expr` captured fragments maintain their own hygiene context; OCaml's AST captures are transparent.
+
+## Exercises
+
+1. **Hygiene test**: Write a macro `swap!(a, b)` that swaps two variables using a temporary. Verify that the temporary doesn't conflict with variables named `tmp` or `temp` in the calling scope.
+2. **Intentional capture**: Implement `with_err!(|e| { ... })` where `e` is a user-named error variable bound inside the macro. Show that the caller controls the name and can use `with_err!(|my_err| { handle(my_err) })`.
+3. **Demonstrate non-hygiene**: Write a C-style macro alternative using string manipulation (as a thought exercise) and explain how three different variable naming conflicts would occur in C but not in Rust's hygienic `macro_rules!`.

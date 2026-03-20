@@ -2,74 +2,67 @@
 
 ---
 
-# 308: When to panic vs Return Result
+# 308: When to Panic vs Return Result
 
-**Difficulty:** 2  **Level:** Intermediate
+## Problem Statement
 
-Know the one rule that tells you which to use — every time.
+The choice between `panic!()` and returning `Result` is architectural. Panic for programming errors (bugs the developer should fix); return `Result` for operational errors (bad user input, network failures, missing files). Getting this wrong creates brittle APIs that crash on recoverable failures, or obscure programmer errors behind error types that callers don't know how to handle. This distinction maps to OCaml's choice between exceptions and `Result`.
 
-## The Problem This Solves
+## Learning Outcomes
 
-New Rust developers often get this wrong in both directions: using `panic!` for things callers should handle (input validation, missing files), or returning `Result` for things that literally cannot happen given correct code (post-assertion invariants, unreachable branches). Both mistakes make code harder to use and harder to reason about.
+- Distinguish recoverable errors (return `Result`) from programming bugs (use `panic!` or `assert!`)
+- Use `assert!()` and `assert_eq!()` to document and enforce invariants
+- Return `Result` from library functions that receive user-controlled input
+- Panic for impossible states that indicate a bug: violated post-conditions, index out of bounds on internal data
 
-The confusion comes from treating `panic!` as "throws an exception" — but it isn't. A panic in Rust is a signal that the program has encountered a *bug in the calling code*, not a recoverable runtime condition. It's the equivalent of `assert false` in OCaml or `assert` in C — a programmer error, not a user error.
+## Rust Application
 
-The rule is simple: **panic for bugs, `Result` for expected failure modes.** If a user can trigger it (bad input, missing file, network timeout), it's a `Result`. If only a programmer can trigger it (passing the wrong index, violating a documented precondition), it's a panic. Libraries should almost never panic — they serve callers who can't recover from unexpected panics.
-
-## The Intuition
-
-Panic = "you called this wrong" (a bug in the caller). `Result` = "this might fail for reasons outside your control" (expected failure).
-
-## How It Works in Rust
+The rule: `Result` for callers who can handle failures, `panic` for bugs that should never happen:
 
 ```rust
-// Result: user-triggered failure — caller decides how to handle
-fn parse_age(s: &str) -> Result<u8, String> {
+// Library function: user provides input — use Result
+pub fn parse_age(s: &str) -> Result<u8, String> {
     let n: i32 = s.parse().map_err(|_| format!("'{}' is not a number", s))?;
     if n < 0 || n > 150 {
-        return Err(format!("age {} out of range", n));
+        return Err(format!("age {} is out of range [0, 150]", n));
     }
     Ok(n as u8)
 }
 
-// Panic: programmer-triggered failure — documents a contract violation
-fn get_first(slice: &[i32]) -> i32 {
-    assert!(!slice.is_empty(), "get_first: slice must not be empty");
-    slice[0]
+// Internal invariant that must always hold — panic is appropriate
+pub fn divide(a: i32, b: i32) -> i32 {
+    assert!(b != 0, "divide: b must not be zero");
+    a / b
 }
-
-// unreachable!: a branch the programmer has proven can't be reached
-fn classify(n: u8) -> &'static str {
-    match n {
-        0 => "zero",
-        1..=9 => "single digit",
-        10..=99 => "double digit",
-        _ => "triple digit",
-    }
-}
-
-// When it's OK to use unwrap():
-// - In tests (test failures are expected to be loud)
-// - In examples and prototypes
-// - When you've already checked the condition and the type system can't see it
-// - With expect() to document why it should be safe
-let val: i32 = "42".parse().expect("hardcoded literal is always valid");
 ```
 
-The `expect("reason")` pattern over bare `unwrap()` is important in production: it documents *why* the programmer believes this can't fail, making future debugging easier if they're wrong.
+## OCaml Approach
 
-## What This Unlocks
+OCaml uses exceptions for panic-equivalent cases and `Result`/`Option` for expected failures:
 
-- **Clear API contracts** — `Result` in the signature tells callers "this can fail and you should handle it"; no `Result` + documented panics tells callers "don't call this with invalid input"
-- **Library safety** — libraries that never panic (except on documented programmer error) are safe to use in any context
-- **Test structure** — `#[should_panic]` tests document exactly which programmer errors trigger panics
+```ocaml
+(* User input: use Result *)
+let parse_age s =
+  match int_of_string_opt s with
+  | None -> Error (Printf.sprintf "'%s' is not a number" s)
+  | Some n when n < 0 || n > 150 -> Error "age out of range"
+  | Some n -> Ok n
+
+(* Programmer invariant: raise Invalid_argument *)
+let divide a b =
+  if b = 0 then raise (Invalid_argument "divide by zero")
+  else a / b
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Recoverable error | Exception or `Result` type | `Result<T, E>` |
-| Programmer bug | `assert false` / `failwith` | `panic!`, `assert!`, `unreachable!` |
-| Library code | Exceptions acceptable | `Result` strongly preferred — panics are rarely acceptable |
-| Pre-condition violation | Manual assertion | `assert!` or `panic!` with message |
-| Tests | OUnit assertion | `#[should_panic]` for expected panics |
+1. **Panic = unrecoverable**: Rust's `panic!` unwinds the thread; OCaml exceptions are catchable with `try/with` — Rust panics can be caught with `catch_unwind` but this is uncommon.
+2. **API contract**: `panic` documents "this is a bug" in the library contract; `Result` documents "this can fail at runtime".
+3. **Testing**: `#[should_panic]` tests that code panics on contract violations; `assert_eq!` tests that Results contain expected values.
+4. **Infallible**: `std::convert::Infallible` and the `!` type represent operations that cannot fail — the type system enforces it.
+
+## Exercises
+
+1. Write a `safe_sqrt(x: f64) -> Result<f64, String>` and a `sqrt_positive(x: f64) -> f64` (panics on negative) — document when each is appropriate.
+2. Refactor a function that currently panics on invalid input to return `Result`, and show that callers must now handle the error.
+3. Add `assert!` precondition checks to an internal function, then write a test with `#[should_panic]` that verifies the assertion fires on invalid input.

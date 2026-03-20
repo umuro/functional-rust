@@ -33,3 +33,9 @@ Rust offers two natural equivalents: `HashMap<char, usize>` for O(1) average acc
 2. **Update idiom:** OCaml's `CMap.update c f m` takes a function over `option`; Rust's `map.entry(c).or_insert(0)` returns a mutable reference for in-place mutation
 3. **String iteration:** OCaml's `String.fold_left` threads state; Rust's `.chars().filter().map().fold()` composes the same pipeline with explicit types
 4. **Sorting:** OCaml's `List.sort (fun (_, a) (_, b) -> compare b a)` sorts by value descending; Rust's `.sort_by(|(c1,n1),(c2,n2)| n2.cmp(n1).then(c1.cmp(c2)))` adds a stable tiebreaker
+
+## Exercises
+
+1. Extend frequency analysis to produce a normalized frequency map (`HashMap<char, f64>`) where values sum to 1.0, then compute the cosine similarity between two texts.
+2. Implement `index_of_coincidence` — the probability that two randomly selected letters from a text are the same — and use it to estimate whether a text is in English.
+3. Build a Vigenère cipher breaker: use the index of coincidence to guess the key length, then apply frequency analysis on each substream to recover the key.

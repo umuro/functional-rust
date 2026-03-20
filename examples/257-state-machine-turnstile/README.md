@@ -33,3 +33,9 @@ Rust encodes `State` and `Event` as `enum` types with `#[derive(Debug, Clone, Co
 2. **Exhaustiveness:** Both languages guarantee all arms are covered at compile time — OCaml via its type checker, Rust via the `match` exhaustiveness check.
 3. **Copy semantics:** Rust's `Copy` trait lets `State` and `Event` be passed by value and used after — no equivalent concept in OCaml (all values are already value-or-pointer transparent).
 4. **Fold with side effects:** OCaml's `List.fold_left` with `Printf.printf` inside the closure is a natural pattern; Rust separates concerns by collecting transitions first, then printing.
+
+## Exercises
+
+1. Add an `OutOfOrder` state to the turnstile and transitions that enter and exit it, ensuring the state machine handles error recovery.
+2. Model a vending machine as a state machine: states are the amount of money inserted and the selected item; transitions are coin insertion, item selection, and dispensing — enforce valid sequences at the type level.
+3. Implement a stateful parser as a state machine that processes a stream of characters and recognizes a simple regular language (e.g., strings matching `(a|b)*abb`), returning `Accept` or `Reject`.

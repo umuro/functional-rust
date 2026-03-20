@@ -33,3 +33,9 @@ Rust mirrors the recursive structure exactly, using `Vec<String>` instead of `st
 2. **List concatenation:** OCaml's `top @ bottom` is O(n); Rust's `[top, bottom].concat()` allocates a new Vec
 3. **Bit shift:** Both use `1 lsl n` / `1 << n` for powers of 2 — identical semantics
 4. **Mutability:** OCaml's recursion is naturally immutable; Rust's fold version uses an accumulator that's moved (not mutated) each iteration
+
+## Exercises
+
+1. Implement Sierpinski carpet (a 2D square fractal) using the same recursive subdivision approach, parameterized by depth.
+2. Generalize the rendering function to output SVG or HTML canvas instructions instead of ASCII, so the fractal can be displayed at arbitrary resolution.
+3. Implement the Koch snowflake using a string rewriting system (L-system): define production rules, apply them `n` times, then interpret the resulting string as drawing commands.

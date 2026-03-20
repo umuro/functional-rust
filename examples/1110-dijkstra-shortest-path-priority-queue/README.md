@@ -37,3 +37,9 @@ OCaml's sorted-set PQ and functional map, with an inner recursive `go` function.
 2. **Min extraction:** OCaml `PQ.min_elt` + `PQ.remove` → two calls. Rust `BTreeSet::pop_first()` atomically removes and returns the minimum in one call.
 3. **Not-found handling:** OCaml `try SMap.find v dist with Not_found -> max_int` uses exception-based control flow. Rust `.unwrap_or(i32::MAX)` expresses the same default with pure `Option` combinators.
 4. **Tail recursion:** OCaml's `let rec go` is tail-recursive and the compiler emits a loop. Rust's inner `fn go` has no guaranteed TCO — for large graphs the iterative `dijkstra` avoids stack overflow.
+
+## Exercises
+
+1. Add a `path_to` function that reconstructs the sequence of node IDs forming the shortest path from source to target, returning `None` if the target is unreachable.
+2. Extend the graph to support directed vs. undirected edges and verify that shortest paths differ appropriately for each graph type.
+3. Implement A* search on the same graph representation by adding a heuristic function parameter, and compare the number of nodes expanded vs. plain Dijkstra on a grid graph.

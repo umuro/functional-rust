@@ -2,96 +2,78 @@
 
 ---
 
-# 509: Closure Composition
+# Closure Composition
 
-**Difficulty:** 3  **Level:** Intermediate
+Function composition combines two functions `f` and `g` into `f ∘ g` (apply `g` first, then `f`), and `pipe` provides left-to-right composition — both implemented as higher-order functions returning new closures.
 
-Build complex transformations from simple pieces by chaining functions: `compose(f, g)(x) = f(g(x))`.
+## Problem Statement
 
-## The Problem This Solves
+Complex data transformations are best expressed as a sequence of simple steps: parse → validate → normalise → format. Manually nesting function calls `f(g(h(x)))` becomes unreadable for long chains. **Function composition** formalises this: `compose(f, g)` returns a new function that applies `g` then `f`. **Piping** (`|>` in F#, OCaml, and Elixir) applies left-to-right. The `Pipeline` builder pattern extends this to dynamic lists of transformations.
 
-You have three transformations: double a number, add 1, then square it. Without composition, you write one big function `|x| (x * 2 + 1).pow(2)` — or worse, nested calls `square(add1(double(x)))` that read right-to-left and obscure the order of operations.
+## Learning Outcomes
 
-As pipelines grow, so does the cognitive load of tracking what happens when. You want to name sub-transformations, test them independently, and combine them in different orders for different use cases. Composition lets you treat functions as building blocks.
+- Implement `compose(f, g)` returning `impl Fn(A) -> C` for mathematical `f ∘ g`
+- Implement `pipe(f, g)` for left-to-right `f | g` composition
+- Build `make_pipeline(Vec<Box<dyn Fn(T)->T>>)` for dynamic chain construction
+- Use the `Pipeline` builder with fluent `.then(f).then(g).run()` API
+- Understand the type constraints: `F: Fn(A)->B`, `G: Fn(B)->C` for `pipe(F, G)`
 
-The deeper issue: as business logic grows, you want to express it as a sequence of named steps. Composition gives you this without inventing a framework — just functions combining functions.
+## Rust Application
 
-## The Intuition
-
-Function composition is math's `∘` operator: `(f ∘ g)(x) = f(g(x))`. It's a right-to-left combinator. The pipe version is left-to-right: `pipe(f, g)(x) = g(f(x))` — which reads like English: "first do f, then g."
-
-Python doesn't have built-in composition, but you'd write `compose = lambda f, g: lambda x: f(g(x))`. JavaScript: `const compose = (f, g) => x => f(g(x))`. In OCaml, `|>` pipes left-to-right and `@@` applies right-to-left. Rust provides neither natively but lets you build them.
-
-The result of composition is just another closure. Composing closures has zero runtime overhead — the compiler inlines the whole chain.
-
-## How It Works in Rust
+`compose` is mathematical right-to-left (apply `g` first):
 
 ```rust
-// compose: mathematical notation — right-to-left (g applied first, then f)
-fn compose<A, B, C, F, G>(f: F, g: G) -> impl Fn(A) -> C
-where
-    F: Fn(B) -> C,
-    G: Fn(A) -> B,
-{
-    move |x| f(g(x))   // captures both f and g by move
+pub fn compose<A, B, C, F, G>(f: F, g: G) -> impl Fn(A) -> C
+where F: Fn(B) -> C, G: Fn(A) -> B {
+    move |x| f(g(x))
 }
-
-// pipe: data-flow notation — left-to-right (f applied first, then g)
-fn pipe<A, B, C, F, G>(f: F, g: G) -> impl Fn(A) -> C
-where
-    F: Fn(A) -> B,
-    G: Fn(B) -> C,
-{
-    move |x| g(f(x))
-}
-
-let double = |x: i32| x * 2;
-let inc    = |x: i32| x + 1;
-let square = |x: i32| x * x;
-
-// compose(inc, double)(5) = inc(double(5)) = 11
-let double_then_inc = compose(inc, double);
-println!("{}", double_then_inc(5)); // 11
-
-// pipe reads left-to-right: double(5)=10, inc(10)=11, square(11)=121
-let process = pipe(pipe(double, inc), square);
-println!("{}", process(5)); // 121
-
-// Builder pattern for multi-step pipelines
-struct Pipeline<T> {
-    steps: Vec<Box<dyn Fn(T) -> T>>,
-}
-impl<T: 'static> Pipeline<T> {
-    fn new() -> Self { Pipeline { steps: Vec::new() } }
-    fn then(mut self, f: impl Fn(T) -> T + 'static) -> Self {
-        self.steps.push(Box::new(f));
-        self
-    }
-    fn run(self) -> impl Fn(T) -> T {
-        move |x| self.steps.iter().fold(x, |acc, f| f(acc))
-    }
-}
-
-let pipeline = Pipeline::new()
-    .then(|x: i32| x * 2)  // step 1
-    .then(|x| x + 1)        // step 2
-    .then(|x| x * x)        // step 3
-    .run();
-println!("{}", pipeline(3)); // ((3*2)+1)^2 = 49
 ```
 
-## What This Unlocks
+`pipe` is left-to-right (apply `f` first — more intuitive for data pipelines):
 
-- **Named transformation stages** — define `normalize`, `validate`, `format` as closures; compose them differently for different endpoints.
-- **Testable sub-transforms** — each composed step is an independent closure you can unit-test before combining.
-- **Middleware pipelines** — HTTP middleware, data processing stages, and event transformers all follow the composition pattern.
+```rust
+pub fn pipe<A, B, C, F, G>(f: F, g: G) -> impl Fn(A) -> C
+where F: Fn(A) -> B, G: Fn(B) -> C {
+    move |x| g(f(x))
+}
+```
+
+`Pipeline` builder for dynamic composition:
+
+```rust
+let result = Pipeline::new()
+    .then(|x: i32| x * 2)
+    .then(|x| x + 1)
+    .run()(5);  // (5*2)+1 = 11
+```
+
+## OCaml Approach
+
+OCaml has `@@` (right-to-left application) and `|>` (left-to-right pipe) built in:
+
+```ocaml
+let compose f g x = f (g x)   (* right-to-left *)
+let pipe f g x = g (f x)      (* left-to-right *)
+
+(* Using built-in operators *)
+let result = 5 |> (fun x -> x * 2) |> (fun x -> x + 1)  (* 11 *)
+
+(* Dynamic pipeline *)
+let make_pipeline transforms x =
+  List.fold_left (fun acc f -> f acc) x transforms
+```
+
+OCaml 4.01 added `|>` and `@@` to the standard library; they are idiomatic for function pipelines.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Compose operator | Custom `( >> )` or `( << )` | Custom `compose()` function |
-| Mathematical `f ∘ g` | `let compose f g x = f (g x)` | `fn compose<...>(f, g) -> impl Fn` |
-| Pipe forward | `\|>` built-in operator | `.pipe(f)` via extension trait or custom `pipe()` |
-| Type inference | Polymorphic — `'a -> 'b` chain natural | Generic bounds — more verbose but explicit |
-| Point-free style | Natural — `let h = f \|> g` | Possible but needs wrapper functions |
+1. **Built-in operators**: OCaml has `|>` and `@@` in the standard library; Rust has no built-in composition operators — they are library functions.
+2. **Type inference**: OCaml infers all types in `compose`/`pipe`; Rust requires explicit type parameters `<A, B, C, F, G>` for composition functions.
+3. **Dynamic pipeline**: Rust's `make_pipeline(Vec<Box<dyn Fn(T)->T>>)` requires boxing (heap allocation); OCaml's `List.fold_left` over function lists uses uniform representation.
+4. **Builder pattern**: Rust's `Pipeline::new().then(f).then(g).run()` consumes `self` at each step (move semantics); OCaml would use a mutable list `ref` or a functional accumulator.
+
+## Exercises
+
+1. **N-ary compose**: Write `fn compose_all<T>(fns: Vec<Box<dyn Fn(T)->T>>) -> impl Fn(T)->T` that composes a list right-to-left (last function applied first).
+2. **Typed pipeline**: Design a type-safe pipeline where each step's output type must match the next step's input type — use a `struct Pipeline<A, B>` parameterised by input and output types.
+3. **Lazy evaluation**: Wrap the `Pipeline` in a `struct LazyPipeline<T>` that stores the input alongside the transforms and evaluates lazily when `.evaluate()` is called.

@@ -2,84 +2,51 @@
 
 ---
 
-# 583: Const in Patterns
+# Pattern Const Patterns
 
-**Difficulty:** 2  **Level:** Beginner
+## Problem Statement
 
-Match against named constants and associated constants in `match` expressions, making arms self-documenting and refactor-safe.
+Pattern matching in Rust goes beyond simple value checks — it enables powerful dispatch mechanisms for type-safe command processing, visitor-pattern traversals, state machine transitions, and recursive data structure manipulation. This example demonstrates advanced pattern matching techniques that arise in compiler construction, game engines, protocol implementations, and functional programming idioms applied to real systems code.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Magic numbers in `match` arms are fragile and hard to read. When you write `match port { 80 => "HTTP", 443 => "HTTPS", ... }`, the meaning lives only in a comment, and if you later change `HTTP_PORT` from 80 to something else, you must hunt down every `match` that references it.
+- Advanced pattern matching constructs specific to this example's domain
+- How Rust's exhaustiveness checking prevents missed cases in complex dispatch
+- How patterns interact with ownership — matching by value vs by reference
+- How recursive enum patterns (trees, ASTs) work with  variants
+- Where this technique appears in real-world Rust: compilers, game engines, CLI tools
 
-Named constants in `match` arms solve both problems: the name documents intent, and changing the constant's value automatically updates every pattern that references it. This is especially important for domain-specific codes, protocol ports, timeout values, and configuration constants that appear in multiple places.
+## Rust Application
 
-## The Intuition
+The source demonstrates the core technique with working examples that can be run directly. Key constructs include enum variant matching, guard conditions, nested destructuring, and composition of multiple pattern types. The match expressions are exhaustive — adding new variants requires updating all match sites, making the code refactor-safe.
 
-Rust allows `const` names in `match` patterns wherever a literal would work — for integers, booleans, chars, and other `PartialEq + Copy` types. The compiler replaces the constant with its value at compile time. Associated constants (`Type::CONST`) work the same way, letting you group related constants on a type rather than scattering them globally.
+Key patterns demonstrated:
+- Named constant patterns using `const` values in match arms
+- Type-dispatch via enum variants carrying different payload types
+- `Box<T>` deref patterns for recursive data structures
+- Or-pattern grouping for related variants in dispatch tables
 
-One important caveat: a bare identifier in a `match` arm is a *binding pattern*, not a constant. To use a constant, it must be either a `const` item, a path (`Module::CONST`), or an associated constant (`Struct::CONST`). Single-segment `const` names work directly.
+## OCaml Approach
 
-## How It Works in Rust
+OCaml's ML heritage makes it the reference implementation for these patterns. Variant types, exhaustive matching, and recursive type handling in OCaml are equivalent in power:
 
-**Top-level constants in patterns:**
-```rust
-const HTTP:  u16 = 80;
-const HTTPS: u16 = 443;
-
-fn describe_port(p: u16) -> &'static str {
-    match p {
-        HTTP  => "HTTP",
-        HTTPS => "HTTPS",
-        1..=1023 => "well-known",
-        _    => "other",
-    }
-}
+```ocaml
+(* Pattern matching in OCaml handles:
+   - Variant constructors with data: Cmd (arg1, arg2) -> ...
+   - Guards: | x when x > threshold -> ...  
+   - Nested patterns: Node { left; right } -> ...
+   - Recursive cases: the natural form for tree traversal *)
 ```
-`HTTP` and `HTTPS` are treated as values to match against, not as variable bindings.
-
-**Range patterns with constants:**
-```rust
-const MIN_AGE: u32 = 18;
-const MAX_AGE: u32 = 65;
-
-match age {
-    0             => "newborn",
-    1..=MIN_AGE   => "minor",
-    MIN_AGE..=MAX_AGE => "adult",
-    _             => "senior",
-}
-```
-Constants can appear as range endpoints in `..=` patterns.
-
-**Associated constants on a struct:**
-```rust
-struct Cfg;
-impl Cfg {
-    const TIMEOUT: u32 = 30;
-}
-
-match t {
-    Cfg::TIMEOUT => "default",
-    1..=10       => "fast",
-    _            => "slow",
-}
-```
-Path syntax (`Cfg::TIMEOUT`) distinguishes this from a binding pattern.
-
-**Why not just use a variable?** A `let` binding in a match arm would *shadow* the outer variable, not compare against it. Only `const` items, paths, and literals act as value patterns.
-
-## What This Unlocks
-
-- **Refactor-safe match arms** — change the constant once, all patterns update automatically.
-- **Self-documenting dispatch** — `HTTP => ...` reads like a specification, not a cryptic number.
-- **Range patterns with semantic names** — `MIN_AGE..=MAX_AGE` expresses intent that `18..=65` doesn't.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Named constant in match | `let module M = struct let x = 5 end` then `M.x` in pattern | `const X: i32 = 5;` used directly in `match` |
-| Bare identifier in match | Always a binding | Bare single-segment name: binding; `path::CONST` or `CONST`: value |
-| Associated constants | Module-scoped values | `impl Type { const X: T = ...; }` |
-| Range in pattern | `when` guard | `lo..=hi` range pattern directly in arm |
+1. **Box deref**: Rust requires `Box<T>` for recursive types and Rust's patterns transparently deref through `Box`; OCaml's GC manages recursive variant pointers automatically.
+2. **Const patterns**: Rust allows named `const` values in patterns; OCaml can use `let open Consts in` to bring constants into scope for pattern matching.
+3. **Visitor pattern**: OCaml's idiomatic style uses recursive functions directly; Rust often uses both direct recursion and the trait-based visitor pattern for separation of concerns.
+4. **State machines**: Both languages naturally express state machines with variant enums + match — this is one of the strongest arguments for algebraic types over OOP class hierarchies.
+
+## Exercises
+
+1. **Extend the data type**: Add a new variant or field to the main data structure and trace all the match expressions that need updating — practice the exhaustiveness feedback loop.
+2. **Accumulating visitor**: Write a traversal function that collects all leaf values into a `Vec<T>` using only pattern matching and recursion.
+3. **State machine validation**: Implement an invalid-transition error: when the state/event combination is unexpected, return `Err("invalid transition")` instead of panicking.

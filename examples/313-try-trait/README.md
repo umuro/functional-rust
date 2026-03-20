@@ -4,79 +4,63 @@
 
 # 313: The Try Trait — What ? Actually Does
 
-**Difficulty:** 4  **Level:** Expert
+## Problem Statement
 
-Understand the mechanism behind `?` — and how to extend it to custom types.
+The `?` operator desugars to a call to the `Try` trait (unstable) or the earlier `From` + early-return pattern. This example demonstrates the concept using a `Validated<T, E>` type that accumulates multiple errors instead of short-circuiting — illustrating that the `?` behavior is customizable. Understanding what `?` actually does enables implementing custom types that participate in Rust's error-handling ergonomics.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You use `?` constantly, but it's a black box: it somehow short-circuits on failure, converts error types, and continues on success. What's actually happening? And why can't you use `?` on your custom `Validated<T, E>` type that accumulates errors instead of short-circuiting?
+- Understand `?` as desugaring to: extract value or convert error and return early
+- Implement a `Validated` type that accumulates errors instead of short-circuiting
+- Recognize that `?` semantics are defined by the return type, not the operator itself
+- See how `Result` and `Option` implement the early-return contract that `?` relies on
 
-The answer is the `Try` trait (currently unstable as `std::ops::Try`). It defines two operations: decompose a value into "output" (success, continue) or "residual" (failure, short-circuit), and reconstruct a value from either. `?` calls these operations. `Result` and `Option` both implement `Try`. Your custom type doesn't — which is why `?` doesn't work on it.
+## Rust Application
 
-On stable Rust, you can't implement `Try` for your own types. But understanding what `?` does lets you replicate the *behavior* manually using `and_then` chains. And when `Try` stabilizes, you'll know exactly which trait to implement.
-
-## The Intuition
-
-`?` desugars to: "decompose this value — if it's the success case, extract the value and continue; if it's the failure case, convert and return early." The `Try` trait defines what those two cases mean for each type.
-
-## How It Works in Rust
+The `Validated` type shows the contrast with `Result`'s short-circuit behavior:
 
 ```rust
-// What ? actually desugars to (simplified):
-// expr?
-// becomes:
-match Try::branch(expr) {
-    ControlFlow::Continue(v) => v,       // success: extract value, continue
-    ControlFlow::Break(r) => {
-        return FromResidual::from_residual(r);  // failure: convert and return
-    }
+#[derive(Debug, PartialEq)]
+pub enum Validated<T, E> {
+    Ok(T),
+    Err(Vec<E>),
 }
 
-// For Result<T, E>, the Try impl is:
-// - branch(Ok(v))  => ControlFlow::Continue(v)
-// - branch(Err(e)) => ControlFlow::Break(Err(e))
-// The FromResidual impl calls From::from(e) to convert the error type.
-
-// On stable: replicate ? behavior with and_then
-fn process_stable(input: &str) -> Result<String, AppError> {
-    parse_number(input)           // Result<i32, ParseError>
-        .map_err(AppError::Parse) // convert error type (what ? + From does)
-        .and_then(|n| {           // continue if Ok (what ? does on success)
-            validate(n).map_err(AppError::Validation)
-        })
-        .map(|n| format!("result: {}", n))
-}
-
-// Custom type: can't use ?, but can implement the same semantics manually
 impl<T, E> Validated<T, E> {
-    // This is what ? would call if Validated implemented Try
-    fn branch(self) -> Result<T, Vec<E>> {
-        match self {
-            Validated::Ok(v) => Ok(v),
-            Validated::Err(es) => Err(es),
+    // combine_errors: merge error lists from multiple validations
+    pub fn and<U>(self, other: Validated<U, E>) -> Validated<(T, U), E> {
+        match (self, other) {
+            (Validated::Ok(t), Validated::Ok(u)) => Validated::Ok((t, u)),
+            (Validated::Err(mut e1), Validated::Err(e2)) => {
+                e1.extend(e2); Validated::Err(e1)  // Accumulate ALL errors
+            }
+            (Validated::Err(e), _) | (_, Validated::Err(e)) => Validated::Err(e),
         }
-    }
-    // and_then gives us sequential chaining (like ? but explicit)
-    fn and_then<U, F: FnOnce(T) -> Validated<U, E>>(self, f: F) -> Validated<U, E> {
-        match self { Validated::Ok(v) => f(v), Validated::Err(es) => Validated::Err(es) }
     }
 }
 ```
 
-The reason `Validated` can't use `?` even conceptually: `?` short-circuits — it returns on the first failure. `Validated` *accumulates* failures. These two semantics are incompatible. `?` is monadic (sequential), `Validated` is applicative (parallel). They solve different problems.
+## OCaml Approach
 
-## What This Unlocks
+OCaml's `let*` desugars to `bind` — the behavior is determined by the monad, not the syntax. A `Validated` monad in OCaml accumulates errors in its `bind` (applicative) form:
 
-- **Deep understanding of `?`** — know exactly what happens at every `?` site, including the `From` call for error conversion
-- **Debugging type errors** — when `?` doesn't compile, you know exactly which `From` impl or `Try` bound is missing
-- **Custom control flow types** — when `Try` stabilizes, you can implement it for `Option`-like types with different semantics
+```ocaml
+(* Applicative validation: both branches evaluated, errors accumulated *)
+let validate_both v1 v2 = match (v1, v2) with
+  | (Valid x, Valid y) -> Valid (x, y)
+  | (Invalid e1, Invalid e2) -> Invalid (e1 @ e2)
+  | (Invalid e, _) | (_, Invalid e) -> Invalid e
+```
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Monadic bind | `let*` in `Result` or custom monad | `?` operator (calls `Try::branch`) |
-| Custom monad | Custom `let*` via ppx or module | `Try` trait (unstable) — use `and_then` on stable |
-| Short-circuit | `Result.bind` returns early on `Error` | `?` returns early on `ControlFlow::Break` |
-| Applicative | Separate `map2` / `both` | No `?` for applicative — use explicit `combine` |
+1. **Monad vs applicative**: Short-circuit (`Result`, `Option`) is monadic; error accumulation (`Validated`) is applicative — fundamentally different composition strategies.
+2. **`?` limitation**: Rust's `?` is monadic (short-circuit only); accumulation requires explicit `and()` or similar applicative operations.
+3. **Form validation**: Accumulation is the right strategy for form validation — show all errors at once, not one at a time.
+4. **Cats/Haskell**: Haskell's `Validation` type in `validation` crate / `Data.Validation` directly mirrors this; PureScript, Elm, and other FP languages have similar types.
+
+## Exercises
+
+1. Implement a form validator using `Validated<T, String>` that validates a name (non-empty) and age (18-100) simultaneously, returning all errors if both fail.
+2. Add an `and_then` method to `Validated` that behaves identically to `Result::and_then` (short-circuits on `Err`) — show when to use each.
+3. Convert between `Validated<T, Vec<E>>` and `Result<T, Vec<E>>` — what information is preserved or lost in each direction?

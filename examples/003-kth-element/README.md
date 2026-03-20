@@ -35,3 +35,9 @@ Recursive pattern match: if `k = 1`, return the head; otherwise recurse on the t
 3. **Safe access:** Rust's `.get()` returns `Option<&T>`; OCaml's pattern match returns `option`
 4. **Borrowing:** Rust returns `&T` (reference); OCaml copies the value
 5. **Underflow risk:** 1-based `k - 1` can underflow `usize` in Rust — must guard against `k = 0`
+
+## Exercises
+
+1. Write `kth_from_end` that returns the `k`-th element counting from the end of the list (1-indexed), returning `None` if out of bounds.
+2. Implement `every_kth` that collects every `k`-th element of a slice into a new `Vec` (e.g., every 3rd element starting from index `k-1`).
+3. Write `kth_element_sorted` that finds the `k`-th smallest element of an unsorted slice without fully sorting it (selection algorithm), returning `None` if `k` exceeds the length.

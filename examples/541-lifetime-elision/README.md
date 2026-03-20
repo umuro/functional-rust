@@ -2,102 +2,48 @@
 
 ---
 
-# 541: Lifetime Elision Rules
+# Lifetime Elision Rules
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-90% of Rust lifetimes are never written — the compiler infers them using three deterministic rules. Knowing the rules tells you exactly when you must write `'a` and when the compiler will figure it out.
+Writing explicit lifetime annotations on every function would make Rust code extremely verbose. Lifetime elision rules were introduced to allow the compiler to infer annotations in the most common cases, making everyday code read cleanly. Three rules cover the vast majority of functions: (1) each input reference gets its own lifetime, (2) if there is exactly one input lifetime, it propagates to all output references, (3) if one of the inputs is `&self` or `&mut self`, its lifetime propagates to all output references. Understanding these rules explains when annotations are required and why.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Early Rust required every lifetime to be written explicitly. Every function signature involving references needed `<'a>` annotations. The community found that most lifetime annotations were *obvious* from the signature structure — so Rust introduced elision rules to infer them automatically.
+- The three elision rules that allow annotations to be omitted in common cases
+- How `fn strlen(s: &str) -> usize` expands to `fn strlen<'a>(s: &'a str) -> usize`
+- How `fn first_word(s: &str) -> &str` expands by Rule 2 (one input → output gets its lifetime)
+- How `fn remaining(&self) -> &str` on a struct expands by Rule 3 (&self lifetime)
+- When elision fails: multiple reference inputs with a reference output require explicit annotation
 
-Without knowing the rules, you can't tell whether a function signature is correct or just happens to compile. You also can't diagnose "missing lifetime specifier" errors — you won't know which cases require annotation.
+## Rust Application
 
-## The Intuition
+`strlen(s: &str) -> usize` — no output reference, so only Rule 1 applies (input gets its own lifetime). `first_word(s: &str) -> &str` — Rule 2: one input `&str` → output `&str` gets the same lifetime. `Parser<'a>` with method `remaining(&self) -> &str` — Rule 3: `&self` has `'a`, so the output `&str` gets `'a`. `longer<'a>(x: &'a str, y: &'a str) -> &'a str` — two inputs, elision cannot determine which, so annotation is required. The source file includes comments showing both the elided and expanded forms.
 
-Lifetime elision is the compiler filling in lifetime annotations you didn't write. The three rules are applied in order to each function signature:
+Key patterns:
+- Elided form: `fn f(s: &str) -> &str` (readable)
+- Expanded form: `fn f<'a>(s: &'a str) -> &'a str` (explicit, same semantics)
+- Failure case: two input `&str` with one output `&str` — must annotate
 
-- **Rule 1**: Every input reference gets its own fresh lifetime. (`&str` becomes `&'a str`, another `&str` becomes `&'b str`)
-- **Rule 2**: If there's exactly one input reference lifetime after Rule 1, all output references get that lifetime.
-- **Rule 3**: If one of the inputs is `&self` or `&mut self`, all output references get self's lifetime.
+## OCaml Approach
 
-If after applying all three rules, any output reference lifetime is still unknown, the compiler requires an explicit annotation.
+OCaml has no lifetime elision because there are no lifetime annotations to elide. All functions operate on GC-managed values, and no annotation is ever required:
 
-## How It Works in Rust
-
-**Rule 1 — one input, output unrelated (no elision needed):**
-
-```rust
-fn strlen(s: &str) -> usize { s.len() }
-// Expands to: fn strlen<'a>(s: &'a str) -> usize
-// No output reference — rule 1 fires but rule 2 doesn't need to
+```ocaml
+let strlen s = String.length s
+let first_word s = match String.split_on_char ' ' s with w :: _ -> w | [] -> ""
+let longer x y = if String.length x >= String.length y then x else y
 ```
-
-**Rule 2 — single input reference, output gets that lifetime:**
-
-```rust
-fn first_word(s: &str) -> &str {
-    s.split_whitespace().next().unwrap_or("")
-}
-// Expands to: fn first_word<'a>(s: &'a str) -> &'a str
-// Rule 1: s gets 'a. Rule 2: exactly one input lifetime → output gets 'a
-```
-
-**Rule 3 — `&self` method, output gets self's lifetime:**
-
-```rust
-struct Cache { data: Vec<String> }
-
-impl Cache {
-    fn get(&self, index: usize) -> Option<&str> {
-        self.data.get(index).map(|s| s.as_str())
-    }
-    // Expands to: fn get<'a>(&'a self, index: usize) -> Option<&'a str>
-    // Rule 3: &self present → output gets 'a (self's lifetime)
-}
-```
-
-**When elision fails — must annotate:**
-
-```rust
-// Two input references, output reference, no self → rule 2 can't apply (two candidates)
-fn longest(x: &str, y: &str) -> &str { ... }
-// error: missing lifetime specifier
-// Fix:
-fn longest<'a>(x: &'a str, y: &'a str) -> &'a str { ... }
-```
-
-**Rule 2 works with one input even if there are more:**
-
-```rust
-// Output comes from s, not prefix — must annotate even though one "main" input
-fn trim_prefix<'a>(s: &'a str, prefix: &str) -> &'a str {
-    // 'a on s only; prefix gets its own lifetime but output is tied to s
-    s.strip_prefix(prefix).unwrap_or(s)
-}
-```
-
-**The `'_` placeholder — explicit elision:**
-
-```rust
-// '_ means "infer the lifetime here" — documents that a lifetime is present
-fn get_first(v: &[i32]) -> Option<&'_ i32> { v.first() }
-// Same as: fn get_first<'a>(v: &'a [i32]) -> Option<&'a i32>
-```
-
-## What This Unlocks
-
-- **Readable signatures** — common functions like `first_word`, `trim`, `get` don't need cluttered annotations. The rules make them clean by default.
-- **Diagnosing "missing lifetime specifier"** — you can immediately tell *why* an annotation is required: two input references with an output reference, and no `self`.
-- **Confident API design** — choosing between `fn get(&self) -> &str` (rule 3: tied to self) and `fn get(&self) -> &'a str` (tied to the data) becomes a deliberate decision, not guesswork.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Reference annotations | No reference annotations — GC manages all | Lifetimes usually inferred via elision; explicit when ambiguous |
-| Inference rules | Full Hindley-Milner type inference everywhere | Three elision rules for lifetimes; everything else explicit |
-| Method return references | Always valid (GC) | Rule 3: `&self` methods return borrow tied to self by default |
-| Single input functions | No concept | Rule 2: one input `&T` → output `&T` gets same lifetime |
-| `'_` syntax | N/A | Explicit elision marker — "infer this lifetime" — useful in type positions |
+1. **Annotation reduction**: Rust's elision rules eliminate annotations in ~90% of practical cases; OCaml eliminates them in 100% of cases because the GC removes the need.
+2. **Rule transparency**: Rust programmers must understand elision rules to read and write idiomatic code; OCaml programmers never encounter lifetime annotations.
+3. **Elision failure**: When Rust elision fails (multiple input references, multiple output references), explicit annotations are required — a learning hurdle that OCaml completely avoids.
+4. **Correctness guarantee**: Rust's elision rules are specified precisely — they are not guesses; the expanded form is provably equivalent; OCaml's implicit safety comes from GC correctness.
+
+## Exercises
+
+1. **Manual expansion**: Take the five functions in the source file and write out their fully-expanded forms with all lifetime annotations explicit — verify they produce identical behavior.
+2. **Elision limit**: Write a function `fn pick(cond: bool, a: &str, b: &str) -> &str` — observe that elision fails here and add the correct annotation.
+3. **Method elision**: Add a method `fn peek(&self) -> char` to `Parser` that returns the first character of `self.input` — verify elision applies Rule 3 correctly.

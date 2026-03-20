@@ -2,80 +2,62 @@
 
 ---
 
-# 835: Point-in-Polygon — Ray Casting
+# Point-in-Polygon Test
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Determine if a point lies inside an arbitrary polygon in O(n) — the fundamental primitive for geographic analysis, game collision, and mesh intersection.
+Determining whether a point lies inside a polygon is fundamental to GIS applications, game collision detection, map interfaces (is this GPS coordinate inside this region?), and computational geometry. The ray casting algorithm casts a horizontal ray from the query point rightward and counts crossings with polygon edges — an odd count means inside, even means outside. The winding number algorithm counts how many times the polygon winds around the point, handling non-convex and self-intersecting polygons correctly. These tests appear in every GIS library, game physics engine, and graphics renderer.
 
-## The Problem This Solves
+## Learning Outcomes
 
-"Is this GPS coordinate inside this country's border?" "Did this mouse click land inside this irregular shape?" "Is this mesh vertex inside this other mesh?" All three reduce to point-in-polygon. It's one of the most frequently needed geometric primitives, appearing in GIS systems (PostGIS uses ray casting for `ST_Contains`), game engines (click detection on irregular sprites), and computational geometry pipelines.
+- Implement the ray casting algorithm: count horizontal ray crossings with polygon edges
+- Handle edge cases: point exactly on edge, ray passing through vertex, horizontal edges
+- Implement the winding number algorithm for non-convex and self-intersecting polygons
+- Understand when each algorithm is appropriate: ray casting for simple polygons, winding number for complex
+- Apply to batch queries: preprocess polygon for O(log n) per query vs O(n) per query
 
-The ray casting algorithm is O(n) per query where n is the number of polygon edges — optimal without preprocessing. The winding number algorithm is an alternative that handles edge cases differently (particularly for self-intersecting polygons); ray casting is simpler and faster for simple polygons.
-
-Correctness hinges entirely on handling degenerate cases: the ray passing exactly through a vertex, the ray running along an edge, the point exactly on the boundary. Getting these right requires careful inequality choices (using `<` vs `≤` at exactly the right places).
-
-## The Intuition
-
-Shoot a ray from P in the +x direction (i.e., to the right). Count how many times the ray crosses a polygon edge. Odd crossings: P is inside. Even crossings: outside. This is the Jordan curve theorem applied computationally.
-
-For each edge (A, B): the ray crosses the edge if A.y and B.y straddle P.y (one strictly above, one at or below — the careful inequality prevents double-counting vertices), and the crossing x-coordinate is to the right of P. The crossing x: `A.x + (P.y - A.y) / (B.y - A.y) × (B.x - A.x)`.
-
-Boundary detection (point exactly on an edge) is handled separately using the cross product to test collinearity and a bounding box check for the range.
-
-## How It Works in Rust
+## Rust Application
 
 ```rust
-const EPS: f64 = 1e-10;
-
-// Test if P lies on segment AB: collinear + within bounding box
-fn on_segment(p: &Point, a: &Point, b: &Point) -> bool {
-    let cross = (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x);
-    if cross.abs() > EPS { return false; }  // Not collinear
-    p.x >= f64::min(a.x, b.x) - EPS && p.x <= f64::max(a.x, b.x) + EPS
-        && p.y >= f64::min(a.y, b.y) - EPS && p.y <= f64::max(a.y, b.y) + EPS
-}
-
-fn point_in_polygon(p: &Point, polygon: &[Point]) -> Location {
+pub fn point_in_polygon(point: &Point, polygon: &[Point]) -> bool {
     let n = polygon.len();
-    if n == 0 { return Location::Outside; }
-
-    let mut crossings = 0usize;
+    let mut inside = false;
+    let (px, py) = (point.x, point.y);
+    let (mut j) = n - 1;
     for i in 0..n {
-        let (a, b) = (&polygon[i], &polygon[(i + 1) % n]);
-
-        if on_segment(p, a, b) { return Location::OnBoundary; }
-
-        // Ray crossing condition:
-        // 1. Edge straddles P.y: one vertex strictly above, one at-or-below
-        //    (the strict/non-strict choice ensures a vertex is counted once)
-        // 2. The crossing x-coordinate is to the RIGHT of P
-        if (a.y <= p.y && b.y > p.y) || (b.y <= p.y && a.y > p.y) {
-            let x_cross = a.x + (p.y - a.y) / (b.y - a.y) * (b.x - a.x);
-            if p.x < x_cross {
-                crossings += 1;
-            }
+        let (xi, yi) = (polygon[i].x, polygon[i].y);
+        let (xj, yj) = (polygon[j].x, polygon[j].y);
+        if ((yi > py) != (yj > py)) &&
+           (px < (xj - xi) * (py - yi) / (yj - yi) + xi) {
+            inside = !inside;
         }
+        j = i;
     }
-    if crossings % 2 == 1 { Location::Inside } else { Location::Outside }
+    inside
 }
 ```
 
-The `(i + 1) % n` wrap connects the last vertex to the first, closing the polygon without special-casing. The inequality choice `a.y <= p.y && b.y > p.y` (one `<=`, one `>`) is the standard way to count each vertex exactly once when the ray passes through it.
+The Jordan curve theorem guarantees the ray casting result for simple (non-self-intersecting) polygons. The condition `(yi > py) != (yj > py)` checks whether the edge crosses the horizontal ray height. The division avoids edge cases where the edge is horizontal (denominator non-zero due to the first condition). Rust's tuple destructuring `(xi, yi)` keeps the coordinate extraction clean. The algorithm handles the previous vertex via `j = i` update — no circular indexing with modulo.
 
-## What This Unlocks
+## OCaml Approach
 
-- **GIS and geographic queries**: PostGIS `ST_Contains`, OpenLayers polygon selection, and every "is this coordinate in this region?" query uses ray casting or winding number.
-- **Game engines and UI**: Click detection on irregular shapes — buttons, sprites, terrain regions. Efficient with spatial indexing (quadtree) to narrow candidates before calling point_in_polygon.
-- **Mesh processing**: Voxelization, CSG (Constructive Solid Geometry), and mesh boolean operations all need point-in-polygon as a subroutine for classifying geometry relative to surfaces.
+OCaml implements point-in-polygon with a `List.fold_left` over edge pairs or a `for` loop with `Array`. The condition is identical floating-point arithmetic. OCaml's `ref` for the mutable `inside` flag: `let inside = ref false in ... inside := not !inside`. The functional version threads the crossing count and previous vertex through `fold`. OCaml's `List.filteri` can pre-filter edges that could possibly cross the query point's y-coordinate for batch optimization.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Float comparison | `<`, `<=` (built-in, raises on NaN) | Same; use `EPS` for near-equality |
-| Polygon edges | `Array.init n (fun i -> (poly.(i), poly.((i+1) mod n)))` | `for i in 0..n` with `(i+1) % n` |
-| Mutable counter | `let count = ref 0 in count := !count + 1` | `let mut crossings = 0; crossings += 1` |
-| Result type | Variant or int | `enum Location { Inside, Outside, OnBoundary }` |
-| Boundary epsilon | Same EPS pattern | `const EPS: f64 = 1e-10` |
+| Aspect | Rust | OCaml |
+|---|---|---|
+| Mutation | `inside = !inside` (bool flip) | `inside := not !inside` |
+| Edge iteration | `for i in 0..n` with `j = i` | `for` loop or `fold_left` |
+| Previous vertex | Separate `j` variable | Same or pair in fold state |
+| Float comparison | `!=` for `f64` (works here) | `<>` for float |
+| Winding number | Separate function | Same approach |
+| Batch queries | `fn contains_batch` | `List.map (point_in_polygon poly)` |
+
+## Exercises
+
+1. Implement the winding number algorithm and verify it handles self-intersecting polygons correctly where ray casting fails.
+2. Add a `point_on_edge` test and handle the "on boundary" case by returning an enum `Inside`/`Outside`/`OnBoundary`.
+3. Preprocess a convex polygon for O(log n) point-in-polygon using binary search on edge angles.
+4. Batch test 10,000 random points against a complex polygon and measure the performance of ray casting vs. winding number.
+5. Implement polygon union/intersection using multiple point-in-polygon tests (Sutherland-Hodgman algorithm).

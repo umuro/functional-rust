@@ -2,75 +2,37 @@
 
 ---
 
-# 790: Matrix Chain Multiplication
+# 790-matrix-chain-multiplication — Matrix Chain Multiplication
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Find the optimal parenthesization order to minimize scalar multiplications when chaining matrices together.
+The matrix chain multiplication problem asks: in what order should a sequence of matrices be multiplied to minimize the total number of scalar multiplications? Different association orders can differ by orders of magnitude: `(A × B) × C` might cost 1000 operations while `A × (B × C)` costs 100. The O(n³) DP solution, from Godbole (1973), is a textbook example of interval DP and is used in query optimization in databases (join reordering) and deep learning compilers (operation fusion).
 
-## The Problem This Solves
+## Learning Outcomes
 
-Matrix multiplication is associative: `(A × B) × C = A × (B × C)`. The order of parenthesization doesn't change the result — but it dramatically changes the cost. With the wrong order, multiplying a chain of matrices can require billions of operations; with the optimal order, the same chain might need only thousands.
+- Model matrix chain as `dims: &[usize]` where `dims[i] × dims[i+1]` is the size of matrix i
+- Fill a 2D DP table where `dp[i][j]` = min cost to multiply matrices i through j
+- Understand interval DP: building solutions to larger intervals from smaller ones
+- Implement the split-point recurrence: try all `k` in `i..j` as split points
+- Use the optimal ordering for actual computation (requires parenthesization reconstruction)
 
-This matters any time you compose linear transformations — 3D rendering pipelines, neural network weight matrices, compiler-generated loop transformations, and robotics kinematics chains all multiply sequences of matrices. In production, getting the order wrong by even one step can make a hot path 100× slower.
+## Rust Application
 
-Matrix chain multiplication is a classic **interval DP** problem: you break the chain at every possible split point `k`, recursively solve both sub-chains, and pick the split that minimizes total cost. Bottom-up DP fills a triangular table in O(n³) time and O(n²) space, then backtracks through a `split` table to reconstruct the optimal parenthesization.
+`matrix_chain(dims)` initializes `dp[i][i] = 0` (single matrix = no cost) and fills by chain length from 2 to n. For each interval `[i, j]` and split point `k`, computes `dp[i][k] + dp[k+1][j] + dims[i]*dims[k+1]*dims[j+1]` and takes the minimum. The classic test case `dims=[10,20,30,40,30]` should produce cost 30000.
 
-## The Intuition
+## OCaml Approach
 
-Given matrices M₁, M₂, …, Mₙ with compatible dimensions, you want to find where to place the parentheses so the total number of scalar multiplications is minimized. Multiplying an `a×b` matrix by a `b×c` matrix costs `a*b*c` operations. The DP state `dp[i][j]` = minimum cost to multiply matrices `i` through `j`. Try every split point `k` between `i` and `j`, then `dp[i][j] = min over k of (dp[i][k] + dp[k+1][j] + dims[i]*dims[k+1]*dims[j+1])`. O(n³) time, O(n²) space.
-
-## How It Works in Rust
-
-```rust
-fn matrix_chain(dims: &[usize]) -> (usize, Vec<Vec<usize>>) {
-    let n = dims.len() - 1;  // number of matrices
-    let mut dp    = vec![vec![0usize; n]; n];  // min cost
-    let mut split = vec![vec![0usize; n]; n];  // optimal split point
-
-    // Fill by chain length l = 2..=n
-    for l in 2..=n {
-        for i in 0..=(n - l) {
-            let j = i + l - 1;
-            dp[i][j] = usize::MAX;
-            for k in i..j {
-                // Cost = left sub-chain + right sub-chain + this multiplication
-                let cost = dp[i][k]
-                    .saturating_add(dp[k + 1][j])
-                    .saturating_add(dims[i] * dims[k + 1] * dims[j + 1]);
-                if cost < dp[i][j] {
-                    dp[i][j] = cost;
-                    split[i][j] = k;  // remember where to split
-                }
-            }
-        }
-    }
-    (dp[0][n - 1], split)
-}
-
-// Reconstruct the optimal parenthesization from the split table
-fn parenthesize(split: &Vec<Vec<usize>>, i: usize, j: usize) -> String {
-    if i == j { format!("M{}", i + 1) }
-    else {
-        let k = split[i][j];
-        format!("({} × {})", parenthesize(split, i, k), parenthesize(split, k + 1, j))
-    }
-}
-```
-
-Key Rust details: `saturating_add` prevents overflow when adding to `usize::MAX` (sentinel for "not yet computed"); the `split` table is a separate `Vec<Vec<usize>>` that mirrors the `dp` table structure; reconstruction is a natural recursive descent.
-
-## What This Unlocks
-
-- **Interval DP pattern** — the same "fill by sub-problem length" structure applies to optimal BST construction, polygon triangulation, and burst balloons problems.
-- **Split-table reconstruction** — separating the "cost" DP from the "decision" DP lets you cheaply trace back the optimal solution after O(n³) work.
-- **Saturating arithmetic for sentinels** — `usize::MAX` as infinity works safely with `saturating_add`, avoiding the classic "accidentally wrap to zero" bug.
+OCaml implements interval DP with `Array.make_matrix n n 0` and nested `for` loops. The outer loop is over chain length, not indices directly, to ensure smaller subproblems are solved before larger ones. OCaml's `min` function and imperative array updates make this direct. The reconstruction uses a separate `split: int array array` table storing optimal split points.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| 2D mutable table | `Array.make_matrix n n 0` | `vec![vec![0usize; n]; n]` |
-| Infinity sentinel | `max_int` | `usize::MAX` with `saturating_add` |
-| Recursive reconstruction | Natural pattern matching | Explicit recursion with index tracking |
-| Immutable sub-results | Functional style with `let` | Same — inner `for` builds toward `dp[i][j]` |
+1. **Interval DP pattern**: Both languages use the same outer-loop-over-length approach to ensure subproblem ordering; the code structure is nearly identical.
+2. **Initialization**: Rust uses `dp[i][j] = usize::MAX` as infinity; OCaml uses `max_int` — same concept.
+3. **Real-world**: Database query optimizers use the same interval DP for join ordering; Rust-based databases like TiKV use this internally.
+4. **Space**: O(n²) space is required; no known space-efficient algorithm exists for this problem.
+
+## Exercises
+
+1. Add a `matrix_chain_order(dims)` function that returns the optimal parenthesization as a string like `"((A(BC))D)"`.
+2. Implement the memoized top-down version and verify it produces the same results as the bottom-up tabulation.
+3. Apply matrix chain optimization to a sequence of 10 randomly-sized matrices and measure how much the optimal ordering reduces the operation count vs. left-to-right.

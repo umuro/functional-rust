@@ -33,3 +33,9 @@ Rust uses `Vec<T>` instead of linked lists. The queue takes ownership of `self` 
 2. **List vs Vec:** OCaml's linked lists have O(1) prepend; Rust's `Vec` has O(1) push but O(n) remove-from-front — a VecDeque would be more efficient but less pedagogical
 3. **Pattern matching:** OCaml matches on list constructors (`h :: t`); Rust checks `is_empty()` and uses `remove(0)`
 4. **Record update:** OCaml's `{ q with back = x :: q.back }` creates a new record; Rust's `mut self` modifies in place
+
+## Exercises
+
+1. Add a `peek` method that returns a reference to the front element without removing it, and an `is_full` predicate.
+2. Implement a thread-safe circular buffer using `Arc<Mutex<CircularBuffer<T>>>` that can be shared between a producer thread and a consumer thread.
+3. Extend the circular buffer to support batch operations: `push_slice` that enqueues an entire `&[T]` atomically (wrapping around if needed) and `drain` that removes all current elements into a `Vec`.

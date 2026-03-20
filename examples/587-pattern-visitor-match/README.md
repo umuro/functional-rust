@@ -2,95 +2,51 @@
 
 ---
 
-# 587: Visitor Pattern via Match
+# Pattern Visitor Match
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Implement multiple independent traversals over a recursive data structure — each traversal is a function, not a class.
+Pattern matching in Rust goes beyond simple value checks — it enables powerful dispatch mechanisms for type-safe command processing, visitor-pattern traversals, state machine transitions, and recursive data structure manipulation. This example demonstrates advanced pattern matching techniques that arise in compiler construction, game engines, protocol implementations, and functional programming idioms applied to real systems code.
 
-## The Problem This Solves
+## Learning Outcomes
 
-The classic object-oriented Visitor pattern requires a `Visitor` interface, an `accept(visitor)` method on every node type, and a concrete class for each operation. To add evaluation, pretty-printing, and literal collection to an expression tree, you write three visitor classes, each with five `visit_*` methods. That's fifteen methods, two interfaces, and a pile of boilerplate before you've written any real logic.
+- Advanced pattern matching constructs specific to this example's domain
+- How Rust's exhaustiveness checking prevents missed cases in complex dispatch
+- How patterns interact with ownership — matching by value vs by reference
+- How recursive enum patterns (trees, ASTs) work with  variants
+- Where this technique appears in real-world Rust: compilers, game engines, CLI tools
 
-The alternative in OOP — just adding methods to each node type — breaks open/closed: every new operation means touching every class. Neither solution is clean.
+## Rust Application
 
-Rust's enum + match inverts this. The data structure is one enum. Each operation is one function. Adding a new operation means adding one function. The compiler guarantees every variant is handled in every function. It's the ideal tradeoff for "stable structure, many operations."
+The source demonstrates the core technique with working examples that can be run directly. Key constructs include enum variant matching, guard conditions, nested destructuring, and composition of multiple pattern types. The match expressions are exhaustive — adding new variants requires updating all match sites, making the code refactor-safe.
 
-## The Intuition
+Key patterns demonstrated:
+- Named constant patterns using `const` values in match arms
+- Type-dispatch via enum variants carrying different payload types
+- `Box<T>` deref patterns for recursive data structures
+- Or-pattern grouping for related variants in dispatch tables
 
-An enum represents a closed set of variants — you control the full list. A recursive function over that enum is a "visitor" in the traditional sense, but without any of the ceremony. The `match` dispatches to the right case, the recursion handles nesting, and the compiler verifies completeness.
+## OCaml Approach
 
-OCaml built its entire standard library around this pattern — `type expr = Lit of float | Add of expr * expr | ...` with `let rec eval = function ...` for each operation. It's idiomatic ML. Rust inherited this style directly.
+OCaml's ML heritage makes it the reference implementation for these patterns. Variant types, exhaustive matching, and recursive type handling in OCaml are equivalent in power:
 
-The key insight: each "visitor" function has the same structure — match on the variant, handle the leaf, recurse on the children. The structure is identical; only the operation differs. Once you see it, you can write a new traversal in minutes.
-
-## How It Works in Rust
-
-```rust
-#[derive(Debug, Clone)]
-enum Expr {
-    Lit(f64),
-    Add(Box<Expr>, Box<Expr>),
-    Sub(Box<Expr>, Box<Expr>),
-    Mul(Box<Expr>, Box<Expr>),
-    Div(Box<Expr>, Box<Expr>),
-}
-
-// Visitor 1: evaluate the tree
-fn eval(e: &Expr) -> f64 {
-    match e {
-        Expr::Lit(n)   => *n,
-        Expr::Add(l,r) => eval(l) + eval(r),
-        Expr::Sub(l,r) => eval(l) - eval(r),
-        Expr::Mul(l,r) => eval(l) * eval(r),
-        Expr::Div(l,r) => eval(l) / eval(r),
-    }
-}
-
-// Visitor 2: count operations (non-leaf nodes)
-fn count_ops(e: &Expr) -> usize {
-    match e {
-        Expr::Lit(_) => 0,
-        // Or-pattern for all binary ops — shared recursive structure
-        Expr::Add(l,r) | Expr::Sub(l,r) | Expr::Mul(l,r) | Expr::Div(l,r) =>
-            1 + count_ops(l) + count_ops(r),
-    }
-}
-
-// Visitor 3: pretty-print to string
-fn pretty(e: &Expr) -> String {
-    match e {
-        Expr::Lit(n)   => format!("{}", n),
-        Expr::Add(l,r) => format!("({}+{})", pretty(l), pretty(r)),
-        // ... each variant gets its operator
-    }
-}
-
-// Visitor 4: collect all leaf values
-fn collect_lits(e: &Expr) -> Vec<f64> {
-    match e {
-        Expr::Lit(n)   => vec![*n],
-        Expr::Add(l,r) | Expr::Sub(l,r) | Expr::Mul(l,r) | Expr::Div(l,r) => {
-            let mut v = collect_lits(l);
-            v.extend(collect_lits(r));
-            v
-        }
-    }
-}
+```ocaml
+(* Pattern matching in OCaml handles:
+   - Variant constructors with data: Cmd (arg1, arg2) -> ...
+   - Guards: | x when x > threshold -> ...  
+   - Nested patterns: Node { left; right } -> ...
+   - Recursive cases: the natural form for tree traversal *)
 ```
-
-## What This Unlocks
-
-- **Zero-boilerplate traversals** — each new operation is one function; no interfaces, no accept/visit plumbing.
-- **Compiler-enforced completeness** — add `Expr::Pow` and every visitor function stops compiling until you handle it.
-- **Or-patterns for shared structure** — `Add(l,r) | Sub(l,r) | Mul(l,r)` shares identical recursive logic across variants.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Data structure | `type expr = ...` | `enum Expr { ... }` |
-| Each traversal | `let rec eval = function ...` | `fn eval(e: &Expr) -> T { match e { ... } }` |
-| Or-patterns | `\| Add(l,r) \| Sub(l,r) -> same_logic` | `Expr::Add(l,r) \| Expr::Sub(l,r) =>` |
-| OOP alternative | Visitor pattern with interfaces | Not needed — functions are first-class |
-| Adding a variant | Compile error in all visitors | Same — compiler finds every match |
+1. **Box deref**: Rust requires `Box<T>` for recursive types and Rust's patterns transparently deref through `Box`; OCaml's GC manages recursive variant pointers automatically.
+2. **Const patterns**: Rust allows named `const` values in patterns; OCaml can use `let open Consts in` to bring constants into scope for pattern matching.
+3. **Visitor pattern**: OCaml's idiomatic style uses recursive functions directly; Rust often uses both direct recursion and the trait-based visitor pattern for separation of concerns.
+4. **State machines**: Both languages naturally express state machines with variant enums + match — this is one of the strongest arguments for algebraic types over OOP class hierarchies.
+
+## Exercises
+
+1. **Extend the data type**: Add a new variant or field to the main data structure and trace all the match expressions that need updating — practice the exhaustiveness feedback loop.
+2. **Accumulating visitor**: Write a traversal function that collects all leaf values into a `Vec<T>` using only pattern matching and recursion.
+3. **State machine validation**: Implement an invalid-transition error: when the state/event combination is unexpected, return `Err("invalid transition")` instead of panicking.

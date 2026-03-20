@@ -2,54 +2,39 @@
 
 ---
 
-# 332: Retry Async
+# 332: Retry Async with Exponential Backoff
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Retry failed operations with exponential backoff — the foundation of resilient async services.
+Transient failures — network blips, temporary service overloads, rate limits — are common in distributed systems. Retrying immediately is counterproductive (may worsen overload); retrying with exponential backoff gives services time to recover while limiting wait time with a maximum delay cap. Distinguishing transient from permanent errors is essential: don't retry bad input or authentication failures. This is a fundamental resilience pattern for any service calling external APIs.
 
-## The Problem This Solves
+## Learning Outcomes
 
-In distributed systems, transient failures are the norm. Treating every failure as permanent makes services fragile. You need a principled retry loop: try again, wait longer each time, give up after reasonable attempts.
+- Distinguish transient errors (worth retrying) from permanent errors (don't retry)
+- Implement exponential backoff: delay doubles each attempt, capped at a maximum
+- Add jitter to prevent thundering herd: randomize delays slightly
+- Implement a configurable retry loop with max attempts, base delay, multiplier, and max delay
 
-This example formalizes: `Transient` vs `Permanent` error variants, configurable exponential backoff, and a hard limit on attempts.
+## Rust Application
 
-## The Intuition
-
-Like a JavaScript `fetchWithRetry`:
-```js
-async function fetchWithRetry(url, attempts = 3, delay = 100) {
-  for (let i = 0; i < attempts; i++) {
-    try { return await fetch(url); }
-    catch (e) { if (i < attempts - 1) await sleep(delay * 2**i); }
-  }
-}
-```
-
-Rust's version is more explicit about *why* it's failing.
-
-## How It Works in Rust
+`RetryError<E>` discriminates transient from permanent, and `RetryConfig` controls the backoff:
 
 ```rust
-#[derive(Debug, Clone)]
-enum RetryError<E> {
-    Transient(E),  // Worth retrying
-    Permanent(E),  // Don't retry
+pub enum RetryError<E> {
+    Transient(E),  // Retry this
+    Permanent(E),  // Don't retry this
 }
 
-fn retry<T, E: Clone>(cfg: &RetryConfig, mut f: impl FnMut() -> Result<T, RetryError<E>>) -> Result<T, E> {
-    let mut delay = cfg.base_delay;
-    for attempt in 1..=cfg.max_attempts {
+pub fn retry<T, E, F>(config: &RetryConfig, mut f: F) -> Result<T, E>
+where F: FnMut() -> Result<T, RetryError<E>> {
+    for attempt in 0..config.max_attempts {
         match f() {
             Ok(v) => return Ok(v),
             Err(RetryError::Permanent(e)) => return Err(e),
-            Err(RetryError::Transient(e)) => {
-                if attempt < cfg.max_attempts {
-                    thread::sleep(delay);
-                    delay = delay.mul_f64(cfg.multiplier);
-                } else {
-                    return Err(e);
-                }
+            Err(RetryError::Transient(e)) if attempt + 1 == config.max_attempts => return Err(e),
+            Err(RetryError::Transient(_)) => {
+                let delay = config.delay_for(attempt);
+                thread::sleep(delay);
             }
         }
     }
@@ -57,10 +42,27 @@ fn retry<T, E: Clone>(cfg: &RetryConfig, mut f: impl FnMut() -> Result<T, RetryE
 }
 ```
 
+## OCaml Approach
+
+OCaml's Lwt provides `Lwt_retry` in some libraries, or a custom recursive retry:
+
+```ocaml
+let rec retry ?(attempts=3) ?(delay=0.1) f () =
+  Lwt.catch (fun () -> f () >>= fun v -> Lwt.return (Ok v))
+    (fun exn ->
+       if attempts <= 1 then Lwt.return (Error exn)
+       else Lwt_unix.sleep delay >>= retry ~attempts:(attempts-1) ~delay:(delay *. 2.0) f)
+```
+
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Error variants | Custom ADT | `RetryError<E>` enum |
-| Delay scaling | `d *. 2.0` | `delay.mul_f64(multiplier)` |
-| Closure type | `unit -> result` | `FnMut() -> Result<T, RetryError<E>>` |
+1. **Transient vs permanent**: Rust's `RetryError<E>` embeds the retry decision in the error type; the caller signals "try again" or "give up".
+2. **Jitter**: Adding randomness (`delay * (1 + 0.1 * random)`) prevents synchronized retries from all clients hitting the server at the same moment.
+3. **Production libraries**: `backoff` and `tower::retry` crates provide production-ready retry middleware with customizable policies.
+4. **Circuit breaker**: Combines with retry: after too many failures, open the circuit to stop retrying for a cooling period.
+
+## Exercises
+
+1. Add jitter to the delay calculation: multiply the computed delay by a random factor between 0.9 and 1.1.
+2. Implement a retry with a deadline: stop retrying after a total wall-clock time budget regardless of attempt count.
+3. Build a circuit breaker on top of retry: after 5 consecutive failures, open the circuit and fail fast for 30 seconds.

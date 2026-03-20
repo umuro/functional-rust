@@ -36,3 +36,9 @@ A simple three-argument curried function: `let compose f g x = f (g x)`. Partial
 3. **Monomorphisation**: Rust generates a concrete function for each type combination at compile time; OCaml uses a uniform representation
 4. **Argument order conventions**: OCaml's `compose f g` matches mathematical notation (f∘g); Rust's `pipe(g, f)` matches data-flow reading order
 5. **Trait extension**: Rust's trait system allows adding `.then_apply` to any `Fn` type — a pattern unavailable in OCaml without a module functor
+
+## Exercises
+
+1. Write a `compose_pair` function that takes two closures `f: B -> C` and `g: A -> B` and returns a new closure `A -> C`.
+2. Implement an `apply_twice` higher-order function that applies a function `f: T -> T` to a value twice, then generalize to `apply_n`.
+3. Build a validation pipeline using composition: compose three validators (non-empty, max-length, alphanumeric-only) into a single `String -> Result<String, &str>` function.

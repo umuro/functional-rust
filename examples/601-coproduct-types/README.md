@@ -2,77 +2,48 @@
 
 ---
 
-# 601: Coproduct / Sum Types
+# Coproduct Types (Sum Types)
 
-**Difficulty:** 5  **Level:** Master
+## Problem Statement
 
-Model "one of these alternatives" using the categorical coproduct — Rust's `enum` is a coproduct with injection and elimination morphisms.
+Coproduct types (also called sum types, tagged unions, or discriminated unions) represent "one of several possibilities." They are the mathematical dual of product types. In category theory, a coproduct `A + B` is the "either A or B" type — represented as Rust's `enum` with two variants. `Either<A, B>` is the canonical general-purpose coproduct, equivalent to Haskell's `Either`, OCaml's `('a, 'b) result` or `Either` from `Either` libraries. Sum types are the foundation of error handling (`Result`), optional values (`Option`), and any branching data.
 
-## The Problem This Solves
+## Learning Outcomes
 
-You often have data that can be one of several distinct alternatives: a result is either `Ok` or `Err`; an AST node is a number, variable, or operation; a network packet is a control frame or a data frame. Representing this with a struct + boolean flags or a nullable union type loses type safety — the type doesn't tell you which case you're in, so the compiler can't ensure you handle all cases.
+- How `Either<A, B>` generalizes `Result<T, E>` and `Option<T>` to arbitrary coproducts
+- How `bimap`, `map_left`, `map_right` transform either side of a sum type
+- How `fold` collapses a coproduct by providing functions for each case
+- How Rust's enums are sum types and what category theory says about them
+- Where coproducts appear: error handling, branching data, type-safe union types
 
-Category theory gives this a precise formulation: the coproduct `A + B` is a type inhabited by either an `A` or a `B`, with injection functions `inl: A → A+B` and `inr: B → A+B`. The *universal property* says: for any type `C` and functions `f: A→C` and `g: B→C`, there is a *unique* function `either(f, g): A+B → C`. This unique function is `match`.
+## Rust Application
 
-Understanding coproducts as a categorical structure means you can reason about them algebraically: `Either<A, Void>` is isomorphic to `A`; `Either<A, B>` is isomorphic to `Either<B, A>`; `Either<A, Either<B, C>>` is isomorphic to `Either<Either<A, B>, C>`. These are the same algebraic identities as for addition.
+`Either<A, B>` has `Left(A)` and `Right(B)` variants. `bimap(f, g)` applies `f` to `Left` and `g` to `Right`. `map_left(f)` and `map_right(g)` transform one side. `fold<C>(on_left, on_right)` eliminates the coproduct by providing a handler for each variant. `either(l, r)` is a smart constructor. The source also shows `n-ary` coproducts using enums with more variants.
 
-## The Intuition
+Key patterns:
+- `bimap(f: A -> C, g: B -> D) -> Either<C, D>` — functor over both sides
+- `fold(on_left: A -> C, on_right: B -> C) -> C` — eliminator
+- `map_right(f)` — `fmap` from the Right functor (biased `Either`)
 
-The coproduct `A + B` means "exactly one of A or B, tagged so you know which" — Rust's `enum` is precisely this, with enum constructors as injections and `match` as the unique elimination morphism guaranteed by the universal property. The trade-off: coproducts make adding new interpreters easy but adding new variants hard (you must update all match arms).
+## OCaml Approach
 
-## How It Works in Rust
+OCaml uses `result` as the built-in asymmetric coproduct:
 
-```rust
-// Coproduct A + B: inhabited by either A or B
-enum Either<A, B> {
-    Left(A),   // injection inl: A → Either<A,B>
-    Right(B),  // injection inr: B → Either<A,B>
-}
-
-impl<A, B> Either<A, B> {
-    // The universal property: unique morphism from two functions
-    // For any C, f: A→C, g: B→C, there is a unique Either<A,B>→C
-    fn either<C, F, G>(self, f: F, g: G) -> C
-    where F: FnOnce(A) -> C, G: FnOnce(B) -> C {
-        match self {               // match IS the unique morphism
-            Either::Left(a)  => f(a),
-            Either::Right(b) => g(b),
-        }
-    }
-
-    // Functor map over both sides
-    fn map_left<C>(self, f: impl FnOnce(A) -> C) -> Either<C, B> {
-        match self {
-            Either::Left(a)  => Either::Left(f(a)),
-            Either::Right(b) => Either::Right(b),
-        }
-    }
-}
-
-// Algebraic identity: Either<A, Void> ≅ A
-enum Void {}  // uninhabited — no values of type Void exist
-
-fn from_void_either<A>(e: Either<A, Void>) -> A {
-    match e {
-        Either::Left(a)  => a,
-        Either::Right(v) => match v {},  // exhaustively handled — Void has no variants
-    }
-}
+```ocaml
+type ('a, 'b) either = Left of 'a | Right of 'b
+let bimap f g = function Left a -> Left (f a) | Right b -> Right (g b)
+let fold fl fr = function Left a -> fl a | Right b -> fr b
 ```
-
-## What This Unlocks
-
-- **Type-safe alternatives**: encode "success or error", "local or remote", "cached or fresh" with exhaustive pattern matching.
-- **Algebraic reasoning**: use coproduct identities to refactor type representations without changing runtime behavior.
-- **Free theorems**: the universal property guarantees that `either(f, g)` is the *only* function from `Either<A,B>` to `C` that factors through injections.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Coproduct A+B | `type t = L of A \| R of B` | `enum T { L(A), R(B) }` |
-| Injection `inl` | `L : A -> t` constructor | `T::L(a)` |
-| Injection `inr` | `R : B -> t` constructor | `T::R(b)` |
-| Elimination | `match` | `match` |
-| Universal morphism | Unique function from match | Same — `match` is the canonical eliminator |
-| Uninhabited type | `type void = \|` (empty) | `enum Void {}` |
+1. **Built-in vs library**: Rust's `Result<T, E>` is the standard coproduct; `Either<A, B>` is a library type; OCaml has `('a, 'b) result` and `('a, 'b) Either.t` separately.
+2. **Biased vs symmetric**: `Result<T, E>` is right-biased (`map` transforms `Ok`); `Either<A, B>` is symmetric; OCaml's `result` is also right-biased.
+3. **Functor instance**: Rust manually implements `map_left`/`map_right` methods; Haskell/OCaml have typeclass/functor instances enabling generic `fmap`.
+4. **GAT limit**: A true polymorphic `Functor` trait for `Either` requires GATs (Generic Associated Types) in Rust — complex but supported since Rust 1.65.
+
+## Exercises
+
+1. **Either chain**: Implement `fn partition_either<A, B>(items: Vec<Either<A, B>>) -> (Vec<A>, Vec<B>)` that splits an `Either` collection into two separate lists.
+2. **Error accumulation**: Build `Either<Vec<Error>, Success>` where you accumulate errors on the `Left` side — implement `combine(a: Either<Vec<E>, A>, b: Either<Vec<E>, B>) -> Either<Vec<E>, (A, B)>`.
+3. **From Result**: Implement `From<Result<A, B>> for Either<B, A>` (note the flipped convention) and `From<Either<B, A>> for Result<A, B>`.

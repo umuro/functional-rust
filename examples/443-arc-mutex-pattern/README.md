@@ -2,64 +2,39 @@
 
 ---
 
-# 443: Arc<Mutex<T>> — Shared Mutable State Across Threads
+# 443: `Arc<Mutex<T>>` — Shared Mutable State
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Share a single mutable value across multiple threads using `Arc` for ownership and `Mutex` for exclusive access — the compile-time enforced lock pattern.
+Multiple threads sharing a single mutable value is a fundamental concurrency pattern: a counter, a shared cache, a work queue. Rust's ownership model normally prevents this — only one owner can have mutable access. `Arc<T>` enables multiple-ownership across threads (atomic reference counting), and `Mutex<T>` ensures exclusive access — only one thread holds the lock at a time. Together, `Arc<Mutex<T>>` is the standard Rust pattern for shared mutable state across threads.
 
-## The Problem This Solves
+`Arc<Mutex<T>>` appears in every multi-threaded Rust program: shared caches, event buses, job queues, game state machines, and any pattern requiring coordinated mutation from multiple threads.
 
-Multiple threads writing to shared state is the source of most concurrency bugs. A counter incremented by 10 threads without coordination will silently produce the wrong total — because increment is three operations (read, add, write) and threads interleave arbitrarily. This is a data race: undefined behavior in C/C++, a runtime check failure in Java, an occasional wrong answer in Python (which only avoids the worst because of the GIL, at the cost of true parallelism).
+## Learning Outcomes
 
-In languages with locks you write the correct-looking code and hope you remembered to acquire the lock, hope you don't hold it across a function that also acquires it (deadlock), and hope you release it even in error paths. In Rust, the `Mutex<T>` wraps the data itself — you cannot touch the data without going through the lock. The type system makes this structural: the value is inside the mutex. There's no way to "accidentally forget to lock" because you can't reach the data without calling `.lock()`.
+- Understand how `Arc` (atomic reference counting) enables shared ownership across threads
+- Learn how `Mutex` provides exclusive access with automatic unlock on drop (RAII guard)
+- See the `Arc::clone(&counter)` pattern for sharing ownership across spawned threads
+- Understand the lock guard pattern: `counter.lock().unwrap()` returns a `MutexGuard`
+- Learn the performance implication: every lock acquisition is a synchronization point
 
-The `MutexGuard` that `.lock()` returns implements `Drop` — when it goes out of scope (including on panic, via unwinding), the lock is released. You cannot forget to unlock. The borrow checker ensures the guard's lifetime bounds all access to the inner value.
+## Rust Application
 
-## The Intuition
+In `src/lib.rs`, `parallel_increment` creates `Arc::new(Mutex::new(0u64))`. Each spawned thread clones the `Arc` (incrementing the reference count), then acquires the mutex with `.lock().unwrap()` and increments the counter. The `MutexGuard` automatically releases the lock when it goes out of scope. After all threads join, the counter holds the correct total. `parallel_collect` uses `Arc<Mutex<Vec<T>>>` for shared collection building.
 
-`Arc` is "Atomically Reference Counted" — like `Rc` but thread-safe. Clone the `Arc` to share ownership across threads; the value is freed when the last clone drops. `Mutex` is the lock: only one thread can hold the `MutexGuard` at a time. Together, `Arc<Mutex<T>>` is Rust's canonical "shared mutable state" pattern.
+## OCaml Approach
 
-In Python you'd write `lock = threading.Lock(); lock.acquire(); counter += 1; lock.release()` — data and lock are separate, bugs hide in the gap. In Java, `synchronized(obj)` locks on an arbitrary object. In Rust, the data IS inside the lock — there is no gap.
-
-## How It Works in Rust
-
-```rust
-use std::sync::{Arc, Mutex};
-use std::thread;
-
-let counter = Arc::new(Mutex::new(0u64)); // data lives inside the Mutex
-
-let handles: Vec<_> = (0..10).map(|_| {
-    let c = Arc::clone(&counter); // clone the Arc — increments ref count
-    thread::spawn(move || {
-        for _ in 0..100 {
-            // lock() blocks until we hold the lock, returns MutexGuard
-            // *guard dereferences to &mut u64
-            *c.lock().unwrap() += 1;
-            // guard drops here — lock released automatically
-        }
-    })
-}).collect();
-
-for h in handles { h.join().unwrap(); }
-println!("{}", *counter.lock().unwrap()); // 1000 — guaranteed correct
-```
-
-`.unwrap()` on `.lock()` handles "poisoned" mutexes — a mutex is poisoned if a thread panics while holding it. In most cases, propagating the panic is correct; production code may call `.unwrap_or_else(|e| e.into_inner())` to recover the data.
-
-## What This Unlocks
-
-- **Shared counters and accumulators** — multiple threads safely increment a counter, push to a `Vec`, or update a `HashMap`.
-- **Coordinated state machines** — threads check and update a shared status value with mutual exclusion.
-- **Job results collection** — worker threads push completed results into a shared `Arc<Mutex<Vec<T>>>` for the main thread to process.
+OCaml uses `Mutex.create()` and `Mutex.lock`/`Mutex.unlock` for mutual exclusion. Shared mutable state is `ref` or mutable record fields protected by a mutex. OCaml 5.x's `Atomic.t` handles simple counter patterns without locks. Unlike Rust, OCaml doesn't enforce that all accesses to a shared value go through a mutex — the type system doesn't track this invariant.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Shared ownership | GC automatic | `Arc::new(...)` + `Arc::clone(&a)` |
-| Lock | `Mutex.lock m` (separate from data) | `m.lock().unwrap()` — data IS in the mutex |
-| Unlock | `Mutex.unlock m` — manual | `MutexGuard` drops automatically (RAII) |
-| Forget to lock | possible — data and lock separate | impossible — data unreachable without `lock()` |
-| Poisoning | N/A | panic while holding = mutex poisoned |
+1. **Type enforcement**: Rust's `Mutex<T>` forces all access through the lock; OCaml's `Mutex.t` is advisory — you can access the value without locking.
+2. **Poisoning**: Rust's mutex becomes "poisoned" if a thread panics while holding it; subsequent `lock()` calls return `Err`. OCaml has no poisoning concept.
+3. **RAII unlock**: Rust's `MutexGuard` unlocks on drop automatically; OCaml requires explicit `Mutex.unlock` (forgetting it = deadlock).
+4. **Arc vs. GC**: Rust needs `Arc` for shared ownership; OCaml's GC manages reference counting transparently.
+
+## Exercises
+
+1. **Rate limiter**: Build a `RateLimiter` using `Arc<Mutex<(u32, Instant)>>` tracking (count, window_start). `fn check_and_increment(&self) -> bool` returns true if the rate limit allows the request, false if exceeded. Test with concurrent threads.
+2. **Bounded queue**: Implement a `BoundedQueue<T>` wrapping `Arc<Mutex<VecDeque<T>>>` with a capacity limit. `push` returns `Err(val)` when full; `pop` returns `None` when empty. Verify correct behavior with producer/consumer threads.
+3. **Deadlock avoidance**: Write a program that could deadlock with `Arc<Mutex<T>>` (two threads each holding one lock waiting for the other's lock). Then fix it using lock ordering or `try_lock` with backoff.

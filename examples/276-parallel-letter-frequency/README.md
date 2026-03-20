@@ -33,3 +33,9 @@ Rust uses `HashMap<char, usize>` with the `entry` API for ergonomic insert-or-up
 2. **Entry API:** OCaml's `CMap.update` takes an `option -> option` function; Rust's `entry().or_insert()` is more ergonomic for counters
 3. **Merge strategy:** OCaml's `CMap.union` takes a 3-argument merge function; Rust requires manual iteration over entries
 4. **Mutability:** OCaml maps are immutable (each operation returns new map); Rust's `HashMap` is mutated in place for efficiency
+
+## Exercises
+
+1. Extend the parallel frequency counter to handle Unicode code points rather than ASCII bytes, using `char` as the key type.
+2. Benchmark the parallel version against the sequential version for texts of 1 KB, 100 KB, and 10 MB, and explain at what size parallelism starts to pay off.
+3. Generalize the parallel aggregation to a generic `parallel_fold` function that splits any `Vec` into chunks, processes them in parallel, and combines results using a monoid — then use it to compute both letter frequency and total word count in one pass.

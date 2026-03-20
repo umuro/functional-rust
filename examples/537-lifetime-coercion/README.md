@@ -2,98 +2,48 @@
 
 ---
 
-# 537: Lifetime Coercion and Subtyping
+# Lifetime Coercion and Subtyping
 
-**Difficulty:** 4  **Level:** Advanced
+## Problem Statement
 
-Longer lifetimes are subtypes of shorter ones. A `&'long T` can be used anywhere a `&'short T` is expected — but not the reverse.
+Lifetime subtyping is the mechanism that makes Rust's borrow checker flexible without requiring programmers to always use exactly matching lifetimes. The rule is simple: a longer lifetime can always be used where a shorter one is expected, because a reference valid for longer is certainly valid for shorter. This is similar to how a subtype can be used where its supertype is expected. Without this coercion, every reference would require perfectly matched lifetime scopes, making APIs rigid and hard to use.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Subtyping for lifetimes is what makes `&'static str` usable everywhere a `&str` is expected. Without it, every function that takes `&str` would need a separate overload for `&'static str`. Instead, Rust automatically *coerces* longer lifetimes to shorter ones at the use site.
+- Why `'static` references can be passed to functions expecting shorter-lived references
+- How `'long: 'short` (outlives) expresses that `'long` is a subtype of `'short`
+- How reborrowing creates a shorter-lived reference from a longer-lived one
+- Why lifetime coercion makes it possible to store `'static` items in `Vec<&'short str>`
+- How `demonstrate_variance<'long: 'short, 'short>` expresses the outlives constraint
 
-The confusion is that this feels backwards from what you'd expect: "longer lifetime" is the *more specific* type. A `&'static str` is a stronger guarantee than a `&'a str` — it commits to living forever. Being a subtype means it can fill in wherever less is required.
+## Rust Application
 
-Understanding this subtyping relationship also explains why `&mut T` can't be coerced the same way — mutable references are invariant, not covariant, and mixing them would break safety.
+`use_briefly<'short>(s: &'short str) -> usize` accepts any reference. `coercion_demo` shows `&'static str` being passed to `use_briefly` — `'static` coerces to `'short` automatically. `store_with_coercion<'short>(storage: &mut Vec<&'short str>, item: &'static str)` stores a static reference where a shorter-lived one is required. `demonstrate_variance<'long: 'short, 'short>` explicitly names the outlives relationship — `'long: 'short` means `'long` outlives `'short`.
 
-## The Intuition
+Key patterns:
+- `'long: 'short` — "long outlives short" / "long is a subtype of short"
+- Implicit coercion: `&'static str` used where `&'short str` expected
+- Reborrowing: `let short: &'short str = &*long_ref` creates shorter borrow
 
-Lifetime subtyping: `'long: 'short` means "'long outlives 'short," which makes `'long` the *subtype*. You can always use a subtype where a supertype is expected.
+## OCaml Approach
 
-Think of it like a precision hierarchy: `'static` is maximally precise (lives forever). Any `'a` is less precise (lives for some scope). A precise tool works wherever a less precise one would — you can always use a laser where a flashlight would do.
+OCaml has no lifetime coercion because there are no lifetime annotations. The GC ensures all referenced values are kept alive. Subtyping in OCaml is structural (via polymorphic variants and object types), not lifetime-based.
 
-Coercion is *narrowing* — the compiler silently shrinks the lifetime annotation to match the expected type. No data moves; it's purely a compile-time label adjustment.
-
-## How It Works in Rust
-
-**`&'static` coerces to any lifetime:**
-
-```rust
-let literal: &'static str = "I live forever";
-
-// Coercion: &'static str → &'shorter str
-// Happens automatically — no cast needed
-let shorter: &str = literal;
-fn accepts_any(s: &str) { println!("{}", s); }
-accepts_any(literal);  // 'static coerces to whatever 'a the function expects
+```ocaml
+(* No equivalent concept — all references are GC-managed *)
+let use_briefly s = String.length s
+let _ = use_briefly "static string"  (* always fine *)
 ```
-
-**Explicit coercion in storage:**
-
-```rust
-fn store_long<'long, 'short>(
-    storage: &mut Vec<&'short str>,
-    item: &'long str,
-) where 'long: 'short {  // 'long outlives 'short — coercion is valid
-    storage.push(item);  // &'long str coerced to &'short str
-}
-
-let mut storage: Vec<&str> = Vec::new();
-let permanent = "permanent";  // &'static str
-store_long(&mut storage, permanent);  // &'static coerces to &'short
-```
-
-**Why `&mut T` is invariant — the danger:**
-
-```rust
-// If &mut T were covariant, this would be possible:
-fn bad_coerce<'long, 'short>(r: &mut &'long str, s: &'short str) {
-    // *r = s; // If allowed: r now holds &'short str
-    // But r was promised to hold &'long str!
-    // After 'short expires, *r would be a dangling reference
-}
-// Rust forbids this — &mut T is invariant to prevent it
-```
-
-**Cache demonstrating lifetime storage:**
-
-```rust
-struct Cache<'a> {
-    entries: Vec<&'a str>,
-}
-
-impl<'a> Cache<'a> {
-    // Only accepts refs that live at least as long as 'a
-    // &'static str satisfies this (coercion)
-    // &'shorter str would fail
-    fn insert(&mut self, entry: &'a str) {
-        self.entries.push(entry);
-    }
-}
-```
-
-## What This Unlocks
-
-- **`&'static str` is universally usable** — pass string literals to any function taking `&str` without type errors. The coercion is automatic.
-- **Generic containers for mixed-lifetime data** — a `Vec<&'a str>` can hold both `&'static str` literals and shorter-lived slices, as long as all satisfy `'a`.
-- **Understanding compiler errors** — when you see "lifetime may not live long enough," you know you're trying to *widen* a lifetime (use shorter where longer is expected), which is invalid.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Reference validity | GC guarantees all live references are valid | Subtyping: `'long <: 'short` means longer refs can fill shorter slots |
-| String literal usage | String literals work anywhere | `&'static str` coerces to `&'a str` — automatic at call sites |
-| Mutable reference aliasing | GC allows multiple mutable refs (with care) | `&mut T` is invariant — no coercion, prevents aliasing bugs |
-| Subtype direction | Subtypes typically extend supertypes | `'long: 'short` makes longer lifetime the *subtype* — more specific = subtype |
-| Type coercions | Implicit where safe | Lifetime coercions (shortening) are implicit; widening is a compile error |
+1. **Automatic coercion**: Rust automatically coerces `'long` to `'short` at assignment; OCaml has no lifetime coercion because lifetimes do not exist.
+2. **Explicit outlives**: Rust's `'long: 'short` syntax expresses a compile-time constraint; OCaml programs never write or verify such relationships.
+3. **Subtype direction**: In Rust, longer lifetimes are subtypes of shorter ones (counterintuitive but correct); OCaml subtyping is based on structural compatibility, not lifetime ordering.
+4. **Practical impact**: Lifetime coercion enables functions with short-lived references to accept static data without special handling; OCaml APIs need no such accommodation.
+
+## Exercises
+
+1. **Longest-lifetime function**: Write `fn most_general<'a>(s: &'a str) -> &'a str { s }` and show it can accept both `&'static str` and short-lived references.
+2. **Vec of mixed lifetimes**: Build a `Vec<&str>` and insert both `&'static str` literals and references to local `String` values — verify the compiler correctly constrains the vec's lifetime.
+3. **Subtyping chain**: Write three functions with lifetimes `'a: 'b: 'c` where the first returns `&'a str`, the second accepts `&'b str`, and the third accepts `&'c str` — show the chain compiles.

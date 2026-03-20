@@ -2,77 +2,37 @@
 
 ---
 
-# 788. Coin Change: Minimum Coins DP
+# 788-coin-change-dp — Coin Change
 
-**Difficulty:** 3  **Level:** Intermediate
+## Problem Statement
 
-Given coin denominations, find the fewest coins that sum to a target amount — plus count the number of distinct ways to make change.
+The coin change problem asks: given denominations of coins and an amount, what is the minimum number of coins needed to make that amount? Greedy fails for non-standard denominations (e.g., coins of 1, 3, 4 — greedy gives 3 coins for 6, but optimal is 2). DP finds the true minimum. The counting variant (number of ways to make change) is used in combinatorics and financial applications. Canonical in algorithm courses since the 1970s.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Coin change is the archetypal 1D DP problem. It appears directly in payment systems (minimise transaction count), and in abstracted form everywhere capacity is being optimally allocated in discrete units: minimise the number of network packets to fill a buffer, minimise the number of tiles to cover a floor, minimise the number of API calls to reach a quota.
+- Implement `coin_change(coins, amount) -> Option<usize>` returning `None` when impossible
+- Use the bottom-up recurrence: `dp[i] = min over coins c: dp[i-c] + 1`
+- Distinguish the minimum-count problem from the counting-ways problem (`coin_change_ways`)
+- Understand why the top-down memoized approach is equivalent but sometimes cleaner
+- Reconstruct the actual coins chosen, not just the count
 
-The "count ways" variant is equally important: how many distinct decompositions exist? This appears in combinatorics, probability, and cryptography (e.g., counting distinct factorizations or key derivation paths).
+## Rust Application
 
-## The Intuition
+`coin_change` initializes `dp = [usize::MAX; amount+1]` with `dp[0] = 0`. For each amount `i` and each coin `c`, if `c <= i` and `dp[i-c] != MAX`, updates `dp[i]`. Returns `dp[amount]` or `None` for `MAX`. `coin_change_ways` counts combinations using the classic unbounded knapsack recurrence. Tests cover the classic `coins=[1,2,5], amount=11` case (3 coins: 5+5+1) and impossible amounts.
 
-Build a 1D array `dp` where `dp[i]` = minimum coins to make amount `i`. Start with `dp[0] = 0` (base case: zero coins for zero amount) and fill left to right. For each amount `i`, try every coin and take the minimum. If no combination works, the cell stays at `∞`. This is the unbounded knapsack pattern — you can use the same coin multiple times — so you iterate *forward* through the table (unlike 0/1 knapsack which goes backward). OCaml's recursive memoised version naturally expresses the same recurrence; Rust's tabulation version is usually faster due to better cache behaviour.
+## OCaml Approach
 
-## How It Works in Rust
-
-```rust
-// Bottom-up tabulation — O(amount × coins) time, O(amount) space
-pub fn coin_change_tab(coins: &[u64], amount: usize) -> Option<u64> {
-    let mut dp = vec![u64::MAX; amount + 1];
-    dp[0] = 0;
-
-    for i in 1..=amount {
-        for &coin in coins {
-            let coin = coin as usize;
-            if coin <= i && dp[i - coin] != u64::MAX {
-                dp[i] = dp[i].min(dp[i - coin] + 1);
-            }
-        }
-    }
-
-    if dp[amount] == u64::MAX { None } else { Some(dp[amount]) }
-}
-
-// Count distinct ways (order-independent combinations)
-// Loop over coins in outer loop: each coin used 0 or more times
-pub fn count_ways(coins: &[u64], amount: usize) -> u64 {
-    let mut dp = vec![0u64; amount + 1];
-    dp[0] = 1;
-    for &coin in coins {
-        for i in coin as usize..=amount {
-            dp[i] = dp[i].saturating_add(dp[i - coin as usize]);
-        }
-    }
-    dp[amount]
-}
-
-// Reconstruct which coins were chosen
-pub fn coin_change_with_coins(coins: &[u64], amount: usize) -> Option<Vec<u64>> {
-    let mut last_coin = vec![0u64; amount + 1];
-    // ... same DP, track last_coin[i] = which coin improved dp[i]
-    // Backtrack: while remaining > 0 { push last_coin[remaining]; remaining -= coin; }
-}
-```
-
-Note the loop structure difference: `count_ways` has coins in the *outer* loop (each coin extended across all amounts) to count unordered combinations. Swapping to amounts-outer would count ordered permutations instead.
-
-## What This Unlocks
-
-- **Payment systems**: ATM software computing minimum-denomination change; point-of-sale systems verifying that exact change is possible.
-- **Partition counting**: the "count ways" pattern counts integer partitions, used in combinatorics, cryptographic analysis, and musical rhythm generation.
-- **Unbounded resource allocation**: any problem where you can reuse a resource unit (tiles, packets, words in a sentence) and want minimum or count of allocations.
+OCaml implements the same bottom-up DP with `Array.make (amount+1) max_int` and a nested `for` loop. Functional style uses `List.fold_left` over coins. The `Int.max_int` sentinel instead of `usize::MAX`. Reconstruction uses a `prev: int array` tracking which coin was used at each step. OCaml's `min_coins` function in competitive programming is often a one-liner using `Array.fold_left`.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Infinity sentinel | `max_int` or `None` | `u64::MAX` (use `!= MAX` guards to prevent overflow) |
-| Memoisation | `Hashtbl` keyed on amount | `HashMap<u64, Option<u64>>` |
-| Tabulation | Imperative loop over `Array` | `Vec<u64>` with forward iteration |
-| Reconstruction | Recursive traceback | `while remaining > 0` with `last_coin` array |
-| Count vs min | Same table, `+` vs `min` | Same pattern: change operator in inner loop |
+1. **Sentinel value**: Rust uses `usize::MAX` as "impossible"; OCaml uses `max_int` — same concept, different constant name.
+2. **Overflow guard**: Rust's `usize::MAX + 1` would panic; the `!= usize::MAX` guard prevents this; OCaml has the same issue with `max_int + 1`.
+3. **Return type**: Rust's `Option<usize>` clearly communicates impossibility; OCaml might return `-1` or `Int.max_int` without a dedicated option type.
+4. **Counting variant**: `coin_change_ways` uses a different loop structure (iterate coins in outer loop for combinations); both languages implement it identically.
+
+## Exercises
+
+1. Implement `coin_change_reconstruct(coins, amount) -> Option<Vec<usize>>` that returns the actual coins used, not just the count.
+2. Add `coin_change_limited(coins, counts, amount)` where `counts[i]` limits how many times coin `i` can be used (bounded knapsack variant).
+3. Implement the top-down memoized version and benchmark it against the bottom-up version for large amounts (100,000+). Which is faster in practice?

@@ -33,3 +33,9 @@ Rust uses `std::iter::once(&0).chain(row.iter()).zip(row.iter().chain(once(&0)))
 2. **Sequence generation:** OCaml uses explicit recursion (`let rec go`); Rust's `successors` provides a declarative "generate from seed" pattern
 3. **Lazy vs eager:** Rust's `successors` is lazy — rows are only computed when consumed; OCaml's recursion eagerly builds the full list
 4. **Numeric type:** OCaml uses arbitrary-precision `int`; Rust uses `u64` which can overflow for large row numbers
+
+## Exercises
+
+1. Implement a `binomial` function using Pascal's triangle row as a lookup table, and verify `C(n, k) == pascals_row(n)[k]` for all `k` from 0 to `n`.
+2. Use Pascal's triangle to expand `(x + y)^n` symbolically: return a `Vec<(i64, i64, i64)>` of `(coefficient, x_power, y_power)` terms.
+3. Generate the Sierpinski triangle pattern by taking Pascal's triangle modulo 2: output a visual grid where odd coefficients are filled and even ones are empty — observe the fractal structure.

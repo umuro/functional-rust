@@ -29,3 +29,9 @@ Rust cannot use `box` patterns on stable, so the balance function uses match gua
 2. **Memory management:** OCaml GC vs. Rust `Box<T>` ownership — each tree node is `Box`-allocated, old nodes are dropped when the new path replaces them
 3. **Algebraic types:** OCaml's `type 'a rbtree = E | T of color * 'a rbtree * 'a * 'a rbtree` maps directly to `enum RBTree<T> { E, T(Color, Box<RBTree<T>>, T, Box<RBTree<T>>) }`
 4. **Generics:** OCaml uses parametric polymorphism (`'a`) with structural equality; Rust requires `Ord` trait bound for comparison
+
+## Exercises
+
+1. Add a `find_all_in_range` method that returns all elements `e` where `lo <= e <= hi` in sorted order using a single in-order traversal that prunes irrelevant subtrees.
+2. Implement a `map_values` function that applies a transformation `f: T -> U` to every element in the tree and returns a new `RedBlackTree<U>` (valid only when `U: Ord`).
+3. Write a benchmark comparing insertion performance between the functional red-black tree and Rust's `BTreeSet` for 10,000 sequential and 10,000 random integers.

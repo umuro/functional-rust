@@ -50,3 +50,9 @@ and loops, which is both idiomatic and tail-call-free in practice.
 4. **Null safety:** Both languages return `Option` for navigation — the only
    difference is syntax (`None`/`Some` is identical; OCaml's `Option.get` vs.
    Rust's `.expect()`).
+
+## Exercises
+
+1. Implement `navigate_right` and `navigate_left` for the tree zipper, enabling horizontal movement between siblings.
+2. Write a `map_focused` function that applies a transformation to the currently focused node and returns the updated zipper.
+3. Build a simple tree editor using the zipper: support commands `up`, `down_left`, `down_right`, `insert_left`, `insert_right`, and `delete_focus`, reconstructing the full tree after a sequence of operations.

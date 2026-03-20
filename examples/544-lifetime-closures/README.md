@@ -2,108 +2,50 @@
 
 ---
 
-# 544: Lifetimes in Closures
+# Lifetimes in Closures
 
-**Difficulty:** 4  **Level:** Intermediate-Advanced
+## Problem Statement
 
-Closures that capture references inherit those references' lifetimes. The `+ 'a` bound on `impl Fn` tells callers how long the returned closure is valid.
+Closures that capture references introduce lifetime constraints that must appear in the closure's type. A closure that borrows a `&str` prefix can only be called while that prefix is alive — the closure's lifetime is bounded by its captured borrows. When returning such closures from functions, the `+ 'a` lifetime bound must appear in the return type to tell callers how long they can use the closure. This is distinct from closures that capture owned data — those have no borrowed lifetime and can be `'static`.
 
-## The Problem This Solves
+## Learning Outcomes
 
-When a closure captures a reference, that reference's lifetime becomes a constraint on the closure itself. Without expressing this constraint, you'd get dangling closures — callbacks that try to access freed data:
+- How `impl Fn(&str) -> String + 'a` expresses a closure tied to its captured reference's lifetime
+- How computing and capturing an owned value (`let sum = data.iter().sum()`) avoids a lifetime constraint
+- How `impl FnMut() -> i32` with mutable state (counter) works with no lifetime annotation
+- When `Box<dyn Fn(&str) -> String>` is needed vs `impl Fn` for returning closures
+- The difference between a closure capturing `&'a str` (tied) and capturing `String` (not tied)
 
-```rust
-fn make_logger(prefix: &str) -> impl Fn(&str) -> String {
-    move |s| format!("{}: {}", prefix, s)
-    // ERROR: cannot infer an appropriate lifetime
-    // The closure captures `prefix` — but how long is it valid?
-}
+## Rust Application
+
+`make_prefixer<'a>(prefix: &'a str) -> impl Fn(&str) -> String + 'a` captures `prefix` by reference — the returned closure cannot outlive `prefix`. `make_sum_adder(data: &[i32]) -> impl Fn(i32) -> i32` computes `sum` first and captures the `i32` value — no lifetime annotation needed because the closure owns its state. `make_checker<'a>(valid: &'a [&str])` captures a slice reference. `make_counter()` returns `impl FnMut() -> i32` with mutable state — no borrowed data. `make_formatter(width: usize)` must use `Box<dyn Fn(&str) -> String>` because `impl Fn` return types cannot be stored in a struct field directly.
+
+Key patterns:
+- `impl Fn(&str) -> String + 'a` — closure bounded by captured reference
+- Pre-compute + capture owned: `let sum = ...; move |x| x + sum` — avoid lifetime
+- `Box<dyn Fn>` when the concrete closure type must be hidden behind a field
+
+## OCaml Approach
+
+OCaml closures capture by reference to the GC heap — no lifetime annotations are needed:
+
+```ocaml
+let make_prefixer prefix = fun s -> prefix ^ s
+let make_sum_adder data = let sum = List.fold_left (+) 0 data in fun x -> x + sum
+let make_counter () = let count = ref 0 in fun () -> incr count; !count
 ```
 
-The function doesn't say how long `prefix` lives. The caller might pass a temporary. The closure would then hold a reference to freed stack data. The `+ 'a` bound closes this gap.
-
-## The Intuition
-
-A closure is just a struct with a `call` method. Every captured reference becomes a field. A captured `&'a str` makes the closure's struct contain a `&'a str` field — so the closure itself is only valid for `'a`.
-
-The `impl Fn(&str) -> String + 'a` return type says: "I'm giving you a closure, and that closure borrows data that lives for `'a`. Keep the source data alive as long as you use the closure."
-
-`move` closures move their captures — no reference, no lifetime constraint. But `move` with a reference just moves the reference, not the data, so the lifetime still applies.
-
-## How It Works in Rust
-
-**Capturing a `&str` — must express the bound:**
-
-```rust
-fn make_prefixer<'a>(prefix: &'a str) -> impl Fn(&str) -> String + 'a {
-    //                                                              ^^^
-    // + 'a: this closure borrows `prefix` which lives for 'a
-    move |s| format!("{}: {}", prefix, s)
-}
-
-// Usage:
-let prefix = String::from("INFO");
-let log = make_prefixer(&prefix);
-println!("{}", log("server started")); // fine — prefix alive
-drop(prefix);
-// println!("{}", log("again")); // would ERROR — prefix dropped, log invalid
-```
-
-**Closure capturing multiple references:**
-
-```rust
-fn make_formatter<'a>(prefix: &'a str, suffix: &'a str) -> impl Fn(&str) -> String + 'a {
-    // Both captures have lifetime 'a — closure valid for min(prefix, suffix)
-    move |s| format!("{}{}{}", prefix, s, suffix)
-}
-```
-
-**Closure in a struct:**
-
-```rust
-struct Filter<'a> {
-    predicate: Box<dyn Fn(i32) -> bool + 'a>,
-}
-
-impl<'a> Filter<'a> {
-    fn from_slice(allowed: &'a [i32]) -> Self {
-        Filter {
-            // Closure captures &'a [i32] — Box must be + 'a
-            predicate: Box::new(move |x| allowed.contains(&x)),
-        }
-    }
-
-    fn check(&self, x: i32) -> bool { (self.predicate)(x) }
-}
-
-let allowed = vec![2, 4, 6, 8];
-let filter = Filter::from_slice(&allowed);
-assert!(filter.check(4));
-assert!(!filter.check(3));
-```
-
-**Closures that capture by value — no lifetime issue:**
-
-```rust
-fn make_sum_adder(data: &[i32]) -> impl Fn(i32) -> i32 + '_ {
-    let sum: i32 = data.iter().sum(); // sum is i32 — Copy
-    move |x| x + sum  // captures sum (owned i32), not data — but still borrows data
-}
-// If we only capture owned Copies, we could return impl Fn + 'static
-```
-
-## What This Unlocks
-
-- **Composable, zero-allocation predicates** — build `Filter`, `Mapper`, `Predicate` structs that capture borrowed context. No `Arc` or `'static` requirement when the context is known to outlive the filter.
-- **Builder patterns with borrowed config** — a builder that captures a `&Config` can return closures for later execution, as long as the config outlives the closure.
-- **Callback APIs without heap allocation** — return `impl Fn + 'a` for callbacks that reference local data, avoiding `Box<dyn Fn + 'static>` heap allocation when the lifetime scope is known.
+All captured values are GC-managed — there is no concept of a closure's lifetime being bounded by its captures.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Closure captures | GC manages all captured values — no lifetime annotation | Captured references become lifetime constraints on the closure |
-| Returning closures | Free — GC handles any captured data | Must express `+ 'a` if closure captures borrowed data |
-| Stored callbacks | `'a ref` pattern or first-class closures with GC | `Box<dyn Fn + 'a>` — explicit lifetime on the stored closure |
-| Partial application | Currying — clean, GC-managed | Closure captures `&'a T` — valid for `'a`. Move closures capture copies when possible |
-| Lambda hoisting | GC: closures can outlive their creation scope | `'a` bound enforces: closure can't outlive its captured references |
+1. **Lifetime bound in return type**: Rust requires `+ 'a` when a returned closure captures a reference; OCaml requires no annotation since the GC keeps captured values alive.
+2. **Owned vs borrowed captures**: Rust distinguishes closures capturing `&str` (lifetime-bounded) from those capturing `String` (lifetime-free); OCaml treats all captures uniformly.
+3. **Mutable counter**: Rust `FnMut() -> i32` with `let mut count = 0` captures by move — no lifetime needed; OCaml uses `ref` cells captured by the GC closure.
+4. **Box vs impl**: Rust sometimes requires `Box<dyn Fn>` for closures returned from structs or stored in heterogeneous collections; OCaml's uniform value representation avoids this distinction.
+
+## Exercises
+
+1. **Lifetimed combinator**: Write `fn make_both<'a>(f: impl Fn(&str) -> bool + 'a, g: impl Fn(&str) -> bool + 'a) -> impl Fn(&str) -> bool + 'a` that returns a closure checking both.
+2. **Owned capture optimization**: Rewrite `make_checker` to clone the `valid` slice data into an owned `Vec<String>` inside the closure so no lifetime annotation is needed on the return type.
+3. **Counter with reset**: Extend `make_counter` to return a pair `(impl FnMut() -> i32, impl FnMut())` where the second closure resets the counter — verify both closures share the same mutable state.

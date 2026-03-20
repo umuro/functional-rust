@@ -4,76 +4,60 @@
 
 # 274: Numeric Reductions: sum() and product()
 
-**Difficulty:** 1  **Level:** Beginner
+## Problem Statement
 
-Fold a numeric iterator to a single value using addition or multiplication.
+Summing or multiplying all elements of a collection is one of the most fundamental computational operations — from computing totals in spreadsheets to calculating factorials in mathematics, to aggregating metrics in monitoring systems. While these could be implemented with `fold()`, Rust provides `sum()` and `product()` as first-class methods that express intent clearly and can be implemented efficiently by the type system via the `Sum` and `Product` traits.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Adding up a list of numbers or computing their product are among the most common reductions in any program. You could write `.fold(0, |acc, x| acc + x)` — but that exposes the identity element and the operator as boilerplate, and signals nothing about *intent* to the reader. `sum()` and `product()` remove all that noise.
+- Understand `sum()` and `product()` as ergonomic specializations of `fold` for numeric types
+- Recognize that `sum()` returns zero and `product()` returns one for empty iterators (identity elements)
+- Use `sum()` and `product()` on iterators of references by using `.copied()` or `.cloned()`
+- Implement the `Sum` and `Product` traits for custom numeric types
 
-They're also more generic than they appear: both work on any type that implements the `Sum` or `Product` trait — including `f64`, `u64`, `i32`, and even `Option<T>` (where a single `None` makes the whole sum `None`). You can map + sum in one expression: `scores.iter().map(|s| s * s).sum()`.
+## Rust Application
 
-In OCaml, you'd use `List.fold_left (+) 0` or `List.fold_left ( * ) 1`. In Rust, `sum()` and `product()` are the idiomatic one-word versions.
-
-## The Intuition
-
-`sum()` reduces an iterator of numbers by adding them all together (identity: 0). `product()` multiplies them all (identity: 1). Both are zero-cost abstractions over `fold` — the compiler produces identical machine code.
-
-```rust
-let nums = [1, 2, 3, 4, 5];
-let total: i32 = nums.iter().sum();      // → 15
-let prod: i32  = nums.iter().product();  // → 120
-```
-
-## How It Works in Rust
+`Iterator::sum()` and `Iterator::product()` require the `Item` type to implement `Sum<Item>` and `Product<Item>` respectively. These traits are implemented for all primitive numeric types:
 
 ```rust
-let nums = [1i32, 2, 3, 4, 5];
+// Gauss's formula: sum 1..=100 = 5050
+let sum: i32 = (1..=100).sum();
+assert_eq!(sum, 5050);
 
-// Basic sum and product
-let total: i32 = nums.iter().sum();      // → 15
-let prod: i32  = nums.iter().product();  // → 120
+// Factorial: 5! = 120
+let fact5: u64 = (1u64..=5).product();
+assert_eq!(fact5, 120);
 
-// Factorial: product over a range
-let factorial = |n: u64| -> u64 { (1..=n).product() };
-println!("{}", factorial(10));  // → 3628800
+// Sum references with .copied()
+let v = [1.0f64, 2.0, 3.0];
+let total: f64 = v.iter().copied().sum();
 
-// Compose with map: sum of squares
-let sum_squares: i32 = nums.iter().map(|&x| x * x).sum();  // → 55
-
-// Float: total price and average
-let prices = [9.99f64, 14.50, 3.75, 22.00];
-let total_price: f64 = prices.iter().sum();
-let avg = total_price / prices.len() as f64;
-
-// Gauss formula check
-let gauss: i32 = (1..=100).sum();
-assert_eq!(gauss, 5050);
-
-// Empty iterator returns the identity element
-let empty_sum: i32 = vec![].into_iter().sum();      // → 0
-let empty_prod: i32 = vec![].into_iter().product(); // → 1
-
-// Option<T> sum: None if any element is None
-let opts: Vec<Option<i32>> = vec![Some(1), Some(2), Some(3)];
-let opt_sum: Option<i32> = opts.into_iter().sum();  // → Some(6)
+// Empty sum/product use identity elements
+let empty_sum: i32 = Vec::<i32>::new().into_iter().sum(); // 0
+let empty_product: i32 = Vec::<i32>::new().into_iter().product(); // 1
 ```
 
-The return type must be annotated or inferred — `sum()` and `product()` are generic over the output type.
+## OCaml Approach
 
-## What This Unlocks
+OCaml uses `List.fold_left (+) 0` for sum and `List.fold_left ( *) 1` for product — there are no dedicated functions:
 
-- **Factorial and combinatorics** — `(1..=n).product()` is the most concise factorial in any language.
-- **Statistical aggregation** — sum over mapped values for dot products, sum of squares, weighted totals.
-- **Fallible aggregation** — `Option` and `Result` implement `Sum`, so a single failure propagates automatically.
+```ocaml
+let sum xs = List.fold_left (+) 0 xs
+let product xs = List.fold_left ( * ) 1 xs
+let () = assert (sum [1;2;3;4;5] = 15)
+```
+
+`Base.List.sum` and `Base.List.product` exist in Jane Street's `Base` library.
 
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Sum a list | `List.fold_left (+) 0 lst` | `iter.sum::<i32>()` |
-| Product a list | `List.fold_left ( * ) 1 lst` | `iter.product::<i32>()` |
-| Identity element | Explicit in fold | Implicit (from `Sum`/`Product` trait) |
-| Floating point | Same | Works — `f32`, `f64` implement both |
-| Empty collection | Must pass identity manually | Returns identity element automatically |
+1. **Trait-based**: Rust's `sum()`/`product()` are generic over any type implementing `Sum`/`Product`; OCaml requires type-specific fold expressions.
+2. **Identity elements**: Both use the mathematical identity — zero for sum, one for product — on empty iterators.
+3. **Overflow behavior**: Rust's `sum()`/`product()` wrap on integer overflow in release mode; use `checked_sum` patterns or saturating arithmetic when needed.
+4. **Custom types**: Implementing `std::iter::Sum` for a custom type lets it participate in `sum()` chains naturally.
+
+## Exercises
+
+1. Compute the sum of squares of a range using `map(|x| x*x).sum::<i64>()`.
+2. Implement a `product` function for floating-point numbers that handles the case of any zero element by returning zero early.
+3. Use `sum()` and `count()` together to compute the arithmetic mean of a `Vec<f64>`.

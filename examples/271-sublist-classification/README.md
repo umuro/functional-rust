@@ -33,3 +33,9 @@ The idiomatic Rust solution uses `slice::windows(n)` to generate all contiguous 
 2. **Equality:** OCaml's structural `=` works on lists; Rust requires `PartialEq` bound on the generic `T`
 3. **Empty check:** OCaml matches `sub = []`; Rust uses `sub.is_empty()`
 4. **Type:** OCaml `type relation = ...` is a sum type; Rust `enum Relation` is identical in concept
+
+## Exercises
+
+1. Extend the sublist classifier to return the starting index at which the first list appears within the second (for the `Sublist` case), returning `None` if not present.
+2. Implement a `longest_common_subsequence` function that returns the LCS of two lists, and use it to check that the LCS of a sublist with its superlist equals the sublist.
+3. Define a lattice of sublist relations (Equal < Sublist < Superlist < Unordered) and implement a `most_specific` function that classifies the relationship between a query list and a collection of lists.

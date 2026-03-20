@@ -4,44 +4,62 @@
 
 # 337: Async Mutex
 
-**Difficulty:** 3  **Level:** Advanced
+## Problem Statement
 
-Lock shared state safely across async tasks — `std::sync::Mutex` works but must not be held across `.await`.
+Shared mutable state across concurrent threads or tasks requires mutual exclusion. `std::sync::Mutex<T>` provides this but blocks the OS thread when locked. In async contexts, blocking a thread blocks all tasks on that thread — a major performance problem. The correct pattern is to use `tokio::sync::Mutex` for async code (yields instead of blocks) and `std::sync::Mutex` only for brief critical sections that never span `.await` points.
 
-## The Problem This Solves
+## Learning Outcomes
 
-Holding a `std::sync::Mutex` guard across an `.await` point can cause deadlocks or panics. The rule: **never hold a sync Mutex guard across an `.await`**. For that, use `tokio::sync::Mutex`.
+- Use `Arc<Mutex<T>>` for shared mutable state across synchronous threads
+- Understand why holding a `std::sync::Mutex` guard across `.await` is a deadlock risk
+- Use `Arc<Mutex<T>>` with brief lock-and-release for async contexts
+- Implement thread-safe caches and counters using `Mutex`
 
-## The Intuition
+## Rust Application
 
-In JavaScript (single-threaded), no mutexes needed. In Python's asyncio, `asyncio.Lock` yields while waiting. Rust exposes the distinction explicitly: sync mutex blocks the thread, async mutex suspends the task.
-
-## How It Works in Rust
+Thread-safe shared counter using `Arc<Mutex<T>>`:
 
 ```rust
-// CORRECT: release the lock before other work
-fn correct_pattern() {
-    let shared = Arc::new(Mutex::new(vec![1, 2, 3]));
-
-    // Braces create a scope — guard drops when scope exits
-    let sum = { shared.lock().unwrap().iter().sum::<i32>() };
-    //        ^-- guard drops here, BEFORE any .await
-
-    // WRONG: let guard = shared.lock().unwrap(); async_fn().await;
-}
-
-// Poison recovery if a thread panicked while holding the lock
-match m.lock() {
-    Ok(v) => println!("Ok: {v}"),
-    Err(p) => println!("Recovered: {}", p.into_inner()),
+pub fn concurrent_increment(num_threads: usize) -> i32 {
+    let counter = Arc::new(Mutex::new(0));
+    let handles: Vec<_> = (0..num_threads).map(|_| {
+        let c = Arc::clone(&counter);
+        thread::spawn(move || {
+            *c.lock().unwrap() += 1;  // Lock briefly, unlock immediately
+        })
+    }).collect();
+    for h in handles { h.join().unwrap(); }
+    *counter.lock().unwrap()
 }
 ```
 
+The `ThreadSafeCache<T>` pattern builds a write-once, read-many cache on top of `Mutex<HashMap>`.
+
+## OCaml Approach
+
+OCaml uses `Mutex.t` from the standard library for threading, and `Lwt_mutex.t` for async-aware locking:
+
+```ocaml
+let counter = ref 0
+let mutex = Mutex.create ()
+
+let increment () =
+  Mutex.lock mutex;
+  incr counter;
+  Mutex.unlock mutex
+```
+
+OCaml 5's multi-core support uses `Mutex` from `Thread` + `Domain`.
+
 ## Key Differences
 
-| Concept | OCaml | Rust |
-|---------|-------|------|
-| Sync mutex | `Mutex.lock` | `std::sync::Mutex` |
-| Async mutex | `Lwt_mutex.lock` | `tokio::sync::Mutex` |
-| Poison | Doesn't exist | `PoisonError` |
-| Guard scope | Explicit unlock | RAII drop |
+1. **Lock guard RAII**: Rust's `lock().unwrap()` returns a `MutexGuard` that unlocks on drop; OCaml requires explicit `Mutex.unlock()`.
+2. **Poisoning**: Rust mutexes are "poisoned" if a thread panics while holding the lock — `lock()` returns `Err` thereafter; OCaml has no poisoning concept.
+3. **Async mutex**: `tokio::sync::Mutex` is async-aware — `lock().await` yields instead of blocking; `std::sync::Mutex` should not span `.await` points.
+4. **RwLock alternative**: For read-heavy workloads, `RwLock<T>` allows multiple concurrent readers and one exclusive writer.
+
+## Exercises
+
+1. Implement a thread-safe LRU cache using `Arc<Mutex<LruCache<K, V>>>`.
+2. Show the deadlock risk of holding a `MutexGuard` across `.await` — demonstrate the issue and the fix.
+3. Benchmark `Arc<Mutex<T>>` vs `Arc<RwLock<T>>` for a read-heavy workload with 10 readers and 1 writer.

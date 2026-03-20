@@ -29,3 +29,9 @@ Rust uses `enum` variants with `Box<RBTree<T>>` for heap-allocated recursive chi
 2. **Pattern matching:** OCaml's or-patterns (`| case1 | case2 -> result`) bind variables across alternatives; Rust needs separate match arms with guards.
 3. **Ownership in rotations:** OCaml's GC allows sharing subtrees freely; Rust's `balance` must destructure and re-box each subtree, making the ownership flow explicit.
 4. **Trait integration:** OCaml uses `List.fold_left` as a standalone function; Rust implements `FromIterator` so `.collect()` works natively with the type system.
+
+## Exercises
+
+1. Implement `select` — given index `k`, return the `k`-th smallest element (0-based) in O(log n) by augmenting each node with its subtree size.
+2. Write a `split` function that takes a value and returns two trees: one with all elements less than the value, and one with all elements greater.
+3. Implement a fully functional ordered map (`RBMap<K, V>`) backed by the red-black tree, with `insert`, `get`, and `remove` operations.
