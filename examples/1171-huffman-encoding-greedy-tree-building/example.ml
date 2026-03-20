@@ -21,5 +21,12 @@ let rec codes prefix = function
 let () =
   let freqs = [('a',5);('b',9);('c',12);('d',13);('e',16);('f',45)] in
   let tree = build_tree freqs in
-  codes "" tree |> List.iter (fun (c, code) ->
-    Printf.printf "%c: %s\n" c code)
+  let cs = codes "" tree in
+  (* 'f' has the highest frequency — gets the shortest code *)
+  assert (List.assoc 'f' cs = "0");
+  (* 'a' and 'b' are least frequent — get 4-bit codes *)
+  assert (String.length (List.assoc 'a' cs) = 4);
+  assert (String.length (List.assoc 'b' cs) = 4);
+  (* all 6 characters are encoded *)
+  assert (List.length cs = 6);
+  print_endline "ok"
