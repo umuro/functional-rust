@@ -3,6 +3,9 @@
 ---
 
 # 916-iterator-count — Iterator Count
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

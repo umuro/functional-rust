@@ -3,6 +3,9 @@
 ---
 
 # 277: Counting Elements with count()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 456: `OnceLock` and `OnceCell` — Once-Initialized Values
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

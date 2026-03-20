@@ -3,6 +3,9 @@
 ---
 
 # 392: `impl Trait` in Argument Position
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

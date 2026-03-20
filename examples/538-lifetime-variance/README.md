@@ -3,6 +3,9 @@
 ---
 
 # Variance: Covariant, Contravariant, Invariant
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

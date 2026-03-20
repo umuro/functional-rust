@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 [fenwick-tree on hightechmind.io](https://hightechmind.io/posts/functional-rust/fenwick-tree)
 
 ---

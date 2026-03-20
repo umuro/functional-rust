@@ -3,6 +3,9 @@
 ---
 
 # GAT Collections
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

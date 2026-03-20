@@ -3,6 +3,9 @@
 ---
 
 # 885-zip-unzip — Zip and Unzip
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # Lifetimes in dyn Trait
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

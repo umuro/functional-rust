@@ -3,6 +3,9 @@
 ---
 
 # Optics: lens pattern
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

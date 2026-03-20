@@ -3,6 +3,9 @@
 ---
 
 # 020 — Remove the Kth Element
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

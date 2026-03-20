@@ -3,6 +3,9 @@
 ---
 
 # 342: Async I/O Concepts
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

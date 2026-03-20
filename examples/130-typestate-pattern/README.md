@@ -3,6 +3,9 @@
 ---
 
 # Typestate Pattern — State Machines in Types
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # String Bytes
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 Rust provides `.bytes()` for raw byte iteration and `String::from_utf8` / `from_utf8_lossy` for converting byte vectors back to strings with explicit UTF-8 validation.
 

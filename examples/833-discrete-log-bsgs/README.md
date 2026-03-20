@@ -3,6 +3,9 @@
 ---
 
 # Discrete Logarithm — Baby-Step Giant-Step
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

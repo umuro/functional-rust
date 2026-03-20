@@ -1,3 +1,6 @@
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 [semaphore on hightechmind.io](https://hightechmind.io/posts/functional-rust/semaphore)
 
 ---

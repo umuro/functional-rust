@@ -3,6 +3,9 @@
 ---
 
 # 350: Oneshot Channel
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

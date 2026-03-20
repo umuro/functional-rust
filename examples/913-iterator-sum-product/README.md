@@ -3,6 +3,9 @@
 ---
 
 # 913-iterator-sum-product — Iterator Sum and Product
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

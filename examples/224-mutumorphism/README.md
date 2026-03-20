@@ -3,6 +3,9 @@
 ---
 
 # Mutumorphism — Genuinely Mutual Recursion
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

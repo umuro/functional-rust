@@ -3,6 +3,9 @@
 ---
 
 # 377: Graph — Adjacency List
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

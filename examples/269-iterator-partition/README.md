@@ -3,6 +3,9 @@
 ---
 
 # 269: Splitting by Predicate with partition()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

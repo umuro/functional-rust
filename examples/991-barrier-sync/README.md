@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 [barrier-sync on hightechmind.io](https://hightechmind.io/posts/functional-rust/barrier-sync)
 
 ---

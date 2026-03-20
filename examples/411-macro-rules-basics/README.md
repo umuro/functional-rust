@@ -3,6 +3,9 @@
 ---
 
 # 411: `macro_rules!` Basics
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

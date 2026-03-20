@@ -1,4 +1,7 @@
 # Struct of Arrays (SoA) Pattern
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 > **Functional Rust** · [hightechmind.io](https://hightechmind.io)
 

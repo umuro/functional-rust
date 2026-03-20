@@ -1,3 +1,6 @@
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 [channel-basics on hightechmind.io](https://hightechmind.io/posts/functional-rust/channel-basics)
 
 ---

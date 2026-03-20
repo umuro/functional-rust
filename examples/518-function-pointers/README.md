@@ -3,6 +3,9 @@
 ---
 
 # Function Pointers vs Closures
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

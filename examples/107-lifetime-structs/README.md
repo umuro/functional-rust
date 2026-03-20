@@ -3,6 +3,9 @@
 ---
 
 # 107-lifetime-structs — Lifetimes in Structs
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

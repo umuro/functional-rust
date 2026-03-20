@@ -3,6 +3,9 @@
 ---
 
 # 381: Blanket Implementations
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

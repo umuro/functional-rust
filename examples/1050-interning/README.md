@@ -3,6 +3,9 @@
 ---
 
 # 1050-interning — String Interning
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

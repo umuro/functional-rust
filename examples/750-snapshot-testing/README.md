@@ -3,6 +3,9 @@
 ---
 
 # 750-snapshot-testing — Snapshot Testing
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

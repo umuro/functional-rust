@@ -3,6 +3,9 @@
 ---
 
 # Sealed Traits
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 031 — Collect the Leaves of a Binary Tree in a List
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

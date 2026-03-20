@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 [priority-queue on hightechmind.io](https://hightechmind.io/posts/functional-rust/priority-queue)
 
 ---

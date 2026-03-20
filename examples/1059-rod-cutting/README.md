@@ -3,6 +3,9 @@
 ---
 
 # 1059-rod-cutting — Rod Cutting
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

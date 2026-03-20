@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 [finger-tree on hightechmind.io](https://hightechmind.io/posts/functional-rust/finger-tree)
 
 ---

@@ -1,3 +1,6 @@
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 [sum-of-multiples on hightechmind.io](https://hightechmind.io/posts/functional-rust/sum-of-multiples)
 
 ---

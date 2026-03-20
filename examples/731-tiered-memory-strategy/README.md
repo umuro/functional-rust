@@ -3,6 +3,9 @@
 ---
 
 # 731-tiered-memory-strategy — Tiered Memory Strategy
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

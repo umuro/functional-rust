@@ -3,6 +3,9 @@
 ---
 
 # 387: Sealed Trait Pattern
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

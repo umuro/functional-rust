@@ -3,6 +3,9 @@
 ---
 
 # 264: Conditional Stopping with take_while()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

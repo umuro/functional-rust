@@ -3,6 +3,9 @@
 ---
 
 # Boyer-Moore String Search
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

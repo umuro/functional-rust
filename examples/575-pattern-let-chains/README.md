@@ -3,6 +3,9 @@
 ---
 
 # Let Chains (&&)
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

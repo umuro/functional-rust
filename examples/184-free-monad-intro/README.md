@@ -3,6 +3,9 @@
 ---
 
 # Introduction to Free Monads
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

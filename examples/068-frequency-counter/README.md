@@ -3,6 +3,9 @@
 ---
 
 # 068 — Frequency Counter (Map Module)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

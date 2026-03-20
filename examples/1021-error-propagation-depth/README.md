@@ -3,6 +3,9 @@
 ---
 
 # 1021-error-propagation-depth — Error Propagation Depth
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 907-iterator-chunks — Iterator Chunks
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

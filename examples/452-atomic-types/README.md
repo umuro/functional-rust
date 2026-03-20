@@ -3,6 +3,9 @@
 ---
 
 # 452: Atomic Types — Lock-Free Concurrent Primitives
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

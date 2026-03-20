@@ -3,6 +3,9 @@
 ---
 
 # 880-custom-iterator — Custom Iterator
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

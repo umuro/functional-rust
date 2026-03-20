@@ -3,6 +3,9 @@
 ---
 
 # Pattern Box Deref
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

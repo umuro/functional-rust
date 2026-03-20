@@ -3,6 +3,9 @@
 ---
 
 # String Regex Pattern
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 Simple pattern matching — glob `*` wildcards and SQL LIKE `%`/`_` wildcards — can be implemented with pure `str` methods and recursive descent without pulling in a regex engine.
 

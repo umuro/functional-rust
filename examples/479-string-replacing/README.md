@@ -3,6 +3,9 @@
 ---
 
 # String Replacing
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 Rust provides `replace` for substituting all occurrences, `replacen` for a capped substitution count, and `retain` for in-place character filtering — covering the most common string transformation patterns.
 

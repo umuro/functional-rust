@@ -3,6 +3,9 @@
 ---
 
 # 362: Trie Structure
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

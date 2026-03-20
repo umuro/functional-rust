@@ -3,6 +3,9 @@
 ---
 
 # Separated List
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 [scan-left on hightechmind.io](https://hightechmind.io/posts/functional-rust/scan-left)
 
 ---

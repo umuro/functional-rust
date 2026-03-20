@@ -3,6 +3,9 @@
 ---
 
 # 1028-btreeset-ops — BTreeSet Operations
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

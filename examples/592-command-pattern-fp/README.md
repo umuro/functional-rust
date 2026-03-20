@@ -3,6 +3,9 @@
 ---
 
 # Command Pattern (Functional Style)
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

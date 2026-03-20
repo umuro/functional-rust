@@ -3,6 +3,9 @@
 ---
 
 # Free Monad with State
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

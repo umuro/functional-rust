@@ -3,6 +3,9 @@
 ---
 
 # 110-cell-interior — Cell<T>: Interior Mutability for Copy Types
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

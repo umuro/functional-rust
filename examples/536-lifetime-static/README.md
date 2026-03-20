@@ -3,6 +3,9 @@
 ---
 
 # 'static Lifetime
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

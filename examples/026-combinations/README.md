@@ -3,6 +3,9 @@
 ---
 
 # 026 — Generate the Combinations of K Distinct Objects Chosen from N Elements
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

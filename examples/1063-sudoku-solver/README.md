@@ -3,6 +3,9 @@
 ---
 
 # 1063-sudoku-solver — Sudoku Solver
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

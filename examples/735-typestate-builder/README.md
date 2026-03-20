@@ -3,6 +3,9 @@
 ---
 
 # 735-typestate-builder — Typestate Builder
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

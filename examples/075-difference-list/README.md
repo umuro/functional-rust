@@ -3,6 +3,9 @@
 ---
 
 # 075 — Difference List
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

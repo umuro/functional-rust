@@ -1,3 +1,6 @@
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 [rope-string on hightechmind.io](https://hightechmind.io/posts/functional-rust/rope-string)
 
 ---

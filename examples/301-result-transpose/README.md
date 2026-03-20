@@ -3,6 +3,9 @@
 ---
 
 # 301: Result::transpose() — Flipping Nested Types
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

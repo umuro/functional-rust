@@ -3,6 +3,9 @@
 ---
 
 # 033 — Collect the Nodes at a Given Level
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

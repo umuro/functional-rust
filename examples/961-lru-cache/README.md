@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 [lru-cache on hightechmind.io](https://hightechmind.io/posts/functional-rust/lru-cache)
 
 ---

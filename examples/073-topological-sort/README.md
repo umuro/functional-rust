@@ -3,6 +3,9 @@
 ---
 
 # 073 — Topological Sort
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

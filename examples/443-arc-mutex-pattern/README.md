@@ -3,6 +3,9 @@
 ---
 
 # 443: `Arc<Mutex<T>>` — Shared Mutable State
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

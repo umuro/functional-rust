@@ -3,6 +3,9 @@
 ---
 
 # 011 — Modified Run-Length Encoding
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

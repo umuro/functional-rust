@@ -3,6 +3,9 @@
 ---
 
 # 1046-cow-collections — Clone-on-Write Collections
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

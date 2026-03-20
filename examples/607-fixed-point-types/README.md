@@ -3,6 +3,9 @@
 ---
 
 # Fixed-Point Types
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

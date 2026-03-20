@@ -1,3 +1,6 @@
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 [mutex-basics on hightechmind.io](https://hightechmind.io/posts/functional-rust/mutex-basics)
 
 ---

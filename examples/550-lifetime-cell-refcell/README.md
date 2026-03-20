@@ -3,6 +3,9 @@
 ---
 
 # Cell and RefCell for Interior Mutability
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

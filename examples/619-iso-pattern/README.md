@@ -3,6 +3,9 @@
 ---
 
 # Optics: iso pattern
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

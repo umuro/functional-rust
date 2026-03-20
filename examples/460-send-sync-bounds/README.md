@@ -3,6 +3,9 @@
 ---
 
 # 460: `Send` and `Sync` Bounds
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 1053-coin-change — Coin Change
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

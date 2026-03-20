@@ -3,6 +3,9 @@
 ---
 
 # 1048-zipper-vec — Vec Zipper
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

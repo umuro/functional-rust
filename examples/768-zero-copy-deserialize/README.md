@@ -3,6 +3,9 @@
 ---
 
 # 768-zero-copy-deserialize — Zero-Copy Deserialize
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

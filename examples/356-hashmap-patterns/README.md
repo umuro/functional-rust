@@ -3,6 +3,9 @@
 ---
 
 # 356: HashMap Patterns
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

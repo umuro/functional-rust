@@ -3,6 +3,9 @@
 ---
 
 # Prism Basics — Optics for Enum Variants
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

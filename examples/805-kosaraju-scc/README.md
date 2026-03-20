@@ -3,6 +3,9 @@
 ---
 
 # 805-kosaraju-scc — Kosaraju's Strongly Connected Components
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

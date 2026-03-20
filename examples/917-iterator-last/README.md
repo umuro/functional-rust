@@ -3,6 +3,9 @@
 ---
 
 # 917-iterator-last — Iterator Last
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

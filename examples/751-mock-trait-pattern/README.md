@@ -3,6 +3,9 @@
 ---
 
 # 751-mock-trait-pattern — Mock Trait Pattern
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

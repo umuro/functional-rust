@@ -3,6 +3,9 @@
 ---
 
 # String Template Pattern
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 A `{{variable}}` template engine implemented with a streaming parser that processes the template in a single left-to-right pass, avoiding repeated full-string scans from naive `replace` loops.
 

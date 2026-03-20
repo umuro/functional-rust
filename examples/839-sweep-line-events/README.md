@@ -3,6 +3,9 @@
 ---
 
 # Sweep Line Algorithm
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 [identity-monad on hightechmind.io](https://hightechmind.io/posts/functional-rust/identity-monad)
 
 ---

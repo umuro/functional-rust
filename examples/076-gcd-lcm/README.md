@@ -3,6 +3,9 @@
 ---
 
 # 076 — GCD and LCM (Ownership Focus)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 883-lazy-sequences — Lazy Sequences
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

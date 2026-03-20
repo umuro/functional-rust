@@ -3,6 +3,9 @@
 ---
 
 # 878-from-into-traits — From/Into Traits
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

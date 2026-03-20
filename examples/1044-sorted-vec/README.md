@@ -3,6 +3,9 @@
 ---
 
 # 1044-sorted-vec — Sorted Vec with Binary Search
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

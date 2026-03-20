@@ -3,6 +3,9 @@
 ---
 
 # 331: Timeouts with time::timeout
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

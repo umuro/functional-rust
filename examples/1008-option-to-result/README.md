@@ -3,6 +3,9 @@
 ---
 
 # 1008-option-to-result — Option to Result
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

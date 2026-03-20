@@ -3,6 +3,9 @@
 ---
 
 # 395: Default Methods in Traits
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

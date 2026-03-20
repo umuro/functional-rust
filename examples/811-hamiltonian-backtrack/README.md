@@ -3,6 +3,9 @@
 ---
 
 # 811-hamiltonian-backtrack — Hamiltonian Path (Backtracking)
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

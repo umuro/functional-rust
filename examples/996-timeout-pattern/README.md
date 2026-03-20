@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 [timeout-pattern on hightechmind.io](https://hightechmind.io/posts/functional-rust/timeout-pattern)
 
 ---

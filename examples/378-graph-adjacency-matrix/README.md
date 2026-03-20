@@ -3,6 +3,9 @@
 ---
 
 # 378: Graph — Adjacency Matrix
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # Finally tagless
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

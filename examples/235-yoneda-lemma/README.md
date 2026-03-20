@@ -3,6 +3,9 @@
 ---
 
 # Yoneda Lemma
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

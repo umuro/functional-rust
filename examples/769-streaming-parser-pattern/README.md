@@ -3,6 +3,9 @@
 ---
 
 # 769-streaming-parser-pattern — Streaming Parser Pattern
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

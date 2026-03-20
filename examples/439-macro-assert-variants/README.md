@@ -3,6 +3,9 @@
 ---
 
 # 439: Assert Variant Macros
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 793-minimum-path-sum — Minimum Path Sum
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

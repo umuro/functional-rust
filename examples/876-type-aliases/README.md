@@ -3,6 +3,9 @@
 ---
 
 # 876-type-aliases — Type Aliases
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

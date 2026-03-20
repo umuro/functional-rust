@@ -3,6 +3,9 @@
 ---
 
 # 808-topological-sort-dfs — Topological Sort (DFS)
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

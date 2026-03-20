@@ -3,6 +3,9 @@
 ---
 
 # 061 — Binary Tree (Size, Membership, Traversal)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

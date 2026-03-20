@@ -3,6 +3,9 @@
 ---
 
 # 023 — Extract a Given Number of Randomly Selected Elements
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

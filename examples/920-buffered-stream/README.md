@@ -3,6 +3,9 @@
 ---
 
 # 920-buffered-stream — Buffered Stream
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

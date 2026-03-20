@@ -1,3 +1,6 @@
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 [sparse-matrix on hightechmind.io](https://hightechmind.io/posts/functional-rust/sparse-matrix)
 
 ---

@@ -3,6 +3,9 @@
 ---
 
 # Coyoneda
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

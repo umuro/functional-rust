@@ -3,6 +3,9 @@
 ---
 
 # 268: Splitting Pairs with unzip()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 779-const-lookup-table — Const Lookup Table
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

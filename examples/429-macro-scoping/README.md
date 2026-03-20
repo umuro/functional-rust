@@ -3,6 +3,9 @@
 ---
 
 # 429: Macro Scoping and Visibility
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

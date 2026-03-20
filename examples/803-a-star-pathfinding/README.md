@@ -3,6 +3,9 @@
 ---
 
 # 803-a-star-pathfinding — A* Pathfinding
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -1,3 +1,6 @@
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 [union-find on hightechmind.io](https://hightechmind.io/posts/functional-rust/union-find)
 
 ---

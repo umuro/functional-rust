@@ -3,6 +3,9 @@
 ---
 
 # 795-subset-sum-dp — Subset Sum
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 415: Token Tree Munching
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

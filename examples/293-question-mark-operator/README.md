@@ -3,6 +3,9 @@
 ---
 
 # 293: The ? Operator
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

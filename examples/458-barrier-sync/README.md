@@ -3,6 +3,9 @@
 ---
 
 # 458: Barrier Synchronization
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

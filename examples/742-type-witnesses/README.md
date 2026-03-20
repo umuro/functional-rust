@@ -3,6 +3,9 @@
 ---
 
 # 742-type-witnesses — Type Witnesses
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

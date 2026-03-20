@@ -3,6 +3,9 @@
 ---
 
 # Pattern Multiple Arms
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

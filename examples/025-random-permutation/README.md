@@ -3,6 +3,9 @@
 ---
 
 # 025 — Generate a Random Permutation of the Elements of a List
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

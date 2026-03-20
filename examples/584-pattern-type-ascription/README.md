@@ -3,6 +3,9 @@
 ---
 
 # Pattern Type Ascription
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

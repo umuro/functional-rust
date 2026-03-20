@@ -3,6 +3,9 @@
 ---
 
 # 342: Arc<Mutex<T>> Pattern
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

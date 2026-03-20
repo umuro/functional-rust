@@ -3,6 +3,9 @@
 ---
 
 # String Compression — Run-Length Encoding
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 Run-length encoding (RLE) compresses strings by replacing consecutive repeated characters with a `(count, char)` pair, implemented with `fold` for encoding and `fold` for decoding — both purely functional.
 

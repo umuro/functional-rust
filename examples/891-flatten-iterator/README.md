@@ -3,6 +3,9 @@
 ---
 
 # 891-flatten-iterator — Flatten Iterator
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

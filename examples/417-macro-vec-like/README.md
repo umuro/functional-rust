@@ -3,6 +3,9 @@
 ---
 
 # 417: Vec-like Collection Macros
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

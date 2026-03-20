@@ -3,6 +3,9 @@
 ---
 
 # 1075-stone-game — Stone Game (Minimax DP)
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

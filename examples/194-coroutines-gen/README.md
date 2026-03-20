@@ -3,6 +3,9 @@
 ---
 
 # Coroutines and Generators
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

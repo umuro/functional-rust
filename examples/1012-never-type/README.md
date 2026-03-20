@@ -3,6 +3,9 @@
 ---
 
 # 1012-never-type — The Never Type (!)
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

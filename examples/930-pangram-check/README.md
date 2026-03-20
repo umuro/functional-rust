@@ -3,6 +3,9 @@
 ---
 
 # 930-pangram-check — Pangram Check
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

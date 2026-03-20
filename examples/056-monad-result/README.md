@@ -3,6 +3,9 @@
 ---
 
 # 056 — Result as a Monad
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 012 — Decode Run-Length Encoding
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

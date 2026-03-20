@@ -3,6 +3,9 @@
 ---
 
 # 434: Domain-Specific Languages with Macros
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

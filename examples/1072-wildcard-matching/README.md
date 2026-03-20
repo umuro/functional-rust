@@ -3,6 +3,9 @@
 ---
 
 # 1072-wildcard-matching — Wildcard Matching
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

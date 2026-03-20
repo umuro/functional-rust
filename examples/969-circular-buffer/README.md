@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 [circular-buffer on hightechmind.io](https://hightechmind.io/posts/functional-rust/circular-buffer)
 
 ---

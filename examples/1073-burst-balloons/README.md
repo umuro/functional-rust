@@ -3,6 +3,9 @@
 ---
 
 # 1073-burst-balloons — Burst Balloons
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

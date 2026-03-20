@@ -3,6 +3,9 @@
 ---
 
 # Fold Optic — Read-Only Multi-Focus Aggregation
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

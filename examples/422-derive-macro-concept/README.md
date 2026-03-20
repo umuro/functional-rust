@@ -3,6 +3,9 @@
 ---
 
 # 422: Derive Macro Concepts
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

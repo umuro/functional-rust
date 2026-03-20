@@ -3,6 +3,9 @@
 ---
 
 # 258: Index-Value Pairs with enumerate()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 936-mutual-recursion — Mutual Recursion
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

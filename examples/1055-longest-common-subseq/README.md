@@ -3,6 +3,9 @@
 ---
 
 # 1055-longest-common-subseq — Longest Common Subsequence
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 [async-join on hightechmind.io](https://hightechmind.io/posts/functional-rust/async-join)
 
 ---

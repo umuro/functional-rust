@@ -3,6 +3,9 @@
 ---
 
 # unions in rust
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

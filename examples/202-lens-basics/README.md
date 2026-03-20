@@ -3,6 +3,9 @@
 ---
 
 # Lens Basics — Get and Set
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

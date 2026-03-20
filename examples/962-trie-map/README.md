@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 [trie-map on hightechmind.io](https://hightechmind.io/posts/functional-rust/trie-map)
 
 ---

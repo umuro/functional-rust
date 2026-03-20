@@ -3,6 +3,9 @@
 ---
 
 # 400: Static vs. Dynamic Trait Dispatch
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

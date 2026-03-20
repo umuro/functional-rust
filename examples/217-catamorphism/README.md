@@ -3,6 +3,9 @@
 ---
 
 # Catamorphism — The Universal Fold
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

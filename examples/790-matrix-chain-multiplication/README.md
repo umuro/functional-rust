@@ -3,6 +3,9 @@
 ---
 
 # 790-matrix-chain-multiplication — Matrix Chain Multiplication
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

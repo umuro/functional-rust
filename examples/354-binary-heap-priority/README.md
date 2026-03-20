@@ -3,6 +3,9 @@
 ---
 
 # 354: BinaryHeap Priority Queue
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

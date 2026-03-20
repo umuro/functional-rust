@@ -3,6 +3,9 @@
 ---
 
 # Pattern Advanced Enums
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

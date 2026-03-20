@@ -3,6 +3,9 @@
 ---
 
 # Polynomial String Hashing
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

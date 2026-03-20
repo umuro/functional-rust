@@ -3,6 +3,9 @@
 ---
 
 # 902-iterator-enumerate — Iterator Enumerate
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

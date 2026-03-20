@@ -3,6 +3,9 @@
 ---
 
 # Length-Indexed Lists
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

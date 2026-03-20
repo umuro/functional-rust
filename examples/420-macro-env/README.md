@@ -3,6 +3,9 @@
 ---
 
 # 420: `env!` and `option_env!` — Compile-time Environment Variables
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

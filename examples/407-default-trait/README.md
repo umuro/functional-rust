@@ -3,6 +3,9 @@
 ---
 
 # 407: The Default Trait
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

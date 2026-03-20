@@ -3,6 +3,9 @@
 ---
 
 # 455: Lock-Free Stack
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

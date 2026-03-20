@@ -3,6 +3,9 @@
 ---
 
 # String Fixed Array
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 `FixedString<const N: usize>` is a stack-allocated string buffer backed by `[u8; N]` with a length counter, providing `String`-like operations with zero heap allocation — essential for embedded systems, real-time code, and hot paths.
 

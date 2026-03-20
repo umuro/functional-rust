@@ -3,6 +3,9 @@
 ---
 
 # Introduction to GADTs
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # Point-in-Polygon Test
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

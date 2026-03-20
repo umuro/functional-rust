@@ -3,6 +3,9 @@
 ---
 
 # 284: FusedIterator for Stable Termination
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

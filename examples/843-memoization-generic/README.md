@@ -3,6 +3,9 @@
 ---
 
 # Generic Memoization
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

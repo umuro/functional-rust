@@ -3,6 +3,9 @@
 ---
 
 # Concurrent HashMap
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 A sharded thread-safe hashmap that reduces lock contention by partitioning keys across multiple independent RwLock-guarded buckets.
 

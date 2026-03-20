@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 [validated-type on hightechmind.io](https://hightechmind.io/posts/functional-rust/validated-type)
 
 ---

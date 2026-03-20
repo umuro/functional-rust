@@ -3,6 +3,9 @@
 ---
 
 # 778-const-fibonacci — Const Fibonacci
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

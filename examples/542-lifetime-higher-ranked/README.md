@@ -3,6 +3,9 @@
 ---
 
 # Higher-Ranked Trait Bounds (for<'a>)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

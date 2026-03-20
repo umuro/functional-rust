@@ -1,4 +1,7 @@
 # MaybeUninit — Safe Uninitialized Memory
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 > **Functional Rust** · [hightechmind.io](https://hightechmind.io)
 

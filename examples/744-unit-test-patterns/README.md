@@ -3,6 +3,9 @@
 ---
 
 # 744-unit-test-patterns — Unit Test Patterns
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

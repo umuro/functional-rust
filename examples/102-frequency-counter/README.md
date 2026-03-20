@@ -3,6 +3,9 @@
 ---
 
 # 102-frequency-counter — Frequency Counter
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

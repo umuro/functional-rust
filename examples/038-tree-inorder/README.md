@@ -3,6 +3,9 @@
 ---
 
 # 038 — Inorder Traversal Sequence
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

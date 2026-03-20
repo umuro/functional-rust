@@ -3,6 +3,9 @@
 ---
 
 # 760-serde-derive-concept — Serde Derive Concept
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

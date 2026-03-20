@@ -3,6 +3,9 @@
 ---
 
 # 352: BTreeSet Sorted
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

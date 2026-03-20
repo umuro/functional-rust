@@ -3,6 +3,9 @@
 ---
 
 # 336: Executor Basics
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

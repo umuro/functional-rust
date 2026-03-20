@@ -3,6 +3,9 @@
 ---
 
 # Hylomorphism — Ana then Cata, Fused
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

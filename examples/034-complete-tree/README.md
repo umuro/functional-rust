@@ -3,6 +3,9 @@
 ---
 
 # 034 — Construct a Complete Binary Tree
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

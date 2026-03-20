@@ -3,6 +3,9 @@
 ---
 
 # 290: Advanced Splitting Patterns
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

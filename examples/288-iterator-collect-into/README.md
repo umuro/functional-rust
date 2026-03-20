@@ -3,6 +3,9 @@
 ---
 
 # 288: Materializing Iterators with collect()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

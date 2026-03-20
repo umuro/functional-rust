@@ -3,6 +3,9 @@
 ---
 
 # 291: Result Combinators
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

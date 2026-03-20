@@ -3,6 +3,9 @@
 ---
 
 # 364: Slab Allocator
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # String Case Conversion
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 Rust's standard library provides `to_uppercase`/`to_lowercase` for Unicode-correct case folding, while `snake_case`, `camelCase`, and `Title Case` conversions are implemented with `char_indices`, `split`, and `flat_map` iterator combinators.
 

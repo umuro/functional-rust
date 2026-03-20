@@ -3,6 +3,9 @@
 ---
 
 # 047 — Result Bind (and_then)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

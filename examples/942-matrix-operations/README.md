@@ -1,3 +1,6 @@
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 [matrix-operations on hightechmind.io](https://hightechmind.io/posts/functional-rust/matrix-operations)
 
 ---

@@ -3,6 +3,9 @@
 ---
 
 # 461: Producer-Consumer Pattern
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

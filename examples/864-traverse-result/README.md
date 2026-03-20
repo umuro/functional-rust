@@ -3,6 +3,9 @@
 ---
 
 # Traverse with Result
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 315: Result ok() and err() Methods
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

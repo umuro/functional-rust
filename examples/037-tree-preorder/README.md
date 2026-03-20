@@ -3,6 +3,9 @@
 ---
 
 # 037 — Preorder Traversal Sequence
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 016 — Drop Every Nth Element
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 074 — Currying and Partial Application (Applied)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

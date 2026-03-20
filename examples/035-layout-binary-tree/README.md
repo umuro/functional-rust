@@ -3,6 +3,9 @@
 ---
 
 # 035 — Layout a Binary Tree
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

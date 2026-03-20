@@ -3,6 +3,9 @@
 ---
 
 # Pattern Exhaustiveness
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

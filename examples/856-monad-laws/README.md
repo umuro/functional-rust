@@ -3,6 +3,9 @@
 ---
 
 # Monad Laws
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 931-records — Records and Functional Update
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

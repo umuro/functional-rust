@@ -3,6 +3,9 @@
 ---
 
 # 425: Proc Macro Attribute
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

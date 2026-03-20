@@ -3,6 +3,9 @@
 ---
 
 # Optics: functional rust grand tour
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 [persistent-tree on hightechmind.io](https://hightechmind.io/posts/functional-rust/persistent-tree)
 
 ---

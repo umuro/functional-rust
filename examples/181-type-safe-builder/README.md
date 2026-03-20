@@ -3,6 +3,9 @@
 ---
 
 # Type-Safe SQL-like Query Builder
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

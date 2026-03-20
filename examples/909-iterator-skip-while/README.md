@@ -3,6 +3,9 @@
 ---
 
 # 909-iterator-skip-while — Iterator skip_while
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

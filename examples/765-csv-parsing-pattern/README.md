@@ -3,6 +3,9 @@
 ---
 
 # 765-csv-parsing-pattern — CSV Parsing Pattern
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

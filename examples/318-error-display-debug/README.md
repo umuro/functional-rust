@@ -3,6 +3,9 @@
 ---
 
 # 318: Display vs Debug for Errors
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

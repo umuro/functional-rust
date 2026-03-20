@@ -3,6 +3,9 @@
 ---
 
 # ffi callbacks
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

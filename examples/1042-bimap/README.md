@@ -3,6 +3,9 @@
 ---
 
 # 1042-bimap — Bidirectional Map
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # Complex Closure Environments
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 872-where-clauses — Where Clauses
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

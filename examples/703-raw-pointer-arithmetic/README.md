@@ -3,6 +3,9 @@
 ---
 
 # raw pointer arithmetic
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

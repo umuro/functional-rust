@@ -3,6 +3,9 @@
 ---
 
 # 733-profile-guided-patterns — Profile-Guided Patterns
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # Backtracking Framework
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

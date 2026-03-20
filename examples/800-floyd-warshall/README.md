@@ -3,6 +3,9 @@
 ---
 
 # 800-floyd-warshall — Floyd-Warshall Algorithm
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

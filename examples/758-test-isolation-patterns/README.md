@@ -3,6 +3,9 @@
 ---
 
 # 758-test-isolation-patterns — Test Isolation Patterns
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

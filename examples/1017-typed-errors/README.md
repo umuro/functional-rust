@@ -3,6 +3,9 @@
 ---
 
 # 1017-typed-errors — Typed Error Hierarchies
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

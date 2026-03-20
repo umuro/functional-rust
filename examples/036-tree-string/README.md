@@ -3,6 +3,9 @@
 ---
 
 # 036 — Represent a Binary Tree as a String
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

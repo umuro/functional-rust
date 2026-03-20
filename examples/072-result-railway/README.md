@@ -3,6 +3,9 @@
 ---
 
 # 072 — Railway-Oriented Programming
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

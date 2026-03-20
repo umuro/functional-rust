@@ -3,6 +3,9 @@
 ---
 
 # 287: Recursive Sequences with successors()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

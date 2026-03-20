@@ -3,6 +3,9 @@
 ---
 
 # 884-infinite-iterators — Infinite Iterators
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

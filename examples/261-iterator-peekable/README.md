@@ -3,6 +3,9 @@
 ---
 
 # 261: Lookahead with Peekable
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

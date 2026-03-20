@@ -3,6 +3,9 @@
 ---
 
 # Lifetimes in impl Blocks
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

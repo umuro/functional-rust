@@ -3,6 +3,9 @@
 ---
 
 # 001 — Last Element of a List
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 **Difficulty**: ⭐
 **Category**: Lists & Pattern Matching

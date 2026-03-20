@@ -3,6 +3,9 @@
 ---
 
 # Free Monad Interpreters
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

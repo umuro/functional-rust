@@ -3,6 +3,9 @@
 ---
 
 # Tuple Struct Patterns
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 923-thread-pool — Thread Pool
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # Anamorphism — Unfold to Build Recursive Structures
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

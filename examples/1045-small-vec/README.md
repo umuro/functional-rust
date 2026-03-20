@@ -3,6 +3,9 @@
 ---
 
 # 1045-small-vec — Small Vector Optimization
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

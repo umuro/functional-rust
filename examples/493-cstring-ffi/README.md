@@ -3,6 +3,9 @@
 ---
 
 # CString and CStr for FFI
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 `CString` and `CStr` are Rust's null-terminated string types for C interop — `CString` owns a null-terminated byte buffer for passing to C functions, and `CStr` borrows one for reading C output.
 

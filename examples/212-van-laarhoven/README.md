@@ -3,6 +3,9 @@
 ---
 
 # Van Laarhoven Lenses
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

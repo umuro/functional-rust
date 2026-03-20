@@ -3,6 +3,9 @@
 ---
 
 # 041 — Option Basics
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 419: `cfg!` and Conditional Compilation
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

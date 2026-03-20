@@ -3,6 +3,9 @@
 ---
 
 # 767-versioned-data-format — Versioned Data Format
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

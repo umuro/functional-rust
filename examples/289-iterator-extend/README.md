@@ -3,6 +3,9 @@
 ---
 
 # 289: Extending Collections with extend()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

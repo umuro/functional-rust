@@ -3,6 +3,9 @@
 ---
 
 # 1036-arena-graph — Graph with Arena Allocation
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

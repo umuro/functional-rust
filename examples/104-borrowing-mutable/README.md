@@ -3,6 +3,9 @@
 ---
 
 # 104-borrowing-mutable — Mutable Borrowing
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

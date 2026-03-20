@@ -3,6 +3,9 @@
 ---
 
 # transmute safe patterns
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

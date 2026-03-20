@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 [profunctor-intro on hightechmind.io](https://hightechmind.io/posts/functional-rust/profunctor-intro)
 
 ---

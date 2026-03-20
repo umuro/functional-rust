@@ -3,6 +3,9 @@
 ---
 
 # Recursive Closures and Y Combinator
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 Rust closures cannot reference themselves directly, so recursive anonymous computations require either named inner functions, open recursion (passing self as argument), or the Y combinator pattern using a `struct` wrapper.
 

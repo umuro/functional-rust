@@ -3,6 +3,9 @@
 ---
 
 # 938-unfold — Unfold
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

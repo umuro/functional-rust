@@ -3,6 +3,9 @@
 ---
 
 # 786-longest-common-subsequence — Longest Common Subsequence
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

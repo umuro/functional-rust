@@ -3,6 +3,9 @@
 ---
 
 # 286: Creating Iterators with from_fn()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

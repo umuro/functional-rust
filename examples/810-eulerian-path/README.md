@@ -3,6 +3,9 @@
 ---
 
 # 810-eulerian-path — Eulerian Path
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

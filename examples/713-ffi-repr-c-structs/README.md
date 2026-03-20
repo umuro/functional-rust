@@ -3,6 +3,9 @@
 ---
 
 # ffi repr c structs
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

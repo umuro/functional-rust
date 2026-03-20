@@ -3,6 +3,9 @@
 ---
 
 # 305: unwrap_or, unwrap_or_else, unwrap_or_default
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

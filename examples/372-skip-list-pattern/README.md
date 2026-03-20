@@ -3,6 +3,9 @@
 ---
 
 # 372: Skip List Pattern
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

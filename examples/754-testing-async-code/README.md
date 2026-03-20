@@ -3,6 +3,9 @@
 ---
 
 # 754-testing-async-code — Testing Async Code
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

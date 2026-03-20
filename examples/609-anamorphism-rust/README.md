@@ -3,6 +3,9 @@
 ---
 
 # Anamorphism
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

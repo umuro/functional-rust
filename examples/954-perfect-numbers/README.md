@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 [perfect-numbers on hightechmind.io](https://hightechmind.io/posts/functional-rust/perfect-numbers)
 
 ---

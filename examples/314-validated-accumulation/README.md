@@ -3,6 +3,9 @@
 ---
 
 # 314: Validated — Accumulating All Errors
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 1010-partition-results — Partition Results
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 1165-building-a-huffman-tree-from-character-frequencies — Huffman Encoding: Greedy Tree Building
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

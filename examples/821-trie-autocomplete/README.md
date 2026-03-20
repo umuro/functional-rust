@@ -3,6 +3,9 @@
 ---
 
 # Trie Autocomplete
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

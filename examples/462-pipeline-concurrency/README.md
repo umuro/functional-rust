@@ -3,6 +3,9 @@
 ---
 
 # 462: Pipeline Concurrency
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 353: VecDeque Double-Ended Queue
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

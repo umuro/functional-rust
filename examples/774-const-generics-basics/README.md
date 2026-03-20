@@ -3,6 +3,9 @@
 ---
 
 # 774-const-generics-basics — Const Generics Basics
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 906-iterator-windows — Iterator Windows
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

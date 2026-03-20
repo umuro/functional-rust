@@ -3,6 +3,9 @@
 ---
 
 # 899-lifetime-basics — Lifetime Basics
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

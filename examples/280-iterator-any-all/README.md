@@ -3,6 +3,9 @@
 ---
 
 # 280: Existential Checks with any() and all()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

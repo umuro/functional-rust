@@ -3,6 +3,9 @@
 ---
 
 # 297: The thiserror Pattern
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

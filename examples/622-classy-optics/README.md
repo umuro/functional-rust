@@ -3,6 +3,9 @@
 ---
 
 # Optics: classy optics
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # Optics: optics intro
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

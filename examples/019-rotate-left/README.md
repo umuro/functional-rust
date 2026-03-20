@@ -3,6 +3,9 @@
 ---
 
 # 019 — Rotate a List to the Left
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -1,3 +1,6 @@
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 [map-reduce on hightechmind.io](https://hightechmind.io/posts/functional-rust/map-reduce)
 
 ---

@@ -3,6 +3,9 @@
 ---
 
 # 887-windows-chunks — Windows and Chunks
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

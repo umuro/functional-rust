@@ -3,6 +3,9 @@
 ---
 
 # 308: When to Panic vs Return Result
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

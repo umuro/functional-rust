@@ -3,6 +3,9 @@
 ---
 
 # Cow<str> Usage
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 `Cow<'a, str>` (Clone-on-Write) is a smart pointer that holds either a borrowed `&'a str` or an owned `String`, allocating only when mutation is actually needed — enabling zero-copy fast paths with a unified API.
 

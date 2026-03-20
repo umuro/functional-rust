@@ -3,6 +3,9 @@
 ---
 
 # Lifetime Cheatsheet
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

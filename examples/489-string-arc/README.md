@@ -3,6 +3,9 @@
 ---
 
 # Arc<str> for Shared Strings
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 `Arc<str>` is a reference-counted fat pointer to an immutable string slice, enabling cheap cloning and safe sharing across threads without copying the string data.
 

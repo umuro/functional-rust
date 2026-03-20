@@ -3,6 +3,9 @@
 ---
 
 # 879-iterator-trait — Iterator Trait
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

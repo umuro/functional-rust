@@ -3,6 +3,9 @@
 ---
 
 # Suffix Array
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

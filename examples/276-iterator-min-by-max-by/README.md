@@ -3,6 +3,9 @@
 ---
 
 # 276: Custom Comparison with min_by() and max_by()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

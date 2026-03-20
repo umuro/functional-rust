@@ -3,6 +3,9 @@
 ---
 
 # 374: Radix Tree (Compressed Trie)
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

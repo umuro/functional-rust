@@ -3,6 +3,9 @@
 ---
 
 # 1032-vec-deque-rotation — VecDeque Rotation
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

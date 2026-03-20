@@ -3,6 +3,9 @@
 ---
 
 # Prime Factorization
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

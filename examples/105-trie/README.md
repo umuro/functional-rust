@@ -3,6 +3,9 @@
 ---
 
 # 105-trie — Trie (Prefix Tree)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

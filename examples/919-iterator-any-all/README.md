@@ -3,6 +3,9 @@
 ---
 
 # 919-iterator-any-all — Iterator any and all
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

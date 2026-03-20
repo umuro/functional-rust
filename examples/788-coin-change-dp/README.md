@@ -3,6 +3,9 @@
 ---
 
 # 788-coin-change-dp — Coin Change
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

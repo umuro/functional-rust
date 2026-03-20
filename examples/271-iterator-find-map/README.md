@@ -3,6 +3,9 @@
 ---
 
 # 271: Transform-and-Find with find_map()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

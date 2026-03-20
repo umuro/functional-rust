@@ -3,6 +3,9 @@
 ---
 
 # 273: Debugging Iterators with inspect()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

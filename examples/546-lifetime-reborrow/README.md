@@ -3,6 +3,9 @@
 ---
 
 # Reborrowing Patterns
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

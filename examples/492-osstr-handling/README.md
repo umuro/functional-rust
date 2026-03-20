@@ -3,6 +3,9 @@
 ---
 
 # OsStr Handling
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 `OsStr` and `OsString` are Rust's OS-native string types that represent file names, environment variables, and command-line arguments exactly as the OS provides them — including byte sequences that are not valid UTF-8 on Unix.
 

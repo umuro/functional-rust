@@ -3,6 +3,9 @@
 ---
 
 # 414: Recursive Macro Patterns
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

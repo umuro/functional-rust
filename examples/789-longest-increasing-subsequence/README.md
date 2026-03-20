@@ -3,6 +3,9 @@
 ---
 
 # 789-longest-increasing-subsequence — Longest Increasing Subsequence
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

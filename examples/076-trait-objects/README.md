@@ -3,6 +3,9 @@
 ---
 
 # 076 — Trait Objects (Dynamic Dispatch)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

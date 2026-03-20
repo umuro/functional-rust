@@ -3,6 +3,9 @@
 ---
 
 # Rabin-Karp Rolling Hash
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

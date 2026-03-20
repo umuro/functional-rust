@@ -3,6 +3,9 @@
 ---
 
 # 873-associated-types — Associated Types
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

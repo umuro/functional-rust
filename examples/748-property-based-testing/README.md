@@ -3,6 +3,9 @@
 ---
 
 # 748-property-based-testing — Property-Based Testing
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

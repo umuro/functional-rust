@@ -3,6 +3,9 @@
 ---
 
 # Closest Pair of Points — Divide and Conquer
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

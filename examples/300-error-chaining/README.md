@@ -3,6 +3,9 @@
 ---
 
 # 300: Chaining Errors with source()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

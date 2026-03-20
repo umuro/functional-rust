@@ -3,6 +3,9 @@
 ---
 
 # Paramorphism — Cata with Access to Original Subtree
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

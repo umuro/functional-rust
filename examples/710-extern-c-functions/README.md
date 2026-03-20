@@ -3,6 +3,9 @@
 ---
 
 # extern c functions
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

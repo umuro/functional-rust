@@ -3,6 +3,9 @@
 ---
 
 # Effects as Exceptions
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

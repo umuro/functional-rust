@@ -3,6 +3,9 @@
 ---
 
 # 424: Proc Macro Derive
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 368: Persistent Data Structures
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

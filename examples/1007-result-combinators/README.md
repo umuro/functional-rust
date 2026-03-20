@@ -3,6 +3,9 @@
 ---
 
 # 1007-result-combinators — Result Combinators
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 459: Thread-Local Storage
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # Effects as State
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

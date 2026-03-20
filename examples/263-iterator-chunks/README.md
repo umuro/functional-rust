@@ -3,6 +3,9 @@
 ---
 
 # 263: Fixed-Size Chunks Iteration
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 078 — Topological Sort (Ownership Focus)
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

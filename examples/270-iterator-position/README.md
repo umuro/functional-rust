@@ -3,6 +3,9 @@
 ---
 
 # 270: Finding Index with position()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

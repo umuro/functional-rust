@@ -3,6 +3,9 @@
 ---
 
 # 102-clone-copy — Clone vs Copy
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 1070-hamiltonian-path — Hamiltonian Path
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

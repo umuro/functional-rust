@@ -3,6 +3,9 @@
 ---
 
 # 914-iterator-min-max — Iterator min and max
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 018 — Extract a Slice from a List
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

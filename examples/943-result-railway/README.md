@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 [result-railway on hightechmind.io](https://hightechmind.io/posts/functional-rust/result-railway)
 
 ---

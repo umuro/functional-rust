@@ -3,6 +3,9 @@
 ---
 
 # 787-edit-distance-levenshtein — Edit Distance (Levenshtein)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

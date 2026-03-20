@@ -3,6 +3,9 @@
 ---
 
 # Interval Tree — Stabbing Queries
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

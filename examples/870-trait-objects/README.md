@@ -3,6 +3,9 @@
 ---
 
 # 870-trait-objects — Trait Objects (Dynamic Dispatch)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

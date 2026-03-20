@@ -3,6 +3,9 @@
 ---
 
 # Traversal — Focus on Zero or More Targets
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 438: `format_args!` and Efficient Formatting
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

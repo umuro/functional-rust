@@ -3,6 +3,9 @@
 ---
 
 # Effects as Async
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

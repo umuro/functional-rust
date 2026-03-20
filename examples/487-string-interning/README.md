@@ -3,6 +3,9 @@
 ---
 
 # String Interning
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 String interning deduplicates equal strings by returning `Arc<str>` handles that share a single heap allocation, enabling O(1) equality comparison by pointer and reduced memory usage for repeated strings.
 

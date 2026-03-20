@@ -3,6 +3,9 @@
 ---
 
 # 886-scan-accumulate — Scan / Accumulate
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

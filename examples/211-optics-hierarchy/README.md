@@ -3,6 +3,9 @@
 ---
 
 # Optics Hierarchy
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

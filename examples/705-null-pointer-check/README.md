@@ -3,6 +3,9 @@
 ---
 
 # null pointer check
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

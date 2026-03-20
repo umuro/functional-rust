@@ -3,6 +3,9 @@
 ---
 
 # Boxing Closures
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 `Box<dyn Fn(A) -> B>` erases the concrete closure type, enabling heterogeneous collections of closures, dynamic dispatch, and storage as struct fields when the closure type is not known at compile time.
 

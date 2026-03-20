@@ -3,6 +3,9 @@
 ---
 
 # 077 — Generic Bounds
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

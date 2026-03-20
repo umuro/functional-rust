@@ -3,6 +3,9 @@
 ---
 
 # 333: Async Recursion
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 927-option-result — Option and Result
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

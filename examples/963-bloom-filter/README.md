@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 [bloom-filter on hightechmind.io](https://hightechmind.io/posts/functional-rust/bloom-filter)
 
 ---

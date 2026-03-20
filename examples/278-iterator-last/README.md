@@ -3,6 +3,9 @@
 ---
 
 # 278: Getting the Last Element with last()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

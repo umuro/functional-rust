@@ -3,6 +3,9 @@
 ---
 
 # 430: Macro Debugging Techniques
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

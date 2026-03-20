@@ -3,6 +3,9 @@
 ---
 
 # Closure Capture Rules
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 Rust closures capture their environment by the least restrictive mechanism that the closure body requires: immutable borrow, mutable borrow, or move (ownership transfer), chosen automatically by the compiler unless `move` is specified explicitly.
 

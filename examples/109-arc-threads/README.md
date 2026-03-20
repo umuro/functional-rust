@@ -3,6 +3,9 @@
 ---
 
 # 109-arc-threads — Arc<T>: Thread-Safe Shared Ownership
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

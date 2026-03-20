@@ -3,6 +3,9 @@
 ---
 
 # 798-kadane-max-subarray — Kadane's Algorithm
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

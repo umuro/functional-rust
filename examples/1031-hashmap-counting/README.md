@@ -3,6 +3,9 @@
 ---
 
 # 1031-hashmap-counting — Frequency Counting with HashMap
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

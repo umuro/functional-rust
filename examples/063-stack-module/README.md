@@ -3,6 +3,9 @@
 ---
 
 # 063 — Stack Module
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 812-graph-coloring — Graph Coloring
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

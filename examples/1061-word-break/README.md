@@ -3,6 +3,9 @@
 ---
 
 # 1061-word-break — Word Break
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 772-parser-combinator-pattern — Parser Combinator Pattern
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

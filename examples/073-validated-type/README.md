@@ -3,6 +3,9 @@
 ---
 
 # 073 — Validated Types (Parse, Don't Validate)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

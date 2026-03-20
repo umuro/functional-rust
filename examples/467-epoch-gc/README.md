@@ -3,6 +3,9 @@
 ---
 
 # Epoch-Based Garbage Collection
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 A memory reclamation scheme for concurrent data structures that defers deallocation until no thread holds a reference to the object being freed.
 

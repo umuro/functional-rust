@@ -3,6 +3,9 @@
 ---
 
 # 908-iterator-take-while — Iterator take_while
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

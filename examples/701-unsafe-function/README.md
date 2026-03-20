@@ -3,6 +3,9 @@
 ---
 
 # Unsafe Functions
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

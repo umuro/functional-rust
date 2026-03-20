@@ -530,8 +530,264 @@ LEVEL_OVERRIDES = {
     "1079-writer-monad":                 "expert",
 }
 
+# Slug-keyword pattern tables — checked in order: expert → advanced → intermediate.
+# A substring match on the example dirname promotes to that level.
+# Fundamental is the final fallback for things that match nothing.
+EXPERT_SLUG_KEYWORDS = [
+    # Monads and category theory
+    "monad", "comonad", "adjunction", "profunctor", "kan-extension",
+    "free-", "church", "scott-encoding", "gadt",
+    "catamorphism", "anamorphism", "hylomorphism", "apomorphism",
+    "paramorphism", "histomorphism", "zygomorphism", "mutumorphism", "prepromorphism",
+    "y-combinator", "yoneda", "cofree",
+    "type-level-bool", "peano-", "church-numeral", "lambda-calculus",
+    "algebraic-effect", "effect-system", "free-monad",
+    # Recursion schemes
+    "category-basics", "curry-howard", "day-convolution", "limits-colimits",
+    "grand-synthesis", "propositions-types",
+    # Effect systems
+    "effect-intro", "effect-handler", "effect-exception", "effect-state",
+    "effect-async", "delimited-cont",
+    # Deep type theory
+    "existential-types", "rank2-types", "heterogeneous-list", "heterogeneous-vec",
+    "type-safe-printf", "singleton-types", "type-equality",
+    "van-laarhoven", "waker-context",
+    "fix-point",
+]
+
+ADVANCED_SLUG_KEYWORDS = [
+    # Balanced trees and complex data structures
+    "red-black", "balanced-insert", "avl-tree", "finger-tree", "b-tree-custom",
+    "persistent-", "arena-allocation",
+    # Graph algorithms
+    "dijkstra", "shortest-path", "bellman-ford", "a-star-", "articulation-point",
+    "topological-sort", "bipartite", "hamiltonian", "minimum-spanning", "aho-corasick",
+    # Parsing
+    "recursive-descent", "parser-combinator", "arithmetic-parser", "char-parser",
+    "satisfy-parser", "many-parser", "flatmap-parser", "digit-parser",
+    "identifier-parser", "choice-parser", "sequence-parser", "map-parser",
+    "flatmap-parser", "optional-parser", "whitespace-parser",
+    # Complex algorithms
+    "huffman", "suffix-array", "convex-hull", "boyer-moore",
+    "branch-and-bound", "backtracking-framework", "bloom-filter",
+    "approximation-set-cover", "01-knapsack",
+    # Type-level / Rust-specific advanced
+    "phantom-type", "phantom-safety", "type-level", "const-generic", "type-witness",
+    "higher-kinded", "blanket-implementation", "auto-trait",
+    # Memory / borrowing
+    "lifetime-self", "refcell", "unsafe-", "avoid-allocation",
+    # Async (complex patterns)
+    "async-recursion", "async-stream", "async-sink", "async-generator",
+    "async-trait", "async-mutex", "async-rwlock", "async-drop",
+    "async-io", "async-join", "async-move", "blocking-in-async",
+    "backpressure", "broadcast-channel", "barrier-sync",
+    # Functional data structures
+    "difference-list", "zipper", "binary-heap-", "priority-queue",
+    # Patterns and abstractions
+    "builder-pattern", "typestate", "newtype-derive", "visitor-pattern",
+    "lense", "optic", "traversal-optic",
+    # DP and complex algorithms
+    "knapsack", "subset-sum", "dynamic-programming", "memoiz",
+    "matrix-chain", "rod-cutting", "partition-equal-subset",
+    "egg-drop", "burst-balloons", "stone-game", "regex-matching",
+    "wildcard-matching", "longest-path-dp", "interval-dp",
+    # Backtracking
+    "n-queens", "sudoku-solver", "subsets-power-set",
+    "permutation-backtrack",
+    # Recursive types / advanced Rust
+    "recursive-types", "zero-cost-abs", "self-referential",
+    # Continuations
+    "cps", "continuation", "tail-recursive-map-cps", "tail-recursive-map-with",
+    # Iterators (advanced)
+    "unfold",
+    # Concurrency
+    "arc-mutex", "arc-rwlock", "arc-threads", "atomic-types", "actor-pattern",
+    # Other advanced
+    "branchless", "bitset", "binary-format", "binary-decimal-fold",
+    "associated-type-bound", "associated-types-advanced",
+    "adjunction", "bifunctor", "bimap",
+    "affine-traversal", "optic-",
+    "corecurs", "algorithm-complexity",
+    "scatter-gather", "partial-application-typestate",
+    # Additional advanced
+    "never-type", "doubly-linked", "cow-collection", "cow-clone",
+    "arena-graph", "reactive-stream", "work-stealing", "cancellation-token",
+    "pin-projection", "self-referential", "send-sync",
+    "global-allocator", "custom-allocator",
+    "dsl-macro", "proc-macro", "macro-rules-advanced",
+    # Lenses / optics series
+    "lens-intro", "lens-laws", "lens-modify",
+    "prism-", "iso-basics", "iso-laws",
+    "traversal", "affine-optic",
+    # Type-level advanced
+    "gat-basics", "gat-collections", "opaque-types", "type-erasure",
+    "variance", "phantom-units",
+    "type-safe-builder", "coherence-rules", "coherence-orphan",
+    # Async advanced
+    "future-trait", "join-futures", "select-futures", "spawn-tasks",
+    "pin-unpin", "executor-basics", "semaphore-async",
+    "structured-concurrency", "runtime-context",
+    "retry-async", "timeout-async", "coroutines-gen", "trampoline",
+    # Complex data structures
+    "rope-data-structure", "slab-allocator", "skip-list", "radix-tree",
+    "segment-tree", "fenwick-tree",
+    # Parser advanced
+    "number-parser", "keyword-parser", "separated-list", "recursive-parser",
+    "expression-parser", "operator-precedence", "error-recovery",
+    "ini-parser", "lisp-parser", "json-parser",
+    "lru-cache",
+    # Resilience patterns
+    "retry-backoff", "circuit-breaker", "rate-limiter", "bulkhead",
+    "health-check", "timeout-pattern",
+]
+
+INTERMEDIATE_SLUG_KEYWORDS = [
+    # Trees (non-trivial)
+    "binary-tree", "bst", "binary-search-tree", "map-fold-tree", "tree-traversal",
+    "symmetric-tree", "complete-tree", "expression-tree", "at-level",
+    "tree-string", "tree-preorder", "tree-inorder", "dotstring-tree", "dotstring-parse",
+    "collect-leaves", "internal-nodes", "count-leaves",
+    # Stacks / queues
+    "stack-module", "stack-", "-stack", "queue", "deque", "circular-buffer",
+    # Folds
+    "fold-left", "fold-right", "listfold", "fold-tree", "fold-optic",
+    "try-fold", "fold-monoid",
+    # HOF patterns
+    "currying", "partial-app", "partial-application",
+    "applying-a-function-twice", "applying-function-twice",
+    "function-composition", "function-compose", "pipeline-op",
+    "higher-order", "-hof", "function-pointer", "boxing-closure",
+    # From-scratch list implementations
+    "map-from-scratch", "filter-from-scratch", "list-map-from-scratch",
+    "list-filter-from-scratch", "list-map-transform", "list-map",
+    "list-filter", "list-fold", "list-operations",
+    # String algorithms
+    "caesar", "atbash", "pangram", "isogram", "anagram", "palindrome",
+    "hamming", "nucleotide", "word-count", "reverse-word", "word-break",
+    "roman-numeral", "phone-number", "edit-distance", "levenshtein",
+    "balanced-parentheses", "balanced-paren", "frequency-anal",
+    "frequency-counter",
+    # List operations (non-trivial)
+    "run-length", "-rle", "rle-", "pack-consecutive", "modified-rle",
+    "decode-rle", "direct-rle", "eliminate-duplicates", "duplicate-element",
+    "flatten-nested", "replicate-n", "rotate-left", "rotate-", "split-list",
+    "drop-every", "zip-unzip", "zip-and-unzip", "zip-pair", "zip-with",
+    "list-partition", "listpartition", "listmap", "listfilter", "listsort",
+    "listflatten", "accumulate-a-result",
+    "remove-kth", "insert-at",
+    "random-select", "random-permutation", "lotto-draw",
+    "combinations", "permutations",
+    # Error handling
+    "error-propagation", "error-handling", "validated", "io-error",
+    "parse-error", "multiple-error", "railway", "collecting-result",
+    "partition-result", "recover-from", "try-operator",
+    "error-conversion", "error-context", "error-accumulation", "error-display",
+    "error-combinators", "error-chain", "typed-errors", "result-combinators",
+    "result-chaining", "option-to-result", "panic-vs-result",
+    "fallible-iterator", "sentinel-vs-result", "parse-int-safe",
+    "file-errors", "network-errors", "validation-error",
+    "option-map", "option-bind", "option-filter", "option-basics",
+    "result-map", "result-bind", "result-basics",
+    # Iterators (most iterator patterns are intermediate)
+    "iterator", "custom-iterator", "infinite-iterator",
+    "iterator-window", "windows-and-chunks", "scan-accumulate",
+    "lazy-sequence", "lazy-fib", "double-ended", "exact-size", "step-by",
+    "take-while", "skip-while", "peekable", "group-by", "chunk",
+    # Rust type system (intermediate)
+    "generic-bounds", "where-clauses", "type-aliases", "type-alias",
+    "display-trait", "from-into-traits", "from-into",
+    "newtype-pattern", "newtype-",
+    "lifetime-basics", "lifetime-elision", "lifetime-",
+    "move-semantics", "clone-copy",
+    "trait-objects", "trait-object", "dynamic-dispatch",
+    "associated-types",
+    # Sorting
+    "insertion-sort", "merge-sort", "quicksort", "bubble-sort",
+    "sort-with-custom", "sort-by", "sort-with", "custom-comparator",
+    # Math / numbers
+    "fibonacci", "sieve-of", "sieve-prime", "prime-factor", "gcd-lcm",
+    "modular-arithmetic", "modular-exp", "binary-search", "greatest-common",
+    "euclid", "collatz", "difference-of-squares", "space-age",
+    # Graphs (basic)
+    "adjacency-list", "adjacency-matrix", "graph-traversal", "graph-color",
+    "minimum-path", "minimum-vertex",
+    # Monoid (basic)
+    "monoid-pattern", "monoid-basic", "monoid-generic",
+    # Functional patterns (intermediate)
+    "accumulate", "scan-", "tail-recursive-accumulator",
+    "point-free", "eta-reduction",
+    # Data structures (intermediate)
+    "association-list", "btreemap", "btreeset", "hashmap-pattern",
+    "hashmap-entry", "hashmap-groupby",
+    "sliding-window", "two-pointer", "matrix-ops",
+    # IO / tooling
+    "csv-parsing", "bench-harness", "benchmarking-harness", "csv-parser",
+    # Async (basic)
+    "async-basics", "async-block", "async-sequence", "async-map",
+    "event-loop", "mpsc-channel", "producer-consumer", "buffered-stream",
+    # Smart pointers (basic)
+    "box-heap", "borrowing-shared", "borrowing-mutable",
+    # OCaml stdlib equivalents (not trivial)
+    "arraymake", "arrayblit", "stringsplit",
+    # Other intermediate exercises
+    "bob", "allergies", "clock-module", "luhn", "scrabble",
+    "triangle-check", "grains", "beer-song", "perfect-number",
+    "isbn-verify", "series-", "robot-simulator",
+    "two-bucket", "connect-game", "poker", "dominoes",
+    "range",
+    # Pattern matching (non-trivial)
+    "nested-pattern", "or-pattern", "pattern-matching",
+    "records",
+    # Applicative (basic)
+    "applicative-validation", "applicative-basics", "applicative-laws",
+    # Misc intermediate
+    "lenses",
+    "abstract-type",
+    # Data structures (additional)
+    "multimap", "interval-map", "sorted-vec", "flat-tree", "trie",
+    "linked-list", "singly-linked", "doubly-linked-safe",
+    "small-vec", "interning",
+    "lru-cache", "work-stealing", "segment-tree", "fenwick-tree",
+    # Algorithms (additional)
+    "sieve", "coin-change", "longest-common-subseq", "lcs-",
+    "longest-increasing", "edit-distance-dp",
+    # Rust concepts (additional)
+    "custom-error", "option-result",
+    "hashmap-counting", "hashmap-",
+    # Rust language features (intermediate)
+    "string-str", "slice-patterns", "vec-patterns",
+    "closure-types", "closure-capture", "closure-",
+    "deref-coercions", "impl-trait", "cell-interior",
+    "move-closure",
+    # Trait patterns
+    "object-safe-traits", "sealed-trait", "extension-trait",
+    "trait-bounds", "supertrait", "default-methods",
+    "trait-specialization", "marker-traits", "trait-dispatch",
+    "deref-coercion", "index-trait",
+    "hash-eq-ord", "display-debug-traits",
+    # Error / option / result patterns
+    "option-combinators", "question-mark-operator", "error-trait-impl",
+    "from-trait-errors", "anyhow-pattern", "result-transpose",
+    "option-transpose", "collect-results", "infallible-conversions",
+    "result-ok-err", "error-in-tests", "downcasting", "try-trait",
+    "error-downcast",
+    # Rust language features
+    "dyn-trait", "const-functions", "maze-solver",
+    "entry-api", "indexmap-ordered",
+    # More data structures
+    "disjoint-set", "directed-acyclic-graph", "weighted-graph",
+    "sum-types", "record-update", "linked-list-safe",
+    # Async (basic/intermediate)
+    "oneshot-channel", "timeout-async", "channel-async",
+    "mpsc-channel", "producer-consumer",
+    # String / IO (additional)
+    "reactive",
+]
+
+
+
 def extract_difficulty(readme, dirname=""):
-    """Count star emoji symbols to determine level, with manual overrides."""
+    """Determine difficulty level via overrides, README tags, then slug patterns."""
     if dirname in LEVEL_OVERRIDES:
         return LEVEL_OVERRIDES[dirname]
     m = re.search(r"\*\*Difficulty:\*\*\s*([⭐🌟]+)", readme)
@@ -550,6 +806,17 @@ def extract_difficulty(readme, dirname=""):
                 return level
         if "beginner" in d:
             return "fundamental"
+    # Slug-keyword classification for untagged READMEs
+    slug = dirname.lower()
+    for kw in EXPERT_SLUG_KEYWORDS:
+        if kw in slug:
+            return "expert"
+    for kw in ADVANCED_SLUG_KEYWORDS:
+        if kw in slug:
+            return "advanced"
+    for kw in INTERMEDIATE_SLUG_KEYWORDS:
+        if kw in slug:
+            return "intermediate"
     return "fundamental"
 
 def extract_concepts(readme):

@@ -3,6 +3,9 @@
 ---
 
 # Phantom Units of Measure
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

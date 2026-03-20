@@ -3,6 +3,9 @@
 ---
 
 # 309: The Never Type (!) in Error Handling
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

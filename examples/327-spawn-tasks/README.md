@@ -3,6 +3,9 @@
 ---
 
 # 327: Spawning Concurrent Tasks
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 049 — Error Conversion
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

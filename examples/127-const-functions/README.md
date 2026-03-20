@@ -3,6 +3,9 @@
 ---
 
 # Const Functions — Compile-Time Computation
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

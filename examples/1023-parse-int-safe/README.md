@@ -3,6 +3,9 @@
 ---
 
 # 1023-parse-int-safe — Safe Integer Parsing
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

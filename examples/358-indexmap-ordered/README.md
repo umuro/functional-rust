@@ -3,6 +3,9 @@
 ---
 
 # 358: IndexMap Ordered (Insertion-Order Map)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

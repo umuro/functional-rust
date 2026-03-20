@@ -3,6 +3,9 @@
 ---
 
 # Pattern Visitor Match
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -1,3 +1,6 @@
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 [future-basics on hightechmind.io](https://hightechmind.io/posts/functional-rust/future-basics)
 
 ---

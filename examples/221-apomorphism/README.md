@@ -3,6 +3,9 @@
 ---
 
 # Apomorphism — Ana that Can Short-Circuit
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

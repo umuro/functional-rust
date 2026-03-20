@@ -3,6 +3,9 @@
 ---
 
 # 022 — Create a List Containing All Integers in a Range
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

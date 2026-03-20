@@ -3,6 +3,9 @@
 ---
 
 # Optics: traversal optics
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

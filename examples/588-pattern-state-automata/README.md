@@ -3,6 +3,9 @@
 ---
 
 # Pattern State Automata
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

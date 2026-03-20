@@ -3,6 +3,9 @@
 ---
 
 # 062 — Records (Structs)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

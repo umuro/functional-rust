@@ -3,6 +3,9 @@
 ---
 
 # 382: Associated Types (Advanced)
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

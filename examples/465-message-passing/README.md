@@ -3,6 +3,9 @@
 ---
 
 # 465: Message Passing vs. Shared Memory
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

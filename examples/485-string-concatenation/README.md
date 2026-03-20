@@ -3,6 +3,9 @@
 ---
 
 # String Concatenation
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 Rust offers four main concatenation strategies — the `+` operator (moves the left operand), `format!` (flexible but always allocates), `join` (separator-aware), and iterator `collect` — each with different ownership, allocation, and readability trade-offs.
 

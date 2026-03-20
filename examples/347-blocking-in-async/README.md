@@ -3,6 +3,9 @@
 ---
 
 # 347: Blocking in Async
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

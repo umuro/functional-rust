@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 [atbash-cipher on hightechmind.io](https://hightechmind.io/posts/functional-rust/atbash-cipher)
 
 ---

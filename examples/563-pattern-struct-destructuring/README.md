@@ -3,6 +3,9 @@
 ---
 
 # Struct Destructuring
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

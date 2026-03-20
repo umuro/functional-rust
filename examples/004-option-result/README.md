@@ -3,6 +3,9 @@
 ---
 
 # 004 — Option and Result
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 814-kmp-pattern-matching — KMP Pattern Matching
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

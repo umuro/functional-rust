@@ -3,6 +3,9 @@
 ---
 
 # 1060-partition-equal-subset — Partition Equal Subset Sum
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

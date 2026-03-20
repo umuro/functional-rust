@@ -3,6 +3,9 @@
 ---
 
 # 418: `stringify!` and `concat!` Macros
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 423: Procedural Macro Introduction
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

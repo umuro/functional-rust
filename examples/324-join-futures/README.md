@@ -3,6 +3,9 @@
 ---
 
 # 324: Running Futures Concurrently with join!
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

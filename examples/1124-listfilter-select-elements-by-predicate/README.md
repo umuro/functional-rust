@@ -3,6 +3,9 @@
 ---
 
 # 1124-listfilter-select-elements-by-predicate — List.filter: Select Elements by Predicate
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

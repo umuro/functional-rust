@@ -3,6 +3,9 @@
 ---
 
 # 871-generic-bounds — Generic Bounds
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

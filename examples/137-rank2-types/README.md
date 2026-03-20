@@ -3,6 +3,9 @@
 ---
 
 # Rank-2 Types Simulation
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

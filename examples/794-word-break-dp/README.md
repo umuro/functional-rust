@@ -3,6 +3,9 @@
 ---
 
 # 794-word-break-dp — Word Break
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

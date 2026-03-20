@@ -3,6 +3,9 @@
 ---
 
 # 355: LinkedList in Rust
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

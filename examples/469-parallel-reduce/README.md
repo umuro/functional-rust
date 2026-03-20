@@ -3,6 +3,9 @@
 ---
 
 # Parallel Reduce
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 A divide-and-conquer aggregation pattern that splits a slice in half, reduces each half in a separate thread, and combines the results — exposing parallelism for associative operations.
 

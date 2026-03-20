@@ -3,6 +3,9 @@
 ---
 
 # Advanced Product Types
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

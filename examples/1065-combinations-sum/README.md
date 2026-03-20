@@ -3,6 +3,9 @@
 ---
 
 # 1065-combinations-sum — Combination Sum
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

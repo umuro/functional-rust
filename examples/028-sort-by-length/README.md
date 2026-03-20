@@ -3,6 +3,9 @@
 ---
 
 # 028 — Sorting a List of Lists According to Length
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

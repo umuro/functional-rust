@@ -3,6 +3,9 @@
 ---
 
 # 329: Async Streams
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 464: Actor Pattern
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 [gcd-lcm on hightechmind.io](https://hightechmind.io/posts/functional-rust/gcd-lcm)
 
 ---

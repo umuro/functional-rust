@@ -3,6 +3,9 @@
 ---
 
 # Option Pattern Matching
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

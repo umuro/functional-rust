@@ -3,6 +3,9 @@
 ---
 
 # 379: Directed Acyclic Graph (DAG) and Topological Sort
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

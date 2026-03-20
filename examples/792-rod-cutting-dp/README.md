@@ -3,6 +3,9 @@
 ---
 
 # 792-rod-cutting-dp — Rod Cutting Problem
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

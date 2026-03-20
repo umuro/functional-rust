@@ -3,6 +3,9 @@
 ---
 
 # 024 — Lotto — Draw N Different Random Numbers from the Set 1..M
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

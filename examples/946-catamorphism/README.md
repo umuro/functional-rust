@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 [catamorphism on hightechmind.io](https://hightechmind.io/posts/functional-rust/catamorphism)
 
 ---

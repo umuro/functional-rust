@@ -3,6 +3,9 @@
 ---
 
 # Lens Modify
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

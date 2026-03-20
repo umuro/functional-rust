@@ -3,6 +3,9 @@
 ---
 
 # Choice Profunctor
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

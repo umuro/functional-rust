@@ -3,6 +3,9 @@
 ---
 
 # 259: Flattening with flat_map()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

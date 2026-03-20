@@ -3,6 +3,9 @@
 ---
 
 # 1123-sorting-algorithmsquicksort — Quicksort
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

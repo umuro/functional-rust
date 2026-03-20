@@ -3,6 +3,9 @@
 ---
 
 # 316: std::io::Error Patterns
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

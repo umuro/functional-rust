@@ -3,6 +3,9 @@
 ---
 
 # 806-articulation-points — Articulation Points
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

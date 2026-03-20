@@ -3,6 +3,9 @@
 ---
 
 # Irrefutable vs Refutable Patterns
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

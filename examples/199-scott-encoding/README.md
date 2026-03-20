@@ -3,6 +3,9 @@
 ---
 
 # Scott Encoding
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

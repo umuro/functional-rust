@@ -3,6 +3,9 @@
 ---
 
 # Introduction to Parser Combinators
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

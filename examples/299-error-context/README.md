@@ -3,6 +3,9 @@
 ---
 
 # 299: Adding Context to Errors
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

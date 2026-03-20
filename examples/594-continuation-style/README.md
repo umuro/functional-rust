@@ -3,6 +3,9 @@
 ---
 
 # Continuation-Passing Style (CPS)
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

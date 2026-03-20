@@ -3,6 +3,9 @@
 ---
 
 # 783-const-type-arithmetic — Const Type Arithmetic
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 380: Weighted Graph and Dijkstra's Algorithm
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 897-borrowing-shared — Shared Borrowing (&T)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

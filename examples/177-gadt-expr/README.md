@@ -3,6 +3,9 @@
 ---
 
 # GADT Typed Expression Evaluator
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

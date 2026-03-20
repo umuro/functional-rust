@@ -3,6 +3,9 @@
 ---
 
 # 396: Simulating Trait Specialization
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

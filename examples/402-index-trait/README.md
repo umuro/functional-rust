@@ -3,6 +3,9 @@
 ---
 
 # 402: Index and IndexMut Traits
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

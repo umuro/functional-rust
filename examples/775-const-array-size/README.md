@@ -3,6 +3,9 @@
 ---
 
 # 775-const-array-size — Const Array Size
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

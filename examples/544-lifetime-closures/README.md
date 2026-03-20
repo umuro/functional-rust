@@ -3,6 +3,9 @@
 ---
 
 # Lifetimes in Closures
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

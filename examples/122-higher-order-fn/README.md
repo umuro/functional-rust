@@ -3,6 +3,9 @@
 ---
 
 # Higher-Order Functions with Lifetime Constraints
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

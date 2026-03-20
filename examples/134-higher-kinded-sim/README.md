@@ -3,6 +3,9 @@
 ---
 
 # Higher-Kinded Types Simulation
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

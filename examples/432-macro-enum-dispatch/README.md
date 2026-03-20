@@ -3,6 +3,9 @@
 ---
 
 # 432: Macro Enum Dispatch
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

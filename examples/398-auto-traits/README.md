@@ -3,6 +3,9 @@
 ---
 
 # 398: Auto Traits (`Send`, `Sync`, `Unpin`)
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 359: Multimap Pattern
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

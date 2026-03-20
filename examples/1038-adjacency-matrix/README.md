@@ -3,6 +3,9 @@
 ---
 
 # 1038-adjacency-matrix — Adjacency Matrix Graph
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 406: Hash, Eq, and Ord Traits
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

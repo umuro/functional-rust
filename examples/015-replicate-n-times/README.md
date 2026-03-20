@@ -3,6 +3,9 @@
 ---
 
 # 015 — Replicate Elements N Times
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

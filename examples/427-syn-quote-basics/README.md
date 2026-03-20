@@ -3,6 +3,9 @@
 ---
 
 # 427: `syn` and `quote!` Basics
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

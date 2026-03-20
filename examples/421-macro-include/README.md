@@ -3,6 +3,9 @@
 ---
 
 # 421: `include!`, `include_str!`, `include_bytes!`
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

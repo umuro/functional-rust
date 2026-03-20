@@ -3,6 +3,9 @@
 ---
 
 # 784-fibonacci-memo-tab — Fibonacci: Memoization vs Tabulation
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

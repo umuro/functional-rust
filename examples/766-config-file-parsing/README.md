@@ -3,6 +3,9 @@
 ---
 
 # 766-config-file-parsing — Config File Parsing
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

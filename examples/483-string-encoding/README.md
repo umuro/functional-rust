@@ -3,6 +3,9 @@
 ---
 
 # String Encoding
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 Rust's `char::encode_utf8`, `str::from_utf8`, and `char::len_utf8` expose the UTF-8 encoding mechanism, while `strip_prefix` handles BOM detection — the building blocks for custom encoding and protocol parsing.
 

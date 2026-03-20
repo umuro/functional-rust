@@ -3,6 +3,9 @@
 ---
 
 # GADT Preventing Runtime Errors — Safe Head
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

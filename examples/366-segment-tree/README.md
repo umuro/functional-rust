@@ -3,6 +3,9 @@
 ---
 
 # 366: Segment Tree
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

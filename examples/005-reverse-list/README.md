@@ -3,6 +3,9 @@
 ---
 
 # 005 — Reverse a List
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

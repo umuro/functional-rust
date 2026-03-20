@@ -3,6 +3,9 @@
 ---
 
 # 928-reverse-list — Reverse List
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 313: The Try Trait — What ? Actually Does
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

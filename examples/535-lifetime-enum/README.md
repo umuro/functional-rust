@@ -3,6 +3,9 @@
 ---
 
 # Lifetimes in Enums
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

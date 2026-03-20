@@ -3,6 +3,9 @@
 ---
 
 # Lifetime Annotations: 'a Basics
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

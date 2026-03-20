@@ -3,6 +3,9 @@
 ---
 
 # 776-const-fn-basics — Const Fn Basics
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

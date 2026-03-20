@@ -3,6 +3,9 @@
 ---
 
 # 320: Fallible Iterators
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

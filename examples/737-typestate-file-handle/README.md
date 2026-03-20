@@ -3,6 +3,9 @@
 ---
 
 # 737-typestate-file-handle — Typestate File Handle
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

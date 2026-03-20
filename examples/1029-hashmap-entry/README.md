@@ -3,6 +3,9 @@
 ---
 
 # 1029-hashmap-entry — HashMap Entry API
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

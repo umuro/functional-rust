@@ -1,3 +1,6 @@
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 [pipeline-stages on hightechmind.io](https://hightechmind.io/posts/functional-rust/pipeline-stages)
 
 ---

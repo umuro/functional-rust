@@ -3,6 +3,9 @@
 ---
 
 # 903-iterator-flat-map — Iterator flat_map
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 1022-sentinel-vs-result — Sentinel Values vs Result
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

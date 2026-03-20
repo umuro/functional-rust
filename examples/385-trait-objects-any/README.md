@@ -3,6 +3,9 @@
 ---
 
 # 385: Trait Objects and `Any` (Runtime Type Information)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 321: async fn and .await Fundamentals
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

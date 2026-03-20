@@ -3,6 +3,9 @@
 ---
 
 # Pattern Const Patterns
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

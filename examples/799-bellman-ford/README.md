@@ -3,6 +3,9 @@
 ---
 
 # 799-bellman-ford — Bellman-Ford Algorithm
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

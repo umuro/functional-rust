@@ -3,6 +3,9 @@
 ---
 
 # 1058-longest-increasing-subseq — Longest Increasing Subsequence
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

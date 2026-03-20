@@ -3,6 +3,9 @@
 ---
 
 # 450: Crossbeam Channels — Advanced Channel Patterns
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

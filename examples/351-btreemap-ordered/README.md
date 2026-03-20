@@ -3,6 +3,9 @@
 ---
 
 # 351: BTreeMap Ordered
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

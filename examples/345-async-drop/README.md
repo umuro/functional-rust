@@ -3,6 +3,9 @@
 ---
 
 # 345: Async Drop
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

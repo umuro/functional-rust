@@ -3,6 +3,9 @@
 ---
 
 # 782-const-eval-patterns — Const Eval Patterns
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

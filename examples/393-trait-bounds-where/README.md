@@ -3,6 +3,9 @@
 ---
 
 # 393: Trait Bounds and Where Clauses
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

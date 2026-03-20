@@ -3,6 +3,9 @@
 ---
 
 # 1024-file-errors — File Operation Errors
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

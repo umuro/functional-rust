@@ -3,6 +3,9 @@
 ---
 
 # 386: Object-Safe Traits
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

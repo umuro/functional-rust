@@ -3,6 +3,9 @@
 ---
 
 # 267: Infinite Cycling with cycle()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

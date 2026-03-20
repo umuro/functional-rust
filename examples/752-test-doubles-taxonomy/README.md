@@ -3,6 +3,9 @@
 ---
 
 # 752-test-doubles-taxonomy — Test Doubles Taxonomy
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

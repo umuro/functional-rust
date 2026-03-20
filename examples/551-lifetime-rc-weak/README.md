@@ -3,6 +3,9 @@
 ---
 
 # Rc and Weak for Shared Ownership
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -1,3 +1,6 @@
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 [rate-limiter on hightechmind.io](https://hightechmind.io/posts/functional-rust/rate-limiter)
 
 ---

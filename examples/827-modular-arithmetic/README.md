@@ -3,6 +3,9 @@
 ---
 
 # Modular Arithmetic
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

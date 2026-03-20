@@ -3,6 +3,9 @@
 ---
 
 # 113-string-str — String vs &str
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

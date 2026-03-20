@@ -3,6 +3,9 @@
 ---
 
 # 1011-try-operator — The ? (Try) Operator
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

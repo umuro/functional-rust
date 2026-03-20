@@ -3,6 +3,9 @@
 ---
 
 # 361: Rope Data Structure
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

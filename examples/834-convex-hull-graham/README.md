@@ -3,6 +3,9 @@
 ---
 
 # Convex Hull — Graham Scan
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

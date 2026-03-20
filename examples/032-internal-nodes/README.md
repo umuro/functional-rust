@@ -3,6 +3,9 @@
 ---
 
 # 032 — Collect the Internal Nodes of a Binary Tree
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 071 — Collatz Conjecture
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # Functional Builder Pattern
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

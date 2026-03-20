@@ -3,6 +3,9 @@
 ---
 
 # PhantomData for Lifetime Markers
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

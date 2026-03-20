@@ -3,6 +3,9 @@
 ---
 
 # soundness principles
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -1,3 +1,6 @@
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 [thread-local on hightechmind.io](https://hightechmind.io/posts/functional-rust/thread-local)
 
 ---

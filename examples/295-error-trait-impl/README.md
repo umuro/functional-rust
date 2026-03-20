@@ -3,6 +3,9 @@
 ---
 
 # 295: Implementing std::error::Error
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

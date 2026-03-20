@@ -3,6 +3,9 @@
 ---
 
 # 346: Runtime Context
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

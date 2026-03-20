@@ -3,6 +3,9 @@
 ---
 
 # 370: SmallVec Pattern
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

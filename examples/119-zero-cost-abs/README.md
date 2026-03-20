@@ -3,6 +3,9 @@
 ---
 
 # Zero-Cost Abstractions
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

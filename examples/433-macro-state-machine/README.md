@@ -3,6 +3,9 @@
 ---
 
 # 433: Macro-Defined State Machines
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

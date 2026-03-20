@@ -3,6 +3,9 @@
 ---
 
 # 302: Option::transpose() — Collecting Optional Results
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

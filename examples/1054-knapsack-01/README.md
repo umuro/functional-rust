@@ -3,6 +3,9 @@
 ---
 
 # 1054-knapsack-01 — 0/1 Knapsack
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

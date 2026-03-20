@@ -3,6 +3,9 @@
 ---
 
 # Self-Referential Structs
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

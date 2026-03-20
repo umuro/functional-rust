@@ -3,6 +3,9 @@
 ---
 
 # Euler's Totient Function
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

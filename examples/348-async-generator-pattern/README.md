@@ -3,6 +3,9 @@
 ---
 
 # 348: Async Generator Pattern
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # 312: Error Downcasting
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

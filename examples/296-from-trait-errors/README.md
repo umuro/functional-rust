@@ -3,6 +3,9 @@
 ---
 
 # 296: From Trait for Error Conversion
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

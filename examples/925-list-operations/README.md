@@ -3,6 +3,9 @@
 ---
 
 # 925-list-operations — List Operations
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

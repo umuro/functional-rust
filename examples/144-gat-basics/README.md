@@ -3,6 +3,9 @@
 ---
 
 # Generic Associated Types (GAT) Basics
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

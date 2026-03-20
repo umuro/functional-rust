@@ -3,6 +3,9 @@
 ---
 
 # 044 — Option Filter
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 

@@ -3,6 +3,9 @@
 ---
 
 # Builder Pattern with Closures
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
 
 ## Problem Statement
 
