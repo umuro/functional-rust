@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Phantom Type State Machine — File Handle
 //!
 //! Uses phantom types to enforce state transitions at compile time.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Duplicate Elements (99 Problems #14)
 ///
 /// Duplicate every element of a list.

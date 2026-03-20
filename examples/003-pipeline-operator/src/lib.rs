@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Pure functions for integers
 pub fn double(x: i32) -> i32 {
     2 * x

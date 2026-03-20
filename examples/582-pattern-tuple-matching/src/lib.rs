@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Tuple Pattern Matching
 //!
 //! Match on multiple values simultaneously using tuple patterns.

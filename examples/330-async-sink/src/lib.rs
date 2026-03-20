@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Async Sink
 //!
 //! A destination that accepts values and flushes them in batches —

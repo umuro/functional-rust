@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Exhaustive Result/Option Method Survey
 //!
 //! Complete reference of `Result<T,E>` and `Option<T>` methods.

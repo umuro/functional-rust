@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Domain Specific Languages with Macros
 //!
 //! Creating mini-languages in macros.

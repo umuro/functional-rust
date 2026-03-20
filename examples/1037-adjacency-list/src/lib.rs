@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1037: Adjacency List — HashMap<usize, Vec<usize>>
 // Classic graph representation with BFS and DFS
 

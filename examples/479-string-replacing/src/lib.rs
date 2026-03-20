@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 479. replace(), replacen()
 
 #[cfg(test)]

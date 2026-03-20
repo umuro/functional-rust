@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Async Basics: Sequential vs Concurrent Execution
 //!
 //! Demonstrates the fundamental difference between sequential and concurrent

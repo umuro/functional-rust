@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // A semigroup is a set with an associative binary operation.
 // Like a monoid but without requiring an identity element.
 // Weaker but more widely applicable.

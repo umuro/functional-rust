@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 095: DoubleEndedIterator
 // Iterate from both ends simultaneously using .rev(), .next_back(), and symmetric traversal.
 

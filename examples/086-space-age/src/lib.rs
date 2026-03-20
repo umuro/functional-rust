@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Space Age — Float Computation with Variants
 ///
 /// Ownership: Planet is Copy (enum with no data). All computations use f64 (Copy).

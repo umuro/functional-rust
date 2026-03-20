@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 'static Lifetime
 //!
 //! Program-duration references: literals, statics, and 'static bounds.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Unfold — Generating Sequences from Seeds
 //!
 //! `unfold` is the dual of `fold`: instead of reducing a list to a value,

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 256. Chaining Iterators with chain()
 //!
 //! `chain()` concatenates two iterators lazily — no allocation for the combination,

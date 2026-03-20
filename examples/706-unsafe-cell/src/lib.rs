@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 706 — UnsafeCell: The Foundation of Interior Mutability
 //!
 //! `UnsafeCell<T>` is the only primitive that lets you mutate data through

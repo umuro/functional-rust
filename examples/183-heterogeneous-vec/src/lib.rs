@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 183: Heterogeneous Vector with Safe Downcast
 // Store different types in one Vec, downcast safely via Any
 

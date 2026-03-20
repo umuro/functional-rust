@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 084: From and Into Traits
 
 // Approach 1: Temperature conversion

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Tail-Recursive Accumulator Pattern
 ///
 /// OCaml relies on tail-call optimization (TCO) for stack safety.

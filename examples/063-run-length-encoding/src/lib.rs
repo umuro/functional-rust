@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// # Run-Length Encoding
 ///
 /// Compress consecutive runs of characters into count+char pairs.

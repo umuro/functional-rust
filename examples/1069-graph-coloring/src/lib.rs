@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1069: Graph Coloring — Backtracking
 
 // Approach 1: Adjacency matrix

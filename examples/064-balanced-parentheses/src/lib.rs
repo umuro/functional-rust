@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// # Balanced Parentheses
 ///
 /// Stack-based bracket matching using Vec as a stack.

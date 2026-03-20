@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Bob — String Pattern Matching
 ///
 /// Ownership: Input is borrowed &str. Responses are &'static str (no allocation).

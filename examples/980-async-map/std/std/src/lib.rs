@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 980: Map over Async
 // Rust: async { f(x.await) } is the idiom for Lwt.map f promise
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Slab Pattern for Indexed Storage
 //!
 //! Pre-allocated pool with stable integer indices.

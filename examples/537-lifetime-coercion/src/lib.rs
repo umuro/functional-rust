@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Lifetime Coercion and Subtyping
 //!
 //! Longer lifetimes can be used where shorter ones are required.

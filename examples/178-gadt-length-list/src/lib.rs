@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 178: Length-Indexed Lists
 // Rust uses const generics to track length at compile time
 

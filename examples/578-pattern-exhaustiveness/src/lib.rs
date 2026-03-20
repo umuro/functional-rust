@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Pattern Exhaustiveness
 //!
 //! Rust's match expressions must cover all possible cases at compile time.

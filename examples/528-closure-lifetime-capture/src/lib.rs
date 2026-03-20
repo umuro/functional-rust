@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Closures Capturing References
 //!
 //! How closure lifetimes are constrained by captured borrows.

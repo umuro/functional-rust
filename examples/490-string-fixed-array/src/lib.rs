@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # String Fixed Array — Stack-Allocated Strings
 //!
 //! Fixed-size strings without heap allocation.

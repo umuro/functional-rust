@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 275. Finding extremes: min() and max()
 //!
 //! `min()` and `max()` consume an iterator and return `Option<T>`.

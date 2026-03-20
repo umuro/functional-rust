@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Pipeline Operator
 //! CS3110 — Chaining transformations left-to-right without nesting.
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 169: Operator Precedence
 // Binary operators with left/right associativity and precedence levels
 
@@ -123,7 +124,7 @@ fn binding_power(op: &OpInfo) -> (u8, u8) {
     }
 }
 
-fn parse_number(input: &str) -> ParseResult<Expr> {
+fn parse_number(input: &str) -> ParseResult<'_, Expr> {
     let s = input.trim_start();
     let bytes = s.as_bytes();
     let mut pos = 0;
@@ -149,7 +150,7 @@ fn parse_number(input: &str) -> ParseResult<Expr> {
 // Approach 2: Pratt parser using the table
 // ============================================================
 
-fn pratt_expr(input: &str, min_bp: u8) -> ParseResult<Expr> {
+fn pratt_expr(input: &str, min_bp: u8) -> ParseResult<'_, Expr> {
     let s = input.trim_start();
     let (mut lhs, mut rest) = if s.starts_with('(') {
         let (e, r) = pratt_expr(&s[1..], 0)?;
@@ -183,7 +184,7 @@ fn pratt_expr(input: &str, min_bp: u8) -> ParseResult<Expr> {
 // Approach 3: Precedence climbing
 // ============================================================
 
-fn climb_expr(input: &str, min_prec: u8) -> ParseResult<Expr> {
+fn climb_expr(input: &str, min_prec: u8) -> ParseResult<'_, Expr> {
     let s = input.trim_start();
     let (mut lhs, mut rest) = parse_number(s)?;
 

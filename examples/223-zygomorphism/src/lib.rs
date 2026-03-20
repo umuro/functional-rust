@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 223: Zygomorphism — Two Mutually Dependent Folds
 
 #[derive(Debug, Clone)]

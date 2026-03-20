@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Serde Attributes Concept
 //!
 //! Understanding serde's attribute system without the actual serde crate.

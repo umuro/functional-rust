@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 004: Option and Result
 // Safe handling of missing values and errors
 

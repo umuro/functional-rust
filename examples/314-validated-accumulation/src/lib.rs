@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Accumulating Multiple Errors (Validated)
 //!
 //! Validated accumulates ALL errors, unlike Result which stops at first.
@@ -52,7 +53,7 @@ pub fn validate_email(email: &str) -> Validated<String, String> {
 
 pub fn validate_age(age_str: &str) -> Validated<u8, String> {
     match age_str.parse::<i32>() {
-        Ok(n) if n >= 0 && n <= 150 => Validated::valid(n as u8),
+        Ok(n) if (0..=150).contains(&n) => Validated::valid(n as u8),
         Ok(n) => Validated::invalid(format!("age {} out of range", n)),
         Err(_) => Validated::invalid(format!("'{}' is not a number", age_str)),
     }

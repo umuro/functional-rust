@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 895: Move Semantics — Rust Ownership Transfer
 //
 // In Rust, values have a single owner. When you pass a value to a function,

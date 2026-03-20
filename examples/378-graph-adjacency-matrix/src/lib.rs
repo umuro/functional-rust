@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Graph - Adjacency Matrix Representation
 //!
 //! O(1) edge lookup, O(V²) storage.

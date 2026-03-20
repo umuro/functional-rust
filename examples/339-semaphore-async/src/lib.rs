@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Semaphore Async
 //!
 //! Limit how many tasks run concurrently — rate limiting, connection pools, throttling.

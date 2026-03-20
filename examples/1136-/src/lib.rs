@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // ---------------------------------------------------------------------------
 // Solution 1: Closure-based — direct mapping of OCaml first-class modules
 //

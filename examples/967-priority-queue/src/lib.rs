@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 967: Priority Queue
 // Approach 1: Manual min-heap implementation
 // Approach 2: std::collections::BinaryHeap (max-heap, wrap for min)

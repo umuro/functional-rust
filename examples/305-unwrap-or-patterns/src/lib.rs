@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # unwrap_or, unwrap_or_else, unwrap_or_default
 //!
 //! Safe alternatives to `unwrap()` when a default value is available.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Irrefutable vs Refutable Patterns
 //!
 //! Some patterns always match (irrefutable); others might not (refutable).

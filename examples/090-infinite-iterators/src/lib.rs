@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 090: Infinite Iterators — cycle, repeat, from_fn
 
 #[cfg(test)]

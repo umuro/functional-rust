@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1067: Phone Keypad Letter Combinations
 
 const PHONE_MAP: &[&str] = &[

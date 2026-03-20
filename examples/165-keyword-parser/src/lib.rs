@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 165: Keyword Parser
 // Keywords with word boundary checking
 

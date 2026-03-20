@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Topological Sort (DFS)
 pub fn topological_sort(n: usize, edges: &[(usize, usize)]) -> Option<Vec<usize>> {
     let mut adj = vec![vec![]; n];

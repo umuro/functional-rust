@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! stringify! and concat! Macros
 //!
 //! Converting tokens to strings at compile time.

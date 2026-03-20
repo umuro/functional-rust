@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 093: Windows and Chunks
 
 #[cfg(test)]

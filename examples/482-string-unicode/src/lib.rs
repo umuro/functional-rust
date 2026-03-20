@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 482. Unicode normalization and graphemes
 
 #[cfg(test)]

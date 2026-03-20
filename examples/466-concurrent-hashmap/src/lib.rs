@@ -1,10 +1,11 @@
+#![allow(clippy::all)]
 //! # Concurrent HashMap — Thread-Safe Key-Value Store
 //!
 //! A sharded hashmap for concurrent access with reduced lock contention.
 
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
-use std::sync::{Arc, RwLock};
+use std::sync::RwLock;
 
 const NUM_SHARDS: usize = 16;
 
@@ -137,6 +138,7 @@ impl Default for CounterMap {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::Arc;
     use std::thread;
 
     #[test]

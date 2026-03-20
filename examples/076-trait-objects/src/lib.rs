@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 076: Trait Objects — dynamic dispatch with dyn Trait
 
 use std::f64::consts::PI;

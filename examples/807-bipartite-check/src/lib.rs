@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Bipartite Check
 pub fn is_bipartite(n: usize, edges: &[(usize, usize)]) -> bool {
     let mut adj = vec![vec![]; n];

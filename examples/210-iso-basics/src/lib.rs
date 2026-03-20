@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// An isomorphism: a lossless, bidirectional transformation between types S and A.
 ///
 /// Laws:

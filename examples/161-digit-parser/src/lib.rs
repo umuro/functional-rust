@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 161: Digit Parser
 // Parse digits: single digit, multi-digit integer, positive/negative
 

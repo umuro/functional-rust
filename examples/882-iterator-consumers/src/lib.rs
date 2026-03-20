@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 088: Iterator Consumers
 // fold, collect, sum, max, find, position
 

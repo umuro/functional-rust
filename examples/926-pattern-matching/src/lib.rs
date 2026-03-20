@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Pattern Matching: the heart of both OCaml and Rust.
 ///
 /// Both languages use pattern matching as a primary control flow mechanism.
@@ -49,14 +50,11 @@ pub fn describe(shape: &Shape) -> String {
 /// Find the largest shape by area from an optional list
 pub fn largest_area(shapes: &[Shape]) -> Option<f64> {
     // Uses iterator + fold, but the interesting bit is Option handling
-    shapes
-        .iter()
-        .map(|s| area(s))
-        .fold(None, |max, a| match max {
-            None => Some(a),
-            Some(m) if a > m => Some(a),
-            _ => max,
-        })
+    shapes.iter().map(area).fold(None, |max, a| match max {
+        None => Some(a),
+        Some(m) if a > m => Some(a),
+        _ => max,
+    })
 }
 
 // ── Recursive style with exhaustive matching ────────────────────────────────

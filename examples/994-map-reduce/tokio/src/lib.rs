@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 994: MapReduce — Tokio version
 // Parallel async map with tokio::spawn, collect results, reduce
 

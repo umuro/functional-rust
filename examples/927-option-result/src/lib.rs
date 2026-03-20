@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Option and Result: safe error handling without exceptions.
 ///
 /// OCaml uses `option` and `result` types. Rust has `Option<T>` and `Result<T, E>`.

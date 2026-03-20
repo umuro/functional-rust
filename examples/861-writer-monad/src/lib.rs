@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 062: Writer Monad
 // Accumulate a log alongside computation results
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Finally Tagless (Tagless Final)
 //!
 //! Extensible DSL interpretation using traits instead of data types.

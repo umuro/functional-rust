@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 214: Fold Optic — Read-Only Multi-Focus Aggregation
 //
 // A Fold is a read-only optic that focuses on multiple values and aggregates them

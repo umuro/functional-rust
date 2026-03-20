@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 086: Custom Iterator with State
 
 // Approach 1: Counter iterator
@@ -70,7 +71,7 @@ impl Iterator for Collatz {
         let val = self.n;
         if self.n == 1 {
             self.done_ = true;
-        } else if self.n % 2 == 0 {
+        } else if self.n.is_multiple_of(2) {
             self.n /= 2;
         } else {
             self.n = 3 * self.n + 1;

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // # Currying and Partial Application
 //
 // OCaml: `let add x y = x + y` — all functions are automatically curried.

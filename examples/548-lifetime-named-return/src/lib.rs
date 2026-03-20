@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Named Return Lifetimes
 //!
 //! Explicit lifetime names for return references.

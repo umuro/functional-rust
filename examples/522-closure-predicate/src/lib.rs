@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Predicate Functions Pattern
 //!
 //! Composable predicates: and, or, not, all_of, any_of.

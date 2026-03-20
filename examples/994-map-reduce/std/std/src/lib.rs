@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 994: MapReduce
 // Parallel map with threads, collect results, reduce
 

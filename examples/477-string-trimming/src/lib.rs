@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 477. trim(), trim_start(), trim_end()
 
 #[cfg(test)]

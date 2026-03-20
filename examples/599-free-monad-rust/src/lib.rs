@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Free Monad
 //!
 //! Build monadic DSLs where the structure is data, interpretation is separate.

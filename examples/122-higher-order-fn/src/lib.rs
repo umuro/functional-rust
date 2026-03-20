@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 122: Higher-Order Functions with Lifetime Constraints
 //
 // When HOFs deal with references, lifetimes must be explicit

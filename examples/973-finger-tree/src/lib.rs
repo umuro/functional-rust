@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 973: Finger Tree (Simplified)
 // Deque with O(1) amortized push/pop both ends
 //

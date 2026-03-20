@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Product types: combine multiple types into one.
 // In category theory, the categorical product.
 

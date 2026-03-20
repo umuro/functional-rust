@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 002: List Operations
 // Core list operations: head, tail, length, append, reverse
 

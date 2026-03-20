@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Trie (Prefix Tree) for efficient string lookups
 //!
 //! O(m) lookup and prefix search where m is the key length.

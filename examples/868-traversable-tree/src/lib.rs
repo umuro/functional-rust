@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 069: Traversable for Binary Tree
 // Map over a tree with effects (Option/Result)
 

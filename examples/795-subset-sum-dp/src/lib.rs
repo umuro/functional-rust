@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Subset Sum
 
 pub fn subset_sum(nums: &[i32], target: i32) -> bool {

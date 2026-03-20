@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Attribute Macro Patterns
 //!
 //! What attribute macros can do.

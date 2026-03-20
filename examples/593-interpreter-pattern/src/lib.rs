@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Interpreter Pattern
 //!
 //! Build and evaluate an abstract syntax tree for a simple expression language.

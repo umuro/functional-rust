@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 068: Tail-Recursive Accumulator
 // Rust doesn't guarantee TCO — use loops or fold instead
 

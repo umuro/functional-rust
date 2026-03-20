@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Implementing std::error::Error
 //!
 //! `std::error::Error` requires Display + Debug and optionally provides `source()`.

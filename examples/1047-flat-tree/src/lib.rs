@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1047: Flat Binary Tree in Vec
 // Children of node i: left = 2*i+1, right = 2*i+2, parent = (i-1)/2
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 131: Builder Pattern with Typestate
 //
 // The typestate builder encodes which required fields have been set directly in

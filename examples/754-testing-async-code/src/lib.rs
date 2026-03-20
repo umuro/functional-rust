@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Testing Async Code
 //!
 //! Patterns for testing async code (using threads as std-only analog).

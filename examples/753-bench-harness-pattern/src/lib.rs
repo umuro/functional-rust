@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Benchmark Harness Pattern
 //!
 //! Measuring hot functions with percentiles (std-only).
@@ -107,7 +108,7 @@ pub fn sum_slice(data: &[i64]) -> i64 {
 
 /// Sum using fold
 pub fn sum_fold(data: &[i64]) -> i64 {
-    data.iter().fold(0, |acc, x| acc + x)
+    data.iter().sum::<i64>()
 }
 
 #[cfg(test)]

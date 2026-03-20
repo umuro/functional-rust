@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Anamorphism (Unfold)
 //! Generalized unfold to build recursive structures.
 

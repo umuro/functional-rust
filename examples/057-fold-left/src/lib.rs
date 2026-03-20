@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # fold_left — Tail-Recursive Accumulator
 //!
 //! OCaml's `fold_left` processes a list left to right with an accumulator:

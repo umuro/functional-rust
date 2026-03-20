@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Error Handling in Tests
 //!
 //! Tests can return Result, use ? operator, and #[should_panic].

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Async Closures
 //!
 //! Patterns for async callbacks using closures that return Futures.

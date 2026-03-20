@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1015: Validation Errors — Accumulating All Errors
 // Not short-circuiting: collect ALL validation failures
 

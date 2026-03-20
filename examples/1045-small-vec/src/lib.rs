@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1045: Small Vector Optimization Concept
 // Stack up to N elements, heap beyond — like SmallVec (concept, std only)
 

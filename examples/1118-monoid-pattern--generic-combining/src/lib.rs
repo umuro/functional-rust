@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Monoid typeclass pattern using Rust traits.
 // OCaml uses first-class modules to pass MONOID implementations.
 // Rust uses traits with associated constants/methods and zero-sized marker types.

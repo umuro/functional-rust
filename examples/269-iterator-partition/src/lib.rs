@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 269. Splitting by predicate with partition()
 //!
 //! `partition(pred)` splits an iterator into two collections in a single pass.

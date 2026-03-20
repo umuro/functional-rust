@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 206: Prism Basics — Optics for Enum Variants
 //
 // A Prism is a lens-like abstraction that focuses on one variant of an enum.

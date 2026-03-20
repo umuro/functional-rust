@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Owning References Pattern
 //!
 //! Combining ownership with interior borrowing.

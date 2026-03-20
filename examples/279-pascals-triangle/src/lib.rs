@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Generate the next row of Pascal's triangle from the current row.
 ///
 /// Uses the "zip-with-add" trick: prepend 0 to the row, append 0 to the row,

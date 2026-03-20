@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Example 215: Recursion Schemes — Separating What From How
 //!
 //! Demonstrates how to factor recursion *out* of business logic using

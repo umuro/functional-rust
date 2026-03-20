@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Hash, Eq, and Ord Traits
 //!
 //! Traits for equality, ordering, and hashing — enabling HashMap/HashSet/BTreeMap keys.

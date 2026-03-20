@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # std::io::Error patterns
 //!
 //! `std::io::Error` wraps OS errors with `ErrorKind` for portable classification.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Solution 1: Idiomatic Rust — in-place insertion sort using slice swaps
 // How a Rust developer writes it: mutate in place, no allocation per step
 pub fn insertion_sort_inplace<T: Ord>(data: &mut [T]) {

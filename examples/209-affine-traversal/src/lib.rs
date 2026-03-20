@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 209: Affine Traversal — At Most One Focus
 //
 // An affine traversal focuses on at most one value: `preview` returns

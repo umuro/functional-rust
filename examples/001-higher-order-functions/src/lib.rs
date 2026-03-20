@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 001: Higher-Order Functions
 // map, filter, fold — the three pillars of functional programming
 

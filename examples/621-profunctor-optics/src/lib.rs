@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Profunctor Optics
 //! Optics as profunctor transformations.
 

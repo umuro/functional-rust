@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 207: Prism Laws — ReviewPreview and PreviewReview
 //
 // Two round-trip laws guarantee that a Prism's `preview` and `review` are

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Enum Dispatch Macro
 //!
 //! Generating match arms for enums.

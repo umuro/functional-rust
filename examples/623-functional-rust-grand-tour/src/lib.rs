@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Functional Rust Grand Tour
 //! Summary of functional programming patterns in Rust.
 
@@ -10,7 +11,7 @@ pub fn option_demo() -> Option<i32> {
 
 /// Result: Error monad
 pub fn result_demo() -> Result<i32, &'static str> {
-    Ok(10).and_then(|x| Ok(x + 1))
+    Ok(10).map(|x| x + 1)
 }
 
 /// Iterator: List operations

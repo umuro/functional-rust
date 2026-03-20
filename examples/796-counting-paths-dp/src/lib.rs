@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Counting Paths
 
 pub fn unique_paths(m: usize, n: usize) -> usize {

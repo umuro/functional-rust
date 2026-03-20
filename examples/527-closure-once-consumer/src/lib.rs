@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! FnOnce for Consuming Closures
 //!
 //! Closures that consume their captured values — callable only once.

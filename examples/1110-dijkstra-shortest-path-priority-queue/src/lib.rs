@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1110: Dijkstra's Shortest Path — Priority Queue
 //
 // OCaml uses `Set.Make` as a sorted priority queue (ordered BST of (dist, node) tuples)

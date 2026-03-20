@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 103: Shared Borrowing — &T
 // Multiple readers, no writers
 

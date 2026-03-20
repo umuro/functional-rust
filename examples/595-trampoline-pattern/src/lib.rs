@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Trampoline Pattern
 //!
 //! Stack-safe recursion using trampolines to convert recursive calls to iteration.

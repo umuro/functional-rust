@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 964: Union-Find / Disjoint Set
 // Path compression + union by rank
 // OCaml: arrays + mutable fields; Rust: Vec + struct methods

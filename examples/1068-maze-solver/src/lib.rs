@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1068: Maze Solver — Backtracking on 2D Grid
 
 use std::collections::VecDeque;

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Allergies — Bitflag Decoding
 ///
 /// Ownership: Allergen is Copy. Score is a simple u32.

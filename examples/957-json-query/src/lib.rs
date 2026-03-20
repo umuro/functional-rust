@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 957: JSON Query by Path
 // get(["users", "0", "name"], json) → Option<&JsonValue>
 // Rust uses lifetime-annotated references; OCaml returns values directly

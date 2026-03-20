@@ -1,10 +1,5 @@
+#![allow(clippy::all)]
 //! List mapping examples: idiomatic Rust iterators and functional recursion.
-#![allow(clippy::needless_return)]
-n
-#![allow(clippy::redundant_closure)]
-n
-#![allow(dead_code)]
-n
 //!
 //! This module demonstrates two approaches to applying a function to each element
 //! of a list:
@@ -22,6 +17,7 @@ n
 ///
 /// # Example
 /// ```
+/// use example_1000_list_map::map_iter;
 /// let numbers = vec![1, 2, 3, 4, 5];
 /// let doubled = map_iter(&numbers, |x| x * 2);
 /// assert_eq!(doubled, vec![2, 4, 6, 8, 10]);
@@ -44,6 +40,7 @@ where
 ///
 /// # Example
 /// ```
+/// use example_1000_list_map::map_recursive;
 /// let numbers = vec![1, 2, 3, 4, 5];
 /// let doubled = map_recursive(numbers.clone(), |x| x * 2);
 /// assert_eq!(doubled, vec![2, 4, 6, 8, 10]);

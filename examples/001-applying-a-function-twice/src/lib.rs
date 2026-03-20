@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Apply a function twice to a value.
 /// Demonstrates higher-order functions and partial application.
 ///

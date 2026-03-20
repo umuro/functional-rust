@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Caesar Cipher — Functional Encryption
 //!
 //! OCaml: `let caesar n s = String.map (shift_char n) s`

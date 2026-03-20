@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 989: One-Time Initialization
 // Rust: OnceLock<T> — set once, read many times (thread-safe)
 

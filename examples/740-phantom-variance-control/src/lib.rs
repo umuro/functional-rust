@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Phantom Variance Control
 
 pub fn placeholder() -> &'static str {

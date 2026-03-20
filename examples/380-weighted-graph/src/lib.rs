@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Weighted Graph and Dijkstra's Algorithm
 //!
 //! Shortest paths with non-negative edge weights.

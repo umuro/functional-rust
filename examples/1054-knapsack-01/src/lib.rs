@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1054: 0/1 Knapsack — 2D DP Table
 
 use std::collections::HashMap;

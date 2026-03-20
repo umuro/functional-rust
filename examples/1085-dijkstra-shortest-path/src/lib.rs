@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Dijkstra's Shortest Path — Functional Rust with BinaryHeap and immutable-style updates.
 ///
 /// Demonstrates how Rust's ownership model naturally prevents the aliasing bugs

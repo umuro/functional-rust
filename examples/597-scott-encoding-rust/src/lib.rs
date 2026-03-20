@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Scott Encoding
 //!
 //! Alternative to Church encoding using pattern matching style.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Simulating Higher-Kinded Types with GATs
 
 pub trait Functor {

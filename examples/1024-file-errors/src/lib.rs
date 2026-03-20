@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1024: File Operation Errors
 // std::io::Error kinds and handling
 

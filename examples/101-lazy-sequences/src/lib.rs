@@ -1,36 +1,5 @@
+#![allow(clippy::all)]
 //! # Lazy Sequences
-#![allow(clippy::manual_is_multiple_of)]
-n
-#![allow(unused_variables)]
-n
-#![allow(clippy::match_like_matches)]
-n
-#![allow(clippy::type_complexity)]
-n
-#![allow(clippy::too_many_lines)]
-n
-#![allow(clippy::manual_range_contains)]
-n
-#![allow(clippy::explicit_iter_loop)]
-n
-#![allow(clippy::needless_lifetimes)]
-n
-#![allow(clippy::char_lit_as_u8)]
-n
-#![allow(clippy::while_let_loop)]
-n
-#![allow(clippy::manual_strip)]
-n
-#![allow(clippy::useless_vec)]
-n
-#![allow(clippy::needless_borrow)]
-n
-#![allow(clippy::redundant_closure)]
-n
-#![allow(unused_imports)]
-n
-#![allow(dead_code)]
-n
 //!
 //! OCaml's `Seq` module provides lazy sequences. Rust's iterators are
 //! lazy by default — they only compute values when consumed.
@@ -46,8 +15,10 @@ pub fn naturals(start: u64) -> impl Iterator<Item = u64> {
 
 /// Fibonacci sequence as an iterator
 pub fn fibs() -> impl Iterator<Item = u64> {
-    std::iter::successors(Some((0u64, 1u64)), |&(a, b)| a.checked_add(b).map(|s| (b, s)))
-        .map(|(a, _)| a)
+    std::iter::successors(Some((0u64, 1u64)), |&(a, b)| {
+        a.checked_add(b).map(|s| (b, s))
+    })
+    .map(|(a, _)| a)
 }
 
 /// Infinite prime number iterator
@@ -56,7 +27,9 @@ pub fn primes() -> impl Iterator<Item = u64> {
 }
 
 fn is_prime(n: u64) -> bool {
-    if n < 2 { return false; }
+    if n < 2 {
+        return false;
+    }
     (2..).take_while(|&i| i * i <= n).all(|i| n % i != 0)
 }
 

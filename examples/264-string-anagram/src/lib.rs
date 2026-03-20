@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! String Anagram Check
 //!
 //! OCaml: sorts character lists and compares.

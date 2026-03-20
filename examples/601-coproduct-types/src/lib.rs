@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Coproduct Types (Sum Types)
 //!
 //! Combine multiple types into a single sum type.

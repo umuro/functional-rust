@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Lifetimes in Structs
 //!
 //! Struct fields that are references require lifetime annotations.

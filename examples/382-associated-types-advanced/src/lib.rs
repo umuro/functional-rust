@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Associated Types vs Type Parameters
 //!
 //! When to use each for cleaner APIs.

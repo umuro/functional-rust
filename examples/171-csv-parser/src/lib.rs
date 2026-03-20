@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 171: CSV Parser
 // Complete CSV parser using combinators (handles quotes, escaping)
 

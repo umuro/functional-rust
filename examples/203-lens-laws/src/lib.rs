@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 203: Lens Laws — GetSet, SetGet, SetSet
 
 #[derive(Debug, Clone, PartialEq)]

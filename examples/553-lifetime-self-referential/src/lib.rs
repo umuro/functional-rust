@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Self-Referential Structs
 //!
 //! Patterns for structs that reference their own data.

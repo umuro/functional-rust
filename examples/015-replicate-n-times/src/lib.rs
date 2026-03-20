@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Replicate Elements N Times (99 Problems #15)
 ///
 /// Replicate every element of a list n times.

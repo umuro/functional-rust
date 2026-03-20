@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// 744: Unit Test Organisation — modules, helpers, AAA pattern
 
 // ── Code under test ───────────────────────────────────────────────────────────

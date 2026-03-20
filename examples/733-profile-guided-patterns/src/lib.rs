@@ -1,6 +1,4 @@
-/// 733: Profile-Guided Patterns — black_box, cold/hot paths, SoA vs AoS
-use std::hint::black_box;
-
+#![allow(clippy::all)]
 // ── black_box usage ───────────────────────────────────────────────────────────
 
 /// Without black_box, the compiler may constant-fold this entire call.

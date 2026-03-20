@@ -1,8 +1,7 @@
+#![allow(clippy::all)]
 // 455. Lock-free stack with atomics
 use std::ptr;
 use std::sync::atomic::{AtomicPtr, Ordering};
-use std::sync::Arc;
-use std::thread;
 
 struct Node<T> {
     value: T,
@@ -71,6 +70,8 @@ impl<T> Drop for Stack<T> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::Arc;
+    use std::thread;
     #[test]
     fn test_lifo() {
         let s = Stack::new();
@@ -85,7 +86,7 @@ mod tests {
     #[test]
     fn test_concurrent() {
         let s = Arc::new(Stack::<u32>::new());
-        let hs: Vec<_> = (0..4)
+        let hs: Vec<std::thread::JoinHandle<()>> = (0..4)
             .map(|_| {
                 let s = Arc::clone(&s);
                 thread::spawn(move || {

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 343: Cancellation Token
 // Arc<AtomicBool> for cooperative cancellation across threads
 

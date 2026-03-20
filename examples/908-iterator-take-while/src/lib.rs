@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 264. Conditional stopping with take_while()
 //!
 //! `take_while(pred)` yields elements until the predicate first returns false.

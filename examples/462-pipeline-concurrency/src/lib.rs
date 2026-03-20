@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Pipeline Concurrency — Staged Processing
 //!
 //! Process data through multiple stages, each running in its own thread.

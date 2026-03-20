@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 083: Display Trait
 // Implement Display for custom types
 

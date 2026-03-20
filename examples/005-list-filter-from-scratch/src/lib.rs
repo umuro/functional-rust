@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Filter removes elements that don't satisfy the predicate.
 /// Idiomatic Rust: uses iterator chains like the Rust standard library
 pub fn filter<T: Clone>(predicate: fn(&T) -> bool, items: &[T]) -> Vec<T> {

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Mock Trait Pattern
 //!
 //! Test doubles without external crates using trait-based mocking.

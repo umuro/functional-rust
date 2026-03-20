@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Natural Transformations
 //! Transform between functors while preserving structure.
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// A functional queue with amortized O(1) operations using two `Vec`s.
 ///
 /// Elements are enqueued onto `back` and dequeued from `front`.

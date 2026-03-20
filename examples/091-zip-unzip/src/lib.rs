@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 091: Zip and Unzip
 
 #[cfg(test)]

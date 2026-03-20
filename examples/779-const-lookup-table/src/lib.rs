@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Const Lookup Table
 //!
 //! Pre-computed lookup tables at compile time.

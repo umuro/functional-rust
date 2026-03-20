@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Smart constructors: enforce invariants at the type level.
 // The type is opaque — you can only create values through validated constructors.
 

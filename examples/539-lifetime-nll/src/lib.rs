@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Non-Lexical Lifetimes (NLL)
 //!
 //! Modern borrow checker: borrows end at last use, not end of block.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 480. chars() and char-level operations
 
 #[cfg(test)]

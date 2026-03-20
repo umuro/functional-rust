@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Example 128: Type-Level Booleans
 //!
 //! Encode `true`/`false` as *types* instead of values so the compiler enforces

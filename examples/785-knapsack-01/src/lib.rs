@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # 0/1 Knapsack Problem
 //!
 //! Classic dynamic programming problem.

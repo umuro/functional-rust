@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Async Generator Pattern
 //! Yield values one at a time from async computations.
 

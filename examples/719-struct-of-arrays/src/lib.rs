@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # 719: Struct of Arrays (SoA) vs Array of Structs (AoS)
 //!
 //! Demonstrates how data layout affects cache efficiency.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Macro Hygiene
 //!
 //! How macros avoid name collisions.

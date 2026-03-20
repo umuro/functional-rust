@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # List Filter from Scratch
 //! CS3110 — Deriving `List.filter`: predicate functions and preserving order.
 

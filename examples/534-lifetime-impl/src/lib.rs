@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Lifetimes in impl Blocks
 //!
 //! Lifetime annotations in impl blocks for structs with borrowed data.

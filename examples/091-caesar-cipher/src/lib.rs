@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Caesar Cipher — Functional Encryption
 //!
 //! Character-level string transformation using modular arithmetic.

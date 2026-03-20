@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // A monoid viewed as a single-object category:
 //   - One object: ()
 //   - Morphisms: the monoid elements

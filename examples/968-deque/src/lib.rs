@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 968: Double-Ended Queue (Deque)
 // Approach 1: std VecDeque (built-in, O(1) amortized all operations)
 // Approach 2: Functional two-stack deque (mirrors OCaml approach)

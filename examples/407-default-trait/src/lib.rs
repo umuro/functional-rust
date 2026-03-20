@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Default Trait
 //!
 //! Providing default values for types — derivable or custom.

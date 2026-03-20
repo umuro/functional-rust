@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 078: Where Clauses
 // Complex where clauses vs inline bounds
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Building Custom Iterator Adapters
 //!
 //! Custom adapters wrap an iterator in a struct and implement `Iterator` on it.

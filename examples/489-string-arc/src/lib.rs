@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 489. Arc<str> for shared strings
 use std::sync::Arc;
 use std::thread;

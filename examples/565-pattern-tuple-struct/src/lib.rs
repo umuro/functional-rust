@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Tuple Struct Patterns
 //!
 //! Destructuring tuple structs and newtypes.

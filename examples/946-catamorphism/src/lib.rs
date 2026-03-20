@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// # Catamorphism — Generalized Fold on ADTs
 ///
 /// A catamorphism replaces each constructor of an algebraic data type

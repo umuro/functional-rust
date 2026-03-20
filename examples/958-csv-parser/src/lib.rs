@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 958: CSV Parser
 // OCaml uses mutable Buffer + state ref; Rust uses an enum state machine with chars iterator
 

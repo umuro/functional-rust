@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! include! and include_str! Macros
 //!
 //! Including files at compile time.

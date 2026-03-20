@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # The ? Operator
 //!
 //! `?` desugars to match + return Err(e.into()), enabling clean error propagation.

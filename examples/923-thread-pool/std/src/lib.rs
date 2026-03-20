@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 923: Thread Pool — std version
 // Fixed N worker threads consuming tasks from a shared channel
 

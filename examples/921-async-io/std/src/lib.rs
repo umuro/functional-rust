@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 use std::io::{self, BufRead, Write};
 use std::sync::mpsc;
 use std::thread;

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! impl Trait in Argument Position
 
 pub fn print_all(items: impl Iterator<Item = impl std::fmt::Display>) {

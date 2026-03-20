@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 990: Semaphore via Mutex<usize> + Condvar
 // Counting semaphore: limit N concurrent operations
 

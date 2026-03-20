@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Rank-2 Types Simulation in Rust
 //!
 //! Rust lacks native rank-2 polymorphism, but traits with generic methods

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1070: Hamiltonian Path — Backtracking
 
 // Approach 1: Adjacency matrix backtracking (fixed start = 0)

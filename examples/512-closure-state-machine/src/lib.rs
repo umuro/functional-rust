@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Closures as State Machine Transitions
 //!
 //! Pattern: a*b+ — zero-or-more 'a' followed by one-or-more 'b'

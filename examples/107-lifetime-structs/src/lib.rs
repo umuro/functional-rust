@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 107: Lifetimes in Structs
 //
 // When a struct holds a reference, it needs a lifetime parameter

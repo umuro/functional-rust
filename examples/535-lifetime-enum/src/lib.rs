@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Lifetimes in Enums
 //!
 //! Enum variants containing references require lifetime parameters.

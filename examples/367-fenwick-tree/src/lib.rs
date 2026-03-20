@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Fenwick Tree (Binary Indexed Tree)
 //!
 //! O(log n) prefix sums and point updates with minimal memory.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # IndexMap Ordered
 //! HashMap that preserves insertion order (simulated without external crate).
 

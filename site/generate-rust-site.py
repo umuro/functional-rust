@@ -598,15 +598,28 @@ def md_to_html(md):
     if not md:
         return ""
     html = md
+    # Replace fenced code blocks with placeholders to protect them from further processing
+    placeholders = {}
+    def save_placeholder(rendered):
+        key = f"\x00PLACEHOLDER{len(placeholders)}\x00"
+        placeholders[key] = rendered
+        return key
     html = re.sub(r"```(\w+)\n(.*?)```",
-        lambda m: f'<pre><code class="language-{m.group(1)}">{escape_html(m.group(2))}</code></pre>',
+        lambda m: save_placeholder(f'<pre><code class="language-{m.group(1)}">{escape_html(m.group(2))}</code></pre>'),
         html, flags=re.DOTALL)
     html = re.sub(r"```\n?(.*?)```",
-        lambda m: f'<pre><code class="language-text">{escape_html(m.group(1))}</code></pre>',
+        lambda m: save_placeholder(f'<pre><code class="language-text">{escape_html(m.group(1))}</code></pre>'),
         html, flags=re.DOTALL)
-    html = re.sub(r"`([^`]+)`", r'<code class="bg-gray-100 dark:bg-gray-700 px-1 rounded text-sm font-mono">\1</code>', html)
-    html = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", html)
-    html = re.sub(r"\*(.+?)\*",     r"<em>\1</em>",         html)
+    html = re.sub(r"`([^`]+)`",
+        lambda m: save_placeholder(f'<code class="bg-gray-100 dark:bg-gray-700 px-1 rounded text-sm font-mono">{escape_html(m.group(1))}</code>'),
+        html)
+    # Escape HTML entities in the remaining text (after code placeholders are extracted)
+    # This handles bare <T>, &, > etc. in prose text before we introduce HTML tags
+    html = escape_html(html)
+    # Restore placeholder keys (escape_html would have escaped \x00 markers — they're safe, no HTML chars)
+    # Restrict bold/italic to not match across | (table separators) or placeholder boundaries
+    html = re.sub(r"\*\*([^*|\x00\n]+)\*\*", r"<strong>\1</strong>", html)
+    html = re.sub(r"\*([^*|\x00\n]+)\*",     r"<em>\1</em>",         html)
     html = re.sub(r"^####\s+(.+)$", r'<h5 class="text-base font-semibold mt-4 mb-1">\1</h5>', html, flags=re.MULTILINE)
     html = re.sub(r"^###\s+(.+)$",  r'<h4 class="text-lg font-semibold mt-5 mb-2">\1</h4>',  html, flags=re.MULTILINE)
     html = re.sub(r"^##\s+(.+)$",   r'<h3 class="text-xl font-bold mt-6 mb-3">\1</h3>',      html, flags=re.MULTILINE)
@@ -639,12 +652,55 @@ def md_to_html(md):
     # Lists
     html = re.sub(r"^[-*]\s+(.+)$",  r'<li class="ml-4 mb-1">• \1</li>',              html, flags=re.MULTILINE)
     html = re.sub(r"^\d+\.\s+(.+)$", r'<li class="ml-4 mb-1 list-decimal">\1</li>',   html, flags=re.MULTILINE)
-    # Paragraphs
-    html = re.sub(r"\n\n+", '</p><p class="mb-4">', html)
-    html = f'<p class="mb-4">{html}</p>'
-    for tag in ["<pre>", "</pre>", "<h2", "<h3", "<h4", "<h5", "<table", "</table>", "<hr", "<thead", "<tbody", "</tbody>"]:
-        html = html.replace(f'<p class="mb-4">{tag}', tag)
-        html = html.replace(f"{tag}</p>", tag)
+    # Paragraph wrapping — block-aware: split on double newlines, wrap prose in <p>, leave block elements bare.
+    # This avoids the wrap-then-strip pattern which creates mismatched <p> tags.
+    _BLOCK_LINE_RE = re.compile(
+        r'^<(?:/?(?:pre|h[2-5]|table|thead|tbody|tr|th|td|hr|li|ul|ol))\b',
+        re.IGNORECASE
+    )
+    def _classify(line):
+        s = line.strip()
+        if not s:
+            return 'empty'
+        if _BLOCK_LINE_RE.match(s):
+            return 'block'
+        # Standalone placeholder on its own line → will become <pre> after restoration
+        if re.match(r'^\x00PLACEHOLDER\d+\x00$', s):
+            return 'block'
+        return 'prose'
+
+    result_parts = []
+    for chunk in re.split(r'\n\n+', html):
+        if not chunk.strip():
+            continue
+        classified = [(_classify(l), l) for l in chunk.split('\n')]
+        has_prose = any(k == 'prose' for k, _ in classified)
+        has_block = any(k == 'block' for k, _ in classified)
+        if has_block and not has_prose:
+            # All block content — emit as-is
+            result_parts.append(chunk)
+        elif not has_block:
+            # All prose — wrap in <p>
+            result_parts.append(f'<p class="mb-4">{chunk}</p>')
+        else:
+            # Mixed — group consecutive prose lines into <p>, emit block lines bare
+            prose_buf = []
+            for kind, line in classified:
+                if kind == 'block':
+                    if prose_buf:
+                        result_parts.append(f'<p class="mb-4">{chr(10).join(prose_buf)}</p>')
+                        prose_buf = []
+                    result_parts.append(line)
+                elif kind == 'prose':
+                    prose_buf.append(line)
+                # 'empty' lines within mixed chunks are ignored
+            if prose_buf:
+                result_parts.append(f'<p class="mb-4">{chr(10).join(prose_buf)}</p>')
+
+    html = '\n'.join(result_parts)
+    # Restore placeholders after paragraph processing
+    for key, value in placeholders.items():
+        html = html.replace(key, value)
     return html
 
 
@@ -1745,6 +1801,16 @@ for ex in all_examples:
 
 # Only generate pages for examples that made it into examples_data
 _included_dirnames = {e["dirname"] for e in examples_data}
+
+# Remove stale HTML files (generated in a previous run but no longer valid)
+_expected_html = {f"{d}.html" for d in _included_dirnames} | {
+    "index.html", "by-level.html", "by-topic.html", "by-learning-path.html",
+    "sitemap.xml", "robots.txt",
+}
+for stale in RUST_DIR.glob("*.html"):
+    if stale.name not in _expected_html:
+        stale.unlink()
+        print(f"  [rm] {stale.name}")
 
 # Generate individual example pages
 generated = 0

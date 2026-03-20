@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Simple Lambda Calculus Interpreter
 ///
 /// Ownership insight: The expression tree uses Box for recursive types.

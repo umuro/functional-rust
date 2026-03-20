@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Longest Common Subsequence
 
 pub fn lcs(a: &str, b: &str) -> usize {

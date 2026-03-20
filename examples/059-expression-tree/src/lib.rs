@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Recursive Variant — Expression Tree
 //!
 //! OCaml's recursive variants with payloads map to Rust's `enum` with

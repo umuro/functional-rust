@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Phone Number Parser — Validation Pipeline
 ///
 /// Ownership: Input is borrowed &str. Result returns owned String on success.

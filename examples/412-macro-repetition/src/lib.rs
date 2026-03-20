@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Macro Repetition Patterns
 //!
 //! Using $(...),* and $(...),+ for variadic macros.

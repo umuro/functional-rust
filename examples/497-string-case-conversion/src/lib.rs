@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 497. Case conversion patterns
 fn to_snake_case(s: &str) -> String {
     let mut out = String::new();

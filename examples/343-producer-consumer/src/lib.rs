@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Producer-Consumer Pattern
 //! Classic concurrent pattern with bounded buffer.
 

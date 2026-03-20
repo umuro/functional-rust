@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Send and Sync Bounds — Thread Safety Markers
 //!
 //! Understanding Send and Sync traits for thread safety.

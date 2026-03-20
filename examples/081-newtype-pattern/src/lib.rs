@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 081: Newtype Pattern
 // Wrapping primitives for type safety at zero cost
 

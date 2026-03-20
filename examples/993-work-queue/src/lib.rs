@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 993: Thread Pool / Work Queue
 // Fixed N workers consuming tasks from a shared mpsc channel
 

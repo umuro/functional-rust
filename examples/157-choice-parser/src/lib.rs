@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 157: Choice Parser
 // alt / choice: try parsers in order, return first success
 

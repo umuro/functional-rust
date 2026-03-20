@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 use std::collections::VecDeque;
 /// 743: Session Types — protocol safety via typestate
 /// The protocol: Connect → SendRequest → RecvResponse → Close

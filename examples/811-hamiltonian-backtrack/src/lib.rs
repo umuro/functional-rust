@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Hamiltonian Path (Backtracking)
 pub fn hamiltonian_path(n: usize, edges: &[(usize, usize)]) -> Option<Vec<usize>> {
     let mut adj = vec![vec![false; n]; n];

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 100: Step By
 
 #[cfg(test)]

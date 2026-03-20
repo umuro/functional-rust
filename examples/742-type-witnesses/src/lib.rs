@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// 742: Type Witnesses — evidence passing for invariants
 
 // ── Sorted witness ─────────────────────────────────────────────────────────────

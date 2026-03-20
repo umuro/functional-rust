@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1023: Safe Integer Parsing
 // str::parse::<i64>() and handling ParseIntError
 

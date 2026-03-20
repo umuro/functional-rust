@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # BitSet Pattern
 //! Efficient set operations using bit manipulation.
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 093: Windows and Chunks
 // Sliding window algorithms in Rust
 

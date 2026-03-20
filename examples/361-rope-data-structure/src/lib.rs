@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Rope data structure for efficient string operations
 //!
 //! A tree-based string representation enabling O(1) concatenation and O(log n) splits.

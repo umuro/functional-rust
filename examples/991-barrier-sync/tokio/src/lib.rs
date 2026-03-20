@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 991: Barrier Synchronization — Tokio version
 // tokio::sync::Barrier — async barrier for task synchronization
 

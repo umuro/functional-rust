@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 092: Scan / Accumulate
 // Like fold but emits every intermediate value — running sums, cumulative statistics, balance histories.
 

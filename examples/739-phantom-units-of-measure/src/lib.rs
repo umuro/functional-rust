@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Phantom Units Of Measure
 
 pub fn placeholder() -> &'static str {

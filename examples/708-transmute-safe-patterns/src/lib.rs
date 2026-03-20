@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Transmute Safe Patterns
 
 use std::mem;

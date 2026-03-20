@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1109: Monoid Pattern — Generic Combining
 //
 // OCaml uses first-class modules (module types) to express the Monoid abstraction.

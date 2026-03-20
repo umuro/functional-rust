@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// 735: Typestate Builder — required fields enforced at compile time
 use std::marker::PhantomData;
 
@@ -27,6 +28,12 @@ pub struct HttpClientBuilder<HasHost, HasPort> {
 }
 
 /// Entry point — start with both required fields unset.
+impl Default for HttpClientBuilder<Unset, Unset> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl HttpClientBuilder<Unset, Unset> {
     pub fn new() -> Self {
         HttpClientBuilder {

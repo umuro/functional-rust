@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Articulation Points
 pub fn articulation_points(n: usize, edges: &[(usize, usize)]) -> Vec<usize> {
     let mut adj = vec![vec![]; n];

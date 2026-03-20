@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 092: Scan with Accumulator
 
 fn running_sum(v: &[i32]) -> Vec<i32> {

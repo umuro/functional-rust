@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 226: Category Basics
 // A category has objects, morphisms, composition, and identity.
 // In Rust: types = objects, functions = morphisms.

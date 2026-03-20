@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Multiple Arms Pattern Matching
 //!
 //! Consolidate match arms using OR patterns for cleaner code.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// # Pangram Check
 ///
 /// A pangram is a sentence using every letter of the alphabet at least once.

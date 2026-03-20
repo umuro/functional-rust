@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1065: Combination Sum — Find Combos Summing to Target
 
 // Approach 1: Backtracking with reuse allowed

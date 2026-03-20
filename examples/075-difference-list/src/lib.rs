@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// # Difference List — O(1) Append
 ///
 /// A difference list represents a list as a function from "rest of list" to "full list".

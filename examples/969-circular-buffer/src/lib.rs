@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 969: Circular / Ring Buffer
 // Fixed-capacity FIFO: push overwrites oldest when full
 // OCaml: array + head/tail/count refs; Rust: Vec + indices

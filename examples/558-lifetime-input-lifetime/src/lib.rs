@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Input Lifetime Patterns
 //!
 //! How input lifetimes constrain function signatures.

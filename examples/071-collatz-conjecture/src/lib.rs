@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Collatz Conjecture
 ///
 /// Computing the 3n+1 sequence step count. Demonstrates simple recursion,
@@ -29,7 +30,7 @@ pub fn collatz_iter(n: i64) -> Result<u64, String> {
     let mut current = n as u64;
     let mut steps = 0u64;
     while current != 1 {
-        current = if current % 2 == 0 {
+        current = if current.is_multiple_of(2) {
             current / 2
         } else {
             3 * current + 1
@@ -44,7 +45,7 @@ pub fn collatz_sequence(n: u64) -> Vec<u64> {
     let mut seq = vec![n];
     let mut current = n;
     while current != 1 {
-        current = if current % 2 == 0 {
+        current = if current.is_multiple_of(2) {
             current / 2
         } else {
             3 * current + 1

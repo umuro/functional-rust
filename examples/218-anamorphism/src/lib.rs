@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 218: Anamorphism — Unfold to Build Recursive Structures
 
 // ana : (seed -> F<seed>) -> seed -> Fix<F>

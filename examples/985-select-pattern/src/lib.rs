@@ -1,9 +1,9 @@
+#![allow(clippy::all)]
 // 985: Select Pattern — Poll Multiple Channels
 // Rust: try_recv loop for non-blocking select over multiple channels
 
 use std::sync::mpsc::{self, TryRecvError};
 use std::thread;
-use std::time::Duration;
 
 #[derive(Debug, PartialEq)]
 enum Selected<A, B> {

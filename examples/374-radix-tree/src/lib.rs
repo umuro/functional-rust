@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Radix Tree (Compressed Trie)
 //!
 //! Space-efficient prefix tree with edge compression.

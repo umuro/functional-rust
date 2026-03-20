@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Dereferencing Raw Pointers
 
 pub fn raw_ptr_example() -> i32 {

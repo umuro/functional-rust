@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Rayon Join — Fork-Join Parallelism
 //!
 //! Execute two closures in parallel and wait for both results.

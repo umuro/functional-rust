@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1060: Partition Equal Subset Sum — Boolean DP
 
 use std::collections::{HashMap, HashSet};

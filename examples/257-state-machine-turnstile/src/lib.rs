@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 257: State Machine — Turnstile
 //
 // A turnstile has two states (Locked, Unlocked) and two events (Coin, Push).

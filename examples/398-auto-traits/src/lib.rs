@@ -1,7 +1,6 @@
+#![allow(clippy::all)]
 //! Auto Traits: Send, Sync, Unpin
 
-use std::cell::RefCell;
-use std::rc::Rc;
 use std::sync::Arc;
 
 pub fn is_send<T: Send>() {}

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 468. Lock-free queue basics (Michael-Scott, simplified)
 use std::ptr;
 use std::sync::atomic::{AtomicPtr, Ordering};

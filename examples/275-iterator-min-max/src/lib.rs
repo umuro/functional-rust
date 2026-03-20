@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 275. Finding extremes: min() and max()
 //!
 //! `min()` and `max()` return `Option<T>` — None for empty, requires `Ord`.

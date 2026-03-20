@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Const Fn Basics
 //!
 //! Functions that can be evaluated at compile time.
@@ -24,7 +25,7 @@ pub const fn gcd(a: u64, b: u64) -> u64 {
 pub const fn pow(base: u64, exp: u32) -> u64 {
     if exp == 0 {
         1
-    } else if exp % 2 == 0 {
+    } else if exp.is_multiple_of(2) {
         let half = pow(base, exp / 2);
         half * half
     } else {
@@ -40,12 +41,12 @@ pub const fn is_prime(n: u64) -> bool {
     if n == 2 {
         return true;
     }
-    if n % 2 == 0 {
+    if n.is_multiple_of(2) {
         return false;
     }
     let mut i = 3;
     while i * i <= n {
-        if n % i == 0 {
+        if n.is_multiple_of(i) {
             return false;
         }
         i += 2;

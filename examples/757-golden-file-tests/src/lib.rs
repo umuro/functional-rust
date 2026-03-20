@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Golden File Tests
 //!
 //! Testing by comparing output against known-good "golden" files.

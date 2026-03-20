@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Example 133: Variance — Covariance, Contravariance, Invariance
 //!
 //! Variance describes when a generic type `F<T>` can be substituted for `F<U>`

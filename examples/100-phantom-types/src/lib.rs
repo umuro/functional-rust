@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Phantom Types — Type-Safe Units
 //!
 //! Use phantom type parameters to prevent mixing meters and seconds at compile time.

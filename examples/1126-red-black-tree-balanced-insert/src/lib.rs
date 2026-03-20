@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Color of a red-black tree node.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Color {

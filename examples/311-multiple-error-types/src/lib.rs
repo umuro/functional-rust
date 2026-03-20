@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Handling Multiple Error Types
 //!
 //! Unify multiple error types with an enum + `impl From` for each variant.

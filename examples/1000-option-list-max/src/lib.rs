@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Returns the maximum element in a list using the iterator method.
 /// Idiomatic Rust: borrows the slice and uses .max() directly.
 pub fn list_max(list: &[i32]) -> Option<i32> {

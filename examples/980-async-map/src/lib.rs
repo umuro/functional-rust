@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 980: Map over Async
 // Rust: async { f(x.await) } is the idiom for Lwt.map f promise
 
@@ -39,8 +40,8 @@ async fn map_to_string(fut: impl Future<Output = i32>) -> String {
 async fn map_chain() -> String {
     let raw = base_value().await; // 5
     let doubled = raw * 2; // 10  (map)
-    let as_str = doubled.to_string(); // "10" (map)
-    as_str
+                           // "10" (map)
+    doubled.to_string()
 }
 
 // --- map derived from bind (async block = bind + return) ---

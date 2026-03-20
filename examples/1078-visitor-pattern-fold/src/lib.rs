@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Visitor Pattern via Fold — Expression Evaluator
 //!
 //! Uses fold as a visitor pattern replacement. Instead of defining a Visitor

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// A lens is a pair of getter/setter functions that focus on a part of a larger structure.
 /// This is the functional approach to accessing and modifying nested data without mutation.
 ///

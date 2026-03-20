@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Option Type — Safe List Maximum
 //!
 //! OCaml's `option` type maps directly to Rust's `Option<T>`.

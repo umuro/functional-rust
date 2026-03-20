@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Function Composition
 //!
 //! Building complex transformations from simple composed pieces.

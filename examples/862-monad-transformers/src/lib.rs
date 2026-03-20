@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 063: Monad Transformers
 // Stacking monads: Option inside Result
 

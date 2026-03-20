@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 995: N-Stage Streaming Pipeline
 // Each stage is a thread + channel — filter/map/transform stages
 
@@ -80,7 +81,7 @@ fn pipeline_even_squares() -> Vec<String> {
 
 // --- More complex: tokenize → filter stop words → count ---
 fn word_count_pipeline(text: &str) -> usize {
-    let stop_words = vec!["the", "a", "an", "is", "in", "of", "to"];
+    let stop_words = ["the", "a", "an", "is", "in", "of", "to"];
     let words: Vec<String> = text.split_whitespace().map(|w| w.to_lowercase()).collect();
 
     let (tx, rx) = mpsc::channel::<String>();

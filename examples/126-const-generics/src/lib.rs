@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 126: Const Generics
 // Rust's const generics encode array sizes and matrix dimensions in the type,
 // turning dimension mismatches into compile errors rather than runtime panics.

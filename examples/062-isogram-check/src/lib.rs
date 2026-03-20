@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// # Isogram Check
 ///
 /// An isogram is a word with no repeating letters (ignoring case, hyphens, spaces).

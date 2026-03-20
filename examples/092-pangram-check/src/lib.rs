@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Pangram Check
 //!
 //! Determine if a string contains every letter of the alphabet.

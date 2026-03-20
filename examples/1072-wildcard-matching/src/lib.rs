@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1072: Wildcard Matching — '?' and '*' — DP
 
 use std::collections::HashMap;

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 176: Introduction to GADTs
 // Rust doesn't have native GADTs, but we can simulate them with
 // PhantomData, traits, and sealed type-level markers.

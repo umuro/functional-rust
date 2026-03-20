@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Entry API
 //! Efficient insert-or-update with HashMap's Entry API.
 

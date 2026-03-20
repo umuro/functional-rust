@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// 736: TCP Connection modelled as typestate
 /// Send/recv only available on Connected; connect only on Disconnected.
 use std::marker::PhantomData;

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 987: Read-Write Lock Pattern
 // Rust: RwLock<T> — many readers OR one writer, never both
 

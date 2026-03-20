@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1017: Typed Error Hierarchy
 // Enum with variants for each subsystem
 

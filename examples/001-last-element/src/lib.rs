@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Find the last element of a list
 //
 // Three implementations showing different Rust idioms.

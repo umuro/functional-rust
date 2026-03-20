@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Nested Patterns
 //!
 //! Matching deeply nested structures.

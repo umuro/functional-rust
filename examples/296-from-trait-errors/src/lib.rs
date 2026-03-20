@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # From Trait for Error Conversion
 //!
 //! `impl From<E> for MyErr` enables automatic error conversion via `?`.

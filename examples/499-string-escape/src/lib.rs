@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 499. Escaping and unescaping strings
 fn escape_html(s: &str) -> String {
     s.chars()

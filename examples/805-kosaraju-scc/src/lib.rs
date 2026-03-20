@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Kosaraju's SCC Algorithm
 pub fn kosaraju(n: usize, edges: &[(usize, usize)]) -> Vec<Vec<usize>> {
     let mut adj = vec![vec![]; n];

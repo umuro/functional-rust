@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # thiserror-style derive macros
 //!
 //! Manually implementing what `#[derive(thiserror::Error)]` generates.

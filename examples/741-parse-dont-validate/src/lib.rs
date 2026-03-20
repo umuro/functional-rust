@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// 741: Parse-Don't-Validate
 /// Types that can ONLY be created via parsing. Once created, always valid.
 

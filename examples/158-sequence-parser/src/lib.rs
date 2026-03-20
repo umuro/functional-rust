@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 158: Sequence Parser
 // pair, preceded, terminated, delimited: sequence combinators
 

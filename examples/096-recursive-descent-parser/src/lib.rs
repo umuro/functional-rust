@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Simple Recursive Descent Parser
 //!
 //! Parse arithmetic expressions into an AST with correct precedence.

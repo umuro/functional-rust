@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Counting Patterns in Macros
 //!
 //! Techniques for counting macro arguments.

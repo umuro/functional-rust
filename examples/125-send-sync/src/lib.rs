@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 125: Send and Sync Marker Traits
 //
 // Send: a type whose ownership can be transferred to another thread.

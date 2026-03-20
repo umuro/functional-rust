@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 060: State Monad
 // Thread state through computations without explicit passing
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Blocking in Async
 //! How to safely run blocking operations in async contexts.
 

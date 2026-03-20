@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Example 132: Phantom Units of Measure
 //!
 //! Tag numeric values with their unit of measure so the compiler prevents

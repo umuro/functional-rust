@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Decode Run-Length Encoding (99 Problems #12)
 ///
 /// Given a modified RLE list, reconstruct the original list by expanding

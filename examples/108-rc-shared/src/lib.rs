@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 108: Rc<T> — Shared Ownership
 //
 // Rc<T> = Reference Counted pointer. Multiple owners, single-threaded.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Zipper — Functional List Cursor
 //!
 //! A zipper provides O(1) navigation and update at the focus point.

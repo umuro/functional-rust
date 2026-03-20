@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 471. String vs &str: ownership semantics
 fn greet(name: &str) {
     println!("Hello, {}!", name);

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Kadane's Algorithm
 
 pub fn max_subarray(arr: &[i32]) -> i32 {

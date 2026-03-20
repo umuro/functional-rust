@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! cfg! and Conditional Compilation
 //!
 //! Compile-time feature flags and platform-specific code.

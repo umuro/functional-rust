@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Complex Closure Environments
 //!
 //! Closures capturing structs, collections, and other closures.

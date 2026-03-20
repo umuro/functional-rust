@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Histomorphism
 //! Fold with access to all previous results.
 

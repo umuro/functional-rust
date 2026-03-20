@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Broadcast Channel
 //! One sender, many receivers — every subscriber gets a copy of every message.
 

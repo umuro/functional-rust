@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Rod Cutting Problem
 
 pub fn rod_cutting(prices: &[usize], n: usize) -> usize {

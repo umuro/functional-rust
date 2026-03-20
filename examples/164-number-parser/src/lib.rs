@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 164: Number Parser
 // Parse floating point numbers with optional sign and decimal
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Recursive Descent Parser
 //!
 //! A simple expression parser using recursive descent.

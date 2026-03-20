@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 166: Separated List
 // separated_list0, separated_list1: comma-separated values
 

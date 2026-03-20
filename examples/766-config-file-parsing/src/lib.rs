@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Config File Parsing
 //!
 //! INI-style configuration file parser.

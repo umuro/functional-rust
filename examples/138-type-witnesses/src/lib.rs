@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Example 138: Type Witnesses / GADT Encoding
 //!
 //! Simulates OCaml's GADTs in Rust using phantom type parameters.

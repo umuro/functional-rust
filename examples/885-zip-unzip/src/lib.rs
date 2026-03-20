@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 091: Zip and Unzip
 // OCaml List.combine/split → Rust zip/unzip
 

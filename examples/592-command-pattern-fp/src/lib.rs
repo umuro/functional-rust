@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Command Pattern (Functional Style)
 //!
 //! Commands as data structures that can be stored, replayed, and undone.

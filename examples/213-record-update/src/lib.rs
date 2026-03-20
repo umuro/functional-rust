@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Example 213: Practical Lens — Deeply Nested Config Update
 //!
 //! Lenses solve a real problem: immutably updating one field deep inside a

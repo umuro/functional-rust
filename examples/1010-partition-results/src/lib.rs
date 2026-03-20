@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1010: Partition Results
 // Separate Ok and Err values using Iterator::partition
 

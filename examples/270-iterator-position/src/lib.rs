@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 270. Finding index with position()
 //!
 //! `position(pred)` returns `Option<usize>` — index of first element where predicate holds.

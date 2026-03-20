@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 963: Bloom Filter
 // Probabilistic membership test: no false negatives, possible false positives
 // Uses 3 independent hash functions + bit array (u64 words)
@@ -31,7 +32,7 @@ pub struct BloomFilter {
 
 impl BloomFilter {
     pub fn new(num_bits: usize) -> Self {
-        let words = (num_bits + 63) / 64;
+        let words = num_bits.div_ceil(64);
         BloomFilter {
             bits: vec![0u64; words],
             num_bits,

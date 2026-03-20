@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 710 — Calling C Functions with `extern "C"`
 //!
 //! Pattern: `#[no_mangle] pub extern "C"` exports a Rust fn with C ABI.

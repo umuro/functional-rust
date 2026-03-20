@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 082: Type Aliases
 // type keyword in both languages — aliases vs newtypes
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # ExactSizeIterator for Known-Length Iterators
 //!
 //! `ExactSizeIterator` provides O(1) `len()`, enabling pre-allocation and size checks.

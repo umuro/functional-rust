@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Solution 1: Idiomatic Rust — uses slice::sort (in-place, introsort-based)
 // This is how a Rust developer sorts: modify in place, no allocation per step
 pub fn quicksort_inplace<T: Ord>(data: &mut [T]) {

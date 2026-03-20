@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Matrix Chain Multiplication
 
 pub fn matrix_chain(dims: &[usize]) -> usize {

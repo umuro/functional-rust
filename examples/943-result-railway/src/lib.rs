@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Result Type — Railway-Oriented Error Handling
 ///
 /// Using Result with combinators (and_then/map) for chaining fallible

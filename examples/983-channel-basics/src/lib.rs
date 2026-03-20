@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 983: MPSC Channel Basics
 // Rust: std::sync::mpsc — Multiple Producer, Single Consumer
 

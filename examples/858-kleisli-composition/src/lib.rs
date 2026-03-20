@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 059: Kleisli Composition
 // Kleisli arrow: A -> Option<B>, composed to build pipelines
 

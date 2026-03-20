@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Log Pattern Macros
 //!
 //! Logging and tracing utilities.

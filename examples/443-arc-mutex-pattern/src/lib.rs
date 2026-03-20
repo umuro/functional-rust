@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Arc<Mutex<T>> — Shared Mutable State Across Threads
 //!
 //! Share a single mutable value across multiple threads using `Arc` for

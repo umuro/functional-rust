@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Difference of Squares
 ///
 /// Ownership: All values are Copy integers. No ownership concerns.

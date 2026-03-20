@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Const Type Arithmetic
 //!
 //! Type-level arithmetic using const generics.

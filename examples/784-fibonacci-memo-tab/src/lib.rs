@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Fibonacci: Memoization vs Tabulation
 //!
 //! Comparing top-down and bottom-up dynamic programming approaches.

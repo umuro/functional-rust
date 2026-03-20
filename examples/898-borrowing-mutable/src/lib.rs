@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 104: Mutable References (&mut T)
 //
 // Only ONE &mut T at a time. No &T while &mut T exists.

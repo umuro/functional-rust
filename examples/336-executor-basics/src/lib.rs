@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Executor Basics
 //!
 //! A minimal async executor — the engine that drives futures to completion by polling them.

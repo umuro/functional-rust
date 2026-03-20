@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Creating Iterators with from_fn()
 //!
 //! `std::iter::from_fn(f)` creates an iterator from a closure returning `Option<T>`.

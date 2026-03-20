@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 219: Hylomorphism — Ana then Cata, Fused
 
 // hylo: unfold a seed, then fold the result. No intermediate structure!

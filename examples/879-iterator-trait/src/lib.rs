@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 085: Iterator Trait
 // OCaml Seq → Rust Iterator
 

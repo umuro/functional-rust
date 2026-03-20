@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 262. Sliding Windows over Slices
 //!
 //! `windows(n)` yields overlapping sub-slices of length `n`, zero-copy.

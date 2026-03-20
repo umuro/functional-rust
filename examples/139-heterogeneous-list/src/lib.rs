@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # HList — Heterogeneous List
 //!
 //! A type-safe list of mixed types where the full type of each element is

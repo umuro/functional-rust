@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 699 — Raw Pointer Basics
 //! *const T and *mut T: creation, casting, and safe wrapping.
 

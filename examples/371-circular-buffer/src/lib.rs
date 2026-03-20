@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Circular Buffer (Ring Buffer)
 //!
 //! Fixed-size FIFO queue with O(1) operations.

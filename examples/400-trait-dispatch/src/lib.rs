@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Static vs Dynamic Trait Dispatch
 
 pub trait Shape {

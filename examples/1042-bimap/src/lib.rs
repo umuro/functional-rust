@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1042: Bidirectional Map — Two HashMaps for Key↔Value
 // Both key and value must be unique — inserting overwrites both directions
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Closure Type Inference
 //!
 //! How Rust infers closure types and when annotations are needed.

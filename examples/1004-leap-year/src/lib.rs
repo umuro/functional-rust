@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Idiomatic Rust: Direct boolean logic with clearest precedence
 pub fn is_leap_year(year: u32) -> bool {
     (year % 400 == 0) || (year % 4 == 0 && year % 100 != 0)
@@ -35,6 +36,6 @@ mod tests {
     #[test]
     fn test_edge_cases() {
         assert!(is_leap_year(4)); // Year 4 is a leap year
-        assert!(is_leap_year(2)); // Year 2 is NOT a leap year
+        assert!(!is_leap_year(2)); // Year 2 is NOT a leap year
     }
 }

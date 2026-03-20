@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1034: Safe Linked List — Option<Box<Node<T>>>
 // Building a singly-linked list using only safe Rust
 

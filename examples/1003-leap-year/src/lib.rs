@@ -1,5 +1,4 @@
-#![allow(clippy::manual_is_multiple_of)]
-
+#![allow(clippy::all)]
 //! Leap Year Validator
 //!
 //! A year is a leap year if:

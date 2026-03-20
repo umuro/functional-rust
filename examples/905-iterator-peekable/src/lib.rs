@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 261. Lookahead with Peekable
 //!
 //! `Peekable` wraps any iterator and adds `peek()` — inspect the next element

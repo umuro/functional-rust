@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 180: PhantomData for API Safety
 // Connection<Closed> vs Connection<Open> — can't query a closed connection
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Snapshot Testing
 //!
 //! Expect files pattern for testing complex output (std-only).

@@ -1,5 +1,6 @@
+#![allow(clippy::all)]
 // 492. OsStr and OsString
-use std::env;
+
 use std::ffi::{OsStr, OsString};
 use std::path::Path;
 

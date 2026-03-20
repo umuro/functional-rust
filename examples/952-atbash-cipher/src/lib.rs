@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Atbash cipher: maps a→z, b→y, ..., z→a. Digits pass through. Groups into 5-char chunks.
 
 fn atbash_char(c: char) -> Option<char> {

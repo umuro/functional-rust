@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 979: Future/Promise Basics — Tokio version
 // Using tokio runtime instead of manual block_on
 

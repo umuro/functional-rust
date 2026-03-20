@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 453. Memory ordering: Relaxed, Acquire, Release
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::Arc;

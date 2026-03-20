@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 113: String vs &str
 //
 // String: owned, heap-allocated, growable, mutable

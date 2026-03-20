@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Closure Memoization — Caching Results
 
 use std::collections::HashMap;

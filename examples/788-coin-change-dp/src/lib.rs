@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Coin Change
 
 pub fn coin_change(coins: &[usize], amount: usize) -> Option<usize> {

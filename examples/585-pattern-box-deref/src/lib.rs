@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Box Deref Patterns
 //!
 //! Pattern matching through Box with automatic dereferencing.

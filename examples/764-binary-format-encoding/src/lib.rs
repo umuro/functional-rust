@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Binary Format Encoding
 //!
 //! Custom binary serialization format.

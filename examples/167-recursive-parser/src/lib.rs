@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 167: Recursive Parser
 // Recursive parsers using function pointers and Rc for recursive grammars
 

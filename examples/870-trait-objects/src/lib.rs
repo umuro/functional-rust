@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 076: Trait Objects — Dynamic Dispatch
 // OCaml polymorphism → Rust dyn Trait vs generics
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! LRU Cache
 //!
 //! Least Recently Used cache with O(1) get/put operations.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 465. Message passing vs shared memory
 use std::collections::HashMap;
 use std::sync::{mpsc, Arc, Mutex};

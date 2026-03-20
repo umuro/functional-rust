@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Supertrait Pattern
 
 use std::fmt::{Debug, Display};

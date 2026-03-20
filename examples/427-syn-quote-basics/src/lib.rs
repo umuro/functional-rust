@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! syn and quote Basics
 //!
 //! Understanding the crates used in proc macros.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Cell and RefCell for Interior Mutability
 //!
 //! Mutating through shared references.

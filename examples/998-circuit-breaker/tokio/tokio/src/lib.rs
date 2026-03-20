@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 998: Circuit Breaker — Tokio version
 // Async circuit breaker using tokio::sync::Mutex and tokio::time
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Run-Length Encoding
 //! OCaml 99 Problems #10 — Encode consecutive duplicates as (count, element) pairs.
 

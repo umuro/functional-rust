@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Rose Tree — Multi-Way Tree with Fold
 //!
 //! OCaml: `type 'a rose = Rose of 'a * 'a rose list`

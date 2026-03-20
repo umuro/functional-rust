@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Phantom Type Basics
 //! PhantomData for type-level information
 

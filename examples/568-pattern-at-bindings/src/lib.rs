@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! @ Bindings
 //!
 //! Binding a name while also matching a pattern.

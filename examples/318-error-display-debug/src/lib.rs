@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Error Display vs Debug
 //!
 //! Display is for users, Debug is for developers.

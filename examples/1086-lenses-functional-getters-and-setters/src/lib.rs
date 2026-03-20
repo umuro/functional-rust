@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// A `Lens<S, A>` focuses on a part `A` within a whole `S`.
 ///
 /// A lens is a first-class getter/setter pair that composes.

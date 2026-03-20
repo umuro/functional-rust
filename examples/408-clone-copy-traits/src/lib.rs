@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Clone and Copy Traits
 //!
 //! Copy: implicit bitwise copy for small, stack-only types.

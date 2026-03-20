@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 177: GADT Typed Expression Evaluator
 // Only well-typed expressions can be constructed
 

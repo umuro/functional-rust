@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Optics Introduction
 //! Composable accessors for nested data.
 

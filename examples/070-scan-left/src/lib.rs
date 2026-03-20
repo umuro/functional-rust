@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 070: Scan Left — running accumulation
 
 // Approach 1: Using .scan() iterator

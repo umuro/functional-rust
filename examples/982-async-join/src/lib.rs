@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 982: Join Parallel Async
 // Rust: std::thread::spawn + join() — like OCaml's Lwt.both
 

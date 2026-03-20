@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 220: Paramorphism — Cata with Access to Original Subtree
 
 #[derive(Debug, Clone)]

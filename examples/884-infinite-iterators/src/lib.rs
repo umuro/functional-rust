@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 090: Infinite Iterators
 // iterate, repeat, cycle, unfold
 

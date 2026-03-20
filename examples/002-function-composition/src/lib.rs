@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Solution 1: Idiomatic Rust — compose as a higher-order function
 // Takes two functions and returns a closure that applies them in sequence
 pub fn compose<A, B, C, F, G>(f: F, g: G) -> impl Fn(A) -> C

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Branchless Programming
 //!
 //! Demonstrates replacing conditional branches with arithmetic operations to

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # The ! (never) Type in Error Handling
 //!
 //! `!` is the never/bottom type for diverging functions.

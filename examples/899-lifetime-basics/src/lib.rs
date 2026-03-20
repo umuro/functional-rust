@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 899: Lifetime Basics
 //
 // Lifetimes ensure references don't outlive the data they point to.

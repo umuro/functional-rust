@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Example 123: impl Trait in Function Signatures
 //!
 //! `impl Trait` in argument position: syntactic sugar for generics —

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 101: Move Semantics
 // Ownership transfer — after move, original is invalid
 

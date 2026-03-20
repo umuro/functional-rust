@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 106: Lifetime Elision Rules
 //
 // Rust has three elision rules that let you skip lifetime annotations

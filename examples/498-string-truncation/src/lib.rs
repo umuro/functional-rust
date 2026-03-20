@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 498. Safe Unicode truncation
 fn truncate_bytes(s: &str, max_bytes: usize) -> &str {
     if s.len() <= max_bytes {

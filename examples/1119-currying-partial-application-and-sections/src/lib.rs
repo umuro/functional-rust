@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Currying, Partial Application, and Sections in Rust.
 //!
 //! This example demonstrates how to emulate OCaml's currying,

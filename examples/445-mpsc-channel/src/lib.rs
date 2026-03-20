@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # MPSC Channels — Message Passing Between Threads
 //!
 //! Send values across threads with `std::sync::mpsc` — multiple producers,

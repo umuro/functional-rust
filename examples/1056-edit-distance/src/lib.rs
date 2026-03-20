@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1056: Edit Distance (Levenshtein) — 2D DP Table
 
 use std::collections::HashMap;

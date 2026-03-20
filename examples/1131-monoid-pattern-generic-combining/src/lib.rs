@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// A trait representing a Monoid: an associative binary operation with an identity element.
 ///
 /// In OCaml this is a module type (first-class module); in Rust it is a trait.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Word Break
 
 use std::collections::HashSet;

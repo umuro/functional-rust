@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # The Future Trait and Poll
 //!
 //! Understanding the core Future trait: `poll`, `Poll::Ready`, `Poll::Pending`,

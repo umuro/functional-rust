@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Sieve of Eratosthenes
 pub fn sieve(n: usize) -> Vec<bool> {
     let mut is_prime = vec![true; n + 1];

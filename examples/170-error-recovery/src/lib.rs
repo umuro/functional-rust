@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 170: Error Recovery
 // Parser error messages with position info and expected tokens
 

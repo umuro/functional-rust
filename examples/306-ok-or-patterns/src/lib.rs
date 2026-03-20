@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # ok_or and ok_or_else
 //!
 //! `ok_or(err)` converts `Option<T>` to `Result<T, E>`.

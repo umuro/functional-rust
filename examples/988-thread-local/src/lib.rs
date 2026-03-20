@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 988: Thread-Local Storage
 // Rust: thread_local! macro — each thread gets its own instance
 
@@ -7,7 +8,7 @@ use std::thread;
 
 // --- Approach 1: thread_local! with Cell (simple counter) ---
 thread_local! {
-    static COUNTER: RefCell<i32> = RefCell::new(0);
+    static COUNTER: RefCell<i32> = const { RefCell::new(0) };
 }
 
 fn thread_local_counter() -> Vec<i32> {
@@ -36,7 +37,7 @@ fn thread_local_counter() -> Vec<i32> {
 
 // --- Approach 2: Thread-local accumulator (no shared state needed) ---
 thread_local! {
-    static LOCAL_SUM: RefCell<i64> = RefCell::new(0);
+    static LOCAL_SUM: RefCell<i64> = const { RefCell::new(0) };
 }
 
 fn thread_local_sum(id: i64) -> i64 {
@@ -71,7 +72,7 @@ fn parallel_sums() -> i64 {
 
 // --- Approach 3: Thread-local cache (computed once per thread) ---
 thread_local! {
-    static THREAD_ID_CACHE: RefCell<Option<String>> = RefCell::new(None);
+    static THREAD_ID_CACHE: RefCell<Option<String>> = const { RefCell::new(None) };
 }
 
 fn get_thread_name(name: &str) -> String {

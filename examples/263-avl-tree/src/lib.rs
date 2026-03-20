@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! AVL Tree — Self-Balancing BST
 //!
 //! OCaml: `type 'a avl = Empty | Node of 'a avl * 'a * 'a avl * int`

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # DoubleEndedIterator and rev()
 //!
 //! `DoubleEndedIterator` enables traversal from both ends; `rev()` swaps the direction.

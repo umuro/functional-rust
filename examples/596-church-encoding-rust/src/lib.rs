@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Church Encoding
 //!
 //! Represent data using only functions (lambda calculus style).

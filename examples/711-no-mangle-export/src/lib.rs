@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 711 — `#[no_mangle]` Exporting Rust Functions to C
 //!
 //! `#[no_mangle] pub extern "C" fn` is the declaration that turns a Rust

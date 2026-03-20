@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 074: Currying and Partial Application
 
 // Approach 1: Closures for partial application

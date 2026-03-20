@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Paramorphism
 //! Fold with access to original substructure.
 

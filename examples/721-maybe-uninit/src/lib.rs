@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # 721: `MaybeUninit` — Safe Uninitialized Memory
 //!
 //! `MaybeUninit<T>` lets you allocate memory without initialising it.

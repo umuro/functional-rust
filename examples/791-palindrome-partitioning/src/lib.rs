@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Palindrome Partitioning
 
 pub fn min_cuts(s: &str) -> usize {

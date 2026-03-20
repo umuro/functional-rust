@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Derive Macro Concepts
 //!
 //! Understanding what derive macros generate.

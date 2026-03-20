@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 271. Transform-and-find with find_map()
 //!
 //! `find_map(f)` finds the first `Some(...)` result — single pass, lazy.

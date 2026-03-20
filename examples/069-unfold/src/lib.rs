@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 069: Unfold — generate a sequence from a seed
 
 // Approach 1: Manual unfold function

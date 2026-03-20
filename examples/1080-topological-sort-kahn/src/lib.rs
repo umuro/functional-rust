@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Topological Sort via Kahn's Algorithm
 //!
 //! Iterative topological sort using in-degree counting.

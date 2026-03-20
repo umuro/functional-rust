@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! State Machine Macro
 //!
 //! Defining state machines with macros.

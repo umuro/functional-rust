@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 116: Box<T> — Heap Allocation
 //
 // Box<T> puts data on the heap with single ownership.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Segment Tree for Range Queries
 //!
 //! O(log n) range queries and point updates.

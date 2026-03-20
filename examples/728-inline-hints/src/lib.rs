@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 728. #[inline], #[cold], #[target_feature] hints
 //
 // Demonstrates how compiler hints guide LLVM without changing semantics.

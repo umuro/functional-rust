@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1028: BTreeSet — Union, Intersection, Difference
 // Rust's BTreeSet provides sorted set with efficient set operations
 

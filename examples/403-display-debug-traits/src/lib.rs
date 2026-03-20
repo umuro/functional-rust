@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Display and Debug Traits
 //!
 //! Two formatting traits: Debug for developers, Display for users.

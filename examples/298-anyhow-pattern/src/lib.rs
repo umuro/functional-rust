@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # anyhow-style Boxed Errors
 //!
 //! `Box<dyn Error + Send + Sync>` is a universal error container — the anyhow pattern.

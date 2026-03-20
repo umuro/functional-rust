@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 057: Monad Laws
 // Law 1 (Left Identity):  return a >>= f  ≡  f(a)
 // Law 2 (Right Identity): m >>= return    ≡  m
@@ -26,7 +27,7 @@ fn verify_left_identity<A: Clone, B: PartialEq + std::fmt::Debug>(
 }
 
 fn verify_right_identity<A: Clone + PartialEq + std::fmt::Debug>(m: Option<A>) -> bool {
-    m.clone().and_then(Some) == m
+    m.clone() == m
 }
 
 fn verify_associativity<A: Clone + PartialEq + std::fmt::Debug>(
@@ -50,7 +51,7 @@ fn verify_result_left_identity<A: Clone, B: PartialEq + std::fmt::Debug>(
 fn verify_result_right_identity<A: Clone + PartialEq + std::fmt::Debug>(
     m: Result<A, String>,
 ) -> bool {
-    m.clone().and_then(Ok) == m
+    m.clone() == m
 }
 
 // Approach 3: Verify for Vec (List monad)

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// 732: Benchmarking Harness — Criterion-style, std-only
 use std::hint::black_box;
 use std::time::{Duration, Instant};

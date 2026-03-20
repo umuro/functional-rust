@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1005: Error Chaining
 // Chain errors with context using map_err
 

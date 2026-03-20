@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Result::transpose() — Flipping Nested Types
 //!
 //! Convert `Result<Option<T>, E>` into `Option<Result<T, E>>` — or back again.

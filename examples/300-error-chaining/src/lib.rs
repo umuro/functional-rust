@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Chaining Errors with source()
 //!
 //! `Error::source()` creates a linked list of causes — traverse to print full chain.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Run-Length Encoding — String Compression
 //!
 //! Encode consecutive repeated characters as count+char.

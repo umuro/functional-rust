@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 055: Option Monad
 // Monadic bind (and_then) for Option: chain computations that may fail
 

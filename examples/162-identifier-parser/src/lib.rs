@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 162: Identifier Parser
 // Parse identifiers: letter followed by alphanumeric/underscore
 

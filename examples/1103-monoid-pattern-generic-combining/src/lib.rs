@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Monoid trait — a type with an identity element and an associative combine.
 pub trait Monoid {
     fn empty() -> Self;

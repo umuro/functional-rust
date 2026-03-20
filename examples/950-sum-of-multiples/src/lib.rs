@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 use std::collections::HashSet;
 
 pub fn sum_of_multiples(factors: &[u64], limit: u64) -> u64 {

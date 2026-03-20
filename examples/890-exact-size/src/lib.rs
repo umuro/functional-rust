@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 096: ExactSizeIterator
 // When you know the length upfront — O(1) .len(), exact pre-allocation, progress tracking.
 

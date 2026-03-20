@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 066: Sequence Monadic
 // Turn a collection of monadic values into a monadic collection
 

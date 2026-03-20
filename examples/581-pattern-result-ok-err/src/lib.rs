@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Result Pattern Matching (Ok/Err)
 //!
 //! Handle fallible operations with the Result type and ? operator.

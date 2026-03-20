@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 202: Lens Basics — Lens as a Pair of Get and Set
 
 // === Approach 1: Lens as struct with closures === //

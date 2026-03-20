@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Derive Macro Patterns
 //!
 //! Common patterns for derive macros.

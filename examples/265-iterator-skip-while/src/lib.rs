@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 265. Conditional skipping with skip_while()
 //!
 //! `skip_while(pred)` discards elements until predicate first returns false, then yields all remaining.

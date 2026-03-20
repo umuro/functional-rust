@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 053: Applicative Functor Basics
 // Applicative: apply a wrapped function to a wrapped value
 

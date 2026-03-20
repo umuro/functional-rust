@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! List.map — Transform Every Element
 //!
 //! Apply a function to each element of a list.

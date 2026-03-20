@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Pattern Binding Modes
 //!
 //! ref, ref mut, and move in patterns.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Parallel Reduce — Concurrent Aggregation
 //!
 //! Reduce collections in parallel for faster aggregation.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Ref Patterns
 //!
 //! Borrowing in patterns with ref and ref mut.

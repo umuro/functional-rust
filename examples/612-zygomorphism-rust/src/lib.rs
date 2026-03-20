@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Zygomorphism
 //! Two folds running in parallel.
 

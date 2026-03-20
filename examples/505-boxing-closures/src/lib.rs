@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Boxing Closures — Dynamic Dispatch
 
 use std::collections::HashMap;

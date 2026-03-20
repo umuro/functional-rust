@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Tempfile Testing
 //!
 //! Testing with temporary files and directories.

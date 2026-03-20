@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Thread Basics — Spawn and Join
 //!
 //! Launch OS threads with `std::thread::spawn`, collect results with

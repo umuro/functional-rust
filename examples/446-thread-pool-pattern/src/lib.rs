@@ -1,9 +1,10 @@
+#![allow(clippy::all)]
 //! # Thread Pool Pattern — Reusable Worker Threads
 //!
 //! A pool of worker threads that process jobs from a shared queue,
 //! avoiding the overhead of spawning threads per task.
 
-use std::sync::mpsc::{self, Receiver, Sender};
+use std::sync::mpsc::{self, Sender};
 use std::sync::{Arc, Mutex};
 use std::thread::{self, JoinHandle};
 

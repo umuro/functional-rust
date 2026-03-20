@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 974: Skip List (Simplified)
 // Probabilistic sorted structure: O(log n) average search/insert
 // Uses raw indices instead of pointers (safer than raw pointers in Rust)

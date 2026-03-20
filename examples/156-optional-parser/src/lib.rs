@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 156: Optional Parser
 // opt: make a parser optional, returns Option<T>
 

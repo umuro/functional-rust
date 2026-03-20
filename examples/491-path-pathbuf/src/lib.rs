@@ -1,4 +1,6 @@
+#![allow(clippy::all)]
 // 491. Path and PathBuf handling
+
 use std::path::{Path, PathBuf};
 
 #[cfg(test)]

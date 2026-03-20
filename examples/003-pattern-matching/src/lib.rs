@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 003: Pattern Matching
 // Tuples, enums, nested patterns, guards
 

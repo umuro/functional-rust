@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Concurrent BTree — Ordered Thread-Safe Map
 //!
 //! A thread-safe ordered map using BTreeMap with RwLock.

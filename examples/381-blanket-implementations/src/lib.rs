@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Blanket Implementations
 //!
 //! Implement a trait for all types that satisfy a bound.

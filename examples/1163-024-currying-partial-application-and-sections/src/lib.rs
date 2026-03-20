@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Currying, Partial Application, and Operator Sections
 //!
 //! OCaml functions are curried by default: `add : int -> int -> int` can be

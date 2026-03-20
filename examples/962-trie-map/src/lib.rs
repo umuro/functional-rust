@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 962: Trie Map
 // OCaml: mutable record with CharMap; Rust: struct with HashMap children
 

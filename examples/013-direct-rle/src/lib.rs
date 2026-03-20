@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Direct Run-Length Encoding (99 Problems #13)
 ///
 /// Implement RLE directly — don't create sublists first, then count.

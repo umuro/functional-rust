@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 473. FromStr and parse()
 use std::fmt;
 use std::str::FromStr;

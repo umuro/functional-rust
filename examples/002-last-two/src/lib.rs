@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Find the last two elements of a list, returning them as a tuple.
 
 // ---------------------------------------------------------------------------

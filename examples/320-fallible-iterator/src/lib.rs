@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Fallible Iterator
 //!
 //! Iterators over Results with collect short-circuiting and best-effort patterns.

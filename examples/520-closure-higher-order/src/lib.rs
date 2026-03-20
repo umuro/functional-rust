@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Higher-Order Functions
 //!
 //! Rust's iterator HOFs: map, filter, fold, flat_map, zip, and custom ones.

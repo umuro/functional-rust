@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Y Combinator — Fixed-point combinator for anonymous recursive functions.
 ///
 /// The Y combinator enables recursion without named function bindings.

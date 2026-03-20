@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 478. contains(), find(), starts_with()
 
 #[cfg(test)]

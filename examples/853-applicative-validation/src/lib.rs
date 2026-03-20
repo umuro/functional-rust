@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 054: Applicative Validation
 // Accumulate ALL errors instead of short-circuiting on first
 

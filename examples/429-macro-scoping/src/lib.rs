@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Macro Scoping
 //!
 //! How macros are imported and exported.

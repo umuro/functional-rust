@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Map Module — Frequency Counter
 //!
 //! Count word frequencies using a map. OCaml's `Map.Make(String)` creates

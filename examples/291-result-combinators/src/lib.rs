@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Result Combinators
 //!
 //! Transform, chain, and recover from errors using `.map()`, `.and_then()`, and `.or_else()`.

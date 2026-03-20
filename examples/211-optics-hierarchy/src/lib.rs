@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 211: Optics Hierarchy — Iso ⊂ Lens ⊂ Traversal, Iso ⊂ Prism ⊂ Traversal
 //
 // The complete hierarchy, from most specific to most general:

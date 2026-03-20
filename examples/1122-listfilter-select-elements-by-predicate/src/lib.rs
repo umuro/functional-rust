@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Filter elements from a slice that satisfy the predicate.
 ///
 /// Solution 1: Idiomatic Rust — iterator `.filter()` chain.

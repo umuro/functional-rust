@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 487. String interning pattern
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};

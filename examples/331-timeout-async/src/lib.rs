@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Timeouts with time::timeout
 //!
 //! Wrap any async operation with a deadline — if it doesn't complete in time,

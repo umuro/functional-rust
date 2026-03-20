@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! let-else Pattern
 //!
 //! Early return when pattern doesn't match.

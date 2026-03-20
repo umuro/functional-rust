@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 168: Expression Parser
 // Pratt parsing for expressions with precedence
 
@@ -30,7 +31,7 @@ fn prefix_binding_power(op: &str) -> Option<u8> {
     }
 }
 
-fn parse_number(input: &str) -> ParseResult<Expr> {
+fn parse_number(input: &str) -> ParseResult<'_, Expr> {
     let s = input.trim_start();
     let bytes = s.as_bytes();
     let mut pos = 0;
@@ -56,7 +57,7 @@ fn parse_number(input: &str) -> ParseResult<Expr> {
     Ok((Expr::Num(num), &s[pos..]))
 }
 
-fn parse_op(input: &str) -> ParseResult<&str> {
+fn parse_op(input: &str) -> ParseResult<'_, &str> {
     let s = input.trim_start();
     match s.chars().next() {
         Some(c @ ('+' | '-' | '*' | '/' | '^')) => Ok((&s[..c.len_utf8()], &s[c.len_utf8()..])),
@@ -64,7 +65,7 @@ fn parse_op(input: &str) -> ParseResult<&str> {
     }
 }
 
-fn pratt_expr(input: &str, min_bp: u8) -> ParseResult<Expr> {
+fn pratt_expr(input: &str, min_bp: u8) -> ParseResult<'_, Expr> {
     let s = input.trim_start();
 
     // Prefix: parentheses, unary minus, or number
@@ -113,8 +114,8 @@ fn pratt_expr(input: &str, min_bp: u8) -> ParseResult<Expr> {
 // Approach 2: Evaluate directly during parsing
 // ============================================================
 
-fn eval_expr(input: &str) -> ParseResult<f64> {
-    fn eval_pratt(input: &str, min_bp: u8) -> ParseResult<f64> {
+fn eval_expr(input: &str) -> ParseResult<'_, f64> {
+    fn eval_pratt(input: &str, min_bp: u8) -> ParseResult<'_, f64> {
         let s = input.trim_start();
         let (mut lhs, mut rest) = if s.starts_with('(') {
             let (val, r) = eval_pratt(&s[1..], 0)?;
@@ -124,11 +125,7 @@ fn eval_expr(input: &str) -> ParseResult<f64> {
             } else {
                 return Err("Expected ')'".to_string());
             }
-        } else if s.starts_with('-')
-            && !s[1..]
-                .trim_start()
-                .starts_with(|c: char| c == '+' || c == '-' || c == '*' || c == '/')
-        {
+        } else if s.starts_with('-') && !s[1..].trim_start().starts_with(['+', '-', '*', '/']) {
             let (val, r) = eval_pratt(&s[1..], 9)?;
             (-val, r)
         } else {

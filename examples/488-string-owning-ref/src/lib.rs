@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # String Owning References — Self-Referential Patterns
 //!
 //! Patterns for owning data while referencing into it.

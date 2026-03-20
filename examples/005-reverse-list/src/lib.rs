@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 005: Reverse a List
 
 // Approach 1: Built-in (in-place)

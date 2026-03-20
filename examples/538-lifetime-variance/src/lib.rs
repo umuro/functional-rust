@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Variance: Covariant, Contravariant, Invariant
 //!
 //! How subtyping propagates through type constructors.

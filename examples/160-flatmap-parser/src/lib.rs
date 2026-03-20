@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 160: FlatMap Parser
 // flat_map / and_then: monadic chaining of parsers
 
@@ -66,8 +67,7 @@ fn parse_nat<'a>() -> Parser<'a, usize> {
 fn length_prefixed<'a>() -> Parser<'a, &'a str> {
     and_then(parse_nat(), |n| {
         Box::new(move |input: &'a str| {
-            if input.starts_with(':') {
-                let rest = &input[1..];
+            if let Some(rest) = input.strip_prefix(':') {
                 if rest.len() >= n {
                     Ok((&rest[..n], &rest[n..]))
                 } else {

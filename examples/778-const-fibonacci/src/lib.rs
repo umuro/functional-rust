@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Const Fibonacci
 //!
 //! Computing Fibonacci numbers at compile time.

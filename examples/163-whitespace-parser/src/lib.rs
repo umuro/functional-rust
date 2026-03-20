@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 163: Whitespace Parser
 // Parse and skip whitespace: ws0, ws1, ws_wrap
 

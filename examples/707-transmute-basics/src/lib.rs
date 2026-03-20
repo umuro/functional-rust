@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 707 — std::mem::transmute: Reinterpreting Bytes
 //!
 //! Safe-alternative-first approach: the safe APIs are always listed first.

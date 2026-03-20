@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 999: Rate Limiter — Tokio version
 // Token bucket using tokio::sync::Mutex and tokio::time::sleep
 

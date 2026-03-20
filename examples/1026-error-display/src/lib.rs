@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1026: Custom Display for Nested Errors with Source Chain
 // Walking the Error::source() chain for human-readable output
 

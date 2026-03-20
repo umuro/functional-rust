@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # 716: Custom Global Allocator with `#[global_allocator]`
 //!
 //! Demonstrates replacing Rust's default allocator with a tracking wrapper

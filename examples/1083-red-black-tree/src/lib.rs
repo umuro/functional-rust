@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Red-Black Tree — Okasaki's purely functional balanced BST
 ///
 /// A red-black tree maintains balance through color invariants:

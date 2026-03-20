@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1019: Fallible Iterator
 // Iterator that can fail: next() -> Option<Result<T,E>>
 

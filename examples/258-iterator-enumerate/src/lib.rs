@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 258. Index-value pairs with enumerate()
 //!
 //! `enumerate()` adds a zero-based index to every iterator element.

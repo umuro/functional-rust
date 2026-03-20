@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 977: Bitset
 // Set, clear, toggle, union, intersection via u64 word arrays
 // OCaml uses 63-bit int (1 bit used for GC tag); Rust uses full u64

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Sieve of Eratosthenes (Functional)
 ///
 /// A purely functional prime sieve using recursive filtering.
@@ -61,7 +62,7 @@ pub fn nth_prime(n: usize) -> u64 {
     let mut primes = Vec::new();
     let mut candidate = 2u64;
     while primes.len() < n {
-        if primes.iter().all(|&p| candidate % p != 0) {
+        if primes.iter().all(|&p| !candidate.is_multiple_of(p)) {
             primes.push(candidate);
         }
         candidate += 1;

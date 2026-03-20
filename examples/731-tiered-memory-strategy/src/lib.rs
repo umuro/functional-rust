@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// 731: Tiered Memory — Stack → Arena Pool → Heap
 use std::cell::Cell;
 

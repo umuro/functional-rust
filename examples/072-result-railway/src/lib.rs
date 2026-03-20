@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 072: Railway-Oriented Programming
 // Chain Results — stay on happy path or switch to error track
 

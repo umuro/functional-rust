@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 714 — FFI Callbacks: Passing Rust Functions to C
 //!
 //! Two patterns for crossing the C ABI boundary with callables:

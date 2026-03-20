@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1020: try_fold — Fold that short-circuits on error
 
 // Approach 1: Iterator::try_fold

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 089: Lazy Sequences
 // OCaml Seq → Rust Iterator + take
 

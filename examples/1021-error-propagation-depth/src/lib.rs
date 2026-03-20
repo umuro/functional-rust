@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1021: Error Propagation Depth
 // 5-level error propagation with ?
 

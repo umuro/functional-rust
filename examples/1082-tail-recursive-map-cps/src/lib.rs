@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // === Solution 1: Naive recursive map ===
 // Direct translation of OCaml's `let rec map f = function | [] -> [] | h::t -> f h :: map f t`
 // Not tail-recursive: the cons (`f h ::`) happens AFTER the recursive call returns.

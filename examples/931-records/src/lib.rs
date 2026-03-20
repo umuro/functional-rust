@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Records — Immutable Update and Pattern Matching
 ///
 /// OCaml's `{ r with field = value }` functional update syntax maps directly

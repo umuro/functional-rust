@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 980: Map over Async — Tokio version
 // async { f(x.await) } is the idiom for mapping over futures
 

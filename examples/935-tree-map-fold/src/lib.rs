@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Map and Fold on Trees
 ///
 /// Lifting map and fold from lists to binary trees. Once you define

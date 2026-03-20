@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Retry Async
 //!
 //! Retry failed operations with exponential backoff —

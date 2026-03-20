@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 182: Existential Types
 // Hide the concrete type while retaining ability to use it
 

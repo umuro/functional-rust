@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Split Borrows from Structs
 //!
 //! Borrowing different fields simultaneously.

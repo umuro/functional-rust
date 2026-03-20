@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 700 — Unsafe Blocks
 //! Keep unsafe footprint minimal: only what truly needs it.
 

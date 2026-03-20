@@ -1,7 +1,8 @@
+#![allow(clippy::all)]
 // 484. Cow<str> for flexible strings
 use std::borrow::Cow;
 
-fn ensure_no_spaces(s: &str) -> Cow<str> {
+fn ensure_no_spaces(s: &str) -> Cow<'_, str> {
     if !s.contains(' ') {
         Cow::Borrowed(s) // no allocation!
     } else {

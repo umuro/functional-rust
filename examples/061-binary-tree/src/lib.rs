@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Binary Tree — Size, Membership, Traversal
 ///
 /// A recursive enum mirrors OCaml's algebraic data type for binary trees.

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 996: Timeout Pattern
 // Rust: mpsc::recv_timeout — like OCaml's Lwt.pick with sleep
 

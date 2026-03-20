@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 073: Parse Don't Validate — Validated Types
 
 // Approach 1: NonEmptyString

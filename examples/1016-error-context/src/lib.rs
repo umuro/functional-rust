@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1016: Error Context
 // Add context/backtrace to errors manually using wrapper structs
 

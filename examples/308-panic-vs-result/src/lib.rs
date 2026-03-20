@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # When to Panic vs Return Result
 //!
 //! Result for recoverable errors, panic for programming bugs.

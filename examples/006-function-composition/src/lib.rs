@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Function Composition: building complex transformations from simple parts.
 ///
 /// OCaml doesn't have a built-in composition operator (though `|>` serves similarly).

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1074: Egg Drop — DP + Binary Search
 
 // Approach 1: Basic DP O(k*n^2)
@@ -50,10 +51,8 @@ fn egg_drop_optimal(eggs: usize, floors: usize) -> usize {
     for t in 1..=floors {
         for k in 1..=eggs {
             dp[t][k] = 1 + dp[t - 1][k - 1] + dp[t - 1][k];
-            if dp[t][k] >= floors {
-                if k == eggs {
-                    return t;
-                }
+            if dp[t][k] >= floors && k == eggs {
+                return t;
             }
         }
     }

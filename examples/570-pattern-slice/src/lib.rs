@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Slice Patterns
 //!
 //! Matching arrays and slices with [a, b, c] patterns.

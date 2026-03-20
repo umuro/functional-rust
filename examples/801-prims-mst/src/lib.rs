@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Prim's MST Algorithm
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 996: Timeout Pattern — Tokio version
 // tokio::time::timeout — idiomatic async timeout
 

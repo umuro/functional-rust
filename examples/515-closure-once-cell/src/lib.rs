@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! Lazy Evaluation with OnceLock
 //!
 //! Deferred computation using std::sync::OnceLock.

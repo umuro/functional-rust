@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Approach 1: map, filter, fold via iterator adapters (lazy, zero intermediate allocation)
 /// OCaml: List.filter f |> List.map g |> List.fold_left (+) 0
 pub fn sum_of_doubled_evens(data: &[i32]) -> i32 {

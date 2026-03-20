@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 998: Circuit Breaker
 // Open/Half-Open/Closed state machine for fault tolerance
 

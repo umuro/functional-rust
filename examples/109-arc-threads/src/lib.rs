@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 109: Arc<T> — Thread-Safe Shared Ownership
 //
 // Arc<T> = Atomic Reference Count. Like Rc<T> but thread-safe.

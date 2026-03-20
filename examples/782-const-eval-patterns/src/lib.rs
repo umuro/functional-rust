@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Const Eval Patterns
 //!
 //! Patterns for compile-time computation.
@@ -99,7 +100,7 @@ pub const fn const_popcount(mut n: u64) -> u32 {
 
 /// Ceiling division at compile time
 pub const fn const_ceil_div(a: usize, b: usize) -> usize {
-    (a + b - 1) / b
+    a.div_ceil(b)
 }
 
 /// Align up to multiple at compile time

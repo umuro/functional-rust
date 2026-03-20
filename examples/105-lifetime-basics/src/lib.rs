@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 105: Lifetime Basics
 // Lifetime annotations tell the compiler how long references live
 

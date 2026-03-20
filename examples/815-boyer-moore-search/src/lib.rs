@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Boyer-Moore String Search
 pub fn boyer_moore(text: &str, pattern: &str) -> Vec<usize> {
     let t: Vec<char> = text.chars().collect();

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 727. SIMD concepts with std::simd (portable_simd)
 //
 // This file demonstrates the portable_simd API using stable-compatible
@@ -9,8 +10,6 @@
 //
 // The scalar versions below are structurally identical to the SIMD versions —
 // just swap `[f32; LANES]` for `f32xN` and loops for SIMD ops.
-
-use std::time::Instant;
 
 // ── LANES constant — matches f32x8 ───────────────────────────────────────────
 

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 260. Stateful accumulation with scan()
 //!
 //! `scan()` is like `fold` but emits each intermediate state as an iterator element.

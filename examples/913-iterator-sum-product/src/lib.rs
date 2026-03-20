@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 274. Numeric reductions: sum() and product()
 //!
 //! `sum()` and `product()` fold iterators of numbers with + and * respectively.

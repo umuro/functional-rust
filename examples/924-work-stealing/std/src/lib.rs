@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 924: Work Stealing — std version
 // Simple work-stealing deque using std threads
 

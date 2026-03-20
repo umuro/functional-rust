@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// The Monoid typeclass — an associative binary operation with an identity element.
 /// Maps directly to OCaml's `module type MONOID`.
 pub trait Monoid {

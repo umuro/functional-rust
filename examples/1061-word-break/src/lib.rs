@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1061: Word Break — DP + HashSet
 
 use std::collections::{HashMap, HashSet, VecDeque};
@@ -22,8 +23,8 @@ fn word_break(s: &str, words: &[&str]) -> bool {
 // Approach 2: Recursive with memoization
 fn word_break_memo(s: &str, words: &[&str]) -> bool {
     let dict: HashSet<&str> = words.iter().copied().collect();
-    fn solve<'a>(
-        s: &'a str,
+    fn solve(
+        s: &str,
         start: usize,
         dict: &HashSet<&str>,
         cache: &mut HashMap<usize, bool>,

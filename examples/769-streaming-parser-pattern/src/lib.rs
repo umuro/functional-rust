@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Streaming Parser Pattern
 //!
 //! Process data incrementally without loading everything into memory.

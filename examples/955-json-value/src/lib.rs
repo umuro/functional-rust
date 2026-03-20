@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 955: JSON Value Type
 // OCaml: type json = Null | Bool of bool | Number of float | Str of string | Array of json list | Object of (string * json) list
 // Rust: enum JsonValue with derived traits

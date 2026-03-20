@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// Solution 1: Idiomatic Rust — fold over chars, propagate errors
 pub fn binary_to_decimal(s: &str) -> Result<u64, String> {
     s.chars().try_fold(0u64, |acc, c| match c {

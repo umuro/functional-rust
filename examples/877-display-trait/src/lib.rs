@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 083: Display Trait
 // OCaml to_string → Rust fmt::Display
 

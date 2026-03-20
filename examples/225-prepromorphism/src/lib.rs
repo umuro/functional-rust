@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // Example 225: Prepromorphism — Apply Natural Transformation at Each Step of Cata
 
 // prepro: like cata, but applies a nat transform to each layer before recursing

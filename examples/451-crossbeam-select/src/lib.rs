@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Crossbeam Select — Multiplexing Multiple Channels
 //!
 //! Wait on multiple channels simultaneously, receiving from whichever

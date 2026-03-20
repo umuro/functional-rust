@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 1059: Rod Cutting — Maximize Revenue
 
 use std::collections::HashMap;

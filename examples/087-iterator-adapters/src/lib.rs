@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 087: Iterator Adapters — build custom adapters
 
 // Approach 1: Custom Map adapter

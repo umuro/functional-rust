@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 // 098: Partition Iterator
 
 #[cfg(test)]

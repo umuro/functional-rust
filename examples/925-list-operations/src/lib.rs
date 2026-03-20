@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// List Operations: fundamental building blocks in functional programming.
 ///
 /// In OCaml, lists are the bread and butter — singly-linked, immutable, with

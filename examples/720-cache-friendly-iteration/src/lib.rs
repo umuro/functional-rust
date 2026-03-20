@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! 720: Cache-Friendly Iteration and Data Access Patterns
 //!
 //! Demonstrates row-major vs column-major access, tiled transposition,

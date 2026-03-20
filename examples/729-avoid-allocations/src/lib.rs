@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 /// 729: Avoid Allocations — Hot path techniques in std-only Rust
 
 // ── Technique 1: Stack-allocated scratch buffer ──────────────────────────────

@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Graph Coloring
 pub fn graph_coloring(n: usize, edges: &[(usize, usize)], m: usize) -> Option<Vec<usize>> {
     let mut adj = vec![vec![]; n];

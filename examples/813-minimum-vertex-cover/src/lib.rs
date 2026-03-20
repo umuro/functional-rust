@@ -1,3 +1,4 @@
+#![allow(clippy::all)]
 //! # Minimum Vertex Cover (Trees)
 pub fn min_vertex_cover_tree(n: usize, edges: &[(usize, usize)]) -> usize {
     if n == 0 {
