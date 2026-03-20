@@ -1,0 +1,4 @@
+Queue ID: 101
+Title: Huffman Encoding — Greedy Tree Building
+Topic: Building a Huffman tree from character frequencies
+Source: https://rosettacode.org/wiki/Huffman_coding#OCaml

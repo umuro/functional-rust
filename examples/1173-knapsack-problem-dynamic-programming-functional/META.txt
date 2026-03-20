@@ -1,0 +1,4 @@
+Queue ID: 103
+Title: Knapsack Problem — Dynamic Programming Functional
+Topic: 0/1 knapsack solved with memoized recursion
+Source: https://rosettacode.org/wiki/Knapsack_problem/0-1#OCaml

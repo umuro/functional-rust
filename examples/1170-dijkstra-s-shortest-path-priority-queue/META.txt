@@ -1,0 +1,4 @@
+Queue ID: 100
+Title: Dijkstra's Shortest Path — Priority Queue
+Topic: Shortest path algorithm with functional priority queue
+Source: https://rosettacode.org/wiki/Dijkstra%27s_algorithm#OCaml

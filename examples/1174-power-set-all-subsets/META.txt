@@ -1,0 +1,4 @@
+Queue ID: 104
+Title: Power Set — All Subsets
+Topic: Generating all subsets of a list recursively
+Source: https://v2.ocaml.org/learn/tutorials/99problems.html

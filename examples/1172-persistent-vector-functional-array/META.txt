@@ -1,0 +1,4 @@
+Queue ID: 102
+Title: Persistent Vector — Functional Array
+Topic: Trie-based persistent vector for O(log n) random access
+Source: https://cs3110.github.io/textbook/chapters/ds/sequences.html
