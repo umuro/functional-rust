@@ -1495,7 +1495,27 @@ name = "example-1174-power-set-all-subsets"
 version = "0.1.0"
 
 [[package]]
+name = "example-1176-huffman-encoding-greedy-tree-building"
+version = "0.1.0"
+
+[[package]]
+name = "example-1177-persistent-vector-functional-array"
+version = "0.1.0"
+
+[[package]]
+name = "example-1178-knapsack-problem-dynamic-programming-functional"
+version = "0.1.0"
+
+[[package]]
+name = "example-1179-power-set-all-subsets"
+version = "0.1.0"
+
+[[package]]
 name = "example-118-deref-coercions"
+version = "0.1.0"
+
+[[package]]
+name = "example-1180-dijkstras-shortest-path-priority-queue"
 version = "0.1.0"
 
 [[package]]

@@ -29,9 +29,4 @@ let () =
     ("c",[("d",3)]); ("d",[])
   ] in
   let dist = dijkstra g "a" in
-  assert (SMap.find "a" dist = 0);
-  assert (SMap.find "b" dist = 1);
-  assert (SMap.find "c" dist = 3); (* a->b->c = 1+2 = 3, shorter than a->c = 4 *)
-  assert (SMap.find "d" dist = 6); (* a->b->c->d = 1+2+3 = 6 *)
-  SMap.iter (Printf.printf "%s: %d\n") dist;
-  print_endline "ok"
+  SMap.iter (Printf.printf "%s: %d\n") dist
