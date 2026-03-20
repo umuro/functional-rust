@@ -1802,6 +1802,16 @@ for ex in all_examples:
 # Only generate pages for examples that made it into examples_data
 _included_dirnames = {e["dirname"] for e in examples_data}
 
+# Remove stale HTML files (generated in a previous run but no longer valid)
+_expected_html = {f"{d}.html" for d in _included_dirnames} | {
+    "index.html", "by-level.html", "by-topic.html", "by-learning-path.html",
+    "sitemap.xml", "robots.txt",
+}
+for stale in RUST_DIR.glob("*.html"):
+    if stale.name not in _expected_html:
+        stale.unlink()
+        print(f"  [rm] {stale.name}")
+
 # Generate individual example pages
 generated = 0
 for ex in all_examples:
