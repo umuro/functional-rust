@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Thread safety cannot be determined by looking at a type in isolation — it depends on all the types it contains. Rust's auto traits (`Send`, `Sync`, `Unpin`) are automatically implemented by the compiler for any type whose fields all satisfy the same trait. If a struct contains only `Send` fields, it is automatically `Send`. If it contains a `Rc<T>` (which is `!Send`), it is automatically `!Send`. This compositional property means you never have to manually declare thread safety for most types — the compiler tracks it transitively.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Long-lived systems must evolve their data formats without breaking existing data. A V1 file written in 2020 must still be readable by a V3 application in 2025. This requires explicit version negotiation, backward-compatible additions (new optional fields with defaults), forward-compatible reading (ignoring unknown fields), and migration functions for format upgrades. Protocol Buffers, Avro, and Thrift all have sophisticated solutions; this example shows the principles in pure Rust.

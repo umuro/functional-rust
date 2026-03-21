@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The builder pattern is ubiquitous for constructing complex objects. The naive implementation calls `build()` at runtime and returns `Result<T, Error>` when required fields are missing. The typestate builder uses phantom type parameters to track which required fields have been set, making `build()` available only when all required fields are present — missing a required field becomes a compile error, not a runtime panic. This technique is used in `tokio::net::TcpStream::builder` and database query builders.

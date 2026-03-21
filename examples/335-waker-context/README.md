@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When a future returns `Poll::Pending`, the executor must know when to re-poll it. Without this signaling mechanism, the executor would either poll continuously (busy-waiting, wasting CPU) or miss the completion event. The `Waker` mechanism solves this: the future stores the waker from `Context`, then calls `waker.wake()` when it's ready to be re-polled. This is the fundamental scheduling mechanism behind all async runtimes.

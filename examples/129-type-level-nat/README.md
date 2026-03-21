@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Type-level naturals extend the type system to encode numbers as types: `Zero`, `Succ<Zero>` (= 1), `Succ<Succ<Zero>>` (= 2). This enables length-indexed containers where the compiler rejects out-of-bounds access, type-safe matrix operations where dimension mismatches are compile errors, and statically checked protocol sequences. The technique originates from dependent type theory (Agda, Coq, Idris) and is approximated in Rust and OCaml using type-level programming.

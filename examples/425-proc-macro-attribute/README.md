@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Attribute macros transform the item they annotate. `#[tokio::main]` rewrites `async fn main()` into a synchronous main that creates a Tokio runtime. `#[actix_web::get("/path")]` registers a handler function with routing metadata. `#[cached]` wraps a function with memoization. These transformations are impossible with derive macros (which only add implementations) or `macro_rules!` (which can't inspect or rewrite existing items). Attribute macros receive both the attribute arguments and the annotated item, enabling full code transformation.

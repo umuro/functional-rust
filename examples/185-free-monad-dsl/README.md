@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Building on the free monad introduction, this example defines a richer Console DSL with `Print`, `ReadLine`, and `Exit` operations. The key insight is that the DSL operations are pure data — `print_line("Hello")` does not print anything, it constructs a value describing the print operation. This makes programs inspectable, serializable, and interpretable in multiple contexts: unit tests simulate I/O without touching the console.

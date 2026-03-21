@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 A thread-safe ordered map backed by `BTreeMap` and a single `RwLock`, providing sorted key iteration, range queries, and first/last-key lookups under concurrent access.
 
 ## Problem Statement

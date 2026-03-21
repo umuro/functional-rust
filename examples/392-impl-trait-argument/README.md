@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Generic function signatures with multiple trait bounds become syntactically heavy: `fn process<I: Iterator<Item = i32>, F: Fn(i32) -> i32>(items: I, f: F)`. Argument-position `impl Trait` provides syntactic sugar: `fn process(items: impl Iterator<Item = i32>, f: impl Fn(i32) -> i32)`. Unlike return-position `impl Trait`, argument-position `impl Trait` is exactly equivalent to a generic type parameter — each call site can pass a different concrete type, and the function is monomorphized for each one. The syntax is cleaner but the semantics are identical to bounded generics.

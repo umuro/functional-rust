@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Continuation-passing style (CPS) is a program transformation where every function, instead of returning a value, accepts an extra "continuation" argument — a callback representing the rest of the computation. This transform makes control flow explicit and enables features that are otherwise impossible in a direct-style language: early exit, coroutines, and delimited continuations. Scheme pioneered first-class continuations with `call/cc`. The continuation monad wraps this pattern as a composable abstraction with the type `Cont r a = (a -> r) -> r`, fundamental to compiler intermediate representations and effect-system implementations.

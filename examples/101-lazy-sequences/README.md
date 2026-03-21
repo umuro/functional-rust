@@ -3,10 +3,10 @@
 ---
 
 # Example 101: Lazy Sequences
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Lazy/Infinite Sequences
-**OCaml Source:** [OCaml Docs — Seq Module](https://ocaml.org/docs/)
+
 
 ## Problem Statement
 

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust values live on the stack by default. Two situations require heap allocation: when a value is too large for the stack, and when a type is recursive (its size would be infinite). `Box<T>` is Rust's simplest heap allocation — a single owned pointer to a heap-allocated `T` with no reference counting overhead.

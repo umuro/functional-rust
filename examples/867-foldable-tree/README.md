@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A fold over a list collapses it into a single value by processing each element sequentially. Extending this idea to trees requires choosing a traversal order — in-order, pre-order, or post-order — each of which imposes a different visitation sequence on nodes. The Foldable abstraction from Haskell and OCaml formalizes this: any container that supports a fold is "foldable," meaning every aggregate operation (sum, count, to-list, membership) can be derived from a single generic fold. This example implements three tree folds in Rust and derives higher-order operations from them.

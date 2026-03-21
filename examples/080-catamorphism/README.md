@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implement a generalized fold (catamorphism) over a binary tree ADT. The `cata` function replaces each constructor with a provided function, enabling `size`, `sum`, `height`, `mirror`, and `to_vec` to be expressed as single `cata` calls — demonstrating the principle of replacing recursive case analysis with higher-order structure.

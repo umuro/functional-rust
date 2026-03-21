@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many operations on collections are read-only most of the time: a configuration lookup, a data validation pass, or a rendering pipeline. Cloning the entire collection for a rare mutation is wasteful. Clone-on-write (Cow) defers allocation until mutation is actually needed, returning a borrowed reference for the common read-only path.

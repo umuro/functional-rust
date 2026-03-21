@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Extracting a contiguous subsequence from positions i to k (OCaml 99 Problems #18) is the subarray operation. It is one of the most common list operations: substring extraction in text editors, windowed queries in time-series databases, submatrix extraction in linear algebra, and range queries in sorted data structures all reduce to slice extraction.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Run-length encoding, log analysis, and data aggregation all need to group consecutive equal elements or elements sharing a common key. SQL's `GROUP BY` aggregates all rows matching a key regardless of position. A consecutive group-by collapses adjacent equal elements — used in run-length encoding, detecting intervals of the same event type, and aggregating time-series data where consecutive observations belong to the same period. Haskell's `Data.List.groupBy` and OCaml's own group pattern both handle consecutive grouping. Rust's standard library has `.chunk_by()` (1.77+); for earlier versions or custom key logic, it must be implemented manually.

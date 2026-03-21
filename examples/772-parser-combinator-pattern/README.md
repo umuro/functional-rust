@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Parser combinators compose small parsers into larger ones using functions: `and_then`, `or`, `many`, `map`. Each primitive parser handles one token; combinators wire them together to match entire grammars without a separate grammar specification or code generator. Introduced in Haskell with Parsec (1995), parser combinators are now central to Rust's `nom` crate (the most downloaded parser library), Haskell's `megaparsec`, and OCaml's `angstrom`. They enable "parsing as programming" — no DSL required.

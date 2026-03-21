@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A queue (FIFO — first in, first out) is fundamental to breadth-first search, task scheduling, message passing, and producer-consumer patterns. Implementing a queue efficiently requires O(1) enqueue at one end and O(1) dequeue at the other.

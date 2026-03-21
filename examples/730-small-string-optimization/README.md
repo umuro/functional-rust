@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Most strings in real applications are short: identifiers, keys, tags, status codes. Yet `String` always heap-allocates, adding a pointer indirection, an allocator round-trip, and cache pressure. Small String Optimization (SSO) stores strings up to a threshold length (here 23 bytes) directly inside the enum variant, avoiding any heap allocation. This technique is used in C++'s `std::string`, Rust's `smol_str` and `compact_str` crates, and many database engines for short column values.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Multiple threads need to read and modify the same data safely. `Arc<Mutex<T>>` is Rust's canonical solution: `Arc` provides reference-counted shared ownership across threads, while `Mutex` ensures only one thread accesses the inner value at a time. This pattern implements the classic mutual exclusion concept formalized by Dijkstra (1965) — a lock that serializes access to a critical section. Without it, concurrent writes produce undefined behavior; with it, Rust's type system *statically* prevents data races, something C++ and Go can only detect at runtime with race detectors.

@@ -3,10 +3,10 @@
 ---
 
 # Example 272: Tree Zipper
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Trees | Functional Data Structures | Zippers
-**OCaml Source:** Huet, G. (1997). "The Zipper." *Journal of Functional Programming*
+
 
 ## Problem Statement
 

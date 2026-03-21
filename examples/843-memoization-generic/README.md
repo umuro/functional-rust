@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Recursive functions with overlapping subproblems waste exponential time recomputing the same results. Memoization wraps a function with a cache: on the first call with given arguments, compute and store the result; on subsequent calls, return the cached value. While specific DP algorithms hard-code their memoization tables, generic memoization provides a reusable cache wrapper for any pure function. This pattern is fundamental in functional languages (Haskell's `memoize`, OCaml's `Hashtbl`-based wrappers) and enables transparent DP without restructuring code. Real-world uses: web request caching, computed property memoization in UI frameworks, and expensive query result caching.

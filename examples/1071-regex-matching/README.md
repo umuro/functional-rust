@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implementing basic regular expression matching with `.` (any character) and `*` (zero or more of the preceding character) is a classic DP/recursion problem. Real regex engines use NFA/DFA compilation for efficiency, but understanding the DP solution illuminates how `.*` can match arbitrarily many characters and why regex backtracking can be exponential.

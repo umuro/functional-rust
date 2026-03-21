@@ -1,6 +1,8 @@
 **Difficulty:** ⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐  
+
 [rwlock-pattern on hightechmind.io](https://hightechmind.io/posts/functional-rust/rwlock-pattern)
 
 ---

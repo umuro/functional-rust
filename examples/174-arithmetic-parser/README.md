@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 An arithmetic evaluator combines parsing and immediate evaluation: it reads an expression like `(3 + 4) * 2 - 1` and produces `13.0` without constructing an AST. This is the classic recursive descent evaluator, foundational to expression evaluation in spreadsheets, calculator apps, scripting engines, and configuration processors. Understanding it requires grasping how grammar levels correspond to function call levels.

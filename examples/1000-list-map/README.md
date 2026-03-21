@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Apply a function to every element of a list and collect the results. Implement both an iterator-based `map_iter` (idiomatic Rust) and a recursive `map_recursive` (functional style mirroring OCaml). Compare with OCaml's `List.map` and a custom tail-recursive implementation.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Atomic increment (`fetch_add`) handles the simple case, but complex atomic updates — "set to max", "set if value is X", "conditional swap" — require `compare_and_exchange` (CAS). CAS is the universal primitive for lock-free algorithms: read the current value, compute the new value, atomically swap old→new only if the value is still what you read. If another thread changed it, retry. This retry loop is the foundation of all lock-free data structures: lock-free stacks, queues, linked lists, and hash maps.

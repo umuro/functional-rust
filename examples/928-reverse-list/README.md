@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Reversing a list is the "hello world" of functional data structure algorithms. It exercises the core skill of list recursion and accumulator-based tail recursion. The naive recursive version (`rev(t) ++ [h]`) is O(n²) due to append at each step. The accumulator version (`rev_acc(t, h::acc)`) is O(n) and tail-recursive — the standard functional programming solution. OCaml's `List.rev` uses this pattern. Rust's `.rev()` iterator adapter is O(1) (lazy reversal); `.iter().rev().collect()` is O(n). This example shows all three approaches.

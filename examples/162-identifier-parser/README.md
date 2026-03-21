@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Identifiers appear in every programming language, configuration format, and data schema: variable names, function names, JSON keys, INI section names. An identifier is typically a letter or underscore followed by any number of letters, digits, or underscores. Parsing identifiers correctly — distinguishing them from keywords, handling Unicode identifiers, producing owned `String` output — is a foundational skill for building any language-level parser.

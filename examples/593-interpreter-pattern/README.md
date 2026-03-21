@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Building a small interpreter is the classic exercise in language implementation and a demonstration of algebraic data types at their most powerful. An AST (Abstract Syntax Tree) is a recursive enum; evaluation is a recursive function over it. This pattern underpins every compiler, template engine, query language, and rule engine. The `Expr` enum with `Lit`, `Var`, `Add`, `Mul`, `Let`, `If` variants covers the core of any expression language.

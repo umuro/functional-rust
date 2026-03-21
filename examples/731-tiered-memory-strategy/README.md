@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Real-time systems — game engines, audio DSP, embedded firmware — cannot afford to call the global allocator in hot paths because it may block or cause fragmentation. The solution is a tiered strategy: trivially small data lives on the stack (Tier 1), medium-lived working data uses a fast bump arena with a fixed slab (Tier 2), and only large or long-lived data falls back to the heap (Tier 3). This mirrors the design of modern memory allocators like jemalloc and mimalloc, which maintain thread-local arenas before escalating to the global heap.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Structured error hierarchies lose their value if they cannot be rendered as human-readable messages. The `std::error::Error` trait provides a `source()` method for linking errors in a chain — root cause, intermediate wrapper, outer context — and `Display` for rendering each layer. Walking this chain produces messages like `"startup failed: config error: file not found: /etc/app.conf"`.

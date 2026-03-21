@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Not every Rust trait can be used as `dyn Trait`. Object safety rules exist because vtables have fixed layouts: every slot is a function pointer taking an erased `*mut ()` as `self`. Traits with generic methods (`fn map<B>(self, f: impl Fn(A) -> B)`) cannot appear in vtables because each monomorphization would need a separate slot. Similarly, methods returning `Self` or taking `Self` parameters break the type erasure required for vtables. Understanding these rules prevents compiler errors and guides API design.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Async code introduces new testing challenges: futures must be driven to completion, timeouts must be tested without real waits, and concurrent operations must be coordinated. In production Rust, `#[tokio::test]` provides a single-threaded or multi-threaded test runtime. This example uses threads and channels as a sync-compatible substitute to demonstrate the core patterns: driving async work to completion, testing timeouts, and injecting controllable fake implementations.

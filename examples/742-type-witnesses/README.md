@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A type witness is a value that proves an invariant holds at the type level. Rather than re-checking a property every time (is this list sorted? is this range non-empty?), you carry evidence of the property in the type. The `Sorted<T>` witness means "this Vec was produced by sorting, so binary search is safe without re-checking." This pattern eliminates entire categories of defensive checks and makes APIs self-documenting about their preconditions. Used in Haskell's `Data.Map.Strict` and Rust's `BTreeMap`.

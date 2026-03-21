@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust's type system prevents data races at compile time through two auto traits. `Send` means a type's ownership can be transferred to another thread — its memory can be safely moved across thread boundaries. `Sync` means a shared reference `&T` can be safely used from multiple threads simultaneously. These are auto-derived compositionally: a struct is `Send` if all fields are `Send`. `Rc<T>` is `!Send` because its reference counter isn't atomic. `Cell<T>` is `!Sync` because interior mutability without synchronization is unsafe across threads.

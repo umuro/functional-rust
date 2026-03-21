@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Heap allocation is not free. Every `Box::new`, `Vec::push`, or `String::from` call invokes the global allocator, which acquires a lock, searches a free list, and may trigger a system call. In latency-sensitive code — game loops, network packet handlers, audio DSP — even a single allocation per frame causes jitter. The solution is to pre-allocate once and reuse, use iterator chains that produce zero intermediate collections, and prefer stack-local buffers for short-lived data.

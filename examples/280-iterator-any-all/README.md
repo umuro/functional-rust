@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Testing whether at least one element satisfies a condition (existential quantification: ∃) or whether all elements satisfy a condition (universal quantification: ∀) are the two most fundamental logical queries on collections. These appear constantly in validation: "does any user have admin rights?", "are all inputs valid?", "does any file exist?". Rust's `any()` and `all()` short-circuit — stopping as soon as the answer is determined — making them efficient even on very large collections.

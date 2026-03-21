@@ -1,8 +1,8 @@
 # Example 1114: Red-Black Tree — Balanced Insert
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Trees | Balanced Data Structures | Functional Patterns
-**OCaml Source:** Okasaki, *Purely Functional Data Structures* (1998), Chapter 3
+
 
 ## Problem Statement
 

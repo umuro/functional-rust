@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Most iterators traverse from front to back. Some algorithms benefit from bidirectional traversal: palindrome checking compares elements from both ends toward the center, taking the last N elements without knowing the total count, and simultaneous front-and-back consumption. Rust's `DoubleEndedIterator` extends `Iterator` with `next_back()`, enabling traversal from the end. This is implemented for slices, ranges, and many adapter types. The `.rev()` adapter wraps any `DoubleEndedIterator` to iterate in reverse. OCaml handles these cases with explicit `List.rev` or array indexing.

@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implement `std::fmt::Display` for custom types — `Color`, `Point`, `Person`, and a generic `Tree<T>` — to enable `format!`, `println!`, and `to_string()` without deriving `Debug`. Compare with OCaml's `Printf.sprintf`-based `to_string` functions for the same types.

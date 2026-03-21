@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `Result::and_then` (bind) sequences two fallible operations: apply a function that returns `Result` to the `Ok` value, propagating `Err` automatically. It is the monadic sequencing operation for `Result` — "do this, then do that, stopping at the first failure". This enables clean pipelines of fallible operations without nested match statements.

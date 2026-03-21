@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Concatenating sequences without allocating a combined container is a common optimization. Iterating over "all items from set A, then all items from set B" should not require copying both into a new buffer. SQL's `UNION ALL`, Haskell's `(++)`, and OCaml's `List.append` all solve this problem — with different allocation behaviors. Rust's `.chain()` adapter concatenates two iterators lazily: no allocation occurs until the combined sequence is consumed. This enables zero-cost concatenation of slices, ranges, filtered views, and any other iterator.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Mathematical expressions like `1 + 2 * 3` must parse according to operator precedence — the result should be `7` (multiply before add), not `9`. Encoding precedence in recursive descent requires separate functions for each precedence level, which is verbose. Pratt parsing (top-down operator precedence) solves this elegantly with a single loop and a binding power table, making it easy to add new operators and adjust precedence without restructuring the grammar.

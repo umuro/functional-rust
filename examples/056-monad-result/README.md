@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `Result` is a monad: it satisfies the three monad laws (left identity, right identity, associativity) and provides `return` (wrapping in `Ok`) and `bind` (`and_then`). Recognizing `Result` as a monad explains why `and_then` chains and `?` feel so clean: they are a principled application of monadic sequencing, the same structure as `IO` in Haskell, `async/await` in most languages, and parser combinators.

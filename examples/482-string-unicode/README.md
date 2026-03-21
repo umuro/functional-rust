@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Rust's standard library exposes Unicode properties through `char` methods (`is_alphabetic`, `is_uppercase`, `to_lowercase`) and string methods (`is_ascii`, `eq_ignore_ascii_case`), while full Unicode normalisation requires the `unicode-normalization` crate.
 
 ## Problem Statement

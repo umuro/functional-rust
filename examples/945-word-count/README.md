@@ -1,5 +1,7 @@
-**Difficulty:** ⭐⭐  
+**Difficulty:** ⭐  
 **Category:** Functional Programming  
+
+**Difficulty:** ⭐⭐  
 
 [word-count on hightechmind.io](https://hightechmind.io/posts/functional-rust/word-count)
 

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A hylomorphism (`hylo`) is the composition of an anamorphism followed by a catamorphism: unfold a seed into a structure, then immediately fold the structure. The profound optimization: the intermediate structure need never be materialized. `hylo` fuses the unfold and fold into a single pass, eliminating intermediate allocation. Mergesort is a canonical hylomorphism: unfold the array into a tree, fold the tree by merging sorted sublists.

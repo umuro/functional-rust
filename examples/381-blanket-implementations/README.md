@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When a trait's functionality can be derived entirely from another trait, duplicating the implementation for every concrete type is tedious and error-prone. Blanket implementations solve this by implementing a trait for all types satisfying a bound: `impl<T: Bound> MyTrait for T`. This is how the standard library implements `ToString` for everything that implements `Display`, and how `From` blanket-implies `Into`. The technique enables powerful composable abstractions without requiring each type to opt in explicitly.

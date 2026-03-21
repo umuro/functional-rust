@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Reducing a sequence to a single number by addition or multiplication is so common that every language provides a dedicated abstraction. Python's `sum()`, OCaml's `List.fold_left (+) 0`, Haskell's `sum` and `product`. Rust's `Iterator::sum()` and `Iterator::product()` are zero-cost abstractions over `fold` with the identity element built in: `0` for sum, `1` for product. They work on any numeric type implementing `Sum` or `Product` and can be chained with any adapter. Factorial, sum-of-squares, inner product, and average are all expressible as one-liners using these consumers.

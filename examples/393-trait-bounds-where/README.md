@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Generic Rust code must express what operations a type parameter supports. Trait bounds (`T: Display + Clone`) appear inline in angle brackets for simple cases, but complex functions with many parameters and bounds become illegible. The `where` clause separates the function signature from its constraints, improving readability when bounds are long, when the same bound applies to multiple parameters, or when bounds involve associated types. Both forms are semantically identical — it is purely an ergonomic choice.

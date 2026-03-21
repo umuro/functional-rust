@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Simulate a robot on a grid that can turn left, turn right, and advance. The robot's state (`x`, `y`, `dir`) is immutable — each instruction returns a new `Robot` rather than mutating in place. Execute a sequence of instructions using fold, and compare with OCaml's record update syntax `{ r with ... }`.

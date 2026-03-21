@@ -3,10 +3,10 @@
 ---
 
 # Example 002: Last Two Elements
-
 **Difficulty:** ⭐  
-**Category:** Lists & Pattern Matching  
-**OCaml Source:** OCaml.org 99 Problems #2
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

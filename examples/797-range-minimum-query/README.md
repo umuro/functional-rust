@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Range Minimum Query (RMQ) asks: given an array and a query `(l, r)`, what is the minimum element in `arr[l..=r]`? Naive O(n) per query is too slow for many applications. The Sparse Table data structure preprocesses the array in O(n log n) time to answer RMQ queries in O(1) using overlapping power-of-two ranges. RMQ is used in LCA (Lowest Common Ancestor) algorithms for trees, suffix array construction, and competitive programming.

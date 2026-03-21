@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Copying data efficiently is fundamental to both performance and memory safety. C++ distinguishes copy constructors from move constructors. Rust makes the distinction even sharper: the `Copy` trait marks types for which a bitwise duplicate is always safe and cheap (integers, booleans, small structs with no heap pointers), while `Clone` is the explicit mechanism for deep copies that may allocate.

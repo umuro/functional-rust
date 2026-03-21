@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Splitting a list at position n (OCaml 99 Problems #17) — producing `(list[..n], list[n..])` — is the fundamental decomposition operation. It is the inverse of concatenation and the basis for divide-and-conquer algorithms like merge sort, binary search, and quickselect. Every partitioning problem reduces to some variant of split.

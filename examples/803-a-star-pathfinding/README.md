@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A* (Hart, Nilsson, Raphael, 1968) is the standard pathfinding algorithm in games, robotics, and navigation systems. It improves on Dijkstra by adding a heuristic that guides the search toward the goal, dramatically reducing explored nodes. The Manhattan distance heuristic is admissible (never overestimates) on grids, guaranteeing optimal paths. Used in every major game engine (Unity NavMesh, Unreal AI), Google Maps, and robot motion planning.

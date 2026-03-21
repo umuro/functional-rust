@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Writing explicit lifetime annotations on every function would make Rust code extremely verbose. Lifetime elision rules were introduced to allow the compiler to infer annotations in the most common cases, making everyday code read cleanly. Three rules cover the vast majority of functions: (1) each input reference gets its own lifetime, (2) if there is exactly one input lifetime, it propagates to all output references, (3) if one of the inputs is `&self` or `&mut self`, its lifetime propagates to all output references. Understanding these rules explains when annotations are required and why.

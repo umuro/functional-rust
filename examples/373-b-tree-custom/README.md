@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Database indexes, file system directory trees (NTFS, ext4), and key-value store storage engines (RocksDB, SQLite) all use B-trees as their core data structure. Rudolf Bayer and Edward McCreight invented the B-tree in 1972 to optimize for disk access patterns: keeping data in large nodes (pages) minimizes the number of disk seeks. A B-tree of degree T stores up to 2T-1 keys per node, keeping the tree very shallow (height O(log_T n)). Unlike binary trees, B-tree nodes are wide — millions of records fit in a tree just 3-4 levels deep, matching the typical disk block size of 4KB-16KB.

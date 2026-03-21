@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Collecting all nodes at a specific depth (OCaml 99 Problems #33) — where the root is at level 1 — is a level-order query that appears in breadth-first search, layer-by-layer neural network processing, and tree visualization. It is also the key to level-order traversal (BFS on trees).

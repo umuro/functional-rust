@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Finding the k largest (or smallest) elements from a large stream is a common problem in data processing: top-10 most visited pages from a billion-row log, top-k nearest neighbors in machine learning, k most recent events. Sorting the entire dataset is O(n log n), but maintaining a heap of size k gives O(n log k) — much better when k is small relative to n.

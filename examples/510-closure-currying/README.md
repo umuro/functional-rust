@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Currying transforms an N-argument function into a chain of N single-argument functions — `add(x, y)` becomes `add(x)(y)`. Rust implements currying explicitly through nested closures returning closures, with `curry` and `uncurry` as conversion utilities.
 
 ## Problem Statement

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The Curry-Howard correspondence is the profound observation that propositions in logic correspond to types in programming, and proofs correspond to programs. A function `A -> B` is a proof that "if A then B." A pair `(A, B)` is a proof of "A and B." A sum type `Either<A, B>` is a proof of "A or B." An impossible type (like `fn() -> !`) corresponds to a false proposition. Understanding this correspondence connects type system design to formal logic.

@@ -3,10 +3,10 @@
 ---
 
 # Example 229: Monoid as a Category
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Category Theory
-**OCaml Source:** Category Theory for Programmers — Bartosz Milewski, ch. 3
+
 
 ## Problem Statement
 

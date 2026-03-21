@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Shared mutable state with locks is error-prone: deadlocks, priority inversion, and complex lock ordering. The alternative is message passing: threads communicate by sending values through channels, with no shared state. `std::sync::mpsc` (Multiple Producer, Single Consumer) provides channels for this pattern. Producers send messages; the consumer receives them. When all senders drop, the receiver's iteration automatically ends — a natural shutdown mechanism.

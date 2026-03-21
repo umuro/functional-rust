@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The Yoneda lemma is one of the most important results in category theory: `Nat(Hom(A, -), F) ≅ F(A)`. In Rust terms: a natural transformation from `fn(A, -)` to any functor `F` is in one-to-one correspondence with a value of `F(A)`. The practical consequence: `Yoneda<F, A>` — a type holding a natural transformation — is isomorphic to `F(A>` but enables free `map` operations without actually running them, accumulating a composition chain that is applied all at once.

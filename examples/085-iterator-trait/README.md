@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implement the `Iterator` trait from scratch for two custom types: a bounded `MyRange` iterator and an infinite `Fibonacci` iterator. By implementing only `next`, gain access to the entire iterator adapter ecosystem (`filter`, `map`, `take`, `collect`). Compare with OCaml's `Seq` type and lazy sequence operations.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 This example revisits topological sort (see example 073) with explicit focus on ownership in the DFS algorithm. The adjacency map borrows string slices (`&str`), the visited set borrows node names, and the result vector owns `String` values. Managing these lifetimes correctly is a concrete exercise in Rust's borrow checker.

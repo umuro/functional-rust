@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Application code (as opposed to library code) often doesn't need to classify errors precisely — it just needs to propagate them to a top-level handler that logs or displays them. Defining a custom error enum for every function that calls multiple libraries is over-engineering. The `anyhow` pattern uses `Box<dyn Error + Send + Sync>` as a universal error container — any error can be boxed and propagated without defining wrapper types.

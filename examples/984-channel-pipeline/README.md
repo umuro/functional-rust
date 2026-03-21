@@ -1,6 +1,8 @@
 **Difficulty:** ⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐  
+
 [channel-pipeline on hightechmind.io](https://hightechmind.io/posts/functional-rust/channel-pipeline)
 
 ---

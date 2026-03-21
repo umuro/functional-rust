@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 An existential type says: "there exists some concrete type implementing this interface, but I won't tell you which one." This enables hiding implementation details, building heterogeneous collections (a list of values with different concrete types all sharing a common interface), and returning values whose concrete type is unnameable (like closures). Existential types are the dual of universal (generic) types, and they appear in every major typed language under different names.

@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 This capstone example weaves together every major concept from this series: recursion schemes, optics, free monads, comonads, type-level programming, parser combinators, and categorical abstractions. The goal is to build a small but complete functional language interpreter that demonstrates how these patterns compose: the AST is defined as a fixed-point type, evaluation uses a catamorphism, variable scoping uses the Reader monad, a free monad models effectful operations, lenses navigate nested state, and Cofree annotates the AST with type information.

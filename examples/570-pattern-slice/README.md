@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Recursive algorithms over lists and arrays naturally decompose into head/tail or first/rest cases — the foundation of functional programming. OCaml's `match` on lists is legendary for enabling clean recursive functions. Rust's slice patterns bring the same capability: `[first, rest @ ..]` matches a non-empty slice and binds head and tail. This enables recursive-style processing of arrays and slices, pattern-based parsing, and elegant handling of variable-length inputs.

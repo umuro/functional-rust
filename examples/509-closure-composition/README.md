@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Function composition combines two functions `f` and `g` into `f ∘ g` (apply `g` first, then `f`), and `pipe` provides left-to-right composition — both implemented as higher-order functions returning new closures.
 
 ## Problem Statement

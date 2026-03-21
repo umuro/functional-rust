@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Recursive descent parsers encode operator precedence as a grammar rule hierarchy, requiring a separate parsing function per precedence level. Vaughan Pratt's 1973 "Top-Down Operator Precedence" technique encodes precedence as integer "binding powers" on operators, enabling a single compact parsing loop to handle any precedence and associativity. It is used in rustc's expression parser, TypeScript's compiler, and the Crafting Interpreters book. Pratt parsing is often the first thing compiler engineers reach for when hand-writing expression parsers.

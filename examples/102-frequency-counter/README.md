@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Counting the frequency of items in a collection is one of the most common data processing operations: word frequency in text analysis, character histograms in compression, event counts in telemetry. The pattern requires a map from item to count that inserts a zero for new keys and increments existing ones atomically.

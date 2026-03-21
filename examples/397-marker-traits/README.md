@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Some type properties cannot be expressed as methods — they are structural guarantees about how a type behaves, not behaviors you can call. A type is "serializable" (safe to convert to bytes), "immutable" (guarantees no internal mutation), or "thread-safe" (safe to share across threads). Marker traits capture these properties: they have no methods, just a name. Code that requires a guarantee asks for `T: Serializable` in its bounds, and only explicitly-opted-in types pass through. This prevents accidentally passing a non-serializable type to a serialization function.

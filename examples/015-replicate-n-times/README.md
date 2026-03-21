@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Replicating each element `n` times (OCaml 99 Problems #15) generalizes duplication: `replicate([a, b, c], 3)` produces `[a, a, a, b, b, b, c, c, c]`. This is a direct application of `flat_map` with `std::iter::repeat`, combining two fundamental iterator patterns: structure expansion and repetition.

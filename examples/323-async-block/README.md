@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `async fn` creates a function that returns a `Future`. `async { }` blocks create anonymous futures inline. The key property of both is laziness: the code inside does not execute until the future is `.await`ed or driven by an executor. This is fundamentally different from eager evaluation — a value computed immediately. Understanding this laziness is essential for avoiding bugs where code runs at the wrong time or doesn't run at all.

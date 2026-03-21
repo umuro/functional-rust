@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Collecting all leaf values into a list (OCaml 99 Problems #31) extends the leaf-counting pattern: instead of incrementing a counter, we collect the actual values. This is the leaf traversal — the first step in algorithms like Huffman decoding, expression evaluation (leaves are operands), and tree serialization.

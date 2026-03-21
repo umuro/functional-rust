@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Inserting an element at position k (OCaml 99 Problems #21) is the inverse of removal — splicing a value into the middle of a sequence. Together with removal, it forms the primitive operations for maintaining ordered sequences, implementing undo/redo buffers, and building persistent data structures.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Functions that need to accumulate a log, collect diagnostics, or build an audit trail alongside their computation result face a choice: return a tuple `(result, log)` or use a mutable global. The Writer monad encapsulates the log accumulation: `Writer<A>` represents a value `A` paired with a log `Vec<String>`. Computations are composed and their logs automatically concatenated. This separates concerns: the core logic doesn't know about logging; the monad handles it. Use cases: compiler diagnostics (warnings alongside the compiled output), query plan logging, audit trails, and trace accumulation in distributed tracing.

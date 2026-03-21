@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Multiplying a sequence of matrices is associative: `(AB)C = A(BC)`, but the computational cost varies dramatically with parenthesization. Multiplying a 10×30 matrix by a 30×5 matrix by a 5×60 matrix: `(AB)C` costs 10×30×5 + 10×5×60 = 4,500 + 3,000 = 7,500 operations; `A(BC)` costs 30×5×60 + 10×30×60 = 9,000 + 18,000 = 27,000. The optimal ordering can be 10–100× faster for large chains.

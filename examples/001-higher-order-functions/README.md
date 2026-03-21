@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Higher-order functions (HOFs) are the foundational abstraction of functional programming, rooted in lambda calculus from the 1930s. The core insight is that functions are values: they can be passed as arguments, returned from other functions, and stored in data structures. This eliminates entire categories of boilerplate loops.

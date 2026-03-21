@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Generic programming traditionally parameterizes types by other types. Const generics extend this to values known at compile time — primarily integer constants. This enables `Array<i32, 8>` and `Array<i32, 16>` to be different types with their sizes embedded in the type system, eliminating runtime bounds checks and enabling stack allocation. Stabilized in Rust 1.51, const generics are used in `ndarray`, embedded-hal, and the standard library's `[T; N]` arrays.

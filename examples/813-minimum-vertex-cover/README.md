@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A vertex cover is a set of vertices such that every edge has at least one endpoint in the set. The minimum vertex cover finds the smallest such set. For general graphs this is NP-hard (equivalent to maximum independent set), but for trees it is solvable in O(n) by DP on the tree structure. Applications: network security (placing sensors to monitor all links), database index optimization, and approximation algorithms for general graphs.

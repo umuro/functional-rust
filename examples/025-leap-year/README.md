@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Determine whether a year is a leap year using the Gregorian calendar rule: a year is a leap year if it is divisible by 400, or divisible by 4 but not by 100. Express this as a single boolean expression and verify on representative examples.

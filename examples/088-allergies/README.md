@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Given a score (up to 255), determine which allergens a person reacts to by decoding a bitflag. Each of the eight allergens maps to a power-of-two score. Implement `is_allergic_to(allergen, score) -> bool` and `allergies(score) -> Vec<Allergen>` using bitwise AND. Compare with OCaml's `land` operator and list filtering.

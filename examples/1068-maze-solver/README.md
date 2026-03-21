@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Path finding in a 2D grid is a fundamental robotics and game AI problem: find a path from start to end while avoiding walls. DFS backtracking finds any path; BFS finds the shortest path (by number of steps). Both are foundational to robot navigation, video game pathfinding, and circuit board routing.

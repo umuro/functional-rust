@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Some graph algorithms require O(1) edge existence queries. For dense graphs where most pairs of vertices are connected — circuit boards, protein interaction networks, game adjacency grids — storing edges as a 2D boolean matrix provides constant-time lookup at the cost of O(V²) space. Transitive closure algorithms (Floyd-Warshall), adjacency matrix multiplication for path counting, and spectral graph analysis all operate naturally on matrix form.

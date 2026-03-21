@@ -1,8 +1,9 @@
 [![hightechmind.io](https://img.shields.io/badge/hightechmind.io-functional--rust-blue)](https://hightechmind.io)
 
 # 087 — Difference of Squares
-**Difficulty:** ⭐⭐  
+**Difficulty:** ⭐  
 **Category:** Functional Programming  
+
 
 
 ## Problem Statement

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Computing a^b mod m naively multiplies a together b times, requiring O(b) operations — impractical for b = 10^18. Fast modular exponentiation (binary exponentiation / repeated squaring) achieves O(log b) by decomposing the exponent in binary: if b is even, `a^b = (a^(b/2))^2`; if odd, `a^b = a * a^(b-1)`. This is the core operation in RSA encryption/decryption (a^e mod n, a^d mod n), Diffie-Hellman key exchange, primality testing (Fermat, Miller-Rabin), and computing large Fibonacci numbers via matrix exponentiation. Without it, public-key cryptography would be computationally infeasible.

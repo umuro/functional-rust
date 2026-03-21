@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A common map operation is "if the key exists, update the value; if not, insert a default." Naively this requires two lookups: `get` then `insert`. Rust's entry API solves this with a single lookup that returns an `Entry` enum — `Occupied` or `Vacant` — allowing you to atomically inspect and modify the map without the borrow checker complications of holding a reference to the value while also modifying the map. This pattern, introduced in Rust 1.0, avoids cloning keys unnecessarily and is the idiomatic way to implement counting, memoization, and conditional initialization.

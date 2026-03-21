@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Function composition is the mathematical operation of combining two functions `f` and `g` into `f ∘ g`, where `(f ∘ g)(x) = f(g(x))`. It is the fundamental mechanism by which complex transformations are built from simple, reusable parts. Unix pipes (`ls | grep foo | sort`) are function composition in a shell. Promise chaining in JavaScript, method chaining in jQuery, and Spark's transformation DAGs are all manifestations of the same idea.

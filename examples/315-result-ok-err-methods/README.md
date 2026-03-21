@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The full `Result<T, E>` method surface is large — over 20 methods covering query, transformation, combination, and extraction. Many Rust developers use only `?`, `unwrap()`, and `map()`, missing more specialized tools like `ok()` (discard error, get `Option<T>`), `err()` (discard success, get `Option<E>`), `map_or()`, and `and()`/`or()`. This reference covers the complete method set and their appropriate use cases.

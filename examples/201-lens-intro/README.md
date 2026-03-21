@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Updating a deeply nested field in an immutable data structure requires manually reconstructing every level of nesting: `AppConfig { db: DbConfig { host: new_host, ..config.db }, ..config }`. For three levels of nesting this is already verbose; for five levels it is unmaintainable. Lenses solve this by encapsulating the path to a field as a first-class value that can be composed, passed, and applied generically. They are fundamental to functional programming with immutable data.

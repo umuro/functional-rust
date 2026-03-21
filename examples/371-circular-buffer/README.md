@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Audio processing, network packet buffering, logging with bounded history, and real-time telemetry all need fixed-size FIFO queues where old data is overwritten when the buffer is full. A circular buffer (ring buffer) achieves this with a fixed `Vec<Option<T>>` and two indices (`head`, `tail`) that wrap around modulo capacity. Operations are always O(1) with no allocation after construction. This is more efficient than `VecDeque` when the capacity is fixed at creation time — the modular arithmetic avoids the reallocation and copying that `VecDeque` might perform when growing.

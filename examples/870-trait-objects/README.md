@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 In object-oriented languages, polymorphism is the default: a method call on a base-class pointer dispatches to the concrete implementation at runtime. Functional languages like OCaml achieve the same through algebraic types with pattern matching (static) or object types (dynamic). Rust offers both mechanisms: generics with trait bounds (static/monomorphized dispatch, zero cost) and trait objects `dyn Trait` (dynamic dispatch via vtable, runtime polymorphism). The choice between them affects binary size, flexibility, and whether the concrete type must be known at compile time. This example shows both approaches using a `Shape` hierarchy.

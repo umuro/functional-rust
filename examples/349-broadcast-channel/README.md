@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Publish-subscribe systems need one sender to deliver the same message to multiple independent receivers — event buses, real-time dashboards, multi-client notification systems. Standard MPSC channels route each message to exactly one receiver. A broadcast channel delivers every message to every subscriber. This pattern powers WebSocket fan-out (one server event → all connected clients), log streaming (one log source → multiple sinks), and reactive frameworks (one state change → all observers). Tokio provides `tokio::sync::broadcast` natively; this example shows the mechanics of building one from primitives.

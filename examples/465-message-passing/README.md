@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Concurrent programming has two fundamental coordination models. Shared memory: threads share data structures, protected by locks. Message passing: threads communicate by sending values, with no shared state. Shared memory is faster for fine-grained updates (no serialization); message passing is safer, scales better, and avoids deadlocks. The word-count example demonstrates both: message passing (each thread computes a local count, sends the whole map) vs. shared memory (all threads write into a shared `HashMap` under a mutex).

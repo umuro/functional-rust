@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When you need sorted iteration AND fast membership tests but do not need to insert and delete frequently, a sorted `Vec<T>` is more cache-efficient than a `BTreeSet`. Binary search over a contiguous array benefits from hardware prefetching, while pointer-heavy B-tree nodes fragment the cache. The `sorted_vec` and `bsearch` crates exploit this trade-off.

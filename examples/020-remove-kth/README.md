@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Removing the element at position k from a list (OCaml 99 Problems #20) is a fundamental list surgery operation — the building block for deletion in arrays, linked lists, and sequences. It produces a new list with one element missing and returns both the removed element and the modified list.

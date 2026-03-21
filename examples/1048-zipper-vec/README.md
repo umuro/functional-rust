@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A zipper is a data structure that provides a "cursor" into a sequence, allowing O(1) local navigation and modification. Introduced by Gérard Huet in 1997 for functional tree navigation, the zipper splits a sequence into three parts: elements to the left of the focus, the currently-focused element, and elements to the right.

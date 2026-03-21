@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Operator precedence determines how `1 + 2 * 3 - 4 / 2` is parsed: multiplication and division bind tighter than addition and subtraction, so the result is `1 + (2*3) - (4/2) = 5`. Associativity determines how `1 - 2 - 3` groups: left-associativity gives `(1-2)-3 = -4`, right-associativity gives `1-(2-3) = 2`. Encoding both correctly in a parser requires a systematic approach: this example shows the classic table-driven, multi-level recursive descent method.

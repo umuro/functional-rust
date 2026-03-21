@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Wildcard matching with `?` (any single character) and `*` (any sequence, including empty) is used in file globbing (`*.rs` matches all Rust files), URL routing (`/api/*/users`), and command-line pattern matching. Unlike regex's `.*`, wildcard `*` matches any sequence including empty — semantically simpler but requiring careful DP handling.

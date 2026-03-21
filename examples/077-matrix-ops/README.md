@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Matrix operations — transpose and multiplication — are the foundation of linear algebra, which underpins graphics (rotation/scaling transforms), machine learning (neural network layers are matrix multiplications), physics simulation (finite element methods), and signal processing (FFT as matrix multiplication). Understanding the data layout and functional implementation of these operations is prerequisite for any numerical computing work.

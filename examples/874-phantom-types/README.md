@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Type safety is most powerful when it prevents entire classes of bugs at compile time. Phantom types are a technique where a type parameter appears in a struct definition but carries no data — it exists solely to encode information in the type system. The classic applications are units of measure (preventing meters from being added to seconds), state machines (preventing unlocked-door operations when the door is locked), and access levels (preventing unauthorized API calls). F#'s units of measure, Haskell's `phantom type` pattern, and OCaml's typed phantom parameters all implement this idea. Rust uses `PhantomData<T>` to hold the phantom type without adding runtime overhead.

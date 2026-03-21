@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Recursive async functions have a fundamental problem: the compiler needs to know the future's size at compile time to allocate it on the stack. A recursive async function has an infinitely-nested type (each recursive call adds another layer of future type). The solution is `Box::pin()` — heap-allocating the future and using a type alias `BoxFuture<'a, T>` to break the recursive type definition. This is the standard pattern for tree traversals and parser combinators in async Rust.

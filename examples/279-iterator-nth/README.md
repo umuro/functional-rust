@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Accessing the element at a specific zero-based index in an iterator requires advancing past all preceding elements. Unlike array indexing (O(1)), `nth(n)` on a generic iterator is O(n) — consuming and discarding the first `n` elements. Crucially, calling `nth(n)` advances the iterator state, so subsequent calls continue from where the previous one left off. This makes `nth()` useful for interleaved stepping through a stream.

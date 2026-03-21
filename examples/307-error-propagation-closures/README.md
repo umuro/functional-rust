@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The `?` operator propagates errors from the enclosing function. Inside a closure passed to `map()` or `and_then()`, `?` propagates from the closure, not the outer function. This distinction matters for `Iterator::map()`: the closure returns `Result<T, E>`, not `T`, and the results must be collected or handled. Understanding how errors flow through closures is essential for writing correct iterator pipelines over fallible operations.

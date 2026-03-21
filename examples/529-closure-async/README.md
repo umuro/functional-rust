@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Async programming requires composing not just values but futures — asynchronous computations that may yield before completing. A common need is passing callbacks that themselves perform async work: an HTTP client that accepts an async retry handler, a task queue that calls an async processing function per item, or a middleware chain where each layer can await I/O. True `async |x| { ... }` closure syntax is nightly-only in Rust; the stable pattern uses `|x| async move { ... }` — a closure returning a `Future`.

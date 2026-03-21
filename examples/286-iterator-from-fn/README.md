@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Building a custom iterator by defining a struct and implementing `Iterator` is powerful but verbose for simple cases. `std::iter::from_fn()` provides a lightweight alternative: create an iterator directly from a closure returning `Option<T>`. The closure captures its own mutable state, and each call produces the next element or `None` to terminate. This is the functional approach to generators — describing iteration as a stateful function.

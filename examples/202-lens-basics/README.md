@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A lens is formally a pair of functions: `get: S -> A` (extract a field of type `A` from a structure `S`) and `set: A -> S -> S` (return a new `S` with the field replaced). This simple representation enables all lens operations: `view` (= `get`), `set`, `over` (apply function to field), and composition. Understanding the basic `Lens<S, A>` struct and its derived operations is the prerequisite for all optics concepts that follow.

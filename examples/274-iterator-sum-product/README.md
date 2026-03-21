@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Summing or multiplying all elements of a collection is one of the most fundamental computational operations — from computing totals in spreadsheets to calculating factorials in mathematics, to aggregating metrics in monitoring systems. While these could be implemented with `fold()`, Rust provides `sum()` and `product()` as first-class methods that express intent clearly and can be implemented efficiently by the type system via the `Sum` and `Product` traits.

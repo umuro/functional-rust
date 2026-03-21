@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Finding the minimum or maximum of a collection is a fundamental algorithm — used in sorting, priority selection, range computation, and statistical analysis. The challenge is handling the empty-collection case safely. Rust's `min()` and `max()` return `Option<T>`, forcing callers to handle the empty case explicitly, while the `min_by_key()` variants enable comparison by a derived property without needing to implement `Ord` on the whole type.

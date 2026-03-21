@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Threads need to communicate without sharing memory unsafely. The MPSC (multi-producer, single-consumer) channel pattern solves thread communication by providing a typed message queue where many threads can send and one thread receives. Channels originate from Hoare's Communicating Sequential Processes (1978) and Dijkstra's work on process communication — the philosophy: don't communicate by sharing memory; share memory by communicating. Channels make data flow explicit, eliminating the need for locks around communication points and preventing entire classes of race conditions.

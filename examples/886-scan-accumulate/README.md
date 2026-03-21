@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Fold collapses a sequence to a single value. Scan is fold's sibling: it emits every intermediate accumulator value as an element of a new sequence. Running sums, cumulative maxima, and prefix products are all applications of scan. In financial applications, scan computes balance history from a list of transactions. In signal processing, it computes moving statistics. Haskell has `scanl`, OCaml has `Seq.scan`, and Python's `itertools.accumulate` serves the same role. Rust's `Iterator::scan` adapter is the idiomatic approach — stateful, lazy, and composable with the rest of the iterator ecosystem.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A futumorphism (futu) is the dual of a histomorphism — an anamorphism that can look ahead multiple levels into the future structure being built. It uses a free monad of the base functor as the coalgebra target, allowing the generator to produce multiple levels of structure at once. This is useful for expanding macros, generating tree structures, and producing ahead-of-need outputs.

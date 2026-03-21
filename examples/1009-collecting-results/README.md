@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When processing a list of inputs that each produce a `Result`, you face a design decision: stop at the first error, or collect all values (or all errors). The "stop at first error" pattern is the most common, and Rust's standard library makes it a one-liner through the `FromIterator` implementation for `Result`.

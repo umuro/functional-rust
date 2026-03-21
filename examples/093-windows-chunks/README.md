@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Use Rust's slice methods `.windows(n)` and `.chunks(n)` to create overlapping and non-overlapping subslice iterators. Demonstrate that `windows` slides one element at a time (producing `len - n + 1` windows) while `chunks` partitions without overlap (last chunk may be shorter). Compare with OCaml's manual recursive implementations.

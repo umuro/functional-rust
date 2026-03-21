@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The naive recursive Fibonacci is O(2^n) due to exponential redundant recomputation — `fib(n)` calls `fib(n-1)` and `fib(n-2)`, each of which calls the same sub-problems repeatedly. Memoization caches each result after its first computation, reducing the complexity to O(n) time and O(n) space.

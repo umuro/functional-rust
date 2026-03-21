@@ -1,8 +1,8 @@
 # Example 1182: List.flatten — Flatten Nested Lists
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Lists & HOF
-**OCaml Source:** OCaml standard library — `List.flatten`, `List.concat_map`
+
 
 ## Problem Statement
 

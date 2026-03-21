@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Lookup tables, mathematical constants, and protocol values are often computed once and used throughout a program's lifetime. Computing them at runtime wastes startup time; hand-coding them as literals is error-prone and hard to maintain. Rust's `const fn` evaluates functions at compile time — the result is baked into the binary as a constant, with zero runtime cost and full verification that the computation is correct at build time.

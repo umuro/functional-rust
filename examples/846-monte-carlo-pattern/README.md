@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Some problems are too complex for exact algorithms but can be approximated by random sampling. Monte Carlo methods estimate quantities by sampling: estimate pi by generating random points in a unit square and counting those inside the unit circle; estimate integrals by averaging function values at random points; approximate Nash equilibria in game theory; simulate financial option pricing. Error decreases as O(1/sqrt(n)) — independent of dimensionality, which is the key advantage over deterministic quadrature for high-dimensional integration. Monte Carlo underpins financial risk models, particle physics simulation, and probabilistic algorithms.

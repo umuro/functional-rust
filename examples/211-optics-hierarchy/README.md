@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Iso, Lens, Prism, AffineTraversal, and Traversal form a hierarchy: every Iso is a Lens and a Prism; every Lens and Prism is an AffineTraversal; every AffineTraversal is a Traversal. This hierarchy means you can write generic algorithms at the most general level (Traversal) that automatically work for any more specific optic. Understanding the hierarchy prevents reimplementing the same operation for each optic type.

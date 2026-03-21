@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 The three closure traits form a hierarchy: `FnOnce` (callable once) ⊇ `FnMut` (callable multiple times with mutation) ⊇ `Fn` (callable multiple times, no mutation). Every closure implements at least `FnOnce`; the compiler automatically determines which traits apply.
 
 ## Problem Statement

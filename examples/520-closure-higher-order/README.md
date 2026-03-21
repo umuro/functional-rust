@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Higher-order functions (HOFs) — functions that take or return other functions — are the backbone of functional programming. They emerged from lambda calculus (Alonzo Church, 1930s) and appeared in practical form in LISP, ML, and Haskell. Rust's iterator API is built entirely on HOFs: `map`, `filter`, `fold`, `flat_map`, `zip`. Beyond the standard library, custom HOFs like `zip_with`, `scan_left`, and `group_by` allow expressing complex data transformations as pipelines without intermediate allocations or imperative loops.

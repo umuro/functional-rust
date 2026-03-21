@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A Traversable structure extends Foldable by allowing each element to produce an effect, then collecting the results into the same shape. The canonical examples are: validate every node (returning `Option<Tree<U>>` — None if any node fails), or parse every node (returning `Result<Tree<U>, E>` — Err on first failure). This is formally the "traverse" operation from the Haskell `Traversable` typeclass. It is used in compilers for type-checking expression trees, in configuration validators that walk nested structures, and in reactive systems that need all-or-nothing transformation of data trees.

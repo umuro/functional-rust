@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Sometimes the choice of what to parse next depends on what was just parsed — a context-sensitive grammar. For example, a length-prefixed string `"3:abc"` requires first parsing the length `3`, then using that to parse exactly 3 more characters. `flat_map` (also called `bind` or `and_then`) enables this: it runs a parser, passes the result to a function that returns a new parser, and runs that parser on the remaining input. This is the monadic bind (`>>=`) for parsers, enabling context-sensitive parsing.

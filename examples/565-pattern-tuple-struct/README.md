@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Tuple structs serve two roles: lightweight structs with positional fields, and newtypes — single-field wrappers that create type-distinct values. The newtype pattern (`struct Meters(f64)`) prevents accidentally passing `Seconds` where `Meters` is expected, even though both are `f64` internally. Pattern matching on tuple structs extracts fields directly, either in `match` arms, `let` bindings, or function parameters. This is common in unit systems (NASA Mars Climate Orbiter crashed from a meters/feet confusion), domain modeling, and type-safe ID types.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many algorithms need to consume elements from a sorted or ordered stream until a condition fails: reading log lines until a timestamp exceeds a threshold, parsing tokens until a delimiter is found, or collecting numbers until a negative value appears. The `take_while()` adapter makes this declarative — it yields elements while a predicate holds and stops the moment it first fails, discarding that element and all subsequent ones.

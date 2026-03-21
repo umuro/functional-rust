@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Standard ranges and slice iterators cover most use cases, but real programs require custom sequences: Fibonacci numbers, arithmetic progressions with arbitrary step sizes, geometric sequences, or domain-specific data streams. Implementing the `Iterator` trait for a custom struct allows these sequences to integrate fully with Rust's iterator ecosystem — all adapter methods (map, filter, take, chain) work automatically. This example shows two custom iterators: a stateful Fibonacci generator and a generic step range, both demonstrating how minimal trait implementation unlocks a rich API.

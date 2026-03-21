@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Calling `head` on an empty list is a classic source of runtime errors. Length-indexed lists — vectors where the length is part of the type — eliminate this class of error: `head` is only defined on `Vec2<T, N>` where `N > 0`. Rust achieves this with const generics (`[T; N]`), which are more ergonomic than the type-level Peano natural approach (example 129) for most practical purposes. This example demonstrates the const-generic approach to length safety.

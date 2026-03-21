@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Input lifetimes determine how long the references passed to a function must remain valid. A function with one `&str` input has a simple input lifetime; a function with multiple `&str` inputs has multiple potentially independent input lifetimes. Getting input lifetimes right determines how long callers must keep their data alive. Over-constraining input lifetimes (requiring longer-lived data than necessary) makes APIs rigid; under-constraining them is a compile error. This example surveys the common input lifetime patterns systematically.

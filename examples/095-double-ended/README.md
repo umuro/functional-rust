@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Use Rust's `DoubleEndedIterator` trait to iterate from both ends simultaneously. Implement palindrome detection by comparing forward and reversed iterators, and demonstrate `next()` / `next_back()` on the same iterator instance. Compare with OCaml's manual array-based bidirectional iteration.

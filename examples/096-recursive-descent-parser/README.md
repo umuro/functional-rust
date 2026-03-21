@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Parse arithmetic expressions with addition and multiplication into an AST, respecting operator precedence (`*` binds tighter than `+`). Implement a three-function recursive descent parser (`parse_expr`, `parse_term`, `parse_atom`) on a token slice, returning `(Expr, remaining_tokens)`. Compare with OCaml's mutually recursive `and`-joined functions.

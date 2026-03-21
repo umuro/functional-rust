@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Debugging a multi-step iterator pipeline is difficult: the lazy evaluation means no intermediate values exist until the consumer runs. Inserting `println!` calls requires breaking the pipeline into named variables. Rust's `.inspect(f)` solves this: it taps into the pipeline at any point, passing each element to a side-effect closure while passing it through unchanged. This is the "tap" operator from Haskell and RxJS, `(|>)` with side effects in F#, and the `;` expression evaluation in many languages. It is primarily a debugging tool but also useful for logging, metrics counting, and audit trails in production pipelines.

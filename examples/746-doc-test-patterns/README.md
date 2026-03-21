@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Documentation that diverges from reality is worse than no documentation: it misleads users and erodes trust. Rust's doc tests solve this by compiling and running every `///` code example as a test. If you change the function signature or behavior, the doc test fails — documentation can never silently go out of date. This is used pervasively in the Rust standard library, the `serde` crate, and virtually every published Rust crate.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust's ownership model means that values are moved by default. For types where copying is cheap and always valid — integers, booleans, simple structs — implicit copying is desirable. For types with heap allocation — `String`, `Vec`, complex structs — copying is potentially expensive and must be explicit. Rust encodes this distinction in two traits: `Copy` (implicit bitwise copy, zero-cost) and `Clone` (explicit `.clone()`, potentially expensive). Seeing `.clone()` in code signals a potentially costly heap duplication. Not seeing it means the copy is stack-only. This visual distinction makes performance characteristics readable from the code.

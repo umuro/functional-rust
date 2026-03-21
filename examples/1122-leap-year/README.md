@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A leap year in the Gregorian calendar occurs every 4 years, except for centuries (divisible by 100), which are only leap years if also divisible by 400. The rule has three conditions arranged in a specific priority: `(divisible by 4) AND NOT (divisible by 100) OR (divisible by 400)`. This is a classic exercise in boolean logic and is the first date-calculation building block.

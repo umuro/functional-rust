@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A Fold is a read-only optic that focuses on multiple values and aggregates them. Unlike a Traversal (which can modify), a Fold only reads — providing `sum`, `count`, `max`, `any`, `all` operations derived from a single `to_list` primitive. Folds are useful when you need to aggregate across deeply nested or graph-structured data without modifying it. They compose like traversals but with only read capabilities.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The choice between `panic!()` and returning `Result` is architectural. Panic for programming errors (bugs the developer should fix); return `Result` for operational errors (bad user input, network failures, missing files). Getting this wrong creates brittle APIs that crash on recoverable failures, or obscure programmer errors behind error types that callers don't know how to handle. This distinction maps to OCaml's choice between exceptions and `Result`.

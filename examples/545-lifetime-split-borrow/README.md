@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A common pattern in game engines and simulations: update the player's position while reading the enemy list from the same `GameState`. Naively, borrowing `&mut self` prevents reading any field — the entire struct is "mutably borrowed." But Rust's borrow checker actually tracks borrows at the field level, not just the struct level. Split borrows let you hold `&mut` to one field and `&` to another simultaneously, as long as they do not alias. This is critical for performance-sensitive code that avoids unnecessary cloning.

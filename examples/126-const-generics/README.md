@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Before const generics, Rust arrays `[T; N]` were a special case — their size was part of the type, but you could not write generic code over arbitrary sizes without macros. Libraries had to implement traits separately for arrays of size 0 through 32. Const generics allow `N` to appear as a type-level constant, enabling truly generic fixed-size arrays, matrices, and buffers where dimension mismatches become compile errors rather than runtime panics.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Two players alternate taking stones from either end of a row. Each player plays optimally to maximize their own stones. Does the first player always win when the number of piles is even?

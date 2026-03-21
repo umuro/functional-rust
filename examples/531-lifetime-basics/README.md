@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Memory safety without a garbage collector requires the compiler to track how long references are valid. C and C++ leave this to the programmer, leading to use-after-free bugs — one of the most common sources of security vulnerabilities (CVEs). Rust solves this with lifetimes: explicit annotations that encode reference validity constraints in the type system. When a function returns a reference, the compiler needs to know which input the output borrows from, so it can reject code that would create a dangling pointer. Lifetime annotations are the mechanism for expressing this relationship.

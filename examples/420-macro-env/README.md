@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Version numbers, API keys for build-time compilation, build metadata, and package names should be embedded in binaries without being hardcoded as string literals that can drift from the actual package metadata. `env!("CARGO_PKG_VERSION")` reads the version from `Cargo.toml` at compile time, producing a `&'static str` with zero runtime cost. `option_env!` handles optional variables that may not be present, returning `Option<&'static str>`. This is how `--version` flags get their version strings, and how build-time configuration is embedded into binaries.

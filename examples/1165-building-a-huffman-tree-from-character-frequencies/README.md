@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Huffman coding, invented by David Huffman in 1952, is an optimal prefix-free encoding: common characters get short bit sequences, rare characters get long ones. It is used in ZIP, gzip, PNG, JPEG, and MP3 — virtually every compression format incorporates Huffman coding.

@@ -1,8 +1,8 @@
 # Example 1085: Dijkstra's Shortest Path
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Graphs & Priority Queues
-**OCaml Source:** `example.ml` — functional Dijkstra over `IntMap` with sorted list as priority queue
+
 
 ## Problem Statement
 

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 String processing functions often receive data that usually needs no modification — normalizing whitespace, sanitizing identifiers, trimming. Returning `String` always allocates even when the input is already valid. Returning `&str` requires the caller to own the buffer. Rust's `Cow<'a, str>` (Clone-on-Write) solves the dilemma: it holds either a borrowed reference (`Cow::Borrowed(&str)`) or an owned string (`Cow::Owned(String)`) and deref-transparently exposes `&str` in both cases. Allocation happens only when the data actually needs modification. This pattern appears in serde deserialization, HTTP header parsing, and any API that wants to avoid unnecessary copying.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A bifunctor is a type with two type parameters where both can be independently mapped. `Result<T, E>` is the canonical bifunctor: `map` transforms the `T` (success side), `map_err` transforms the `E` (error side), and `bimap` does both. Other bifunctors: tuples `(A, B)`, `Either<L, R>`.

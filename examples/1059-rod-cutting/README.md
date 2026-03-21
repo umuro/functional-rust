@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rod cutting asks: given a rod of length n and a price table for each possible length, how should you cut the rod to maximize revenue? Cutting a rod of length 7 into pieces of length 3 and 4 might be worth more than selling it whole. This is an unbounded knapsack variant where the rod lengths are the "item sizes" and prices are the "values."

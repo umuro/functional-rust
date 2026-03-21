@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Locating the position of an element matching a condition is a fundamental operation: finding where a token appears in a list, locating a delimiter in a byte sequence, or finding the insertion point in a sorted array. Unlike `find()` which returns the element, `position()` returns the zero-based index — essential when the index itself is needed for slicing, bounds computation, or further navigation.

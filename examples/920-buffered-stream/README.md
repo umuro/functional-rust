@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When processing a stream of items where each item requires significant I/O or computation, processing them one at a time creates a bottleneck. Buffered or concurrent processing allows N items to be in-flight simultaneously, keeping the processing pipeline saturated. This pattern appears in web crawlers (N concurrent HTTP requests), image processing pipelines (N images being resized in parallel), and database batch operations (N rows being processed simultaneously). The key challenge is bounding concurrency — allowing N concurrent operations without spawning unbounded threads. This example uses a semaphore to implement bounded concurrency.

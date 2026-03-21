@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 In advanced generic programming, you sometimes need to express and prove that two type parameters are the same type. This arises in type-safe casts, in GADT-style encodings, and in generic code that needs to branch on whether two type parameters are equal. A type equality witness `Eq<A, B>` is a value that proves `A = B` at the type level, enabling safe casts without `unsafe` code and without dynamic type checking.

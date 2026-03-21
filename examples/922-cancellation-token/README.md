@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Long-running operations — large file downloads, iterative computations, background scans — must be stoppable. Stopping a thread forcefully from outside is unsafe in any language (leaked resources, inconsistent state). The safe pattern is cooperative cancellation: the running task periodically checks a cancellation flag and exits cleanly when set. This is the `CancellationToken` pattern from .NET, `context.Context` from Go, and `AbortController` from JavaScript. Rust's `std::sync::atomic::AtomicBool` provides the thread-safe flag needed for this pattern without heap allocation overhead.

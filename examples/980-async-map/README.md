@@ -1,6 +1,8 @@
 **Difficulty:** ⭐⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐⭐  
+
 [async-map on hightechmind.io](https://hightechmind.io/posts/functional-rust/async-map)
 
 ---

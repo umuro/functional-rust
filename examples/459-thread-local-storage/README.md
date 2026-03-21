@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Some per-request or per-thread state shouldn't be shared: random number generator seeds, per-thread error codes, per-thread profiling counters, locale settings. Global shared state requires synchronization; passing context through every function is verbose. Thread-local storage (TLS) provides a third option: each thread has its own independent copy of a variable, accessible without synchronization. Accessing TLS is as fast as a local variable with OS thread support, and Rust's `thread_local!` makes it safe and ergonomic.

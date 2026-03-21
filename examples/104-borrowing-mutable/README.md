@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Mutable references are the mechanism for safe mutation in Rust: you can modify data through a `&mut T` reference, but only one `&mut T` can exist at a time, and no shared `&T` references can coexist with it. This is Rust's compile-time implementation of the mutual exclusion principle: writers exclude all other accessors.

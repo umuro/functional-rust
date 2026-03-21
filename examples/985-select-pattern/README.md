@@ -1,6 +1,8 @@
 **Difficulty:** ⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐  
+
 [select-pattern on hightechmind.io](https://hightechmind.io/posts/functional-rust/select-pattern)
 
 ---

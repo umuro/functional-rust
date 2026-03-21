@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 While `Strong` profunctors correspond to lenses (product types, always present), `Choice` profunctors correspond to prisms (sum types, possibly absent). `Choice` adds `left: P<A, B> -> P<Either<A, C>, Either<B, C>>` — the ability to "pass through" the `Right(C)` case while operating on `Left(A) -> Left(B)`. Functions implement `Choice` naturally. A Van Laarhoven prism requires `Choice`: `type Prism s a = ∀p. Choice p => p a b -> p s t`.

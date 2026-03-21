@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Batch processing is fundamental to systems programming: sending data in fixed-size network packets, processing database rows in pages, dividing work among threads, or encoding binary data in base64 groups of 3 bytes. The `chunks(n)` method partitions a slice into non-overlapping sub-slices of at most `n` elements, handling the remainder (a possibly smaller final chunk) automatically.

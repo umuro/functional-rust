@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Most grammars involve repetition: a sequence of digits forms a number, a sequence of letters forms an identifier, a sequence of statements forms a block. `many0` (zero or more) and `many1` (one or more) generalize repetition for any parser. These combinators run a parser repeatedly until it fails, collecting all results into a `Vec<T>`. `many0` always succeeds (empty input is zero repetitions); `many1` fails if the first application fails.

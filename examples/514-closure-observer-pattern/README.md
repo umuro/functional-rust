@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The observer (publish-subscribe) pattern originated in GUI frameworks of the 1980s and became one of the Gang of Four behavioral design patterns. The core problem: how do you notify multiple independent components when a value changes, without tightly coupling them together? Traditional OOP solutions require implementing an `EventListener` interface and registering objects. Closures eliminate the need for a class hierarchy — any callable that matches the signature can be registered as a handler, making the pattern far more composable and concise.

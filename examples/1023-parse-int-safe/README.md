@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Parsing integers from strings is the entry point for untrusted data in almost every application: reading configuration files, processing HTTP query parameters, deserializing CSV rows. C's `atoi` silently returns 0 on failure. C++'s `std::stoi` throws an exception. Python's `int()` raises a `ValueError`. Rust's `str::parse::<i64>()` returns `Result<i64, ParseIntError>`, forcing the caller to handle the failure case.

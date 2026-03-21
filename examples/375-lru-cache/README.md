@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Cache memory is finite. When CPU caches, web caches, and database buffer pools fill up, they must decide which entries to evict. The Least Recently Used (LRU) policy discards the entry that has not been accessed for the longest time, exploiting temporal locality — the observation that recently accessed data is more likely to be accessed again soon. The challenge is achieving O(1) time for both lookup and eviction simultaneously.

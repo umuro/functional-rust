@@ -1,6 +1,8 @@
 **Difficulty:** ⭐⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐⭐  
+
 [merge-sort on hightechmind.io](https://hightechmind.io/posts/functional-rust/merge-sort)
 
 ---

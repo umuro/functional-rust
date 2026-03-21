@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Define custom error enums and implement `fmt::Display` and `std::error::Error` for them. Create `ValidationError` for age and name validation, and `DetailedError` for field-level errors with context. Compare with OCaml's exception-based error handling and variant-based `Result` errors.

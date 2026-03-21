@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The dotstring representation of a binary tree (OCaml 99 Problems #39) uses a preorder traversal where leaves are represented by `.` characters. A node `x` with left subtree `l` and right subtree `r` becomes `x` followed by the dotstring of `l` then `r`. The self-delimiting property — you can parse the string left to right without needing parentheses — makes it efficient for both storage and streaming.

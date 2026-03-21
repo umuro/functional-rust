@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many combinatorial optimization and enumeration problems — N-queens, Sudoku solving, permutation generation, subset enumeration, graph coloring, constraint satisfaction — require exploring a search space that grows exponentially with input size. Backtracking systematically explores candidates and abandons (backtracks from) any partial solution as soon as it determines it cannot lead to a valid complete solution. This pruning makes backtracking vastly more efficient than brute force for well-constrained problems, though still exponential in the worst case. Understanding backtracking as a reusable framework — not just specific puzzles — enables applying it to new combinatorial problems.

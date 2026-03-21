@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The Store comonad models a mutable reference into a larger data structure: given a "getter" function and a current focus position, you can read the value at focus, move the focus elsewhere, or derive new stores by transforming the getter. This captures the essence of how lenses work under the hood. In Rust, implementing Store reveals how comonadic structure enables elegant data-access abstractions without mutation.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Type inference for closures is a quality-of-life feature that distinguishes modern functional-leaning languages from older systems languages. In Rust, the compiler infers closure parameter and return types from the context in which the closure is first used — similar to how Hindley-Milner inference works in ML-family languages. However, unlike full HM inference, Rust locks in a closure's type at its first use site and rejects subsequent calls with different types. Understanding these rules helps avoid cryptic type errors when composing iterators and higher-order functions.

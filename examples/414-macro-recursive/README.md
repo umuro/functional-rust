@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Some computations and code generation tasks have naturally recursive structure: counting elements, reversing lists, checking if a value equals any of N options. In functions, recursion is straightforward. In macros, recursion works by having one arm handle the base case (empty input) and another arm peel off one element and recursively invoke the macro on the remainder. This compile-time recursion is bounded by Rust's `macro_recursion_limit` (default 128) and computes entirely at compile time, producing efficient code with no runtime recursion.

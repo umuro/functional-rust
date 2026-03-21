@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Kruskal's algorithm (1956) finds the MST by sorting all edges by weight and adding each edge if it doesn't create a cycle, using a Union-Find (Disjoint Set Union) data structure to detect cycles in near-O(1). While Prim's grows from a vertex, Kruskal's grows from edges. It is more efficient for sparse graphs (E ≈ V) and is the basis for Borůvka's parallel MST algorithm used in distributed computing.

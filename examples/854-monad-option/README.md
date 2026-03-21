@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A chain of operations that might fail — look up a user, find their settings, get their preferred language — requires either nested `if let Some` blocks (deeply indented "pyramid of doom") or the `?` operator shorthand. The Option monad formalizes this: `and_then` sequences computations where each step might return `None`, automatically propagating absence without explicit checking. This is Rust's `Option::and_then`, Haskell's `Maybe` monad, and OCaml's `Option.bind`. The power: code that looks like a straight pipeline reads cleanly, yet automatically handles every possible absence at every step.

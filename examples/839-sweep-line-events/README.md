@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many geometric problems — computing area of union of rectangles, finding all intersecting segment pairs, computing Voronoi diagrams — can be solved efficiently by imagining a vertical line sweeping left-to-right through the plane. The sweep line processes "events" (start/end of intervals, segment crossings) in sorted x-order, maintaining a data structure of active elements. This reduces 2D problems to a sequence of 1D operations. The sweep line technique is the basis for computational geometry algorithms used in GIS, VLSI design, and computer graphics.

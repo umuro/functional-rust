@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Standard lifetime parameters on functions are monomorphic: `F: Fn(&'a str) -> &'a str` means `F` works for one specific lifetime `'a` chosen by the caller. But some abstractions need functions that work for any lifetime — a callback that processes strings of any duration, not just one specific scope. Higher-Ranked Trait Bounds (HRTB) with `for<'a>` express universal quantification over lifetimes: `F: for<'a> Fn(&'a str) -> &'a str` means `F` must work for every possible lifetime. This is essential for trait objects, parser combinators, and middleware that receive arbitrarily-scoped references.

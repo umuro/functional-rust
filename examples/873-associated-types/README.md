@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When a trait operation involves a type that varies per implementation — like the element type of a container, or the output type of an addition — you need a way to express that relationship without making the trait itself generic. Rust's associated types solve this: a trait `Container` declares `type Item`, and each implementation specifies what `Item` is. This avoids the ambiguity of generic traits (where multiple `Container<i32>` and `Container<String>` implementations could coexist on the same struct) and makes trait bounds more readable. OCaml's module types use the same idea with `type t` and `type item` declarations inside module signatures.

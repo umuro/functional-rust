@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Use single-field tuple structs (`struct Meters(f64)`) to give distinct types to values that share the same underlying representation. Prevent units-of-measure confusion (`Meters` vs `Seconds`), enforce distinct ID types (`UserId` vs `OrderId`), and add type-safe conversions between `Celsius` and `Fahrenheit` — all with zero runtime overhead.

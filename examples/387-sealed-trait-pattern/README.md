@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust's trait system is open by default — any crate can implement any trait for any type (subject to orphan rules). Sometimes library authors want to prevent external implementations: a `Token` trait whose implementors are exactly the types the library defines, ensuring exhaustive handling and preventing downstream breakage when new variants are added. The sealed trait pattern uses a private `Sealed` supertrait to enforce this: only types that implement `private::Sealed` can implement the public trait, and `private::Sealed` cannot be named by external code.

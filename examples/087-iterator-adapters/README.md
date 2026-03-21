@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implement custom iterator adapters — `MyMap`, `MyFilter`, and `MyTake` — by wrapping an inner iterator and implementing `next`. Bundle them into an extension trait `MyIterExt` for fluent chaining. Compare with OCaml's `Seq`-based `my_map`, `my_filter`, and `my_take` functions.

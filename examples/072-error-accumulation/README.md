@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 This example implements a custom `Validation<T, E>` type that accumulates errors rather than short-circuiting (see also example 054 for the practical use case). The distinction is fundamental: `Result` is a monad (errors short-circuit), `Validation` is an applicative functor (errors accumulate). You cannot derive `Validation` from `Result`.

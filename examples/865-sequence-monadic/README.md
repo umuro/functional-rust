@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `sequence` converts a collection of monadic values into a monadic collection: `Vec<Option<T>> → Option<Vec<T>>` or `Vec<Result<T,E>> → Result<Vec<T>,E>`. While `traverse` applies a function and sequences simultaneously, `sequence` is pure rearrangement — it just flips the containers. If you already have a `Vec<Option<T>>` from mapping over a collection, `sequence` collects them into `Option<Vec<T>>`. Rust's `Iterator::collect` achieves this for `Option` and `Result`. The pattern appears when: you have pre-computed individual results and need to combine them, or when working with futures (`Vec<Future<T>> → Future<Vec<T>>` via `futures::future::join_all`).

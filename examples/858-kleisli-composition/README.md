@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Function composition `g ∘ f` works for plain functions, but fails for monadic functions `f: A -> Option<B>` and `g: B -> Option<C>` — you can't compose them directly because `g` expects `B`, not `Option<B>`. Kleisli composition solves this: `f >=> g` is a function `A -> Option<C>` that applies `f`, then if `Some(b)`, applies `g(b)`. This enables building pipelines of fallible functions as composable building blocks. Kleisli arrows are the category-theoretic way to think about monadic computation: instead of the Kleisli category being hard to understand, think of it as "composition that handles failure automatically." Used in parser combinators, middleware chains, and validation pipelines.

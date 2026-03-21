@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Real data structures are rarely flat — they are trees: enums containing structs containing options containing results. Nested patterns allow matching deeply nested structures in a single expression, extracting values from multiple levels simultaneously. Without nested patterns, extracting a value from `Some(Some(Point { x, y }))` would require multiple nested `match` statements. Nested patterns are essential in AST traversal, JSON processing, configuration parsing, and any domain with layered data.

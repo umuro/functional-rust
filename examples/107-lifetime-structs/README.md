@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When a struct holds a reference, the struct's validity is tied to the data it borrows. A struct holding `&str` cannot outlive the `String` it was created from — if the `String` is dropped, the struct would hold a dangling pointer. Rust's lifetime annotations on structs make this relationship explicit, preventing the struct from being used after its data is freed.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Mutex-based synchronization has overhead: kernel entry, thread scheduling, potential contention. For simple operations on single values — incrementing a counter, setting a flag, tracking a maximum — atomic hardware instructions provide the same guarantee without a lock. Modern CPUs support atomic read-modify-write operations (fetch_add, compare_and_swap) that execute atomically from all other cores' perspectives. Rust's `std::sync::atomic` module exposes these directly.

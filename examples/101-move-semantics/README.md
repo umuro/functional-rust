@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Memory safety without a garbage collector requires a clear ownership model. C++ introduced move semantics in C++11 to avoid expensive deep copies when transferring ownership of heap resources. Rust takes this further: every value has exactly one owner, and assigning a non-`Copy` value to a new variable transfers ownership — the original binding becomes invalid. The compiler enforces this statically, eliminating use-after-free and double-free at zero runtime cost.

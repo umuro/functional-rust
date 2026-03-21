@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Levenshtein edit distance measures the minimum number of single-character insertions, deletions, and substitutions to transform one string into another — the foundation of spell checkers, fuzzy search, and diff algorithms.
 
 ## Problem Statement

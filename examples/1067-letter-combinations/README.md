@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Given a phone number keypad string (digits 2–9), generate all possible letter combinations. This is a classic Cartesian product problem: each digit maps to a set of letters, and you want all combinations taking one letter from each digit's set.

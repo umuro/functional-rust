@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Graph coloring assigns colors to vertices so no two adjacent vertices share a color, using at most k colors. The four-color theorem (every planar map is 4-colorable) is famous; the general k-coloring decision problem is NP-complete for k ≥ 3. Applications: register allocation in compilers (variables with conflicting lifetimes need different registers), exam scheduling (conflicting exams need different time slots), frequency assignment in cellular networks.

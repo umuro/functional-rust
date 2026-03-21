@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Given a list and a function that might fail for each element, how do you apply the function to all elements and either get all results or fail at the first problem? `map` produces `Vec<Option<U>>` — a list of maybes. `traverse` flips this to `Option<Vec<U>>` — either all succeeded or the whole thing failed. This is the "all or nothing" pattern: validate a batch of inputs, parse a list of strings, look up a list of keys — succeed if all succeed, fail on first problem. Rust achieves this via `Iterator::collect::<Option<Vec<T>>>()`, which is traverse for Option built into the language.

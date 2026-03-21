@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 This example explores advanced type theory concepts applied to Rust. Church encoding, Scott encoding, finally tagless, free monads, and effect systems are all techniques from the typed lambda calculus and category theory research community. They demonstrate how to encode data and control as pure functions, how to build extensible DSLs without committing to a representation, and how to model effects as values rather than side effects. These patterns originate in Haskell and OCaml research and require adapting to Rust's ownership model.

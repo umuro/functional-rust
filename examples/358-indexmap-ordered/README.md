@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `HashMap` iterates in arbitrary order; `BTreeMap` iterates in key-sorted order. But sometimes you need to iterate in insertion order — preserving the sequence in which entries were added. This is how Python dicts work since 3.7, how JSON objects are commonly expected to behave, and how HTTP headers must be processed. The `indexmap` crate provides this natively; this example demonstrates the pattern using a `HashMap` + `Vec<K>` combination to illustrate the mechanism, which you can replace with the real `IndexMap` crate in production.

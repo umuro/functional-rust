@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust traits with `async fn` methods have a fundamental limitation: the returned `Future` type differs per implementation, making traits with async methods not object-safe. The workaround is to return `Pin<Box<dyn Future<Output = T> + Send>>` — a heap-allocated, type-erased future. The `async-trait` crate automates this boxing. Understanding the manual pattern illuminates what the macro generates and when to use each approach.

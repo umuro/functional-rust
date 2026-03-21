@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `filter` selects elements from a collection that satisfy a predicate, discarding the rest. It is the second pillar of functional data processing (alongside `map` and `fold`), appearing in every query language, data pipeline, and UI list filtering operation.

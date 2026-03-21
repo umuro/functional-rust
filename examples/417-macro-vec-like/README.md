@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The `vec![1, 2, 3]` literal macro is so convenient that the absence of equivalent literals for `HashSet`, `BTreeSet`, and `HashMap` is a constant friction point. Initializing these collections requires `let mut s = HashSet::new(); s.insert(1); s.insert(2);` — three lines per item. Collection literal macros (`set!`, `map!`, `btree_set!`) bring the same ergonomics to all standard collections, making initialization as concise as `vec!` while maintaining type safety and supporting trailing commas.

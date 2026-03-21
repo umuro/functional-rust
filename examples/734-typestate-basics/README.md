@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 State machines are everywhere: network connections, file handles, protocol sessions, UI wizards. The standard approach encodes state as a runtime enum and adds `match` checks before every operation. This moves errors from compile time to runtime — you can write `socket.send(data)` on a closed socket and only discover the bug at runtime. The typestate pattern encodes state in the type parameter itself, making invalid transitions a compile error. Zero-cost at runtime: all phantom data is erased.

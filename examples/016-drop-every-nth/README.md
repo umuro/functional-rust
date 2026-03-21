@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Dropping every nth element from a list (OCaml 99 Problems #16) — keeping all elements except those at positions 0, n-1, 2n-1, ... (1-indexed: drop positions n, 2n, 3n, ...) — is a simple but instructive filtering problem. It requires maintaining a counter alongside the data, which is the job of `enumerate`.

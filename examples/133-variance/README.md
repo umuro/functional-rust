@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Variance determines when a generic type `F<T>` can be substituted for `F<U>` given a subtype or lifetime relationship between `T` and `U`. Getting variance wrong leads to subtle memory safety bugs: if `&mut Vec<Dog>` were covariant in `Dog`, you could assign a `Cat` into a `Vec<Dog>` through it. Rust's borrow checker enforces correct variance automatically for most types, but `PhantomData` lets you declare the correct variance for raw-pointer wrappers where the compiler cannot infer it.

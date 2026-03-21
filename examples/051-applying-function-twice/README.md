@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Applying a function twice — `f(f(x))` — is a simple but illuminating exercise in higher-order functions and partial application. It demonstrates that functions are first-class values: `twice` takes a function as a parameter and returns a value (or a new function via partial application). This is the simplest non-trivial higher-order function, used as an introduction in OCaml's CS3110 course at Cornell.

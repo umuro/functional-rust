@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many algorithms require generating sequences without a predetermined endpoint: cycling through a palette, repeating a default value, generating an arithmetic sequence of any length. In languages without lazy evaluation, this requires explicit loop counters and early exits. Rust provides `std::iter::repeat`, `repeat_with`, `cycle`, and `successors` as built-in infinite iterator constructors. These integrate naturally with `.take(n)` to produce finite results. Haskell's `iterate` and OCaml's `Seq.unfold` serve the same role. This example surveys all the standard infinite iterator patterns in Rust.

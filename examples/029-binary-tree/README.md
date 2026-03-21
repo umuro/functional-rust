@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A binary tree is the most important recursive data structure in computer science. It underlies binary search trees (std::collections::BTreeMap), heaps (priority queues), Huffman coding trees (compression), parse trees (compilers), and spatial partitioning (k-d trees, R-trees). The recursive definition — a tree is either a leaf or a node with a value and two subtrees — maps perfectly to algebraic data types.

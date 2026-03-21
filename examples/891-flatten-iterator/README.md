@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Nested data structures are pervasive: lists of lists, optional values that may or may not be present, results that may succeed or fail. Flattening removes exactly one level of nesting, collapsing `Vec<Vec<T>>` into `Vec<T>`, `Option<Option<T>>` into `Option<T>`, or `Vec<Option<T>>` into `Vec<T>`. This is formally the monadic `join` operation. In Haskell, `concat` and `>>=` (bind) express this. OCaml has `List.concat` and `Option.join`. Rust's `.flatten()` and `.flat_map()` (which is `map` followed by `flatten`) are the standard tools. This example covers all the flatten patterns across nested containers.

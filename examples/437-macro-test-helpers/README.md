@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Test code benefits from higher-level assertions than `assert_eq!`. Floating-point tests need approximate equality, panic testing needs `catch_unwind` boilerplate, and table-driven tests need repetition over input/output pairs. Test helper macros eliminate this repetition: `assert_approx!(a, b)`, `assert_panics!(expr)`, `test_cases!(fn, input => expected, ...)`. These make tests more readable, reduce boilerplate, and ensure consistent error messages when assertions fail.

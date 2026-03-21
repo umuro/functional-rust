@@ -1,8 +1,8 @@
 # Example 1103: Monoid Pattern — Trait-Based Combining
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Type Classes & Abstractions
-**OCaml Source:** `example.ml` — first-class module `MONOID` with `concat_all` via `List.fold_left`
+
 
 ## Problem Statement
 

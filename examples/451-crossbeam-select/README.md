@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A thread watching multiple channels needs to respond to whichever has data first, without blocking on one while the other has messages. Go's `select` statement solves this natively. Rust's `std::sync::mpsc` has no select mechanism — you'd need to poll with `try_recv` in a loop, wasting CPU. `crossbeam::select!` provides efficient blocking select across multiple channels: the calling thread blocks until any channel has a message, then executes the matching arm.

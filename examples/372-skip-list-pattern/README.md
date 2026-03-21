@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Linked lists support O(1) insert/delete at a known position but O(n) search. Balanced BSTs (AVL, red-black) support O(log n) search with complex rotation logic. Skip lists (William Pugh, 1990) achieve O(log n) expected time for search, insert, and delete using a simpler probabilistic approach: multiple layers of linked lists where each layer skips over elements, creating "express lanes" for fast traversal. Redis's sorted sets, LevelDB's memtable, and HBase use skip lists as their core sorted data structure. This example demonstrates the concept with sorted vectors as simulated express lanes, illustrating the layered search principle.

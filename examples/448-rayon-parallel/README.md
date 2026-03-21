@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Converting sequential code to parallel is usually complex: thread management, load balancing, result collection. Rayon's parallel iterators solve this: replace `.iter()` with `.par_iter()` and Rayon handles thread spawning, work distribution, and result aggregation. The library implements parallel `map`, `filter`, `fold`, `sum`, and 40+ other operations. This example demonstrates the underlying pattern using `thread::scope` to show what Rayon does internally.

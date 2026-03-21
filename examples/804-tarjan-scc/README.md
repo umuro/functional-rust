@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A Strongly Connected Component (SCC) is a maximal subgraph where every vertex can reach every other vertex. Tarjan's algorithm (1972) finds all SCCs in O(V+E) time using a single DFS, tracking discovery times and low-link values. SCCs are used in compiler optimization (detecting cycles in dataflow graphs), social network analysis (finding tight-knit communities), deadlock detection, and 2-SAT (satisfiability) solvers.

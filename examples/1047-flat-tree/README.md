@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Binary heaps and segment trees store binary trees in arrays using the heap indexing formula: for a node at index `i`, the left child is at `2*i+1`, the right child at `2*i+2`, and the parent at `(i-1)/2`. This array-based tree representation eliminates pointer overhead, maximizes cache locality, and enables O(1) parent/child navigation without storing explicit pointers.

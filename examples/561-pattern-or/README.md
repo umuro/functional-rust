@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Matching the same action for multiple variants is a common need in language interpreters, state machines, and data validation. Before Rust 2021's or-pattern stabilization, developers had to either duplicate arms or use `if matches!(...)` guards. Or patterns (`|` in match arms and `if let`) allow matching several alternatives with one arm, keeping code DRY and exhaustiveness checking intact. OCaml has always had this with its `|` in `match`, making it a natural comparison point.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Real applications deal with multiple error types from different libraries: `std::io::Error` from file I/O, `serde_json::Error` from JSON parsing, `reqwest::Error` from HTTP — all in the same function. To use `?` with mixed error types, you need a unified error type and `From` implementations for each source error.

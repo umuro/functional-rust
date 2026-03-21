@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Primitive types like `String` or `u32` carry no domain meaning — a user ID and a product ID are both `u32`, but passing one where the other is expected is a bug the type checker won't catch. Newtypes wrap primitives in named types that are distinct at the type level, add invariants via smart constructors, and enable implementing external traits on otherwise opaque types. This is one of the most practical patterns in production Rust code.

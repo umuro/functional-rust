@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Some problem domains have natural syntaxes that are more readable and less error-prone than general-purpose code. SQL queries, HTML templates, configuration languages, and test specifications benefit from DSL syntax. `macro_rules!` can implement simple DSLs within Rust source: `query!(SELECT name, age FROM users WHERE "active = true")` is safer and more readable than string concatenation. The macro validates structure at compile time (correct SQL keywords, table identifiers) and generates the underlying representation.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When a generic function involves multiple type parameters, each with several bounds, the inline bound syntax `<T: A + B, U: C + D, F: Fn(T) -> U>` becomes unwieldy. Rust's `where` clause separates the type parameter list from the constraints, moving them to a dedicated block after the function signature. This improves readability for complex higher-order functions, especially those accepting multiple function parameters. OCaml achieves the same clarity through structural typing and module signatures, which do not require listing constraints inline.

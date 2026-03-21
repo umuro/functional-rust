@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 As applications grow, different subsystems produce different categories of errors. A web service has authentication errors, database errors, network errors, and business logic errors. Representing all of these as `String` or `Box<dyn Error>` loses type information that callers could use to take specific recovery actions — retry on a timeout, redirect on auth failure, or surface a 400 vs 500 HTTP status code.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Given a string and a dictionary of words, can the string be segmented into a sequence of dictionary words? This is the fundamental problem in natural language tokenization, programming language lexers, and CJK (Chinese/Japanese/Korean) text segmentation where words are not separated by spaces.

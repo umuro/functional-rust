@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 CSV (Comma-Separated Values) is the most universally used data interchange format — spreadsheets, database exports, data pipelines. Despite its apparent simplicity, correct CSV parsing is subtle: fields may be quoted (allowing commas inside), quotes inside quoted fields are doubled (`"She said ""hello"""`), and line endings may be `\n` or `\r\n`. This example builds a complete RFC 4180 compliant CSV parser from combinators.

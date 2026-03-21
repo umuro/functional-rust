@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Safe concurrent read access is the foundation of parallel computing. In C, multiple threads reading the same data simultaneously is fine as long as no thread writes, but the language does not enforce this rule — a race condition occurs silently. Rust's borrow checker enforces the reader-writer invariant at compile time: any number of shared references (`&T`) can coexist, but no mutable reference (`&mut T`) can coexist with any other reference.

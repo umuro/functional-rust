@@ -3,8 +3,9 @@
 ---
 
 # 070 — Hamming Distance
-**Difficulty:** ⭐⭐  
+**Difficulty:** ⭐  
 **Category:** Functional Programming  
+
 
 
 ## Problem Statement

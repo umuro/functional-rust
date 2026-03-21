@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When a program repeatedly stores and compares the same set of strings — identifiers in a compiler, field names in a serializer, CSS class names in a renderer — storing each string as a separate allocation wastes memory and makes comparison O(|string|) instead of O(1).

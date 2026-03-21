@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 An `unsafe fn` declaration means "calling this function has preconditions that the compiler cannot verify — the caller is responsible for upholding them." This is different from an `unsafe {}` block inside a function body. `unsafe fn` shifts the burden of proof to the caller and makes the unsafety visible at every call site. The safe-wrapper idiom pairs `unsafe fn` with a public safe function that validates the preconditions before calling the unsafe version.

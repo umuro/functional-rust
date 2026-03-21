@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Exceptions are a special case of algebraic effects — an effect that does not resume the computation. When an exception is thrown, the stack is unwound to the nearest handler, which may handle the exception and continue or re-throw it. Understanding exceptions as non-resumable effects unifies the conceptual model: both exceptions and effects interrupt the normal control flow and transfer control to a handler.

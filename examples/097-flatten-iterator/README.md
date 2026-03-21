@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Use Rust's `.flatten()` to collapse an iterator of iterables into a single flat stream, and `.flat_map(f)` to map then flatten in one step. Demonstrate on nested vectors, optional values (`Vec<Option<T>>`), and a transformation that expands each element into a mini-sequence. Compare with OCaml's `List.concat` and `List.concat_map`.

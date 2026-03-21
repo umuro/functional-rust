@@ -1,8 +1,8 @@
 # Example 001: Applying a Function Twice
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** [Higher-Order Functions | Functional Composition | Currying]
-**OCaml Source:** Classic functional programming pattern
+
 
 ## Problem Statement
 

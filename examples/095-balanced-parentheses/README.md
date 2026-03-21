@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Check whether a string of brackets is balanced: every opening bracket has a matching closing bracket in the correct order. Implement both an imperative `Vec` stack version and a functional `try_fold` version. Compare with OCaml's recursive list-as-stack approach.

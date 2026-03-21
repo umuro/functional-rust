@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Linked lists are the canonical data structure of functional programming. In Haskell, OCaml, and Lisp, the list is the primary collection type and virtually all standard library functions operate on it. Even in languages where arrays are preferred at runtime, understanding the core list operations — `head`, `tail`, `length`, `append`, `reverse` — gives insight into structural recursion and the accumulator pattern.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A dangling pointer — a reference to memory that has been freed — is one of the most common and dangerous bugs in C/C++. Rust prevents dangling pointers through lifetimes: compile-time annotations that track how long a reference remains valid. When a function returns a reference, the compiler needs to know whether it comes from parameter `a`, parameter `b`, or neither. Explicit lifetime parameters `'a` provide this information. OCaml's GC prevents dangling pointers at runtime; Rust prevents them at compile time with zero runtime cost. Lifetimes are the mechanism behind Rust's memory safety guarantee.

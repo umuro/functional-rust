@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Counting the number of distinct paths in a grid from top-left to bottom-right (moving right or down) is a combinatorics problem solvable by DP. The answer without obstacles is `C(m+n-2, m-1)` — a binomial coefficient — but obstacles require DP. This problem models robot motion planning, network routing analysis, and combinatorial counting. The obstacle variant uses the same recurrence with zeroed cells.

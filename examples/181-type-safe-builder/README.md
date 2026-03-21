@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A SQL query builder that allows calling `.where_()` before `.from()`, or calling `.build()` without a `SELECT` clause, is a footgun — the error appears at runtime when the query fails, not at the API call site. Type-safe builders use typestate to enforce calling order at compile time: `build()` is only available when all required clauses have been provided. This pattern appears in HTTP clients (`reqwest`), ORMs (`diesel`), and configuration APIs.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Production parsers must provide actionable error messages, not "parse error at offset 423." Users need to know what went wrong, where (line and column), and what was expected. Error recovery goes further: instead of stopping at the first error, the parser continues, collecting multiple errors. This requires tracking position (line/column from offset), enriching errors with expected-token information, and synchronizing on error tokens to resume parsing.

@@ -1,8 +1,8 @@
 # Example 1082: Tail-Recursive Map with CPS
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Higher-Order Functions
-**OCaml Source:** Cornell CS3110 — Functional Programming in OCaml
+
 
 ## Problem Statement
 

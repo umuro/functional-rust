@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Trait objects (`dyn Trait`) enable runtime polymorphism in Rust — the ability to work with different types through a common interface without knowing the concrete type at compile time. They are Rust's answer to OOP inheritance and interface polymorphism: `Vec<Box<dyn Shape>>` can hold circles, rectangles, and triangles in one collection.

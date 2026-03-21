@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Euler's totient function phi(n) counts the integers from 1 to n that are coprime to n. It is fundamental to RSA key generation: the private key d satisfies `e * d ≡ 1 (mod phi(n))` where n = p*q. By Euler's theorem, `a^phi(n) ≡ 1 (mod n)` for any a coprime to n, generalizing Fermat's little theorem. phi(n) also counts primitive roots, answers "how many fractions in lowest terms have denominator n," and appears in the analysis of the Stern-Brocot tree. For prime p, phi(p) = p-1; for prime power p^k, phi(p^k) = p^k - p^(k-1); these combine multiplicatively for general n.

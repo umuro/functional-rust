@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Statically typed languages normally cannot store values of unknown type and later recover their original type. Rust's `std::any::Any` trait provides controlled runtime type information: any `'static` type automatically implements `Any`, and `dyn Any` enables downcasting back to the original type with `downcast_ref::<T>()`. This enables heterogeneous containers, scripting engine value types, dependency injection containers, and event systems where the payload type varies.

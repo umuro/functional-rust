@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 OCaml's `|>` (pipe) operator, F#'s `|>`, and Elixir's `|>` all solve the same readability problem: deeply nested function calls read inside-out, but data transformations are conceptually left-to-right. `f(g(h(x)))` is hard to read; `x |> h |> g |> f` reads as a pipeline. Rust does not have a native pipe operator, but the pattern can be simulated with an extension trait `Pipe` that adds `.pipe(f)` to every type. This lets Rust code express transformation pipelines in the same left-to-right style as functional languages.

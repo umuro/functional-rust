@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Most grammar rules require multiple things in order: a key-value pair is `identifier "=" value`, a function call is `identifier "(" args ")"`. Sequence combinators run two or more parsers in order, combining their results. `pair` keeps both results. `preceded` discards the first (e.g., parse `"("` then `value` — keep `value`). `terminated` discards the second. `delimited` discards both ends and keeps the middle — the most common case for parenthesized expressions.

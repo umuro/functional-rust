@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 All recursive data types — lists, trees, expressions — have the same structure: a "base functor" that describes one layer, plus a mechanism for recursion. The Fix point separates these concerns: `Fix<F>` is the type-level fixed point of a functor `F`. `ListF<A>` describes one list node; `Fix<ListF>` is a full list. This abstraction enables writing a single `cata` (fold) function that works for any recursive type — just provide the one-step algebra.

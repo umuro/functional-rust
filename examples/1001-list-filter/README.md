@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Keep only elements of a list that satisfy a predicate. Implement three approaches: iterator-based `filter_iter` (idiomatic), `filter_in_place` using `Vec::retain`, and `filter_recursive` (functional style). Compare with OCaml's `List.filter` and a recursive implementation.

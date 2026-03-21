@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many mathematical and algorithmic sequences are defined recursively: each element is a function of its predecessor. Powers of 2 (`1, 2, 4, 8, ...`), the Collatz sequence, convergence sequences in numerical methods, and tree/graph traversal via repeated `next_node(current)` calls all share this structure. `std::iter::successors()` formalizes this pattern: given a first value and a function `f(current) -> Option<next>`, it generates the entire infinite (or finite) sequence.

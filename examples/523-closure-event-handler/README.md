@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Event-driven programming is the foundation of GUI toolkits (GTK, Qt, winit), async runtimes (Tokio, async-std), and game engines (Bevy). The central challenge is routing typed events to the correct handlers in priority order, while allowing handlers to stop propagation — preventing lower-priority handlers from seeing an event already consumed by a higher-priority one. This example implements a typed event dispatcher with priority-ordered handler chains using closures as the handler mechanism.

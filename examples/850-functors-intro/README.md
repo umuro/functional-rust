@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A functor is a type that supports mapping a function over its contents while preserving structure. `Option::map`, `Result::map`, `Vec::iter().map()`, `Iterator::map()` are all functors in Rust. The functor pattern abstracts "apply a transformation inside a container" independently of the container type. This enables writing generic algorithms that work over any functor: parse, transform, validate — all without knowing whether the value is present, absent, or in a list. Functors are the foundation of the map → filter → fold pipeline central to functional programming and the Rust iterator protocol.

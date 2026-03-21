@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Async runtimes like Tokio use a fixed pool of threads to drive many concurrent tasks. If any task calls a blocking operation (CPU-intensive computation, synchronous I/O, `thread::sleep`), it stalls the entire thread, preventing all other tasks on that thread from making progress. This is the "blocking in async" problem — it can silently starve the runtime of threads, causing latency spikes and timeouts. The solution is to offload blocking work to a dedicated thread pool (`tokio::task::spawn_blocking`) so the async thread pool remains responsive. Understanding this boundary is critical for mixing synchronous libraries (database drivers, compression codecs) with async code.

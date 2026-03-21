@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Iterator pipelines are often opaque: when a `filter().map().fold()` chain produces an unexpected result, there is no obvious place to insert a print statement without breaking the pipeline. The `inspect()` adapter solves this by injecting a side-effect function at any point in the pipeline — the values pass through unchanged, but the closure can log, count, assert, or monitor them. It is the functional equivalent of `console.log` placed between transformations.

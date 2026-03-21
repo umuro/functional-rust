@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many problems require tracking which elements belong to the same group and efficiently merging groups: Kruskal's minimum spanning tree algorithm, connected components in a graph, network percolation, image segmentation, and equivalence class tracking in type inference. The Union-Find (Disjoint Set Union) data structure, developed by Bernard Galler and Michael Fischer (1964) with the key optimizations by Tarjan (1975), provides near-O(1) amortized operations. The two optimizations — path compression and union by rank — together achieve O(α(n)) per operation where α is the inverse Ackermann function, effectively constant for all practical inputs.

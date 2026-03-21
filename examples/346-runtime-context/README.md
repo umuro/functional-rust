@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Distributed systems attach request IDs, trace spans, and user session tokens to every operation without threading those values through every function call. Thread-local storage solves this: each thread has its own copy of the context variable, invisible to other threads. This enables "ambient context" — logging, metrics, and tracing libraries can read the current request ID without the application code explicitly passing it. Java's `ThreadLocal`, Python's `contextvars.ContextVar`, and Go's `context.Context` (passed explicitly) all address the same problem. Rust uses `thread_local!` for synchronous code and task-local variables (via `tokio::task_local!`) for async code.

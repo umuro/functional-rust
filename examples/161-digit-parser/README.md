@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Numbers are ubiquitous in data formats — configuration files, JSON, CSV, protocol messages. Parsing integers and floats correctly requires handling signs, leading zeros (allowed for floats, disallowed in JSON for integers), and overflow. Building a number parser from primitives demonstrates the full combinator pipeline: match sign, match digits, collect and convert, handle errors. This is the most universally used parser in real-world applications.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A truly generic collection trait in Rust — one where `map` changes the element type — requires GATs. Without them, you cannot express "a `Vec<T>` mapped by `T -> U` produces `Vec<U>`" in a trait that also applies to `HashMap<K, V>`, `BTreeSet<T>`, and custom containers. GAT collections resolve this by making the container's output type generic over the element type, enabling unified generic algorithms over diverse collection types.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Linked lists are the canonical recursive data structure of computer science — every functional language builds on them. Yet in practice, `Vec` outperforms `LinkedList` for almost every use case on modern hardware because CPU caches favor contiguous memory. Rust's `std::collections::LinkedList` is a doubly-linked list that exists mainly for O(1) `append` (splicing) and O(1) `split_off` at arbitrary positions. Understanding when linked lists are appropriate — and when `Vec` is better — is a key data structure competency. This example demonstrates Rust's stdlib `LinkedList` while explaining why it's rarely the right choice.

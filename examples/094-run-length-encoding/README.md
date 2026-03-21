@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Compress a string using run-length encoding: replace consecutive repeated characters with a count followed by the character (e.g. `"AAABCC"` → `"3AB2C"`). Implement both an imperative index-based version and a functional grouping version. Compare with OCaml's `Buffer`-based recursive implementation.

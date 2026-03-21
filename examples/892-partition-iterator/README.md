@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Splitting a collection into groups based on a predicate is a fundamental data classification operation. Database query engines partition rows into matching and non-matching sets. Compilers partition tokens into valid and invalid. Trading systems partition orders into buy and sell. The naive approach uses two separate filter passes, scanning the data twice. `Iterator::partition` does this in one pass, returning two collections simultaneously. OCaml has `List.partition`. Python's `itertools` requires two passes. This single-pass property is critical for large data sets or when the source can only be consumed once.

@@ -1,8 +1,8 @@
 # Example 1187: List.fold_left — Accumulate a Result
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Lists & HOF
-**OCaml Source:** Standard Library — `List.fold_left`
+
 
 ## Problem Statement
 

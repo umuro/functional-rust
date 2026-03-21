@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The power set of a set S is the set of all subsets, including the empty set and S itself. A set with n elements has 2^n subsets. Generating all subsets is needed for exhaustive search, testing all combinations of feature flags, computing all possible teams from a player list, and in model checking for state space exploration.

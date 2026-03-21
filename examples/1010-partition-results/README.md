@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When processing a batch of fallible operations, you often want to continue rather than abort at the first error. A log ingestion pipeline, for example, should record malformed lines separately rather than crashing the entire run. This requires splitting an iterator of `Result` values into two separate collections: the successes and the failures.

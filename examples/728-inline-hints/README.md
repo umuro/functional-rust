@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Modern CPUs execute code most efficiently when hot paths are inlined and cold paths stay out of the instruction cache. Without compiler hints the optimizer must guess which call sites to inline and which branches are rarely taken. Rust exposes `#[inline]`, `#[inline(always)]`, `#[inline(never)]`, and `#[cold]` as explicit hints to LLVM, letting the programmer communicate profiling knowledge without changing program semantics. This matters in systems code — kernel drivers, game engines, parsers — where a mis-inlined function on a hot loop can cost 10–30% throughput.

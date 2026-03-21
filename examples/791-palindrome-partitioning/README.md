@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Palindrome partitioning asks: what is the minimum number of cuts needed to divide a string into parts where each part is a palindrome? This combines two DP subproblems: checking if substrings are palindromes (interval DP) and finding minimum cuts (linear DP). It appears in DNA restriction site analysis, string compression algorithms, and has connections to the Longest Palindromic Subsequence problem.

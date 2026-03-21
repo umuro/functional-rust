@@ -3,10 +3,10 @@
 ---
 
 # Example 010: Run-Length Encoding
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Lists & Data Compression
-**OCaml Source:** OCaml 99 Problems #10
+
 
 ## Problem Statement
 

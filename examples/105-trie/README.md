@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A trie (from re-trie-val, sometimes called a prefix tree) stores strings with shared prefixes, enabling O(|key|) insertion and lookup regardless of how many strings are stored. It is the data structure behind autocomplete, IP routing (longest-prefix match), spell checkers, and dictionary compression.

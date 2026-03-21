@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A catamorphism (fold/cata) is a generalized fold over a recursive data structure. Any fold can be expressed as a catamorphism. The F-algebra (algebra of the base functor) specifies how to collapse one level; the catamorphism applies it recursively bottom-up. This generalizes List.fold_right, tree fold, and any recursive descent. The term comes from Meijer et al. 1991 Bananas, Lenses, Envelopes and Barbed Wire.

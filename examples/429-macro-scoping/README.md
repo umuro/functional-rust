@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Macros have complex scoping rules in Rust that differ from both functions and types. A `macro_rules!` without `#[macro_export]` is only visible within the file it's defined in and below in the same module tree. `#[macro_export]` exports to the crate root, making it accessible as `crate::my_macro!`. The 2018 edition introduced module-path importing (`use crate::my_macro`). Understanding these rules is essential for structuring crates with macros and for importing macros from dependencies.

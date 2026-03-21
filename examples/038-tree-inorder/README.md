@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Inorder traversal visits nodes in left-subtree, root, right-subtree order. For a binary search tree (BST), inorder traversal produces a sorted sequence — this is the key property that makes BSTs useful for range queries. For expression trees, inorder with parentheses produces the standard algebraic notation `"3 + 4"`.

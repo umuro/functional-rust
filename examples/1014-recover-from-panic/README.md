@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust's panics are designed for unrecoverable programming errors, but in server environments you sometimes need to isolate untrusted or user-supplied code: a plugin that panics should not crash the entire process. The `std::panic::catch_unwind` function provides a safety net — it catches a panic before it unwinds past the boundary and converts it to a `Result`.

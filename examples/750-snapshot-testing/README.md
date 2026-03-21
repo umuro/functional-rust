@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Complex output — formatted reports, rendered templates, generated code, pretty-printed data structures — is hard to test with `assert_eq!` because the expected string is long and fragile. Snapshot testing stores the first run's output as a "golden file" and asserts subsequent runs produce identical output. When output legitimately changes, run with `UPDATE_SNAPSHOTS=1` to accept the new output. Used in `insta` (Rust), `jest` (JavaScript), and `expect_test` (OCaml/Reason).

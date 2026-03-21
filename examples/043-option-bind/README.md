@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `Option::and_then` (also called "bind" in Haskell/OCaml) is the monadic sequencing operation for `Option`. Where `map(f)` applies `f: T -> U` and wraps in `Some`, `and_then(f)` applies `f: T -> Option<U>` — the function itself decides whether to return `Some` or `None`. This prevents double-wrapping: `map` on an `Option`-returning function produces `Option<Option<U>>`; `and_then` flattens it to `Option<U>`.

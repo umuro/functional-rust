@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Pattern matching originated in ML (1973) and is now recognized as one of the most productive features in statically typed programming. It combines structural decomposition of data with exhaustiveness checking: the compiler verifies that every possible shape of a value is handled, preventing entire classes of runtime errors that plague switch/case in other languages.

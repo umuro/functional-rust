@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `Vec` supports O(1) push/pop at the back but O(n) at the front (shifting all elements). When you need O(1) at both ends — sliding window algorithms, BFS queues, ring buffers, undo/redo stacks — `VecDeque` is the right tool. Implemented as a ring buffer (circular array), it maintains `head` and `tail` indices and wraps around, giving amortized O(1) for `push_front`, `push_back`, `pop_front`, and `pop_back`. This data structure dates back to Knuth (TAOCP Vol. 1) and is standard in every language: Python's `collections.deque`, Java's `ArrayDeque`, C++'s `std::deque`.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Internal nodes (non-leaf nodes) of a binary tree (OCaml 99 Problems #32) are those with at least one child that is not a `Leaf`. Collecting internal nodes is the complement of collecting leaves — together they enumerate all nodes in the tree. In a binary search tree, internal nodes are where routing decisions are made; in a parse tree, they represent grammatical rules rather than terminals.

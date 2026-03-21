@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Testing whether two line segments intersect is a building block of computational geometry: polygon union/intersection, road network analysis, PCB trace routing, robot obstacle detection, and sweep line algorithms all reduce to repeated segment intersection tests. The cross product orientation test determines which side of a directed line a point lies on; two segments intersect if and only if each segment's endpoints straddle the other segment's line. Degenerate cases (collinear segments, touching at endpoints) require careful handling. This is one of the most error-prone geometric primitives due to floating-point precision issues.

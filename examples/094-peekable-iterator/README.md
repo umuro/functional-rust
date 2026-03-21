@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Use `.peekable()` to look ahead at the next iterator element without consuming it. Implement `dedup` — removing consecutive duplicates — as a demonstration: consume the current value, then skip ahead while the peek matches. Compare with OCaml's manual `peekable` wrapper built on `Seq`.

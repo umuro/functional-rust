@@ -1,6 +1,8 @@
 **Difficulty:** ⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐  
+
 [json-query on hightechmind.io](https://hightechmind.io/posts/functional-rust/json-query)
 
 ---

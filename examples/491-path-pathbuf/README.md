@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 `Path` and `PathBuf` are Rust's filesystem path types — analogous to `str`/`String` — providing OS-aware joining, extension extraction, parent navigation, and cross-platform normalisation.
 
 ## Problem Statement

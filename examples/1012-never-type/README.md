@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Some computations never return a value: they panic, loop forever, or exit the process. In type theory, this is the "bottom" type — a type with no inhabitants. Rust makes this explicit with the `!` type (pronounced "never"). Functions returning `!` can appear in any expression position because they are coerced to any type, which allows them to unify with arbitrary branches in `match` expressions.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Closures derive much of their power from capturing their surrounding environment — local variables, structs, collections, even other closures. Understanding what a closure captures, how it captures it (by move vs by reference), and what that means for ownership is central to writing idiomatic Rust. This example explores complex capture scenarios: closures over structs with boxed function fields, cyclic iterators over vectors, closures wrapping other closures, mutable counters, and growing accumulators.

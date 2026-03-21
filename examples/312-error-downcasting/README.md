@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When errors are stored as `Box<dyn Error>` for flexibility, the concrete type is erased. Downcasting recovers the concrete type at runtime when specific error handling is needed — retrying on network timeouts but propagating authentication errors, for example. This is `downcast_ref::<ConcreteType>()` on a `dyn Error` — the Rust equivalent of `instanceof` checks or `catch (SpecificException e)` in Java/Python.

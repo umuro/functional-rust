@@ -1,8 +1,8 @@
 # Example 1162: Hello World — Functions and Greetings
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Functions & Basics
-**OCaml Source:** `let greet (name : string) : string = "Hello, " ^ name ^ "!"`
+
 
 ## Problem Statement
 

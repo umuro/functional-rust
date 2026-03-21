@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When computing large combinatorial values (n! mod p, binomial coefficients, number of paths), intermediate results overflow 64-bit integers long before the final answer. Modular arithmetic performs all operations in a finite field Z/pZ, keeping values bounded. Computing `(a + b) % m`, `(a * b) % m`, `pow(a, b, m)`, and `inv(a, m)` are the building blocks of competitive programming, cryptography, and number theory. The key insight: `(a * b) % m = ((a % m) * (b % m)) % m`. Modular exponentiation (fast power) runs in O(log b) and is essential for RSA, Diffie-Hellman, and primality testing.

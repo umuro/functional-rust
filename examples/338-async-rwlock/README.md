@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many shared data structures are read frequently and written rarely — caches, configuration, routing tables. A `Mutex` serializes all access (both reads and writes), creating unnecessary contention. `RwLock<T>` allows multiple concurrent readers OR one exclusive writer, matching the actual access pattern. This is the correct concurrency primitive for read-heavy workloads in database caches, HTTP routers, and configuration stores.

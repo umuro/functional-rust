@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Lookup tables trade memory for computation: instead of calculating `sin(x)` at runtime, you pre-compute 256 values and index into the table with a single array access. Pre-computing these tables at compile time with `const fn` means zero startup overhead — the table is embedded in the binary's read-only data segment. This technique is used in audio DSP (wavetable synthesis), graphics (gamma correction curves), and cryptography (S-boxes in AES, CRC32 tables).

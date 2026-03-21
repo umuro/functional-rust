@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Product types (tuples, structs, records) combine multiple values into one. In category theory, a product `A × B` has projections `fst: A×B → A` and `snd: A×B → B`. Beyond tuples, advanced product types include heterogeneous lists (type-level lists of different types), named product types with field accessors, and type-level products enabling generic programming over record shapes. Understanding product types as mathematical objects clarifies why certain operations are natural (projection, bimap) and others require additional constraints.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Maximum subarray sum (Kadane's algorithm, 1984) finds the contiguous subarray with the largest sum in O(n) time. This is an astonishing result: intuitively it seems you must check all pairs, but a single pass suffices. It models maximum profit from a sequence of daily stock gains/losses, maximum signal amplitude in signal processing, and appears in image processing (maximum sum submatrix). It is one of the most elegant DP algorithms.

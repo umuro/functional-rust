@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Data processing often has sequential stages: read → parse → validate → transform → write. Running stages sequentially wastes time — the parser waits idle while the reader fetches the next batch. Pipelining runs stages concurrently: stage 1 processes item 1 while stage 2 processes item 0. With N stages each taking time T, throughput improves from T per item to T per item (after startup) with N stages running simultaneously. This is the assembly line model applied to software.

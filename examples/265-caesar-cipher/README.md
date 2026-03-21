@@ -3,10 +3,10 @@
 ---
 
 # Example 265: Caesar Cipher — Functional Encryption
-
 **Difficulty:** ⭐  
-**Category:** String Processing  
-**OCaml Source:** https://exercism.org/tracks/ocaml/exercises/rotational-cipher
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

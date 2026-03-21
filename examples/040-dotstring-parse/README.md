@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Parsing a dotstring back to a binary tree (OCaml 99 Problems, complement to #39) is the deserialization half of the round-trip. It is also a textbook example of recursive descent parsing: each call to the parse function consumes exactly one self-delimiting unit (either a `.` for leaf or a character followed by two recursive calls for a node).

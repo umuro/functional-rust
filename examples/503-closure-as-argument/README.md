@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Passing closures as function arguments is the foundation of higher-order programming: `map`, `filter`, `fold`, `sort_by`, and custom adapters all accept closures that specialise their behaviour at the call site.
 
 ## Problem Statement

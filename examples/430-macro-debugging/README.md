@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Macro expansion errors can be opaque — the compiler shows the expanded output but not always why a specific expansion fails. A macro that works for some inputs but fails for others requires tools to inspect what tokens are being matched and what code is being generated. `cargo-expand` shows the full expanded source, `trace_macros!` shows each expansion step, `stringify!` converts tokens to strings for inspection, and strategic `compile_error!` can reveal what the macro is seeing at a specific expansion point.

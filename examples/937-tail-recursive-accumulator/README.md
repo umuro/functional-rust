@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Naive recursion — `sum(list) = head + sum(tail)` — builds up a call stack one frame per element. For a list of 100,000 elements, this overflows the stack. The solution is tail recursion: make the recursive call the very last operation, enabling the compiler to reuse the current stack frame (tail-call optimization, TCO). OCaml guarantees TCO for tail-recursive functions. Rust does NOT guarantee TCO — the compiler may or may not optimize it. For stack safety in Rust, idiomatic code uses iterators (`.iter().sum()`) or explicit loops, which the compiler will never stack-overflow.

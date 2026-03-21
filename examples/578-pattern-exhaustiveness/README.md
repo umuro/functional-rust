@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Exhaustiveness checking is one of the most valuable compile-time guarantees in a language with algebraic data types. When you add a new variant to an enum, the compiler immediately points to every `match` expression that does not handle it — no runtime surprises, no silent fallthrough to wrong behavior. This makes refactoring safe: you cannot forget to handle new cases. It is why functional programmers value algebraic data types over class hierarchies with virtual dispatch, and why Rust and OCaml are preferred for compiler writing, protocol implementations, and state machines.

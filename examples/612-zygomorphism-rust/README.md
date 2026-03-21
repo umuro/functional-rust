@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A zygomorphism (zygo) is a mutually recursive fold where two computations run simultaneously, one depending on the other. The classic example: compute both the value and its depth simultaneously in a single tree traversal. Zygomorphisms generalize paramorphisms and are more efficient than running two separate traversals.

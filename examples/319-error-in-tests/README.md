@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Tests that call fallible functions traditionally use `unwrap()`, which panics with an unhelpful message on failure. Rust test functions can return `Result<(), E>`, enabling `?` to propagate errors with full context. Additionally, `#[should_panic(expected = "...")]` attributes test that specific panics occur — completing the testing toolkit for both `Result`-returning and panic-producing code.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Writing proc macros without `syn` and `quote` is like writing a compiler without an AST — you'd be manipulating raw token streams manually. `syn` parses Rust token streams into a rich AST: `DeriveInput`, `ItemFn`, `Type`, `Expr`, `Ident`. `quote!` generates Rust code from these AST nodes with clean `#variable` interpolation. Together, they are the standard toolkit for every serious Rust proc macro, used by `serde`, `tokio`, `clap`, and virtually every derive macro in the ecosystem.

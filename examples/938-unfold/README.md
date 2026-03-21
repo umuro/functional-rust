@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Fold (catamorphism) consumes a recursive structure into a value. Unfold (anamorphism) generates a recursive structure from a seed value. They are dual operations. Unfold takes a seed `S` and a function `f: S -> Option<(T, S)>`: if `f(s) = None`, the sequence ends; if `f(s) = Some(value, next_state)`, emit `value` and continue with `next_state`. This generates sequences: ranges, Collatz sequences, Fibonacci, countdowns. Haskell has `unfoldr`; OCaml has `Seq.unfold`. Rust's `std::iter::from_fn` and custom iterators serve the same role. Unfold is the generative dual of fold.

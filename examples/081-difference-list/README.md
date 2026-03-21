@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implement a difference list data structure that provides O(1) append by representing a list as a function `Vec<T> -> Vec<T>`. Compare with OCaml's natural `'a list -> 'a list` function type, and also show a practical `VecBuilder` alternative that amortizes allocation across many append operations.

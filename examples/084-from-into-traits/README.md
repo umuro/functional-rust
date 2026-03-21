@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implement Rust's `From` and `TryFrom` traits for type conversions: bidirectional temperature conversion between `Celsius` and `Fahrenheit`, parsing a `Color` from `&str` with `TryFrom`, and validating a raw user record into a typed `User`. Compare with OCaml's explicit named conversion functions.

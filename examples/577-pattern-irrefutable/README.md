@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust distinguishes between patterns that always succeed (irrefutable) and those that might fail (refutable). `let` bindings, function parameters, and `for` loops require irrefutable patterns — patterns that cannot fail to match. `if let`, `while let`, and `match` arms accept refutable patterns. This distinction is enforced at compile time: using a refutable pattern in a `let` binding is an error. Understanding this rule explains compiler errors and guides which construct to use for which kind of pattern.

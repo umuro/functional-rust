@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Communication protocols have strict ordering requirements: you must connect before sending, send before receiving, and receive before closing. Violating the order causes protocol errors that are caught only at runtime, often in production. Session types encode the entire protocol as a sequence of type-level state transitions, making it impossible to call operations out of order. Pioneered in pi-calculus research, session types are used in the `session_types` Rust crate and Haskell's `sesh` library for typed channel communication.

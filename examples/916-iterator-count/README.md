@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Counting how many elements satisfy a condition is a fundamental operation: how many words are longer than 5 characters, how many numbers are prime, how many transactions exceeded a threshold. Rust's `Iterator::count()` consumes the iterator and returns the number of elements. Combined with `.filter()`, it counts matching elements. For slices, `.len()` is O(1) and preferred; for filtered or transformed iterators, `.count()` is the correct consumer. OCaml uses `List.length (List.filter pred xs)` — two passes — while Rust's `.filter().count()` is a single pass.

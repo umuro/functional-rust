@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 An anamorphism unfolds a seed step by step until the base case. But some unfolding algorithms know partway through that the rest of the structure is already built — they want to "embed" an existing structure rather than continuing to unfold. Apomorphisms extend anamorphisms with this short-circuit capability: the coalgebra can return either a new seed (continue unfolding) or an existing `Fix<F>` value (embed directly). This is the dual of a paramorphism.

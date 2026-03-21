@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Use `type` aliases to give shorter, more descriptive names to complex type expressions. Define `Point`, `Name`, `AppResult<T>`, `Predicate<T>`, and `Transform<T>` — reducing repetition in signatures and improving readability — and compare with OCaml's equivalent `type` declarations.

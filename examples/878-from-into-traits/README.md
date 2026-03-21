@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Type conversions are ubiquitous in systems programming: parsing strings, converting between unit systems, adapting error types. Rust's `From<T>` and `Into<T>` traits standardize these conversions. Implementing `From<A> for B` automatically provides `Into<B> for A` via a blanket implementation. The `?` operator uses `From` to convert error types in fallible functions. `TryFrom`/`TryInto` handle conversions that can fail. This design replaces the error-prone cast operators of C/C++ with explicit, nameable, testable conversion functions. OCaml handles conversions through explicit functions in module interfaces, with no universal conversion trait.

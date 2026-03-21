@@ -1,8 +1,8 @@
 # Example 1109: Monoid Pattern — Generic Combining
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Typeclasses & Traits | Newtype Pattern | Generic Abstractions
-**OCaml Source:** Classic functional programming — algebraic structure
+
 
 ## Problem Statement
 

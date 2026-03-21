@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Sometimes a struct logically borrows from an external lifetime but does not store any reference — perhaps it holds a raw pointer, a numeric ID, or an opaque handle. Without `PhantomData`, the compiler has no way to know the struct's relationship to that lifetime, leading to incorrect variance and missing lifetime checks. `PhantomData<&'a T>` is a zero-size type that carries lifetime and variance information without storing any data. It is essential for safe wrappers around raw pointers, arena allocators, typed indices, and foreign-function handles.

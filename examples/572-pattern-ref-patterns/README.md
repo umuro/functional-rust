@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Before match ergonomics (Rust 2018), matching on a reference required explicit `ref` keywords in patterns to borrow rather than move the matched value. This was verbose and confusing, particularly for newcomers. Match ergonomics automated most cases, but explicit `ref` and `ref mut` still appear in older code, in code that must be explicit for clarity, and in specific contexts where ergonomics do not apply. Understanding both the old explicit style and the modern ergonomic style is essential for reading existing Rust codebases.

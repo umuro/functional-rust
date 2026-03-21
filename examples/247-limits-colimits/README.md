@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Limits and colimits are the categorical generalizations of "greatest lower bounds" and "least upper bounds." Products, terminal objects, equalizers, and pullbacks are all limits; coproducts, initial objects, coequalizers, and pushouts are all colimits. In type theory and functional programming, they correspond to familiar constructs: product types (limits), sum types (colimits), function spaces, and more. This example instantiates categorical limits and colimits as Rust types and shows the universal property that characterizes each.

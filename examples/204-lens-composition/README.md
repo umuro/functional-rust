@@ -3,9 +3,10 @@
 ---
 
 # Example 204: Lens Composition — Zoom Into Nested Structs
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Functional Patterns | Optics | Immutable Updates
+
 
 ## Problem Statement
 

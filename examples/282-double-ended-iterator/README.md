@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Some traversal algorithms need to process elements from both ends of a sequence — reversing a sequence, checking palindromes, implementing a two-pointer algorithm, or finding the last matching element efficiently. `DoubleEndedIterator` extends the `Iterator` trait with a `next_back()` method, enabling traversal from the back end without reversing the sequence in memory. The `rev()` adapter wraps a `DoubleEndedIterator` to produce a forward iterator that yields elements from back to front.

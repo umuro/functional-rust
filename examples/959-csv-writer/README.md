@@ -1,6 +1,8 @@
 **Difficulty:** ⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐  
+
 [csv-writer on hightechmind.io](https://hightechmind.io/posts/functional-rust/csv-writer)
 
 ---

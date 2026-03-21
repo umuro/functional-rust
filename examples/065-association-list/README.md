@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 An association list (alist) is the simplest possible key-value store: a list of `(key, value)` pairs where lookup scans from the front and new entries are prepended (shadowing older entries). It is O(1) insert, O(n) lookup, but correct and simple. OCaml and Lisp use alists extensively for environments (variable → value mappings) in interpreters.

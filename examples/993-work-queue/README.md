@@ -1,6 +1,8 @@
 **Difficulty:** ⭐⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐⭐  
+
 [work-queue on hightechmind.io](https://hightechmind.io/posts/functional-rust/work-queue)
 
 ---

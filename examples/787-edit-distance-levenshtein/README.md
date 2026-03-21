@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Edit distance (Levenshtein distance, 1966) measures how many single-character insertions, deletions, or substitutions transform one string into another. It is the backbone of spell checkers (aspell, hunspell), fuzzy string search (Elasticsearch, Redis), autocorrect (mobile keyboards), DNA sequence alignment, and natural language processing. The DP algorithm runs in O(mn) time and is one of the most practically important algorithms in computing.

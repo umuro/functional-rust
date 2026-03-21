@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A catamorphism (`cata`) is the unique function that folds a recursive structure bottom-up. Instead of writing separate `sum`, `depth`, `pretty_print`, and `count_nodes` functions (each with their own recursion), you write one `cata` function and provide an "algebra" — a non-recursive function that handles one node. `cata` handles the recursion; the algebra handles the semantics. Adding new operations costs only a new algebra, never a new traversal.

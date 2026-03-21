@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Tail recursion optimization (TCO) transforms tail-recursive functions into loops, enabling recursion on large inputs without stack overflow. OCaml guarantees TCO for tail-recursive functions. Rust does not — instead, it encourages using iterators and explicit loops which compile to the same efficient code without TCO guarantees.

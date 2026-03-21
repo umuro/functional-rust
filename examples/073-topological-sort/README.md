@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Topological sort orders the nodes of a directed acyclic graph (DAG) such that for every directed edge (u → v), node u appears before v in the ordering. It answers the question: "in what order should I do these tasks given their dependencies?" Build systems (Bazel, Make, Cargo), package managers (npm, pip), spreadsheet recalculation, and database schema migrations all use topological sort.

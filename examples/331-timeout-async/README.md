@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Network operations that hang indefinitely freeze applications. A DNS lookup, database query, or HTTP request that never responds must be bounded by a deadline. Timeouts are the fundamental resilience mechanism for distributed systems — every external call should have one. The `TimeoutError<E>` pattern distinguishes operation failures (the operation ran but failed) from timeout failures (the deadline expired), enabling different recovery strategies for each.

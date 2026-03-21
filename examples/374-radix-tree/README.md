@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Standard tries use one node per character — a word like "programming" requires 11 nodes. When many keys share long common prefixes (URLs, file paths, IP addresses), most trie nodes have exactly one child and waste memory. A radix tree (Patricia trie, compressed trie) collapses chains of single-child nodes into a single edge with a multi-character label. The word "programming" and "program" share a node labeled "program" with two children: one for "" (end) and one for "ming". This compression can reduce node count from O(total_chars) to O(words) for typical key sets. Radix trees power IP routing (longest prefix match), HTTP router matching, and autocomplete in shells.

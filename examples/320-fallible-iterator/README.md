@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Iterators over external data sources — file lines, network streams, database cursors — may fail during iteration. The standard `Iterator` trait doesn't accommodate per-element errors. The solution is an iterator yielding `Result<T, E>` items, combined with the `collect::<Result<Vec<_>, _>>()` short-circuit pattern or `filter_map(Result::ok)` for best-effort collection. This is the standard pattern for parsing streams and processing external data.

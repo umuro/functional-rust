@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Type-level arithmetic allows the type system to reason about sizes and dimensions. `Add<3, 4>::VALUE == 7` and `Mul<3, 4>::VALUE == 12` are computed by the compiler. This enables types like `Matrix<f64, 3, 4>` and `Matrix<f64, 4, 5>` to multiply only when the inner dimensions match — a matrix multiplication type error becomes a compile error. Used in linear algebra libraries (`nalgebra`) and tensor libraries that enforce dimension compatibility.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many macro-generated code patterns need to know the number of elements at compile time: pre-allocating arrays of the right size, generating tuple types, creating assertions about argument counts. Counting macro arguments is surprisingly non-trivial — you can't use a simple `$n` count since macros don't have builtin counters. Three techniques exist: recursive counting (O(n) expansions), array length trick (O(1) using `[()].len()`), and the substitution trick. Each has different compile-time performance characteristics.

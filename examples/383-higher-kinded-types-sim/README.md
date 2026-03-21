@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Higher-Kinded Types (HKTs) let you abstract over type constructors like `Option`, `Vec`, and `Result` — not just concrete types. A `Functor` typeclass in Haskell captures "any container that can be mapped over" without specifying whether it's a list, maybe, or tree. Rust lacks native HKTs, but Generic Associated Types (GATs, stabilized in Rust 1.65) enable simulation: `type Mapped<B>` as an associated type lets a trait express "map this container's inner type from A to B."

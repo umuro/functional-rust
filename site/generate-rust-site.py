@@ -166,48 +166,83 @@ def classify_topic(slug):
 # ---- Learning paths ----
 LEARNING_PATHS = [
     {
-        "id": "foundations",
-        "title": "Functional Foundations",
+        "id": "list-basics",
+        "title": "List Operations & Basic Algorithms",
+        "icon": "📋",
+        "description": "Core list operations, basic algorithms, and foundational data structures: last element, reverse, slice, duplicates, basic math sequences.",
+        "keywords": ["list", "last", "reverse", "slice", "duplicate", "accumulate", "fibonacci", "collatz", "sieve", "combinations"],
+    },
+    {
+        "id": "hof-closures",
+        "title": "Higher-Order Functions & Closures",
         "icon": "🏗️",
-        "description": "Core FP concepts: higher-order functions, closures, function composition, and currying.",
-        "keywords": ["higher-order", "function", "composition", "currying", "closure", "lambda", "apply", "pipeline", "twice", "applying"],
+        "description": "Map, filter, fold, currying, partial application, function composition, closures, and pipeline patterns.",
+        "keywords": ["higher-order", "closure", "currying", "partial", "composition", "pipeline", "functor", "applicative", "monad", "macro", "generic"],
+    },
+    {
+        "id": "error-handling",
+        "title": "Error Handling FP Style",
+        "icon": "🛡️",
+        "description": "Result, Option, monadic error composition, async patterns, and concurrency.",
+        "keywords": ["error", "result", "option", "monad", "combinator", "either", "exception", "failure", "safe", "async", "thread", "channel"],
+    },
+    {
+        "id": "strings-data",
+        "title": "Strings, Vectors & Data Types",
+        "icon": "🔤",
+        "description": "String operations, vector manipulation, basic structs, records, and pattern matching.",
+        "keywords": ["string", "str", "anagram", "palindrome", "isogram", "pangram", "word", "parse", "encode", "decode", "caesar"],
     },
     {
         "id": "pattern-matching",
         "title": "Pattern Matching & Types",
         "icon": "🔍",
-        "description": "Algebraic data types, sum types, and pattern-based destructuring in Rust.",
-        "keywords": ["pattern", "matching", "enum", "algebraic", "variant", "destructure", "option", "sum", "type"],
+        "description": "Algebraic data types, sum types, traits, type system, and pattern-based destructuring in Rust.",
+        "keywords": ["pattern", "matching", "enum", "algebraic", "variant", "destructure", "option", "sum", "type", "trait"],
     },
     {
         "id": "collections",
         "title": "Data Structures & Collections",
         "icon": "📦",
-        "description": "Lists, trees, maps, and other functional data structures.",
-        "keywords": ["list", "tree", "map", "stack", "queue", "deque", "linked", "binary", "array", "vector", "kth", "last", "length", "element", "operations"],
+        "description": "Trees, maps, graphs, advanced data structures, lifetimes, and memory safety.",
+        "keywords": ["tree", "map", "stack", "queue", "deque", "linked", "binary", "array", "vector", "lifetime", "borrow", "memory"],
     },
     {
         "id": "iterators",
         "title": "Iterators & Transformation",
         "icon": "🔄",
         "description": "Map, filter, fold, and lazy iteration patterns from OCaml to Rust.",
-        "keywords": ["iterator", "fold", "reduce", "filter", "zip", "flatten", "scan", "sequence", "map"],
-    },
-    {
-        "id": "error-handling",
-        "title": "Error Handling FP Style",
-        "icon": "🛡️",
-        "description": "Result, Option, and monadic error composition.",
-        "keywords": ["error", "result", "option", "monad", "combinator", "either", "exception", "failure", "safe"],
+        "keywords": ["iterator", "fold", "reduce", "filter", "zip", "flatten", "scan", "sequence"],
     },
     {
         "id": "recursion",
         "title": "Recursion & Induction",
         "icon": "♾️",
-        "description": "Recursive patterns, tail-call optimization, and structural induction.",
-        "keywords": ["recursion", "recursive", "tail", "fibonacci", "factorial", "accumulator", "divide", "merge", "sort", "palindrome"],
+        "description": "Recursive patterns, tail-call optimization, graphs, algorithms, and structural induction.",
+        "keywords": ["recursion", "recursive", "tail", "fibonacci", "factorial", "accumulator", "divide", "merge", "sort", "graph", "dijkstra"],
     },
 ]
+
+# ---- Topic → learning-path routing table ----
+# Maps each TOPICS id to the learning-path id that owns it.
+_TOPIC_TO_PATH = {
+    "iterators":         "iterators",
+    "pattern-matching":  "pattern-matching",
+    "closures-hof":      "hof-closures",
+    "error-handling":    "error-handling",
+    "strings-parsing":   "strings-data",
+    "trees":             "collections",
+    "graphs-algorithms": "recursion",
+    "data-structures":   "list-basics",
+    "recursion-dp":      "recursion",
+    "traits-types":      "pattern-matching",
+    "generics-macros":   "hof-closures",
+    "lifetimes-memory":  "collections",
+    "async-concurrency": "error-handling",
+    "fp-abstractions":   "hof-closures",
+    "testing":           "list-basics",
+    "other":             "list-basics",
+}
 
 # ---- Theme & JS snippets (plain strings, NOT f-strings) ----
 
@@ -592,6 +627,7 @@ ADVANCED_SLUG_KEYWORDS = [
     "egg-drop", "burst-balloons", "stone-game", "regex-matching",
     "wildcard-matching", "longest-path-dp", "interval-dp",
     # Backtracking
+    "manacher", "palindrome-partition", "palindrome-part",
     "n-queens", "sudoku-solver", "subsets-power-set",
     "permutation-backtrack",
     # Recursive types / advanced Rust
@@ -661,13 +697,11 @@ INTERMEDIATE_SLUG_KEYWORDS = [
     "map-from-scratch", "filter-from-scratch", "list-map-from-scratch",
     "list-filter-from-scratch", "list-map-transform", "list-map",
     "list-filter", "list-fold", "list-operations",
-    # String algorithms
-    "caesar", "atbash", "pangram", "isogram", "anagram", "palindrome",
-    "hamming", "nucleotide", "word-count", "reverse-word", "word-break",
-    "roman-numeral", "phone-number", "edit-distance", "levenshtein",
-    "balanced-parentheses", "balanced-paren", "frequency-anal",
-    "frequency-counter",
-    # List operations (non-trivial)
+    # Complex string algorithms (non-trivial, require algorithmic insight)
+    "edit-distance", "levenshtein",
+    "balanced-parentheses", "balanced-paren",
+    "word-break",  # DP-based
+    # List operations that require FP thinking
     "run-length", "-rle", "rle-", "pack-consecutive", "modified-rle",
     "decode-rle", "direct-rle", "eliminate-duplicates", "duplicate-element",
     "flatten-nested", "replicate-n", "rotate-left", "rotate-", "split-list",
@@ -704,10 +738,11 @@ INTERMEDIATE_SLUG_KEYWORDS = [
     # Sorting
     "insertion-sort", "merge-sort", "quicksort", "bubble-sort",
     "sort-with-custom", "sort-by", "sort-with", "custom-comparator",
-    # Math / numbers
-    "fibonacci", "sieve-of", "sieve-prime", "prime-factor", "gcd-lcm",
-    "modular-arithmetic", "modular-exp", "binary-search", "greatest-common",
-    "euclid", "collatz", "difference-of-squares", "space-age",
+    # Math / algorithms that require FP or algorithmic concepts
+    "fibonacci-memo", "fibonacci-dp", "lazy-fib", "const-fibonacci", "memoization-fibonacci",
+    "fibonacci-variants",
+    "prime-factor", "gcd-lcm",
+    "modular-arithmetic", "modular-exp", "greatest-common",
     # Graphs (basic)
     "adjacency-list", "adjacency-matrix", "graph-traversal", "graph-color",
     "minimum-path", "minimum-vertex",
@@ -842,10 +877,14 @@ def extract_section(md, *headings):
     return ""
 
 def classify_learning_path(concepts, title, slug):
-    text = " ".join(concepts).lower() + " " + title.lower() + " " + slug.replace("-", " ")
-    scores = {p["id"]: sum(1 for kw in p["keywords"] if kw in text) for p in LEARNING_PATHS}
-    best = max(scores, key=scores.get)
-    return best if scores[best] > 0 else "foundations"
+    """Route an example to a learning path via topic-based lookup.
+
+    Calls classify_topic() on the slug, then maps the topic id to a path id
+    using the _TOPIC_TO_PATH table.  Falls back to 'list-basics' when the
+    topic is unknown.
+    """
+    topic = classify_topic(slug)
+    return _TOPIC_TO_PATH.get(topic, "list-basics")
 
 def parse_comparison(comparison_md):
     blocks = re.findall(r"```(\w+)\n(.*?)```", comparison_md, re.DOTALL)

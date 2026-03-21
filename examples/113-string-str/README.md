@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust has two primary string types: `String` (owned, heap-allocated, growable) and `&str` (borrowed string slice — a pointer + length into any UTF-8 data). This distinction is analogous to `std::string` vs `const char*` in C++, but with full UTF-8 guarantees and lifetime safety. Choosing the right type for function parameters and return types affects performance, API ergonomics, and ownership semantics.

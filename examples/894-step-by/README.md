@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Structured traversal — skipping elements at regular intervals, attaching position indices, or traversing in reverse — arises constantly in data processing. NumPy's `arange(start, stop, step)`, Python's `range(start, stop, step)`, and SQL's `ROW_NUMBER()` analytic function all serve structured traversal needs. Rust provides three zero-cost adapter methods for these: `.step_by(n)` for strided access, `.enumerate()` for index attachment, and `.rev()` for reversal. These compose cleanly: `.enumerate().rev()` gives reverse-indexed enumeration, and `.step_by(2).enumerate()` gives even-indexed positions.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `match` requires handling all cases, which is verbose when you only care about one. `if let` provides single-arm matching: execute a block only when the pattern matches, with an optional `else` for the non-matching case. `while let` loops while a pattern continues to match, perfect for draining queues, popping stacks, and processing iterators. These constructs are ubiquitous in real Rust code — understanding them and knowing when to prefer them over `match` is essential.

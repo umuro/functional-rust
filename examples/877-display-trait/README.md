@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Every user-facing type eventually needs a string representation. In Java, `toString()` is defined on `Object` and returns `String`. In Python, `__str__` serves the same role. Rust splits this into two distinct traits: `Display` for human-readable output (`{}` format) and `Debug` for developer-diagnostic output (`{:?}` format). This separation prevents the common bug of accidentally showing internal debug details to end users. OCaml uses `to_string` functions by convention (no enforced interface), or `Format.fprintf` for more complex formatting. Implementing `Display` unlocks `format!`, `println!`, `to_string()`, and any generic function bounded on `Display`.

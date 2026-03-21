@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 State machines govern everything from network connections to file handles to UI workflows. Typically, invalid transitions (locking an open door, reading from a closed file, sending on a disconnected socket) fail at runtime with errors or panics. The typestate pattern encodes each valid state as a distinct type, so invalid transitions become compile errors. This eliminates entire classes of runtime bugs with zero overhead — the state information disappears at compile time.

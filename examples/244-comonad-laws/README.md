@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Just as monads must satisfy left identity, right identity, and associativity, comonads must satisfy three dual laws. These laws ensure that `extract` and `extend` compose predictably, making comonadic abstractions composable and refactorable without hidden surprises. This example formalizes and verifies the comonad laws in Rust using property-based tests on concrete comonad instances.

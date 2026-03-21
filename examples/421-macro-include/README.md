@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Binary assets (images, shaders, SQL queries, configuration files) can be embedded directly into executables. Instead of loading them from disk at runtime (which can fail if the file is missing or the path changes), `include_bytes!` and `include_str!` embed the file content as a compile-time constant. The resulting binary is self-contained: no external files needed, no file-not-found errors at runtime. `include!` includes arbitrary Rust source files, enabling code generation workflows where a `build.rs` produces Rust code that is then `include!`'d.

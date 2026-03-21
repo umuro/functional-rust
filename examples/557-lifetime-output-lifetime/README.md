@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Every function returning a reference must express where that reference comes from — the output lifetime. In simple cases, elision handles this. In complex cases, understanding which input the output borrows from is essential for correctness. Three distinct patterns cover most use cases: (1) output tied to a single input, (2) output tied to the shortest common lifetime of multiple inputs, (3) output with a lifetime independent of inputs (`'static`). Getting the output lifetime wrong causes either compile errors or unnecessarily restrictive APIs.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Divide and conquer is an algorithm design paradigm that decomposes a problem into smaller independent subproblems, solves them recursively, and combines solutions. It underlies merge sort, quicksort, binary search, FFT, Strassen matrix multiplication, and closest pair of points. The recurrence T(n) = aT(n/b) + f(n) is analyzed by the Master Theorem. Understanding divide and conquer as a pattern — not just specific algorithms — enables recognizing and applying it to new problems. Many problems that appear to require O(n^2) naive solutions admit O(n log n) or better divide-and-conquer solutions.

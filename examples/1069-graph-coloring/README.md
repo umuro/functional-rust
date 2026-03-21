@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Graph coloring assigns colors to vertices such that no two adjacent vertices share a color, using at most k colors. It models register allocation in compilers (colors = registers, vertices = variables, edges = interference), exam scheduling (colors = time slots, vertices = exams, edges = shared students), and map coloring.

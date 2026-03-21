@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Closures that capture their environment behave differently depending on what they do with captured values — read them, mutate them, or consume them. Rust encodes this in three traits: `Fn` (shared borrow), `FnMut` (mutable borrow), `FnOnce` (takes ownership). The hierarchy `Fn ⊆ FnMut ⊆ FnOnce` means the compiler selects the most restrictive trait that still allows the closure to be called correctly, preventing data races and use-after-move bugs at compile time.

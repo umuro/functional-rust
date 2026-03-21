@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Extracting a value from `Option<T>` or `Result<T, E>` when a sensible default exists is extremely common: getting a config value or using a default, parsing a number or falling back to 0, looking up a cache entry or computing a fresh value. The `unwrap_or` family provides safe alternatives to `unwrap()` that handle the `None`/`Err` case without panicking. The three variants differ in when the default value is computed — eagerly, lazily, or from the type's `Default` implementation.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Given g, h, and prime p, the discrete logarithm problem asks: find x such that `g^x ≡ h (mod p)`. This is computationally hard for large p (the Discrete Log Problem, DLP), which is the security foundation of Diffie-Hellman key exchange, ElGamal encryption, DSA signatures, and elliptic curve cryptography. Baby-step Giant-step (BSGS) solves the DLP in O(sqrt(p)) time and O(sqrt(p)) space — much faster than brute force O(p) but still infeasible for cryptographic p (256+ bit). Understanding BSGS is essential for cryptanalysis, CTF competitions, and understanding why large primes are necessary.

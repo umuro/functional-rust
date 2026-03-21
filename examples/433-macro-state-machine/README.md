@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 State machines (finite automata) model systems with discrete states and transitions: TCP connection lifecycle, UI component states, traffic lights, parser automata. Writing state machines by hand requires defining state enums, transition tables, and guards repeatedly. A `state_machine!` macro generates the enum, transition logic, and validity checks from a compact declaration. This keeps the state structure and transitions co-located and prevents invalid transitions from being written at all.

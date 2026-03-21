@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When matching on a reference (e.g., `&Option<String>` instead of `Option<String>`), Rust historically required explicit `ref` keywords to borrow rather than move matched values. Match ergonomics (RFC 2005, Rust 2018) made this automatic in most cases: matching on `&T` adjusts the binding mode so `Some(s)` binds `s: &String` rather than requiring `Some(ref s)`. Understanding binding modes explains many "borrowed vs moved" questions that arise when matching references, and helps write code that works correctly with both owned and borrowed match targets.

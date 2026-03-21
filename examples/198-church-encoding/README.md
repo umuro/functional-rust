@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Church encoding represents data and operations as pure functions (lambdas). Church numerals encode natural numbers: zero is `λf.λx.x`, one is `λf.λx.f x`, two is `λf.λx.f (f x)`. Booleans, pairs, and lists can all be encoded as functions. This demonstrates that the lambda calculus is computationally complete — data and control flow are the same thing. Understanding Church encoding illuminates the foundation of functional programming and type theory.

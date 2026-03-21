@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 An anamorphism (unfold/ana) is the categorical dual of a catamorphism — it builds a recursive structure top-down from a seed. While catamorphisms consume structures, anamorphisms produce them. The F-coalgebra specifies how to expand one level from a seed value. Examples: generating a list from a range, unfolding a tree from a depth-first generator, producing a stream from a state.

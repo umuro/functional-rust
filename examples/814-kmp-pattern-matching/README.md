@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Knuth-Morris-Pratt (1977) finds all occurrences of a pattern in a text in O(n+m) time, avoiding redundant comparisons. Naive search backtracks to the beginning on mismatch; KMP uses the Failure Function (LPS array) to skip ahead. It is used in `grep`, text editors (search/replace), network intrusion detection systems (signature matching), and bioinformatics (exact sequence matching). KMP is the foundational substring search algorithm that all others build upon.

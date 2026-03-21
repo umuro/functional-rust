@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `Option<T>` represents the presence or absence of a value, while `Result<T, E>` represents success or a specific failure reason. Real programs often start with an `Option` lookup — for example, reading a key from a map — and need to convert it into a `Result` that can carry an error message and propagate through the `?` operator.

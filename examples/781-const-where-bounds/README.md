@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Const generics can accept any `usize` value, but many types have validity constraints: a buffer must be non-empty, a size must be a power of two, a dimension must be positive. On stable Rust, these constraints are enforced via runtime assertions in `new()`. On nightly, `where [(); N - 1]: Sized` and similar tricks enforce constraints at compile time. This example shows both approaches and explains why the nightly technique is not yet stable.

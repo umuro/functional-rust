@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The Environment comonad (also called the Reader comonad's dual, or Co-Reader) pairs a value with a fixed environment: `(e, a)`. You can always extract the value, ask what the environment is, and extend computations that depend on both the current value and the surrounding environment. This models read-only context propagation where each step in a computation can inspect a shared environment without passing it explicitly.

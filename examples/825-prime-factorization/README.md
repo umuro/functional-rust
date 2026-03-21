@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Decomposing an integer into its prime factors is fundamental to number theory: computing GCD, LCM, Euler's totient, cryptographic key generation, and combinatorial coefficient calculations all rely on factorization. For small numbers, trial division by primes up to sqrt(n) suffices. For large numbers (64-bit), Pollard's rho algorithm factorizes in O(n^(1/4)) expected time. Real-world cryptography relies on the hardness of factorizing large composites (RSA). Competitive programming uses factorization for: divisor enumeration, Mobius function, Euler's phi, and modular arithmetic.

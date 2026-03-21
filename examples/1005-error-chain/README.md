@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Add context to errors as they propagate up the call stack. When a low-level `read_file` returns `Err(IoError::NotFound)`, the higher-level `load_config` wraps it in `AppError { context: "loading /path", source: e }`. Implement a `WithContext` extension trait for ergonomic chaining. Compare with OCaml's manual wrapping pattern.

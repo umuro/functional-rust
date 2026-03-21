@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Closures and complex iterators have unnameable types in Rust. A closure `move |x| x + n` has a unique anonymous type that cannot be written in a function signature. Before `impl Trait` (Rust 1.26), returning closures required `Box<dyn Fn>` with heap allocation. Return-position `impl Trait` (RPIT) tells the compiler "return some concrete type implementing this trait" — the caller doesn't know the exact type, but gets static dispatch with no heap allocation. This is essential for returning closures, lazy iterators, and async futures.

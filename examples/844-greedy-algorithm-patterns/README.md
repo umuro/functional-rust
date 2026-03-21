@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Greedy algorithms make locally optimal choices at each step, hoping for a global optimum. Unlike dynamic programming which considers all subproblems, greedy algorithms commit to a choice and never reconsider. When a greedy choice property holds — meaning there always exists an optimal solution that includes the greedy choice — greedy algorithms are correct and typically O(n log n) (dominated by sorting). Classic greedy problems: interval scheduling (schedule maximum activities), fractional knapsack, Huffman coding, Prim's/Kruskal's MST, and coin change (for standard denominations). Recognizing when greedy works (and when it fails) is a key algorithm design skill.

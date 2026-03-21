@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The power of free monads is multiple interpreters for the same program. A console DSL program can be interpreted by a "real" interpreter that reads from stdin and writes to stdout, a "test" interpreter that uses mock I/O with predetermined inputs, and a "logging" interpreter that records every operation for debugging. The program description is shared; only the interpreter changes. This is the essence of dependency injection at the computation level.

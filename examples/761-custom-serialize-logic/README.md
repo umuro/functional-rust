@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `#[derive(Serialize)]` handles the common case, but sometimes you need custom serialization: dates formatted as ISO strings rather than struct fields, passwords skipped entirely, amounts rounded before serialization, or opaque identifiers encoded as base64. Custom serialization implements `Serialize` (or `serde::Serialize` in production) manually, giving complete control over the wire format.

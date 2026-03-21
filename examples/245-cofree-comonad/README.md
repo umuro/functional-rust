@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The Cofree comonad is the categorical dual of the Free monad. Where Free builds up effects lazily for later interpretation, Cofree builds up a potentially infinite tree of values annotated with a functor at every node. It is the universal comonad: every comonad arises as a coalgebra for some Cofree instance. In Rust, Cofree enables elegant tree-shaped data structures where each node carries both a value and a collection of children described by a functor.

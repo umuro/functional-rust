@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The convex hull of a point set is the smallest convex polygon containing all points — the shape you'd get by stretching a rubber band around the points. It's the foundation of computational geometry: collision detection in game engines, GIS boundary computation, robot motion planning (collision-free paths), image processing (object outline detection), and clustering algorithms all use convex hull. Graham scan computes the convex hull in O(n log n) dominated by sorting — the actual hull construction is O(n) after the sort. Understanding convex hull also introduces the cross product test for point orientation, a building block for many geometric algorithms.

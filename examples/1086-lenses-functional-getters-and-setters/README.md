@@ -1,8 +1,8 @@
 # Example 1086: Lenses — Functional Getters and Setters
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Functional Abstractions
-**OCaml Source:** Functional programming lens pattern (van Laarhoven / record-based)
+
 
 ## Problem Statement
 

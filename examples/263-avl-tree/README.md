@@ -3,10 +3,10 @@
 ---
 
 # Example 263: AVL Tree — Self-Balancing BST
-
 **Difficulty:** ⭐⭐⭐  
-**Category:** Trees  
-**OCaml Source:** https://rosettacode.org/wiki/AVL_tree#OCaml
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

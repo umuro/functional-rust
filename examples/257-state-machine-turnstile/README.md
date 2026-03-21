@@ -3,10 +3,10 @@
 ---
 
 # Example 257: State Machine — Turnstile
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** State Machines | Pattern Matching
-**OCaml Source:** Classic finite state machine example
+
 
 ## Problem Statement
 

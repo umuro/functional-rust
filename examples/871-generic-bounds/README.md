@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Generic programming allows a single function to operate over many types, but only those types that satisfy certain contracts. In C++, this was implicit (duck typing) leading to cryptic template errors. Rust and Haskell require explicit constraints: `T: PartialOrd + Display` means "any type T that supports comparison and formatting." OCaml uses module signatures and functors to express similar constraints. Generic bounds are the foundation of type-safe abstractions: they enable writing `find_max` once that works for integers, floats, strings, or any custom comparable type.

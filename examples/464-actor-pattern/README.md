@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Shared mutable state with locks leads to deadlocks, priority inversion, and complex reasoning. The actor model offers an alternative: each actor is an isolated entity with private state, communicating only through message passing. No locks, no shared memory — just messages. An actor processes messages sequentially, ensuring its state is never concurrently modified. This model was popularized by Erlang and is the foundation of `actix`, `tokio::actor`, and any system requiring encapsulated concurrent state.

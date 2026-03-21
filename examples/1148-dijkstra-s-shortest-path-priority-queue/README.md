@@ -1,8 +1,8 @@
 # Example 1148: Dijkstra's Shortest Path — Priority Queue
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Graphs & Algorithms
-**OCaml Source:** Classic algorithm — functional priority-queue style with `Set.Make` and `Map.Make`
+
 
 ## Problem Statement
 

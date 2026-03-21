@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Before Generic Associated Types (GATs, stable in Rust 1.65), it was impossible to write a trait whose associated types were themselves generic over a lifetime or type parameter. This blocked implementing traits like `LendingIterator` (where each call to `next` borrows from the iterator itself) or a generic `Container` trait with a `map` method that changes the element type. GATs fill this gap, enabling patterns previously impossible in stable Rust.

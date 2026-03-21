@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Enums with many variants often need repetitive match arms for dispatch methods. A `Command` enum with 20 variants requires a 20-arm `match` for each dispatch method. When variants map uniformly to trait implementations, macros can generate all the match arms automatically. This is the `enum_dispatch` crate's core idea: eliminate the boilerplate of matching each variant and delegating to the inner type. The `dispatch_enum!` macro generates both the enum and its dispatch methods from a compact declaration.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Floating-point numbers in text formats (JSON, CSV, scientific data) require parsing optional sign, integer digits, optional decimal point and fractional digits, and optional exponent notation (`1.5e-10`). Each component is optional or required in a specific combination. This example builds a full floating-point parser using combinators, demonstrating how complex lexical rules reduce to composed simple rules with clear, testable components.

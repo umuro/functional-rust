@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Type aliases create convenient shorthand but provide no safety guarantees: `type UserId = u64` means `UserId` and `u64` are interchangeable. The newtype pattern wraps a type in a single-field struct, creating a distinct type with identical runtime representation. Haskell's `newtype` keyword formalizes this with zero-cost guarantee. In Rust, tuple structs like `struct UserId(u64)` achieve the same: you cannot accidentally pass a `UserId` where an `OrderId` is expected, even though both wrap `u64`. This pattern is standard in domain-driven design for preventing primitive obsession and encoding domain invariants.

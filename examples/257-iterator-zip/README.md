@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many algorithms operate on two parallel sequences simultaneously: pairing keys with values, computing dot products, correlating time-series data, or combining two streams element-by-element. The naive approach uses index-based access (`a[i]`, `b[i]`) which is error-prone and requires bounds checking. The `zip()` combinator solves this by producing pairs `(a_i, b_i)` lazily, stopping when the shorter source is exhausted — eliminating off-by-one errors entirely.

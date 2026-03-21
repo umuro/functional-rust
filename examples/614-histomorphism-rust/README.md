@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A histomorphism (histo) is a catamorphism where the fold function has access to the entire history of previous fold results, not just the immediate result. The cofree comonad of the base functor carries the history. This enables computing Fibonacci in O(n) with a single pass, longest increasing subsequence, and dynamic programming patterns that need previous computed values.

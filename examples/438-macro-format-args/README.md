@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 String formatting is ubiquitous but has performance implications. `format!("{}: {}", name, value)` always allocates a new `String`. For logging, writing to a buffer, or outputting to a `Write` implementor, you want to format directly without intermediate allocation. `format_args!` returns a `fmt::Arguments` value — a lightweight descriptor of the format string and its arguments — that can be passed to `write!`, `writeln!`, or any `fmt::Write` implementor. This avoids the intermediate `String` allocation when the target already implements `Write`.

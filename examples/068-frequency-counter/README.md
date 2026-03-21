@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Counting word frequencies is the "Hello World" of data analysis — used in text indexing (Elasticsearch), word clouds, spell-checking frequency tables, natural language processing (term frequency for TF-IDF), and compression (Huffman coding frequencies). The Rust equivalent of OCaml's `Map.Make` module is `HashMap` (unordered, O(1) ops) or `BTreeMap` (ordered, O(log n) ops).

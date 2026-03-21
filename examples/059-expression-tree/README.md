@@ -3,10 +3,10 @@
 ---
 
 # Example 059: Recursive Variant — Expression Tree
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Algebraic Data Types
-**OCaml Source:** Cornell CS3110 — Data chapter (variants with payloads)
+
 
 ## Problem Statement
 

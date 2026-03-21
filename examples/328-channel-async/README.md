@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Shared mutable state across threads requires locks — error-prone and contended. Channels provide an alternative: communicate via message passing rather than sharing state. Go popularized "don't communicate by sharing memory; share memory by communicating." Rust's `std::sync::mpsc` (multi-producer, single-consumer) channels implement this pattern with type-safe, backpressure-supporting message queues. This is the foundation for actor-based and pipeline architectures.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 A concurrent FIFO queue that uses atomic compare-and-swap operations instead of locks, implementing the Michael-Scott algorithm.
 
 ## Problem Statement

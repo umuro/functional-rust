@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A simple thread pool with a single shared queue becomes a contention bottleneck: all threads compete for the same lock to get the next job. Work stealing solves this: each thread has its own local deque. Workers process their own tasks from the front; idle workers steal tasks from the back of busy workers' deques. This locality-aware load balancing was introduced in Cilk (MIT, 1990s) and is the algorithm behind Java's `ForkJoinPool`, `rayon`, Go's goroutine scheduler, and .NET's `Task Parallel Library`.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Reading or writing one byte at a time with unbuffered I/O makes a system call for each operation — catastrophically slow for large files. `BufReader` and `BufWriter` add an in-memory buffer: reads fill the buffer in bulk (e.g., 8KB), and subsequent reads serve from the buffer without syscalls. Writers accumulate data in the buffer and flush in bulk. This optimization, crucial for text file processing and log writing, reduces system call overhead by orders of magnitude.

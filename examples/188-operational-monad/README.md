@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The operational monad is a variant of the free monad that separates the description of primitive instructions from the composition mechanism (bind/sequence). Instead of encoding both instructions and sequencing in one recursive type, the operational monad has two layers: `Instruction<A>` (user-defined operations) and `Program<A>` (sequencing). This reduces boilerplate compared to free monads and makes adding new instructions simpler — only the instruction type changes.

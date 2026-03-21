@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Bare error messages like "file not found" or "parse failed" are unhelpful without context about what was being attempted. Context wrapping adds layers of "where" and "why" information around errors: "while loading config: while reading /etc/app.conf: file not found". This is the `anyhow::context()` pattern — each operation wraps a lower-level error in a higher-level description, building an error chain that reads as a call-stack narrative.

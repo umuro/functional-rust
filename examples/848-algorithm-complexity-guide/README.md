@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Understanding time and space complexity is essential for writing software that scales. A function that runs in 1ms for n=100 might take 10 seconds for n=10,000 if it's O(n^2) — and 3 years for n=1,000,000. Engineers need an intuitive grasp of which complexity class their code falls into, and which operations trigger which class. This reference guide concretizes the abstract Big-O notation with real Rust examples: constant-time array access, logarithmic binary search, linear scans, O(n log n) sorting, quadratic nested loops, exponential backtracking. Each example demonstrates not just the code but why it achieves its complexity class.

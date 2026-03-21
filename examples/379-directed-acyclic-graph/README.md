@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many real-world problems require ordering tasks where some must precede others: build systems (compile A before B if B imports A), package managers (install dependencies before dependents), course prerequisites, and spreadsheet cell evaluation. A Directed Acyclic Graph (DAG) models these dependency relationships, and topological sort produces a valid linear ordering. If the graph contains a cycle, no valid ordering exists — which signals a circular dependency error.

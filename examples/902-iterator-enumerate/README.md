@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Algorithms that process both element values and their positions — numbering output lines, finding the index of a match, filtering by even/odd positions — need both the index and the value simultaneously. The naive approach uses a separate mutable counter variable, which is error-prone and verbose. Python's `enumerate()` and OCaml's `List.mapi` solve this idiomatically. Rust's `.enumerate()` wraps any iterator to yield `(usize, T)` pairs, composing cleanly with `.filter()`, `.find()`, and `.map()` without mutable counter variables.

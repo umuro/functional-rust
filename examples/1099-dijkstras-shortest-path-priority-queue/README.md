@@ -1,8 +1,8 @@
 # Example 1099: Dijkstra's Shortest Path with Priority Queue
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Graphs & Priority Queues
-**OCaml Source:** Classic graph algorithms — Dijkstra's algorithm with ordered set as priority queue
+
 
 ## Problem Statement
 

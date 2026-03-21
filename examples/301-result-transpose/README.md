@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When mapping over an `Option<&str>` to parse it, the result is `Option<Result<T, E>>` — an option containing a result. But many APIs expect `Result<Option<T>, E>` — a result containing an optional value. The `transpose()` method converts between these two nested forms, enabling clean composition when optionality and fallibility interact. This is a common need when parsing optional configuration values or handling nullable database fields.

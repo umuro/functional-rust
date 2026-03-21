@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The producer-consumer pattern separates work generation from work processing: one or more producer threads generate items at their own rate; one or more consumer threads process items at their own rate. A bounded buffer between them provides decoupling and backpressure. This is the most common inter-thread communication pattern — used in web servers (request producers, handler consumers), data pipelines (readers produce, transformers consume), and I/O systems (network receivers produce, parsers consume).

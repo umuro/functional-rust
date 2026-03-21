@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A Hamiltonian path visits every vertex exactly once. Unlike Eulerian path (efficient, O(V+E)), Hamiltonian path is NP-complete — no polynomial algorithm is known. The backtracking approach prunes the search tree by abandoning partial paths that cannot possibly complete. It is the basis for TSP (traveling salesman) solvers and appears in puzzle solving (knight's tour, Sudoku) and genome sequencing (alternative to Eulerian for short reads).

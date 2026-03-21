@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Finding the kth smallest element in an unsorted array naively requires sorting: O(n log n). Quickselect finds it in O(n) expected time by using the partition step from quicksort but only recursing into one side. Choosing the pivot randomly avoids worst-case O(n^2) behavior from adversarial inputs. Practical uses: computing medians for statistics, percentile calculations in monitoring systems, streaming data analysis (p99 latency), and machine learning (median-based normalization). The deterministic variant (median-of-medians) guarantees O(n) worst-case but with higher constants.

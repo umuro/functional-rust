@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Generic bounds constrain which types a generic function or struct can be used with. `fn print_list<T: Display>(items: &[T])` works for any T that implements Display. Without bounds, generic code cannot call any methods on T. With bounds, you unlock the full interface of the trait.

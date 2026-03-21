@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Computing running totals, prefix sums, or any sequence where each value depends on all previous values is a common need in financial systems, signal processing, and data streaming. A plain `fold()` produces only the final accumulated result. The `scan()` adapter solves this by emitting each intermediate accumulated state as an element — turning a `fold` into a stream of partial results.

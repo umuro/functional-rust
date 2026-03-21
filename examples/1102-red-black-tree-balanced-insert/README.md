@@ -1,8 +1,8 @@
 # Example 1102: Red-Black Tree — Balanced Insert
-
 **Difficulty:** ⭐⭐⭐  
-**Category:** Trees | Algebraic Data Types | Pattern Matching  
-**OCaml Source:** Okasaki, *Purely Functional Data Structures* (1998), Chapter 3
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

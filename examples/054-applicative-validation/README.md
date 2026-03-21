@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Standard `Result` short-circuits at the first error — if name validation fails, age and email are never checked. For user-facing forms, you want to collect ALL errors and report them together. Applicative validation (inspired by Haskell's `Validation` type) accumulates errors rather than short-circuiting.

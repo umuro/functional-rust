@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When you need a set of small integers (0..63), a single `u64` can represent the entire set — one bit per element. Bit manipulation turns set operations into single CPU instructions: union is `|`, intersection is `&`, difference is `& !other`, complement is `!`. This is orders of magnitude faster than `HashSet<u32>` for small universes. BitSets power compiler register allocation (tracking which registers are live), sudoku solvers (tracking which digits remain possible in each cell), chess engines (bitboards for piece positions), and graph algorithms (adjacency matrices for small graphs). The `u64.count_ones()` intrinsic maps to a single `POPCNT` CPU instruction.

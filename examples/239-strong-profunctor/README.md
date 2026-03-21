@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A `Strong` profunctor extends a profunctor with `first: P<A, B> -> P<(A, C), (B, C)>` — the ability to "pass along" extra context `C` while the profunctor operates on `A -> B`. Functions are `Strong`: `first(f) = |(a, c)| (f(a), c)`. The significance: in the profunctor optics encoding, **lenses are exactly Strong profunctors**. A Van Laarhoven lens `type Lens s a = ∀p. Strong p => p a b -> p s t` works for any Strong profunctor.

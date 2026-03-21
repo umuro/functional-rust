@@ -1,6 +1,8 @@
 **Difficulty:** ⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐  
+
 [once-init on hightechmind.io](https://hightechmind.io/posts/functional-rust/once-init)
 
 ---

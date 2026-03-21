@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Parsers produce raw strings and characters, but applications need structured data — integers, enums, structs. The `map` combinator transforms a parser's output without changing what it consumes. It is the `Functor` operation for parsers: if you have a `Parser<A>` and a function `A -> B`, `map` produces a `Parser<B>`. This functional transformation step keeps parsing (what to consume) separate from interpretation (what it means), a core principle of combinator-based parsing.

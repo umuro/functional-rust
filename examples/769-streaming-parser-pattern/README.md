@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Network protocols deliver data in chunks, not as complete messages. A TCP stream may deliver the header in one packet and the body in several others. Streaming parsers process data incrementally, maintaining state between `feed()` calls and yielding complete messages only when enough data has arrived. This pattern is fundamental to every network server: HTTP, WebSocket, gRPC, and custom binary protocols all use streaming parsers. Without it, you must buffer entire messages in memory before parsing.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A lens focuses on exactly one field; a prism focuses on at most one. A traversal focuses on zero or more values simultaneously. `over_all(traversal, f, structure)` applies `f` to every focused element and returns the updated structure. `collect_all(traversal, structure)` gathers all focused elements into a `Vec`. Traversals generalize `map` and `fold` to any structure: the same traversal that maps over `Vec` elements can map over tree nodes or nested struct fields.

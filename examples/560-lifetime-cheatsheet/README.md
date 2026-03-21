@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Lifetime annotations in Rust are a powerful but syntactically noisy feature. After learning each individual rule in isolation, programmers often struggle to apply them quickly when reading or writing real code. A cheatsheet consolidates the most common patterns — elision, structs with lifetimes, impl blocks, static lifetimes, HRTB, and subtyping — into a single reference with expanded forms and their practical interpretations.

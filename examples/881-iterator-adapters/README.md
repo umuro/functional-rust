@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Functional programming's core power comes from composing small transformations into pipelines. Haskell's `Data.List`, OCaml's `List` module, and Python's `itertools` all provide map, filter, flat_map, take, and skip as standalone functions or methods. Rust packages these as lazy iterator adapters — each adapter wraps the previous iterator and transforms elements on demand, with no intermediate allocation. This pipeline model replaces nested loops with declarative data transformations. The lazy evaluation means even pipelines over infinite iterators terminate correctly when capped by `.take()` or `.find()`.

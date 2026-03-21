@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The adjacency list representation stores a graph as a map from each node to its list of neighbors. Compared to an adjacency matrix (O(V²) space), the adjacency list uses O(V + E) space, making it optimal for sparse graphs — social networks, web graphs, and road maps all have far fewer edges than the V² maximum.

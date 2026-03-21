@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The naive approach to insert-or-update a hash map performs two lookups: one to check if the key exists, one to insert or update. This is O(2 log n) for tree maps and O(2) amortized for hash maps — and worse, it requires the key to be hashed twice. For hot code paths like frequency counting or cache updates, this overhead matters.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Frequency counting is the foundation of histogram generation, text analysis, log aggregation, and A/B test result collection. The operation reads each item from a stream and increments a counter in a map, requiring an efficient insert-or-increment primitive.

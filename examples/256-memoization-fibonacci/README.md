@@ -3,10 +3,10 @@
 ---
 
 # Example 256: Memoization — Fibonacci with Hashtable Cache
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Memoization | Higher-Order Functions
-**OCaml Source:** Classic functional programming pattern — HOF memoize wrapper
+
 
 ## Problem Statement
 

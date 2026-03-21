@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Pairing two sequences element-by-element and splitting a sequence of pairs back into two separate sequences are fundamental data transformations. Mathematically, zip and unzip are inverses. Practically, zip is used for: combining coordinates with labels, computing dot products, running element-wise comparisons, and building key-value pairs. OCaml provides `List.combine` (zip) and `List.split` (unzip). Python has built-in `zip()`. Rust's `.zip()` adapter on iterators handles the pairing lazily, and `.unzip()` consumer splits pairs back. This example covers zip, zip_with (pairwise operations), zip_with_index, and zip_longest.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Subset sum asks: can a subset of given numbers sum to a target value? It is NP-complete in general but solvable in pseudo-polynomial O(n × target) time via DP. It underlies the 0/1 knapsack problem, is used in cryptography (merkle-hellman knapsack), and appears in scheduling (can a set of tasks exactly fill a time slot?) and partitioning problems (can employees be split into equal-salary teams?).

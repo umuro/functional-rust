@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Higher-order functions — functions that take other functions as arguments or return functions as results — are the foundation of functional programming. They enable abstraction over behavior: instead of writing five slightly different loops, write one `map`, `filter`, `fold`, `compose`, or `apply` and pass the varying behavior as a function. This is how real-world Rust uses iterators (`map`, `filter`, `flat_map`, `fold`) and how callback-based APIs work. Higher-order functions also enable point-free style, function composition pipelines, and building domain-specific languages from combinators. OCaml's `|>` pipe operator and Haskell's `$` are syntactic sugar for function application.

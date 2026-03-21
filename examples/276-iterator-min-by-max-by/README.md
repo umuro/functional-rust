@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many types either cannot implement `Ord` (floating-point numbers have NaN) or require a non-standard ordering (reverse order, case-insensitive comparison, comparison by a computed property). The `min_by()` and `max_by()` methods accept a custom comparator function `Fn(&A, &A) -> Ordering`, enabling arbitrary orderings without modifying the type's own comparison. This is essential for types like `f64` and for domain-specific orderings.

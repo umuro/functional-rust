@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implement `fold_left` — the left-to-right accumulator fold — both as a thin wrapper around `Iterator::fold` and as an explicit tail-recursive function. Compute sum, product, and maximum from a list using the same fold abstraction. Compare with OCaml's `List.fold_left` and a custom tail-recursive implementation.

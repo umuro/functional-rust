@@ -3,10 +3,10 @@
 ---
 
 # Example 060: Option Type — Safe List Maximum
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Error Handling
-**OCaml Source:** [CS3110 — Options](https://cs3110.github.io/textbook/chapters/data/options.html)
+
 
 ## Problem Statement
 

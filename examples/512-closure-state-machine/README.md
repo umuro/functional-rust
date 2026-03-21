@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 A state machine where each state is a `Box<dyn Fn(char) -> StateResult>` — transitions are closures that return the next state or accept/reject — implementing a recogniser for the regex `a*b+`.
 
 ## Problem Statement

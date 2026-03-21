@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 HashMap lookups return `Option<&V>`. Parsing the value returns `Result<T, E>`. The combination is `Option<Result<T, E>>` — but most downstream code wants `Result<Option<T>, E>`. The `Option::transpose()` method handles this conversion. A closely related use case is collecting a `Vec<Option<Result<T, E>>>` where `None` means "absent" and `Err` means "failed to parse", and both need to be handled cleanly.

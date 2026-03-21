@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A lotto draw selects k distinct numbers from 1 to m uniformly at random — for example, a 6/49 lottery draws 6 numbers from {1, ..., 49}. This is random selection without replacement from a generated range, combining examples 022 (range) and 023 (random select) into a single operation.

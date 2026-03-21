@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `map` is the fundamental operation of functional programming: apply a function to every element of a list, producing a new list of the same length with transformed values. It is the backbone of data transformation pipelines, API response formatting, and mathematical vector operations.

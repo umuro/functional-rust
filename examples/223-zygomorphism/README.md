@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Sometimes two fold operations are interdependent: "compute the average" requires both the sum and the count simultaneously. Running two separate catamorphisms would traverse the structure twice. A zygomorphism runs two algebras in a single pass: a "helper" algebra computes auxiliary data, and the "main" algebra uses that auxiliary data alongside the recursive results. Named after the Greek for "yoke," it couples two folds together.

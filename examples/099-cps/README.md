@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Transform recursive functions to CPS by passing a continuation — "what to do next" — as an explicit function argument. Implement `factorial` in direct, CPS, and iterative styles. Show CPS on a binary tree sum. Compare with OCaml where CPS provides genuine tail recursion versus Rust where CPS uses boxed closures but does not eliminate stack use.

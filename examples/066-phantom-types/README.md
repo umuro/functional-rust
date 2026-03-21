@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Phantom types use type parameters that carry no runtime data — they exist only to prevent mixing incompatible values at compile time. `Quantity<Meters>` and `Quantity<Seconds>` have the same runtime representation (`f64`) but are different types. Accidentally adding meters to seconds is a compile-time error, not a runtime error.

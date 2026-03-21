@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implement `From<SubError> for AppError` to enable automatic error conversion with the `?` operator. When a function returns `Result<T, AppError>` and calls a sub-function returning `Result<T, ParseIntError>`, the `?` operator automatically wraps the inner error via `From::from`. Compare with OCaml's explicit manual wrapping.

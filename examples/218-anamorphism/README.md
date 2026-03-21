@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The dual of a catamorphism is the anamorphism (`ana`) — it unfolds a seed into a recursive structure. Where `cata` tears down a structure bottom-up, `ana` builds one top-down. `unfold` for lists is an anamorphism: starting from a seed, repeatedly apply a coalgebra to produce the next element and the new seed, until reaching the base case. This is how infinite streams, number sequences, and tree generation are expressed functionally.

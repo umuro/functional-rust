@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many concurrent operations need exactly one result delivered back: spawning a task and waiting for its answer, implementing a request-response protocol, or delivering a computation result from a worker thread. MPSC channels are overkill here — they're designed for streams of messages. A oneshot channel is optimized for single-value delivery: the sender can only send once (consuming itself), the receiver can only receive once, and both are guaranteed by the type system. Tokio's `tokio::sync::oneshot` implements this; the stdlib provides no equivalent, making it an instructive primitive to build from scratch.

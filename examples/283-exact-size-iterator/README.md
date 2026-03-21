@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Pre-allocating the right amount of memory before collecting an iterator avoids repeated resizing. Displaying progress bars requires knowing total count upfront. Splitting an iterator into equally-sized chunks requires knowing its length. The `ExactSizeIterator` trait signals that an iterator knows its exact remaining length in O(1) time, enabling these optimizations without counting all elements first.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `std::sync::mpsc` provides basic MPSC (multiple producer, single consumer) channels but lacks bounded backpressure, multiple consumers, and select across channels. `crossbeam::channel` provides both bounded (`crossbeam::channel::bounded(n)`) and unbounded channels with MPMC (multiple producer, multiple consumer) semantics. Bounded channels implement backpressure — the producer blocks when the buffer is full — preventing fast producers from overwhelming slow consumers with unbounded memory growth.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Functional programming favors immutable data structures with "functional update": instead of modifying a record in place, you create a new record with the changed field and the rest copied from the original. This preserves the original value, enables easy undo/redo, and is safe across threads. OCaml's `{ r with field = new_value }` syntax makes this concise. Rust provides the identical idiom with struct update syntax: `Struct { field: new_value, ..old }`. Both syntaxes copy unchanged fields from the original struct, creating a new value without mutation.

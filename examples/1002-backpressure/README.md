@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Demonstrate backpressure in a concurrent pipeline using `mpsc::sync_channel` — a bounded channel where the sender blocks when the buffer is full. Show `try_send` for non-blocking drop-on-full semantics, and a multi-stage bounded pipeline. Compare with OCaml's `Mutex`/`Condition`-based bounded channel implementation.

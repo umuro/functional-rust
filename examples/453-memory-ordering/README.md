@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Modern CPUs and compilers reorder instructions for performance. On a multi-core system, one thread's operations may appear in a different order to another thread. Memory ordering specifies the synchronization guarantees: `Relaxed` (no ordering guarantees), `Acquire`/`Release` (synchronized handoff between writer and reader), `AcqRel` (both acquire and release), `SeqCst` (total global order). Choosing the wrong ordering causes data races or needless performance loss. The Release-Acquire pair is the key idiom: a `Release` store "publishes" writes; an `Acquire` load "subscribes" to them.

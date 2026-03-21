@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implement a custom `accumulate` function equivalent to `map` — applying a function to every element of a list and collecting the results. Provide three versions: naive recursive, tail-recursive with an accumulator, and idiomatic iterator-based. Compare with OCaml's `List.map` and tail-recursive alternative.

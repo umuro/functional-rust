@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Errors in real systems are causal chains: a configuration loading failure is caused by a file read failure, which is caused by a permissions denial. Displaying only the top-level error loses the root cause. The `Error::source()` method creates a linked list of errors from high-level to low-level, enabling tools and users to see the complete causal chain. This is the Rust equivalent of Java's exception chaining (`getCause()`) and Python's `raise X from Y`.

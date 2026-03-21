@@ -1,6 +1,8 @@
 **Difficulty:** ⭐⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐⭐  
+
 [poker-hand-evaluator on hightechmind.io](https://hightechmind.io/posts/functional-rust/poker-hand-evaluator)
 
 ---

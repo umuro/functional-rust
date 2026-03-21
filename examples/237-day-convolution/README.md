@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Day convolution is a monoidal product for functors: given two applicative functors `F` and `G`, `Day<F, G>` is their "tensor product." The construction packages values from both functors with a combining function, enabling them to be applied together. Day convolution arises in effect systems (combining independent effect types), parser combinators (running two parsers on the same input), and signal processing abstractions. It is the categorical generalization of `zip` for applicatives.

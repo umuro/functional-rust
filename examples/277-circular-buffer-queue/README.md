@@ -3,10 +3,10 @@
 ---
 
 # Example 277: Circular Buffer — Functional Queue
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Data Structures
-**OCaml Source:** https://dev.realworldocaml.org/
+
 
 ## Problem Statement
 

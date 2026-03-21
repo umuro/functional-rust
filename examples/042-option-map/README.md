@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `Option::map` applies a function to the value inside a `Some`, leaving `None` unchanged. This is the functor operation — it lifts a function `f: T -> U` into the option context to produce `Option<T> -> Option<U>`. The key property: `None.map(f) == None` for any `f`. This enables transformation of optional values without explicit null-checking.

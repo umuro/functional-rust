@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Processing data in fixed-size batches is fundamental to I/O buffering, pagination, parallel work distribution, and batch database operations. Reading 4096-byte I/O blocks, processing 100 database rows at a time, distributing work across 8 threads — all require splitting a sequence into non-overlapping fixed-size groups. Rust provides `.chunks(n)` for variable-size last chunk and `.chunks_exact(n)` for uniform-size-only processing. These are zero-copy slice operations returning references into the original data. OCaml requires recursive functions or `Array.sub` for equivalent functionality.

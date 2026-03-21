@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When a closure uses a variable from its enclosing scope, it must determine how to capture it: share a reference, take a mutable reference, or move ownership. Getting this wrong leads to use-after-free (in unsafe code), data races, or borrow conflicts. Rust enforces the correct capture mode at compile time based on how the closure uses each variable. Understanding capture modes is essential for writing closures that outlive their creation scope (e.g., closures passed to threads).

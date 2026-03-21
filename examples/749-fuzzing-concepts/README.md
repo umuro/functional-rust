@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Fuzzing sends random or mutated inputs to a program to find panics, crashes, and assertion failures. It has discovered thousands of security vulnerabilities in parsers, decoders, and protocol implementations. AFL++ and libFuzzer are the dominant fuzzers; Rust's `cargo-fuzz` wraps libFuzzer for Rust code. The key design principle for fuzzer-safe code is: never panic on any input — return `Err` instead of unwrapping. This example demonstrates how to write fuzz-safe parsers.

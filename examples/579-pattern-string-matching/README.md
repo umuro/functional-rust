@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many programs dispatch on string commands: REPL commands, configuration keys, protocol keywords, HTTP methods. While `HashMap` lookup handles large vocabularies, small fixed sets are more readable as `match` expressions. Rust supports matching on `&str` literals, combining with or-patterns and guards for commands that start with a prefix. This pattern is common in CLI tools, game loops, and simple interpreters.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 An interval map assigns values to non-overlapping ranges of a key space. Use cases: IP address routing tables (CIDR blocks), calendar scheduling (time ranges), tax brackets (income ranges), and memory segment descriptors in operating systems.

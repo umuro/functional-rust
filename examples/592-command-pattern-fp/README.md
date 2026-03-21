@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The OOP command pattern encapsulates actions as objects with `execute` and `undo` methods. The functional version is simpler: commands are data (enum variants), interpretation is a separate function. This separation — data from behavior — makes commands serializable, loggable, testable, and replayable without coupling them to execution context. It is the foundation of event sourcing, undo/redo systems, game replay, and distributed systems that need to log and replay operations.

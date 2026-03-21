@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Railway-oriented programming (ROP), coined by Scott Wlaschin, is a visual metaphor for monadic error handling. Picture a two-track railway: the "happy track" (Ok values) and the "error track" (Err values). Each function is a switch: if you are on the happy track and the function succeeds, you stay on it; if it fails, you switch to the error track and stay there until the end.

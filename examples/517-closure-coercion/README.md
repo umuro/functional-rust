@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 C and systems programming have long relied on function pointers for callbacks — they are a fixed machine-word size, require no heap allocation, and map directly to a call instruction. Rust preserves this capability: non-capturing closures and named functions both coerce to `fn` pointer types, enabling zero-overhead callbacks in FFI-compatible APIs. The constraint is intentional — a capturing closure has extra data that a raw pointer cannot represent. Understanding when coercion works and when it fails helps you choose between `fn`, `impl Fn`, and `Box<dyn Fn>`.

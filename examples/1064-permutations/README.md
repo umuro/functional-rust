@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Generating all permutations of a sequence is essential for brute-force combinatorial search: testing all orderings of tasks for a scheduling problem, generating all possible moves in game AI, and exhaustive testing of commutative operations. There are n! permutations of n elements.

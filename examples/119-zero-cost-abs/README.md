@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 High-level code often runs slower than hand-written low-level code in languages without zero-cost guarantees — intermediate allocations, dynamic dispatch, and interpreter overhead add up. Rust's zero-cost abstraction principle guarantees that iterator chains, closures, and newtype wrappers compile to identical machine code as their hand-written equivalents. This enables writing expressive, composable code without sacrificing performance — a core design goal of the language.

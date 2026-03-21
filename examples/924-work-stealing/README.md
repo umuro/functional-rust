@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A fixed thread pool with a single shared work queue can become a bottleneck: all workers contend for the same lock. Work-stealing distributes this: each worker has its own local queue; when idle, a worker "steals" tasks from another worker's queue. This approach was invented for the Cilk parallel runtime at MIT and is used in Java's `ForkJoinPool`, .NET's `ThreadPool`, Go's goroutine scheduler, and Rust's `rayon`. Local queues use lock-free algorithms for pushes; stealing requires only occasional locking. The result is near-linear scaling on multi-core processors for divide-and-conquer workloads.

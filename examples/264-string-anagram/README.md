@@ -3,10 +3,10 @@
 ---
 
 # Example 264: String Anagram Check
-
 **Difficulty:** ⭐  
-**Category:** String Processing  
-**OCaml Source:** https://exercism.org/tracks/ocaml/exercises/anagram
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

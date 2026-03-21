@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Autocomplete and prefix search are fundamental to user interfaces: search bars, IDE completion, spell checkers, and IP routing tables all need to answer "what words start with this prefix?" efficiently. A hash map of all words answers exact lookups in O(1) but cannot answer prefix queries. A trie (prefix tree) organizes strings by shared prefixes, enabling prefix queries in O(m) time where m is the prefix length — independent of how many words are stored. This also makes insertion, deletion, and "does any word start with X?" all O(m). Tries power the autocomplete in Google Search, the routing table lookup in routers, and the dictionary in word games.

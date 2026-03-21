@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Spawning threads that outlive their creator creates "orphan threads" — tasks that may read freed memory, hold resources after the owning scope exits, or silently swallow panics. Structured concurrency (Nathaniel J. Smith, 2018; popularized by Kotlin coroutines and Python's `anyio`) ensures that spawned tasks are strictly scoped: they cannot outlive the block that created them. Rust's `thread::scope` implements this at the language level — borrowed references are valid for the entire scope, and the scope blocks until all spawned threads complete. No raw `Arc` needed for data shared with child threads; borrows work directly.

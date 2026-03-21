@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `Option<T>` is Rust's type-safe replacement for null pointers. Tony Hoare called null his "billion-dollar mistake" — null references cause crashes, undefined behavior, and security vulnerabilities in C, C++, Java, and JavaScript. Rust's `Option<T>` forces explicit handling of the absent case at compile time. Every `Option` must be pattern-matched or explicitly unwrapped — the compiler prevents accessing the inner value without handling `None`. OCaml's `option` type predates Rust's `Option` and solves the same problem.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A very common pattern is: try to convert each element into a useful form, stop at the first success, and return it. For example, parse numbers from strings until one succeeds, look up each key in several registries until a hit, or try multiple fallback strategies until one works. The naive approach chains `map()` and `find()`, but this creates intermediate `Option` values. The `find_map(f)` adapter fuses these into a single lazy operation: find the first `Some(...)` result from applying `f`.

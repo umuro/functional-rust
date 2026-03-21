@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 In-place mutation is often more efficient than allocating new values. Sorting a large array in place, incrementing a counter, reversing a buffer — all benefit from direct mutation. Rust allows mutable access via `&mut T` with one strict rule: only one `&mut T` can exist at a time, and no `&T` can coexist with it. This prevents data races and iterator invalidation — the bugs that plagued C++ with concurrent mutation. The rule "exclusive access implies safe mutation" is Rust's solution to the aliasing problem that makes optimizing languages hard.

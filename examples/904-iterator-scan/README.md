@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Fold produces one final value. Scan produces the whole sequence of intermediate values — one per input element. Running sums, cumulative maxima, and prefix products are all scan applications. The scan operation also supports early termination: returning `None` from the closure stops the iterator, enabling a "scan until condition" behavior that fold cannot express lazily. Haskell has `scanl`; OCaml has `Seq.scan` (since 4.14); Python has `itertools.accumulate`. Rust's `Iterator::scan` takes a mutable state reference, giving fine-grained control over both the emitted value and the accumulator.

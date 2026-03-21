@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Most introductory lifetime examples use a single `'a` for all borrows. But real code often has references with genuinely independent lifetimes — a function that reads from one buffer and writes to another, a struct holding a reader and a writer that may live for different durations. Using a single lifetime in these cases would over-constrain the API: callers would need to keep all referenced data alive for the same duration. Multiple independent lifetime parameters express the true dependency relationships and give callers maximum flexibility.

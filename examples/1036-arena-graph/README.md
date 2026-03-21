@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Graphs are notoriously difficult to represent in Rust's ownership model because nodes can have multiple incoming edges, violating the single-owner rule. The arena allocation pattern sidesteps this by storing all nodes in a `Vec<Node>` (the "arena") and using integer indices as edge references instead of direct pointers. Index-based references have no ownership semantics and cannot dangle as long as the arena lives.

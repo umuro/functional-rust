@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Counting elements — total count, conditional count, count of distinct values — is one of the most frequent operations in data processing. While `len()` is available for sized collections, `count()` works on any iterator, including those from lazy chains of `filter()`, `map()`, and `flat_map()`. It consumes the iterator in a single pass, returning the total number of elements yielded.

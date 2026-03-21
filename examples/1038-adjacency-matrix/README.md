@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The adjacency matrix represents a graph as a V×V boolean (or weighted) matrix where `matrix[i][j] = true` means there is an edge from node i to node j. Edge lookup is O(1) — a direct array access — making it ideal for dense graphs where the number of edges approaches V². It is the standard representation in network routing tables, transition matrices in Markov chains, and Floyd-Warshall all-pairs shortest path.

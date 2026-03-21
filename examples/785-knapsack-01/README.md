@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The 0/1 knapsack problem is a foundational combinatorial optimization problem: given items with weights and values and a capacity-limited bag, select items to maximize total value without exceeding capacity. "0/1" means each item is either taken or not (no fractions). It appears in resource allocation, project portfolio selection, cargo loading, and is a building block for more complex optimization problems. The DP solution runs in O(n × W) time, making large instances tractable.

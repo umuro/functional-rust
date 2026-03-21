@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `thread::spawn` requires `'static` data — you can't borrow a local variable across threads because the spawned thread might outlive the caller's stack frame. This forces `Arc<T>` and cloning even when you just want to process slices of a local array in parallel. `thread::scope` (stabilized in Rust 1.63) solves this: scoped threads are guaranteed to complete before the scope exits, so they can safely borrow any data from the enclosing scope — including stack-allocated slices, without `Arc` or `clone`.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The coin change problem asks: given coin denominations and a target amount, what is the minimum number of coins to make that amount? This is a classic DP problem with applications in currency systems, memory allocators (minimal number of blocks to satisfy a request), and NP-hard scheduling approximations.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Checking exact membership in a large set requires storing all elements, which is expensive when the set contains billions of items (URLs, email addresses, IP addresses). Burton Howard Bloom introduced a probabilistic approach in 1970: use a bit array and multiple hash functions to answer "is this element in the set?" with guaranteed no false negatives but a tunable false positive rate. A Bloom filter can represent 1 billion URLs using only ~1.2 GB at 1% false positive rate — orders of magnitude less than a hash set.

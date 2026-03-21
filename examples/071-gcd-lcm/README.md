@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The Greatest Common Divisor (GCD) and Least Common Multiple (LCM) are fundamental number theory operations. Euclid's algorithm for GCD (300 BC) is one of the oldest algorithms in existence: `gcd(a, 0) = a`, `gcd(a, b) = gcd(b, a % b)`. LCM follows from GCD: `lcm(a, b) = a * b / gcd(a, b)`.

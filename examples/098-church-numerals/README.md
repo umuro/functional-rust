@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Encode natural numbers as higher-order functions (Church numerals): zero applies `f` zero times, one applies once, `succ(n)` wraps `n` to apply one more time. Implement `to_int` (apply `+1` starting from 0) and arithmetic operations. Compare OCaml's naturally polymorphic Church encoding with Rust's `Box<dyn Fn>` approach.

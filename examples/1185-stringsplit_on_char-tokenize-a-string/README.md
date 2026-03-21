@@ -1,8 +1,8 @@
 # Example 1185: String.split_on_char — Tokenize a String
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Strings & Iterators
-**OCaml Source:** `String.split_on_char`
+
 
 ## Problem Statement
 

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Pairing elements from two sequences is fundamental to many algorithms: matching names with scores, computing dot products, running pairwise comparisons, building dictionaries from key and value slices. OCaml's `List.combine` (zip) and `List.split` (unzip) are the eager equivalents. Rust's `.zip()` adapter is lazy and does not panic on length mismatch — it stops at the shorter iterator. This laziness makes zip safe for use with infinite iterators. The `.enumerate()` method is a special case of zip with an index sequence, and `.unzip()` is the inverse consumer.

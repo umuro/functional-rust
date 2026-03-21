@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Determine whether a year is a leap year using the Gregorian calendar rules: a year is a leap year if it is divisible by 400, or divisible by 4 but not divisible by 100. Implement `is_leap_year(year: u32) -> bool` as a single boolean expression and verify on 2000 (leap), 1900 (not), 2004 (leap), 2001 (not).

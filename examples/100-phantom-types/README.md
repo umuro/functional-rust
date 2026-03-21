@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Use `PhantomData<Unit>` to tag a `Quantity<Unit>` struct with a unit type, preventing addition of meters to seconds at compile time. The unit type `Meters` or `Seconds` carries no runtime data — it exists purely as a type-level marker. Compare with OCaml's abstract phantom types (`type meters`) and the simpler newtype alternative.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Some code patterns cannot be abstracted with functions. A function that takes a variable number of arguments of different types, generates different code branches depending on the caller's syntax, or captures the source location of its invocation requires metaprogramming. Rust's `macro_rules!` is the declarative macro system: pattern-match on the input token stream, transform it, and emit generated code. Unlike C preprocessor macros, `macro_rules!` is hygienic (generated identifiers don't leak), syntactically aware, and integrated into the module system.

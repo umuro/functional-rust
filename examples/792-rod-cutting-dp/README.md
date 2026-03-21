@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rod cutting is a classic unbounded knapsack variant: given a rod of length n and prices for each length, maximize revenue by cutting the rod into pieces. Unlike 0/1 knapsack, pieces of the same length can be used multiple times. It was popularized by Cormen et al. "Introduction to Algorithms" and models real cutting-stock problems in manufacturing, timber processing, and cable management.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Reversing a string is a fundamental exercise that reveals important differences between languages in how they handle Unicode text. Reversing the bytes of a UTF-8 string produces garbage — multi-byte characters become invalid. Reversing by characters (Unicode scalar values) is correct for most purposes. Reversing by grapheme clusters (the human-perceived characters, e.g., emoji with skin tone modifiers) requires the `unicode-segmentation` crate.

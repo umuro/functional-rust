@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Configuration files — INI, TOML, YAML — are the primary mechanism for parametrizing deployed software without recompilation. INI format predates them all and remains ubiquitous in tools like `git config`, Windows registry exports, and `openssl.cnf`. Parsing INI manually teaches section-based hierarchical configuration, comment handling, and graceful error reporting for malformed config files.

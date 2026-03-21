@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 This example covers a specific aspect of Rust's unsafe programming model: raw memory manipulation, FFI interop, allocator customization, or soundness principles. These topics are essential for systems programming — writing OS components, device drivers, game engines, and any code that must interact with C libraries or control memory layout precisely. Rust's unsafe system is designed to confine unsafety to small, auditable regions while maintaining safety in the surrounding code.

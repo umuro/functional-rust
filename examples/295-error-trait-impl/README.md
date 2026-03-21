@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The `std::error::Error` trait is the common interface for all Rust errors, enabling error chaining, dynamic dispatch, and interoperability between libraries. Implementing it properly — with `Display` for user messages, `Debug` for developer output, and `source()` for causal chains — is the foundation of production-quality error handling. This mirrors the interface that `anyhow`, `thiserror`, and the broader ecosystem expect.

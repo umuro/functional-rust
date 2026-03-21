@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `Result::map` transforms the success value inside `Ok` while leaving `Err` unchanged — the functor operation for `Result`. It is the equivalent of `Option::map` but for the two-channel success/failure type. Together with `map_err`, it enables transformation of both channels: `map` for the success value, `map_err` for the error value.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The `?` operator desugars to a call to the `Try` trait (unstable) or the earlier `From` + early-return pattern. This example demonstrates the concept using a `Validated<T, E>` type that accumulates multiple errors instead of short-circuiting — illustrating that the `?` behavior is customizable. Understanding what `?` actually does enables implementing custom types that participate in Rust's error-handling ergonomics.

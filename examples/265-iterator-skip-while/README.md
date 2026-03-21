@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Data streams often begin with a preamble, header, or leading values that should be ignored before processing begins. Log files start with timestamps; CSV files may have metadata rows; sorted lists may have leading zeros. The `skip_while()` adapter solves this by discarding elements from the front of an iterator until the predicate first returns false, then yielding all remaining elements unconditionally — including any that would again match the original predicate.

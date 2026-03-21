@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Complex macro DSLs need to parse arbitrary syntax that doesn't fit standard repetition patterns. Token tree (TT) munching processes input one token tree at a time: one arm peels off the first `$tt` and processes it, recursing with the remainder. This enables parsing heterogeneous sequences, implementing mini-parsers within macros, and supporting complex field definition syntax like `field: Type = default`. TT munching is the technique behind the `bitflags!`, `clap::arg!`, and `pest` grammar macros.

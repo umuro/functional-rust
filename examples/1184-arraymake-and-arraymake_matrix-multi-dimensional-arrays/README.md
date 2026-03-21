@@ -1,8 +1,8 @@
 # Example 1184: Array.make and Array.make_matrix — Multi-dimensional Arrays
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Arrays & Mutable State
-**OCaml Source:** `Array.make`, `Array.make_matrix`
+
 
 ## Problem Statement
 

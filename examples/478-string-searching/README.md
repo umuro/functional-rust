@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Rust's string search methods — `contains`, `find`, `rfind`, `starts_with`, `ends_with`, and `matches` — provide zero-allocation substring and pattern searching with a unified `Pattern` trait.
 
 ## Problem Statement

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Deserialization is where input data meets your domain model — it is the boundary where untrusted data enters the system. Custom deserialization lets you validate during parsing (not after), normalize data (trim whitespace, convert case), handle version differences (accept V1 and V2 formats), and reject invalid states before they reach business logic. This is the parse-don't-validate principle applied to serialization.

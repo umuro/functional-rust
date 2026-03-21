@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Every adjunction `F ⊣ G` gives rise to a monad `G ∘ F` with unit `η` and multiplication `G(ε_F)`, and a comonad `F ∘ G` with counit `ε` and comultiplication `F(η_G)`. This is the deepest connection between adjunctions, monads, and comonads. The State monad arises from the product/exponential adjunction; the List monad from the free/forgetful adjunction. This example derives the State monad and its dual the Env comonad from first principles using the product adjunction.

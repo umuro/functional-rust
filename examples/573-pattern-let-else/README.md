@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Deeply nested `if let` expressions create the "pyramid of doom" — code that drifts rightward with each additional unwrap. `let-else` (stabilized in Rust 1.65) provides early return on pattern mismatch: if the pattern does not match, the `else` block must diverge (return, break, continue, or panic). This enables "railway-oriented" linear code — extract what you need at the top, return on failure, use the value in the rest of the function. It is the idiomatic Rust replacement for chains of nested `if let`.

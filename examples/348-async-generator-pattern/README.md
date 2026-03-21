@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Some computations produce values lazily — database result sets, network streams, event queues — where computing all values upfront would be wasteful or impossible. Generators (Python's `yield`, JavaScript's `function*`, C#'s `yield return`) allow a function to produce values one at a time, suspending between yields. Rust doesn't have stable generators yet (RFC 2996 is in progress), but the pattern is emulated via the `Iterator` trait for synchronous generators and async streams (`Stream` trait from `futures`) for async generators. Understanding this pattern prepares you for when Rust's native generator syntax lands.

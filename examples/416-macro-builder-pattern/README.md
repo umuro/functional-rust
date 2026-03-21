@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The builder pattern reduces construction errors for structs with many optional fields, but implementing it manually requires writing setter methods for every field — tedious and error-prone to keep in sync with the struct itself. Macros can eliminate this boilerplate: define the struct once with field metadata, and a macro generates the builder struct, all setter methods, and the `build()` method. This keeps the struct definition as the single source of truth.

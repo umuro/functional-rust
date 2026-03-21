@@ -3,10 +3,10 @@
 ---
 
 # Example 252: Insertion Sort
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Sorting Algorithms
-**OCaml Source:** https://rosettacode.org/wiki/Sorting_algorithms/Insertion_sort#OCaml
+
 
 ## Problem Statement
 

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Trait evolution is a challenge: adding a new required method to a published trait breaks all existing implementors. Default methods (introduced in Rust to solve this, analogous to Java 8's default interface methods) allow traits to provide method implementations that implementors can use or override. This enables adding new functionality to traits without breaking the ecosystem and reduces the "implement 20 methods just to satisfy a trait" problem by providing sensible defaults for derived functionality.

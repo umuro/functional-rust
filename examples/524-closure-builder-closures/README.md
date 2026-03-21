@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The builder pattern addresses the "telescoping constructor" problem: when a type has many optional fields, constructors become unwieldy and error-prone. Rust's builder idiom (fluent API) is widespread in production code — `reqwest::ClientBuilder`, `tokio::runtime::Builder`, `std::thread::Builder` all use it. Adding closures to builders enables behavior injection: instead of just configuring data fields, callers can inject callbacks for connection events, error handlers, or transformation pipelines. This makes APIs both configurable and extensible without requiring trait implementations.

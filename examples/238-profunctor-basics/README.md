@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A profunctor is a type constructor `P<A, B>` that is contravariant in `A` and covariant in `B`. Functions `fn(A) -> B` are the canonical profunctor: you can pre-map the input (`A -> A'` gives `P<A', B>`) and post-map the output (`B -> B'` gives `P<A, B'>`). Profunctors generalize both `Functor` (covariant only) and `Contravariant` (contravariant only). They are the mathematical foundation of the profunctor optics encoding (Van Laarhoven generalization).

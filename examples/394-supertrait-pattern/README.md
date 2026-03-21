@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Some traits only make sense when combined with others. A `Printable` type that can print itself both in debug and display forms requires both `Debug` and `Display`. Instead of requiring callers to write `T: Debug + Display + Printable` everywhere, supertraits express this: `trait Printable: Debug + Display` declares that any type implementing `Printable` must also implement `Debug` and `Display`. This reduces boilerplate at every call site and makes semantic groupings explicit in the trait system.

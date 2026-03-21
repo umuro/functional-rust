@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A custom derive macro generates trait implementations automatically from a type's definition. When you annotate `#[derive(MyTrait)]`, the proc macro receives the struct/enum definition as a token stream, parses it to find field names and types, and emits an `impl MyTrait for TheType` block. This is the mechanism behind `serde::Deserialize` — it inspects every field name and type, generating JSON deserialization code specific to that struct's shape, something impossible with `macro_rules!`.

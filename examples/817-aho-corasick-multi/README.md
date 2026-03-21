@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When you need to find hundreds of keywords simultaneously in a large text — network intrusion detection scanning for attack signatures, spam filters checking for banned phrases, DNA analysis searching for multiple probes — running each pattern separately costs O(n * k) where k is the number of patterns. Aho-Corasick solves this by building a trie of all patterns and adding failure links so that mismatches fall back to the longest suffix that is also a prefix of some pattern. The result is O(n + m + z) where n is text length, m is total pattern length, and z is match count — regardless of how many patterns there are. This is the algorithm powering `fgrep -f patterns.txt`, network packet inspection, and antivirus scanning.

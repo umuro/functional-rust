@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 In a large ecosystem with thousands of crates, two independent crates could both implement `Display` for `Vec<i32>`, creating an ambiguous implementation conflict. Rust's orphan rule prevents this: you can only implement a trait for a type if either the trait or the type is defined in your current crate. This coherence guarantee ensures that every `(trait, type)` pair has exactly one implementation, making code predictable regardless of which crates are combined. The newtype pattern is the standard workaround when you need to implement a foreign trait for a foreign type.

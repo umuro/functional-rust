@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When processing a batch of inputs where some may fail, sometimes you want both the successes and the failures — not a short-circuit. Importing a CSV where invalid rows are logged and skipped, processing API responses where some fail and others succeed, or batch-validating records while collecting all errors. The `partition(Result::is_ok)` pattern collects all results in one pass, then extracts the `Ok` and `Err` values into separate vectors.

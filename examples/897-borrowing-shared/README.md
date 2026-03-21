@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Reading data from multiple places simultaneously is safe as long as no one is writing. Rust formalizes this with shared references (`&T`): unlimited readers can hold `&T` simultaneously, but no writer can hold `&mut T` while any `&T` exists. This compile-time "readers-writer lock" prevents data races without runtime overhead. OCaml's GC and immutability-by-default avoid the need for explicit borrowing — values are implicitly shared. Rust's borrow checker is the mechanism that makes systems-level Rust safe without garbage collection.

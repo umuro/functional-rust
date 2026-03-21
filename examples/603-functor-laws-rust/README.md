@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Functors are the fundamental abstraction for mapping over container types. A functor must satisfy two laws: identity (fmap id == id) and composition (fmap (f . g) == fmap f . fmap g). These laws ensure that mapping preserves structure. Rust's Iterator, Option, and Result are all functors. Understanding functor laws helps verify that custom collection types behave correctly when mapped over.

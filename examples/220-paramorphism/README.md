@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A catamorphism's algebra sees only the folded results of children, not the original sub-structure. But some algorithms need both — the original subtree and its folded result simultaneously. Factorial needs "the predecessor" and its result; a tree algorithm may need the original child count and the accumulated value. Paramorphisms extend catamorphisms: the algebra receives pairs of `(original_subtree, accumulated_result)` for each child.

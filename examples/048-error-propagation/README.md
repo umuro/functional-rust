@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The `?` operator is Rust's ergonomic solution to error propagation. Without it, every fallible call requires an explicit `match` or `unwrap`. With `?`, errors bubble up automatically: `let x = fallible_op()?;` returns the error early if the operation fails, otherwise binds `x` to the success value. This transforms nested error handling into sequential, readable code.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 The `move` keyword forces a closure to take ownership of every variable it captures from the enclosing scope — required for thread spawning, returning closures from functions, and async tasks where the closure must outlive its creator.
 
 ## Problem Statement

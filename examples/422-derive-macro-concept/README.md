@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many trait implementations are entirely mechanical: `Debug` for a struct just prints each field name and value, `Clone` copies each field, `PartialEq` compares each field. Writing these by hand for every type is tedious, error-prone (especially when fields are added later), and distracts from the actual logic. `#[derive(Debug, Clone, PartialEq)]` instructs the compiler to generate these mechanical implementations automatically based on the type's structure. Understanding what derive macros generate is essential for debugging unexpected behavior.

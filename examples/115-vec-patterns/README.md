@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The vector iterator pattern — `filter`, `map`, `fold`, `zip`, `flat_map`, `scan` — is the functional programming toolkit applied to Rust's `Vec<T>`. These adapters are lazy, composable, and zero-overhead: the compiler fuses them into a single loop with no intermediate allocations.

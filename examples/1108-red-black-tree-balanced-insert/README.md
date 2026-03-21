@@ -1,8 +1,8 @@
 # Example 1108: Red-Black Tree with Okasaki's Functional Balancing
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Trees & Persistent Data Structures
-**OCaml Source:** `example.ml` — Okasaki's original ML formulation with a single `balance` pattern match
+
 
 ## Problem Statement
 

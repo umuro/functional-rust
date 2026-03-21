@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `macro_rules!` patterns match different syntactic categories through designators: `$e:expr` matches any expression, `$i:ident` matches an identifier, `$t:ty` matches a type, `$p:pat` matches a pattern, `$b:block` matches a block. Choosing the right designator is critical — `expr` captures the full expression including operators, while `tt` captures a single token tree. Misusing designators leads to confusing parse errors or overly restrictive macros that refuse valid inputs.

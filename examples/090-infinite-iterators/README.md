@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Create infinite iterators using Rust's standard library combinators: `cycle` (repeat a finite sequence forever), `repeat` (emit one value forever), `from_fn` (stateful generator), and `repeat_with` (side-effecting generator). Always bound with `.take(n)` before collecting. Compare with OCaml's `Seq`-based infinite sequence representations.

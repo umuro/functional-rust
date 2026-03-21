@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A multimap (or multi-dictionary) maps each key to multiple values. Real-world examples: a person can have multiple phone numbers, a web server can handle multiple routes for the same path prefix, a product can belong to multiple categories. Standard hash maps do not support this — inserting the same key twice overwrites the old value.

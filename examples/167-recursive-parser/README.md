@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Recursive grammars — lists containing lists, expressions containing sub-expressions, JSON arrays containing arrays — require parsers that call themselves. In a strict functional setting, this creates a challenge: a closure cannot easily refer to itself. Rust's solution uses `Rc<dyn Fn>` for sharing a parser across recursive calls, or function pointers for simpler cases. Recursion is the fundamental mechanism for parsing context-free grammars.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Counting, grouping, and frequency analysis are among the most common data processing tasks. A hash map is the universal tool: O(1) average insert and lookup, with keys mapped to values. Rust's `HashMap<K, V>` uses the SipHash-1-3 algorithm by default (DoS-resistant), supports the `entry()` API for atomic insert-or-update, and requires `K: Hash + Eq`. Understanding the three canonical patterns — word counting, grouping by key, and top-N frequency — prepares you for most real-world data pipeline work.

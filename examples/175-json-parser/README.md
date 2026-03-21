@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 JSON is the universal data interchange format — REST APIs, configuration files, log streams, and inter-service communication all use it. Parsing JSON correctly requires handling all six value types (null, boolean, number, string, array, object), Unicode escape sequences in strings, arbitrary nesting, and proper whitespace handling. This capstone example applies every parser combinator technique from the series to build a complete, correct JSON parser.

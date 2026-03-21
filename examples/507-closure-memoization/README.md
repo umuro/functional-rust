@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Memoization wraps a function in a cache layer that stores previously computed results, returning the cached value on repeated calls instead of recomputing — a classic time-space trade-off applicable to any pure function.
 
 ## Problem Statement

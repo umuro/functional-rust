@@ -3,10 +3,10 @@
 ---
 
 # Example 261: Binary Search Tree — Insert and Search
-
 **Difficulty:** ⭐⭐  
-**Category:** Trees  
-**OCaml Source:** https://cs3110.github.io/textbook/chapters/ds/bst.html
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

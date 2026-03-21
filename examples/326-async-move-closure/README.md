@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Async tasks often need to use data from the surrounding scope — a user ID, a connection string, or a shared counter. Since async tasks may outlive the scope where they are created, they cannot borrow — they must own their data. The `async move { }` block (and `move ||` closure) captures all referenced variables by value, giving the async task ownership. This is required whenever a spawned task needs access to outer-scope data.

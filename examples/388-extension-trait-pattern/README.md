@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 You want to add methods to a type you don't own — `str`, `Vec`, an external library type. Rust's orphan rule prevents implementing foreign traits on foreign types directly, but the extension trait pattern works around this: define a new trait in your crate, implement it for the foreign type, and bring it into scope with `use`. This is how `itertools` adds hundreds of methods to `Iterator`, how `tokio` adds async utilities to `TcpStream`, and how domain-specific libraries enrich standard library types.

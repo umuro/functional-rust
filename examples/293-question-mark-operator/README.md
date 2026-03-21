@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Chaining fallible operations with `and_then()` is composable but visually noisy when there are many sequential steps. The `?` operator provides syntactic sugar for early return on failure: `expr?` desugars to `match expr { Ok(v) => v, Err(e) => return Err(e.into()) }`. This makes error propagation code read like imperative code while retaining the type safety of explicit `Result` types. It is Rust's equivalent of OCaml's `let*` syntax and Haskell's `do` notation.

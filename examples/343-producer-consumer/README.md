@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When data is produced at a variable rate and consumed at a different variable rate, a bounded buffer between them smooths out the mismatch — producers slow down when the buffer is full (backpressure), consumers wait when it's empty. This pattern, formalized by Dijkstra (1965) as the "bounded buffer problem," underlies logging pipelines, work queues, streaming data processing, and I/O scheduling. Without a bounded buffer, fast producers can exhaust memory; without the blocking discipline, consumers busy-wait and waste CPU. The Rust implementation uses `Mutex` + `Condvar` to achieve efficient blocking on both conditions.

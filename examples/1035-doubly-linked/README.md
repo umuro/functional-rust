@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Doubly-linked lists support O(1) insertion and removal at any node when you already hold a reference to that node. This makes them ideal for LRU cache eviction (move a node to the front when accessed), editor cursor movement, and undo/redo history. The challenge in Rust is that each node needs a pointer to both its predecessor and successor, creating a cycle of shared ownership that cannot be expressed with simple `Box<T>`.

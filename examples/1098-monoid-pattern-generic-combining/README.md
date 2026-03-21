@@ -1,8 +1,8 @@
 # Example 1098: Monoid Pattern — Generic Combining
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Type Classes & Algebraic Abstractions
-**OCaml Source:** First-class modules pattern (Real World OCaml, Chapter 10)
+
 
 ## Problem Statement
 

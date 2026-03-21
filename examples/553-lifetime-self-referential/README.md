@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A self-referential struct stores a reference to its own data — for example, a struct that owns a `String` and also holds a `&str` pointing into that same `String`. This is fundamentally incompatible with Rust's ownership model: moving the struct invalidates the internal reference. This is one of Rust's hardest problems, arising in async futures (which hold references to their own state), parsers (holding a pointer into a buffer they own), and event loops. The standard solutions are: use indices instead of references, use `Pin<Box<T>>` for unmovable data, or use external crates like `ouroboros`.

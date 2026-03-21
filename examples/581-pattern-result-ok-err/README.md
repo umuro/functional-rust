@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Error handling is one of the most consequential design decisions in a language. C uses integer return codes (frequently ignored). Java uses exceptions (can be swallowed silently). Rust uses `Result<T, E>` — a value that is either `Ok(T)` or `Err(E)`, with the compiler enforcing that error paths are handled. The `?` operator makes error propagation as concise as exceptions while keeping the error path explicit in function signatures. OCaml's `result` type serves the same purpose and is the direct ancestor of Rust's `Result`.

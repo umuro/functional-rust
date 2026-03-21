@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Cross-platform libraries must support Linux, macOS, Windows, and embedded targets — each with different APIs, file paths, and system calls. Feature flags enable shipping a core library with optional capabilities that users opt into. Compiling debug-only code into release builds wastes binary space and performance. Conditional compilation solves all of these: `#[cfg(target_os = "linux")]` includes code only on Linux, `#[cfg(feature = "advanced")]` only when the feature is enabled, `#[cfg(debug_assertions)]` only in debug builds. The compiler eliminates excluded branches entirely — zero runtime cost.

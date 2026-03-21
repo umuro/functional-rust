@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Lazy sequences represent potentially infinite collections where elements are computed on demand. OCaml 4.07 added the `Seq` module for this purpose; Haskell uses lazy lists by default. The key insight: you can define `let naturals = 0, 1, 2, ...` as an infinite sequence and then `take 10` to get the first 10 elements — without ever computing element 11.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Functions calling multiple libraries encounter multiple error types. Unifying them into a single application error type with `match` on every `?` usage is boilerplate. The `From<SourceError>` trait enables automatic conversion: when `impl From<ParseIntError> for AppError` is defined, the `?` operator automatically calls `AppError::from(e)` when propagating a `ParseIntError`. This is how Rust achieves zero-boilerplate error type unification.

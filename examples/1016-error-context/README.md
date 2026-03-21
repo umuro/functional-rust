@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When an error bubbles up through several layers of a call stack, the raw error message often lacks enough information to diagnose the problem. "file not found" tells you what failed but not why the file was being read or what operation was in progress. Adding context at each propagation point — "loading config -> reading file -> file not found" — produces error messages that pinpoint the root cause without a debugger.

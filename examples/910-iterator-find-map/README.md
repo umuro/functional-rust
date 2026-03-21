@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A common pattern: try a transformation on each element, take the first success, ignore failures. Parsing the first valid integer from a list of strings, finding the first `key=value` pair in a config, finding the first element longer than a threshold — all follow this pattern. The naive approach uses `filter_map(f).next()`, but `find_map(f)` expresses the intent more directly: "find the first element for which f returns Some." OCaml's `List.find_map` was added in 4.10. Haskell's `Data.Maybe.mapMaybe` and `listToMaybe . mapMaybe f` serve the same role. It is the "optional value from the first successful transformation" operation.

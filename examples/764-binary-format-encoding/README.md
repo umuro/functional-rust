@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Binary serialization is 2–10x smaller and faster than JSON for the same data. It is used in database wire protocols (PostgreSQL binary format), game networking (ENet, Quake protocol), inter-service communication (Protocol Buffers, FlatBuffers, MessagePack), and file formats (ELF, PNG, MP4). Understanding binary encoding teaches endianness, alignment, length prefixing, and the fundamental trade-offs between human readability and machine efficiency.

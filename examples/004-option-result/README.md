@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Null references were famously called "the billion-dollar mistake" by their inventor Tony Hoare. Languages like Java, C, and C++ use `null`/`NULL` to represent missing values, which causes `NullPointerException`, segfaults, and unchecked error codes at runtime. Functional languages solved this with algebraic types: `Option` (sometimes called `Maybe`) wraps a value that may or may not exist, and `Result` (or `Either`) wraps a value that may have failed with an error.

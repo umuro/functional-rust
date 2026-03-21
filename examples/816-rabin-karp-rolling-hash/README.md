@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Finding multiple patterns in a text, or detecting plagiarism across documents, requires more than single-pattern search. Rabin-Karp solves this using polynomial hashing: compute a hash for each window of text equal in size to the pattern, and compare hashes rather than characters. The rolling hash property means each step takes O(1) — subtract the contribution of the outgoing character and add the incoming one. This enables searching for k patterns simultaneously in O(n + k*m) expected time. Real-world uses: duplicate code detection, plagiarism detection, DNA fingerprinting, and detecting repeated substrings in large files.

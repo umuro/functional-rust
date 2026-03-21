@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Fire-and-forget background tasks, parallel work distribution, and pipeline stages all require spawning independent units of work. `thread::spawn` (synchronous) and `tokio::spawn` (async) start tasks that run independently and optionally return results via `JoinHandle`. Understanding how to spawn tasks, collect results, and handle panics is foundational for concurrent Rust programming.

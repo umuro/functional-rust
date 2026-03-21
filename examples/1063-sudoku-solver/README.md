@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Sudoku is a constraint satisfaction problem: fill a 9×9 grid with digits 1–9 such that each row, column, and 3×3 box contains each digit exactly once. Backtracking with constraint checking is the standard algorithm — try each valid digit at each empty cell, backtrack when no digit works.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Parallel algorithms often have phases: all threads complete phase 1 before any begins phase 2. A barrier synchronization point ensures all N threads reach the barrier before any proceed. Without barriers, fast threads would start phase 2 while slow threads are still in phase 1, reading partially-computed data. Barriers are the foundation of parallel algorithm phases in scientific computing (iterative solvers, particle simulations), data pipeline stages, and distributed systems consensus.

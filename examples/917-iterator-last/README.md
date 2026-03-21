@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Retrieving the final element of a sequence has different costs depending on the data structure: O(1) for arrays and `Vec` (by index), O(n) for linked lists (must traverse all). For iterators, `.last()` always traverses the entire sequence — it must consume every element to reach the end. This makes `.last()` unsuitable for large sequences where only the final element is needed; a `DoubleEndedIterator` with `.next_back()` is O(1) for slices. Understanding this cost difference helps write efficient code. OCaml has `List.rev xs |> List.hd` which is similarly O(n).

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Some conversions are always valid (`u8` to `u32`), while others might fail (`u32` to `u8` — might overflow). Rust encodes this distinction in the type system: `From/Into` for infallible conversions, `TryFrom/TryInto` for fallible ones. Using `TryFrom` for a conversion that might fail makes failure handling explicit and visible, unlike C-style implicit narrowing casts that silently truncate. This mirrors OCaml's explicit type coercions.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Generators and coroutines produce sequences of values lazily — yielding one value at a time rather than computing the entire sequence upfront. This enables infinite sequences, pipeline processing without intermediate allocations, and cooperative multitasking. Python's `yield`, JavaScript's `function*`, C#'s `yield return`, and Rust's nightly `Generator` trait all implement this pattern. Understanding generators builds intuition for `async/await` (generators that yield futures).

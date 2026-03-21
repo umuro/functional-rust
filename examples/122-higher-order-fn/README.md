@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Higher-order functions (HOFs) — functions that take or return other functions — are the backbone of functional programming. In Rust, HOFs that deal with references must explicitly declare lifetimes to tell the borrow checker how long returned references live relative to their inputs. Without this, the compiler cannot guarantee memory safety. This example shows the patterns for safe HOFs: finding elements, composing functions, and filtering collections.

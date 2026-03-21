@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Variance describes how subtyping relationships propagate through generic type constructors. In Rust, lifetimes and types can be covariant, contravariant, or invariant in a type parameter. Getting variance wrong leads to unsound code: a `Cell<&'static str>` being treated as `Cell<&'short str>` would allow writing a short-lived reference into a long-lived cell. `PhantomData` is the tool for explicitly setting variance when the compiler cannot infer it correctly from the struct fields, especially when raw pointers are involved.

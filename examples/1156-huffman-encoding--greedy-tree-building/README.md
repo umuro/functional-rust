@@ -1,8 +1,8 @@
 # Example 1156: Huffman Encoding — Greedy Tree Building
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Trees | Greedy Algorithms | Priority Queues
-**OCaml Source:** Classic data structures — Huffman (1952) encoding algorithm
+
 
 ## Problem Statement
 

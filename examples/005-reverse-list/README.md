@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Reversing a list is a deceptively simple problem that illuminates a critical performance trap in functional programming: naive recursive reverse is O(n²) because each recursive call appends to the end. The solution — the accumulator pattern — is O(n) and is the prototype for tail-recursive programming. Understanding this transformation is essential before working with any recursive data structure.

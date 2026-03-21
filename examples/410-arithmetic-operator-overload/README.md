@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Mathematical types — vectors, matrices, complex numbers, rational numbers, polynomials — are naturally expressed with arithmetic notation: `v1 + v2`, `m * v`, `-c`. Without operator overloading, these become `v1.add(&v2)`, making code verbose and harder to read than the underlying mathematics. Rust's `std::ops` module provides traits for every arithmetic operator: `Add`, `Sub`, `Mul`, `Div`, `Neg`, `Rem`, and their `*Assign` variants. Implementing these makes custom types feel like first-class numeric citizens.

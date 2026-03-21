@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Imperative error handling with nested `if/else` or try/catch blocks forces control flow restructuring whenever an operation might fail. The `Result<T, E>` type in Rust models explicit failure as a value, and its combinator methods enable functional-style error handling: transform successes, chain operations, and recover from failures — all without breaking out of an expression context. This mirrors OCaml's `Result.bind` and Haskell's `Either` monad.

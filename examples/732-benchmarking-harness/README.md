@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Micro-benchmarking is surprisingly hard to do correctly. The compiler may eliminate "dead" computations, the CPU may boost frequency during warmup, and a single outlier can skew the mean. Production benchmark frameworks like Criterion address these problems with warmup phases, statistical analysis, and outlier rejection. This example builds a Criterion-inspired harness using only `std`, demonstrating the core techniques that make benchmarks trustworthy.

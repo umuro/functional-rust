@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Variadic functions (accepting any number of arguments) are fundamental to ergonomic APIs: `println!`, `vec!`, `format!`. In Rust, regular functions cannot be variadic — they have fixed arities. `macro_rules!` repetition syntax `$($pattern),*` matches zero or more occurrences and expands them, enabling macros that accept any number of arguments. This is how `vec![1, 2, 3]` works for any length, and how `println!("{} {}", a, b)` accepts different format argument counts.

@@ -1,8 +1,8 @@
 # Example 1183: Array.blit — Copy Subarray
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Arrays & Mutation
-**OCaml Source:** OCaml standard library — `Array.blit`
+
 
 ## Problem Statement
 

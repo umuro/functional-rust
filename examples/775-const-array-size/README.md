@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Heap-allocated `Vec<T>` is versatile but has overhead: a pointer, length, and capacity word, plus a heap allocation. For collections with a small, known maximum size (network packet fields, audio samples, fixed-size queues), a stack-allocated vector with a compile-time capacity bound eliminates all this overhead. `StackVec<T, CAP>` provides `Vec`-like operations with a static capacity guarantee, failing gracefully when the capacity is exceeded rather than allocating more space.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 An effect handler is the runtime component that intercepts effects, provides a value, and resumes the computation. Different handlers for the same effects give different behaviors — the same program can run in a logging context, a testing context, or a production context. This is the effect-system equivalent of the free monad interpreter pattern, but operating at the runtime level rather than the data-structure level.

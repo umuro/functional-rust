@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When processing a list of inputs that might each fail with an error, you often want to either collect all successful results or report the first error. This is traverse for Result: `Vec<T> → (T → Result<U,E>) → Result<Vec<U>,E>`. Rust's `Iterator::collect::<Result<Vec<T>,E>>()` is exactly this — it short-circuits on the first `Err` and returns it, or collects all `Ok` values. Real applications: batch parsing user inputs, processing CSV rows (fail on first bad row), executing a list of database updates (rollback on first failure), and validating a sequence of configuration values.

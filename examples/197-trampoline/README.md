@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust (and OCaml without tail-call optimization) stack-overflows on deeply recursive functions. A trampoline converts stack recursion into heap iteration: instead of calling the next step recursively, return a thunk (a suspended computation). The trampoline loop executes thunks iteratively on the heap, never growing the call stack. This enables "infinite" recursion and mutual recursion on arbitrary inputs without stack overflow.

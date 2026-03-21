@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A sum type (also called a tagged union, discriminated union, or variant type) holds a value of exactly one of several possible types. `Result<T, E>` holds either a `T` or an `E`. `Option<T>` holds either a `T` or nothing. A `Shape` holds either a `Circle` or a `Rectangle`. Sum types are the fundamental mechanism for modeling data with alternatives, replacing nullable pointers, error codes, and untagged unions with type-safe, exhaustively checkable alternatives.

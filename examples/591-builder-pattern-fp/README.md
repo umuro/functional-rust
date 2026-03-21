@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The builder pattern addresses the "telescoping constructor" problem — many optional fields make constructors unwieldy. The functional variant uses consuming methods (`self -> Self`) instead of `&mut self`, creating an immutable chain. Each method returns a new value with one field changed. This style is prevalent in Rust's standard library (`std::thread::Builder`) and ecosystem (`reqwest::ClientBuilder`). It is also related to OCaml's record functional update syntax `{ record with field = new_val }`.

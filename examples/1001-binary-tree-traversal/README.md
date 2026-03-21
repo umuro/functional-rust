@@ -1,8 +1,8 @@
 # Example 1001: Binary Tree — Size, Membership, Traversal
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Trees
-**OCaml Source:** `type 'a tree = Leaf | Node of 'a * 'a tree * 'a tree`
+
 
 ## Problem Statement
 

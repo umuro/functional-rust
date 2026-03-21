@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Define traits with associated types (`type Item`) to express relationships between a type and its element type without adding an extra type parameter. Implement a `Container` trait with `IntStack` and `StringQueue`, a generic `drain_all` utility, and a custom `RangeIter` — comparing with OCaml's module abstract types.

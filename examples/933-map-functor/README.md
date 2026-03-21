@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A balanced binary search tree map (dictionary) is one of the most important data structures in functional programming: O(log n) insert, lookup, and delete with ordered iteration. OCaml's `Map.Make` functor instantiates a BST map for any totally-ordered key type — this is a module-level generic. Rust uses `BTreeMap<K, V>` where `K: Ord` serves the same role with generics. The key contrast: OCaml's functor approach allows creating map modules specialized to a key type at the module level; Rust's generics parameterize at the function/struct level. Both produce efficient ordered maps with similar APIs.

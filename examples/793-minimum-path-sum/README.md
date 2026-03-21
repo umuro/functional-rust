@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Finding the minimum-cost path through a grid from the top-left to the bottom-right (moving only right or down) is a fundamental 2D DP problem. It models route planning in robotics, game pathfinding with terrain costs, circuit board wiring, and is a building block for more complex grid DP problems. The constraint of only moving right or down makes it solvable in O(mn) with O(1) extra space (modifying the grid in place).

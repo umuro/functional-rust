@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Assigning (x, y) coordinates to tree nodes for visualization (OCaml 99 Problems #35) is a tree layout algorithm. The simplest rule: y = depth (root at 1), x = position in inorder traversal (leftmost node at x=1, rightmost at x=n). This produces a planar embedding where no two nodes overlap and no edge crossings occur.

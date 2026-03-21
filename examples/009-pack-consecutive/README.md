@@ -3,10 +3,10 @@
 ---
 
 # Example 009: Pack Consecutive Duplicates
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Lists & Grouping
-**OCaml Source:** OCaml 99 Problems #9
+
 
 ## Problem Statement
 

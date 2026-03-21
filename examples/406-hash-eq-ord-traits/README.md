@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 To use a type as a `HashMap` key or in a `HashSet`, it needs `Eq + Hash`. To use it in a `BTreeMap` or sorted collection, it needs `Ord`. These traits form a coherence hierarchy: `Eq: PartialEq`, `Ord: Eq + PartialOrd`. Implementing them incorrectly — hashing a value differently than how it compares for equality — leads to incorrect collection behavior and subtle bugs (items can be inserted but never found). Rust's type system and derive macros make the common case correct, but custom implementations require careful adherence to the mathematical laws.

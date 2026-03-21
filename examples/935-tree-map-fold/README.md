@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Map and fold over lists generalize naturally to trees. Tree map preserves structure while transforming values; tree fold collapses the tree into a single value. Once `fold_tree` is defined, all aggregate operations — size, depth, sum, flatten to list — can be expressed without any additional explicit recursion. This is the principle behind the `Foldable` typeclass and catamorphisms: define one fold, derive everything else. OCaml's standard `List.map` and `List.fold_left` extend to trees through the same pattern. This example demonstrates the full power of a well-designed fold.

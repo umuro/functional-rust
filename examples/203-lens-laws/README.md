@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A "lens" that violates basic consistency properties is useless — if `set` does not set or `get` does not get what was set, compositions break silently. Three laws define what it means for a lens to be "lawful": GetSet (setting then getting gives back what you set), SetGet (getting then setting the same value is a no-op), and SetSet (setting twice is the same as setting once). Law-checking tests catch implementation bugs early.

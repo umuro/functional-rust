@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 While the Yoneda lemma gives a free Functor for any type constructor from the "contravariant" side, Coyoneda gives a free Functor from the "covariant" side. `Coyoneda<F, A>` is an existential type that wraps a value `F<B>` and a function `B -> A`, deferring the `fmap` until it is needed. The practical use: you can make any type constructor a Functor for free using Coyoneda, even if it does not natively support `map`. This is the foundation of the free applicative and free monad.

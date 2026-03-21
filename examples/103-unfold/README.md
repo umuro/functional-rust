@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `fold` reduces a sequence to a single value. `unfold` is its dual: it generates a sequence from a seed value by repeatedly applying a step function until the function returns `None`. This is the mathematical concept of anamorphism — the category-theoretic dual of catamorphism (fold).

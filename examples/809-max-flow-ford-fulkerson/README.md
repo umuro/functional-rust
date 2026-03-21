@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Maximum flow (Ford-Fulkerson, 1956) finds the maximum amount that can flow from a source to a sink in a capacitated network. The Edmonds-Karp variant uses BFS (finding shortest augmenting paths) and runs in O(VE²). Applications include network traffic routing, image segmentation (min-cut = max-flow), bipartite matching (König's theorem), and supply chain optimization. It is one of the most practically important algorithms in operations research.

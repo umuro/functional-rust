@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A singleton type has exactly one value — the type and its single inhabitant are isomorphic. Singleton types bridge the gap between values and types, enabling dependent-type-like programming where a runtime value is "promoted" to the type level. This is used in type-safe array indexing (a bound checked once becomes a type-level certificate), in protocol specifications, and in any setting where you want to carry proof of a runtime fact in the type system.

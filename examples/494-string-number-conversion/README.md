@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Rust provides `.to_string()` (via `Display`), `format!("{:x}", n)` for radix formatting, `.parse::<T>()` (via `FromStr`) for parsing, and `i64::from_str_radix(s, base)` for non-decimal parsing — covering all directions of number-string conversion.
 
 ## Problem Statement

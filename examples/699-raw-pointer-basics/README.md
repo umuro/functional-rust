@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Raw pointers (`*const T` and `*mut T`) are Rust's lowest-level memory access primitive — the equivalent of C's pointers. They bypass the borrow checker entirely: no lifetime tracking, no aliasing rules, no validity guarantees. They are essential for FFI, custom allocators, lock-free data structures, and performance-critical code that cannot afford the overhead of safe abstractions. The safe-wrapper idiom encapsulates raw pointer operations behind a safe function boundary, isolating the `unsafe` footprint.

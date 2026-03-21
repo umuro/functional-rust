@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Coproduct types (also called sum types, tagged unions, or discriminated unions) represent "one of several possibilities." They are the mathematical dual of product types. In category theory, a coproduct `A + B` is the "either A or B" type — represented as Rust's `enum` with two variants. `Either<A, B>` is the canonical general-purpose coproduct, equivalent to Haskell's `Either`, OCaml's `('a, 'b) result` or `Either` from `Either` libraries. Sum types are the foundation of error handling (`Result`), optional values (`Option`), and any branching data.

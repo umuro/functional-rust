@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Lifetime subtyping is the mechanism that makes Rust's borrow checker flexible without requiring programmers to always use exactly matching lifetimes. The rule is simple: a longer lifetime can always be used where a shorter one is expected, because a reference valid for longer is certainly valid for shorter. This is similar to how a subtype can be used where its supertype is expected. Without this coercion, every reference would require perfectly matched lifetime scopes, making APIs rigid and hard to use.

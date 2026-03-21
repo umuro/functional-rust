@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Resource management is one of the oldest problems in systems programming. C requires manual `fclose(f)`, `free(ptr)`, `release_lock()` — calls that are easily forgotten, especially in error paths. C++ introduced RAII (Resource Acquisition Is Initialization): resources are tied to stack lifetimes, and destructors run automatically when objects go out of scope. Rust adopts this with the `Drop` trait: implement `fn drop(&mut self)` and it runs deterministically when the value is destroyed — at end of scope, when moved into a function that consumes it, or when explicitly dropped with `drop(val)`.

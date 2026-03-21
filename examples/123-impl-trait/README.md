@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Before `impl Trait`, returning a closure or a complex iterator chain from a Rust function required either boxing (`Box<dyn Fn...>`) with a heap allocation, or writing out the unnameable concrete type by hand — impossible for iterator chains and closures. `impl Trait` in return position solves this: the function promises to return "some type implementing this trait" without naming it, enabling zero-allocation returns of closures and iterator pipelines while hiding implementation details from callers.

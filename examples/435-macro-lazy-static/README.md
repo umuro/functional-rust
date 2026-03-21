@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Global state initialization in Rust is tricky: `static` variables require `const` initializers, but many useful values (HashMap, compiled regex, config loaded from env) can only be built at runtime. The `lazy_static!` macro (now largely superseded by `std::sync::OnceLock` in Rust 1.70+) solves this by wrapping initialization in a once-executed closure. `OnceLock<T>` provides thread-safe initialization on first access. This pattern enables global singletons, compiled regex caches, and runtime-initialized configuration that is accessed efficiently after the first call.

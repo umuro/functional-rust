@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Large configuration structs become painful to construct when callers must specify every field. Languages with named parameters or optional fields handle this naturally, but Rust requires all fields to be specified in struct literals. The `Default` trait solves this: implementing `Default` for a struct lets callers use `..Default::default()` to fill in unspecified fields, and the struct update syntax to customize only what differs from the default. This is the idiomatic Rust approach to optional constructor parameters.

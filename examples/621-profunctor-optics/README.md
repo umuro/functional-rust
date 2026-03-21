@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Optics are composable data accessors originating from Haskell's lens library (Edward Kmett, 2012). They solve the deeply-nested update problem in immutable data: updating a field three levels deep requires rebuilding all intermediate values. Optics compose — a lens into a struct field composed with a prism for an enum variant gives a combined accessor that can get, set, and modify deeply nested optional values. The optic hierarchy includes Lens (exactly one focus), Prism (zero or one focus on enum variants), Traversal (zero or more foci), and Iso (lossless bidirectional conversion).

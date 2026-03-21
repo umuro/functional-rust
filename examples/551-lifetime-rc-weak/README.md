@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Tree and graph structures require nodes to reference each other, but reference cycles prevent reference-counted memory from being freed. A tree node holding a strong `Rc` reference to its parent and the parent holding a strong `Rc` to its children creates a cycle — the counts never reach zero. The solution: break cycles with `Weak<T>` — a non-owning reference that does not prevent deallocation. `Rc::downgrade` creates a `Weak`; `weak.upgrade()` returns `Option<Rc<T>>` — `None` if the target has been freed. This pattern is fundamental in GUI widget trees, DOM implementations, and doubly-linked lists.

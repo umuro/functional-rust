@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 S-expressions (S-exprs) are the syntax of Lisp, Scheme, and Clojure, and are used as a data format by Emacs configuration, WebAssembly's text format, and many build systems. Their uniform recursive structure (atoms and lists) makes them both easy to parse and pleasant to work with programmatically. Parsing S-exprs demonstrates recursive parser combinators with multiple primitive types: atoms, numbers, strings, booleans, nil, and nested lists.

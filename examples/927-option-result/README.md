@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Null pointer dereferences are the billion-dollar mistake — Tony Hoare's famous regret. Languages like ML, Haskell, Rust, and Swift replace null with explicit optional types: `option` / `Option<T>`. The type system forces the programmer to handle the "not present" case. For errors, exceptions are non-local, untyped, and easy to forget. `Result<T, E>` (or `either` in Haskell) makes errors explicit in the type signature. OCaml has `option` and `result`; Rust has `Option<T>` and `Result<T, E>`. Both provide `map`, `and_then`, `unwrap_or` combinators for composing safe computations.

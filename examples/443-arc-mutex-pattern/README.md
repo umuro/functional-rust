@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Multiple threads sharing a single mutable value is a fundamental concurrency pattern: a counter, a shared cache, a work queue. Rust's ownership model normally prevents this — only one owner can have mutable access. `Arc<T>` enables multiple-ownership across threads (atomic reference counting), and `Mutex<T>` ensures exclusive access — only one thread holds the lock at a time. Together, `Arc<Mutex<T>>` is the standard Rust pattern for shared mutable state across threads.

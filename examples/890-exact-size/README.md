@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When processing data with a known count, reporting progress percentages, pre-allocating output buffers, or rendering progress bars, you need the total element count upfront. Standard `Iterator` does not guarantee this — `.count()` might consume the iterator. `ExactSizeIterator` adds a guaranteed-O(1) `.len()` method for iterators that know their exact size before iteration. Slice iterators, range iterators, and many standard adapters implement it. This enables accurate progress reporting, guaranteed single-allocation output with `Vec::with_capacity`, and chunk-boundary calculations without consuming the source.

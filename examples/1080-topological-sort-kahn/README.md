@@ -3,10 +3,10 @@
 ---
 
 # Example 1080: Topological Sort via Kahn's Algorithm
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Graphs
-**OCaml Source:** https://rosettacode.org/wiki/Topological_sort#OCaml
+
 
 ## Problem Statement
 

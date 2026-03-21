@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Large structs and long tuples often have many fields, but a given function cares about only one or two. Without wildcards, every pattern must mention every field. `_` ignores a single element; `..` ignores zero or more elements in struct patterns and slice patterns. Together they enable precise, readable patterns that name exactly the data you need. This is particularly important for forward compatibility — using `..` in struct patterns means adding new fields to the struct does not break existing match arms.

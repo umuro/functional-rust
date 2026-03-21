@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A stack is a last-in, first-out (LIFO) data structure — one of the two fundamental abstractions alongside the queue. Stacks appear in function call management (the call stack), expression evaluation (operators and operands), undo/redo systems, DFS graph traversal, and balanced-parentheses checking (example 064). The stack abstraction — `push`, `pop`, `peek`, `is_empty` — hides implementation details from callers.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Decoding run-length encoding (OCaml 99 Problems #12) is the inverse of encoding: given a sequence of `(count, element)` or `element` items, reconstruct the original uncompressed sequence. This is the decompression side of a codec — used in fax machines (CCITT T.4), BMP images, PCX format, and simple network protocols.

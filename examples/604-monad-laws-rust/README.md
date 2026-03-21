@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Monads extend functors with sequential composition. Three laws must hold: left identity (return a >>= f == f a), right identity (m >>= return == m), and associativity ((m >>= f) >>= g == m >>= (f . (g =<<))). These laws ensure that monadic operations compose predictably. Option and Result in Rust satisfy these laws — and_then is monadic bind.

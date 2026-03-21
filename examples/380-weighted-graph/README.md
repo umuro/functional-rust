@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Edge weights model real costs: road distances, network latency, flight prices, pipeline capacities. Edsger Dijkstra introduced his shortest-path algorithm in 1956 to find minimum-cost routes in graphs with non-negative weights. It runs in O((V + E) log V) with a binary heap and is the foundation of GPS routing, internet packet routing (OSPF protocol), game AI pathfinding, and transportation optimization.

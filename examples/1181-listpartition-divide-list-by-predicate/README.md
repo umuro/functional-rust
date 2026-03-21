@@ -1,8 +1,8 @@
 # Example 1181: List.partition — Divide List by Predicate
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Lists & HOF
-**OCaml Source:** OCaml standard library `List.partition`
+
 
 ## Problem Statement
 

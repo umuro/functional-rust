@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Null pointer errors are the "billion dollar mistake" — unhandled absence of a value causing runtime crashes. Rust's `Option<T>` encodes optionality in the type system, and its combinator methods enable composing operations on optional values without null checks or sentinel values. This mirrors OCaml's `option` type and Haskell's `Maybe` monad — the foundational functional programming approach to nullable values.

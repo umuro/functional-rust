@@ -1,8 +1,8 @@
 # Example 1147: Dijkstra's Shortest Path — Functional Priority Queue
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Graphs & Algorithms
-**OCaml Source:** 99 OCaml Problems / classic graph algorithms
+
 
 ## Problem Statement
 

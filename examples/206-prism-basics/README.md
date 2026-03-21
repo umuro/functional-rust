@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Lenses focus on product types (struct fields that always exist). Prisms focus on sum types (enum variants that may or may not be present). A prism for the `Err` variant of `Result<T, E>` lets you view the error (if present) and construct a `Result::Err` from an error value. Prisms are the dual of lenses in the optics hierarchy: lenses are for "always there" fields, prisms are for "maybe there" variants.

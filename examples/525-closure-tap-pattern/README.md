@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Data pipelines built with iterator chains or method chaining have a readability problem: inserting debug logging or instrumentation requires breaking the chain into temporary `let` bindings. The tap pattern solves this by injecting a side-effecting function at any point in a chain without disrupting the data flow — the function runs, but the original value passes through unchanged. This pattern appears in JavaScript's `.tap()` in lodash, Ruby's `Object#tap`, Haskell's `(<$)` for constant functors, and is commonly needed when debugging long iterator chains.

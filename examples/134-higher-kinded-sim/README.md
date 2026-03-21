@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Higher-kinded types (HKTs) allow abstracting over type constructors like `Option<_>`, `Vec<_>`, or `Result<_, E>` — not just types. This enables writing a single `map` implementation that works over any container without duplicating code. Haskell's `Functor` and `Monad` typeclasses rely on HKTs. Rust lacks native HKTs, but Generic Associated Types (GATs, stable since 1.65) enable a defunctionalization-based simulation that achieves the same abstraction.

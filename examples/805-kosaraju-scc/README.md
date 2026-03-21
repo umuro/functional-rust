@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Kosaraju's algorithm (1978, independently by Sharir 1981) finds SCCs using two DFS passes: first on the original graph to compute finish-time order, then on the reversed graph in reverse finish order. Each DFS tree in the second pass is exactly one SCC. While Tarjan's uses one pass, Kosaraju's is conceptually simpler and easier to implement correctly. Both run in O(V+E) time.

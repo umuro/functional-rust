@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Function-like proc macros look like function calls (`my_macro!(...)`) but unlike `macro_rules!`, they receive their entire argument as a `TokenStream` and can generate arbitrary Rust code. This enables domain-specific languages embedded in Rust source: SQL queries (`sql!("SELECT * FROM users WHERE id = $1")` with type-checked parameters), HTML templates, CSS-in-Rust, regex patterns compiled at build time. The `sql!` macro can verify query syntax at compile time and generate typed query structs — impossible with `macro_rules!`.

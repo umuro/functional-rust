@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The longest increasing subsequence (LIS) finds the longest subsequence of a sequence where elements are strictly increasing. It appears in scheduling (job sequencing by deadline), genomics (conserved gene segments), and card games (patience sorting, which inspired the O(n log n) algorithm).

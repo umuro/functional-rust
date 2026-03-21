@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `unfold` is the dual of `fold`: where `fold` reduces a sequence to a value, `unfold` generates a sequence from a seed value. Given an initial state and a step function `f: S -> Option<(T, S)>`, `unfold` produces `T` values until `f` returns `None`. It is the anamorphism to fold's catamorphism.

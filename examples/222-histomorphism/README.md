@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Sometimes a fold needs not just the immediate child's result, but the full history of all previous results. Fibonacci is the classic example: `fib(n) = fib(n-1) + fib(n-2)` — the current result depends on two previous results. A catamorphism can only see the immediately adjacent result. A histomorphism provides access to all previous results via a "Cofree" annotation: each node carries its folded result and a pointer to the previous annotation, forming a linked history.

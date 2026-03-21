@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Repeating a pattern indefinitely is needed in round-robin scheduling, alternating colors in UI tables, repeating short sequences to fill longer ones, or generating periodic signals. The `cycle()` adapter creates an infinite iterator by cloning the source iterator each time it is exhausted. Combined with `take()` or `zip()`, it produces exactly as many repetitions as needed without manually computing modular indices.

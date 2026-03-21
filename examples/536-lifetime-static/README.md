@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `'static` is the longest possible lifetime in Rust — it means "valid for the entire program duration." String literals embedded in the binary are `'static str`. Global constants and statics are `'static`. The `'static` bound on trait objects (`Box<dyn Trait + 'static>`) means the type contains no non-static references — it can be sent across thread boundaries and stored in long-lived data structures. Understanding `'static` is essential for thread-safe data sharing, global configuration, error type design, and trait object storage.

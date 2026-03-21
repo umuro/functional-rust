@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Between a lens (exactly one focus) and a traversal (zero or more focuses) lies the affine traversal (at most one focus). It is the combination of a prism (might not exist) and a lens (focused access). `HashMap::get` is an affine traversal: it focuses on the value at a key if it exists, with no-op updates when the key is absent. Optional record fields and possibly-missing array elements are natural affine traversals.

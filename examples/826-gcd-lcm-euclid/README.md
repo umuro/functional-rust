@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The greatest common divisor (GCD) and least common multiple (LCM) are foundational operations in arithmetic: reducing fractions, synchronizing periodic events, solving linear Diophantine equations, and implementing modular arithmetic all depend on them. The Euclidean algorithm computes GCD in O(log min(a,b)) — exponentially faster than trial factorization. Extended Euclidean finds Bezout coefficients (x, y such that ax + by = gcd(a,b)), enabling modular inverse computation essential for RSA and other cryptographic operations. These functions appear in virtually every number theory library.

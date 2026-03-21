@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Threading state through a sequence of functions without the State monad requires passing the state explicitly as an argument and returning it alongside the result: `fn step(input: T, state: S) -> (R, S)`. This is error-prone and noisy. The State monad encapsulates this threading: `State<S, A>` represents a computation `S -> (A, S)` that reads and modifies state. Computations are composed without explicit state passing — the monad handles threading. This pattern appears in: compiler passes (threading symbol tables), game state machines, configuration accumulation, and embedded DSLs. It makes stateful computation composable and testable while remaining purely functional.

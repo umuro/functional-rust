@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Topological sort orders the vertices of a Directed Acyclic Graph (DAG) so that every edge goes from earlier to later in the order. It is fundamental to build systems (Makefile, Cargo, Bazel — dependency ordering), task schedulers, course prerequisite ordering, and package managers. The DFS-based algorithm by Tarjan (1976) runs in O(V+E) and also detects cycles (where topological sort is undefined).

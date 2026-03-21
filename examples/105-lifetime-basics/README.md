@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Returning a reference from a function is safe only if the referenced data outlives the reference. In C, returning a pointer to a local variable is undefined behavior — the data is destroyed when the function returns. Rust's lifetime system prevents this at compile time by tracking how long each reference is valid.

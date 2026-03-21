@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A mutex-based stack serializes all push/pop operations — a contention bottleneck under high concurrency. A lock-free stack uses `compare_and_swap` on the head pointer: push allocates a new node, sets its next to the current head, then CAS-swaps the head; pop reads the head, follows next, then CAS-swaps the head to next. Retrying on CAS failure makes it correct without locks. Treiber's lock-free stack (1986) is the canonical algorithm and remains relevant in high-frequency trading, lock-free allocators, and concurrent data structures research.

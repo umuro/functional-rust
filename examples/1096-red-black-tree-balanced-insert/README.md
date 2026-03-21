@@ -1,8 +1,8 @@
 # Example 1096: Red-Black Tree with Okasaki's Functional Balancing
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Trees & Functional Data Structures
-**OCaml Source:** Chris Okasaki, *Purely Functional Data Structures* (1998), §3.3
+
 
 ## Problem Statement
 

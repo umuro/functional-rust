@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Lexers and parsers routinely need to inspect the next token before deciding which production rule to apply, without consuming that token. Without peek, the only options are consuming and pushing back (requiring a separate buffer) or reading one token ahead manually. Rust's `.peekable()` adapter adds `peek()` — a reference to the next element without advancing the iterator. This is the minimal lookahead needed for LL(1) parsing, run-length encoding, and merge algorithms. OCaml's `Stream` module and the `Angstrom` parser combinator library serve similar roles.

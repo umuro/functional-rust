@@ -3,10 +3,10 @@
 ---
 
 # Example 215: Recursion Schemes — Separating What From How
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Recursion Schemes
-**OCaml Source:** Meijer, Fokkinga, Paterson — "Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire" (1991)
+
 
 ## Problem Statement
 

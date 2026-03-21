@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Free monads separate the description of a computation from its execution. A program built from free monad operations is a pure data structure — a tree of instructions. Different interpreters can then execute the same program in different ways: one runs it against a real console, another tests it with mocked input/output, a third logs every operation. This separation enables dependency injection at the computation level, pure testing without mocks, and multiple execution strategies for the same program description.

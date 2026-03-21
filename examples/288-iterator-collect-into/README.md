@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Lazy iterators describe computations but produce no output until consumed. The `collect()` method is the primary way to materialize a lazy iterator pipeline into a concrete data structure. Its power lies in genericity: the same `collect()` call produces a `Vec`, `HashSet`, `HashMap`, `String`, `BTreeMap`, or any other `FromIterator`-implementing type, depending solely on the type annotation. This makes pipelines maximally composable — the output format is a separate decision from the transformation logic.

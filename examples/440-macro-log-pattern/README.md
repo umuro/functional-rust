@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Logging requires consistent metadata: timestamp, level, file, line number, and the actual message. Writing `eprintln!("[INFO] {}:{}: {}", file!(), line!(), msg)` at every log site is verbose and inconsistent. Log macros capture this metadata automatically at the call site using `file!()` and `line!()` built-in macros. The `log` crate standardizes this with `log::info!`, `log::warn!`, `log::error!` macros that also support multiple backends. Understanding the underlying macro pattern explains why log calls show the correct source location.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 C's `printf` is famously unsafe: `printf("%d", "hello")` compiles but causes undefined behavior at runtime. A type-safe printf encodes the format string's type signature in the type system, so passing the wrong type of argument is a compile error. This is one of the motivating examples for GADTs in OCaml and for HLists in Haskell, demonstrating how the type system can enforce format-argument correspondence at zero runtime cost.

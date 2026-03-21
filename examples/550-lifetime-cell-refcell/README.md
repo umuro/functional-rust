@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust's ownership rules normally require `&mut T` for mutation — impossible when a value is shared via `Rc<T>` or multiple references. Interior mutability provides a controlled escape hatch: types that allow mutation through a shared reference (`&T`). `Cell<T>` works for `Copy` types by get/set semantics. `RefCell<T>` works for non-`Copy` types by moving the borrow check to runtime — it panics on violation rather than failing at compile time. These types are foundational in GUI frameworks, mock objects, memoization, and any structure requiring shared mutable access without a `Mutex`.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Rust provides several patterns for constructing strings incrementally: `push_str`/`push` for sequential appending, `join` for separating collections, `collect` from iterators, `repeat` for duplication, and `with_capacity` for pre-allocated buffers.
 
 ## Problem Statement

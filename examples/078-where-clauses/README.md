@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Express complex trait bounds on generic functions and types using Rust's `where` clause syntax. Implement `print_if_equal`, `zip_with`, `sum_items`, `dot_product`, and `display_collection` — each requiring multiple or compound constraints — and compare with OCaml's module functor approach to constraining polymorphic code.

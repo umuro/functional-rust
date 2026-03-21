@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Iterator adapters transform sequences lazily, but something must drive the evaluation to completion. Iterator consumers "pull" all values out: `.collect()` materializes into a container, `.sum()` accumulates into a number, `.find()` short-circuits at the first match, and `.fold()` generalizes all of these. OCaml's equivalent consumers are `List.fold_left`, `List.find`, `List.for_all`, `List.exists`, `List.length`. Understanding the consumer landscape determines which one to reach for: `.fold()` is the universal but verbose fallback; specific consumers like `.max()`, `.count()`, and `.any()` communicate intent clearly.

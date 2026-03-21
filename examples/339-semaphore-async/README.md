@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Connection pools, rate limiters, and resource-bounded operations need to limit concurrent access to at most N simultaneous operations. A mutex limits to 1; a semaphore limits to N. Common uses: limit concurrent HTTP requests to 10 to avoid overwhelming a third-party API, limit concurrent database connections to the pool size, or limit parallel file reads to avoid exhausting file descriptors.

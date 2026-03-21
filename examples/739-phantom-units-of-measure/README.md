@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The Mars Climate Orbiter was lost in 1999 because one module computed thrust in pound-force seconds and another expected newton-seconds. Unit confusion errors cost lives and billions of dollars. F# pioneered Units of Measure as a language feature; Rust and OCaml achieve the same protection via phantom types. A `Length<Meters>` cannot be added to `Length<Feet>` without an explicit conversion, catching unit errors at compile time with zero runtime overhead.

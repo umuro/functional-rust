@@ -3,10 +3,10 @@
 ---
 
 # Example 007: Flatten Nested List
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Recursive Data Structures & Enums
-**OCaml Source:** OCaml 99 Problems #7
+
 
 ## Problem Statement
 

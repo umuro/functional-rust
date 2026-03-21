@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Group consecutive equal elements of a slice into a `Vec<Vec<T>>`. Adjacent identical elements form one group; a new group starts when the element changes. Input `[1, 1, 2, 2, 2, 3, 1, 1]` produces `[[1,1], [2,2,2], [3], [1,1]]`. Compare with OCaml's accumulator-based recursive approach.

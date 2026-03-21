@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Rust's trim family removes whitespace or custom characters from the start, end, or both ends of a string, returning a `&str` slice into the original — no allocation required.
 
 ## Problem Statement

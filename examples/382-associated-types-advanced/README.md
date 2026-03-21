@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Trait design faces a recurring question: should a related type be an associated type or a type parameter? Type parameters allow multiple implementations per type (`impl ConvertTo<String> for Foo` and `impl ConvertTo<i32> for Foo`). Associated types enforce a single canonical implementation (`type Item` in `Iterator` — a type can only be one kind of iterator at a time). Choosing wrong leads to either ambiguous type inference or unnecessarily restricted APIs.

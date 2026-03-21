@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Gerard Meszaros coined the term "test doubles" in 2007 to categorize the different ways to replace real dependencies in tests. Confusingly, many people call all test doubles "mocks." The taxonomy — Stub, Spy, Mock, Fake, Dummy — has precise meanings that guide which technique to use. Using the wrong double leads to tests that are either too coupled to implementation details (mocks everywhere) or too permissive (stubs that hide bugs). This example implements all five categories for a `Logger` dependency.

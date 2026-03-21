@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The state monad is a functional pattern for threading state through a computation without explicit mutable state. The effect-based equivalent provides `Get` and `Put` effects that a handler satisfies by threading state. This unifies state management with the effect handler model, enabling stateful computations to be tested with different initial states, logged, and combined with other effects — all without modifying the computation itself.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Micro-benchmarking is notoriously tricky: compilers optimize aggressively, CPUs speculate and prefetch, and without careful technique, what you measure may not reflect what actually runs in production. Closures are central to benchmarking APIs because they encapsulate the code under test while providing the benchmark harness control over setup, teardown, and iteration. `std::hint::black_box` prevents the optimizer from eliminating computations whose results are discarded. This example shows how to build closure-based benchmarking utilities similar to `criterion`.

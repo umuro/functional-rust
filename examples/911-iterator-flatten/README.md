@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Nested collections arise naturally: a document is a list of paragraphs, each paragraph is a list of sentences, each sentence is a list of words. Collapsing one level of this nesting — "all words in the document" — is the flatten operation. Formally, it is the monadic `join` from category theory: `join :: m (m a) -> m a`. Haskell's `concat`, OCaml's `List.concat`, and Rust's `.flatten()` all implement this. Understanding flatten as `join` reveals why `flat_map` = `map` + `flatten` = monadic bind (`>>=`): it is the fundamental operation of every monad.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A public trait that external crates can implement is an extension point — any third party can add new implementations. Sometimes that is undesirable: a trait for serialization formats should not be implementable outside the library, or a set of marker types should be closed for soundness. The sealed trait pattern prevents external implementations by requiring implementors to also implement a private "seal" trait that is inaccessible outside the crate.

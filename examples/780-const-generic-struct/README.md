@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Ring buffers (circular buffers) are fundamental data structures in operating systems, audio processing, and producer-consumer patterns. A fixed-capacity ring buffer avoids heap allocation and provides O(1) push and pop with power-of-two sizes enabling fast modulo via bitmask. Using a const generic capacity `RingBuffer<T, CAP>` embeds the capacity in the type, enabling different capacities to be different types with no runtime dispatch.

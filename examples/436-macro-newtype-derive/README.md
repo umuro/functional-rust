@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Newtypes provide type safety but impose an implementation burden: you must re-derive or re-implement every trait the inner type has. `Email(String)` should support `Display`, `FromStr`, `Deref<Target=str>`, `AsRef<str>`, and more — all of which `String` already provides. The `derive_more` crate and custom macros generate these delegating implementations automatically. Without them, every newtype requires dozens of boilerplate impl blocks that simply forward to the inner type.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 This example implements a generic binary tree with the core operations from OCaml's CS3110 course: size, depth, membership, and traversal. Unlike the 99 Problems tree (examples 029-040) which focuses on structural puzzles, this tree is a programming exercise in generics and trait bounds — the foundation for building a binary search tree (BST).

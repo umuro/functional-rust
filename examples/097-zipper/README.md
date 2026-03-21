@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implement a list zipper — a functional cursor data structure that provides O(1) navigation (left/right) and O(1) update at the focus position. The zipper stores `left` (reversed prefix), `focus` (current element), and `right` (suffix). Compare with OCaml's idiomatic record-based zipper.

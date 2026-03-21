@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A difference list represents a list as a function from "remaining suffix" to "complete list". Appending two difference lists is O(1) — just function composition — instead of O(n). This is important in functional programming where repeated left-fold appends create O(n²) behavior.

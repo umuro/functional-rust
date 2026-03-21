@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Naive string search checks every position in the text, yielding O(n*m) worst-case time. For long texts with long patterns this is prohibitively slow. Real-world applications — log scanning, virus signature detection, text editors, DNA sequence analysis — require sublinear average-case search. Boyer-Moore achieves this by using two heuristics: the bad-character rule skips large chunks of text when a mismatch occurs at the wrong character position, and the good-suffix rule leverages known pattern structure to skip even further. The result is often O(n/m) average-case performance, making Boyer-Moore the algorithm behind `grep` and many production text search tools.

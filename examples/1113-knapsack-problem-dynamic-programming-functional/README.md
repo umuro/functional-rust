@@ -1,8 +1,8 @@
 # Example 1113: 0/1 Knapsack with Dynamic Programming (Functional Style)
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Dynamic Programming & Iteration
-**OCaml Source:** `example.ml` — imperative OCaml with mutable array and nested `for` loops
+
 
 ## Problem Statement
 

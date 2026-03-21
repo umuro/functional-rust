@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Computing with infinite mathematical sequences — natural numbers, primes, Fibonacci numbers, powers — requires that elements be generated on demand rather than all at once. Lazy evaluation defers computation until results are needed, enabling programs to express "the first 100 primes" as concisely as "all primes." Haskell is lazy by default; OCaml uses `Seq` for explicit laziness. Rust's iterators are lazy by design: adapters like `.map()` and `.filter()` do nothing until consumed by `.collect()`, `.take()`, or `.fold()`. This makes Rust iterators ideal for modeling infinite mathematical sequences.

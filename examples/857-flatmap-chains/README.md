@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Long sequences of fallible or absent-value operations create deeply nested code with `match` or `if let`. FlatMap (bind/and_then) chains linearize these sequences: each step receives the value from the previous step and returns a new wrapped value. The chain short-circuits on the first failure. This enables multi-step data processing pipelines — parse JSON, extract a field, convert the type, look it up in a database, format the result — written as readable flat code without the pyramid of doom. FlatMap chains are the foundation of Rust async/await (which desugars to state machines over flatmapped futures), Rust's `?` operator chains, and iterator `flat_map`.

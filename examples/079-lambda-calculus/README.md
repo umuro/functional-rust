@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implement a small-step interpreter for a minimal lambda calculus with integers, variables, lambda abstraction, function application, and addition. The interpreter evaluates `Expr` trees against an environment, returning `Value` (integer or closure) — and compare the implementation with OCaml's natural match-based interpreter.

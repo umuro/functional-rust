@@ -1,8 +1,8 @@
 # Example 1084: Monoid Pattern
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Pattern Matching | HOF
-**OCaml Source:** `module type MONOID` / `module Sum` / `module Product`
+
 
 ## Problem Statement
 

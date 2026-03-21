@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Building up a collection incrementally from multiple sources — appending new items to an existing `Vec`, merging two `HashMap`s, adding elements from a computation to an existing set — is a fundamental operation in accumulative algorithms. The `extend()` method is the mutable counterpart to `collect()`: it appends elements from any `IntoIterator` to an existing collection in place, avoiding the need to create intermediate temporary collections.

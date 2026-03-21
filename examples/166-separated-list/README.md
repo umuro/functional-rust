@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Comma-separated values, semicolon-separated statements, pipe-separated fields — separated lists appear everywhere in text formats. `separated_list0` and `separated_list1` parse sequences of items with a separator between each pair, correctly handling the last item (no trailing separator in strict formats) and empty lists. Building this from primitives requires careful handling of the separator-before-next-item pattern to avoid consuming the separator when the list has ended.

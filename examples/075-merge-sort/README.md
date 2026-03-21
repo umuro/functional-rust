@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Merge sort (John von Neumann, 1945) is the canonical divide-and-conquer sorting algorithm: split the list in half, sort each half recursively, merge the sorted halves. It guarantees O(n log n) in all cases — unlike quicksort which degrades to O(n²) on sorted input. It is the algorithm used in Rust's `Vec::sort` (TimSort) and Java's `Arrays.sort` for objects.

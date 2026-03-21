@@ -17,6 +17,7 @@ from pathlib import Path
 # ---- Config ----
 EXAMPLES_DIR = Path(__file__).parent.parent / "examples"
 DRY_RUN = "--dry-run" in sys.argv
+FORCE = "--force" in sys.argv  # overwrite existing tags
 
 LEVELS = {
     "fundamental":  "⭐",
@@ -119,10 +120,11 @@ INTERMEDIATE_SLUG_KEYWORDS = [
     "map-from-scratch", "filter-from-scratch", "list-map-from-scratch",
     "list-filter-from-scratch", "list-map-transform", "list-map",
     "list-filter", "list-fold", "list-operations",
-    "caesar", "atbash", "pangram", "isogram", "anagram", "palindrome",
-    "hamming", "nucleotide", "word-count", "reverse-word", "word-break",
-    "roman-numeral", "phone-number", "edit-distance", "levenshtein",
-    "balanced-parentheses", "balanced-paren", "frequency-anal", "frequency-counter",
+    # Complex string/algo (basic ones like palindrome, caesar, hamming are FUNDAMENTAL)
+    "edit-distance", "levenshtein", "manacher", "palindrome-partition",
+    "balanced-parentheses", "balanced-paren",
+    "word-break",  # DP-based, not simple string op
+    "frequency-anal", "frequency-counter",
     "run-length", "-rle", "rle-", "pack-consecutive", "modified-rle",
     "decode-rle", "direct-rle", "eliminate-duplicates", "duplicate-element",
     "flatten-nested", "replicate-n", "rotate-left", "rotate-", "split-list",
@@ -155,10 +157,11 @@ INTERMEDIATE_SLUG_KEYWORDS = [
     "associated-types",
     "insertion-sort", "merge-sort", "quicksort", "bubble-sort",
     "sort-with-custom", "sort-by", "sort-with", "custom-comparator",
-    "fibonacci", "sieve-of", "sieve-prime", "sieve",
+    # Fibonacci/math variants that use FP concepts (basic fibonacci is FUNDAMENTAL)
+    "fibonacci-memo", "fibonacci-dp", "lazy-fib", "const-fibonacci",
+    "memoization-fibonacci", "fibonacci-variants",
     "prime-factor", "gcd-lcm",
-    "modular-arithmetic", "modular-exp", "binary-search", "greatest-common",
-    "euclid", "collatz", "difference-of-squares", "space-age",
+    "modular-arithmetic", "modular-exp", "greatest-common",
     "adjacency-list", "adjacency-matrix", "graph-traversal", "graph-color",
     "minimum-path", "minimum-vertex",
     "monoid-pattern", "monoid-basic", "monoid-generic",
@@ -260,8 +263,19 @@ def main():
             skipped_empty += 1
             continue
         if has_difficulty_tag(text):
-            skipped_has_tag += 1
-            continue
+            if not FORCE:
+                skipped_has_tag += 1
+                continue
+            # Force mode: strip existing tag and re-stamp
+            text = re.sub(
+                r'\n\*\*Difficulty:\*\*.*?(?=\n(?!\*\*))',
+                '',
+                text,
+                flags=re.DOTALL,
+            )
+            # Simpler approach: just remove the metadata block lines
+            text = re.sub(r'\n\*\*Difficulty:\*\*[^\n]*\n', '\n', text)
+            text = re.sub(r'\n\*\*Category:\*\*[^\n]*\n', '\n', text)
         level = classify_slug(ex.name)
         new_text = inject_tag(text, level)
         if DRY_RUN:

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 String slicing in Rust operates on UTF-8 byte boundaries, not character indices. Understanding the difference between byte offsets and character positions is essential for correct multibyte text handling.
 
 ## Problem Statement

@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Demonstrate Rust's `ExactSizeIterator` trait — iterators that know their length in O(1). Show that `Vec::iter()`, ranges, and `enumerate` all implement `ExactSizeIterator`, enabling `.len()` without traversal. Demonstrate `chunks_exact` for obtaining only full-sized chunks plus a remainder. Compare with OCaml's O(1) `Array.length` versus O(n) `List.length`.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 If two crates independently implement the same trait for the same type, the compiler cannot decide which to use — this is the "coherence problem." Rust's orphan rule prevents this: you can only implement a trait for a type if at least one of the trait or the type is defined in your crate. This guarantees at most one implementation per `(Trait, Type)` pair globally, making trait resolution unambiguous. Understanding these rules prevents confusing "conflicting implementations" errors.

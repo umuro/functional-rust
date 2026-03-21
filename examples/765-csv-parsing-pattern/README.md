@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 CSV (Comma-Separated Values) is the most common format for tabular data exchange — spreadsheets, database exports, analytics pipelines. Despite its simplicity, CSV has edge cases that trip up naive implementations: quoted fields containing commas, escaped quotes inside quoted fields, variable column counts, and different line endings (CRLF vs LF). Building a correct CSV parser teaches state machine design and the importance of handling edge cases explicitly.

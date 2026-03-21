@@ -3,10 +3,10 @@
 ---
 
 # Example 262: Rose Tree — Multi-Way Tree with Fold
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐  
-**Category:** Trees  
-**OCaml Source:** https://cs3110.github.io/textbook/chapters/ds/trees.html
+
 
 ## Problem Statement
 

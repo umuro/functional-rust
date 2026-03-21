@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Divide-and-conquer algorithms (merge sort, quicksort, parallel tree traversal) split a problem into two independent sub-problems that can be solved concurrently. The fork-join model captures this: `join(f, g)` runs both `f` and `g`, potentially in parallel, waiting for both to complete. `rayon::join` is the idiomatic way to express this in Rust — it automatically decides whether to run in parallel (if threads are available) or sequentially (if the thread pool is saturated), adapting to load.

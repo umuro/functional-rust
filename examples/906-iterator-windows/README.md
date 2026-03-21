@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Signal processing, financial time-series analysis, and machine learning feature engineering all use sliding window operations: compute a statistic over each overlapping sub-window of a sequence. A window of size k over n elements produces n-k+1 windows. Naive implementation requires O(k) work per window; efficient windowed algorithms precompute partial results. Rust's `.windows(n)` on slices yields zero-copy overlapping sub-slices in O(1) per window, enabling cache-friendly windowed computation. OCaml lacks a built-in equivalent and requires manual implementation.

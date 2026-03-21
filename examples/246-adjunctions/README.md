@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 An adjunction between two functors `F` and `G` is a natural bijection between morphisms: `Hom(F A, B) ≅ Hom(A, G B)`. Adjunctions are the categorical generalization of "best approximations" and appear everywhere in functional programming: currying is an adjunction, the product/exponent adjunction underlies closures, and many monad/comonad pairs arise from adjunctions. This example implements adjunctions in Rust and shows how the `State` and `Env` comonad/monad pair emerges from the product adjunction.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Counting the leaves (nodes with no children) of a binary tree (OCaml 99 Problems #30) is a simple structural recursion exercise. A leaf is a `Leaf` variant in our tree type. Counting leaves is useful in analyzing tree balance (more leaves = more complete), computing Huffman code lengths (each leaf is one codeword), and measuring the branching factor of search trees.

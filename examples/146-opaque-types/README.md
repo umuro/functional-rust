@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Information hiding is a foundational software engineering principle: expose what a module does, not how it does it. Opaque types make a concrete type invisible outside its defining module — callers can use the type but cannot inspect its internals, pattern match on it, or construct it directly. This enforces abstraction boundaries, enables safe evolution of internals, and prevents invariant violations from outside the module.

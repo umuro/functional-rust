@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 "Parse, don't validate" (Lexi Lambda, 2019) is a design principle: instead of checking a precondition and continuing with the raw value, parse the input into a type that PROVES the precondition is satisfied. `NonEmptyString` cannot be empty by construction; `PositiveInt` cannot be negative. The type system enforces invariants, not runtime checks.

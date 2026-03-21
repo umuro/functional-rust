@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 General-purpose allocators (malloc/jemalloc) have overhead: each allocation needs bookkeeping metadata, thread-local allocation caches, and potentially lock contention. For workloads that allocate thousands of small objects and free them all at once — AST nodes during parsing, temporary nodes in a graph algorithm, frame data in a game loop — arena allocation (bump allocation) is dramatically faster. The arena pre-allocates one large block and serves allocations by simply advancing a pointer. "Freeing" individual objects is a no-op; the entire arena resets in O(1). This pattern powers programming language parsers, game engines, and database query planners.

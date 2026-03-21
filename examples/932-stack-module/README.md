@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Module signatures in OCaml enforce interface contracts: you declare what a module provides (types and functions), and the compiler verifies that implementations satisfy the contract. This enables abstract data types, multiple implementations of the same interface, and documentation by contract. Rust's traits serve the same role: they define a set of methods that concrete types must implement. A `Stack` trait with `push`, `pop`, `peek`, `empty`, and `is_empty` methods can be satisfied by `Vec`, `LinkedList`, or a custom persistent stack — all interchangeable behind the trait interface.

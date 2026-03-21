@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Functions that need a shared configuration or environment — database connection, logger, feature flags, request context — pass it as the first argument. As this environment grows or more functions need it, threading it explicitly becomes tedious and brittle. The Reader monad encapsulates this: `Reader<R, A>` represents a computation `R -> A` that reads from environment R and produces A. Computations are composed without explicit environment passing — the monad threads it automatically. This is dependency injection made explicit in the type system. It appears in: web request handlers, database query builders, configuration-driven computations, and compiler passes reading symbol tables.

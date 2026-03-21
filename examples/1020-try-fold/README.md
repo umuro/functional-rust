@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `fold` (reduce) is the fundamental operation of functional programming: reduce a sequence to a single value by combining elements with an accumulator. When the combining function is fallible — parsing, validation, arithmetic with overflow — you need a variant that short-circuits on the first error.

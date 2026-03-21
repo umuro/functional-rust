@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Long or repetitive type signatures hurt readability. `HashMap<String, Vec<(usize, f64)>>` is tedious to write repeatedly, and `Box<dyn Fn(&str) -> Result<i32, ParseError>>` is worse. Type aliases provide a way to name complex types for clarity and consistency. The key tradeoff: unlike newtypes, aliases are transparent to the type checker — `UserId` and `u64` are the same type. This makes aliases appropriate for documentation and convenience (not safety). Both Rust and OCaml use the `type` keyword for aliases, though OCaml's aliases can also be parameterized with additional constraints via module types.

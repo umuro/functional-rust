@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Mathematical and scientific code benefits from natural indexing syntax. A matrix should support `m[(row, col)]`, a graph adjacency structure `graph[(u, v)]`, and a typed map `inventory["sword"]`. Rust's `Index` and `IndexMut` traits operator-overload the `[]` subscript operator for any combination of container and index type — not just integer indexing. This enables domain-specific types to feel as natural as built-in arrays while maintaining Rust's safety guarantees.

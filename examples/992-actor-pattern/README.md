@@ -1,6 +1,8 @@
 **Difficulty:** ⭐⭐⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐⭐⭐  
+
 [actor-pattern on hightechmind.io](https://hightechmind.io/posts/functional-rust/actor-pattern)
 
 ---

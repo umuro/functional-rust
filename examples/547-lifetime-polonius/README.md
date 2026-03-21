@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 NLL (Non-Lexical Lifetimes) dramatically improved Rust's borrow checker but still rejects some provably safe code. The most famous example: looking up a key in a map, and if absent, inserting and returning a reference to the new value — the classic "get-or-insert" pattern. NLL conservatively rejects this because the mutable borrow for the lookup overlaps with the mutable borrow for the insert, even though they cannot both be active simultaneously. Polonius, the next-generation borrow checker based on Datalog constraints, accepts this pattern and other currently-rejected safe code.

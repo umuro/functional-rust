@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Complex iterator chains in Rust have unwritable types: `Filter<Map<IntoIter<i32>, fn(i32) -> i32>, fn(&i32) -> bool>` is the actual return type of a filtered map. Before `impl Trait` (stabilized in Rust 1.26), returning such types required boxing with `Box<dyn Iterator>`, adding heap allocation and vtable overhead. `impl Trait` in return position lets the compiler infer the concrete type while hiding it from the caller — giving static dispatch performance with ergonomic opaque types. Type aliases make these patterns reusable.

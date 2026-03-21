@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Some functions never return — they loop forever, panic, or call `std::process::exit()`. Rust's `!` (never type) represents the return type of such functions. It coerces to any type, enabling `panic!()` in match arms that need any type, and it is the error type for infallible operations. `std::convert::Infallible` is the named equivalent for `Result<T, !>` — a result that can only ever be `Ok`. Understanding `!` clarifies why certain patterns compile.

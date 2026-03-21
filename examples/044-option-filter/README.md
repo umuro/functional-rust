@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `Option::filter` applies a predicate to the value inside a `Some`, turning it into `None` if the predicate fails. It is the conditional guard operation for `Option`: "keep this value only if it satisfies this condition". Combined with `map` and `and_then`, `filter` completes the basic Option toolkit.

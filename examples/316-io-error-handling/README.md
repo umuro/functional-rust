@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 File I/O, network operations, and process management all produce `std::io::Error`. This error type wraps OS-level errors (errno codes) and classifies them by `ErrorKind` — enabling portable handling of "file not found", "permission denied", or "connection refused" without dealing with raw OS codes. Understanding `io::Error` and `ErrorKind` is essential for writing robust system-level Rust code.

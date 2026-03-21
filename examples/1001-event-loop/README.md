@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implement a functional event loop that dispatches `Event` variants to pure state transitions. The `dispatch` function takes the current `AppState` and an `Event`, returning the next `AppState`. Run the loop with `fold` over a vector of events, stopping at `Quit`. Compare with OCaml's recursive `run_event_loop` using a typed `handler` record.

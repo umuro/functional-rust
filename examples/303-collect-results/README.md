@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Parsing a batch of inputs where each might fail presents a choice: fail fast on the first error, or collect all errors. The `collect::<Result<Vec<T>, E>>()` pattern implements fail-fast: if any element produces `Err`, the entire collection short-circuits and returns that `Err`. This is the most common pattern for validating a batch of inputs — parse all or fail on the first invalid one.

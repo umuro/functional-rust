@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many parsing and streaming algorithms need to look ahead at the next element before deciding whether to consume it. A lexer scanning multi-character numbers must peek at the next character without consuming it. A run-length encoder must check if the next element matches the current group. Implementing lookahead without peekable iterators requires awkward "push-back" buffers or read-one-ahead state variables. Rust's `.peekable()` adapter adds a `peek()` method that returns a reference to the next element without advancing the iterator. OCaml handles this with explicit option state or stream parsers from the `Stream` module.

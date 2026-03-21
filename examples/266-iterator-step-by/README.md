@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Subsampling — taking every nth element from a sequence — is needed in signal processing (downsampling), matrix operations (accessing column strides), image processing (pixel subsampling), and data analysis (sampling large datasets). Without a dedicated combinator, this requires index-based loops or manual counter tracking. The `step_by(n)` adapter yields the first element, then skips `n-1` elements, repeatedly — turning strided access into a composable iterator operation.

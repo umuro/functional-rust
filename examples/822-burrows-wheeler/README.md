@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Data compression algorithms like bzip2 achieve high compression ratios by first applying the Burrows-Wheeler Transform (BWT) to rearrange text so that similar characters cluster together, making run-length encoding and move-to-front coding highly effective. The BWT is a reversible transformation: it takes a string, generates all rotations, sorts them lexicographically, and returns the last column. The magic is that similar contexts cluster the last-column characters. The inverse BWT recovers the original string exactly. BWT is also used in bioinformatics for FM-index construction, enabling compressed full-text indexes that power genome alignment tools like BWA and Bowtie.

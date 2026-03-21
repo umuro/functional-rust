@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust has many smart pointer types — `String`, `Vec<T>`, `Box<T>`, `Arc<T>`, `Rc<T>` — each wrapping a more primitive type. Without automatic conversion, every function accepting `&str` would reject `&String`, forcing callers to write `.as_str()` everywhere. Deref coercions solve this by letting the compiler insert implicit dereferences: `&String` becomes `&str`, `&Vec<T>` becomes `&[T]`, transitively. This gives ergonomic APIs without sacrificing type safety.

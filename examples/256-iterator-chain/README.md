@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Sequential processing of multiple separate collections is a universal programming need. Before lazy iterator composition, programmers allocated a new combined collection just to iterate over it — wasteful in both time and memory. The `chain()` combinator solves this by creating a single iterator that moves through one source, then continues with another, producing zero intermediate allocations. This is the functional programming principle of iterator composition: build complex traversal logic from small, single-purpose pieces.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Sometimes you want both to test a value against a pattern and to bind it to a name for use in the arm body. Without `@` bindings, you would either have to test the pattern and reconstruct the value, or bind the name and recheck the condition inside the arm. The `@` operator (at-binding) solves this: `a @ 0..=12` both tests that the value is in range AND binds it to `a`, so you can use `a` in the expression without repeating the match.

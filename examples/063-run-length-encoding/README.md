@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Run-length encoding (RLE) compresses consecutive repeated characters: "AABCCCDEEEE" → "2AB3CD4E". It is one of the oldest and simplest compression algorithms, used in fax machines (CCITT T.4 standard, 1980), BMP image files, PCX format, and as the basis for more sophisticated codecs. The decode-recode round-trip test is a classic example of property-based testing.

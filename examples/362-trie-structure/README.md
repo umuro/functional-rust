@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Hash maps give O(1) exact key lookup but can't answer prefix queries: "list all words starting with 'pre'" requires scanning all keys. A trie (retrieval tree, Fredkin 1960) stores strings by decomposing them into characters — each node represents one character, paths from root to end-marked nodes spell out stored words. Lookup is O(m) where m is the key length, independent of how many words are stored. Tries power autocomplete in IDEs and search engines, IP routing tables (compact trie on bit prefixes), spell checkers, and dictionary compression (compressed tries / DAWG). They're the data structure behind DNS resolution caches.

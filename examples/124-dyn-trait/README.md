@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Sometimes the concrete type implementing a trait is unknown at compile time — a plugin system, a heterogeneous collection of shapes, or a UI widget tree. Static dispatch (`impl Trait` / generics) requires knowing the type at compile time and produces one copy of the code per type. Dynamic dispatch (`dyn Trait`) uses a vtable to resolve method calls at runtime, enabling heterogeneous collections and open extension without recompilation. Understanding when to choose each is a core Rust design skill.

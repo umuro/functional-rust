@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Nested collections are ubiquitous: a list of lists of results, a tree traversal producing sub-lists per node, or an iterator of options where only `Some` values matter. The `flatten()` adapter removes exactly one level of nesting — turning `Iterator<Item = Iterator<Item = T>>` into `Iterator<Item = T>`. It is the foundation for monadic composition and list comprehensions, and is the building block behind `flat_map()`.

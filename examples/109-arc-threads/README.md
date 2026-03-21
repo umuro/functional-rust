@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When multiple threads need read access to the same data, you need a mechanism for shared ownership with thread-safe reference counting. Rust's `Rc<T>` is single-threaded — it uses non-atomic reference counting that is not safe to clone across threads. `Arc<T>` (Atomically Reference-Counted) uses atomic operations for the count, making it safe to share across threads.

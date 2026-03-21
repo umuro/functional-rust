@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Rust's `.chars()` iterator provides character-level traversal of UTF-8 strings, yielding Unicode scalar values (`char`, 4 bytes each) rather than raw bytes — the correct unit for most text processing.
 
 ## Problem Statement

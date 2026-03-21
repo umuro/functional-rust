@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Compile-time evaluation is not limited to simple arithmetic. Complex computations — string hashing for perfect hash maps, computing bit-reversal permutations, generating code tables — can run during compilation. This example collects practical `const fn` patterns: FNV hash of a string, log2 of a size for bit-counting, compile-time min/max/clamp, and ANSI escape code generation for terminal colors. These patterns eliminate entire categories of runtime initialization.

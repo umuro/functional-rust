@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `#[derive(Serialize, Deserialize)]` is the most-used derive macro in the Rust ecosystem — the `serde` crate has been downloaded billions of times. Understanding what the macro generates demystifies serde's design: it calls into a `Serializer` or `Deserializer` trait whose concrete implementation handles the format (JSON, TOML, MessagePack). This separation means your types are format-agnostic; the format is injected at the call site.

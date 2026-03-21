@@ -3,10 +3,10 @@
 ---
 
 # Example 255: Lazy Fibonacci
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Lazy / Infinite Sequences
-**OCaml Source:** https://cs3110.github.io/textbook/chapters/ds/streams.html
+
 
 ## Problem Statement
 

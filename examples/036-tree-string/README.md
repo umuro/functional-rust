@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Serializing a binary tree to a string and back (OCaml 99 Problems #36) is a fundamental serialization problem. The format: `"a(b(d,e),c(,f))"` represents a tree where `a` is the root, with left child `b` (which has children `d` and `e`) and right child `c` (which has only right child `f`). Commas separate children; empty positions are left blank.

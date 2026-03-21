@@ -1,6 +1,8 @@
 **Difficulty:** ⭐⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐⭐  
+
 [csv-parser on hightechmind.io](https://hightechmind.io/posts/functional-rust/csv-parser)
 
 ---

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A rank-2 type is a function that takes a polymorphic argument — a function that must work for all types, not just one specific type chosen by the caller. The classic example: `runST :: (forall s. ST s a) -> a` in Haskell prevents mutable state from leaking out of a computation. In Rust and OCaml, rank-2 polymorphism is simulated using traits with generic methods, which enforce "the callee chooses the type" rather than "the caller chooses the type."

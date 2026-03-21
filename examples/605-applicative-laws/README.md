@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Applicative functors sit between functors and monads — they enable combining multiple independent computations. Four laws: identity, homomorphism, interchange, and composition. Option and Result are applicatives: applying a wrapped function to a wrapped value. Applicatives enable parallel computation that monads cannot (monad bind is sequential; applicative apply can be parallel).

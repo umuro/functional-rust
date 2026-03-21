@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A recursive type is one whose definition refers to itself — a tree node contains child nodes, a linked list node points to the next node. This is fundamental to representing hierarchical data: file systems, abstract syntax trees, JSON documents, and parse trees. Rust requires recursive types to have a known size at compile time, which forces explicit indirection via `Box<T>` at recursive positions.

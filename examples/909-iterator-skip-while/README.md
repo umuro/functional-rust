@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many data processing tasks need to skip a leading section before the relevant data begins: skip log header lines until the first data row, skip sorted leading zeros before meaningful values, strip leading whitespace from a string. `skip_while` is the complement of `take_while`: it discards elements from the front until the predicate first fails, then yields all remaining elements — including later ones that match the predicate. This "once it switches, it never switches back" behavior is the key distinction from `filter`. It models a state machine with two states: skipping and yielding.

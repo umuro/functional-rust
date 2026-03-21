@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Every language with explicit error handling faces the same design question: when should an error abort the program versus return a recoverable value? In Go, `panic` and `error` serve different roles. In Rust, `panic!` signals a programming bug (an invariant violation), while `Result<T, E>` represents an expected failure that callers should handle. Conflating the two leads to either over-cautious `unwrap`-heavy code or libraries that silently swallow errors.

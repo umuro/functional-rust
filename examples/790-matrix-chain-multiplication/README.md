@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The matrix chain multiplication problem asks: in what order should a sequence of matrices be multiplied to minimize the total number of scalar multiplications? Different association orders can differ by orders of magnitude: `(A × B) × C` might cost 1000 operations while `A × (B × C)` costs 100. The O(n³) DP solution, from Godbole (1973), is a textbook example of interval DP and is used in query optimization in databases (join reordering) and deep learning compilers (operation fusion).

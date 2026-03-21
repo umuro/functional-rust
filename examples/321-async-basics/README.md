@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Network servers, database clients, and file-processing applications spend most of their time waiting for I/O. Blocking threads during waits is wasteful — a single server handling 10,000 connections would need 10,000 threads. Async/await enables concurrent I/O on a small thread pool by pausing and resuming tasks when they would otherwise block. This example demonstrates the fundamental concepts using synchronous thread-based analogies before introducing true async syntax.

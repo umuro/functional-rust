@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Heap allocation is expensive: a small `Vec<T>` allocates a buffer on the heap even for zero or one elements. The small vector optimization (SVO) stores elements on the stack up to a threshold, spilling to the heap only when the count exceeds N. LLVM's `SmallVector`, C++'s `llvm::SmallVector`, and Rust's `smallvec` crate all implement this pattern.

@@ -1,6 +1,8 @@
 **Difficulty:** ⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐  
+
 [matrix-multiply on hightechmind.io](https://hightechmind.io/posts/functional-rust/matrix-multiply)
 
 ---

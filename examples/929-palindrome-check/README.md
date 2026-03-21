@@ -3,8 +3,9 @@
 ---
 
 # 929-palindrome-check — Palindrome Check
-**Difficulty:** ⭐⭐  
+**Difficulty:** ⭐  
 **Category:** Functional Programming  
+
 
 
 ## Problem Statement

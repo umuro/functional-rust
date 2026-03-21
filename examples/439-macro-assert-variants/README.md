@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Testing enum variants is verbose: `assert!(matches!(result, Ok(_)))` requires knowing the `matches!` macro, wrapping in `assert!`, and loses the ability to extract the inner value. `unwrap_variant!(result, Ok(v) => v)` provides a cleaner pattern: assert that the value matches a variant and extract the inner data in one operation. For test suites heavily using `Result` and enum-heavy domain models, these macros significantly reduce test boilerplate while providing better error messages.

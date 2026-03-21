@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Real programs need multiple effects simultaneously: a computation might be fallible (Option/Result), AND need to read configuration (Reader), AND accumulate a log (Writer). Composing two monads directly doesn't work — `Option<Reader<Config, A>>` and `Reader<Config, Option<A>>` require different bind implementations. Monad transformers solve this by stacking effects: `OptionT<E, A> = Result<Option<A>, E>` adds optionality to Result. This enables writing code that handles both "not found" (None) and "failed" (Err) without explicit nesting. Used in: web frameworks (request handler: Result for errors, Option for optional fields, Reader for context), compiler pipelines, and effectful DSLs.

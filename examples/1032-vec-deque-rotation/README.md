@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A double-ended queue (deque) supports efficient insertion and removal at both ends. Ring buffers — fixed-size deques used for circular logs, producer-consumer queues, and audio sample buffers — are a classic application. Rotation (shifting all elements left or right by k positions) requires O(1) with a proper deque but O(n) with a plain `Vec`.

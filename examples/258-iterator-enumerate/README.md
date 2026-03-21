@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Knowing the position of each element while iterating is a recurring need: numbering output lines, finding the index of the first matching element, or computing index-dependent transformations. The traditional C-style `for (int i = 0; i < n; i++)` loop provides this but loses the iterator abstraction. The `enumerate()` adapter solves this by injecting a zero-based index alongside each element, keeping the pipeline composable.

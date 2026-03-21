@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust's orphan rule prevents implementing an external trait on an external type — you cannot add `Display` to `Vec<T>` if both come from other crates. Extension traits solve this by defining a new trait with the desired methods and implementing it for the external type — since the new trait is yours, the orphan rule permits it. This pattern is widely used in Rust libraries to add methods to standard types (`IteratorExt`, `ReadExt`, `FutureExt`).

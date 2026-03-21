@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Closures that capture references introduce lifetime constraints that must appear in the closure's type. A closure that borrows a `&str` prefix can only be called while that prefix is alive — the closure's lifetime is bounded by its captured borrows. When returning such closures from functions, the `+ 'a` lifetime bound must appear in the return type to tell callers how long they can use the closure. This is distinct from closures that capture owned data — those have no borrowed lifetime and can be `'static`.

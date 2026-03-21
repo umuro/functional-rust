@@ -1,6 +1,8 @@
 **Difficulty:** ⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐  
+
 [key-value-store on hightechmind.io](https://hightechmind.io/posts/functional-rust/key-value-store)
 
 ---

@@ -1,6 +1,8 @@
 **Difficulty:** ⭐⭐⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐⭐⭐  
+
 [skip-list on hightechmind.io](https://hightechmind.io/posts/functional-rust/skip-list)
 
 ---

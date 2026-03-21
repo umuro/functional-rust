@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The rental pattern addresses a common need: a type that owns its data and provides borrowing access to it — "renting out" references into its own storage. This is a structured version of the owning-reference problem. The `rental` crate (now deprecated) automated this with macros; the `ouroboros` and `self_cell` crates provide safe modern alternatives. Understanding the manual implementation helps explain why the borrow checker prevents naive self-referential structs and what makes the pattern sound.

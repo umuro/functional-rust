@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `const fn` allows computations to run at compile time, moving work from program startup to compilation. This eliminates initialization overhead for lookup tables, mathematical constants, and hash seeds. Stabilized incrementally since Rust 1.31, `const fn` now supports loops, conditional expressions, and recursive functions. It is used in `phf` (perfect hash functions computed at compile time), `const-oid`, and array-init crates.

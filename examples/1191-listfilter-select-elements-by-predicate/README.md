@@ -1,8 +1,8 @@
 # Example 1191: List.filter — Select Elements by Predicate
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Lists & HOF
-**OCaml Source:** OCaml standard library — `List.filter`
+
 
 ## Problem Statement
 

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Before `serde` existed, Rust programmers wrote serialization by hand. Understanding manual serialization reveals what `#[derive(Serialize)]` generates and why `serde`'s design is what it is. Manual serialization is still needed when: the format has custom requirements, you target `no_std` environments, you need maximum performance without abstraction overhead, or you are implementing a wire protocol like MessagePack or Protocol Buffers.

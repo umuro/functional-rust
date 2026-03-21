@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A type with a `map` method is not a valid functor unless it satisfies two algebraic laws: identity (`map(id) == id`) and composition (`map(f∘g) == map(f)∘map(g)`). These laws are not enforced by the Rust type system — they're mathematical contracts that ensure `map` truly "preserves structure" and doesn't do hidden processing. Code that depends on functor behavior (optimizations, refactoring, generic algorithms) relies on these laws holding. Understanding laws lets you reason about code algebraically: `Option::map` satisfying the laws means you can freely refactor `x.map(f).map(g)` to `x.map(|v| g(f(v)))` with confidence.

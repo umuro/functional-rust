@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When a closure borrows data from its environment rather than moving it, the closure's lifetime is constrained by the validity of those borrows. This is the intersection of two of Rust's most distinctive features: closures and the borrow checker. The challenge is expressing in the type system that "this closure is valid as long as the data it borrows is valid." Getting this right enables zero-copy parsing, view-based APIs, and efficient filtering over borrowed slices without unnecessary cloning.

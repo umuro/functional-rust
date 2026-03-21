@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Use Rust's iterator `zip` to pair elements from two sequences, `.unzip()` to split a sequence of pairs back into two vectors, and `zip` + `map` to implement a pairwise `zip_with`. Compare with OCaml's recursive `zip`, `unzip`, and `zip_with` on lists.

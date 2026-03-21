@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The Van Laarhoven encoding represents all lens operations as a single function type: `type Lens s a = forall f. Functor f => (a -> f a) -> s -> f s`. Choosing different functors selects different operations: `Identity` functor gives `over`, `Const r` functor gives `view`. The profound payoff: **lens composition is plain function composition** (`f . g`). No special composition operator is needed. This is why Haskell's `lens` library can compose optics with `(.)`.

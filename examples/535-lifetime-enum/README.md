@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Enums can hold references just like structs, and the same lifetime annotation rules apply. Token types in parsers, parse result types, and zero-copy JSON/YAML values are all classic examples: they borrow slices of the input string rather than copying, making parsing dramatically faster. The `Token<'a>` pattern is foundational in parser combinators (nom, winnow, pest) — a lexer tokenizes a string slice and yields tokens that are lightweight views into the original input, requiring no allocation.

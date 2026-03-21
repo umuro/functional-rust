@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Combining the free monad pattern with state — a mutable counter, accumulator, or environment — requires threading state through the interpreter. A state-carrying free monad DSL enables programs that read and write state as pure operations, with the actual state management happening in the interpreter. This models how database transactions, accumulating computations, and stateful protocols can be expressed purely and tested without mutable global state.

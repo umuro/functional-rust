@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 File handles have permission semantics: writing to a read-only file, or reading from a write-only file, are runtime errors in most systems. The standard library's `File` type catches these at runtime via OS error codes. The typestate pattern promotes permission violations to compile-time errors: `FileHandle<ReadOnly>` simply does not implement `write_all`, so calling it is caught by the type checker before the program runs. This approach is used in embedded HAL (hardware abstraction layer) crates to prevent writing to read-only hardware registers.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Most text formats are whitespace-insensitive: `{"key": "value"}` and `{ "key" : "value" }` are equivalent JSON. Parsers must skip whitespace between tokens without interfering with token recognition. `ws0` (zero or more whitespace characters) and `ws1` (one or more) are standard utilities. Wrapping content parsers with `ws_wrap` allows callers to ignore whitespace concerns entirely, keeping individual token parsers clean and focused.

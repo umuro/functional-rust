@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Finding the two closest points in a set of n points naively requires O(n^2) distance comparisons. Divide-and-conquer solves this in O(n log n): split points by x-coordinate median, recursively find closest pairs in left and right halves, then check the strip of width 2*delta around the dividing line for cross-half pairs. The key insight: within the strip, each point needs to be compared against at most 7 others — a fixed constant, making the strip check O(n) total. This algorithm appears in geographic information systems (nearest neighbor queries), robotics (obstacle proximity), and computational chemistry (molecular interaction detection).

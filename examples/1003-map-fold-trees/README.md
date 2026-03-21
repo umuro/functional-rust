@@ -1,8 +1,8 @@
 # Example 1003: Map and Fold on Trees
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Trees | HOF
-**OCaml Source:** `map_tree`, `fold_tree` over `'a tree`
+
 
 ## Problem Statement
 

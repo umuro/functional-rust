@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Graph nodes, AST nodes, and ECS (Entity Component System) game entities all need stable references that don't invalidate when other items are added or removed. Raw indices into a `Vec` are unstable — removing element 5 shifts all subsequent elements, invalidating stored indices. A slab allocator solves this: it maintains a `Vec<Option<T>>` where items occupy stable slots identified by integer keys. Removed slots are tracked in a free list and reused for future allocations. Keys remain valid across insertions and removals of other elements. The `slab` crate is the production implementation; this example shows the pattern from scratch.

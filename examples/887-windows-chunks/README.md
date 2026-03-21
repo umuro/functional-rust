@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Sliding window algorithms process overlapping sub-sequences for signal analysis, moving averages, and local extrema detection. Non-overlapping chunking processes data in fixed batches for pagination, block processing, and parallel work distribution. Both are fundamental in data processing pipelines. Rust provides `.windows(n)` (overlapping, zero-copy) and `.chunks(n)` / `.chunks_exact(n)` (non-overlapping) as built-in slice methods. These are unique in that they operate on slices (borrowing from the original data) rather than consuming iterators, enabling zero-allocation window and chunk processing.

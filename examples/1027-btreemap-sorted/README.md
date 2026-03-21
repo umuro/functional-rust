@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Hash maps provide O(1) average lookup but iterate in arbitrary order, making them unsuitable for tasks that require processing keys in sorted order — leaderboards, time-series data, range queries, and sorted output. B-trees, invented by Bayer and McCreight in 1972 for database indexes, maintain sorted order while keeping operations O(log n). Rust's `BTreeMap` is a cache-friendly B-tree optimized for modern hardware.

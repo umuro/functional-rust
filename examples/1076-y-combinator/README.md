@@ -3,10 +3,10 @@
 ---
 
 # Example 1076: Y Combinator — Anonymous Recursion
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Higher-Order Functions
-**OCaml Source:** https://rosettacode.org/wiki/Y_combinator#OCaml
+
 
 ## Problem Statement
 

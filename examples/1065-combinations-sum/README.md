@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Find all combinations of numbers from a given set that sum to a target, where each number may be used multiple times. This is a backtracking enumeration problem with applications in change-making (all ways to make an amount), spell correction (all word sequences summing to a score), and exam scheduling (all subsets hitting exactly N hours).

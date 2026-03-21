@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The longest common subsequence (LCS) finds the longest sequence of characters (not necessarily contiguous) that appears in the same order in two strings. It is the foundation of `diff` tools (git diff, Unix diff), DNA sequence alignment in bioinformatics, and file comparison in version control systems.

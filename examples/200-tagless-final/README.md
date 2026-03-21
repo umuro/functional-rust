@@ -3,10 +3,10 @@
 ---
 
 # Example 200: Tagless Final
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** DSLs | Type System
-**OCaml Source:** Kiselyov — "Finally Tagless, Partially Evaluated"
+
 
 ## Problem Statement
 

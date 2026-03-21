@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Finding the extreme value in a sequence is ubiquitous: highest score, earliest date, longest string, coldest temperature. The standard approach traverses the sequence once while tracking the running extreme. Rust's `Iterator::min()` and `Iterator::max()` encapsulate this idiom, requiring `Ord` for direct comparison. For types with partial ordering (like `f64`, which has NaN), `min_by` and `max_by` accept a custom comparator. `min_by_key` and `max_by_key` extract a sort key from each element. All return `Option<T>` — returning `None` for empty iterators rather than panicking.

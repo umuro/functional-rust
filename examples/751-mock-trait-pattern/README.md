@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Code that sends emails, makes HTTP requests, or writes to databases is hard to test: real calls are slow, cost money, and have side effects. The mock trait pattern defines a dependency as a trait, injects it through generics or `dyn Trait`, and provides a test implementation that records calls without performing real work. This is the foundation of dependency injection in Rust and is used in every major Rust web framework's testing guide.

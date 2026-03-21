@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `fold` reduces a sequence to one value. `scan` (also called `scanl` in Haskell or `scan_left` in OCaml) returns all intermediate accumulator values — a prefix sum, running maximum, or cumulative product. This is the essential operation for financial running totals, cumulative distribution functions, and online statistics algorithms.

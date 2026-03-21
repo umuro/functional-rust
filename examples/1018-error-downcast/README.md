@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When errors are type-erased as `Box<dyn Error>` or `Arc<dyn Error>`, you lose the ability to pattern-match on specific error types. This is the trade-off of dynamic dispatch: flexibility at the cost of type information. Downcasting recovers the concrete type at runtime, using the `Any` mechanism under the hood.

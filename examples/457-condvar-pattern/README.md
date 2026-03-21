@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A mutex protects shared state but provides no way for a thread to wait until the state changes. A consumer thread checking "is the queue empty?" must repeatedly check (busy-wait) or sleep — wasting CPU or adding latency. Condition variables solve this: a thread calls `wait` (which atomically releases the mutex and sleeps), and another thread calls `notify_one` or `notify_all` when the state changes. The waiting thread re-acquires the mutex and re-checks the condition. This is the foundation of thread synchronization: producer-consumer queues, barrier synchronization, and event notification.

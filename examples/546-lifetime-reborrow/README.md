@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Reborrowing is the implicit mechanism by which Rust creates a shorter-lived reference from a longer-lived one. When you pass `&mut x` to a function that takes `&mut i32`, Rust does not move the mutable reference — it creates a reborrow that lasts only for the function call. When the call returns, the original `&mut x` is available again. Without reborrowing, using `&mut` references would require move semantics — you could only use a mutable reference once. Understanding reborrowing explains why `&mut` chains work intuitively in practice.

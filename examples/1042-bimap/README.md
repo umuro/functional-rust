@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A bidirectional map (bimap) maintains a one-to-one correspondence between keys and values, enabling O(1) lookup in both directions: given a key, find the value; given a value, find the key. Use cases: ID to name lookups where you need reverse resolution, encoding/decoding tables, symbol tables in compilers.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When a struct has a lifetime parameter, every `impl` block for that struct must repeat the lifetime parameter and can use it in method signatures. The critical subtlety is that methods can return references with either the struct's lifetime (`'a`) or the lifetime of `&self` — and these are different. A method returning `&'a T` can return data that outlives the method call; a method returning `&T` tied to `&self` is only valid for the duration of the method borrow. Understanding this distinction prevents common confusion when implementing view-type APIs.

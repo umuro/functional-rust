@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Concatenating strings with `String::push_str` or `+` is O(n) — it copies all bytes each time. For a text editor that concatenates hundreds of small edits, this becomes O(n²) across all operations. A rope (Boehm, Atkinson & Plass, 1995) solves this with a binary tree of string fragments: concatenation is O(1) (just create a new tree node), and converting to a flat string is O(n) (tree traversal). Text editors (VS Code's Monaco uses ropes), version control systems, and collaborative editing frameworks use ropes to handle large documents with frequent insertions and deletions efficiently.

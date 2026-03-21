@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Writing fast code without profiling data is guesswork. Profile-guided optimization (PGO) uses runtime measurements to inform the compiler about which branches are hot, which functions should be inlined, and how data should be laid out in memory. Even without a full PGO pipeline, developers can apply the same principles manually: annotate hot/cold branches, choose Struct-of-Arrays over Array-of-Structs for SIMD-friendly access, and use `black_box` to ensure benchmarks measure real work.

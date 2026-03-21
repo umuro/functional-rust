@@ -1,8 +1,8 @@
 # Example 1124: List.sort — Sort with Custom Comparator
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Lists & HOF
-**OCaml Source:** `List.sort`, `String.compare`
+
 
 ## Problem Statement
 

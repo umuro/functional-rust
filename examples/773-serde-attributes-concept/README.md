@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `serde`'s attribute system — `#[serde(rename = "...")]`, `#[serde(skip)]`, `#[serde(default)]`, `#[serde(flatten)]` — transforms how types map to their serialized representation. Understanding these attributes is essential for working with external JSON APIs, legacy formats, and versioned protocols. This example demystifies serde attributes by showing what behavior they encode without the actual serde crate, making the mental model clear.

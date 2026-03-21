@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The Mars Climate Orbiter was lost in 1999 because one team used metric units and another used imperial — the mismatch went undetected until the spacecraft disintegrated. Unit confusion bugs kill software. Phantom types solve this: tag numeric values with their unit at the type level so `Quantity<Meters>` and `Quantity<Feet>` are distinct, incompatible types. Adding meters to feet is a compile error, not a runtime surprise. This pattern is used in aerospace, physics simulations, and financial systems.

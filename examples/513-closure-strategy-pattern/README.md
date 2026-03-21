@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 The Strategy pattern replaces object hierarchies with closures stored as `Box<dyn Fn>` fields — the algorithm is a runtime-swappable value rather than a compile-time type, enabling clean separation of structure and behaviour.
 
 ## Problem Statement

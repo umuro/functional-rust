@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A suffix array enables lightning-fast substring search, counting occurrences, finding the longest repeated substring, and computing the longest common substring between two strings — all after O(n log n) preprocessing. Without a suffix array or suffix tree, answering "how many times does pattern P appear in text T?" requires O(n*m) per query. With a suffix array, binary search answers each query in O(m log n). This powers full-text search engines, bioinformatics sequence analysis, data compression (BWT transform), and plagiarism detection tools. The suffix array is a space-efficient alternative to suffix trees that fits in O(n) integers.

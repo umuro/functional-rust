@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust's ownership model moves values by default — after `let b = a`, `a` is consumed. For small stack-allocated types (integers, `f32`, pairs of floats), this restriction is unnecessary overhead: the value is trivially duplicated by copying bits. For heap-allocated types (strings, vectors), copying must be explicit to avoid unexpected O(n) copies. Rust resolves this with two traits: `Copy` (implicit bitwise copy, opt-in) and `Clone` (explicit `.clone()`, potentially expensive). This distinction makes performance visible in code: an `.clone()` call signals potential allocation.

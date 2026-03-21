@@ -1,6 +1,8 @@
 **Difficulty:** ⭐⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐⭐  
+
 [deque on hightechmind.io](https://hightechmind.io/posts/functional-rust/deque)
 
 ---

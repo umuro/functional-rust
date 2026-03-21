@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Pattern matching is the primary control flow mechanism of functional programming. Where imperative languages use `if/else` chains and switch statements, functional languages match on the structure of data: a tree is either a Leaf or a Node(left, value, right); a result is either Ok(x) or Err(e). OCaml and Rust both center pattern matching as a first-class language feature. Both compile match expressions to decision trees, check exhaustiveness at compile time (no unhandled case), and bind variables in each arm. This example uses algebraic shapes to compare the two languages' match syntax and capabilities.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many algorithms need to repeatedly extract the element with the highest (or lowest) priority: Dijkstra's shortest path, A* search, Huffman coding, task schedulers, and event-driven simulations. A priority queue with O(log n) insert and O(log n) extract-max is the standard data structure for these needs. Rust's `BinaryHeap` implements a max-heap — the largest element is always at the top. The `Reverse<T>` wrapper flips the comparison, turning the max-heap into a min-heap. This covers both "top N largest" and "top N smallest" queries efficiently.

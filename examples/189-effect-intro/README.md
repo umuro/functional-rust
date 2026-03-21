@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Algebraic effects are a modern alternative to monads for structuring side effects. Unlike free monads (which build heap-allocated trees), algebraic effects are handled at the runtime level — the effect is "thrown" and a handler "catches" it, potentially resuming the computation. OCaml 5 introduced native effect handlers. Rust simulates them using closures and callbacks. Effects are used in async runtimes (every `await` is an effect), error handling, non-determinism, and resource management.

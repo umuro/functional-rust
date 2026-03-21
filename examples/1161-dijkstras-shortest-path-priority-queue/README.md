@@ -1,8 +1,8 @@
 # Example 1161: Dijkstra's Shortest Path — Priority Queue
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Graphs & Algorithms
-**OCaml Source:** https://rosettacode.org/wiki/Dijkstra%27s_algorithm#OCaml
+
 
 ## Problem Statement
 

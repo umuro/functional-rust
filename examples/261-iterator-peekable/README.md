@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many parsing and grouping algorithms need to examine the next element before deciding whether to consume it. A lexer must decide if the current `<` starts `<`, `<=`, or `<<` by looking ahead. A run-length encoder must check if the next element continues the current run. Without lookahead, you must buffer elements manually or restructure the algorithm. `Peekable` wraps any iterator to add a one-element lookahead without consuming the peeked element.

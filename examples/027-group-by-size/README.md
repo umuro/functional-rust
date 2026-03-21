@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Partitioning a set into groups of specified sizes (OCaml 99 Problems #27) — for example, dividing 9 people into groups of 2, 3, and 4 — generalizes the combinations problem. This is multinomial selection: choose the first group, then choose the second group from the remainder, and so on. The number of ways to partition n elements into groups of sizes k1, k2, ..., km is the multinomial coefficient n! / (k1! · k2! · ... · km!).

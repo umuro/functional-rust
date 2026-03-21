@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Self-referential data — a struct that owns a string and also holds slices into it — is the hardest string pattern in Rust. The safe solution stores byte-offset pairs rather than `&str` references, extracting slices on demand.
 
 ## Problem Statement

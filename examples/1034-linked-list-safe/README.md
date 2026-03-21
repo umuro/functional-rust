@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Linked lists are a foundational data structure in functional programming — OCaml's list type is a linked list at the machine level. In Rust, implementing a linked list in safe code is notoriously tricky because the borrow checker must verify that no two nodes share ownership. The canonical safe approach uses `Option<Box<Node<T>>>` for the next pointer, which gives single ownership through the `Box` and `None` for the terminator.

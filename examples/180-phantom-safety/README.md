@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Database connections, file handles, and network sockets have a lifecycle: they must be opened before use and closed after use. Calling query methods on a closed connection causes runtime errors. PhantomData-based typestate encodes the connection state in the type: `Connection<Closed>` and `Connection<Open>` are different types, with query methods available only on `Connection<Open>`. Opening a closed connection returns `Connection<Open>`; closing an open connection returns `Connection<Closed>`.

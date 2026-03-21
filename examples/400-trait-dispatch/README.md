@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Polymorphism has two implementation strategies with different performance characteristics. Static dispatch (monomorphization) generates a separate copy of the function for each concrete type at compile time — maximum performance, larger binary. Dynamic dispatch (vtable) uses a single function that calls through a pointer table at runtime — smaller binary, supports heterogeneous collections, with the cost of one pointer indirection per virtual call. Rust gives you explicit control over this choice: `impl Trait` / generics for static, `dyn Trait` for dynamic.

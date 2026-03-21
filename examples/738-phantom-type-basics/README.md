@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Sometimes you need a type to carry extra compile-time information that has no runtime representation. A `UserId` and a `ProductId` are both `u64`, but mixing them up is a logic error. Phantom types solve this: `Tagged<u64, UserTag>` and `Tagged<u64, ProductTag>` are different types at compile time but identical at runtime. This pattern prevents unit confusion (meters vs. feet), validates data provenance (raw vs. validated input), and creates marker-based permission systems — all at zero runtime cost.

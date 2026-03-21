@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Primitive types like `f64` and `String` carry no semantic meaning. A function taking two `f64` parameters for distance and mass has no protection against passing them in the wrong order. The Mars Climate Orbiter was lost in 1999 because one module used metric units and another used imperial — the compiler saw only `f64`. The newtype pattern wraps primitive types in single-field structs, creating distinct types with zero runtime overhead: `Meters(f64)` and `Kilograms(f64)` cannot be accidentally interchanged.

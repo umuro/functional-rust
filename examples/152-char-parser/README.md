@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 All parsers ultimately reduce to reading individual characters. Primitive character parsers — match this specific character, match any character, match a character not in this set, match any of these characters — form the atomic vocabulary from which all other parsers are constructed. Getting these primitives right (correct UTF-8 handling, informative error messages, correct remaining input slicing) is essential for building correct higher-level parsers.

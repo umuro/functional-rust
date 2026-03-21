@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Tests that share mutable global state are non-deterministic when run in parallel: test A's changes leak into test B's state, causing intermittent failures that are painful to debug. The solution is test isolation: every test operates on its own independent state. Dependency injection, scoped state, and per-test instances replace global singletons. This is a fundamental principle of reliable test suites used in every professional codebase.

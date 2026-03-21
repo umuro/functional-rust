@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 File I/O is one of the most common sources of recoverable errors in production software. Files may not exist, permissions may be wrong, disks may be full, or paths may be invalid. Every language with a type system faces the question of how to represent these errors at the type level.

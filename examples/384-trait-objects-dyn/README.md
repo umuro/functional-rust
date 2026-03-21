@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Static dispatch (generics with monomorphization) produces the fastest code but requires knowing all concrete types at compile time. Sometimes the set of types is open and determined at runtime — a plugin system, a heterogeneous collection, or a callback registered by user code. Dynamic dispatch via `dyn Trait` solves this: values are stored as fat pointers (data pointer + vtable pointer), enabling runtime polymorphism at the cost of an indirect function call per virtual method.

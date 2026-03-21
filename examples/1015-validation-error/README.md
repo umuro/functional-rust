@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Form validation, data ingestion, and configuration parsing all share a common need: report every error at once rather than stopping at the first one. A user who submits a form with three invalid fields should not have to submit-fix-submit-fix three times. This "accumulate all errors" pattern requires a different data structure than `Result<T, E>`, which can carry only one error at a time.

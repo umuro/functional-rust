@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `head` on an empty list is undefined. Instead of returning `Option<T>` and forcing callers to handle `None`, the typestate approach encodes emptiness in the type: `SafeList<T, NonEmpty>` has a `head` method; `SafeList<T, Empty>` does not. This converts a potential runtime panic into a compile error, and callers never need to unwrap. The pattern generalizes to any operation that requires a precondition: safe division, safe array access, safe database reads.

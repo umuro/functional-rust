@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Standard maps store one value per key. A multimap stores multiple values per key — every tag in an index has multiple documents, every author writes multiple books, every event has multiple handlers. While no `MultiMap` exists in Rust's standard library, the pattern is straightforwardly implemented as `HashMap<K, Vec<V>>` with the entry API. This is the basis for inverted indexes in full-text search, adjacency lists in graph algorithms, and event subscription registries. Understanding the pattern helps recognize when it applies vs using `(K, V)` pair collections.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Finding the longest palindromic substring naively requires O(n^2) time by expanding from each center. Manacher's algorithm finds all palindromic substrings — both odd and even length — in O(n) time by reusing previously computed palindrome radii. This is the canonical O(n) solution to "find the longest palindrome in a string," a classic interview problem with practical applications in DNA analysis (palindromic sequences indicate restriction enzyme sites), text compression, and symmetry detection. The key insight is that palindromes inside a larger known palindrome have known minimum radii, avoiding redundant character comparisons.

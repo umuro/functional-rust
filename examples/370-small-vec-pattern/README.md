@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Most collections in practice are small — a function rarely returns more than a few results, most AST nodes have 2-3 children, most tokenizers produce short token sequences. Standard `Vec<T>` always heap-allocates, even for zero or one element. The `SmallVec` optimization stores up to N items inline (on the stack or in the struct), spilling to heap only when needed. The `smallvec` crate implements this; this example shows the pattern from scratch using a const-generic `N`. SmallVec is used in LLVM (for instruction operands), Rust's own compiler, browser engines, and game ECS implementations to eliminate heap pressure for small collections.

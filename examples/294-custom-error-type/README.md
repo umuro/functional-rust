@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Generic error strings (`String`, `&str`) lose information — callers cannot match on the error kind to handle different failures differently. Custom error enums document every possible failure mode in the type system, enabling exhaustive handling, machine-readable error codes, and structured error data. This is the standard approach in production Rust libraries and mirrors OCaml's algebraic error types.

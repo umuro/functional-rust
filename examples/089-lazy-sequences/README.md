@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Create infinite lazy sequences in Rust using `std::iter::from_fn` and `std::iter::successors` — without custom structs. Generate natural numbers, Fibonacci numbers, and powers of two using closures that capture mutable state. Compare with OCaml's `Seq` thunk-based lazy sequences.

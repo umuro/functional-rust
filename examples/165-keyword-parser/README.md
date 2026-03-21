@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Keywords like `if`, `else`, `while`, and `return` must be distinguished from identifiers. A naive string parser would match `"if"` at the start of `"ifstream"` — failing to recognize that `"ifstream"` is an identifier containing the prefix `"if"`. Keyword parsers enforce word boundary checking: the keyword must not be followed by an identifier character. This is the difference between lexer-level and parser-level thinking in grammar design.

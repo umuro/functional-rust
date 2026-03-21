@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Scott encoding is an alternative to Church encoding that represents data as pattern matches — a function that takes one continuation per constructor. Where Church encoding ties data to iteration, Scott encoding ties data to pattern matching. Scott-encoded natural numbers and lists support O(1) `head` and `tail` (Church lists need O(n) to access the tail), making Scott encoding more practical for functional data structures. It is the basis for how some functional compilers represent data types at runtime.

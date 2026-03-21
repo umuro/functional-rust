@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Shared mutable state across concurrent threads or tasks requires mutual exclusion. `std::sync::Mutex<T>` provides this but blocks the OS thread when locked. In async contexts, blocking a thread blocks all tasks on that thread — a major performance problem. The correct pattern is to use `tokio::sync::Mutex` for async code (yields instead of blocks) and `std::sync::Mutex` only for brief critical sections that never span `.await` points.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The borrow checker enforces two rules that together eliminate data races and use-after-free bugs: (1) you can have multiple shared references (`&T`) or exactly one mutable reference (`&mut T`), never both simultaneously; (2) references cannot outlive the data they point to. These rules are based on the "aliasing XOR mutability" principle from the research community. Understanding why these rules exist — not just what they are — makes it easier to design APIs that work with the borrow checker rather than fighting it.

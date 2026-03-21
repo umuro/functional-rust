@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Retrieving the final element of a sequence is straightforward for slices (`slice.last()`) but requires consuming the entire iterator for non-indexed collections. The `last()` method provides a safe, idiomatic way to get the final element of any iterator, returning `Option<T>` to handle the empty case. Combined with `filter()`, it finds the last matching element in a single pass.

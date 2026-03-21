@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A bipartite graph can be 2-colored: vertices split into two sets where all edges go between sets (no edges within a set). BFS-based 2-coloring checks bipartiteness in O(V+E). Applications: job matching (workers and jobs are two sets), recommendation systems (users and items), scheduling (tasks and time slots), and the fundamental theorem that a graph is bipartite if and only if it contains no odd-length cycles.

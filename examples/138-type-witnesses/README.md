@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A type witness is a value that carries proof of a type relationship at runtime, allowing safe downcasting or refinement of a type. GADTs (Generalized Algebraic Data Types) use type witnesses at the constructor level to encode invariants like "this expression evaluates to an int" or "this list has exactly n elements." Without type witnesses, type-safe evaluation of heterogeneous expression trees requires runtime type tags and potential panics on mismatch.

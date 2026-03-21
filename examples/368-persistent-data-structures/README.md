@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Mutable data structures destroy history — you can't go back to a previous state without making copies. Persistent (functional/immutable) data structures solve this by sharing unchanged structure between versions. A persistent linked list shares its tail: `cons(x, list)` creates a new list that shares all of `list` without copying. This structural sharing makes undo/redo O(1), version control O(changed-nodes), and functional programming idioms possible. Rust implements persistent structures using `Rc<T>` (single-threaded) or `Arc<T>` (multi-threaded) for reference-counted shared ownership.

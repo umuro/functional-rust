@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Two abstractions represent callable values in Rust: `fn` pointers (a plain machine address) and closures (address plus captured environment). The tension between them matters in practice: `fn` pointers have a known, fixed size — useful for FFI, const contexts, and uniform dispatch tables. Closures are more powerful but carry hidden state and require generics or boxing. Choosing the wrong abstraction forces unnecessary heap allocation or limits caller flexibility. This example compares the two side-by-side including their memory layout.

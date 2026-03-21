@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Use Rust's `.partition(predicate)` to split an iterator into two collections in a single pass: elements satisfying the predicate go into the first collection, the rest into the second. Compare with OCaml's `List.partition` and `partition_map` using `Either`.

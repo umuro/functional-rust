@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many operations produce zero, one, or multiple outputs per input: tokenizing a sentence produces multiple words, parsing produces either a value or nothing, expanding a range produces many numbers. `.flat_map(f)` = `.map(f).flatten()` handles all three cases in one operation. In category theory, this is the monadic bind (`>>=`) — the mechanism that lets you chain computations where each step can produce zero or more results. OCaml has `List.concat_map`. Haskell has `concatMap` and `(>>=)` for lists. This is one of the most powerful iterator operations.

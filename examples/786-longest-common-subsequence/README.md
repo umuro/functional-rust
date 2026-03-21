@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The Longest Common Subsequence (LCS) problem finds the longest sequence of characters common to two strings (not necessarily contiguous). It is the foundation of `diff` tools (used in Git, patch, and code review), DNA sequence alignment (BLAST, ClustalW), and plagiarism detection. The classic O(mn) DP solution by Hirschberg (1975) fills an m×n table comparing characters.

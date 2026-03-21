@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The coin change problem asks: given denominations of coins and an amount, what is the minimum number of coins needed to make that amount? Greedy fails for non-standard denominations (e.g., coins of 1, 3, 4 — greedy gives 3 coins for 6, but optimal is 2). DP finds the true minimum. The counting variant (number of ways to make change) is used in combinatorics and financial applications. Canonical in algorithm courses since the 1970s.

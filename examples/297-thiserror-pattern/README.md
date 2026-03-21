@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implementing `Display`, `Debug`, `Error`, and `From` impls for every error type is mechanical boilerplate. The `thiserror` crate generates this boilerplate via derive macros. This example implements what `thiserror` generates manually — understanding the generated code demystifies the macro and provides a foundation for working with the pattern in production codebases where `thiserror` is a standard dependency.

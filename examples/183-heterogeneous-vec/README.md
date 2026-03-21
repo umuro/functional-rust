@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Sometimes you need a single collection to hold values of different types — a property bag, an event queue with mixed event types, a dynamic configuration store. `Box<dyn Any>` erases type information completely, but `downcast_ref::<T>()` recovers it safely: the downcast checks the stored `TypeId` against the requested type and returns `Option<&T>`. This is the runtime equivalent of type-safe storage — safer than `transmute` but with runtime dispatch.

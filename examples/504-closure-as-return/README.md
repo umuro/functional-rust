@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Returning closures from functions — factory functions — enables partial application, stateful generators, and configurable behaviour. Rust uses `impl Fn` for static dispatch or `Box<dyn Fn>` when the concrete type must be erased.
 
 ## Problem Statement

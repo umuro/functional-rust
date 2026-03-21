@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Standard run-length encoding always emits `(count, element)` pairs, but this is wasteful for singleton runs: `(1, 'a')` is less clear than just `'a'`. The modified encoding (OCaml 99 Problems #11) uses a sum type: elements with count > 1 are represented as `Many(count, element)`, while singletons are represented as `One(element)`. This avoids redundancy and makes the encoding self-describing.

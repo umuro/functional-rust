@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many grammars require matching fixed string literals: keywords like `"true"` and `"false"`, operators like `"+="`, or delimiters like `"<!--"`. Matching character by character would work but is verbose and error-prone for multi-character strings. The `tag` combinator matches an entire expected string at once, using `str::starts_with` for efficiency. Case-insensitive variants handle HTTP methods, SQL keywords, and HTML tag names where casing is not significant.

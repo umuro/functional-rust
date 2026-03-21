@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A hylomorphism (hylo) composes an anamorphism followed by a catamorphism — build then fold. This is the general recursive scheme: any recursive computation that builds an intermediate structure and then folds it is a hylomorphism. Mergesort is the canonical example: unfold the list into a tree of comparison results, then fold to produce the sorted list.

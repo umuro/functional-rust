@@ -1,6 +1,8 @@
 **Difficulty:** ⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐  
+
 [count-min-sketch on hightechmind.io](https://hightechmind.io/posts/functional-rust/count-min-sketch)
 
 ---

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When a function returns a reference, the lifetime of that reference must be tied to one of its inputs. In simple cases, elision handles this automatically. But when functions have multiple reference parameters and it is important to document or enforce which input the output borrows from, explicit named lifetimes in the return type make the relationship unambiguous. Named return lifetimes are especially valuable in parser structs, view adapters, and any API where the relationship between input source and output view matters for correctness.

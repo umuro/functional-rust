@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Integration tests verify that components work together through their public APIs, not just in isolation. In Rust, integration tests live in the `tests/` directory and link against the compiled library — they cannot access private internals. This forces a clean API boundary. Setting up shared state (database connections, server sockets, test data) across multiple integration tests requires patterns for initialization, teardown, and parallelism-safe shared fixtures.

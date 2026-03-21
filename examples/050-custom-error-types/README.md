@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Custom error types make error handling self-documenting. Instead of returning `String` errors (which lose structure) or `Box<dyn Error>` (which loses type safety), a custom enum provides exhaustive matching, compiler-checked error handling, and rich error messages. This is how Rust's standard library and major crates (`serde`, `tokio`, `axum`) define their errors.

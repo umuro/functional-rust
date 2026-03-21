@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 JSON (JavaScript Object Notation) was introduced in 2001 and is now the universal data interchange format. Building a JSON serializer from scratch teaches you about recursive data structures, string escaping, number formatting, and the performance trade-offs in text-based formats. Understanding JSON's structure also helps when working with serde's JSON support and when debugging serialization issues in production systems.

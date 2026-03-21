@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Lifetime annotations are often redundant — the compiler can infer them from context. Rust's three lifetime elision rules specify exactly when annotations can be omitted, making the common cases concise while requiring explicit annotations only for ambiguous cases.

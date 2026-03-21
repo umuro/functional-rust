@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Most structs own their data outright. But some structs are intentionally views or windows into existing data — text highlights, tokenizer state, zero-copy parsers, iterator adapters. These structs hold references rather than owned values, which means their validity is tied to the lifetime of the data they reference. Rust's lifetime parameters on structs make this relationship explicit in the type, preventing a view struct from outliving its source data. This pattern is essential for zero-copy parsing (nom, winnow), text processing, and embedded data structures.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Deterministic primality testing via trial division is O(sqrt(n)), impractical for 64-bit numbers (up to 4 billion operations). Cryptographic applications need to test numbers with hundreds of digits for primality during key generation. Miller-Rabin is a probabilistic primality test that runs in O(k log^2 n) where k is the number of witness rounds — each round reduces error probability to 1/4. With k=25 rounds, the probability of a false positive is negligible. For 64-bit integers, a specific set of deterministic witnesses {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37} makes Miller-Rabin deterministic — no false positives for any n < 3.3 * 10^24.

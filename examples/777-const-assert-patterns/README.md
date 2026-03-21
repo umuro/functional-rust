@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Runtime assertions (`assert!`) check invariants at program execution time — too late for configuration errors that could be caught earlier. Compile-time assertions (`const_assert!`) catch impossible configurations, wrong struct sizes, invalid constant values, and violated mathematical invariants during compilation. Used in embedded systems (verify that a packet type fits in a buffer), cryptography (check key size assumptions), and any code with compile-time-knowable invariants.

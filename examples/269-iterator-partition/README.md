@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Classifying elements into exactly two groups — evens and odds, valid and invalid, passing and failing — is extremely common. The naive approach iterates twice: once to collect matches, once to collect non-matches. The `partition()` adapter solves this by splitting an iterator into two collections in a single pass, reducing both computation time and code verbosity. This appears constantly in data validation, input parsing, and batch processing pipelines.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Graphs model relationships between entities: social networks, road maps, dependency systems, web links. The adjacency list representation stores for each vertex the list of its neighbors, using O(V + E) space — optimal for sparse graphs where E << V². For a social network with 1 billion users each having ~200 friends, adjacency lists use 200 billion entries versus a matrix requiring 10^18 cells.

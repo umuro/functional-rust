@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Fibonacci numbers appear in algorithm analysis, financial modeling, and data structure design (Fibonacci heaps). Computing them at compile time eliminates startup overhead for lookup tables and serves as a benchmark for `const fn` capability. This example implements three approaches — naive recursion, iterative, and matrix exponentiation — and compares their feasibility and efficiency in `const` contexts, demonstrating how `const fn` restrictions shape algorithm choices.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Algebraic data types (ADTs) with sum-type variants are the backbone of functional programming. Enums in Rust are full ADTs: variants can carry no data (unit), named fields (struct-like), or positional fields (tuple-like). Pattern matching on enum variants is exhaustive — the compiler verifies every variant is handled. This makes enums with match the preferred tool for command dispatch, protocol parsing, event handling, and any domain with a finite set of cases. It is the functional alternative to class hierarchies with virtual dispatch.

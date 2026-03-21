@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A paramorphism (para) is a generalization of a catamorphism where the fold function also receives the original substructure in addition to the folded result. This enables patterns like Fibonacci (needs both current and previous values), factorial (needs both n and (n-1)!), and pretty-printing with parentheses around specific forms. It is strictly more powerful than cata for certain patterns.

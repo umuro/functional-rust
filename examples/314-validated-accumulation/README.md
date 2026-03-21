@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 User registration forms, configuration validation, and batch processing all share a need: show all errors at once, not just the first one. When a form has 10 invalid fields, showing only the first error forces the user to submit nine more times. The `Validated` type addresses this with applicative composition: validate all fields independently, then combine results — accumulating every error if multiple validations fail simultaneously.

@@ -3,8 +3,9 @@
 ---
 
 # Extended Euclidean Algorithm
-**Difficulty:** ⭐⭐  
+**Difficulty:** ⭐  
 **Category:** Functional Programming  
+
 
 
 ## Problem Statement

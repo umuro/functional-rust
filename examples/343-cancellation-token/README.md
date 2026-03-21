@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Long-running background workers need a way to stop cleanly when the application shuts down or a user cancels an operation. Forcibly killing threads (`pthread_cancel` in C) is unsafe — it can leave mutexes locked or resources open. Cooperative cancellation instead asks workers to check a shared flag and stop themselves at defined safe points. The cancellation token pattern formalizes this: a shared atomic boolean that any thread can check and any caller can flip. This is the same pattern used by Linux kernel's `kthread_should_stop()`, Java's `Thread.interrupted()`, and the `CancellationToken` in .NET and Tokio.

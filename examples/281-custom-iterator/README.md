@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Every iterator in Rust's standard library is built from the same foundation: a struct with state and a single `next()` method. Understanding this foundation is essential for building domain-specific sequences — streaming database rows, generating mathematical sequences, traversing custom data structures, or implementing infinite value generators. The entire iterator adapter ecosystem (`map`, `filter`, `zip`, etc.) becomes available for free once `next()` is implemented.

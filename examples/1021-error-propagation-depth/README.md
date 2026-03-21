@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Real applications have deep call stacks: a user request flows through authentication, configuration loading, parsing, validation, and service calls — each of which can fail with a different type of error. Manually handling each error at every call site creates enormous boilerplate and buries the application logic.

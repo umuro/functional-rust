@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Continuation-Passing Style (CPS) is a program transformation where instead of returning a value, a function passes its result to a callback (continuation). Every function takes an extra argument `k: impl FnOnce(T) -> R` and calls `k(result)` instead of returning. CPS has deep roots in compiler theory (CPS IR is used in LLVM, GHC, and OCaml's backend), enables explicit control flow manipulation, and is the foundation for implementing coroutines, async/await, generators, and exception handling. It also eliminates stack overflow in recursive functions.

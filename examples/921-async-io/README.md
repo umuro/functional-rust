@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Blocking I/O operations — reading files, making network requests, querying databases — pause the calling thread for potentially seconds. In a single-threaded server, this means all other requests wait. The solution is asynchronous I/O: initiate the operation, yield control while waiting, resume when the result is ready. OCaml's `Lwt` library implements this with promises; Python uses `asyncio`; JavaScript uses `Promise`. Rust's `async/await` syntax desugars to state machines (Futures) with no runtime overhead. This example shows thread-based async I/O as a foundation before introducing the `async` keyword.

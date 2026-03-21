@@ -3,10 +3,10 @@
 ---
 
 # Example 271: Sublist Classification
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐  
-**Category:** Lists & HOF | Pattern Matching  
-**OCaml Source:** Classic list relationship problem
+
 
 ## Problem Statement
 

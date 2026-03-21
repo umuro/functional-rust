@@ -3,10 +3,10 @@
 ---
 
 # Example 128: Type-Level Booleans
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐  
-**Category:** Type System | Phantom Types | Compile-Time Safety  
-**OCaml Source:** Real World OCaml — Chapter on Phantom Types
+
 
 ## Problem Statement
 

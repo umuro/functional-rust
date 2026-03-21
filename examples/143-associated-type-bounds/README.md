@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When a trait has associated types, callers often need to constrain those associated types — "give me an iterator whose items are `Clone`" or "give me a container whose element type implements `Display`." Before Rust 1.79, this required verbose `where Item: Clone` clauses in every bound. Associated type bounds (`Iterator<Item: Clone>`) compress this into the bound itself, making complex generic signatures readable and reducing repetition in library code.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Data often arrives paired — key-value entries, coordinate pairs, or associated data — but needs to be split into separate collections for independent processing. The `unzip()` adapter is the exact inverse of `zip()`: it consumes an iterator of pairs and distributes them into two separate collections simultaneously, in a single pass. This is more efficient than collecting all pairs first and then splitting.

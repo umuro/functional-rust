@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Network connection objects are the canonical example of runtime state misuse: calling `send()` before `connect()` or after `close()` is a logic error that only manifests at runtime. Production code adds defensive `if !self.connected { return Err(...) }` checks everywhere. The typestate pattern eliminates these checks: `send` and `recv` only exist on `TcpConn<Connected>`, so calling them on a disconnected connection is a compile error. Used in production in the `tokio-serial` and `embedded-hal` crates.

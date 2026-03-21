@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `async fn` and `Future` trait implementations don't run themselves — they need an executor to drive them to completion by calling `poll()` repeatedly until `Poll::Ready`. Understanding how an executor works explains the behavior of `tokio`, `async-std`, and other runtimes. This example builds a minimal single-threaded executor from scratch, demonstrating task queueing, waker implementation, and the poll loop.

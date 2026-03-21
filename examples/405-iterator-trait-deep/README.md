@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust's `Iterator` trait is one of the most carefully designed APIs in the standard library. Implementing just `fn next(&mut self) -> Option<Self::Item>` unlocks 75+ adapter methods: `map`, `filter`, `fold`, `take`, `skip`, `chain`, `zip`, `enumerate`, `flat_map`, and more — all built as default methods on top of `next`. This design means any custom data structure that implements `Iterator` gains the entire rich functional pipeline for free, with zero-cost abstraction through lazy evaluation and monomorphization.

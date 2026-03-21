@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Building on the GADT introduction, this example shows a full typed expression evaluator where the type system guarantees that evaluation never fails with a type mismatch. Each node type in the AST is a separate Rust struct implementing an `Expr` trait with an associated `Value` type. This approach ensures that `eval` on an `Add` node always produces an integer, and on a `Compare` node always produces a boolean — type safety is structural, not checked at runtime.

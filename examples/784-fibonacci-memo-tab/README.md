@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Dynamic programming (DP) is an algorithm design technique from Richard Bellman (1950s) that solves problems by breaking them into overlapping subproblems and storing intermediate results. Fibonacci is the canonical teaching example: naive recursion recomputes `fib(n-2)` exponentially many times. Two DP strategies fix this: memoization (top-down, cache on demand) and tabulation (bottom-up, fill a table iteratively). Understanding both is essential for tackling more complex DP problems.

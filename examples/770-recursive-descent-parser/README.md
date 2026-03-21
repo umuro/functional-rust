@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Recursive descent parsing is the simplest technique for parsing context-free grammars. It was invented in the 1960s and remains the dominant approach for hand-written parsers in production compilers: Clang, GCC, rustc, and Go's parser are all recursive descent. The idea is elegant: each grammar rule becomes a function; parsing is calling that function. Operator precedence is handled by a hierarchy of mutually recursive functions (or the Pratt technique in the next example).

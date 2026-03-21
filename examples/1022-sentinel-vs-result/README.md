@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Sentinel values — magic numbers like `-1` for "not found" or empty strings for "missing" — are a C-era pattern for encoding failure in a type that is otherwise used for success. They require callers to check the return value against the sentinel manually, and forgetting to do so compiles without error. The `strlen` convention of returning `-1` on failure, `strtol` returning 0 with `errno` set, and many POSIX APIs use this pattern.

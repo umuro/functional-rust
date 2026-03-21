@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Error handling with `match` on every `Result` is verbose and obscures the happy path. The Result monad — Rust's `Result::and_then` and the `?` operator — chains fallible operations so that the first error short-circuits the chain and is returned immediately. This is the foundation of Rust's ergonomic error handling: `parse()?.compute()?.serialize()?` reads like a straight pipeline yet properly propagates errors. The same pattern is OCaml's `Result.bind`, Haskell's `Either` monad, and Scala's `for`-comprehensions over `Either`. Understanding it as a monad explains why `map` and `and_then` behave differently and how to write clean, composable error-handling code.

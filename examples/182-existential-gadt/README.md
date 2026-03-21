@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 An existential type packs a value together with proof that it satisfies an interface, erasing the concrete type. The consumer of an existential value can use the interface but cannot recover the original type. This enables heterogeneous collections (a `Vec` of different types all implementing the same trait), plugin architectures, and open-ended extension points. Rust's `Box<dyn Trait>` is the primary existential mechanism, paralleling OCaml's GADT-based existential encoding.

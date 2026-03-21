@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A prism that violates its consistency laws — where `review` followed by `preview` does not give back the original value, or where `preview` succeeds but `review` of the result does not reconstruct the original — is an unreliable abstraction that breaks compositions silently. The two prism laws (ReviewPreview and PreviewReview) define what it means for a prism to be lawful and trustworthy, just as the three lens laws define a trustworthy lens.

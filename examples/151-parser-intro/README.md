@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Parsing transforms raw text into structured data. Hand-written parsers for each format are tedious, error-prone, and hard to compose. Parser combinators solve this by representing parsers as first-class values (functions) that can be combined using higher-order functions: sequence two parsers, try alternatives, repeat zero or more times. This functional approach, pioneered in Haskell by Parsec, produces parsers that closely mirror the grammar they parse, making them readable and maintainable.

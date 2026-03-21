@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 In C++, copying data is implicit and expensive — passing a `std::string` to a function copies the heap allocation by default. C++11 introduced move semantics as an opt-in optimization. Rust inverts the default: passing a value to a function always moves ownership, making the original binding invalid. This prevents use-after-free at compile time without a garbage collector. OCaml avoids the issue through garbage collection — all values are GC-managed, and the runtime ensures safety. Understanding Rust's move semantics is the entry point to its ownership model and the foundation for the borrow checker.

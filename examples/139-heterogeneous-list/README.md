@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A `Vec<T>` requires all elements to have the same type. A `(i32, &str, bool)` tuple preserves each element's type but has fixed arity — you cannot write generic code over tuples of different lengths. An HList (heterogeneous list) bridges this gap: it is a recursive type `HCons<H, T>` where each element's type is preserved in the overall type signature `HCons<i32, HCons<&str, HCons<bool, HNil>>>`. This enables type-safe row polymorphism, variadic generics simulation, and database record types.

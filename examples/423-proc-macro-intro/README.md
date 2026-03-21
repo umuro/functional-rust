@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `macro_rules!` handles syntactic patterns but cannot inspect type information or generate identifiers dynamically based on field names. Procedural macros (proc macros) operate on the full Rust token stream at compile time as external Rust programs: they receive a `TokenStream`, parse it using `syn`, and emit generated code using `quote`. This enables `#[derive(Serialize)]` to generate different code for each struct's specific field names and types — impossible with `macro_rules!`.

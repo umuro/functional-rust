@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Some operations are inherently one-time: consuming a network connection, sending a channel message, releasing a one-time authentication token, or running a database transaction. Languages without linear types struggle to enforce "call at most once" at compile time, leading to runtime errors or logic bugs. Rust's `FnOnce` trait is the compile-time guarantee that a callable is invoked at most once — the type system physically prevents a second call by consuming the closure on the first. This maps directly to linear/affine types in type theory.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Type erasure deliberately discards type information to enable heterogeneous collections, plugin systems, and dynamic dispatch. Storing values of different concrete types together requires erasing their specific types and retaining only a common interface. This is the mechanism behind Java's generics, Rust's `Box<dyn Trait>`, OCaml's existential types, and Go's interface values. The cost is one pointer indirection per method call; the benefit is open extension and runtime flexibility.

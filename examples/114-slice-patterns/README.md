@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Pattern matching on sequences is the heart of functional programming. OCaml's list patterns `x :: rest` enable recursive algorithms that read naturally. Rust provides analogous slice patterns — `[first, rest @ ..]`, `[a, b]`, `[head, .., tail]` — for contiguous memory. Unlike OCaml's linked lists, Rust's slice patterns operate on contiguous arrays with O(1) indexed access.

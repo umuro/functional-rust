@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implement a push-based reactive stream (`Observable<T>`) with an `Observer` trait providing `on_next`, `on_error`, and `on_complete` callbacks. Support `map` and `filter` operators that create derived observables. Compare with OCaml's record-based observer and functional observable composition.

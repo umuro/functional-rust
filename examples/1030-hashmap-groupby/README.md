@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Grouping items by a key — SQL's `GROUP BY`, Python's `itertools.groupby`, Haskell's `Data.Map.fromListWith` — is one of the most frequent data processing operations. You want to transform a flat list into a map from key to list of matching elements: group customers by country, group log events by severity, group words by length.

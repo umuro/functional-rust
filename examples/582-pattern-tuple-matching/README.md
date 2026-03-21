@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many decisions depend on the combination of multiple conditions. FizzBuzz is the canonical example: the output depends on two independent Boolean conditions. Without tuple matching, you need nested `if` statements. Matching on a tuple `(cond1, cond2)` expresses the decision matrix declaratively: each arm covers exactly one combination. This pattern is used in state transition tables, game logic, protocol state machines, and any logic where multiple independent conditions determine the outcome.

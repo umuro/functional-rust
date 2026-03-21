@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust's borrow checker models each reference as having a "region" — a set of program points at which the reference is valid. The compiler infers the minimal region sufficient to cover all uses of the reference, rather than using a static scope. Region inference is the theoretical foundation that makes both lexical lifetimes and NLL work. Understanding how the compiler infers regions helps predict what the borrow checker will accept, explains "does not live long enough" errors, and motivates the Polonius project which extends region inference to handle more cases soundly.

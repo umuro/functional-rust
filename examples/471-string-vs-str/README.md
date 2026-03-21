@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 The distinction between an owned heap-allocated `String` and a borrowed string slice `&str` is fundamental to Rust's ownership model and zero-copy string handling.
 
 ## Problem Statement

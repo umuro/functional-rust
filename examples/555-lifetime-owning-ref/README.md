@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Sometimes you want a type that owns its data and simultaneously exposes a view into it — a buffer that knows which window of its bytes is "active," a string that knows where its meaningful content starts and ends. Storing both the owner and a reference to its contents in the same struct leads to self-referential problems. The owning-reference pattern solves this by storing indices rather than pointers, computing views on demand, or using separate types for owner and view.

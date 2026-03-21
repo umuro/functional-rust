@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many real-world transformations are one-to-many: splitting a sentence into words, expanding a range for each element, or parsing optional values from strings. A plain `map()` yields `Iterator<Item = Iterator<...>>` — a nested structure that requires an additional `flatten()` call to linearize. The `flat_map()` combinator (also known as `bind` or `>>=` in monadic contexts) fuses these two operations, mapping each element to an iterable and immediately flattening the result into a single stream.

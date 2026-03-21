@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Survey the terminal iterator operations that drive a lazy chain to produce a result: `sum`, `product`, `count`, `collect`, `fold`, `min`, `max`, `any`, `all`, `find`, and `for_each`. Demonstrate each with examples on ranges and slices, and compare with OCaml's `Seq.fold_left`-based equivalents.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Servers that handle thousands of simultaneous network connections cannot dedicate one OS thread per connection — thread stacks alone would consume gigabytes of memory. Async I/O solves this by decoupling waiting from threads: while one operation waits for a disk read or network packet, the same thread processes other work. This model traces back to the C10K problem (Dan Kegel, 1999) and the design of event loops in Node.js, nginx, and later Tokio. Rust's `async`/`await` brings this efficiency without sacrificing type safety or requiring a garbage collector, achieving C-level throughput with safe, readable code.

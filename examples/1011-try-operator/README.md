@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Explicit error propagation is verbose. Without language support, every fallible call requires a `match` block to check for errors and forward them upward. In a deep call stack, this repetition obscures the happy-path logic. Haskell's `do` notation and OCaml's `let*` binding both address this. Rust's `?` operator is the compile-time desugaring of the same idea: it extracts the `Ok` value or returns the `Err` early, optionally converting the error type via `From`.

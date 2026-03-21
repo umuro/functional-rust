@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Handle functions that return different error types in the same call chain. Compare two approaches: `Box<dyn Error>` (flexible, type-erased) and a typed `AppError` enum (exhaustive, structured). Implement `From` conversions for the enum approach to enable `?` operator chaining. Compare with OCaml's unified variant and polymorphic variants.

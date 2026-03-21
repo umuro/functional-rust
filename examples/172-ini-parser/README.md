@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 INI files are used for configuration in Windows, Python's `configparser`, Git's `.gitconfig`, and countless other tools. The format has sections `[name]`, key-value pairs `key = value`, comments `; ...` or `# ...`, and optional whitespace. Building an INI parser demonstrates real-world parsing with multiple line types requiring different handling, and produces a structured result (`HashMap<String, HashMap<String, String>>`) directly usable by applications.

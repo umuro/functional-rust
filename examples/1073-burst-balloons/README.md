@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The burst balloons problem is an interval DP gem: given a row of balloons with numbers, bursting balloon `k` earns `nums[k-1] * nums[k] * nums[k+1]` coins. Find the maximum coins from bursting all balloons in the best order. The key insight is reasoning about the LAST balloon to burst in an interval, not the first.

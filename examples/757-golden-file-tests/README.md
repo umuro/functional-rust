@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Snapshot testing and golden file testing are closely related: both compare actual output against stored expected output. Golden files differ in that the expected output is stored as human-readable files you commit to version control, making output changes visible in code review. This pattern is standard in compilers (test output for each source file), documentation generators, and code formatters. It makes regressions visible as diffs rather than assertion failures.

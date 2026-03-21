@@ -3,8 +3,9 @@
 ---
 
 # 069 — Sieve of Eratosthenes
-**Difficulty:** ⭐⭐  
+**Difficulty:** ⭐  
 **Category:** Functional Programming  
+
 
 
 ## Problem Statement

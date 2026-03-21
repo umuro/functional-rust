@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `HashMap` gives O(1) average lookup but no ordering guarantees — iterating a `HashMap` yields keys in unpredictable order, and range queries are impossible. `BTreeMap` solves this by storing key-value pairs in a B-tree (Bayer & McCreight, 1972) — a self-balancing tree optimized for block-access patterns. All operations are O(log n) in the worst case, and keys are always iterated in sorted order. `BTreeMap` is the right tool when you need sorted output, range queries, `min_key`/`max_key` in O(log n), or when the number of entries is small enough that cache-friendly sorted data beats hash table overhead.

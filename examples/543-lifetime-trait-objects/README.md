@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Trait objects (`dyn Trait`) are Rust's mechanism for runtime polymorphism — a single `Box<dyn Renderer>` can hold any type implementing `Renderer`. But trait objects carry an implicit lifetime bound: `Box<dyn Renderer>` is shorthand for `Box<dyn Renderer + 'static>`, meaning the underlying type must contain no non-static references. When you need a trait object that borrows from an external scope, you must write `Box<dyn Renderer + 'a>` explicitly. This is critical for middleware stacks, plugin systems, and any architecture that stores trait objects.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Generalized Algebraic Data Types (GADTs) extend ordinary algebraic data types by allowing each constructor to specify a different return type for the type parameter. This enables type-safe expression trees where `eval` on `int expr` always returns `int`, not `int | bool`. GADTs were introduced in OCaml to bring the expressiveness of dependent types to mainstream functional programming. Rust simulates them via phantom types and sealed trait hierarchies.

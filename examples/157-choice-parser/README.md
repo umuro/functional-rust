@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Grammars have alternatives: a value is either a number, a string, a boolean, or null. The `alt` (or `choice`) combinator tries parsers in order, returning the first success. If all fail, it returns the last error. This ordered choice is the basis for all ambiguity resolution in parsing — the order of alternatives determines precedence. Getting alternatives right (trying most specific before most general) is key to correct parsers.

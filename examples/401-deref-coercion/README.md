@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust's ownership system produces many wrapper types: `Box<T>`, `Arc<T>`, `String`, `Vec<T>`. Without deref coercions, using these types would require explicit unwrapping everywhere — `(*my_box).some_method()`, `(&my_string).as_str()`. The `Deref` trait and Rust's deref coercion rules automatically convert `&Box<T>` to `&T`, `&String` to `&str`, and `&Vec<T>` to `&[T]` when the compiler needs to. This makes functions accepting `&str` work seamlessly with `String`, `Box<String>`, `Arc<String>`, and any other type that dereferences to `str`.

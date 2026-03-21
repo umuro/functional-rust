@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Bottom-up dynamic programming fills a table iteratively from the smallest sub-problems to the largest, avoiding recursion stack overhead and the overhead of hash map lookups in top-down memoization. For Fibonacci, this means filling an array from index 0 upward.

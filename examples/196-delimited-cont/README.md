@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Full continuations (`callcc`) capture the entire remaining computation. Delimited continuations capture only the computation up to a "delimiter" — a prompt that marks the boundary. This makes them composable and less dangerous than full continuations. Delimited continuations are the foundation of effect handlers (OCaml 5), generators, and async/await. Understanding them reveals how all these features share a common computational model.

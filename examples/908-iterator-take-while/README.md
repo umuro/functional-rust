@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Sometimes you want all elements up to the first failure, not just those satisfying a predicate anywhere in the sequence. `take_while` differs from `filter` in one critical way: it stops permanently at the first non-matching element, rather than skipping and continuing. This makes it the only safe option for bounded consumption of infinite iterators — `filter` on an infinite iterator that eventually runs out of matches would loop forever. It also models "leading prefix" queries: collect all sorted-prefix elements, consume a stream until a sentinel, read until end-of-section.

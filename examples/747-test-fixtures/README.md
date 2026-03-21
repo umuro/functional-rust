@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Tests that rely on shared mutable state are fragile: one test's teardown failure corrupts the next test's starting state. RAII-based test fixtures solve this: the fixture sets up state in a constructor and tears it down in `Drop`, guaranteeing cleanup even if the test panics. A `DatabaseFixture` that seeds test data and clears it on drop ensures every test starts from a known clean state, regardless of test order or failures.

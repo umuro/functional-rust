@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 This example applies currying and partial application to practical patterns — building factories, greeting generators, and transformation pipelines. Where example 005 introduced the theory, this example shows the patterns in context: `make_adder(5)` returns a reusable function, `apply_twice` demonstrates function composition from first principles.

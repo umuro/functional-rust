@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implement functional quicksort that mirrors the OCaml version: take a comparator `gt`, remove the pivot, partition the rest into smaller and larger halves, recursively sort both, and concatenate. Also provide an idiomatic Rust version using `Vec::sort`. Compare the allocation-heavy functional approach with the in-place standard library sort.

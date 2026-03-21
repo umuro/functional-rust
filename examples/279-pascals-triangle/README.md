@@ -3,10 +3,10 @@
 ---
 
 # Example 279: Pascal's Triangle — Row Generation
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Math/Recursion
-**OCaml Source:** https://exercism.org/tracks/ocaml/exercises/pascals-triangle
+
 
 ## Problem Statement
 

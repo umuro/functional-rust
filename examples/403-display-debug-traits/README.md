@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Formatting output for different audiences requires different representations. Debug output should be complete and unambiguous for developers (`Color::Rgb(255, 0, 0)`); display output should be readable for end users (`rgb(255,0,0)`). Mixing these leads to either confusing user-facing output or opaque developer output. Rust separates these concerns with two traits: `Debug` (derivable, for `{:?}`) and `Display` (manual, for `{}`). Additional formatter traits (`LowerHex`, `Binary`, `Octet`, `Pointer`) handle domain-specific representations.

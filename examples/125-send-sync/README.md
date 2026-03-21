@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Data races are a class of concurrency bugs where two threads access the same memory simultaneously with at least one write, with no synchronization. They cause undefined behavior in C/C++ and subtle bugs in GC languages. Rust eliminates them at compile time using two marker traits: `Send` (a type's ownership can cross thread boundaries) and `Sync` (shared references to the type can be accessed from multiple threads). Violating these rules is a compile error, not a runtime crash.

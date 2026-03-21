@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 This example revisits GCD and LCM (see also example 071) with an explicit focus on ownership semantics. Since GCD operates on `u64` (a `Copy` type), ownership is trivial — values are copied freely. This makes GCD a clean example for understanding when Rust's ownership system has zero friction: primitive types are `Copy`, so they move like values in any other language.

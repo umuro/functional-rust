@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The `Iterator` specification in Rust says that after `next()` returns `None`, subsequent behavior is undefined — some iterators might return `Some` again if called further (a "restart"). This makes it unsafe to call `next()` after termination without an explicit check. The `FusedIterator` marker trait solves this by promising that once `next()` returns `None`, all future calls also return `None` — enabling safe and optimized composition in adapters that call `next()` multiple times.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Persistent data structures return modified versions while keeping old versions intact. They are the foundation of functional programming, git-style versioning, undo/redo, and concurrent data sharing without locks. Haskell's `Data.Map`, OCaml's `Map.Make`, and Clojure's hash array mapped trie (HAMT) are all persistent.

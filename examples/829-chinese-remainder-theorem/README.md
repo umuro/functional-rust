@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The Chinese Remainder Theorem (CRT) solves systems of simultaneous congruences: given `x ≡ a1 (mod m1)`, `x ≡ a2 (mod m2)`, ..., find x mod (m1 * m2 * ...) when the moduli are pairwise coprime. This has applications in: cryptography (RSA-CRT speedup), number theory, calendar calculations, and distributed hashing. CRT also enables working with multiple small moduli instead of one large modulus, which is the key technique in Number Theoretic Transform (NTT) for polynomial multiplication. In competitive programming, CRT reconstructs a number from its remainders under several moduli, enabling range queries on large integers.

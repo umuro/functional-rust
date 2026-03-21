@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Safe Unicode-aware truncation requires finding char boundaries rather than slicing at arbitrary byte offsets. Rust provides `is_char_boundary` and `char_indices().nth(n)` for correct byte-limit and character-limit truncation.
 
 ## Problem Statement

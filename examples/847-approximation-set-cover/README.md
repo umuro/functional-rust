@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Set cover is NP-hard: given a universe U of elements and a collection S of subsets, find the minimum number of subsets whose union equals U. The greedy approximation picks the subset covering the most uncovered elements at each step, achieving an O(log n) approximation — proven optimal assuming P ≠ NP. This approximation is used in: network monitoring (minimum sensor placement to cover all traffic), advertising (minimum campaigns to reach all demographics), feature selection in machine learning, and compiler register allocation. Understanding approximation algorithms — which sacrifice optimality for polynomial time — is essential for NP-hard optimization.

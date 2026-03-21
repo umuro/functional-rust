@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Accessing the nth element of an iterator requires consuming all preceding elements — the iterator has no random access. `Iterator::nth(n)` does exactly this: it skips n elements and returns the (n+1)th as `Option<T>`. For slices, `.get(n)` is O(1) and preferred. For filtered or chained iterators, `.nth()` provides controlled positional access without collecting. Understanding nth's consumption semantics — it advances the iterator past n elements — is essential for using it correctly in parsing and protocol implementations.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The standard library's `map`, `filter`, and `zip` adapters cover many cases, but domain-specific transformations often need their own adapters — a rate limiter that throttles output, a deduplicator that removes consecutive duplicates, or a strider that yields every nth element. Building custom adapters in Rust follows the same pattern as the standard library: wrap an inner iterator in a struct and implement `Iterator` on it, making the adapter composable with the entire ecosystem.

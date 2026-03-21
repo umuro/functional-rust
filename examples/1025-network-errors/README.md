@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Network errors are not all equal: a DNS failure means the host does not exist (do not retry), a timeout might be transient (retry with backoff), a TLS error means a misconfiguration (alert the operator), and an HTTP 5xx means the server is overloaded (retry). Treating all network errors the same leads to either excessive retries or insufficient resilience.

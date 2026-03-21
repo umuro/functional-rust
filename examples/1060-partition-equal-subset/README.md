@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Given a set of positive integers, can it be partitioned into two subsets with equal sums? This is an NP-complete problem in general, but the DP solution runs in O(n × sum/2) — pseudo-polynomial and practical for reasonable input sizes.

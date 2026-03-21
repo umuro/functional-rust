@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 An Eulerian path visits every edge exactly once. Euler proved in 1736 (the Königsberg bridge problem — the first graph theory result) that an Eulerian path exists if and only if exactly 0 or 2 vertices have odd degree (directed: out-degree − in-degree = ±1 for endpoints, 0 for all others). Eulerian circuits (closed paths) require all vertices to have equal in/out-degree. Applications include printed circuit board routing, DNA sequence assembly (de Bruijn graphs), and postman route optimization.

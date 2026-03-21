@@ -1,8 +1,8 @@
 # Example 1136: Monoid — Fold with Closures and Traits
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Pattern Matching | Higher-Order Functions | Type-Class Patterns
-**OCaml Source:** Real World OCaml — first-class modules as type-class witnesses
+
 
 ## Problem Statement
 

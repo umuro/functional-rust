@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Given a set of intervals [l, r] and a query point q, find all intervals that contain q (stabbing query). Naive linear scan is O(n) per query. An interval tree answers stabbing queries in O(log n + k) where k is the number of reported intervals, after O(n log n) preprocessing. This enables efficient scheduling conflict detection (does event at time q overlap any existing booking?), genomic range queries (which genes cover position q?), and network packet classification (which firewall rules match this port range?). Interval trees are the data structure behind many calendar and scheduling applications.

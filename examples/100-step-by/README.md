@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Use Rust's `.step_by(n)` to iterate over a range with a custom step size, producing `[start, start+n, start+2n, …]`. Demonstrate steps of 2, 5, 25, and 1 on integer ranges. Compare with OCaml's recursive `step_by` and `Seq.unfold`-based `range_step`.

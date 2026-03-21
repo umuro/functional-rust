@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rust's borrow checker prevents mutation through shared references (`&T`). But sometimes you need to update a field in a struct that is shared by multiple callers — a memoized cache, a call counter, or a lazy-initialized field — without needing `&mut self`. Interior mutability provides a controlled escape hatch.

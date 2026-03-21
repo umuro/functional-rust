@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Error messages have two audiences: end users who need human-readable descriptions ("Cannot connect to server"), and developers who need complete diagnostic information including internal state (field names, codes, stack frames). Rust encodes this distinction in two traits: `Display` for user-facing messages, `Debug` for developer diagnostics. Both are required by `std::error::Error`, and using them correctly separates user experience from debugging information.

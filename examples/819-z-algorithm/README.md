@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The Z-algorithm computes, for each position in a string, the length of the longest substring starting at that position that is also a prefix of the whole string. This Z-array answers pattern matching questions directly: concatenate `pattern + "$" + text`, compute the Z-array, and any position where Z[i] equals the pattern length is a match. The algorithm runs in O(n) time and O(n) space, making it a linear alternative to KMP with a simpler conceptual model. It powers prefix-related string queries in competitive programming, bioinformatics repeat analysis, and text compression preprocessing.

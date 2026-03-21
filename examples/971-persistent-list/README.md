@@ -1,6 +1,8 @@
 **Difficulty:** ⭐⭐⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐⭐⭐  
+
 [persistent-list on hightechmind.io](https://hightechmind.io/posts/functional-rust/persistent-list)
 
 ---

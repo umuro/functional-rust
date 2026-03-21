@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Determining whether a point lies inside a polygon is fundamental to GIS applications, game collision detection, map interfaces (is this GPS coordinate inside this region?), and computational geometry. The ray casting algorithm casts a horizontal ray from the query point rightward and counts crossings with polygon edges — an odd count means inside, even means outside. The winding number algorithm counts how many times the polygon winds around the point, handling non-convex and self-intersecting polygons correctly. These tests appear in every GIS library, game physics engine, and graphics renderer.

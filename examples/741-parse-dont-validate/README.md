@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 "Validate then use" is the traditional approach: accept raw input, check it, and then use the raw value downstream, relying on programmers to remember to validate first. Parse-don't-validate flips this: you can only construct a typed value by successfully parsing it, making invalid states unrepresentable. Coined by Alexis King in 2019, this principle is used in Haskell's `text` library, Rust's `std::net::IpAddr`, and almost every well-designed API that accepts structured input.

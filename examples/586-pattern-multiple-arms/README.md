@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Pattern matching in Rust goes beyond simple value checks — it enables powerful dispatch mechanisms for type-safe command processing, visitor-pattern traversals, state machine transitions, and recursive data structure manipulation. This example demonstrates advanced pattern matching techniques that arise in compiler construction, game engines, protocol implementations, and functional programming idioms applied to real systems code.

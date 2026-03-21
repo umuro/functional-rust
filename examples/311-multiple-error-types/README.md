@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Real functions call multiple operations that each have different error types: parsing, I/O, database queries. Returning `Result<T, String>` loses precision; returning a massive union type is unwieldy. The standard approach is a custom error enum with one variant per error source, and `impl From<SourceError>` for each — enabling `?` to automatically wrap errors at each call site. This is the pattern `thiserror` automates.

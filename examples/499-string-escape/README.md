@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Escaping and unescaping strings — for HTML, JSON, SQL, and shell contexts — requires replacing special characters with entity sequences on output and reversing the process on input, handling both streaming and complete-string variants.
 
 ## Problem Statement

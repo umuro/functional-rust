@@ -1,8 +1,8 @@
 # Example 1123: List.fold_left — Accumulate a Result
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Lists & Higher-Order Functions
-**OCaml Source:** `example.ml` — three one-liners using `List.fold_left` with operator sections
+
 
 ## Problem Statement
 

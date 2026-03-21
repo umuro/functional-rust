@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Edit distance (Levenshtein distance) measures how many single-character edits — insertions, deletions, and substitutions — are needed to transform one string into another. It is the core metric in spell checkers, fuzzy search, DNA sequence alignment, and natural language processing for measuring string similarity.

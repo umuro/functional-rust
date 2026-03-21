@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Code often needs to convert an `Option<T>` to a `Result<T, E>` — treating absence as an error with a specific message. A missing configuration key is an `Option<&str>`, but the caller expects a `Result` with a descriptive error. The `ok_or()` and `ok_or_else()` methods convert `Option<T>` to `Result<T, E>`, supplying an error value for the `None` case. This is the bridge between optionality and error handling.

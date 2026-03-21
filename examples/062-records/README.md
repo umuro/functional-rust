@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Records (called structs in Rust) are the product type of a type system — a value that bundles multiple named fields. OCaml's `type point = { x: float; y: float }` and Rust's `struct Point { x: f64, y: f64 }` are direct equivalents. Records are the foundation for representing real-world entities: users, configurations, geometric shapes, network requests.

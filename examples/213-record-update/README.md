@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 This example returns to the motivating problem from the lens introduction (example 201) and solves it completely with the lens toolkit. A three-level nested `AppConfig` requires updating the database host. Without lenses, this is six lines of destructuring and reconstruction. With composed lenses, it is one line: `over(db_host_lens, |_| new_host, config)`. This demonstrates the practical value of the lens abstraction for real-world code.

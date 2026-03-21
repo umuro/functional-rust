@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 C preprocessor macros are famously dangerous because they operate via text substitution: `#define DOUBLE(x) x * 2` expands `DOUBLE(a + b)` to `a + b * 2` — not `(a + b) * 2`. Variable name collisions are another hazard: a macro using `int result = ...` conflicts with any `result` variable in the expansion scope. Rust's `macro_rules!` is hygienic: identifiers introduced inside a macro expansion live in a separate scope from the call site. `let result = $val` inside a macro doesn't shadow `result` outside it.

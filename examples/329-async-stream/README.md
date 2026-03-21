@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Database cursor results, paginated API responses, file lines, and network byte streams all produce data incrementally. Loading everything into memory before processing is impractical for large datasets. The `Stream` trait (async equivalent of `Iterator`) yields values one at a time, allowing the consumer to process each before the next is produced. Async streams are the foundation of streaming ETL, real-time data processing, and lazy I/O pipelines.

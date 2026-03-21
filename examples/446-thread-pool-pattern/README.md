@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Spawning a new OS thread for each incoming request is expensive: thread creation takes ~100μs and each thread consumes ~8MB of stack space by default. A thread pool pre-creates N worker threads that loop waiting for jobs, processing each job from a shared queue. The `rayon` crate provides a global thread pool, but understanding the implementation reveals the fundamental pattern: a channel as work queue, `Arc<Mutex<Receiver>>` for shared job pickup, and `JoinHandle`s for graceful shutdown.

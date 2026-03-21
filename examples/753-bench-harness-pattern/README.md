@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Percentile latency matters more than mean latency for user-facing systems. A p99 of 50ms means 1% of requests are slow — unacceptable for interactive applications. Production benchmark frameworks like Criterion report p50, p90, p95, and p99. This example builds a stdlib-only harness that computes full percentile statistics from per-iteration samples, demonstrating the statistical foundation beneath tools like Criterion, Divan, and `hyperfine`.

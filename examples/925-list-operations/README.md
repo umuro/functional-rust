@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Lists are the fundamental data structure of functional programming. OCaml's standard library is built around singly-linked `list`: head::tail destructuring, recursive definitions, and higher-order functions like `map`, `filter`, and `fold`. Rust uses `Vec<T>` as the workhorse — heap-allocated, contiguous, with O(1) indexed access — but supports functional-style operations through the `Iterator` trait. Learning to express classical list algorithms in Rust illuminates both the idioms of functional programming and the differences between Rust's ownership-based and OCaml's GC-based memory models.

@@ -1,8 +1,8 @@
 # Example 1002: Stack Module with Signature
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Pattern Matching | Error Handling
-**OCaml Source:** `module type STACK` / `module ListStack : STACK`
+
 
 ## Problem Statement
 

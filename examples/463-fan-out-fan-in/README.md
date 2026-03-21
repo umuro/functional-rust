@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 One slow processing step can bottleneck an entire pipeline. Fan-out distributes work items from one source to N parallel workers; fan-in collects results from all N workers back to one consumer. Together, they parallelize the bottleneck stage without changing the serial stages around it. If one processing step takes 100ms and you have 8 cores, 8 parallel workers reduce the step's throughput contribution to ~12.5ms per item — 8x improvement.

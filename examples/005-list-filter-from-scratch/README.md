@@ -1,8 +1,8 @@
 # Example 005: List Filter From Scratch
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Higher-Order Functions | Lists | Predicates
-**OCaml Source:** Functional programming classic; derives `List.filter`
+
 
 ## Problem Statement
 

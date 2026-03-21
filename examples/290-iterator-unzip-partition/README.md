@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Real-world data classification often requires more than a binary split. Partitioning numbers into negative, zero, and positive; splitting strings by parse success while keeping both results; routing events to different queues — these require multi-way classification in a single pass. This example explores `unzip`, `partition`, and custom fold-based trisection patterns, demonstrating when to use each.

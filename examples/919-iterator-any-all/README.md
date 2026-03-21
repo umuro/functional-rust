@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Existential and universal quantification over sequences — "does any element satisfy X?" and "do all elements satisfy X?" — are fundamental logic operations. In formal logic, ∃ (exists) and ∀ (for all). In SQL, `EXISTS` and `NOT EXISTS`. In Haskell, `any` and `all`. In OCaml, `List.exists` and `List.for_all`. Rust's `Iterator::any()` and `Iterator::all()` short-circuit: `any` stops at the first true, `all` stops at the first false. This makes them efficient even on large sequences and safe on infinite iterators (as long as the condition is eventually met).

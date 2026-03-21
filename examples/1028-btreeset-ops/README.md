@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Set operations — union, intersection, difference, and symmetric difference — are mathematical primitives used throughout computing: dependency resolution (which packages are in both A and B?), access control (union of permissions), deduplication, and set-based query optimization in databases.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many real-world conditions are naturally expressed as ranges: grade thresholds, age categories, ASCII character classification, HTTP status code groups. Without range patterns, these require chains of `if/else if` with repeated comparisons. Range patterns (`lo..=hi`) in match arms express these conditions declaratively, with the added benefit of exhaustiveness checking across the covered domain. Range patterns are used in compilers, ASCII processors, game scoring systems, and any domain with numeric thresholds.

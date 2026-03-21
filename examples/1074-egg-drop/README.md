@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Given k eggs and n floors, find the minimum number of trials needed to determine the critical floor above which eggs break. This is a classic DP/binary-search problem that appears in reliability testing, threshold determination, and A/B test stopping rules.

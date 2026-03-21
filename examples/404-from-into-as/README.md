@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Type conversions are pervasive: temperatures between Celsius and Fahrenheit, integers between types, domain values from raw data. Ad-hoc conversion functions (`celsius_to_fahrenheit`, `as_kelvin`) don't compose and require memorizing function names. The `From`/`Into` trait pair standardizes infallible conversions: implement `From<A> for B` and get `Into<A>` on `B` for free via blanket impl. `TryFrom`/`TryInto` handle fallible conversions returning `Result`. This unification means all conversions use `.into()`, `.from()`, or `.try_into()` consistently.

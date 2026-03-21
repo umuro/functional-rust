@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Signal processing, time-series analysis, and pattern recognition algorithms frequently examine overlapping subsequences of fixed length. A moving average over stock prices, an n-gram language model, or detecting whether an array is sorted — all require looking at consecutive groups of elements simultaneously. The `windows(n)` method provides zero-copy, overlapping sub-slices of a fixed length, making these algorithms expressible as simple iterator pipelines.

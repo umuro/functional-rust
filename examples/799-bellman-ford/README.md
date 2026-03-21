@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Bellman-Ford (1958/1965) finds shortest paths from a source to all vertices in a weighted graph, handling negative edge weights that Dijkstra cannot handle. It also detects negative-weight cycles. Used in network routing (RIP — Routing Information Protocol uses Bellman-Ford), currency arbitrage detection, and financial risk analysis. The O(VE) time complexity is slower than Dijkstra's O((V+E)logV) but handles a broader class of problems.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Predicates — boolean-valued functions — appear everywhere in data processing: filtering collections, validating inputs, routing events, enforcing business rules. When predicates are composed rather than inlined, code becomes self-documenting and reusable. The predicate combinator pattern (AND, OR, NOT, `all_of`, `any_of`) treats predicates as first-class values, enabling query languages, rule engines, and access-control systems to be built from small, testable pieces.

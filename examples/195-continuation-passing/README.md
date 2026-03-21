@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Continuation-passing style (CPS) transforms functions so that instead of returning a value, they pass the result to a "continuation" callback. CPS makes control flow explicit — every function knows exactly what happens next. It is the basis for compilers (CPS intermediate representations in GHC, MLton), non-local exits, and cooperative scheduling. CPS transform eliminates the call stack: tail calls to continuations never grow the stack.

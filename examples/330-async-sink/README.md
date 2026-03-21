@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Writing individual items to disk, network, or databases one at a time is inefficient. Batching writes — accumulating items in a buffer and flushing when the buffer is full or a flush is explicitly requested — is the standard optimization. The `Sink` trait (in the `futures` crate) is the write-side complement to `Stream`: it accepts items and provides backpressure when the buffer is full. Understanding the buffering and flushing lifecycle is essential for high-throughput I/O.

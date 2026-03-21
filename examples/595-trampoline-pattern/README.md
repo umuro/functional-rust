@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Deep recursion causes stack overflow. Rust's default stack is 8MB — a recursive function that calls itself millions of times will overflow. Languages with tail-call optimization (OCaml, Scheme, Haskell) eliminate this through compiler transformation. Rust does not guarantee TCO. The trampoline pattern provides a library-level solution: instead of calling recursively, return a thunk (deferred computation). A loop `run`s the trampoline by repeatedly calling the thunk until `Done`. This converts O(n) stack depth to O(1) stack depth with O(n) heap allocation.

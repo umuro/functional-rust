@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Church numerals are a demonstration that numbers and arithmetic can be encoded purely as functions — no integers required. Introduced by Alonzo Church as part of lambda calculus (1930s), a Church numeral N is a function that applies another function N times: `zero = λf.λx. x`, `one = λf.λx. f x`, `two = λf.λx. f(f x)`. Successor, addition, and multiplication can all be defined in terms of function composition. This example is primarily educational, illustrating lambda calculus encoding in a typed language. It reveals why Rust requires `Rc` for shared closures and `Box<dyn Fn>` for type erasure.

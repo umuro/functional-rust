@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Resource cleanup (closing files, flushing buffers, notifying peers) often requires async operations — but Rust's `Drop` trait is synchronous. If an async task holding a database connection is cancelled, its `Drop` runs synchronously on the async runtime, potentially blocking the executor thread. This mismatch is a known pain point: Rust doesn't yet have `AsyncDrop` in stable (RFC 3541 is in progress). The workaround is RAII guards with synchronous `Drop` that signal cleanup flags, deferring actual async cleanup to explicit `close()` methods or `defer!`-like patterns that run before the future is abandoned.

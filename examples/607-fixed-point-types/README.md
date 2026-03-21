@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A fixed point of a type function F is a type T where T = F(T). In Haskell, Fix F = F (Fix F) captures the recursive structure common to all recursive types. This abstraction enables writing functions over any recursive type generically. In Rust, fixed points require Box or Rc for heap indirection. This pattern is the theoretical foundation for catamorphisms, anamorphisms, and the morphism zoo.

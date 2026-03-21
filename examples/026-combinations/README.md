@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Generating all k-element subsets (combinations) of a set (OCaml 99 Problems #26) is a fundamental combinatorics problem. C(n, k) = n! / (k! · (n-k)!) is the number of ways to choose k elements from n without regard to order. The recursive structure — either include the first element (and choose k-1 from the rest) or skip it (and choose k from the rest) — is the textbook example of backtracking.

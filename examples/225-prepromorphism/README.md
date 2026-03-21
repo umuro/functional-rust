@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A prepromorphism applies a natural transformation (a functor-to-functor mapping) to each layer of a structure before folding it. This enables optimizations or normalizations that happen during the fold: simplifying expression nodes before evaluating them, or applying a "compress" step before accumulating. The natural transformation must be a functor endomorphism: `F<A> -> F<A>` (same functor, same element type).

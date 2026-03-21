@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Many grammar elements are optional: a sign before a number (`-42` vs `42`), a trailing comma, a default parameter value. The `opt` combinator wraps a parser in `Option`: if the parser succeeds, `opt` returns `Some(value)`; if it fails, `opt` returns `None` (consuming no input). This makes optional grammar elements explicit and composable, avoiding nested `if/else` in hand-written parsers.

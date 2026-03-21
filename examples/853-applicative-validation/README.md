@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `Result` short-circuits on the first error — useful for computations where later steps depend on earlier ones, but poor for user input validation where you want to report all errors at once. If a signup form has invalid email AND weak password, showing only the first error forces users to resubmit multiple times. The `Validated` type accumulates all errors instead of short-circuiting. This is the applicative approach: both validations run independently and their errors are combined. In contrast to monadic `and_then` which chains dependent operations, applicative validation runs all checks in parallel and collects all failures. This pattern is used in form validation libraries, configuration parsers, and data pipeline error reporting.

@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Kan extensions answer the question: "given functors `F: C -> D` and `G: C -> E`, how do we best extend or lift G along F to get a functor from D to E?" The Right Kan Extension (Ran) and Left Kan Extension (Lan) are the universal solutions to this problem. In functional programming, Ran encodes the Yoneda lemma, and Lan gives rise to coends and existential types. Both appear in the implementation of profunctor optics and indexed traversals.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Given a string and a dictionary of words, determine if the string can be segmented into a sequence of dictionary words. This is used in natural language processing (Chinese word segmentation — Chinese text has no spaces), search engine query parsing, and code tokenization. The DP approach avoids the exponential backtracking of a naive recursive search by caching whether each prefix is breakable.

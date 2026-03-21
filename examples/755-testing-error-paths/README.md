@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Happy-path tests are necessary but insufficient. Error paths — malformed input, out-of-range values, empty fields, resource exhaustion — are where bugs hide and security vulnerabilities lurk. Testing error paths requires asserting on specific error variants, not just that an error occurred. Rust's `Result` and rich error enums make error path testing natural and exhaustive, unlike exception-based languages where error type testing requires awkward catch-and-inspect patterns.

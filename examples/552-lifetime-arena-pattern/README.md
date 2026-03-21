@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Arena allocation (also called region-based memory management) is a technique where all allocations live in a single region and are freed all at once when the region is dropped. This is dramatically faster than individual heap allocations: no per-object malloc overhead, excellent cache locality, and zero fragmentation. Compilers (LLVM, GCC), game engines, and web browsers use arenas for AST nodes, parse results, and per-frame allocations. In Rust, arenas elegantly tie allocated objects to the arena's lifetime, preventing use-after-arena-drop at compile time.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Some values are expensive to initialize (parse config, compile regex, connect to DB) and should only be initialized once. Race conditions arise if multiple threads try to initialize simultaneously. `OnceLock<T>` provides thread-safe once-initialization: `get_or_init(|| expensive_computation())` guarantees the closure runs exactly once, even under concurrent access. `OnceCell<T>` is the single-threaded version. Both are simpler and more ergonomic than the `lazy_static!` macro they largely replace.

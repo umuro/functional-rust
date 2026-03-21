@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rather than enumerate every specific character a parser might accept, `satisfy` generalizes character matching to any predicate `Fn(char) -> bool`. This single combinator replaces dozens of specific parsers: `is_digit`, `is_letter`, `is_whitespace`, `is_alphanumeric` all become one-liners built from `satisfy`. The predicate-based approach is more extensible, composable, and mirrors the mathematical notation for character classes used in formal grammar theory.

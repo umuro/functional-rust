@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Deserialization normally copies data: the input bytes are parsed and new heap-allocated strings and vectors are created. Zero-copy deserialization avoids this by returning references (`&str`, `&[u8]`) that point directly into the input buffer. For high-throughput network servers processing thousands of requests per second, eliminating these copies can halve memory bandwidth usage. `serde`'s `#[serde(borrow)]` attribute enables zero-copy deserialization for string fields.

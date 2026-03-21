@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Spawning a new OS thread for each task is expensive: thread creation costs ~10-100 microseconds and each thread consumes stack memory. For workloads with many short tasks, the thread creation overhead dominates. A thread pool pre-creates N worker threads and reuses them for many tasks. Work is submitted to a queue; idle workers pick up and execute tasks. This is the foundation of most concurrent runtime systems: Java's `Executors`, Python's `concurrent.futures.ThreadPoolExecutor`, .NET's `ThreadPool`, and Rust's `rayon`. This example shows the manual implementation.

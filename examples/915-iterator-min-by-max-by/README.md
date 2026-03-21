@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Standard `min()` and `max()` require `Ord` — total ordering — which excludes `f64` (NaN breaks total order) and types requiring custom comparison semantics. `min_by(cmp)` and `max_by(cmp)` accept an explicit `Fn(&A, &A) -> Ordering` comparator, enabling: comparing floats with `partial_cmp().unwrap_or(Equal)`, multi-key comparison with `.then_with(|| a.secondary.cmp(&b.secondary))`, reverse ordering by swapping arguments, and domain-specific orderings like "closest to zero." This is the Rust equivalent of OCaml's `List.min_elt ~compare` and Python's `min(key=...)`.

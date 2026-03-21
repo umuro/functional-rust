@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Patterns alone cannot express all matching conditions — sometimes you need to test an arbitrary Boolean expression in addition to the structural match. Pattern guards (`if condition` after a match arm pattern) fill this gap: they allow any expression as an additional condition, while keeping the pattern for structural decomposition. Guards are used heavily in parsers, compilers, and game logic where the same structural form can have different meanings depending on computed values.

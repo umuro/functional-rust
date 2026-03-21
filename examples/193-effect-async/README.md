@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Asynchronous I/O is the most widely deployed algebraic effect in mainstream programming. Rust's `async/await` transforms async functions into state machines that yield control at each `await` point — the runtime (Tokio, async-std) is the "handler" that resumes computations when I/O completes. This example explores the conceptual connection between algebraic effects and async, showing how `Future` and `Poll` are the concrete Rust implementation of the "suspend and resume" effect model.

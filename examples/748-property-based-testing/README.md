@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Example-based tests check specific inputs. Property-based testing checks invariants that must hold for all inputs by generating hundreds of random cases automatically. Pioneered by Haskell's QuickCheck (1999), this approach finds edge cases that humans miss: off-by-one errors, integer overflow, empty collections. The `proptest` and `quickcheck` Rust crates are production-grade; this example builds a minimal stdlib-only framework to teach the core ideas.

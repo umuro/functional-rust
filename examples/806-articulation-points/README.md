@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 An articulation point (cut vertex) is a vertex whose removal disconnects the graph. Finding articulation points in O(V+E) is critical for network reliability analysis: which routers, if removed, would split the internet? Which protein in a protein-protein interaction network is essential? Which road intersection, if closed, disconnects a city? The algorithm also finds bridges (edges whose removal disconnects the graph).

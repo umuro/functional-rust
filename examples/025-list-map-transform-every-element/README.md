@@ -1,8 +1,8 @@
 # Example 025: List.map — Transform Every Element
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Lists & HOF
-**OCaml Source:** `List.map (fun x -> x * 2) numbers`
+
 
 ## Problem Statement
 

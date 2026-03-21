@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A random permutation (shuffle) rearranges all elements of a list with each of the n! arrangements equally likely. This is different from random selection: a permutation includes every element exactly once, just in a random order. The canonical algorithm is Fisher-Yates (Knuth) shuffle, which runs in O(n) time and is proven to produce a uniform distribution.

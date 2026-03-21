@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A stack (LIFO — last in, first out) is one of the most fundamental data structures: it underlies function call frames, expression evaluation, undo history, and DFS traversal. Implementing a stack efficiently requires O(1) push and pop at one end.

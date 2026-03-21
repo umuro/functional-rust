@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implement `running_sum` and `running_max` — prefix accumulations that produce a new sequence where each element is the accumulated result up to that position. Use Rust's `Iterator::scan` for `running_sum` and an explicit loop for `running_max`. Compare with OCaml's `scan_left` built on `List.fold_left`.

@@ -1,6 +1,8 @@
 **Difficulty:** ⭐⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐⭐  
+
 [series-sliding-window on hightechmind.io](https://hightechmind.io/posts/functional-rust/series-sliding-window)
 
 ---

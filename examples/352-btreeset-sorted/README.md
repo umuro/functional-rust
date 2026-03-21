@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 When you need a set that maintains elements in sorted order — for range membership tests, sorted output, or ordered iteration — `BTreeSet` is the right choice over `HashSet`. Like `BTreeMap`, it uses a B-tree internally, giving O(log n) insert/remove/contains and guaranteed sorted iteration. This is the structure behind sorted unique element collections in databases (sorted indexes), lexicographic ordering for string sets, and anywhere you need both deduplication and sorted traversal without re-sorting after each insertion.

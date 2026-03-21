@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A complete binary tree of n nodes (OCaml 99 Problems #34) fills levels from left to right — every level except possibly the last is fully filled, and the last level has all nodes to the left. This is the structural property of binary heaps and array-based trees. Index `i` has children at `2i+1` and `2i+2`; parent at `(i-1)/2`.

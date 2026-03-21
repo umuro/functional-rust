@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The N-queens problem asks how to place N chess queens on an N×N board so that no two queens attack each other — no shared row, column, or diagonal. It is the classic benchmark for backtracking algorithms and constraint satisfaction solvers.

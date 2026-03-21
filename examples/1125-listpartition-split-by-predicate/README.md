@@ -1,8 +1,8 @@
 # Example 1125: List.partition — Split by Predicate
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Lists & HOF
-**OCaml Source:** `List.partition`
+
 
 ## Problem Statement
 

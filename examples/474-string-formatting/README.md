@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Rust's `format!`, `write!`, and `writeln!` macros provide compile-time checked format strings with alignment, precision, padding, and radix specifiers built into the language.
 
 ## Problem Statement

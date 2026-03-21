@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `scan_left` (Haskell: `scanl`, OCaml: `List.fold_left` with output collection) produces all intermediate values of a fold, not just the final result. `scan_left(+, 0, [1,2,3,4])` gives `[0, 1, 3, 6, 10]` — each prefix sum. This is the "running total" operation.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Boolean checks against patterns appear frequently in filters, validations, and conditions. Before `matches!`, Rust code needed full `match val { Pattern => true, _ => false }` expressions for this — verbose for a single-line predicate. The `matches!` macro (stabilized in Rust 1.42) collapses this to `matches!(val, Pattern)`, supporting or-patterns, guards, and destructuring. It is the most concise way to test whether a value matches a pattern without extracting data.

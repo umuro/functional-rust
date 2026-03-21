@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Variance describes how subtyping relationships on types propagate through type constructors. In Rust's lifetime system: if `'long: 'short` (long outlives short), does `Container<'long>` also satisfy `Container<'short>` requirements? The answer depends on whether `Container` is covariant, contravariant, or invariant in its lifetime. Getting variance wrong leads to subtle unsoundness bugs — particularly with mutable references, which must be invariant. Rust computes variance automatically based on how lifetime parameters are used, and `PhantomData` lets you declare variance for types that need it explicitly.

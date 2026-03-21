@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Like functor laws, monad laws are algebraic contracts that ensure `bind` (and_then) behaves predictably. The three laws — left identity, right identity, and associativity — guarantee that `return` is a neutral element for bind and that bind is associative (the order of parenthesizing a chain doesn't matter). Code that refactors monadic chains relies on these laws: splitting a long chain into helper functions, extracting common subexpressions, and equational reasoning in tests all depend on them. Violating monad laws leads to subtle bugs: computations that behave differently depending on how they were composed, breaking algebraic reasoning.

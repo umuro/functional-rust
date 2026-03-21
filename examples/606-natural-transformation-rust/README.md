@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A natural transformation is a structure-preserving map between functors. For example, converting Option to Vec (Some(x) -> vec![x], None -> vec![]) is a natural transformation. It must commute with fmap — applying fmap before or after the transformation gives the same result. This is foundational in category theory and appears as generic conversions between container types.

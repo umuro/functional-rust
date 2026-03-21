@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Extending the Curry-Howard correspondence, this example makes the type-as-proposition correspondence concrete with examples: conjunction (product types), disjunction (sum types), implication (function types), negation (function to `!`), and the universal and existential quantifiers (generic types and existential types). Seeing familiar type operations through the logical lens reveals why type system design and formal logic are the same discipline.

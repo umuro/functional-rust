@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A comonad is the categorical dual of a monad. Where a monad has `pure: A -> M<A>` (inject a value) and `bind: (A -> M<B>) -> M<A> -> M<B>` (sequence effects), a comonad has `extract: W<A> -> A` (extract the focused value) and `extend: (W<A> -> B) -> W<A> -> W<B>` (apply a context-dependent function to every position). Comonads model computations that consume context: cellular automata, image processing, signal filtering, and zipper-based navigation.

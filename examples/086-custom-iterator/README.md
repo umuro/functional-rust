@@ -5,6 +5,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Implement three stateful custom iterators: a `Counter` that steps by a given value indefinitely, a `Fib` Fibonacci iterator, and a `Collatz` iterator that terminates at 1. Demonstrate that implementing `next` unlocks the full iterator adapter chain. Compare with OCaml's closure-based counters and `Seq` lazy sequences.

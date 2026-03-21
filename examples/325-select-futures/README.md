@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Sometimes you want the first result from multiple concurrent operations — a timeout competing with an operation, querying multiple replicas and using the fastest response, or cancelling work when a stop signal arrives. The `select!` macro (in `tokio` or `futures`) polls multiple futures and returns when the first one completes, cancelling the others. This is the fundamental tool for implementing timeouts, fallbacks, and cancellation in async code.

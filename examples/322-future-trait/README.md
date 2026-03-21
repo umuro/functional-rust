@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The `async`/`.await` syntax in Rust is syntactic sugar over the `Future` trait. A `Future` is a state machine with a single `poll()` method that either returns `Poll::Ready(output)` or `Poll::Pending`. Understanding the underlying `Future` trait is essential for implementing custom async primitives, debugging async code, and understanding why `.await` cannot be used in non-async contexts. This is the foundation that all async Rust is built on.

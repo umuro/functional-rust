@@ -1,6 +1,8 @@
 **Difficulty:** ⭐⭐⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐⭐⭐  
+
 [circuit-breaker on hightechmind.io](https://hintechmind.io/posts/functional-rust/circuit-breaker)
 
 ---

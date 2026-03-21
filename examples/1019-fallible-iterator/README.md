@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Standard iterators yield `T` values with no error channel. But many real-world data sources — file readers, database cursors, network streams — can fail mid-iteration. The `fallible-iterator` crate and manual implementations model this with iterators that yield `Option<Result<T, E>>`: `None` for end-of-sequence, `Some(Ok(v))` for a value, and `Some(Err(e))` for a failure.

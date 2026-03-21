@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Mutually recursive functions call each other: `is_even(n) = (n == 0) || is_odd(n-1)` and `is_odd(n) = (n != 0) && is_even(n-1)`. Neither function can be defined in terms of only itself; they require simultaneous definition. In OCaml, `let rec is_even n = ... and is_odd n = ...` uses `and` to co-define them. Rust does not need special syntax — any two functions in the same module can call each other freely since function names are resolved at link time, not at definition time. This difference reveals a fundamental design choice between definition-order-sensitive and definition-order-free languages.

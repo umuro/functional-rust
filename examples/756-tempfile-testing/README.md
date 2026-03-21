@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Code that reads or writes files cannot be tested with in-memory mocks alone — you need real filesystem semantics. Temporary directories solve this: they provide real file paths, get cleaned up on test completion, and are isolated per test process. Without proper cleanup, failing tests leave debris in `/tmp` that accumulates over time. The `Drop`-based `TempDir` type ensures cleanup even when tests panic.

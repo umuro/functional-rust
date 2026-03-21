@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Currying (named after mathematician Haskell Curry, though independently discovered by Moses Schonfinkel) is the technique of transforming a multi-argument function into a chain of single-argument functions. `add(a, b)` becomes `add(a)(b)`, where `add(5)` returns a new function that adds 5 to its argument. This makes partial application — fixing some arguments now and the rest later — a natural consequence of function application.

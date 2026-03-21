@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Category theory provides the mathematical foundation for functional programming abstractions — functors, monads, and natural transformations are all categorical concepts. A category consists of objects (types), morphisms (functions), composition (`.`), and identity (`id`). The category of types and functions (called **Hask** in Haskell, **Typ** in type theory) is the mathematical model that explains why `Option`, `Result`, and `Vec` all have `map`, and why `and_then` (bind) has its signature.

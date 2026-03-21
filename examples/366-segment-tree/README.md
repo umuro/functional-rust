@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Database range aggregation, stock price range queries, and competitive programming problems frequently ask: "What is the sum/min/max over elements from index L to R?" With a plain array, this is O(n) per query. Sorting allows binary search for range bounds but not arbitrary aggregates. The segment tree (developed independently in multiple contexts, popularized in competitive programming circa 1990s) achieves O(log n) for both range queries and point updates by maintaining a binary tree where each node stores the aggregate for a contiguous subarray. This is the data structure behind range aggregate functions in databases and time-series systems.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `Option<T>` is Rust's solution to the null pointer problem. Where Java uses `null` and C uses `NULL` or sentinel values, Rust forces you to acknowledge that a value may not exist at the type level. `Option<T>` is an enum with two variants: `Some(T)` when a value exists, and `None` when it does not.

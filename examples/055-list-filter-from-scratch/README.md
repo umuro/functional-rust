@@ -3,10 +3,10 @@
 ---
 
 # Example 055: List Filter from Scratch
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Higher-Order Functions
-**OCaml Source:** CS3110
+
 
 ## Problem Statement
 

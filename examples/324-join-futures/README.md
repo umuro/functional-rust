@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Sequential async execution wastes time when multiple operations are independent: fetching user data and fetching their posts can happen simultaneously. `join!` (or `tokio::join!`) starts all futures concurrently and waits for all to complete. The total time equals the slowest task, not the sum of all tasks. This is the fundamental tool for parallelizing independent I/O operations in async Rust.

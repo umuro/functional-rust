@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Transient failures — network blips, temporary service overloads, rate limits — are common in distributed systems. Retrying immediately is counterproductive (may worsen overload); retrying with exponential backoff gives services time to recover while limiting wait time with a maximum delay cap. Distinguishing transient from permanent errors is essential: don't retry bad input or authentication failures. This is a fundamental resilience pattern for any service calling external APIs.

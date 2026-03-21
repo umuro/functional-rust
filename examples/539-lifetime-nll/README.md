@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Before Rust 2018's Non-Lexical Lifetimes (NLL), the borrow checker used lexical scopes to determine when borrows ended — a borrow lasted until the end of the enclosing block, even if the borrowed value was never used after its last access point. This caused many correct programs to be rejected: you could not borrow from a `Vec`, compute something, then push to the `Vec` in the same block, even though the first borrow logically ended before the push. NLL (stabilized in Rust 2018) makes borrows end at their last use, not at the end of their enclosing scope.

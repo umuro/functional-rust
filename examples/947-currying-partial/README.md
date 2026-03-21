@@ -1,6 +1,8 @@
 **Difficulty:** ⭐⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐⭐  
+
 [currying-partial on hightechmind.io](https://hightechmind.io/posts/functional-rust/currying-partial)
 
 ---

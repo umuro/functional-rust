@@ -1,6 +1,8 @@
 **Difficulty:** ⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐  
+
 [json-value on hightechmind.io](https://hightechmind.io/posts/functional-rust/json-value)
 
 ---

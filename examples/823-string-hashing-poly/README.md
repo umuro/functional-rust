@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Comparing strings character by character takes O(m) time. When you need to compare many substrings — checking if a string is a rotation of another, finding duplicate substrings, comparing all n^2 pairs of substrings — naive comparison becomes O(n^2 * m). Polynomial hashing reduces substring comparison to O(1) with O(n) preprocessing: compute prefix hashes, then any substring hash is `(prefix[r] - prefix[l] * base^(r-l)) % mod`. This enables O(n log n) string sorting, O(n) duplicate detection, and O(n log n) LCP (longest common prefix) binary search. It's the hash function behind rolling hash algorithms, string fingerprinting, and near-duplicate document detection.

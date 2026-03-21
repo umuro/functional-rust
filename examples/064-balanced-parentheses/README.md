@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Checking whether brackets are balanced is the classic stack application problem. Every `(`, `[`, or `{` must have a matching closing bracket in the correct order. The algorithm is: push opening brackets; on closing brackets, pop and verify the match; at end, the stack must be empty.

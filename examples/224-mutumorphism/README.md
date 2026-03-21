@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Mutually recursive functions — `is_even` and `is_odd` depending on each other — are natural in mathematics but require mutual `let rec` in functional languages. A mutumorphism generalizes this: two folds that are mutually dependent, each using the other's result at each recursive step. Unlike zygomorphism (one feeds the other), mutumorphism has symmetric dependency. The classic example: `is_even(n)` uses `is_odd(n-1)` and vice versa.

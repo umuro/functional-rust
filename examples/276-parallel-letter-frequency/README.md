@@ -3,10 +3,10 @@
 ---
 
 # Example 276: Parallel Letter Frequency
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Higher-Order Functions
-**OCaml Source:** https://exercism.org/tracks/ocaml/exercises/parallel-letter-frequency
+
 
 ## Problem Statement
 

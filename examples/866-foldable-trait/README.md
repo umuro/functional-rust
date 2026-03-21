@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Folding — reducing a collection to a single value by repeatedly applying a combining function — is the most general way to consume a data structure. `sum`, `product`, `max`, `min`, `to_vec`, `count`, `any`, `all`, `find` are all specific instances of fold. A `Foldable` trait abstracts this: any type that supports `fold_left` and `fold_right` can be reduced to any type. This powers generic algorithms that work over trees, lists, and custom containers without knowing the specific structure. OCaml's `List.fold_left` and Haskell's `Foldable` typeclass are the canonical implementations. Rust's `Iterator::fold` is the iterator-based equivalent.

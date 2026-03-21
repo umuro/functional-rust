@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Backtracking explores the complete search space but doesn't use bounds to prune. Branch and bound adds an upper/lower bound computation at each node: if the best possible solution achievable from a partial assignment cannot beat the current best complete solution, prune that entire subtree. This makes branch and bound the algorithm of choice for exact optimization: integer linear programming, traveling salesman problem (with bounds from relaxations), knapsack (with greedy fractional bound), and scheduling optimization. While still exponential in the worst case, good bounds make it practical for real instances that pure backtracking cannot handle.

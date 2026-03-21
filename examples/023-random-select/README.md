@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Selecting k elements uniformly at random without replacement from a list (OCaml 99 Problems #23) is one of the fundamental sampling problems in computer science. It underlies A/B testing, bootstrapping in statistics, Monte Carlo simulations, shuffling in card games, and random forest sampling in machine learning.

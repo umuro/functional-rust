@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Modern CPUs have multiple cores that sit idle when code runs single-threaded. `std::thread::spawn` creates OS threads that run truly in parallel on separate cores. Unlike async tasks (which are lightweight but still single-core unless you use an async runtime with a thread pool), OS threads run independently and can leverage all available cores for CPU-bound work. The challenge is safely sharing data between threads — Rust's type system enforces this at compile time via `Send` and `Sync` bounds.

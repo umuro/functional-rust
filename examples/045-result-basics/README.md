@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `Result<T, E>` extends `Option<T>` with error information: instead of `None`, a failure produces `Err(e)` carrying a typed error value `e`. This is how Rust handles all recoverable errors — file I/O, network calls, parsing, validation — without exceptions or error codes. The type system forces callers to handle both `Ok(value)` and `Err(error)` cases.

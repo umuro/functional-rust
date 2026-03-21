@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The Longest Increasing Subsequence (LIS) problem finds the longest subsequence of a sequence in which all elements are in sorted increasing order. It appears in patience sorting (used in the solitaire card game and by Timsort), scheduling theory, and bioinformatics. The naive O(n²) DP is classic; the O(n log n) solution using binary search and "patience sorting" is a key algorithmic insight showing that binary search applies to DP optimization.

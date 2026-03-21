@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Generating a range of integers (OCaml 99 Problems #22) — `range(4, 9)` → `[4, 5, 6, 7, 8, 9]` — is one of the simplest list-generating operations and a gateway to understanding lazy vs eager sequence generation. In Python it is `range(4, 9)`, in Haskell `[4..9]`, in OCaml (with batteries) `4 -- 9`. The key insight is that a range can be represented lazily (an iterator) or eagerly (a list/vector).

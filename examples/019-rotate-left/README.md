@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Rotating a list left by n positions — moving the first n elements to the end — is a fundamental circular buffer operation. It appears in round-robin schedulers (rotating the job queue), circular queues, cryptographic operations (bit rotation in SHA, AES), polynomial arithmetic (cyclic shift), and visual animation (scrolling backgrounds).

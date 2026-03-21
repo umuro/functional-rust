@@ -3,10 +3,10 @@
 ---
 
 # Example 258: Monadic Option Chaining
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Monadic patterns
-**OCaml Source:** Classic functional programming — option monad bind
+
 
 ## Problem Statement
 

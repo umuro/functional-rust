@@ -1,6 +1,8 @@
 **Difficulty:** ⭐⭐⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐⭐⭐  
+
 [segment-tree on hightechmind.io](https://hightechmind.io/posts/functional-rust/segment-tree)
 
 ---

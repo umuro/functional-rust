@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `unsafe` blocks are Rust's explicit opt-out from the borrow checker for a specific scope. The fundamental principle: minimize the unsafe footprint. Only the code that genuinely requires unsafe operations should be inside `unsafe { }`. Safe code (error handling, logging, computation) belongs outside. This discipline makes auditing easier — reviewers can focus on the narrow `unsafe` region rather than an entire function. It is a core practice in systems programming with Rust.

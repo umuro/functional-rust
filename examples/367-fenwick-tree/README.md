@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Prefix sum queries ("sum of elements 1 through i") and point updates are needed in ranking systems (how many scores are below X?), inversion counting in arrays, and order-statistic operations. A Fenwick tree (Peter Fenwick, 1994) achieves O(log n) for both operations using only O(n) space and remarkably simple index arithmetic. Unlike the segment tree, which needs 4n space and explicit left/right children, the Fenwick tree is a flat array where the "tree structure" is encoded in the binary representation of indices. It's the most space-efficient and cache-friendly structure for prefix sum queries with updates.

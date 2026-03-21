@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Lazy initialization solves a fundamental tension: some values are expensive to compute but not always needed, and global mutable state is unsafe in concurrent programs. Before `OnceLock`, Rust programs used `unsafe` code or external crates like `lazy_static` for program-global lazy values. `std::sync::OnceLock` (stabilized in Rust 1.70) provides a safe, lock-free, thread-safe cell initialized exactly once. This pattern is ubiquitous in database connection pools, configuration parsers, and compiled regex caches.

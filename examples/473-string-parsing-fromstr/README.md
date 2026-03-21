@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 The `FromStr` trait provides a uniform interface for parsing strings into typed values, powering the `.parse::<T>()` method used throughout the standard library and Serde.
 
 ## Problem Statement

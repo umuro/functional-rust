@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Functors apply a plain function to a wrapped value: `map(f, Just(x)) = Just(f(x))`. But what if the function itself is wrapped? Applicative functors add `apply(Just(f), Just(x)) = Just(f(x))` — applying a wrapped function to a wrapped value. This enables combining multiple independent computations: parse two fields from a form, validate them independently, and combine results only if both succeed. Applicatives are strictly more powerful than functors but less powerful than monads (monads allow the second computation to depend on the first). In practice: form validation (`Validated`), parallel effects, command-line parsing (`clap`'s applicative API), and parser combinators all use applicative structure.

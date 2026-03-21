@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Map-reduce was popularized by Google's 2004 paper as a framework for processing petabytes of data across thousands of machines. But the pattern predates distributed computing — it is a direct application of `map` and `fold` from functional programming, rooted in lambda calculus. Even in single-threaded Rust, the map-reduce idiom cleanly separates the transformation of individual elements from their aggregation, making code more composable and testable than equivalent imperative loops.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 Rust provides `split`, `splitn`, `split_once`, and `split_whitespace` for dividing strings into parts, all returning lazy iterators that yield `&str` slices into the original string without allocation.
 
 ## Problem Statement

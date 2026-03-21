@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Iteration is fundamental to every program. Languages handle it differently: C uses index-based loops, Java uses `Iterable`/`Iterator` interfaces, Python uses `__iter__`/`__next__`. Rust's `Iterator` trait requires only one method — `fn next(&mut self) -> Option<Self::Item>` — and provides over 70 adapter and consumer methods for free. This design unifies all iteration patterns: ranges, collections, generators, and lazy sequences all implement the same interface. OCaml's `Seq` module serves a similar role for lazy sequences, and `List` provides eager equivalents. Understanding the `Iterator` trait is essential for idiomatic Rust.

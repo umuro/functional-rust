@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `over` (also called `modify`) is the key derived operation of a lens: apply a function to the focused field without extracting and re-inserting manually. `over(lens, f, s) = lens.set(f(lens.get(s)), s)`. This operation is so central to lens usage that it deserves its own example. Composing `over` with other lens operations (modify a sub-field, accumulate changes, apply validation) shows the lens as a reusable update combinator.

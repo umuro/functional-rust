@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 `Arc<Mutex<T>>` allows only one thread at a time — even for reads. For read-heavy workloads where many threads query shared state but writes are rare (configuration, routing tables, cached data), this is unnecessary serialization. `RwLock<T>` differentiates: any number of threads can hold a `read()` lock simultaneously, but a `write()` lock requires exclusive access. Combined with `Arc`, this enables high-concurrency reads with safe infrequent writes — the standard pattern for shared caches and configuration.

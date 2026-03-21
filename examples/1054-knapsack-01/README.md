@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 The 0/1 knapsack problem is the quintessential combinatorial optimization problem: given items with weights and values, and a weight capacity, select items to maximize total value without exceeding capacity. Each item can be included at most once (0 or 1 times). It has direct applications in resource allocation, financial portfolio optimization, and load balancing.

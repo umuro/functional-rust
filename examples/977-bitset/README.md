@@ -1,6 +1,8 @@
 **Difficulty:** ⭐⭐⭐  
 **Category:** Functional Programming  
 
+**Difficulty:** ⭐⭐⭐  
+
 [bitset on hightechmind.io](https://hightechmind.io/posts/functional-rust/bitset)
 
 ---

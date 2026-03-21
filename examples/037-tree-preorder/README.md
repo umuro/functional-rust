@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Preorder traversal visits nodes in root-left-right order, producing a sequence where the root always comes before its descendants. This ordering has a critical property: in a full binary tree (where leaves are uniquely identifiable), the preorder sequence uniquely determines the tree. Combined with the inorder sequence (from example 038), any binary tree can be reconstructed.

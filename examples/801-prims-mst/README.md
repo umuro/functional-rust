@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 A Minimum Spanning Tree (MST) of a weighted undirected graph connects all vertices with minimum total edge weight. Prim's algorithm (1957) grows the MST greedily from a starting vertex, always adding the cheapest edge connecting the MST to a new vertex. MSTs are used in network design (laying cables or pipes with minimum cost), cluster analysis, and approximation algorithms for traveling salesman.

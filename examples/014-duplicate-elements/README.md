@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Duplicating every element of a list (OCaml 99 Problems #14) — transforming `[a, b, c]` into `[a, a, b, b, c, c]` — is an exercise in `flat_map`: the structure-expanding operation that maps each input to multiple outputs and concatenates the results. It is the simplest possible case of `flat_map` with a fixed expansion factor.

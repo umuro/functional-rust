@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 An isomorphism is a lossless, reversible transformation between two types: `Celsius <-> Fahrenheit`, `String <-> Vec<u8>`, `(A, B) <-> (B, A)`. An Iso optic captures this bidirectional mapping as a first-class value. Unlike a lens (asymmetric: `get` and `set` are different operations) or prism (partial), an iso is fully symmetric: `get` and `reverse_get` are inverses of each other. Isos are the most restrictive optic — they appear at the top of the optics hierarchy.

@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Chaining fallible operations without deeply nested pattern matches is a core challenge in error-handling design. In C, every call site checks a return code, creating pyramids of conditionals. Haskell's `Either` monad and OCaml's `Result` type both solve this by providing combinators that thread success values through a pipeline while propagating errors automatically.

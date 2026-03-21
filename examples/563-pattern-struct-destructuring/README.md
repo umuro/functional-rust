@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Extracting multiple fields from a struct simultaneously — without intermediate temporary variables — is a fundamental ergonomic feature of pattern matching languages. Struct destructuring allows binding multiple fields in one pattern, renaming them, ignoring others with `..`, and doing all of this directly in function parameters. This eliminates boilerplate field access chains (`p.x`, `p.y`) in favor of declarative extraction that reads like a specification of what data you need.

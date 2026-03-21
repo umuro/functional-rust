@@ -7,6 +7,7 @@
 **Category:** Functional Programming  
 
 
+
 ## Problem Statement
 
 Some code patterns require converting source code tokens to string literals at compile time: debug output showing the expression that was evaluated, test assertions printing the failing condition's source text, enum variants converting to their names. The built-in `stringify!($e)` macro captures an expression as a `&'static str` without evaluating it. `concat!` joins string literals at compile time. Together, these enable zero-runtime-cost reflective string generation from source code.
