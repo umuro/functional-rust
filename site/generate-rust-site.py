@@ -1412,14 +1412,26 @@ def generate_index(examples_data):
         by_level.setdefault(ex["level"], []).append(ex)
     nf = len(by_level.get("fundamental",  []))
     ni = len(by_level.get("intermediate", []))
-    na = len(by_level.get("advanced", []) + by_level.get("expert", []))
+    na = len(by_level.get("advanced", []))
+    ne = len(by_level.get("expert",   []))
+
+    def _stat_card(level, count, label, bg, text):
+        return (
+            f'<button onclick="document.querySelector(\'.level-filter[data-level=\\\"{level}\\\"]\').click();'
+            f'document.getElementById(\'examples-grid\').scrollIntoView({{behavior:\'smooth\',block:\'start\'}})" '
+            f'class="{bg} rounded-xl p-5 text-center cursor-pointer hover:brightness-125 hover:scale-105 transition-all duration-150 w-full">'
+            f'<div class="text-4xl font-bold {text}">{count}</div>'
+            f'<div class="text-sm text-gray-300 mt-1">{label}</div>'
+            f'</button>'
+        )
 
     stats = (
-        '\n        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">'
-        f'\n          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 text-center"><div class="text-4xl font-bold">{total}</div><div class="text-sm text-gray-300 mt-1">Examples</div></div>'
-        f'\n          <div class="bg-green-500/20 rounded-xl p-5 text-center"><div class="text-4xl font-bold text-green-300">{nf}</div><div class="text-sm text-gray-300 mt-1">Fundamental</div></div>'
-        f'\n          <div class="bg-blue-500/20 rounded-xl p-5 text-center"><div class="text-4xl font-bold text-blue-300">{ni}</div><div class="text-sm text-gray-300 mt-1">Intermediate</div></div>'
-        f'\n          <div class="bg-purple-500/20 rounded-xl p-5 text-center"><div class="text-4xl font-bold text-purple-300">{na}</div><div class="text-sm text-gray-300 mt-1">Advanced+</div></div>'
+        '\n        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">'
+        f'\n          <button onclick="document.querySelector(\'.level-filter[data-level=\\\"all\\\"]\').click();document.getElementById(\'examples-grid\').scrollIntoView({{behavior:\'smooth\',block:\'start\'}})" class="bg-white/10 backdrop-blur-sm rounded-xl p-5 text-center cursor-pointer hover:brightness-125 hover:scale-105 transition-all duration-150 col-span-2 md:col-span-1"><div class="text-4xl font-bold">{total}</div><div class="text-sm text-gray-300 mt-1">Examples</div></button>'
+        f'\n          {_stat_card("fundamental",  nf, "Fundamental", "bg-green-500/20",  "text-green-300")}'
+        f'\n          {_stat_card("intermediate", ni, "Intermediate", "bg-blue-500/20",   "text-blue-300")}'
+        f'\n          {_stat_card("advanced",     na, "Advanced",    "bg-purple-500/20", "text-purple-300")}'
+        f'\n          {_stat_card("expert",       ne, "Expert",      "bg-red-500/20",    "text-red-300")}'
         '\n        </div>'
     )
 
@@ -1465,7 +1477,7 @@ def generate_index(examples_data):
     cards = "\n".join(example_card(ex) for ex in examples_data)
 
     grid = (
-        '\n    <section class="mb-16">'
+        '\n    <section id="examples-grid" class="mb-16">'
         '\n      <div class="flex items-center justify-between mb-6">'
         '\n        <h2 class="text-3xl font-bold text-gray-900 dark:text-white">All Examples</h2>'
         '\n        <div class="text-sm text-gray-500 dark:text-gray-400 hidden sm:block">'
