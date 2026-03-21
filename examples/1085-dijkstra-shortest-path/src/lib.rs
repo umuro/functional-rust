@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 /// Dijkstra's Shortest Path — Functional Rust with BinaryHeap and immutable-style updates.
 ///

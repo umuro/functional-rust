@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1027: BTreeMap — Sorted Key Iteration
 // Rust's BTreeMap keeps keys in sorted order (B-tree internally)

@@ -1,6 +1,0 @@
-{
-  "num": 28,
-  "title": "### 028: List.sort \u2014 Sort with Custom Comparator",
-  "topic": "Sort a list using a comparison function",
-  "source": "OCaml Standard Library"
-}

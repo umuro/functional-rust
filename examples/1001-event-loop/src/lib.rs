@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1001: Simple Event Loop
 // Poll events, dispatch enum handlers, accumulate state

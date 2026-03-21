@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1020: try_fold — Fold that short-circuits on error
 

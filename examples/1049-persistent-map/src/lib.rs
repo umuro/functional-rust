@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1049: Persistent HashMap — Functional Update
 // Simulate persistence in Rust using clone-on-write or cheap cloning

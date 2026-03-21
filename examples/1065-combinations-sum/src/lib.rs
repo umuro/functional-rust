@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1065: Combination Sum — Find Combos Summing to Target
 

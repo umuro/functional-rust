@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1057: Matrix Chain Multiplication — Optimal Parenthesization
 

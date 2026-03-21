@@ -1,6 +1,0 @@
-{
-  "num": 27,
-  "title": "### 027: List.fold_left \u2014 Accumulate a Result",
-  "topic": "Reduce a list to a single value from left to right",
-  "source": "OCaml Standard Library"
-}

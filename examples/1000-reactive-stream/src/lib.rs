@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1000: Reactive Stream
 // Push-based Observable<T> with map/filter/take/subscribe

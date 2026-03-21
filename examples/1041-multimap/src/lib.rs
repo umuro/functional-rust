@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1041: Multimap — HashMap<K, Vec<V>> with Helpers
 // A map where each key can have multiple values

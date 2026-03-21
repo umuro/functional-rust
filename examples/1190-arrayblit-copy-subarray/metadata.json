@@ -1,6 +1,0 @@
-{
-  "num": 36,
-  "title": "### 036: Array.blit \u2014 Copy Subarray",
-  "topic": "Copy a portion of one array into another",
-  "source": "OCaml Standard Library"
-}

@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1059: Rod Cutting — Maximize Revenue
 

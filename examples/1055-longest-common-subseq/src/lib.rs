@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1055: Longest Common Subsequence — 2D DP + Backtrack
 

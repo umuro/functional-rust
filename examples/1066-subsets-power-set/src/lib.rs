@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1066: All Subsets (Power Set) — Backtracking vs Bitmasking
 

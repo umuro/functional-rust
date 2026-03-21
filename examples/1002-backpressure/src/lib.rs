@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1002: Backpressure — Bounded sync_channel blocks producer
 // When consumer is slow, bounded buffer fills and producer is forced to wait

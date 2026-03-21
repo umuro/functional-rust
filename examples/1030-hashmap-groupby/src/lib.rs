@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1030: Group Elements by Key — HashMap<K, Vec<V>>
 // The classic group-by pattern using Entry API

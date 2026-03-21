@@ -1,2 +1,0 @@
-Original queue number: 102
-Title: Persistent Vector — Functional Array

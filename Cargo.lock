@@ -1075,27 +1075,7 @@ name = "example-1087-tail-recursive-map-with-cps"
 version = "0.1.0"
 
 [[package]]
-name = "example-1088-red-black-tree-balanced-insert"
-version = "0.1.0"
-
-[[package]]
-name = "example-1089-monoid-pattern-generic-combining"
-version = "0.1.0"
-
-[[package]]
 name = "example-109-arc-threads"
-version = "0.1.0"
-
-[[package]]
-name = "example-1090-dijkstra-shortest-path-priority-queue"
-version = "0.1.0"
-
-[[package]]
-name = "example-1091-red-black-tree-balanced-insert"
-version = "0.1.0"
-
-[[package]]
-name = "example-1092-red-black-tree-balanced-insert"
 version = "0.1.0"
 
 [[package]]
@@ -1103,39 +1083,7 @@ name = "example-1093-currying-partial-application"
 version = "0.1.0"
 
 [[package]]
-name = "example-1094-red-black-tree-balanced-insert"
-version = "0.1.0"
-
-[[package]]
-name = "example-1095-red-black-tree-balanced-insert"
-version = "0.1.0"
-
-[[package]]
-name = "example-1096-red-black-tree-balanced-insert"
-version = "0.1.0"
-
-[[package]]
-name = "example-1097-red-black-tree-balanced-insert"
-version = "0.1.0"
-
-[[package]]
-name = "example-1098-monoid-pattern-generic-combining"
-version = "0.1.0"
-
-[[package]]
-name = "example-1099-dijkstras-shortest-path-priority-queue"
-version = "0.1.0"
-
-[[package]]
 name = "example-110-cell-interior"
-version = "0.1.0"
-
-[[package]]
-name = "example-1100-huffman-encoding-greedy-tree-building"
-version = "0.1.0"
-
-[[package]]
-name = "example-1101-persistent-vector-functional-array"
 version = "0.1.0"
 
 [[package]]
@@ -1143,31 +1091,7 @@ name = "example-1102-red-black-tree-balanced-insert"
 version = "0.1.0"
 
 [[package]]
-name = "example-1103-monoid-pattern-generic-combining"
-version = "0.1.0"
-
-[[package]]
-name = "example-1104-dijkstra-shortest-path-priority-queue"
-version = "0.1.0"
-
-[[package]]
-name = "example-1105-huffman-encoding-greedy-tree-building"
-version = "0.1.0"
-
-[[package]]
-name = "example-1106-persistent-vector-functional-array"
-version = "0.1.0"
-
-[[package]]
 name = "example-1107-currying-partial-application-and-sections"
-version = "0.1.0"
-
-[[package]]
-name = "example-1108-red-black-tree-balanced-insert"
-version = "0.1.0"
-
-[[package]]
-name = "example-1109-monoid-pattern-generic-combining"
 version = "0.1.0"
 
 [[package]]
@@ -1175,67 +1099,11 @@ name = "example-111-refcell-runtime"
 version = "0.1.0"
 
 [[package]]
-name = "example-1110-dijkstra-shortest-path-priority-queue"
-version = "0.1.0"
-
-[[package]]
-name = "example-1111-huffman-encoding-greedy-tree-building"
-version = "0.1.0"
-
-[[package]]
-name = "example-1112-persistent-vector-functional-array"
-version = "0.1.0"
-
-[[package]]
-name = "example-1113-knapsack-problem-dynamic-programming-functional"
-version = "0.1.0"
-
-[[package]]
-name = "example-1114-red-black-tree-balanced-insert"
-version = "0.1.0"
-
-[[package]]
-name = "example-1115-red-black-tree-balanced-insert"
-version = "0.1.0"
-
-[[package]]
-name = "example-1116-monoid-pattern-generic-combining"
-version = "0.1.0"
-
-[[package]]
-name = "example-1117-dijkstras-shortest-path-priority-queue"
-version = "0.1.0"
-
-[[package]]
-name = "example-1118-dijkstras-shortest-path--priority-queue"
-version = "0.1.0"
-
-[[package]]
-name = "example-1118-huffman-encoding--greedy-tree-building"
-version = "0.1.0"
-
-[[package]]
 name = "example-1118-monoid-pattern-generic-combining"
 version = "0.1.0"
 
 [[package]]
-name = "example-1118-persistent-vector--functional-array"
-version = "0.1.0"
-
-[[package]]
-name = "example-1118-red-black-tree--balanced-insert"
-version = "0.1.0"
-
-[[package]]
-name = "example-1119-currying-partial-application-and-sections"
-version = "0.1.0"
-
-[[package]]
 name = "example-112-cow-clone-on-write"
-version = "0.1.0"
-
-[[package]]
-name = "example-1120-currying-partial-application-and-sections"
 version = "0.1.0"
 
 [[package]]
@@ -1244,10 +1112,6 @@ version = "0.1.0"
 
 [[package]]
 name = "example-1122-leap-year"
-version = "0.1.0"
-
-[[package]]
-name = "example-1122-listfilter-select-elements-by-predicate"
 version = "0.1.0"
 
 [[package]]
@@ -1275,63 +1139,7 @@ name = "example-1125-reverse-string"
 version = "0.1.0"
 
 [[package]]
-name = "example-1126-red-black-tree-balanced-insert"
-version = "0.1.0"
-
-[[package]]
-name = "example-1127-monoid-pattern-generic-combining"
-version = "0.1.0"
-
-[[package]]
-name = "example-1128-dijkstra-s-shortest-path-priority-queue"
-version = "0.1.0"
-
-[[package]]
-name = "example-1129-huffman-encoding-greedy-tree-building"
-version = "0.1.0"
-
-[[package]]
 name = "example-113-string-str"
-version = "0.1.0"
-
-[[package]]
-name = "example-1130-persistent-vector-functional-array"
-version = "0.1.0"
-
-[[package]]
-name = "example-1131-monoid-pattern-generic-combining"
-version = "0.1.0"
-
-[[package]]
-name = "example-1132-dijkstras-shortest-path-priority-queue"
-version = "0.1.0"
-
-[[package]]
-name = "example-1133-huffman-encoding-greedy-tree-building"
-version = "0.1.0"
-
-[[package]]
-name = "example-1134-persistent-vector-functional-array"
-version = "0.1.0"
-
-[[package]]
-name = "example-1135-knapsack-problem-dynamic-programming-functional"
-version = "0.1.0"
-
-[[package]]
-name = "example-1136-monoid-fold-closures"
-version = "0.1.0"
-
-[[package]]
-name = "example-1137-placeholder"
-version = "0.1.0"
-
-[[package]]
-name = "example-1138-placeholder"
-version = "0.1.0"
-
-[[package]]
-name = "example-1139-placeholder"
 version = "0.1.0"
 
 [[package]]
@@ -1339,31 +1147,7 @@ name = "example-114-slice-patterns"
 version = "0.1.0"
 
 [[package]]
-name = "example-1140-placeholder"
-version = "0.1.0"
-
-[[package]]
-name = "example-1141-monoid-pattern-generic-combining"
-version = "0.1.0"
-
-[[package]]
-name = "example-1142-dijkstras-shortest-path-priority-queue"
-version = "0.1.0"
-
-[[package]]
 name = "example-1143-huffman-encoding-greedy-tree-building"
-version = "0.1.0"
-
-[[package]]
-name = "example-1144-persistent-vector--functional-array"
-version = "0.1.0"
-
-[[package]]
-name = "example-1145-knapsack-problem--dynamic-programming-functional"
-version = "0.1.0"
-
-[[package]]
-name = "example-1146-dijkstra-shortest-path-priority-queue"
 version = "0.1.0"
 
 [[package]]
@@ -1371,71 +1155,11 @@ name = "example-1147-dijkstras-shortest-path-priority-queue"
 version = "0.1.0"
 
 [[package]]
-name = "example-1148-dijkstra-s-shortest-path-priority-queue"
-version = "0.1.0"
-
-[[package]]
-name = "example-1149-huffman-encoding-greedy-tree-building"
-version = "0.1.0"
-
-[[package]]
 name = "example-115-vec-patterns"
 version = "0.1.0"
 
 [[package]]
-name = "example-1150-persistent-vector-functional-array"
-version = "0.1.0"
-
-[[package]]
-name = "example-1151-knapsack-problem-dynamic-programming-functional"
-version = "0.1.0"
-
-[[package]]
-name = "example-1152-power-set-all-subsets"
-version = "0.1.0"
-
-[[package]]
-name = "example-1153-currying-partial-application-and-sections"
-version = "0.1.0"
-
-[[package]]
-name = "example-1154-currying-partial-application-and-sections"
-version = "0.1.0"
-
-[[package]]
-name = "example-1155-dijkstras-shortest-path-priority-queue"
-version = "0.1.0"
-
-[[package]]
-name = "example-1156-huffman-encoding-greedy-tree-building"
-version = "0.1.0"
-
-[[package]]
-name = "example-1157-persistent-vector--functional-array"
-version = "0.1.0"
-
-[[package]]
-name = "example-1158-knapsack-problem--dynamic-programming-functional"
-version = "0.1.0"
-
-[[package]]
-name = "example-1159-power-set--all-subsets"
-version = "0.1.0"
-
-[[package]]
 name = "example-116-box-heap"
-version = "0.1.0"
-
-[[package]]
-name = "example-1160-dijkstras-shortest-path-priority-queue"
-version = "0.1.0"
-
-[[package]]
-name = "example-1161-dijkstras-shortest-path-priority-queue"
-version = "0.1.0"
-
-[[package]]
-name = "example-1162-hello-world"
 version = "0.1.0"
 
 [[package]]
@@ -1448,10 +1172,6 @@ version = "0.1.0"
 
 [[package]]
 name = "example-1165-building-a-huffman-tree-from-character-frequencies"
-version = "0.1.0"
-
-[[package]]
-name = "example-1165-currying-partial-application-and-sections"
 version = "0.1.0"
 
 [[package]]
@@ -1479,10 +1199,6 @@ name = "example-1170-dijkstra-s-shortest-path-priority-queue"
 version = "0.1.0"
 
 [[package]]
-name = "example-1171-huffman-encoding-greedy-tree-building"
-version = "0.1.0"
-
-[[package]]
 name = "example-1172-persistent-vector-functional-array"
 version = "0.1.0"
 
@@ -1491,31 +1207,7 @@ name = "example-1173-knapsack-problem-dynamic-programming-functional"
 version = "0.1.0"
 
 [[package]]
-name = "example-1174-power-set-all-subsets"
-version = "0.1.0"
-
-[[package]]
-name = "example-1176-huffman-encoding-greedy-tree-building"
-version = "0.1.0"
-
-[[package]]
-name = "example-1177-persistent-vector-functional-array"
-version = "0.1.0"
-
-[[package]]
-name = "example-1178-knapsack-problem-dynamic-programming-functional"
-version = "0.1.0"
-
-[[package]]
-name = "example-1179-power-set-all-subsets"
-version = "0.1.0"
-
-[[package]]
 name = "example-118-deref-coercions"
-version = "0.1.0"
-
-[[package]]
-name = "example-1180-dijkstras-shortest-path-priority-queue"
 version = "0.1.0"
 
 [[package]]
@@ -1539,47 +1231,7 @@ name = "example-1185-stringsplit_on_char-tokenize-a-string"
 version = "0.1.0"
 
 [[package]]
-name = "example-1186-listfilter-select-elements-by-predicate"
-version = "0.1.0"
-
-[[package]]
-name = "example-1187-listfold_left-accumulate-a-result"
-version = "0.1.0"
-
-[[package]]
-name = "example-1188-listsort-sort-with-custom-comparator"
-version = "0.1.0"
-
-[[package]]
-name = "example-1189-listflatten-flatten-nested-lists"
-version = "0.1.0"
-
-[[package]]
 name = "example-119-zero-cost-abs"
-version = "0.1.0"
-
-[[package]]
-name = "example-1190-arrayblit-copy-subarray"
-version = "0.1.0"
-
-[[package]]
-name = "example-1191-listfilter-select-elements-by-predicate"
-version = "0.1.0"
-
-[[package]]
-name = "example-1192-listfold_left-accumulate-a-result"
-version = "0.1.0"
-
-[[package]]
-name = "example-1193-listsort-sort-with-custom-comparator"
-version = "0.1.0"
-
-[[package]]
-name = "example-1194-listflatten-flatten-nested-lists"
-version = "0.1.0"
-
-[[package]]
-name = "example-1195-arrayblit-copy-subarray"
 version = "0.1.0"
 
 [[package]]

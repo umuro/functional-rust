@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1040: Queue Using VecDeque
 // FIFO queue: push_back, pop_front — both O(1)

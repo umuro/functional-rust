@@ -1,9 +1,10 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1024: File Operation Errors
 // std::io::Error kinds and handling
 
 use std::fs;
-use std::io::{self, Write};
+use std::io;
 use std::path::Path;
 
 // Approach 1: Basic file operations with io::Error

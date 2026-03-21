@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1039: Stack Using Vec
 // Vec's push/pop operate at the end — perfect LIFO stack

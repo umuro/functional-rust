@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1058: Longest Increasing Subsequence — O(n log n) Patience Sorting
 
