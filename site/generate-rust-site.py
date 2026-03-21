@@ -1595,24 +1595,24 @@ def generate_by_topic(examples_data):
     # Only include topics that have examples, in taxonomy order
     present = [(tid, label) for tid, label, _ in TOPICS if by_topic.get(tid)]
 
-    # Per-topic vibrant gradient palette: (icon, css-gradient)
+    # Per-topic muted-dark gradient palette: rich hues, dark enough for white text
     TOPIC_STYLE = {
-        "iterators":         ("🔄", "linear-gradient(to right, #3b82f6, #22d3ee)"),
-        "pattern-matching":  ("🎯", "linear-gradient(to right, #a855f7, #8b5cf6)"),
-        "closures-hof":      ("⚡", "linear-gradient(to right, #f97316, #f59e0b)"),
-        "error-handling":    ("🛡️", "linear-gradient(to right, #ef4444, #fb7185)"),
-        "strings-parsing":   ("📝", "linear-gradient(to right, #22c55e, #10b981)"),
-        "trees":             ("🌳", "linear-gradient(to right, #059669, #14b8a6)"),
-        "graphs-algorithms": ("🕸️", "linear-gradient(to right, #0891b2, #0ea5e9)"),
-        "data-structures":   ("📦", "linear-gradient(to right, #6366f1, #3b82f6)"),
-        "recursion-dp":      ("♾️", "linear-gradient(to right, #eab308, #f59e0b)"),
-        "traits-types":      ("🔷", "linear-gradient(to right, #7c3aed, #a855f7)"),
-        "generics-macros":   ("⚙️", "linear-gradient(to right, #ec4899, #e879f9)"),
-        "lifetimes-memory":  ("⏳", "linear-gradient(to right, #d97706, #f97316)"),
-        "async-concurrency": ("🚀", "linear-gradient(to right, #14b8a6, #22d3ee)"),
-        "fp-abstractions":   ("🧮", "linear-gradient(to right, #f43f5e, #ec4899)"),
-        "testing":           ("✅", "linear-gradient(to right, #84cc16, #22c55e)"),
-        "other":             ("📌", "linear-gradient(to right, #6b7280, #64748b)"),
+        "iterators":         ("🔄", "linear-gradient(to right, #1d4ed8, #0e7490)"),
+        "pattern-matching":  ("🎯", "linear-gradient(to right, #6d28d9, #4c1d95)"),
+        "closures-hof":      ("⚡", "linear-gradient(to right, #c2410c, #92400e)"),
+        "error-handling":    ("🛡️", "linear-gradient(to right, #b91c1c, #9f1239)"),
+        "strings-parsing":   ("📝", "linear-gradient(to right, #15803d, #065f46)"),
+        "trees":             ("🌳", "linear-gradient(to right, #047857, #0f766e)"),
+        "graphs-algorithms": ("🕸️", "linear-gradient(to right, #0e7490, #075985)"),
+        "data-structures":   ("📦", "linear-gradient(to right, #4338ca, #1d4ed8)"),
+        "recursion-dp":      ("♾️", "linear-gradient(to right, #a16207, #92400e)"),
+        "traits-types":      ("🔷", "linear-gradient(to right, #5b21b6, #6d28d9)"),
+        "generics-macros":   ("⚙️", "linear-gradient(to right, #be185d, #86198f)"),
+        "lifetimes-memory":  ("⏳", "linear-gradient(to right, #b45309, #c2410c)"),
+        "async-concurrency": ("🚀", "linear-gradient(to right, #0f766e, #0e7490)"),
+        "fp-abstractions":   ("🧮", "linear-gradient(to right, #be123c, #9d174d)"),
+        "testing":           ("✅", "linear-gradient(to right, #4d7c0f, #15803d)"),
+        "other":             ("📌", "linear-gradient(to right, #374151, #4b5563)"),
     }
 
     def _topic_pill(fv, icon, label, count, grad=None):
@@ -1631,7 +1631,7 @@ def generate_by_topic(examples_data):
         )
 
     all_pill = _topic_pill("all", "🗂", "All", len(examples_data),
-                           grad="linear-gradient(to right, #4b5563, #6b7280)")
+                           grad="linear-gradient(to right, #1f2937, #374151)")
     pills = "\n".join(
         _topic_pill(tid, TOPIC_STYLE.get(tid, ("•",))[0], label, len(by_topic[tid]))
         for tid, label in present
