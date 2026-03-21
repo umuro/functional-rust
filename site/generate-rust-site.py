@@ -1594,17 +1594,56 @@ def generate_by_topic(examples_data):
     # Only include topics that have examples, in taxonomy order
     present = [(tid, label) for tid, label, _ in TOPICS if by_topic.get(tid)]
 
-    btn_cls = ('text-left bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 '
-               'rounded-lg px-3 py-2 hover:border-orange-400 hover:text-orange-500 '
-               'transition-colors text-sm font-medium')
+    # Per-topic vibrant gradient palette: (icon, from-color, to-color)
+    TOPIC_STYLE = {
+        "iterators":         ("🔄", "from-blue-500",    "to-cyan-400"),
+        "pattern-matching":  ("🎯", "from-purple-500",  "to-violet-400"),
+        "closures-hof":      ("⚡", "from-orange-500",  "to-amber-400"),
+        "error-handling":    ("🛡️", "from-red-500",     "to-rose-400"),
+        "strings-parsing":   ("📝", "from-green-500",   "to-emerald-400"),
+        "trees":             ("🌳", "from-emerald-600", "to-teal-500"),
+        "graphs-algorithms": ("🕸️", "from-cyan-600",    "to-sky-500"),
+        "data-structures":   ("📦", "from-indigo-500",  "to-blue-400"),
+        "recursion-dp":      ("♾️", "from-yellow-500",  "to-amber-400"),
+        "traits-types":      ("🔷", "from-violet-600",  "to-purple-500"),
+        "generics-macros":   ("⚙️", "from-pink-500",    "to-fuchsia-400"),
+        "lifetimes-memory":  ("⏳", "from-amber-600",   "to-orange-500"),
+        "async-concurrency": ("🚀", "from-teal-500",    "to-cyan-400"),
+        "fp-abstractions":   ("🧮", "from-rose-500",    "to-pink-400"),
+        "testing":           ("✅", "from-lime-500",    "to-green-400"),
+        "other":             ("📌", "from-gray-500",    "to-slate-400"),
+    }
+
+    def _topic_pill(fv, icon, label, count):
+        fr, to = TOPIC_STYLE.get(fv, ("•", "from-gray-500", "to-slate-400"))[1:]
+        return (
+            f'<button data-fv="{fv}" class="inline-flex items-center gap-1.5 '
+            f'bg-gradient-to-r {fr} {to} text-white '
+            f'px-3.5 py-1.5 rounded-full text-sm font-semibold shadow '
+            f'hover:shadow-md hover:brightness-110 hover:scale-105 active:scale-95 '
+            f'transition-all duration-150">'
+            f'{icon} {escape_html(label)} '
+            f'<span class="bg-black/20 text-xs px-1.5 py-0.5 rounded-full">{count}</span>'
+            f'</button>'
+        )
+
+    all_pill = _topic_pill("all", "🗂", "All", len(examples_data)).replace(
+        'bg-gradient-to-r from-gray-500 to-slate-400',
+        'bg-gradient-to-r from-gray-700 to-gray-500 dark:from-gray-300 dark:to-gray-100 dark:text-gray-900'
+    )
+    # fix the all pill manually since it has no topic entry
     all_pill = (
-        f'<button data-fv="all" class="{btn_cls}">'
-        f'All <span class="text-gray-400 dark:text-gray-500 text-xs">({len(examples_data)})</span></button>'
+        f'<button data-fv="all" class="inline-flex items-center gap-1.5 '
+        f'bg-gradient-to-r from-gray-700 to-gray-500 text-white '
+        f'px-3.5 py-1.5 rounded-full text-sm font-semibold shadow '
+        f'hover:shadow-md hover:brightness-110 hover:scale-105 active:scale-95 '
+        f'transition-all duration-150">'
+        f'🗂 All '
+        f'<span class="bg-black/20 text-xs px-1.5 py-0.5 rounded-full">{len(examples_data)}</span>'
+        f'</button>'
     )
     pills = "\n".join(
-        '<button data-fv="{}" class="{}">{} <span class="text-gray-400 dark:text-gray-500 text-xs">({})</span></button>'.format(
-            tid, btn_cls, escape_html(label), len(by_topic[tid])
-        )
+        _topic_pill(tid, TOPIC_STYLE.get(tid, ("•",))[0], label, len(by_topic[tid]))
         for tid, label in present
     )
 
