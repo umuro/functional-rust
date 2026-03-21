@@ -325,26 +325,43 @@ document.addEventListener('DOMContentLoaded', function() {
     if (counter) counter.textContent = (q || activeLevel !== 'all') ? count + ' result' + (count !== 1 ? 's' : '') : '';
   }
 
+  function setLevel(level, scroll) {
+    activeLevel = level;
+    // Update filter bar buttons
+    document.querySelectorAll('.level-filter').forEach(function(b) {
+      var on = b.dataset.level === level;
+      b.classList.toggle('bg-orange-500', on);
+      b.classList.toggle('text-white', on);
+      b.classList.toggle('bg-gray-100', !on);
+      b.classList.toggle('dark:bg-gray-700', !on);
+      b.classList.toggle('text-gray-700', !on);
+      b.classList.toggle('dark:text-gray-300', !on);
+    });
+    // Update hero stat cards
+    document.querySelectorAll('.hero-stat-btn').forEach(function(b) {
+      var on = b.dataset.level === level;
+      b.style.outline = on ? '3px solid white' : '';
+      b.style.outlineOffset = on ? '2px' : '';
+      b.style.transform = on ? 'scale(1.08)' : '';
+    });
+    filterCards();
+    if (scroll) {
+      var grid = document.getElementById('examples-grid');
+      if (grid) grid.scrollIntoView({behavior: 'smooth', block: 'start'});
+    }
+  }
+
   searchEl.addEventListener('input', filterCards);
 
   document.querySelectorAll('.level-filter').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      activeLevel = this.dataset.level;
-      document.querySelectorAll('.level-filter').forEach(function(b) {
-        b.classList.remove('bg-orange-500', 'text-white');
-        b.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-      });
-      this.classList.add('bg-orange-500', 'text-white');
-      this.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-      filterCards();
-    });
+    btn.addEventListener('click', function() { setLevel(this.dataset.level, false); });
   });
 
-  var allBtn = document.querySelector('.level-filter[data-level="all"]');
-  if (allBtn) {
-    allBtn.classList.add('bg-orange-500', 'text-white');
-    allBtn.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-  }
+  document.querySelectorAll('.hero-stat-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { setLevel(this.dataset.level, true); });
+  });
+
+  setLevel('all', false);
 });
 </script>"""
 
@@ -1415,27 +1432,18 @@ def generate_index(examples_data):
     na = len(by_level.get("advanced", []))
     ne = len(by_level.get("expert",   []))
 
-    def _stat_onclick(level):
-        # Use single quotes inside the CSS selector to avoid breaking the HTML attribute
-        return (
-            f"document.querySelector('.level-filter[data-level={level}]').click();"
-            f"document.getElementById('examples-grid').scrollIntoView({{behavior:'smooth',block:'start'}})"
-        )
-
     def _stat_card(level, count, label, bg, text):
-        oc = _stat_onclick(level)
         return (
-            f'<button onclick="{oc}" '
-            f'class="{bg} rounded-xl p-5 text-center cursor-pointer hover:brightness-125 hover:scale-105 transition-all duration-150 w-full">'
+            f'<button data-level="{level}" '
+            f'class="hero-stat-btn {bg} rounded-xl p-5 text-center cursor-pointer hover:brightness-125 transition-all duration-150 w-full">'
             f'<div class="text-4xl font-bold {text}">{count}</div>'
             f'<div class="text-sm text-gray-300 mt-1">{label}</div>'
             f'</button>'
         )
 
-    oc_all = _stat_onclick("all")
     stats = (
         '\n        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">'
-        f'\n          <button onclick="{oc_all}" class="bg-white/10 backdrop-blur-sm rounded-xl p-5 text-center cursor-pointer hover:brightness-125 hover:scale-105 transition-all duration-150 col-span-2 md:col-span-1"><div class="text-4xl font-bold">{total}</div><div class="text-sm text-gray-300 mt-1">Examples</div></button>'
+        f'\n          <button data-level="all" class="hero-stat-btn bg-white/10 backdrop-blur-sm rounded-xl p-5 text-center cursor-pointer hover:brightness-125 transition-all duration-150 col-span-2 md:col-span-1"><div class="text-4xl font-bold">{total}</div><div class="text-sm text-gray-300 mt-1">Examples</div></button>'
         f'\n          {_stat_card("fundamental",  nf, "Fundamental", "bg-green-500/20",  "text-green-300")}'
         f'\n          {_stat_card("intermediate", ni, "Intermediate", "bg-blue-500/20",   "text-blue-300")}'
         f'\n          {_stat_card("advanced",     na, "Advanced",    "bg-purple-500/20", "text-purple-300")}'
