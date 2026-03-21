@@ -356,8 +356,10 @@ FILTER_JS = """<script>
     function activate(val) {
       btns.forEach(function(b) {
         var on = b.dataset.fv === val;
-        b.style.opacity = on ? '1' : '0.45';
-        b.style.transform = on ? 'scale(1.05)' : 'scale(1)';
+        b.style.outline = on ? '3px solid white' : '';
+        b.style.outlineOffset = on ? '2px' : '';
+        b.style.transform = on ? 'scale(1.08)' : 'scale(1)';
+        b.style.boxShadow = on ? '0 0 0 3px rgba(255,255,255,0.6)' : '';
         b.setAttribute('aria-pressed', on ? 'true' : 'false');
       });
       secs.forEach(function(s) {
