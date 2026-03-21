@@ -1,0 +1,6 @@
+{
+  "num": 26,
+  "title": "### 026: List.filter \u2014 Select Elements by Predicate",
+  "topic": "Keep only elements satisfying a condition",
+  "source": "OCaml Standard Library"
+}

@@ -1539,7 +1539,27 @@ name = "example-1185-stringsplit_on_char-tokenize-a-string"
 version = "0.1.0"
 
 [[package]]
+name = "example-1186-listfilter-select-elements-by-predicate"
+version = "0.1.0"
+
+[[package]]
+name = "example-1187-listfold_left-accumulate-a-result"
+version = "0.1.0"
+
+[[package]]
+name = "example-1188-listsort-sort-with-custom-comparator"
+version = "0.1.0"
+
+[[package]]
+name = "example-1189-listflatten-flatten-nested-lists"
+version = "0.1.0"
+
+[[package]]
 name = "example-119-zero-cost-abs"
+version = "0.1.0"
+
+[[package]]
+name = "example-1190-arrayblit-copy-subarray"
 version = "0.1.0"
 
 [[package]]
