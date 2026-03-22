@@ -711,6 +711,10 @@ name = "example-1009-collecting-results"
 version = "0.1.0"
 
 [[package]]
+name = "example-101-huffman-encoding"
+version = "0.1.0"
+
+[[package]]
 name = "example-101-lazy-sequences"
 version = "0.1.0"
 
@@ -764,6 +768,10 @@ version = "0.1.0"
 
 [[package]]
 name = "example-102-frequency-counter"
+version = "0.1.0"
+
+[[package]]
+name = "example-102-persistent-vector"
 version = "0.1.0"
 
 [[package]]
