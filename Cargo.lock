@@ -1231,6 +1231,18 @@ name = "example-1185-stringsplit_on_char-tokenize-a-string"
 version = "0.1.0"
 
 [[package]]
+name = "example-1186-huffman-encoding-greedy-tree-building"
+version = "0.1.0"
+
+[[package]]
+name = "example-1187-huffman-encoding-greedy-tree-building"
+version = "0.1.0"
+
+[[package]]
+name = "example-1188-huffman-encoding-greedy-tree-building"
+version = "0.1.0"
+
+[[package]]
 name = "example-119-zero-cost-abs"
 version = "0.1.0"
 
