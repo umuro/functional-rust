@@ -1243,7 +1243,27 @@ name = "example-1188-huffman-encoding-greedy-tree-building"
 version = "0.1.0"
 
 [[package]]
+name = "example-1189-huffman-encoding-greedy-tree-building"
+version = "0.1.0"
+
+[[package]]
 name = "example-119-zero-cost-abs"
+version = "0.1.0"
+
+[[package]]
+name = "example-1190-persistent-vector-functional-array"
+version = "0.1.0"
+
+[[package]]
+name = "example-1191-list-filter-select-elements-by-predicate"
+version = "0.1.0"
+
+[[package]]
+name = "example-1192-list-fold-left-accumulate-result"
+version = "0.1.0"
+
+[[package]]
+name = "example-1193-list-sort-custom-comparator"
 version = "0.1.0"
 
 [[package]]
