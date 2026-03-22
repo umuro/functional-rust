@@ -153,5 +153,18 @@ def main():
     for dir_name in created:
         print(dir_name)
 
+    # Remind the caller to run conversions + quality checks
+    if created:
+        print('', file=sys.stderr)
+        print('Next steps:', file=sys.stderr)
+        print('  1. Convert each directory with Claude (run_conversions.sh or direct claude -p)', file=sys.stderr)
+        print('  2. Validate quality gates:', file=sys.stderr)
+        for dir_name in created:
+            print(f'       bash scripts/check-one-example.sh examples/{dir_name}', file=sys.stderr)
+        print('', file=sys.stderr)
+        print('  Or use run_conversions.sh which runs checks automatically after each conversion:', file=sys.stderr)
+        dirs_arg = ' '.join(created)
+        print(f'       bash run_conversions.sh {dirs_arg}', file=sys.stderr)
+
 if __name__ == '__main__':
     main()
