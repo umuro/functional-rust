@@ -16,31 +16,64 @@ impl HTree {
     }
 }
 
-/// Idiomatic Rust: build a Huffman tree using a BinaryHeap (min-heap via Reverse).
-/// Avoids repeated sorting by using a priority queue.
+/// Idiomatic Rust: build a Huffman tree using a BinaryHeap (min-heap).
+/// Uses a struct wrapper to implement Ord only on the priority key, not on HTree itself.
 pub fn build_tree_idiomatic(freqs: &[(char, u32)]) -> Option<HTree> {
-    use std::cmp::Reverse;
     use std::collections::BinaryHeap;
 
-    // BinaryHeap is a max-heap; wrap in Reverse to get min-heap by frequency.
-    let mut heap: BinaryHeap<Reverse<(u32, usize, HTree)>> = freqs
+    // Wrapper so BinaryHeap can order by (freq, counter) without requiring HTree: Ord.
+    struct Item {
+        freq: u32,
+        counter: usize,
+        tree: HTree,
+    }
+
+    impl PartialEq for Item {
+        fn eq(&self, other: &Self) -> bool {
+            self.freq == other.freq && self.counter == other.counter
+        }
+    }
+    impl Eq for Item {}
+    impl PartialOrd for Item {
+        fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+            Some(self.cmp(other))
+        }
+    }
+    impl Ord for Item {
+        fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+            // Reverse on freq: lower frequency → higher priority (min-heap).
+            // Break ties by counter so insertion order is stable.
+            other
+                .freq
+                .cmp(&self.freq)
+                .then(other.counter.cmp(&self.counter))
+        }
+    }
+
+    let mut counter = freqs.len();
+    let mut heap: BinaryHeap<Item> = freqs
         .iter()
         .enumerate()
-        .map(|(i, &(c, f))| Reverse((f, i, HTree::Leaf(c, f))))
+        .map(|(i, &(c, f))| Item {
+            freq: f,
+            counter: i,
+            tree: HTree::Leaf(c, f),
+        })
         .collect();
 
-    // Use a counter to break frequency ties deterministically (FIFO order).
-    let mut counter = freqs.len();
-
     loop {
-        let Reverse((_, _, a)) = heap.pop()?;
+        let a = heap.pop()?;
         let b = match heap.pop() {
-            Some(Reverse((_, _, node))) => node,
-            None => return Some(a),
+            Some(item) => item,
+            None => return Some(a.tree),
         };
-        let merged_freq = a.freq() + b.freq();
-        let merged = HTree::Node(Box::new(a), Box::new(b), merged_freq);
-        heap.push(Reverse((merged_freq, counter, merged)));
+        let merged_freq = a.freq + b.freq;
+        let merged = HTree::Node(Box::new(a.tree), Box::new(b.tree), merged_freq);
+        heap.push(Item {
+            freq: merged_freq,
+            counter,
+            tree: merged,
+        });
         counter += 1;
     }
 }
@@ -48,10 +81,7 @@ pub fn build_tree_idiomatic(freqs: &[(char, u32)]) -> Option<HTree> {
 /// Functional/recursive Rust: mirrors the OCaml approach — sort the list each round.
 /// Less efficient than the heap approach but structurally identical to the OCaml source.
 pub fn build_tree_recursive(freqs: &[(char, u32)]) -> Option<HTree> {
-    let mut trees: Vec<HTree> = freqs
-        .iter()
-        .map(|&(c, f)| HTree::Leaf(c, f))
-        .collect();
+    let mut trees: Vec<HTree> = freqs.iter().map(|&(c, f)| HTree::Leaf(c, f)).collect();
     trees.sort_by_key(|t| t.freq());
     go(trees)
 }
@@ -61,7 +91,7 @@ fn go(mut trees: Vec<HTree>) -> Option<HTree> {
         0 => None,
         1 => trees.into_iter().next(),
         _ => {
-            // Take the two lowest-frequency trees (already sorted).
+            // Take the two lowest-frequency trees (already sorted ascending).
             let a = trees.remove(0);
             let b = trees.remove(0);
             let merged_freq = a.freq() + b.freq();
@@ -74,7 +104,7 @@ fn go(mut trees: Vec<HTree>) -> Option<HTree> {
 }
 
 /// Recursively collect (char, code-string) pairs by traversing the tree.
-/// '0' goes left (first child), '1' goes right (second child).
+/// '0' goes left, '1' goes right.
 pub fn codes(tree: &HTree, prefix: &str) -> Vec<(char, String)> {
     match tree {
         HTree::Leaf(c, _) => vec![(*c, prefix.to_owned())],
@@ -102,25 +132,17 @@ mod tests {
     }
 
     #[test]
-    fn test_build_tree_idiomatic_single_char() {
+    fn test_build_tree_empty_returns_none() {
+        assert!(build_tree_idiomatic(&[]).is_none());
+        assert!(build_tree_recursive(&[]).is_none());
+    }
+
+    #[test]
+    fn test_build_tree_single_char() {
         let freqs = vec![('x', 7)];
         let tree = build_tree_idiomatic(&freqs).expect("should build");
         assert_eq!(tree.freq(), 7);
         assert!(matches!(tree, HTree::Leaf('x', 7)));
-    }
-
-    #[test]
-    fn test_build_tree_recursive_single_char() {
-        let freqs = vec![('x', 7)];
-        let tree = build_tree_recursive(&freqs).expect("should build");
-        assert_eq!(tree.freq(), 7);
-        assert!(matches!(tree, HTree::Leaf('x', 7)));
-    }
-
-    #[test]
-    fn test_build_tree_empty_returns_none() {
-        assert!(build_tree_idiomatic(&[]).is_none());
-        assert!(build_tree_recursive(&[]).is_none());
     }
 
     #[test]
@@ -145,7 +167,6 @@ mod tests {
 
     #[test]
     fn test_codes_prefix_free() {
-        // In a valid Huffman tree no code is a prefix of another.
         let freqs = sample_freqs();
         let tree = build_tree_idiomatic(&freqs).expect("should build");
         let result = codes(&tree, "");
@@ -165,16 +186,16 @@ mod tests {
 
     #[test]
     fn test_highest_freq_char_gets_shortest_code() {
-        // 'f' has freq 45 — more than all others combined — so it gets code "0" or "1" (len 1).
+        // 'f' has freq 45 — more than all others combined — so it gets a 1-bit code.
         let freqs = sample_freqs();
         let tree = build_tree_idiomatic(&freqs).expect("should build");
         let result = codes(&tree, "");
-        let f_code = result
+        let f_code_len = result
             .iter()
             .find(|(c, _)| *c == 'f')
             .map(|(_, code)| code.len())
             .expect("f must have a code");
-        assert_eq!(f_code, 1, "'f' should get a 1-bit code");
+        assert_eq!(f_code_len, 1, "'f' should get a 1-bit code");
     }
 
     #[test]
@@ -189,9 +210,7 @@ mod tests {
     }
 
     #[test]
-    fn test_codes_recursive_vs_idiomatic_same_set() {
-        // Both approaches must produce codes for the same set of characters,
-        // each code non-empty, and the prefix-free property holds for both.
+    fn test_recursive_matches_idiomatic_charset() {
         let freqs = sample_freqs();
         let t1 = build_tree_idiomatic(&freqs).expect("should build");
         let t2 = build_tree_recursive(&freqs).expect("should build");
@@ -202,7 +221,6 @@ mod tests {
         let chars1: Vec<char> = c1.iter().map(|(c, _)| *c).collect();
         let chars2: Vec<char> = c2.iter().map(|(c, _)| *c).collect();
         assert_eq!(chars1, chars2);
-        // All codes must be non-empty.
         for (_, code) in c1.iter().chain(c2.iter()) {
             assert!(!code.is_empty());
         }

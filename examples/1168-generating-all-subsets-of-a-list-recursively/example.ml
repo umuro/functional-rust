@@ -1,3 +1,4 @@
+(* Idiomatic OCaml: generate all subsets recursively *)
 let rec powerset = function
   | [] -> [[]]
   | x :: rest ->
@@ -5,8 +6,9 @@ let rec powerset = function
     ps @ List.map (fun s -> x :: s) ps
 
 let () =
-  let sets = powerset [1; 2; 3] in
-  Printf.printf "%d subsets:\n" (List.length sets);
-  List.iter (fun s ->
-    Printf.printf "{%s}\n" (String.concat "," (List.map string_of_int s))
-  ) sets
+  assert (powerset [] = [[]]);
+  assert (List.length (powerset [1;2;3]) = 8);
+  assert (List.length (powerset [1;2;3;4]) = 16);
+  assert (List.mem [] (powerset [1;2;3]));
+  assert (List.mem [1;2;3] (powerset [1;2;3]));
+  print_endline "ok"

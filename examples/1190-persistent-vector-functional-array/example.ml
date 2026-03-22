@@ -32,6 +32,14 @@ let of_list lst =
 
 let () =
   let v = of_list [10;20;30;40;50] in
-  Printf.printf "v[2] = %d\n" (get 2 v);
-  let v = set 2 99 v in
-  Printf.printf "v[2] = %d\n" (get 2 v)
+  assert (size v = 5);
+  assert (get 0 v = 10);
+  assert (get 2 v = 30);
+  assert (get 4 v = 50);
+  let v2 = set 2 99 v in
+  (* Original unchanged — persistent semantics *)
+  assert (get 2 v = 30);
+  (* New version has updated element *)
+  assert (get 2 v2 = 99);
+  assert (of_list [] = Nil);
+  print_endline "ok"

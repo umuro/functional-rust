@@ -1,3 +1,4 @@
+(* Idiomatic OCaml: Huffman tree from character frequencies *)
 type htree = Leaf of char * int | Node of htree * htree * int
 
 let freq t = match t with Leaf (_,f) -> f | Node (_,_,f) -> f
@@ -21,5 +22,11 @@ let rec codes prefix = function
 let () =
   let freqs = [('a',5);('b',9);('c',12);('d',13);('e',16);('f',45)] in
   let tree = build_tree freqs in
-  codes "" tree |> List.iter (fun (c, code) ->
-    Printf.printf "%c: %s\n" c code)
+  let total = List.fold_left (fun acc (_,f) -> acc + f) 0 freqs in
+  assert (freq tree = total);
+  let all_codes = codes "" tree in
+  assert (List.length all_codes = 6);
+  (* 'f' has frequency 45 — more than all others combined — so it gets a 1-bit code *)
+  let f_code = List.assoc 'f' all_codes in
+  assert (String.length f_code = 1);
+  print_endline "ok"
