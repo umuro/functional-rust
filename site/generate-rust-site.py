@@ -75,7 +75,8 @@ TOPICS = [
      ["closure-", "higher-order", "currying", "partial-app", "function-comp",
       "function-pointer", "pipeline-op", "applying-a-function", "twice",
       "higher-order-fn", "function-composition",
-      "fn-fnmut", "fn-fnonce", "boxing-closure", "-cps", "cps-"]),
+      "fn-fnmut", "fn-fnonce", "boxing-closure", "-cps", "cps-",
+      "hello-world"]),
     ("error-handling",   "Error Handling",
      ["error-", "-errors", "-error", "result-", "-result", "option-", "validated-",
       "try-operator", "try-trait", "parse-error", "parse-dont", "parse-int-safe",
@@ -188,7 +189,7 @@ TOPICS = [
     ("fp-abstractions",  "FP Abstractions",
      ["monad-", "writer-monad", "state-monad", "reader-monad", "identity-monad",
       "functor-", "functors-intro", "map-functor", "applicative-",
-      "free-monad", "monoid-", "effect-", "lens", "prism-", "profunctor-",
+      "free-monad", "monoid-", "monoid", "effect-", "lens", "prism-", "profunctor-",
       "optic", "continuation-", "comonad", "bifunctor", "kleisli",
       "adjunction", "yoneda", "coyoneda", "tambara", "higher-order-fn",
       "traversal", "affine-", "iso-", "morphism", "natural-transf",
@@ -211,15 +212,28 @@ TOPICS = [
      []),  # catch-all — remaining examples
 ]
 
-def classify_topic(slug):
-    """Classify an example by its directory slug into a topic group."""
+def classify_topic(slug, title=""):
+    """Classify an example by its directory slug into a topic group.
+    Falls back to checking the README title when the slug has no useful text
+    (e.g. '1136-' with no concept words after the number).
+    """
+    # Try slug first
     s = slug.lower()
     for tid, _label, keywords in TOPICS:
         if tid == "other":
-            return "other"
+            break
         for kw in keywords:
             if kw in s:
                 return tid
+    # Slug didn't match — try title if provided
+    if title:
+        t = title.lower()
+        for tid, _label, keywords in TOPICS:
+            if tid == "other":
+                break
+            for kw in keywords:
+                if kw in t:
+                    return tid
     return "other"
 
 # ---- Learning paths ----
@@ -960,7 +974,7 @@ def classify_learning_path(concepts, title, slug):
     using the _TOPIC_TO_PATH table.  Falls back to 'list-basics' when the
     topic is unknown.
     """
-    topic = classify_topic(slug)
+    topic = classify_topic(slug, title)
     return _TOPIC_TO_PATH.get(topic, "list-basics")
 
 def parse_comparison(comparison_md):
@@ -2208,7 +2222,7 @@ for ex in all_examples:
     level    = extract_difficulty(readme, ex.name)
     concepts = extract_concepts(readme)
     path_id  = classify_learning_path(concepts, title, ex.name)
-    topic_id = classify_topic(ex.name)
+    topic_id = classify_topic(ex.name, title)
     examples_data.append({
         "dirname":  ex.name,
         "num":      num,
