@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "code-review-graph": {
+      "command": "/home/umur/.local/bin/code-review-graph",
+      "args": [
+        "serve"
+      ]
+    }
+  }
+}
