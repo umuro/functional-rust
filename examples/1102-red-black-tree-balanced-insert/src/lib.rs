@@ -1,4 +1,4 @@
-#![allow(clippy::all)]
+#![allow(dead_code)]
 //! 1102: Red-Black Tree with Okasaki's Functional Balancing
 //!
 //! A purely functional red-black tree using Okasaki's elegant pattern-matching

@@ -1279,6 +1279,14 @@ name = "example-1194-string-sub-and-concat"
 version = "0.1.0"
 
 [[package]]
+name = "example-1195-queue-item"
+version = "0.1.0"
+
+[[package]]
+name = "example-1196"
+version = "0.1.0"
+
+[[package]]
 name = "example-120-closure-types"
 version = "0.1.0"
 

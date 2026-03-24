@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 // Example 110: Cell<T> — Interior Mutability for Copy Types
 //
 // Cell<T> allows mutation through a shared reference (&T).
@@ -9,10 +8,6 @@
 use std::cell::Cell;
 
 // ── Approach 1: Simple counter ────────────────────────────────────────────────
-//
-// Mirrors OCaml `let counter = ref 0`.  Here the binding is immutable (`let`),
-// yet `Cell::set` can still update the interior value.  The key insight:
-// `Cell` wraps the mutation, so the *binding* never needs `mut`.
 
 pub fn counter_demo() -> u32 {
     let counter = Cell::new(0u32);
@@ -22,10 +17,6 @@ pub fn counter_demo() -> u32 {
 }
 
 // ── Approach 2: Mutable field inside an otherwise-immutable struct ────────────
-//
-// `Config` can be shared via `&Config` (multiple callers, no `mut` required),
-// yet `call_count` tracks how many times it has been used.
-// This is the classic "shared-but-selectively-mutable" pattern in Rust.
 
 pub struct Config {
     pub name: String,
@@ -41,7 +32,6 @@ impl Config {
     }
 
     // Takes `&self` (shared reference) yet increments the counter.
-    // Without Cell we would need `&mut self`, preventing sharing.
     pub fn use_it(&self) {
         self.call_count.set(self.call_count.get() + 1);
     }
@@ -52,10 +42,6 @@ impl Config {
 }
 
 // ── Approach 3: Lazy / cached computation ────────────────────────────────────
-//
-// Mirrors the OCaml pattern of storing `None` initially and replacing with
-// `Some(computed)` on first access.  `Cell<Option<T>>` works here because
-// `Option<T>` is `Copy` when `T: Copy`.
 
 pub struct CachedSquare {
     input: i32,
@@ -70,7 +56,6 @@ impl CachedSquare {
         }
     }
 
-    // Expensive computation (simulated).  Result is stored on first call.
     pub fn get(&self) -> i32 {
         match self.cache.get() {
             Some(v) => v,
@@ -84,10 +69,6 @@ impl CachedSquare {
 }
 
 // ── Approach 4: Cell as a flag (bool) ─────────────────────────────────────────
-//
-// `bool` is Copy, so `Cell<bool>` is a lightweight, non-atomic toggle.
-// Useful for visited flags in traversal, or once-only guards, without
-// the overhead of a Mutex.
 
 pub fn toggle_demo() -> (bool, bool) {
     let flag = Cell::new(false);
@@ -97,7 +78,42 @@ pub fn toggle_demo() -> (bool, bool) {
     (before, after)
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+fn main() {
+    // Approach 1: counter through shared ref
+    let count = counter_demo();
+    println!("counter_demo() = {count}");
+
+    // Approach 2: Config with selectively mutable call_count
+    let cfg = Config::new("default");
+    let r1 = &cfg;
+    let r2 = &cfg; // two shared refs simultaneously — allowed!
+    r1.use_it();
+    r2.use_it();
+    println!("Config '{}' used {} times", cfg.name, cfg.count());
+
+    // Approach 3: lazy cached square
+    let cs = CachedSquare::new(7);
+    println!("CachedSquare(7).get() = {}", cs.get());
+    println!("CachedSquare(7).get() again = {} (from cache)", cs.get());
+
+    // Approach 4: bool toggle
+    let (before, after) = toggle_demo();
+    println!("toggle: before={before}, after={after}");
+
+    // Cell::replace — swap and return old value
+    let c = Cell::new(42i32);
+    let old = c.replace(99);
+    println!("replace(99): old={old}, new={}", c.get());
+}
+
+/* Output:
+   counter_demo() = 2
+   Config 'default' used 2 times
+   CachedSquare(7).get() = 49
+   CachedSquare(7).get() again = 49 (from cache)
+   toggle: before=false, after=true
+   replace(99): old=42, new=99
+*/
 
 #[cfg(test)]
 mod tests {
@@ -105,9 +121,8 @@ mod tests {
 
     #[test]
     fn test_counter_increments_via_shared_ref() {
-        // Cell::set works through &Cell<T> — no `mut` binding needed.
         let c = Cell::new(0u32);
-        let r = &c; // shared reference
+        let r = &c;
         r.set(r.get() + 10);
         r.set(r.get() + 5);
         assert_eq!(c.get(), 15);
@@ -122,7 +137,7 @@ mod tests {
     fn test_config_call_count_through_shared_ref() {
         let cfg = Config::new("test");
         let r1 = &cfg;
-        let r2 = &cfg; // two shared refs at the same time — allowed!
+        let r2 = &cfg;
         r1.use_it();
         r2.use_it();
         r1.use_it();
@@ -138,10 +153,8 @@ mod tests {
     #[test]
     fn test_cached_square_computed_once() {
         let cs = CachedSquare::new(7);
-        // First call computes, subsequent calls return cached value.
         assert_eq!(cs.get(), 49);
-        assert_eq!(cs.get(), 49); // from cache
-                                  // Confirm the cache cell is now Some.
+        assert_eq!(cs.get(), 49);
         assert_eq!(cs.cache.get(), Some(49));
     }
 
@@ -160,7 +173,6 @@ mod tests {
 
     #[test]
     fn test_cell_replace() {
-        // Cell::replace returns the old value — handy for swap patterns.
         let c = Cell::new(42i32);
         let old = c.replace(99);
         assert_eq!(old, 42);
