@@ -1,0 +1,11 @@
+[package]
+name = "example-1201-reverse-string"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[[example]]
+name = "demo"
+doc = false
+path = "src/lib.rs"
