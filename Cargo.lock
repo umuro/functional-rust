@@ -719,6 +719,10 @@ name = "example-101-lazy-sequences"
 version = "0.1.0"
 
 [[package]]
+name = "example-101-list-filter"
+version = "0.1.0"
+
+[[package]]
 name = "example-101-move-semantics"
 version = "0.1.0"
 
@@ -1292,6 +1296,10 @@ version = "0.1.0"
 
 [[package]]
 name = "example-1198-applying-a-function-twice"
+version = "0.1.0"
+
+[[package]]
+name = "example-1199-024-currying-partial-application-and-sections"
 version = "0.1.0"
 
 [[package]]
