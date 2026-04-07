@@ -1311,6 +1311,30 @@ name = "example-1200-list-filter-select-elements-predicate"
 version = "0.1.0"
 
 [[package]]
+name = "example-1201-reverse-string"
+version = "0.1.0"
+
+[[package]]
+name = "example-1202-huffman-encoding-greedy-tree-building"
+version = "0.1.0"
+
+[[package]]
+name = "example-1203-huffman-encoding-greedy-tree-building"
+version = "0.1.0"
+
+[[package]]
+name = "example-1204-persistent-vector-functional-array"
+version = "0.1.0"
+
+[[package]]
+name = "example-1205-list-filter-select-elements-by-predicate"
+version = "0.1.0"
+
+[[package]]
+name = "example-1206-list-fold-left-accumulate-a-result"
+version = "0.1.0"
+
+[[package]]
 name = "example-121-closure-capture"
 version = "0.1.0"
 
