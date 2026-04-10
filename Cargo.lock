@@ -1339,7 +1339,35 @@ name = "example-1207-huffman-encoding-greedy-tree-building"
 version = "0.1.0"
 
 [[package]]
+name = "example-1208-applying-a-function-twice"
+version = "0.1.0"
+
+[[package]]
+name = "example-1208-currying-partial-application-and-sections"
+version = "0.1.0"
+
+[[package]]
+name = "example-1209-conway-s-game-of-life"
+version = "0.1.0"
+
+[[package]]
+name = "example-1209-persistent-vector-functional-array"
+version = "0.1.0"
+
+[[package]]
 name = "example-121-closure-capture"
+version = "0.1.0"
+
+[[package]]
+name = "example-1210-knapsack-problem-dynamic-programming-functional"
+version = "0.1.0"
+
+[[package]]
+name = "example-1211-listfold_left-accumulate-a-result"
+version = "0.1.0"
+
+[[package]]
+name = "example-1212-listsort-sort-with-custom-comparator"
 version = "0.1.0"
 
 [[package]]
