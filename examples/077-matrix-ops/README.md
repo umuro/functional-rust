@@ -24,7 +24,26 @@ The functional approach: transpose by column extraction with iterators; multiply
 
 ## OCaml Approach
 
-OCaml's transpose: `let transpose m = let rows = List.length m and cols = List.length (List.hd m) in List.init cols (fun c -> List.init rows (fun r -> List.nth (List.nth m r) c))`. `List.nth` is O(n) — for performance, use `Array.make_matrix`. Matrix multiply: `let multiply a b = let bt = transpose b in List.map (fun row -> List.map (fun col -> List.fold_left2 (+) 0 row col) bt) a`.
+OCaml's list-based transpose and multiply:
+
+```ocaml
+let transpose m =
+  let rows = List.length m in
+  let cols = List.length (List.hd m) in
+  List.init cols (fun c ->
+    List.init rows (fun r ->
+      List.nth (List.nth m r) c))  (* O(n) per access *)
+
+let dot row col =
+  List.fold_left2 (fun acc x y -> acc + x * y) 0 row col
+
+let multiply a b =
+  let bt = transpose b in
+  List.map (fun row ->
+    List.map (fun col -> dot row col) bt) a
+```
+
+For performance, use `Array.make_matrix` (O(1) random access). OCaml's `Bigarray` provides flat contiguous storage equivalent to `ndarray` in Rust.
 
 ## Key Differences
 

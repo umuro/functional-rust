@@ -18,6 +18,9 @@ Replicate-then-flatten appears in data pipelines (upsampling time series), image
 - Implement recursive replication with a nested helper
 - Recognize this as the generalization of `duplicate` (example 014)
 
+- Verify edge cases: `replicate(list, 0)` returns `[]` and `replicate(list, 1)` returns a copy of `list`
+- Combine `flat_map` with `std::iter::repeat(x.clone()).take(n)` for lazy, allocation-efficient replication
+
 ## Rust Application
 
 `replicate` uses `.flat_map(|x| std::iter::repeat(x.clone()).take(n))` — the canonical idiom. Each element maps to a lazy iterator of `n` copies, and `flat_map` concatenates them. `replicate_prealloc` uses `Vec::with_capacity(list.len() * n)` and a nested loop — faster in practice because it avoids intermediate allocations. The recursive version uses a helper `repeat_elem` that builds `n` copies of one element via recursion, then appends the replication of the tail.
@@ -33,8 +36,16 @@ OCaml's version: `let replicate lst n = List.concat_map (fun x -> List.init n (f
 3. **Clone cost**: Rust clones `x` once per copy. OCaml shares the same GC pointer for all `n` copies — O(1) space overhead per run in OCaml vs O(n) in Rust for heap-allocated types.
 4. **n=0 behavior**: Both correctly produce an empty output for n=0. `repeat(x).take(0)` yields nothing; `List.init 0 f` produces `[]`.
 
+1. **`repeat + take` idiom:** `std::iter::repeat(x).take(n)` is the canonical Rust pattern for generating n copies of a value. It is lazy — no allocation until consumed by `flat_map`.
+2. **Pre-allocation wins:** For large n, `Vec::with_capacity(list.len() * n)` with a nested loop is O(n) allocations saved. The `flat_map` version may allocate intermediate iterators.
+3. **`n=0` case:** `replicate(list, 0)` returns an empty `Vec`. OCaml's `List.init 0 f` also returns `[]`. Edge cases matter for downstream callers.
+4. **`n=1` is identity:** `replicate(list, 1) == list.to_vec()`. This is a useful property test: verify it with `proptest`.
+
 ## Exercises
 
 1. **Benchmark**: Compare `replicate` (with `flat_map`) vs `replicate_prealloc` (with `with_capacity` + loop) on a `Vec<String>` of 1000 elements with n=100. Which is faster and why?
 2. **Replicate with index**: Write `replicate_indexed(list: &[i32], n: usize) -> Vec<(usize, i32)>` that produces `n` copies of each element tagged with their original index: `[(0, a), (0, a), (1, b), (1, b), ...]`.
 3. **Variable replication**: Write `replicate_var(list: &[i32], counts: &[usize]) -> Vec<i32>` where `counts[i]` specifies how many times to repeat `list[i]`. Use `zip` and `flat_map`.
+
+4. **Variable replication**: Implement `replicate_by(list: &[T], counts: &[usize]) -> Vec<T>` where each element is replicated a different number of times from the `counts` slice. Hint: `zip` then `flat_map`.
+5. **Downsample**: Implement `every_nth(list: &[T], n: usize) -> Vec<T>` that keeps every nth element — the inverse of replication when used for downsampling data.

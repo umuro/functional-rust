@@ -18,6 +18,9 @@ The direct approach teaches an important programming pattern: maintaining a smal
 - Understand when single-pass algorithms are preferable to multi-pass
 - Apply the `RleItem` enum from example 011 as a shared output type
 
+- Use a two-pointer scan: `start` marks the run beginning, `i` advances until a different element is found
+- Understand that single-pass encoding is more memory-efficient than two-pass (pack-then-count) encoding
+
 ## Rust Application
 
 `encode_direct` uses a while loop with two pointers: `start` marks the beginning of each run, `i` advances until it finds an element different from `list[start]`. The run length is `i - start`. This is O(n) time, O(1) extra space (beyond the output). The recursive `encode_direct_recursive` uses pattern matching on `split_first()` and an accumulator, showing how the same algorithm can be expressed recursively. Both produce identical output to the modified encoder from example 011.
@@ -33,8 +36,16 @@ The direct OCaml version is: `let rec encode lst = match lst with | [] -> [] | x
 3. **Boundary detection**: Rust checks `list[i] != list[start]` to detect run end. OCaml's `when y = x` guard in the match arm advances while equal.
 4. **Output accumulation**: Rust pushes to a `Vec` (amortized O(1)). OCaml builds a cons list in reverse and reverses at the end, or builds forward using a tail-recursive accumulator.
 
+1. **Single-pass vs two-pass:** Direct encoding scans once, emitting output at run boundaries. Two-pass (pack then encode) scans twice and allocates an intermediate grouped structure. For large inputs, single-pass is significantly faster.
+2. **State tracking:** The direct approach tracks `(start, i)` or `(current, count)` explicitly. OCaml's recursive version passes state as function arguments — equivalent logic, different syntactic form.
+3. **`while` loop vs recursion:** The nested `while` loops in Rust's direct version are idiomatic for scanning with two pointers. OCaml prefers recursive definitions; Rust uses loops for efficiency.
+4. **Shared `RleItem` type:** Both this example and example 011 use the same `RleItem<T>` enum — showing how shared types enable composition between modules.
+
 ## Exercises
 
 1. **Encode bytes**: Adapt `encode_direct` to work on `&[u8]` for binary data encoding. Benchmark it against the version from example 011 on a large repeated-byte input.
 2. **Maximum run**: Write `longest_run<T: PartialEq>(list: &[T]) -> Option<(usize, &T)>` that returns the count and value of the longest consecutive run in a single pass.
 3. **RLE streaming encoder**: Implement `RleEncoder<T>` as a struct that accepts elements one at a time via `push(&mut self, x: T)` and emits complete `RleItem<T>` values when a run ends (like a streaming codec).
+
+4. **Streaming encoder**: Implement `encode_direct` as an `Iterator<Item = RleItem<T>>` — returning a lazy encoder that produces encoded items on demand without building the full output vector.
+5. **Benchmark comparison**: Measure the performance difference between the two-pass approach (example 010) and the direct single-pass approach on a 1MB input with varying run lengths.

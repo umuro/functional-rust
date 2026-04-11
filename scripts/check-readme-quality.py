@@ -27,11 +27,12 @@ REQUIRED_SECTIONS = [
     ("Exercises",          r"##\s+Exercises?"),
 ]
 
-# Minimum body word count (enough prose to explain context)
-MIN_WORDS = 150
+# Minimum word count — enough to explain motivation, context, and real usage
+MIN_WORDS = 250
 
 # Lines of actual content (non-blank, not the boilerplate header, not H1)
-MIN_BODY_LINES = 18
+# 30 lines forces real explanatory prose, not just bullet points
+MIN_BODY_LINES = 30
 
 _BOILERPLATE_RE = re.compile(
     r"^\s*$|"               # blank

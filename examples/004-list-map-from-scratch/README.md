@@ -8,6 +8,8 @@
 
 Implement the `map` function—a higher-order function that applies a transformation function to each element of a list. Demonstrate how abstracting this common pattern (apply f to each element) enables partial application: binding `map` with specific functions creates specialized transformers.
 
+Building `map` from scratch is the canonical first exercise in functional programming because it forces you to understand the abstraction you are hiding. Every senior developer should know that `for (item of items) result.push(f(item))` is just `items.map(f)`. Making this abstraction a first-class value — a function that takes other functions — is what enables predicate factories, transformer pipelines, and the entire functional style.
+
 ## Learning Outcomes
 
 - How to abstract repeated functional patterns into reusable higher-order functions
@@ -35,6 +37,12 @@ Idiomatic Rust leverages iterators: `.iter().map(f).collect()` is the standard, 
 4. **Standard library idiom:** OCaml learners use `List.map`; Rust learners typically use the iterator `map` method. The explicit implementation teaches the abstraction, but production code uses iterators.
 
 5. **Function composition:** OCaml easily composes `map` with other list functions via piping; Rust chains methods or uses closure composition, reflecting different language paradigms.
+
+1. **List vs Slice representation:** OCaml uses a linked list `'a list`; Rust uses slices `&[T]` for borrowed views of contiguous data. Slices are cheaper to work with but require `Copy` bounds for element operations.
+2. **Automatic currying:** OCaml's `map f` partially applies to create a transformer. Rust needs an explicit closure: `|items| map_idiomatic(f, items)`.
+3. **Allocation per call:** The recursive Rust version allocates an intermediate `Vec` per recursive frame. The iterator version collects once at the end.
+4. **Trait bounds:** Rust requires `T: Copy` when extracting values from a borrowed slice by value. OCaml's GC handles ownership transparently — no bounds needed.
+5. **Function type syntax:** OCaml: `'a -> 'b`. Rust: `impl Fn(T) -> U` for closures or `fn(T) -> U` for function pointers.
 
 ## Exercises
 

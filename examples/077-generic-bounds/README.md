@@ -24,7 +24,27 @@ Bounds are Rust's mechanism for "bounded polymorphism" — the type theory conce
 
 ## OCaml Approach
 
-OCaml's equivalent is module functors or type constraints. `let print_item (type a) (show: a -> string) (x: a) = print_string (show x)` — OCaml passes the "typeclass dictionary" explicitly as a function argument. With modular implicits or ppx_deriving, this becomes less verbose. OCaml 5 modules with functors: `module type PRINTABLE = sig type t val to_string : t -> string end`.
+OCaml passes trait "dictionaries" explicitly as module or function arguments:
+
+```ocaml
+(* Explicit dictionary passing — the function receives the "show" implementation *)
+let print_item (type a) (show : a -> string) (x : a) = print_string (show x)
+
+(* Module functor approach — equivalent to Rust's generic bounds *)
+module type ORDERED = sig
+  type t
+  val compare : t -> t -> int
+end
+
+module FindMax(O : ORDERED) = struct
+  let find_max lst =
+    List.fold_left
+      (fun acc x -> if O.compare x acc > 0 then x else acc)
+      (List.hd lst) (List.tl lst)
+end
+```
+
+OCaml's modular implicits (a research extension) would make this automatic, similar to Rust's trait resolution.
 
 ## Key Differences
 

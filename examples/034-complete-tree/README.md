@@ -18,6 +18,9 @@ Complete binary trees are used in heap data structures (priority queues: `Binary
 - Verify completeness: all levels full except possibly the last, which is left-justified
 - Connect complete binary trees to heap data structures
 
+- Build a complete binary tree using the formula: left subtree gets ceiling(n/2) nodes, right gets floor(n/2)
+- Verify `count_nodes(complete_binary_tree(n)) == n` for all n in tests
+
 ## Rust Application
 
 The construction proceeds recursively: for n nodes, the left subtree gets `l = (n - 1 + ((n-1) % 2)) / 2` nodes and the right gets `n - 1 - l` nodes. The root takes one node. This distributes nodes to ensure left-justification. Building from a slice: `complete_tree(values, 0, n)` where index 0 is the root and children of index i are at `2i+1` and `2i+2`.
@@ -33,8 +36,17 @@ OCaml's version: `let rec complete_binary_tree n = if n = 0 then Leaf else let l
 3. **Left vs right subtree size**: The exact formula for how many nodes go to each subtree depends on which level is partial. Off-by-one errors here produce trees that are complete but not left-justified.
 4. **Heapify**: Rust's standard `BinaryHeap::from(vec)` uses the Floyd heapify algorithm (O(n)) rather than constructing a complete tree first. Understanding the tree structure helps reason about heap operations.
 
+1. **Complete vs perfect:** A complete binary tree has all levels fully filled except possibly the last, which is filled left-to-right. A perfect tree has all leaves at the same depth. The `complete_binary_tree n` generates the canonical complete binary tree with n nodes.
+2. **Recursive construction:** `if n <= 0 then Leaf else Node((), complete_binary_tree(n/2), complete_binary_tree(n - n/2))` splits n nodes between left and right subtrees. The left subtree gets the larger share for left-filling.
+3. **`()` as value type:** The OCaml version uses unit `()` as the node value — only the structure matters, not the payload. Rust uses `()` analogously: `Tree<()>` for structure-only trees.
+
+4. **Left-heavy filling:** When n is odd, the left subtree gets one more node than the right. This ensures the last level fills left-to-right, which is the defining property of a complete binary tree.
+
 ## Exercises
 
 1. **Verify completeness**: Write `is_complete<T>(tree: &Tree<T>) -> bool` that checks if a tree is complete. Use level-order traversal — once you see a non-full node, all subsequent nodes must be leaves.
 2. **From sorted array**: Build a complete binary search tree from a sorted `Vec<i32>`. For a sorted array, the median becomes the root, left half becomes the left subtree, right half the right subtree.
 3. **Heap operations**: Using your complete tree, implement `heap_insert` and `heap_extract_min` that maintain the heap property. Compare with Rust's built-in `BinaryHeap`.
+
+4. **Validate completeness**: Write `is_complete<T>(tree: &Tree<T>) -> bool` that checks whether a given tree is a complete binary tree (all levels full except possibly last, last filled left-to-right).
+5. **N-th node**: In a complete binary tree with n nodes, the nodes can be numbered 1..n in BFS order. Write `nth_node<T: Clone>(tree: &Tree<T>, n: usize) -> Option<T>` returning the n-th node's value.

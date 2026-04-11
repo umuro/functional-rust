@@ -38,8 +38,16 @@ OCaml's recursive variants are natural — `type expr = Num of float | Add of ex
 4. **Error handling:** Rust can return `Result` for safe division; OCaml's version silently produces `infinity`
 5. **Ownership in recursion:** Rust's `eval(&self)` borrows the tree; OCaml pattern matching doesn't distinguish owned vs borrowed
 
+1. **Recursive enum with `Box`:** `Expr::Add(Box<Expr>, Box<Expr>)` requires `Box` for the recursive self-reference. OCaml's `type expr = Num of int | Add of expr * expr` needs no annotation — GC handles heap allocation.
+2. **Interpreter pattern:** `eval` is a structural recursive interpreter — the type of `Expr` directly shapes the recursion in `eval`. Each variant has one matching arm. This is the prototype for compiler backends and DSL interpreters.
+3. **`Box<Expr>` construction:** Building trees requires explicit `Box::new`: `Expr::Add(Box::new(Expr::Num(1)), Box::new(Expr::Num(2)))`. Helper constructors like `add(l, r)` hide this verbosity.
+4. **Pattern matching on `Box`:** Matching on `Box<T>` requires `box pattern` syntax in nightly Rust, or deref coercion. Stable Rust matches `&*left` or uses `if let` to unbox.
+
 ## Exercises
 
 1. Add a `Let { name: String, value: Box<Expr>, body: Box<Expr> }` variant to the expression tree and extend the evaluator to handle variable binding with a simple environment map.
 2. Implement a pretty-printer for the expression tree that adds parentheses only where needed based on operator precedence.
 3. Write a `fold_expr` function analogous to `fold` on lists, and use it to implement both evaluation and pretty-printing without writing recursive `match` in each function.
+
+4. **Variables**: Add `Expr::Var(String)` variant and implement `eval_with_env(expr: &Expr, env: &HashMap<String, i64>) -> Option<i64>` that looks up variables in an environment, returning `None` for unbound variables.
+5. **Pretty printer**: Implement a pretty-printer that produces minimal parentheses — only add parentheses when operator precedence requires them. `Add(Mul(2, 3), 4)` should print as `2 * 3 + 4` not `(2 * 3) + 4`.

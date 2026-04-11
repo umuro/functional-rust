@@ -18,6 +18,9 @@
 - Distinguish `map` from `and_then`: map keeps the return type in `Option`, and_then allows the function to return `Option`
 - Use `map` with method references: `opt.map(str::to_uppercase)`
 
+- Apply `Option::map(f)` to transform `Some(x)` to `Some(f(x))` while passing `None` through unchanged
+- Verify the functor laws: `map(id) == id` and `map(f).map(g) == map(|x| g(f(x)))`
+
 ## Rust Application
 
 `opt.map(|x| x * 2)` doubles the inner value if present. `opt.map(|x| x.to_string())` converts an `Option<i32>` to `Option<String>`. Chaining: `safe_head(v).map(|x| x * 2).map(|x| x + 1)`. The closure type must match: `Option<T>::map<U, F: FnOnce(T) -> U>`. Note: `map` takes the inner value by move (for `Option<T>`, not `&Option<T>`). Use `as_ref()` to map by reference: `opt.as_ref().map(|x| x.len())`.
@@ -33,8 +36,17 @@ OCaml's `Option.map f opt`: `let map f = function None -> None | Some x -> Some 
 3. **`as_ref` for reference**: Rust's `opt.as_ref().map(...)` maps over `Option<&T>` without consuming the option. OCaml's `Option.map` always borrows by the GC; no explicit `as_ref` needed.
 4. **`map` vs `Option.iter`**: Rust's `map` produces a new Option. `Option::iter` produces an iterator of 0 or 1 elements. OCaml's `Option.iter f opt` calls `f` for side effects, returns unit.
 
+1. **Functor law:** `Option::map` satisfies the functor laws: `map id = id` and `map (f ∘ g) = map f ∘ map g`. This means `map` is composable and predictable. OCaml's `Option.map` satisfies the same laws.
+2. **Chaining `map`:** Multiple `.map()` calls chain without nesting: `opt.map(f).map(g)` vs nested `match`. Each `map` propagates `None` automatically — short-circuiting at the first `None`.
+3. **`Option.map` in OCaml:** `Option.map f opt` applies `f` to the value inside `opt`. Note the argument order: OCaml's `Option.map f opt` vs Rust's `opt.map(f)`. The data-last convention in OCaml enables partial application: `Option.map double` is a function from `int option` to `int option`.
+
+4. **Argument order:** OCaml's `Option.map f opt` takes function first, option second (data-last, for partial application). Rust's `opt.map(f)` is method-first (data-first). The computation is identical.
+
 ## Exercises
 
 1. **Map string**: Write `shorten(opt: Option<String>) -> Option<String>` that truncates the string to 5 characters if Some. Use `opt.map(|s| s.chars().take(5).collect())`.
 2. **Nested option**: Given `Option<Option<i32>>`, write `flatten_opt(opt: Option<Option<i32>>) -> Option<i32>` using `.flatten()`. Understand why this is not a `map`.
 3. **Map error message**: Write `validate_age(age: Option<i32>) -> Option<String>` that returns `Some("valid")` for ages 0-150 and `None` otherwise. Use `opt.filter(|&a| a >= 0 && a <= 150).map(|_| "valid".to_string())`.
+
+4. **Double map**: Write `map2<A, B, C>(f: impl Fn(A, B) -> C, a: Option<A>, b: Option<B>) -> Option<C>` that maps a two-argument function over two options, returning `None` if either is `None`.
+5. **Functor law test**: Write unit tests verifying the two functor laws for `Option::map`: (1) `map(id) == id` and (2) `map(f ∘ g) == map(f) ∘ map(g)` for specific functions `f` and `g`.

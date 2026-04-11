@@ -18,6 +18,9 @@ Custom comparators are everywhere: sorting database records by multiple fields, 
 - Compare the functional (sort_by_key) and imperative (Schwartzian transform) approaches
 - Understand why frequency-based sorting requires a two-pass algorithm
 
+- Use `sort_by_key(|l| l.len())` for length-based sorting and a `HashMap<usize, usize>` frequency map for the secondary frequency sort
+- Use stable sort to preserve relative order of equal-length lists
+
 ## Rust Application
 
 Part 1 (sort by length): `lists.sort_by_key(|l| l.len())`. Part 2 (sort by frequency): first compute `freq: HashMap<usize, usize>` counting how often each length appears, then `lists.sort_by_key(|l| freq[&l.len()])`. Both use stable sort (Rust's `sort_by_key` is stable). The Schwartzian transform pre-computes keys to avoid recomputing during sort: `let mut tagged: Vec<(usize, &Vec<i32>)> = lists.iter().map(|l| (l.len(), l)).collect(); tagged.sort_by_key(|&(len, _)| len)`.
@@ -26,6 +29,8 @@ Part 1 (sort by length): `lists.sort_by_key(|l| l.len())`. Part 2 (sort by frequ
 
 OCaml's version: `List.sort (fun a b -> compare (List.length a) (List.length b)) lists`. For frequency sort: compute a frequency map, then `List.sort (fun a b -> compare (freq (List.length a)) (freq (List.length b))) lists`. OCaml's `List.sort` takes a comparison function `'a -> 'a -> int` where negative means "less than". This is the standard compare-function interface used in C's `qsort` and Java's `Comparator`.
 
+OCaml's sort by length: `let sort_by_length lists = List.sort (fun l1 l2 -> compare (List.length l1) (List.length l2)) lists`. The comparison function takes the lengths and uses `compare` for ordering. For sort by frequency: first count lengths with a `Hashtbl`, then sort using the counts as keys. OCaml's `List.sort` is a merge sort — stable and O(n log n).
+
 ## Key Differences
 
 1. **Comparator interface**: OCaml uses `int`-returning comparators (negative/zero/positive). Rust uses `Ordering` enum (`Less`/`Equal`/`Greater`) with `sort_by`, or key functions with `sort_by_key`.
@@ -33,8 +38,15 @@ OCaml's version: `List.sort (fun a b -> compare (List.length a) (List.length b))
 3. **Stability**: Rust's `sort_by_key` is stable. OCaml's `List.sort` is also stable. Both preserve relative order of equal elements.
 4. **In-place vs functional**: Rust's `sort_by_key` mutates the `Vec`. OCaml's `List.sort` returns a new sorted list.
 
+1. **`sort_by_key` vs comparator:** Rust's `sort_by_key(|l| l.len())` is cleaner than `sort_by(|a, b| a.len().cmp(&b.len()))` when the key is simple. OCaml always takes a comparator function.
+2. **Stability:** Rust's `sort_by_key` is stable (preserves order of equal elements). OCaml's `List.sort` is also stable. Use `sort_unstable_by_key` for better performance when stability is not needed.
+3. **Frequency sort requires `HashMap`:** The two-pass algorithm (count lengths, then sort by count) uses a `HashMap<usize, usize>` in Rust. OCaml uses `Hashtbl` with the same two-pass approach.
+
 ## Exercises
 
 1. **Multi-level sort**: Sort a `Vec<Vec<i32>>` first by length, then lexicographically within equal-length groups. Use `sort_by(|a, b| a.len().cmp(&b.len()).then(a.cmp(b)))`.
 2. **Reverse sort**: Write `sort_by_length_desc(lists: &mut Vec<Vec<i32>>)` that sorts longest-first using `sort_by_key(|l| std::cmp::Reverse(l.len()))`.
 3. **Topological sort by frequency**: Given a text document, split into words, group by first letter, and sort those groups by frequency of the first letter across the whole document.
+
+4. **Sort by multiple keys**: Implement sorting by (length, alphabetically within same-length groups) using `sort_by(|a, b| a.len().cmp(&b.len()).then_with(|| a.cmp(b)))`.
+5. **Schwartzian transform**: Implement the Schwartzian transform for the frequency sort: `map → sort → map` — annotate each list with its frequency, sort, then strip the annotation.

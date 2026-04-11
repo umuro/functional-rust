@@ -24,7 +24,25 @@ Merge sort is naturally recursive and maps directly to functional programming pa
 
 ## OCaml Approach
 
-OCaml's merge sort: `let rec merge_sort = function | ([] | [_]) as lst -> lst | lst -> let (left, right) = split lst (List.length lst / 2) in merge (merge_sort left) (merge_sort right)`. `merge` uses pattern matching on the two sorted lists: `let rec merge l1 l2 = match l1, l2 with | [], l | l, [] -> l | x :: t1, y :: t2 -> if x <= y then x :: merge t1 l2 else y :: merge l1 t2`.
+OCaml's merge sort uses recursive pattern matching on lists:
+
+```ocaml
+let rec merge l1 l2 = match l1, l2 with
+  | [], l | l, [] -> l
+  | x :: t1, y :: t2 ->
+    if x <= y then x :: merge t1 l2
+    else y :: merge l1 t2
+
+let rec merge_sort = function
+  | ([] | [_]) as lst -> lst
+  | lst ->
+    let mid = List.length lst / 2 in
+    let left = List.filteri (fun i _ -> i < mid) lst in
+    let right = List.filteri (fun i _ -> i >= mid) lst in
+    merge (merge_sort left) (merge_sort right)
+```
+
+The list-based version is purely functional with no mutation. `List.stable_sort` in OCaml's stdlib is an optimized merge sort.
 
 ## Key Differences
 

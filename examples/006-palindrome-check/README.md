@@ -18,6 +18,9 @@ The problem also illustrates an important distinction between eager (allocating 
 - Normalize input (lowercase, filter non-alphanumeric) for real-world palindrome checks
 - Use Rust's `DoubleEndedIterator` for O(1) `rev()` without allocation
 
+- Use `s.chars().eq(s.chars().rev())` for zero-allocation palindrome checking that leverages `DoubleEndedIterator`
+- Handle Unicode correctly with `chars()` rather than byte-level comparison
+
 ## Rust Application
 
 `is_palindrome_rev` allocates a reversed `String` and compares with `==` — simple and clear. `is_palindrome_iter` uses `s.chars().eq(s.chars().rev())` — zero allocation, leveraging that `Chars` implements `DoubleEndedIterator`. `is_palindrome_clean` demonstrates production-quality normalization: filter to alphanumeric, lowercase each character with `to_lowercase().next().unwrap()`, collect to a `Vec<char>` to enable comparing against its own `rev()`. This correctly handles "A man, a plan, a canal: Panama".
@@ -33,8 +36,16 @@ OCaml's `String` module lacks a built-in `String.rev`, but it is easily construc
 3. **Normalization**: Both languages require explicit lowercasing and filtering. Rust's `char::to_lowercase()` returns an iterator (handling ligatures that expand to multiple chars). OCaml's `Char.lowercase_ascii` is simpler but ASCII-only.
 4. **Comparison**: Rust's iterator `.eq()` short-circuits at the first difference. OCaml's `=` on lists is structural equality that traverses the full list.
 
+1. **`DoubleEndedIterator`:** Rust's `.rev()` on `Chars` works because `Chars` implements `DoubleEndedIterator` — it can be read from both ends. OCaml strings lack this; reversing requires `String.init` or a manual loop.
+2. **Unicode correctness:** `s.chars()` iterates Unicode scalar values (code points). Byte-level reversal (`s.bytes().rev()`) would corrupt multi-byte characters. OCaml's strings are byte sequences — Unicode handling requires separate libraries.
+3. **Zero allocation:** `s.chars().eq(s.chars().rev())` allocates nothing — it compares lazily. OCaml's `s = String.init (String.length s) (fun i -> s.[String.length s - 1 - i])` allocates a new string.
+4. **Normalization:** Real-world palindrome checks require lowercasing and stripping non-alphanumeric characters. The `to_lowercase()` method in Rust returns an iterator (some Unicode characters expand to multiple chars), so `.next().unwrap()` is needed for single-char values.
+
 ## Exercises
 
 1. **Largest palindrome substring**: Write `largest_palindrome(s: &str) -> &str` that returns the longest palindromic substring using Manacher's algorithm or naive O(n²) expansion.
 2. **Palindrome pairs**: Given a list of words, find all pairs `(i, j)` where concatenating words `i` and `j` forms a palindrome.
 3. **Streaming check**: Write `is_palindrome_stream(iter: impl Iterator<Item=char>) -> bool` that checks if a character stream is a palindrome by collecting to `Vec<char>` then comparing with its reverse.
+
+4. **Longest palindrome substring**: Implement Manacher's algorithm (or a simpler O(n²) version) to find the longest palindromic substring of a given string.
+5. **Palindrome pairs**: Given a list of words, find all pairs `(i, j)` where `words[i] + words[j]` is a palindrome, using `HashSet` for O(n) lookup.

@@ -8,6 +8,8 @@
 
 Implement a filter function that removes elements from a list that don't satisfy a given predicate (boolean test function). This is the fundamental operation for selecting a subset of elements while preserving order.
 
+`filter` is the second pillar of list processing after `map`. It answers the question: "which elements satisfy this property?" Every SQL `WHERE` clause, every `grep` command, and every search feature in a UI implements `filter`. Building it from scratch — recursive pattern matching, then fold, then iterator — makes the abstraction concrete and shows the three levels of abstraction available in functional programming.
+
 ## Learning Outcomes
 
 - How to work with predicate functions (`fn(&T) -> bool`) in Rust
@@ -36,6 +38,11 @@ All three preserve order and handle empty lists correctly. The iterator version 
 2. **Recursion safety:** OCaml's immutable recursion is safe by default; Rust requires `fn(&T)` to avoid mutable predicates
 3. **Cloning:** Rust must `.clone()` elements when moving them into the result vector; OCaml lists share structure via references
 4. **Laziness:** Rust iterators are lazy (elements processed on-demand); fold is eager (processes all elements immediately)
+
+1. **Function type:** OCaml uses `'a -> bool` for predicates; Rust uses `fn(&T) -> bool` (function pointer) or `impl Fn(&T) -> bool` (closure). Function pointers are faster than closures for inline predicates.
+2. **`Clone` requirement:** Rust requires `T: Clone` to extract values from `&[T]` into a new owned `Vec<T>`. OCaml's GC handles sharing automatically.
+3. **Order:** Both recursive implementations process elements front-to-back and preserve order. The fold-based version accumulates in order via `push` (not prepend), so no reversal is needed.
+4. **Predicate takes reference:** `filter(pred, items)` in Rust passes `&T` to the predicate. In OCaml, `List.filter` passes the value directly.
 
 ## Exercises
 

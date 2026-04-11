@@ -18,6 +18,9 @@ This pattern is essential for adapting between different result types in a pipel
 - Use `map` to add context: `result.map(|v| (v, metadata))`
 - Understand that `map` is equivalent to `and_then(|v| Ok(transform(v)))`
 
+- Use `Result::map(f)` to transform `Ok(x)` to `Ok(f(x))` while passing `Err(e)` through unchanged
+- Use `Result::map_err(g)` to transform the error value — apply when converting between error types
+
 ## Rust Application
 
 `result.map(|x| x * 2)` doubles the inner value on success. `result.map(|x| x.to_string())` converts types. `result.map_err(|e| format!("error: {}", e))` converts error types. Chaining: `parse_int(s).map(|n| n * 2).map(|n| n.to_string())`. The error type must be consistent through a `map` chain — use `map_err` to normalize before chaining `map` calls.
@@ -33,8 +36,16 @@ OCaml's `Result.map f r`: `let map f = function Ok x -> Ok (f x) | Error e -> Er
 3. **Type inference**: Both infer the output type of the mapped function. Rust requires explicit `map_err` call to change error types; OCaml's structural typing can sometimes infer error type changes without explicit conversion.
 4. **`map` vs `and_then`**: `map` cannot fail — the function returns `U`, not `Result<U, E>`. If the transformation can fail, use `and_then` instead.
 
+1. **`Result::map` only transforms `Ok`:** Errors pass through unchanged. `result.map(f)` applies `f` only if `result` is `Ok(v)` — otherwise returns the `Err(e)` unchanged. This is the Functor instance for Result.
+2. **`map_err` for error transformation:** `result.map_err(f)` applies `f` to the error value — the mirror of `map`. Useful for converting between error types.
+3. **OCaml `Result.map`:** `Result.map f result` applies `f` to `Ok` values. `Result.map_error f result` transforms the error. Both are OCaml 4.08+ standard library functions.
+4. **Chaining:** `.map().map_err()` can be chained to transform both success and error paths without nested `match` expressions.
+
 ## Exercises
 
 1. **Double map**: Write `transform(r: Result<i32, String>) -> Result<String, String>` that doubles the int and converts to string on success, and prepends "Error: " to error messages. Use both `map` and `map_err`.
 2. **Normalization pipeline**: Given a `Result<&str, IoError>`, write a chain that trims whitespace, parses as float, multiplies by 100, and rounds to int. Each step uses `map`.
 3. **Split channels**: Given `Vec<Result<i32, String>>`, use `partition` to split into `(Vec<i32>, Vec<String>)` of successes and errors. This is the `partition_result` pattern.
+
+4. **Map both sides**: Write `bimap<T, U, E, F>(f: impl Fn(T) -> U, g: impl Fn(E) -> F, result: Result<T, E>) -> Result<U, F>` — transform both the success and error simultaneously.
+5. **Apply**: Implement `result_apply<T, U, E: Clone>(f: Result<impl Fn(T) -> U, E>, arg: Result<T, E>) -> Result<U, E>` — the applicative `<*>` for `Result`.

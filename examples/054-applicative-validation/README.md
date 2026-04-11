@@ -18,6 +18,9 @@ This pattern is essential in form validation, API request validation, configurat
 - Understand the applicative functor pattern: `f <*> a` where both f and a may have errors
 - Recognize that validation is not a monad (no `and_then`) because the second step does not depend on the first
 
+- Distinguish applicative validation (accumulate all errors) from monadic chaining (short-circuit on first error)
+- Implement a `Validation<T, E>` type with `combine` that merges `Vec<E>` error lists
+
 ## Rust Application
 
 Individual validators return `Result<T, Vec<ValidationError>>`. `validate_all` combines them: `match (validate_name(name), validate_age(age), validate_email(email)) { (Ok(n), Ok(a), Ok(e)) => Ok(Person { name: n, age: a, email: e }), _ => { let mut errors = vec![...]; ... Err(errors) } }`. The key is merging error vectors from all failing validators rather than returning the first error.
@@ -33,8 +36,16 @@ OCaml defines a `validation` type: `type ('a, 'e) validation = Ok of 'a | Errors
 3. **`Vec<E>` errors**: Both implementations use `Vec<ValidationError>` for the error accumulator. The individual validators return single errors wrapped in `vec![...]` for uniformity.
 4. **Crates**: The `garde` and `validator` crates implement applicative validation for Rust structs via derive macros. Understanding the manual implementation explains what these macros generate.
 
+1. **Accumulating vs short-circuiting:** `and_then` (`>>=`) short-circuits on the first error. Applicative validation (using `<*>` or `map2`) accumulates all errors. The choice depends on whether you want "first error" or "all errors" reporting.
+2. **`Result` vs custom `Validation`:** Rust's standard `Result::and_then` short-circuits. For accumulation, define a `Validation<T, E>` type that collects errors in a `Vec<E>`.
+3. **Real-world use:** Form validation always uses accumulative errors — you want to show ALL invalid fields, not just the first. API request validation is similar.
+4. **OCaml `Validated`:** OCaml's `ppx_validate` and libraries like `Validate` provide applicative-style validation. The type is `type ('a, 'e) validated = Valid of 'a | Invalid of 'e list`.
+
 ## Exercises
 
 1. **Form validation**: Write a `validate_registration(form: &RegistrationForm) -> Result<User, Vec<String>>` that validates username length, password strength, and email format simultaneously.
 2. **Parallel vs sequential**: Write the same validation using sequential `and_then` (stops at first error) and parallel `Validation` (collects all errors). Demonstrate with an input that has 3 errors.
 3. **Custom accumulator**: Instead of `Vec<ValidationError>`, use `HashMap<String, Vec<String>>` as the error type, where keys are field names. This gives per-field error messages.
+
+4. **Validate struct**: Implement validation for a `UserInput { name: String, age: String, email: String }` struct, returning all validation errors at once using the accumulative `Validation` type.
+5. **Sequence validations**: Implement `validate_all<T, E: Clone>(validations: Vec<impl Fn() -> Result<T, E>>) -> Result<Vec<T>, Vec<E>>` that runs all validations and collects either all successes or all failures.

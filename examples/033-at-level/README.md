@@ -18,6 +18,9 @@ Level queries are the bridge between depth-first structural recursion (which pro
 - Recognize that collecting all levels produces a level-order traversal
 - Handle the edge case: level > tree depth returns empty list
 
+- Use a decreasing level counter: `at_level(tree, level-1)` on each child collects nodes one level deeper
+- Use BFS with a queue as an alternative for collecting all levels in level-order
+
 ## Rust Application
 
 `at_level<T: Clone>(tree: &Tree<T>, level: usize) -> Vec<T>`: if `level == 1`, return the current node's value (if it's a Node). If `level > 1`, recurse with `level - 1` on both children and extend the results. Base case: `Tree::Leaf` always returns empty. The counter decrements by 1 at each level, reaching 1 at the target depth.
@@ -33,8 +36,17 @@ OCaml's version: `let rec at_level tree level = match tree with | Leaf -> [] | N
 3. **`@` efficiency**: OCaml's `at_level l (level-1) @ at_level r (level-1)` copies the left result. Rust's `extend` approach is more memory-efficient.
 4. **BFS alternative**: For collecting all levels, BFS with a queue is more efficient (O(n) total) than calling `at_level` for each level (O(n·d) total).
 
+1. **Level counting:** "Level 1" is the root (OCaml 99 convention). Rust often uses 0-based levels. Document which convention the function uses to avoid off-by-one bugs.
+2. **Breadth-first vs depth-first:** Collecting all nodes at level d can be done with a depth-first search (decrement d as you descend) or a breadth-first queue (maintain a frontier at each level). Both are O(n).
+3. **`Vec` concatenation:** `result.extend(at_level(left, n-1))` is O(k) where k is the number of nodes found. For large trees at deep levels, this allocates frequently — accumulator style is faster.
+
+5. **Accumulator for efficiency:** Passing `&mut Vec<T>` as an accumulator parameter avoids O(k) `extend` overhead per recursive call on deeply nested trees.
+
 ## Exercises
 
 1. **Level-order traversal**: Write `level_order<T: Clone>(tree: &Tree<T>) -> Vec<Vec<T>>` that returns `[nodes_at_level_1, nodes_at_level_2, ...]` using a queue-based BFS.
 2. **Maximum sum level**: Write `max_sum_level(tree: &Tree<i32>) -> usize` that returns the level with the highest sum of node values.
 3. **Zigzag traversal**: Write `zigzag<T: Clone>(tree: &Tree<T>) -> Vec<Vec<T>>` like level-order but alternating left-to-right and right-to-left on each level (a common interview problem).
+
+4. **All levels**: Implement `level_order<T: Clone>(tree: &Tree<T>) -> Vec<Vec<T>>` returning all levels as a list of lists, using BFS with a queue.
+5. **Tree width**: Implement `width(tree: &Tree<T>) -> usize` returning the maximum number of nodes at any single level — the "width" of the tree.

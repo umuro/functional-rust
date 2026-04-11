@@ -6,9 +6,9 @@
 
 ## Problem Statement
 
-Railway-oriented programming (ROP), coined by Scott Wlaschin, is a visual metaphor for monadic error handling. Picture a two-track railway: the "happy track" (Ok values) and the "error track" (Err values). Each function is a switch: if you are on the happy track and the function succeeds, you stay on it; if it fails, you switch to the error track and stay there until the end.
+Railway-oriented programming (ROP), coined by Scott Wlaschin in his 2014 talk and blog series, is a visual metaphor for monadic error handling. Picture a two-track railway: the "happy track" carries `Ok` values forward; the "error track" carries `Err` values that bypass all remaining steps. Each processing function is a switch: if the input arrives on the happy track and the function succeeds, the output stays on the happy track; if the function fails, the output switches to the error track and stays there for all subsequent steps.
 
-This pattern, implemented via `and_then` chaining, produces code that reads linearly without nested error handling. It is the functional equivalent of exception-based error flow but with explicit types. Used in F#, Rust, Scala, and any language where Result/Either is the error handling mechanism.
+This pattern, implemented via `and_then` chaining, produces code that reads top-to-bottom as a linear sequence of steps — exactly like procedural code with exceptions, but without hidden control flow. The `?` operator in Rust is syntactic sugar for `and_then` applied to the current function's result type. Used in F#, Rust, Scala, Haskell, and any language where `Result`/`Either` is the primary error-handling mechanism, this pattern scales from simple validation pipelines to multi-step business logic with complex failure modes.
 
 ## Learning Outcomes
 
@@ -20,11 +20,26 @@ This pattern, implemented via `and_then` chaining, produces code that reads line
 
 ## Rust Application
 
-Each validation function `fn validate_x(order: Order) -> Result<Order, String>` consumes the order and returns it unchanged (or an error). `validate_order_chain` uses `.and_then(validate_quantity).and_then(validate_price)` — each function is a switch on the railway. `validate_order_question` uses `?` to achieve the same effect. Both are identical in behavior; `?` is more readable for sequential pipelines.
+Each validation step takes an `Order` and returns `Result<Order, String>`:
+- `validate_quantity` checks that quantity > 0
+- `validate_price` checks that price > 0.0
+- `validate_item` checks that the item name is non-empty
+
+`validate_order_chain` composes them with `.and_then(validate_quantity).and_then(validate_price).and_then(validate_item)` — a left-to-right railway. `validate_order_question` achieves the same with `?`, which is more readable for deep pipelines. Both are semantically identical: the first failure short-circuits everything after it.
 
 ## OCaml Approach
 
-OCaml's version: `let validate_order order = let ( >>= ) = Result.bind in validate_item order >>= validate_quantity >>= validate_price`. The `>>=` operator makes the railway tracks explicit. With `let*`: `let* o = validate_item order in let* o = validate_quantity o in validate_price o`. Each step receives the validated order from the previous step.
+OCaml's railway uses `Result.bind` or custom operators:
+
+```ocaml
+let validate_order order =
+  let ( >>= ) = Result.bind in
+  validate_item order
+  >>= validate_quantity
+  >>= validate_price
+```
+
+With OCaml 4.08+ binding operators, you can also write `let* o = validate_item order in let* o = validate_quantity o in validate_price o`. Each step receives the validated value from the previous step. The symmetry with Rust's `.and_then` chain is exact.
 
 ## Key Differences
 

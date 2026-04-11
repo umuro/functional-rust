@@ -18,6 +18,9 @@ Tree serialization appears everywhere: JSON serialization of nested objects, XML
 - Implement a simple recursive descent parser with an index/cursor
 - Verify the round-trip invariant: `from_str(to_str(t)) == t`
 
+- Serialize a tree to `"x(left,right)"` format recursively, with empty string for `Leaf`
+- Implement `fmt::Display` for `Tree<char>` to use `format!` and `to_string()` on trees
+
 ## Rust Application
 
 `to_string(tree: &Tree<char>) -> String`: `Leaf` → `""`, `Node(c, l, r)` → format `"{c}({left},{right})"` where left and right are recursive calls. `from_str` is a recursive descent parser: read one character (the node value), then if `(` follows, parse left subtree, expect `,`, parse right subtree, expect `)`. Use a `&mut usize` index to track position in the input string.
@@ -33,8 +36,17 @@ OCaml's version: `let rec to_string = function | Leaf -> "" | Node (c, l, r) -> 
 3. **Error handling**: Rust's parser should return `Result<Tree<char>, String>`. OCaml uses exceptions (`failwith "parse error"`) in imperative code or `option`/`result` in functional style.
 4. **Leaf representation**: Empty string `""` for `Leaf` makes the format non-self-delimiting. The `(,)` markers tell the parser where subtrees begin and end.
 
+1. **String representation:** The node string format is `"x(left,right)"` where `x` is the node label, and leaf is empty string `""`. This is the canonical OCaml 99 Problems tree string format.
+2. **Recursive string building:** Both implementations build the string recursively: base case (leaf = `""`), recursive case (format the node value and append subtrees). String concatenation in Rust is via `format!` — not as efficient as a `String` builder for deep trees.
+3. **`fmt::Display`:** Implementing `Display` for `Tree<T>` where `T: Display` is the idiomatic Rust way to convert a tree to a string. OCaml uses `Printf.sprintf` or string concatenation.
+
+4. **`Buffer` for performance:** Building strings via `format!` concatenation is O(n^2) for deep trees. Use `String::with_capacity` or a `Write` trait implementation for O(n) serialization.
+
 ## Exercises
 
 1. **Generic tree string**: Generalize to `Tree<T>` where T implements `Display` and `FromStr`. The format becomes `"{value}({left},{right})"` with any displayable value.
 2. **S-expression format**: Implement a Lisp-style format: `"(a (b d e) (c () f))"` where `()` represents a leaf. This is self-delimiting and easier to parse.
 3. **JSON format**: Serialize the tree as JSON: `{"value": "a", "left": {...}, "right": null}`. Use `serde_json` for serialization and deserialization.
+
+4. **Round-trip test**: Implement both `tree_to_string` and `tree_from_string` (parser from example 040) and write a property test verifying `parse(serialize(t)) == t` for all trees.
+5. **JSON serialization**: Implement `tree_to_json<T: Serialize>(tree: &Tree<T>) -> String` using the `serde_json` crate — a more practical serialization format than dotstring.

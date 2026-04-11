@@ -18,6 +18,9 @@ Lazy sequences appear in: streaming data processing (reading lines from a file w
 - Chain lazy operations (`filter`, `map`, `take`) without intermediate allocation
 - Implement a finite `unfold` that stops when the state function returns `None`
 
+- Create infinite sequences using `std::iter::successors` or `Iterator::from_fn` and consume finite prefixes with `.take(n)`
+- Chain lazy operations (`.map()`, `.filter()`) that defer computation until a terminal consumer drives the iterator
+
 ## Rust Application
 
 `naturals(start)` returns `start..` — Rust's built-in infinite range. `fibs()` uses `successors(Some((0, 1)), |&(a, b)| Some((b, a + b))).map(|(a, _)| a)` — generates Fibonacci pairs lazily. `primes()` uses `(2..).filter(|&n| (2..=sqrt(n)).all(|i| n % i != 0))` — trial division, computed per-element. `unfold` manually drives a state function.
@@ -33,8 +36,16 @@ OCaml 4.07+ `Seq` module: `let rec naturals n () = Seq.Cons (n, naturals (n + 1)
 3. **`successors` vs recursive Seq**: Rust's `successors(seed, f)` generates a sequence by repeatedly applying `f`. OCaml's recursive `Seq` nodes use closures/thunks to delay computation.
 4. **`take` and `collect`**: Rust: `.take(n).collect::<Vec<_>>()`. OCaml: `Seq.take n seq |> List.of_seq`. Both materialize n elements from a potentially infinite sequence.
 
+1. **`Iterator` as lazy sequence:** Rust's iterators are lazy by default — no computation happens until a consumer (`.collect()`, `.sum()`, `.for_each()`) drives the chain. OCaml's lazy values use `lazy` keyword and `Lazy.force`.
+2. **Infinite sequences:** `std::iter::successors(Some(0), |&n| Some(n + 1))` generates an infinite sequence. Combine with `.take(n)` to consume a finite prefix. OCaml uses `let rec seq = lazy (...)` for co-recursive lazy streams.
+3. **`Iterator::take_while`:** Consume from an infinite sequence until a predicate fails: `(0..).take_while(|&n| n < 100)`. OCaml's `LazyList.take_while pred stream` is the equivalent.
+4. **No memoization:** Rust's lazy iterators are not memoized — re-consuming a `filter().map()` chain recomputes. OCaml's `Lazy.t` IS memoized — `Lazy.force` computes once and caches the result.
+
 ## Exercises
 
 1. **Sieve stream**: Write `prime_stream()` returning an infinite iterator of primes using the sieve of Eratosthenes implemented as a lazy stream (not trial division). Each new prime filters multiples from the remaining stream.
 2. **Collatz stream**: Write `collatz_seq(n: u64) -> impl Iterator<Item=u64>` that yields the Collatz sequence starting from n until 1. Use `successors`.
 3. **Memoized Fibonacci**: Write a Fibonacci iterator that caches previously computed values using a `Vec` internally. Compare performance with the `successors`-based version for large n.
+
+4. **Fibonacci iterator**: Implement a `Fibonacci` struct that implements `Iterator<Item = u64>` — each `next()` call returns the next Fibonacci number. Use `successors(Some((0u64, 1u64)), |(a, b)| Some((*b, a + b))).map(|(a, _)| a)`.
+5. **Lazy sieve**: Implement a lazy Sieve of Eratosthenes using an infinite iterator of integers, filtering out multiples of each discovered prime. Note: this is educational — a segmented sieve is faster in practice.

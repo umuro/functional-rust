@@ -24,7 +24,23 @@ Difference lists originate in Prolog (1984) and appear in Haskell's `ShowS` type
 
 ## OCaml Approach
 
-OCaml's difference list: `type 'a dlist = 'a list -> 'a list`. `let empty = fun xs -> xs`. `let singleton x = fun xs -> x :: xs`. `let append dl1 dl2 = fun xs -> dl1 (dl2 xs)`. `let to_list dl = dl []`. `let from_list lst = fun xs -> lst @ xs`. This is exactly the same pattern — function composition.
+OCaml's difference list is an elegant application of higher-order functions:
+
+```ocaml
+type 'a dlist = 'a list -> 'a list
+
+let empty : 'a dlist = fun xs -> xs
+let singleton x = fun xs -> x :: xs
+let append dl1 dl2 = fun xs -> dl1 (dl2 xs)  (* O(1): function composition *)
+let to_list dl = dl []
+let from_list lst = fun xs -> lst @ xs
+
+(* append [1;2] [3;4]: build dl1 . dl2, then apply to [] *)
+let result = to_list (append (from_list [1;2]) (from_list [3;4]))
+(* result = [1; 2; 3; 4] *)
+```
+
+This is isomorphic to Haskell's `ShowS = String -> String` and `DList a = [a] -> [a]`.
 
 ## Key Differences
 

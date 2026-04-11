@@ -6,25 +6,45 @@
 
 ## Problem Statement
 
-`scan_left` (Haskell: `scanl`, OCaml: `List.fold_left` with output collection) produces all intermediate values of a fold, not just the final result. `scan_left(+, 0, [1,2,3,4])` gives `[0, 1, 3, 6, 10]` — each prefix sum. This is the "running total" operation.
+`scan_left` (Haskell: `scanl`, OCaml: `List.fold_left` with output collection) produces all intermediate values of a fold, not just the final result. Where `fold([1,2,3,4], +, 0)` gives `10`, `scan_left([1,2,3,4], +, 0)` gives `[0, 1, 3, 6, 10]` — every prefix sum including the initial accumulator. This is the "running total" operation.
 
-Running totals appear in financial ledgers, cumulative statistics, prefix sum arrays (for range sum queries in O(1)), exponential moving averages, and sliding-window algorithms. Prefix sum arrays are a fundamental data structure in competitive programming and algorithmic interviews.
+Running totals appear throughout practical computing. Financial ledgers track a running balance alongside each transaction, enabling audit trails. Prefix sum arrays — the canonical scan_left application — allow O(1) range sum queries: `sum(i..j) = prefix[j] - prefix[i]`, making them a standard data structure in competitive programming and database query engines. Exponential moving averages in signal processing and real-time analytics compute as a scan over time-series data. Compilers accumulate struct field offset tables by scanning over field sizes. Any computation that needs to observe the fold at every step, not just at the end, uses scan.
 
 ## Learning Outcomes
 
-- Use Rust's `.scan(init, |acc, &x| { *acc += x; Some(*acc) })` for running accumulation
-- Implement a generic `scan_left<T, F>` function that mirrors OCaml's `List.fold_left` with output
-- Distinguish scan (keeps all intermediates) from fold (keeps only final result)
-- Use prefix sums for O(1) range sum queries
-- Implement running max, running min, and running product with the same pattern
+- Use Rust's `.scan(init, |acc, &x| { *acc = ...; Some(*acc) })` for running accumulation with mutable state
+- Implement a generic `scan_left<T: Clone, F>(init: T, v: &[T], f: F) -> Vec<T>` that mirrors OCaml's pattern
+- Distinguish scan (keeps all intermediates) from fold (keeps only the final result)
+- Build prefix sum arrays for O(1) range sum queries
+- Implement running max, running min, and running product with the same generic combinator
+- Recognize that scan is fold with intermediate-result observation at every step
 
 ## Rust Application
 
-`running_sum` uses `.scan(0, |state, &x| { *state += x; Some(*state) })` — the `state` is mutated each step, and each call emits the current state. `scan_left<T, F>` is a generic version that works for any accumulator and combining function. `running_product` uses `scan_left(1, v, |a, b| a * b)`. `running_max` maintains the current maximum.
+`running_sum` uses Rust's built-in `.scan()` iterator method:
+- Mutable state `*state` is updated in place each step
+- Each invocation emits the current state via `Some(*state)`
+- The initial `0` is prepended to include the starting accumulator
+
+The generic `scan_left<T: Clone, F>(init: T, v: &[T], f: F) -> Vec<T>` starts with `vec![init.clone()]` and loops, pushing `f(&acc, x)` at each step. The `Clone` bound is required because every intermediate value must be owned and stored. `running_product` reuses `scan_left(1, v, |a, b| a * b)`, showing the same combinator works for any associative operation.
 
 ## OCaml Approach
 
-OCaml's `List.fold_left` computes only the final result. For scan: `let scan_left f init lst = let rec aux acc list result = match list with [] -> List.rev result | x :: t -> let new_acc = f acc x in aux new_acc t (new_acc :: result) in init :: aux init lst []`. OCaml 4.11 adds `List.fold_left_map` for producing both a result and a transformed list, which partially addresses this.
+OCaml's standard library `List.fold_left` computes only the final result. For scan, you define it manually:
+
+```ocaml
+let scan_left f init lst =
+  let rec aux acc lst result =
+    match lst with
+    | [] -> List.rev result
+    | x :: t ->
+      let acc' = f acc x in
+      aux acc' t (acc' :: result)
+  in
+  init :: aux init lst []
+```
+
+This is tail-recursive via the accumulator `result` list, reversed at the end. OCaml 4.11 added `List.fold_left_map` which produces a transformed list alongside the accumulator, partially overlapping with scan for element-wise transforms but not providing running intermediates directly.
 
 ## Key Differences
 

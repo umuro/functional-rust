@@ -6,9 +6,11 @@
 
 ## Problem Statement
 
-"Parse, don't validate" (Lexi Lambda, 2019) is a design principle: instead of checking a precondition and continuing with the raw value, parse the input into a type that PROVES the precondition is satisfied. `NonEmptyString` cannot be empty by construction; `PositiveInt` cannot be negative. The type system enforces invariants, not runtime checks.
+"Parse, don't validate" (Lexi Lambda, 2019) is a foundational design principle: instead of checking a precondition and continuing with the raw value, parse the input into a type that structurally PROVES the precondition is satisfied. `NonEmptyString` cannot be empty by construction — its type is the proof. `PositiveInt` cannot be negative — the type system, not runtime checks, enforces this.
 
-This pattern eliminates entire categories of defensive programming. If a function takes `NonEmptyString`, callers cannot accidentally pass an empty string — the type system prevents it. Applied in Rust's type system, `Email`, `PositiveInt`, `BoundedString<1, 50>` make invalid states unrepresentable. Used in `nutype`, `validator`, and custom domain types throughout production Rust code.
+This pattern eliminates entire categories of defensive programming. If a function takes `NonEmptyString`, callers cannot accidentally pass an empty string — the compiler prevents it. Downstream code needs no re-validation. Applied in Rust, types like `Email`, `PositiveInt`, and `BoundedString<1, 50>` make invalid states literally unrepresentable in the program's type structure.
+
+Used in `nutype` (a Rust derive macro for validated newtypes), `validator`, and custom domain types throughout production Rust codebases, this pattern is especially valuable in domain-driven design where the business rules should be embedded in types, not scattered as defensive checks throughout the logic.
 
 ## Learning Outcomes
 
@@ -24,7 +26,21 @@ This pattern eliminates entire categories of defensive programming. If a functio
 
 ## OCaml Approach
 
-OCaml's approach uses abstract types in modules: `module NonEmptyString : sig type t val of_string : string -> t option val to_string : t -> string end = struct type t = string let of_string s = if s = "" then None else Some s let to_string s = s end`. The `sig` hides the internal representation, preventing direct construction of `t`.
+OCaml uses abstract types in modules to hide the internal representation:
+
+```ocaml
+module NonEmptyString : sig
+  type t
+  val of_string : string -> t option
+  val to_string : t -> string
+end = struct
+  type t = string
+  let of_string s = if s = "" then None else Some s
+  let to_string s = s
+end
+```
+
+The `sig` restricts the visible interface: the `t` type is abstract outside the module, so callers cannot construct a `NonEmptyString.t` directly — only through `of_string`. This is OCaml's equivalent of Rust's private fields.</p>
 
 ## Key Differences
 

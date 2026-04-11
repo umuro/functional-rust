@@ -12,6 +12,8 @@
 
 Flatten an arbitrarily nested list structure into a flat list.
 
+Flattening nested lists appears in JSON document processing (flatten nested arrays), compiler AST processing (flatten nested expression lists), and file system traversal (flatten directory trees). The problem requires a recursive data type — a list where each element is either a value or another list — and structural recursion over that type. This is the simplest non-trivial example of processing an algebraic data type.
+
 ## Learning Outcomes
 
 - Model recursive data structures with Rust enums (algebraic data types)
@@ -38,6 +40,11 @@ Three approaches:
 3. **Ownership matters**: The consuming version (`flatten_owned`) avoids all cloning by taking ownership — impossible in GC languages where sharing is implicit
 4. **Clone bound**: Borrowing versions need `T: Clone` to extract values; OCaml copies freely under GC
 5. **Memory layout**: Rust's `Vec<Node<T>>` is a contiguous heap buffer; OCaml's list is a chain of heap-allocated cons cells
+
+1. **`Box` for recursion:** Rust's `Node::Many(Vec<Node<T>>)` uses a `Vec` (not `Box<Node>`) because a `Vec<Node>` has a known size (pointer + length + capacity). OCaml's `type 'a node = One of 'a | Many of 'a node list` uses a GC-managed list directly.
+2. **`Clone` bound:** `flatten<T: Clone>` requires cloning values extracted from the borrowed `&Node<T>`. OCaml's GC shares values without cloning.
+3. **Explicit stack:** Rust's `flatten_stack` uses a manual `Vec<&Node<T>>` stack to avoid actual recursion, ensuring stack safety for deeply nested inputs. OCaml's TCO handles this automatically with tail-recursive accumulator style.
+4. **Ownership:** `Node::One(T)` owns its value. Flattening requires moving or cloning values out of the tree — Rust forces this to be explicit.
 
 ## Exercises
 

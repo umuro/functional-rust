@@ -24,7 +24,20 @@ The ownership-focused presentation shows that Rust's borrow checker is not an ob
 
 ## OCaml Approach
 
-OCaml: `let rec gcd a b = if b = 0 then a else gcd b (a mod b)`. All integers are value types in OCaml too — no ownership issues. `List.fold_left gcd 0 lst` computes GCD of a list (using `gcd(0, x) = x` as the identity). `List.fold_left lcm 1 lst` computes LCM (using `lcm(1, x) = x`).
+OCaml's Euclidean GCD is a direct tail-recursive function:
+
+```ocaml
+let rec gcd a b = if b = 0 then a else gcd b (a mod b)
+let lcm a b = if a = 0 || b = 0 then 0 else a / gcd a b * b
+
+(* GCD of a list using fold — gcd(0, x) = x as identity *)
+let gcd_list lst = List.fold_left gcd 0 lst
+
+(* LCM of a list — lcm(1, x) = x as identity *)
+let lcm_list lst = List.fold_left lcm 1 lst
+```
+
+All integers in OCaml are value types (like Rust's `Copy` types), so there are no ownership issues. The standard library added `Int.gcd` in OCaml 4.14.
 
 ## Key Differences
 

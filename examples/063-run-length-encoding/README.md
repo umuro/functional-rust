@@ -18,6 +18,9 @@ This version operates on strings rather than generic lists, demonstrating charac
 - Handle the edge case: count=1 (single character, no prefix)
 - Implement the round-trip invariant: `decode(encode(s)) == s`
 
+- Implement both two-pass (pack then count) and single-pass (fold with run tracking) RLE encoding
+- Use `encode_fold` with `acc.last_mut()` for single-pass encoding that avoids intermediate allocation
+
 ## Rust Application
 
 `encode` collects chars to `Vec<char>`, iterates with an index tracking the current run, and builds the result string. When a run ends (different char or end of string), pushes the count (if > 1) and the character. `decode` iterates chars, accumulating a `count` from digit characters and emitting `repeat` characters when a letter is encountered. The `for _ in 0..repeat { result.push(c); }` loop handles the expansion.
@@ -33,8 +36,16 @@ OCaml's string version: `let encode s = let n = String.length s in let buf = Buf
 3. **Digit parsing**: Rust uses `c.is_ascii_digit()` and arithmetic `c as u32 - '0' as u32`. OCaml: `Char.code c - Char.code '0'`. Same approach.
 4. **`count * 10 + digit`**: Multi-digit run lengths (10+) require accumulating digits: `count = count * 10 + digit`. Both implementations handle this the same way.
 
+1. **`dedup` vs RLE:** `dedup()` removes all consecutive duplicates. RLE counts them. Different operations for different use cases — compression uses RLE; uniqueness uses dedup.
+2. **`Itertools::chunk_by`:** The `itertools` crate provides `chunk_by(|a, b| a == b)` which groups consecutive equal elements. This is the iterator-based `pack` operation from example 009.
+3. **Generic vs concrete:** Making `encode<T: PartialEq + Clone>` generic handles any element type, not just characters. OCaml's `'a rle` is also polymorphic.
+4. **Performance:** Single-pass encoding with `fold` is faster than two-pass (group then count) because it avoids intermediate allocation. For string RLE specifically, byte-level iteration (`bytes()`) is faster than `chars()` for ASCII input.
+
 ## Exercises
 
 1. **Generic RLE**: Adapt to work on `&[T]` instead of `&str`, returning a `String`-like encoding. What type should the output be for generic T?
 2. **Streaming codec**: Write an `RleEncoder` struct with a `push(c: char) -> Option<String>` method that emits encoded chunks when runs complete, enabling streaming use.
 3. **Benchmark**: Compare encoding performance on "AAAAABBBCCCCC..." (long runs) vs "ABCDEFGH..." (no runs). When is RLE beneficial vs harmful?
+
+4. **String RLE**: Implement `rle_encode_str(s: &str) -> String` that encodes a string in a compact format like `"aaa bb c"` → `"3a 2b c"` and `rle_decode_str` that reverses it.
+5. **Image RLE**: Implement `encode_image(pixels: &[u8]) -> Vec<(u8, u8)>` for a grayscale image encoded as a flat byte array — this is the actual BMP/PCX compression format.

@@ -18,9 +18,13 @@ These types make the possibility of absence or failure explicit in the type sign
 - Understand the monadic structure: `and_then` is "do this next, but only if the previous step succeeded"
 - Convert between `Option` and `Result` with `.ok_or()` and `.ok()`
 
+- Use `if let Some(x) = opt { ... }` as shorthand when only the `Some` case needs handling, without writing a full `match`
+
 ## Rust Application
 
 `safe_div` returns `Option<i32>` instead of relying on a caller to check for zero. `double_head` chains with `.map(|x| x * 2)` — if the head is `None`, map short-circuits. `chain_lookups` uses `and_then` to sequence two fallible operations: only if the first succeeds does it attempt the second. The `MyError` enum and `Result`-based variants show how to carry structured error information — the same pattern used throughout the Rust standard library and in crates like `anyhow` and `thiserror`.
+
+The `?` operator (try operator) is the most concise form of error propagation: in a function returning `Result<T, E>`, writing `let x = fallible_op()?` automatically returns `Err(e)` if the operation fails and unwraps `Ok(v)` to `v` if it succeeds. This is equivalent to OCaml's `let* x = fallible_op() in ...` monadic bind syntax. The `?` operator works for both `Option` and `Result` in Rust.
 
 ## OCaml Approach
 
@@ -33,8 +37,16 @@ OCaml's `option` type (`None | Some x`) and `result` type (`Ok x | Error e`) wor
 3. **`ok_or`**: Rust provides `.ok_or(err)` to convert `Option<T>` to `Result<T, E>`. OCaml uses `Option.to_result ~none:err`.
 4. **Unwrap**: Both languages provide an "unwrap or panic" escape hatch (Rust: `.unwrap()`, OCaml: `Option.get`). Both should be avoided in production code.
 
+1. **Null safety:** Both languages eliminate null at the type level. `Option` forces explicit handling of absence; there is no way to call a method on `None` by accident.
+2. **`?` operator:** Rust's `?` for early-return on error has no direct OCaml syntax equivalent (OCaml uses `let*` with ppx_let or explicit match). Both achieve the same monadic composition.
+3. **Error type:** Rust's `Result<T, E>` carries a typed error `E`. OCaml's `result` type: `type ('a, 'b) result = Ok of 'a | Error of 'b`. Both are isomorphic.
+4. **Conversion:** Rust provides `.ok()` (`Result` → `Option`), `.ok_or(e)` (`Option` → `Result`). OCaml uses manual `match` for these conversions.
+
 ## Exercises
 
 1. **Safe index**: Write `safe_get(v: &[i32], i: usize) -> Option<i32>` and chain it with `safe_div` to implement `divide_at_index(nums: &[i32], i: usize, divisor: i32) -> Option<i32>`.
 2. **Collect options**: Write `all_or_none(opts: &[Option<i32>]) -> Option<Vec<i32>>` that returns `Some` only if all inputs are `Some`, using `.collect::<Option<Vec<_>>>()`.
 3. **Error enrichment**: Write a function that parses a string to an integer, divides it by another parsed integer, and returns a `Result<i32, String>` with a descriptive error message at each step.
+
+4. **Optional chaining**: Given a nested structure `User { address: Option<Address> }` where `Address { city: Option<String> }`, write a function that returns the city as `Option<&str>` using `and_then` and `as_deref`.
+5. **Collect Options**: Implement `sequence(opts: Vec<Option<T>>) -> Option<Vec<T>>` that returns `None` if any element is `None`, otherwise returns `Some` of all the values — equivalent to OCaml's `Option.join` applied to a list.

@@ -18,6 +18,9 @@ This pattern appears in validation pipelines: `parse_int(s).filter(|&x| x >= 0).
 - Use `filter` as a guard in option chains to enforce preconditions
 - Recognize filter as the "zero of the monad" — it can collapse a chain to None
 
+- Use `Option::filter(pred)` to return `None` when the predicate fails on a `Some(x)` value
+- Compose `.filter().map().and_then()` for declarative option processing without explicit match
+
 ## Rust Application
 
 `opt.filter(|&x| x > 0)` returns `None` if `opt` is `None` or if `x <= 0`. The predicate receives a reference `&T`. Multiple filters: `opt.filter(|&x| x >= 18).filter(|&x| x <= 65)` applies both bounds. Combining with map: `safe_parse(s).filter(|&n| n != 0).map(|n| 100 / n)` — parse, guard against zero, then divide. The `.ok()` method converts `Result` to `Option` for use with filter chains.
@@ -33,8 +36,16 @@ OCaml's `Option.filter f opt`: `let filter f = function None -> None | Some x ->
 3. **`Option.filter` availability**: OCaml 4.08 added `Option.filter`. Earlier versions need `match` or the bind derivation. Rust has always had `Option::filter`.
 4. **`retain` analogy**: `Option::filter` is analogous to `Vec::retain` — both remove elements that fail a predicate. `retain` is in-place; `filter` produces a new Option.
 
+1. **`Option::filter` semantics:** `opt.filter(pred)` returns `None` if `opt` is `None` or if the predicate returns `false`. It is equivalent to `opt.and_then(|x| if pred(&x) { Some(x) } else { None })`.
+2. **OCaml equivalent:** OCaml provides `Option.filter pred opt` (OCaml 4.08+) with identical semantics.
+3. **Composing filter + map:** `opt.filter(pred).map(transform)` reads as "keep the value if it passes the predicate, then transform it." This is a common pattern for conditional transformation.
+4. **Use case:** `option_filter` is particularly useful for validating optional inputs — keep the value only if it's in a valid range or satisfies a constraint.
+
 ## Exercises
 
 1. **Age validation**: Write `validate_age(age: Option<i32>) -> Option<i32>` that filters to `[0, 150]` using two chained `filter` calls.
 2. **Non-empty string**: Write `non_empty(s: Option<String>) -> Option<String>` that returns `None` for `Some("")` and passes through non-empty strings. Use `filter(|s| !s.is_empty())`.
 3. **Conditional transform**: Write `square_if_positive(opt: Option<i32>) -> Option<i32>` that squares the value only if it is positive, returning `None` otherwise. Combine `filter` and `map`.
+
+4. **Filter chain**: Write `filter_positive_even(opt: Option<i32>) -> Option<i32>` using two chained `.filter()` calls — one for positive, one for even.
+5. **Filter with transform**: Write `filter_map_option<T, U>(opt: Option<T>, pred: impl Fn(&T) -> bool, transform: impl Fn(T) -> U) -> Option<U>` combining filter and map in one step.

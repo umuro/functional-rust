@@ -24,7 +24,28 @@ Dynamic dispatch via `dyn Trait` is used in plugin systems, event handlers, GUI 
 
 ## OCaml Approach
 
-OCaml's equivalent is the module system or object system. Module-based: `type shape = { area: unit -> float; name: unit -> string }`. `let circle r = { area = (fun () -> Float.pi *. r *. r); name = (fun () -> "circle") }`. Record-of-functions is OCaml's idiomatic "dynamic dispatch" — a manually built vtable.
+OCaml uses record-of-functions as its idiomatic "dynamic dispatch" (manually built vtable):
+
+```ocaml
+type shape = {
+  area : unit -> float;
+  name : unit -> string;
+}
+
+let circle r = {
+  area = (fun () -> Float.pi *. r *. r);
+  name = (fun () -> "circle");
+}
+
+let rectangle w h = {
+  area = (fun () -> w *. h);
+  name = (fun () -> "rectangle");
+}
+
+let describe s = Printf.printf "%s: %.2f\n" (s.name ()) (s.area ())
+```
+
+OCaml's OO subset (`#method`) provides an alternative with structural subtyping. The record-of-functions approach mirrors Rust's vtable more directly.
 
 ## Key Differences
 

@@ -6,25 +6,44 @@
 
 ## Problem Statement
 
-Hamming distance counts the number of positions at which two equal-length strings differ. Named after Richard Hamming (1950), it was originally developed for error detection in digital communication — a Hamming distance of 1 means strings differ at exactly one position, allowing single-bit error correction.
+Hamming distance counts the number of positions at which two equal-length strings differ. Named after Richard Hamming, who introduced it in his landmark 1950 paper on error-detecting and error-correcting codes, the concept was foundational for reliable digital communication. A code with minimum Hamming distance d can detect up to d-1 bit errors and correct up to floor((d-1)/2) errors — the foundation of Hamming codes and modern ECC memory.
 
-Applications: DNA sequence comparison (bioinformatics), error-correcting codes (Hamming codes, Reed-Solomon), nearest-neighbor search in machine learning, and password similarity analysis. The `zip + filter + count` pattern it demonstrates is one of the most common iterator patterns in Rust.
+Applications span many fields: DNA sequence comparison in bioinformatics measures how far two genetic strands have diverged through mutation; error-correcting codes in storage and networking (Hamming codes, Reed-Solomon) rely on Hamming distance to detect and repair corruption; nearest-neighbor search in machine learning uses it to find similar binary feature vectors in LSH (locality-sensitive hashing); and cryptographic protocols analyze password similarity to enforce minimum edit distance policies. The `zip + filter + count` pipeline it demonstrates is one of the most fundamental iterator composition patterns in Rust, applicable whenever you need to compare two sequences element-by-element.
 
 ## Learning Outcomes
 
-- Use `.zip()` to pair corresponding elements from two iterators
-- Use `.filter(|(a, b)| a != b)` to count mismatches
-- Return `Result` when inputs must have equal length
-- Implement using both `filter().count()` and `fold` for comparison
-- Use byte-level comparison (`as_bytes()`) for ASCII performance
+- Use `.zip()` to pair corresponding elements from two iterators into a stream of tuples
+- Use `.filter(|(a, b)| a != b)` to select only the mismatched pairs before counting
+- Return `Result<usize, String>` when inputs must have equal length, signaling the precondition violation explicitly
+- Implement the same logic using both `filter().count()` and `fold` to compare styles
+- Use byte-level comparison (`as_bytes()`) for ASCII performance, bypassing UTF-8 decoding
+- Understand the connection to error-correcting codes and binary distance metrics
 
 ## Rust Application
 
-`hamming_distance(s1, s2)` checks lengths first (returning `Err` if unequal), then `s1.chars().zip(s2.chars()).filter(|(a, b)| a != b).count()`. `hamming_fold` uses `fold(0, |acc, (a, b)| if a != b { acc + 1 } else { acc })` — equivalent but explicit about accumulation. `hamming_bytes` compares `&[u8]` directly — faster for ASCII strings since `chars()` overhead is avoided.
+`hamming_distance(s1: &str, s2: &str) -> Result<usize, String>` validates equal lengths first, returning `Err` if they differ. The pipeline `s1.chars().zip(s2.chars()).filter(|(a, b)| a != b).count()` reads cleanly:
+1. `zip` pairs up characters from both strings
+2. `filter` keeps only the pairs that differ
+3. `count` tallies the mismatches
+
+`hamming_fold` replaces `filter().count()` with `fold(0, |acc, (a, b)| if a != b { acc + 1 } else { acc })`, showing the accumulator pattern explicitly. Both are O(n).
+
+`hamming_bytes` accepts `&[u8]` slices for ASCII-only inputs (DNA sequences, binary strings), avoiding UTF-8 decoding overhead entirely.
 
 ## OCaml Approach
 
-OCaml's version: `let hamming s1 s2 = if String.length s1 <> String.length s2 then Error "unequal lengths" else Ok (String.fold_left2 (fun acc c1 c2 -> if c1 = c2 then acc else acc + 1) 0 s1 s2)`. `String.fold_left2` (OCaml 4.14+) folds over two strings simultaneously. Earlier: `List.fold_left2 acc (String.to_seq_of_bytes s1 |> List.of_seq) (...)`.
+OCaml uses `String.fold_left2` (OCaml 4.14+) to visit corresponding characters:
+
+```ocaml
+let hamming s1 s2 =
+  if String.length s1 <> String.length s2
+  then Error "unequal lengths"
+  else Ok (String.fold_left2
+             (fun acc c1 c2 -> if c1 = c2 then acc else acc + 1)
+             0 s1 s2)
+```
+
+Earlier versions convert to `List.of_seq` and use `List.fold_left2`. OCaml's `String` is byte-indexed so characters are always single bytes — no Unicode code-point complexity. The error result type is `(int, string) result`, matching Rust's `Result<usize, String>` structurally.
 
 ## Key Differences
 

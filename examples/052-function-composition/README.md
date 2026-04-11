@@ -37,8 +37,16 @@ A simple three-argument curried function: `let compose f g x = f (g x)`. Partial
 4. **Argument order conventions**: OCaml's `compose f g` matches mathematical notation (f∘g); Rust's `pipe(g, f)` matches data-flow reading order
 5. **Trait extension**: Rust's trait system allows adding `.then_apply` to any `Fn` type — a pattern unavailable in OCaml without a module functor
 
+1. **`Box<dyn Fn>` requirement:** The composed function's type cannot be named statically, so it must be heap-allocated as `Box<dyn Fn>`. For generic composition that avoids allocation, use the `impl Fn` return type with a concrete closure.
+2. **Mathematical vs data-flow order:** Mathematical `f ∘ g` (f after g) reads right-to-left. Pipeline `pipe(f, g)` reads left-to-right. Choose the order that makes your code most readable.
+3. **`'static` lifetime:** The `'static` bound on `compose` ensures the closure can be stored and used anywhere. Drop it if you know the composition will not outlive the function arguments.
+4. **OCaml `>>>`:** Some OCaml libraries define `let (>>>) f g = fun x -> g (f x)` for left-to-right composition. This matches Rust's `pipe` semantics.
+
 ## Exercises
 
 1. Write a `compose_pair` function that takes two closures `f: B -> C` and `g: A -> B` and returns a new closure `A -> C`.
 2. Implement an `apply_twice` higher-order function that applies a function `f: T -> T` to a value twice, then generalize to `apply_n`.
 3. Build a validation pipeline using composition: compose three validators (non-empty, max-length, alphanumeric-only) into a single `String -> Result<String, &str>` function.
+
+4. **Compose three**: Implement `compose3<A, B, C, D>(f: impl Fn(C) -> D, g: impl Fn(B) -> C, h: impl Fn(A) -> B) -> impl Fn(A) -> D` that composes three functions in mathematical order (f after g after h).
+5. **Identity law**: Write a test verifying that `compose(id, f)(x) == f(x)` and `compose(f, id)(x) == f(x)` for any function `f` and value `x` — these are the identity laws of function composition.

@@ -38,8 +38,16 @@ OCaml's `option` type (`Some x | None`) is the idiomatic way to represent partia
 4. **Copying:** Rust needs `.copied()` to go from `Option<&T>` to `Option<T>`; OCaml doesn't distinguish
 5. **Iterator integration:** Rust's `max()` returns `Option` natively — no need for a custom function
 
+1. **Empty collection safety:** `max()` on an empty iterator returns `None` — safe. OCaml's `List.fold_left max min_int []` would return `min_int` — not safe if the list might be legitimately empty vs accidentally empty.
+2. **`Option` as safe max:** `iter.max()` returns `Option<T>` — the caller must decide what to do with an empty collection. This forces correct handling instead of silently returning a sentinel.
+3. **`Iterator::max()` is lazy:** It processes elements one by one — no intermediate allocation. OCaml's `List.fold_left (fun acc x -> max acc x) (List.hd list) (List.tl list)` is equivalent but more verbose.
+4. **Custom max by key:** `iter.max_by_key(|x| x.score)` finds the maximum by a derived key. OCaml: `List.fold_left (fun acc x -> if x.score > acc.score then x else acc) first rest`.
+
 ## Exercises
 
 1. Implement `safe_min` alongside `safe_max`, then write `safe_range` that returns `Option<(T, T)>` with the min and max in a single pass.
 2. Write `safe_max_by_key` that accepts a key extraction function `f: &T -> K` and returns the element with the greatest key, returning `None` for an empty list.
 3. Implement `top_n` that returns the `n` largest elements from a slice as a sorted `Vec<T>`, using `Option` throughout to handle edge cases (empty slice, `n > len`).
+
+4. **Top-k**: Implement `top_k<T: Ord>(iter: impl Iterator<Item = T>, k: usize) -> Vec<T>` that returns the k largest elements, using a min-heap of size k (`BinaryHeap` in Rust can be adapted).
+5. **Safe statistics**: Implement `safe_stats(data: &[f64]) -> Option<(f64, f64, f64)>` returning `(min, max, mean)` — return `None` for empty input, using `Iterator::min_by`, `max_by`, and `sum` / `count`.

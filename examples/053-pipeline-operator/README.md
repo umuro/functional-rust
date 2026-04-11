@@ -38,8 +38,16 @@ Defines `|>` as `let ( |> ) x f = f x`. This is just reverse function applicatio
 4. **Zero cost**: Both the trait default method and macro expand at compile time with no runtime overhead
 5. **Ownership**: Each `pipe` step consumes and produces — ownership flows through the chain naturally
 
+1. **`|>` in OCaml is built-in:** Defined as `let (|>) x f = f x` in the standard library. Rust has no such operator — the closest is method chaining on iterator adapters.
+2. **Ownership at each step:** Each `pipe(value, f)` call moves the value into `f`. This enforces that values are consumed sequentially — no accidental reuse. OCaml's GC handles sharing transparently.
+3. **Type inference:** OCaml's `|>` benefits from left-to-right type inference in the pipeline. Rust's `pipe` function sometimes requires explicit type annotations on intermediate closures.
+4. **Iterator chains as pipe:** `vec.iter().filter(pred).map(f).sum()` is Rust's idiomatic pipeline for collections. Each method call corresponds to one stage in the OCaml `|>` pipeline.
+
 ## Exercises
 
 1. Implement a `pipe` function that takes a value and a single-argument closure, applies the closure, and returns the result — then chain three `pipe` calls to transform a string.
 2. Write a `pipe_debug` wrapper that logs the intermediate value between two pipeline stages to stderr, keeping the same type signature as `pipe`.
 3. Model a data-transformation pipeline using `pipe`: parse a CSV row string → split into fields → trim each field → parse the third field as `f64` → multiply by a tax rate, returning a `Result<f64, String>`.
+
+4. **Typed pipeline**: Define a `Pipeline<T>` struct that wraps a value and implements a `.pipe(f)` method returning `Pipeline<U>`. Add a `.value()` method to extract the final result. This gives Rust a fluent pipeline API.
+5. **Error pipeline**: Implement `ResultPipeline<T, E>` wrapping `Result<T, E>` with a `.pipe(f: impl FnOnce(T) -> Result<U, E>) -> ResultPipeline<U, E>` method that chains fallible operations.

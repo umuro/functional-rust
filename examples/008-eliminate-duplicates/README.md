@@ -12,6 +12,8 @@
 
 Eliminate consecutive duplicate elements from a list. Only remove duplicates that are adjacent — non-adjacent duplicates remain.
 
+Removing consecutive duplicates is the decompression step for run-length encoding. It also appears in log deduplication (suppress duplicate consecutive log messages), text compression preprocessing, and clean-up of sensor data with stuck values. The key constraint — only consecutive duplicates are removed — makes this fundamentally different from removing all duplicates (which requires a `HashSet`). Run-length decoding produces this exact output.
+
 ## Learning Outcomes
 
 - Use `dedup()` for in-place mutation vs building a new collection
@@ -37,6 +39,11 @@ Pattern matches on the list head, comparing consecutive elements. When `h1 = h2`
 3. **`windows(2)` is unique to Rust**: Efficient pairwise comparison over contiguous memory
 4. **Trait bounds**: Rust needs `PartialEq` explicitly; OCaml uses polymorphic equality
 5. **In-place vs functional**: Rust naturally offers both; OCaml is functional-first (no in-place dedup on lists)
+
+1. **Mutation vs immutable:** Rust's `dedup()` mutates in place. OCaml lists are immutable — `compress` always builds a new list.
+2. **`PartialEq` vs structural equality:** Rust's `dedup` uses `PartialEq` for comparison. OCaml uses structural equality `(=)` by default, which works for most types.
+3. **`windows(2)`:** Rust's sliding-window iterator has no built-in OCaml equivalent — it's possible only on contiguous memory (slices/arrays), not linked lists.
+4. **Single pass:** All three Rust implementations are single-pass O(n). OCaml's recursive version is also single-pass — it compares the head with the next element.
 
 ## Exercises
 

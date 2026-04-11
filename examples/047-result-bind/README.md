@@ -18,6 +18,9 @@ The classic example is a multi-step pipeline: validate input → parse → compu
 - Recognize `and_then` as the result monad's bind operation
 - Connect `and_then` to the `?` operator: `f()?` desugars to an `and_then` chain
 
+- Use `Result::and_then(f)` to sequence fallible operations — each step feeds its success value to the next
+- Use the `?` operator as shorthand for `and_then`-based error propagation in functions returning `Result`
+
 ## Rust Application
 
 `parse_int(s).and_then(|n| safe_div(n, 2)).and_then(|n| Ok(n.to_string()))` — parse, divide (may fail with division by zero), convert. Each `and_then` only runs if the previous step succeeded. The `?` operator is syntax sugar: `let n = parse_int(s)?; let d = safe_div(n, 2)?; Ok(d.to_string())` is equivalent and more readable for long chains. Both error types must be compatible (same `E`, or convertible via `From`).
@@ -33,8 +36,16 @@ OCaml's `Result.bind r f`: `let bind r f = match r with Ok x -> f x | Error e ->
 3. **`and_then` vs `>>=`**: Haskell uses `>>=` (pronounced "bind"). Rust calls it `and_then`. OCaml calls it `bind`. All are the same operation.
 4. **Error channel**: `and_then` only threads through the success channel. Use `or_else` for the error channel: `result.or_else(|e| fallback(e))`.
 
+1. **`and_then` sequences fallible steps:** Each step in the chain may fail. If any step returns `Err`, the chain short-circuits and propagates the error. Only `Ok` values proceed to the next step.
+2. **Railway-oriented programming:** The metaphor: `Ok` is the happy track; `Err` is the error track. `and_then` switches you to the error track on failure — you never switch back without explicit `or_else`.
+3. **`?` operator shorthand:** `let x = fallible_op()?` is syntactic sugar for `and_then` in functions returning `Result`. The `?` desugars to `match fallible_op() { Ok(v) => v, Err(e) => return Err(e.into()) }`.
+4. **OCaml `let*`:** With `ppx_let`, `let* x = fallible_op () in next_step x` is the OCaml equivalent of `fallible_op()?.and_then(|x| next_step(x))`.
+
 ## Exercises
 
 1. **Config parser**: Write a function that reads a string `"host:port"`, splits on `:`, parses the port as `u16`, and validates the host is non-empty. Use `and_then` at each step.
 2. **Database query chain**: Simulate `find_user(id).and_then(|u| find_posts(u.id)).and_then(|posts| render(posts))` with stub functions. Handle the case where each step might return `Err("not found")`.
 3. **Equivalent forms**: Rewrite a 3-step `and_then` chain using (a) nested `match`, (b) `and_then`, (c) `?` operator. Verify all three produce the same results. Discuss readability.
+
+4. **Pipeline of 3**: Write `pipeline(input: &str) -> Result<f64, String>` that parses a string to integer, checks it's positive, then computes its square root — using three chained `and_then` calls.
+5. **`?` operator**: Rewrite the same `pipeline` function using the `?` operator instead of explicit `and_then` chains. Both must produce identical behavior.

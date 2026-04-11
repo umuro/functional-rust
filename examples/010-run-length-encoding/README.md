@@ -12,6 +12,8 @@
 
 Use the result of Problem 9 (pack consecutive duplicates) to implement run-length encoding: replace consecutive duplicate elements with `(count, element)` pairs.
 
+Run-length encoding (RLE) is one of the oldest compression algorithms, dating to the 1960s. It is used in fax transmission (CCITT T.4 standard), BMP and PCX image formats, TIFF compression, and the PackBits algorithm in TIFF. The core idea is to replace runs of repeated data with a single (count, value) pair. For data with long runs (solid-color images, simple fax documents), RLE achieves significant compression. For random data with no runs, it can expand the data.
+
 ## Learning Outcomes
 
 - Compose solutions by building on previous problems (pack → encode)
@@ -37,6 +39,10 @@ First packs consecutive elements (reusing Problem 9's `pack`), then maps each gr
 3. **Single-pass efficiency**: The fold and direct versions avoid creating intermediate packed groups
 4. **`usize` vs `int`**: Rust uses `usize` for counts (unsigned, pointer-sized); OCaml uses `int` (signed, word-sized)
 5. **No intermediate allocation**: The direct version builds the result in one pass — important for large inputs
+
+1. **Composition:** The two-pass `encode` (pack then map) is cleaner but allocates twice. The single-pass `encode_fold` is more efficient. OCaml's version typically uses the same two-pass structure as it composes `pack` from problem 9.
+2. **Tuple types:** `(usize, T)` in Rust is a product type. OCaml's `(int * 'a)` is the same concept with different syntax. Both are structural — no named fields.
+3. **`fold` for single pass:** Using `fold` with mutable access to the last element (`acc.last_mut()`) avoids re-scanning the accumulator. This is the key idiom for single-pass accumulation.
 
 ## Exercises
 

@@ -18,6 +18,9 @@ The efficient algorithm avoids creating intermediate lists: for a list of length
 - Understand the connection between rotation and circular buffers
 - Apply the reversal algorithm as an alternative O(n) in-place approach
 
+- Use `n % v.len()` to normalize rotations larger than the list length before slicing
+- Use `v.rotate_left(n)` for O(n) in-place rotation with no allocation
+
 ## Rust Application
 
 The idiomatic approach: `let n = n % v.len(); let mut result = v[n..].to_vec(); result.extend_from_slice(&v[..n]); result`. The `n % v.len()` normalization handles rotations larger than the list. An alternative uses slice concatenation: `[&v[n..], &v[..n]].concat()`. For in-place rotation, `v.rotate_left(n)` is built into `Vec` and is O(n) with no allocation.
@@ -26,6 +29,8 @@ The idiomatic approach: `let n = n % v.len(); let mut result = v[n..].to_vec(); 
 
 OCaml's version: `let rotate lst n = let len = List.length lst in let n = ((n mod len) + len) mod len in let (left, right) = split lst n in right @ left`. The `((n mod len) + len) mod len` handles negative rotations correctly. `split` from example 017 decomposes the list, and `@` concatenates. OCaml's `@` is O(|left|), making this O(n) overall.
 
+OCaml's rotate uses `split_at` then appends: `let rotate list n = let len = List.length list in let n' = n mod len in let (left, right) = split_at n' list in right @ left`. The `@` operator copies the left half — O(|right|). Negative rotation is achieved by normalizing: `((n mod len) + len) mod len`.
+
 ## Key Differences
 
 1. **In-place rotation**: Rust's `v.rotate_left(n)` mutates `Vec` in place using a three-reversal algorithm — O(n) time, O(1) space. OCaml's immutable lists always allocate new structure.
@@ -33,8 +38,15 @@ OCaml's version: `let rotate lst n = let len = List.length lst in let n = ((n mo
 3. **`@` vs `extend_from_slice`**: OCaml's `right @ left` is O(|right|) because it copies the right list. Rust's `extend_from_slice` appends in O(n) but avoids an intermediate allocation if capacity allows.
 4. **`split_at` performance**: Rust's split is O(1) (pointer arithmetic). OCaml's `List.length` + `split` are O(n) each.
 
+1. **`rotate_left` built-in:** Rust's `slice::rotate_left(n)` is a built-in method that rotates in place using three reversals — O(n), no allocation. OCaml has no built-in rotation.
+2. **`[n..] ++ [..n]`:** The immutable Rust version uses `[&v[n..], &v[..n]].concat()` — O(n) with one allocation. OCaml uses `right @ left` — O(|right|) with one allocation.
+3. **Modular arithmetic:** `n % v.len()` handles rotations larger than the list length. Always normalize before accessing slice indices to avoid panics.
+
 ## Exercises
 
 1. **Rotate right**: Write `rotate_right(v: &[i32], n: usize) -> Vec<i32>` using `rotate_left` with appropriate adjustment.
 2. **Caesar cipher via rotation**: A Caesar cipher on the alphabet is a rotation of 26 characters. Write `caesar_encrypt(text: &str, shift: usize) -> String` using `rotate_left` on the alphabet.
 3. **Detect rotation**: Write `is_rotation(a: &[i32], b: &[i32]) -> bool` that returns true if `b` is a rotation of `a`. Use the classic trick of checking if `b` is a subarray of `a ++ a`.
+
+4. **Rotate right**: Implement `rotate_right(v: &[T], n: usize) -> Vec<T>` — rotating right by `n` is the same as rotating left by `v.len() - n`. Use `v.rotate_left` for the in-place version.
+5. **Cyclic iterator**: Implement `cyclic_iter(v: &[T], start: usize) -> impl Iterator<Item = &T>` that starts at index `start` and cycles through the slice indefinitely — equivalent to an infinite rotating view.

@@ -18,6 +18,9 @@ Tree layout algorithms are used in compiler visualization (AST display), file sy
 - Understand inorder traversal as the basis for the x-position assignment
 - Recognize that inorder position gives a non-overlapping horizontal layout
 
+- Thread a `&mut usize` counter through recursive calls to assign sequential in-order x-coordinates
+- Assign y-coordinates as the depth parameter passed down during recursion
+
 ## Rust Application
 
 The layout function threads an inorder counter `x` through the tree. For each node, recursively layout the left subtree (advancing x), assign the current x to this node (advancing x), then layout the right subtree. Using `&mut usize` for the counter: `fn layout<T: Clone>(tree: &Tree<T>, x: &mut usize, depth: usize) -> Tree<(T, (usize, usize))>`. The depth increments by 1 at each level.
@@ -33,8 +36,17 @@ OCaml's version uses a mutable reference: `let layout_aux tree = let x = ref 0 i
 3. **Annotated tree type**: The result `Tree<(T, (usize, usize))>` adds coordinate information to each node. OCaml's `'a tree` becomes `('a * (int * int)) tree` — the same pattern.
 4. **No TCO**: The tree layout recursion is not tail-recursive (left → self → right). Both languages handle this via the call stack, limited by tree depth.
 
+1. **Position tracking:** The layout algorithm assigns `(x, y)` coordinates to each node. `x` is the in-order position (1-based, left-to-right), `y` is the depth (1-based, top-to-bottom). The result is a `Tree<(T, usize, usize)>` where each node carries its coordinates.
+2. **In-order traversal for x:** The x-coordinate is the in-order rank of the node — visiting nodes in sorted order assigns 1, 2, 3, ... left-to-right. A mutable counter is threaded through the traversal.
+3. **Mutating through recursion:** Rust threads the counter as `&mut usize` — mutable reference passed through recursive calls. OCaml's functional version threads the counter as an additional return value.
+
+4. **Functional vs mutable threading:** OCaml threads the counter as an extra return value from each recursive call. Rust passes `&mut usize` — both achieve the same shared mutable counter, expressed differently.
+
 ## Exercises
 
 1. **Compact layout**: Implement a layout where the x-positions are assigned based on the minimum spacing between subtrees (Reingold-Tilford first pass). This requires computing the "contour" of each subtree.
 2. **SVG output**: Given the layout coordinates, write `to_svg(tree: &Tree<(char, (usize, usize))>) -> String` that produces an SVG string with circles for nodes and lines for edges.
 3. **Center layout**: Modify the layout so the root is always centered over its children rather than at the inorder position. This produces a more aesthetically balanced tree.
+
+4. **Centred layout**: Implement a layout algorithm that places the root at the centre and distributes child subtrees symmetrically, computing x-coordinates based on subtree width.
+5. **Render to ASCII**: Using the coordinates from layout, render the tree to an ASCII-art string where nodes appear at their `(x, y)` positions and edges are drawn with `-` and `|` characters.

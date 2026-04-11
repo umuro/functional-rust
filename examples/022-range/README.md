@@ -18,6 +18,9 @@ This distinction matters enormously in practice: Rust's `(4..=9)` is a lazy `Ran
 - Handle the case `a > b` (empty range or descending range)
 - Understand lazy (iterator) vs eager (Vec) range representations
 
+- Use `(a..=b).collect::<Vec<i32>>()` to eagerly materialize a lazy range
+- Understand that `(a..=b)` is a zero-allocation lazy iterator — use it directly in `map`, `filter`, `sum` without collecting
+
 ## Rust Application
 
 The idiomatic Rust approach is `(a..=b).collect::<Vec<i32>>()` — this uses the built-in `Range` type which is a lazy iterator. For descending ranges: `(b..=a).rev().collect()`. The recursive version builds `[a, a+1, ..., b]` by prepending `a` and recurring on `a+1`. An `unfold`-based version: `std::iter::successors(Some(a), |&x| if x < b { Some(x + 1) } else { None }).collect()`.
@@ -26,6 +29,8 @@ The idiomatic Rust approach is `(a..=b).collect::<Vec<i32>>()` — this uses the
 
 OCaml's version: `let range a b = let rec aux acc n = if n < a then acc else aux (n :: acc) (n - 1) in aux [] b`. The recursion counts down from `b` to `a`, building the result in forward order by prepending. `List.init (b - a + 1) (fun i -> a + i)` is a more concise version. With `Seq`: `Seq.unfold (fun i -> if i > b then None else Some (i, i + 1)) a |> List.of_seq`.
 
+OCaml's range using recursion: `let rec range a b = if a > b then [] else a :: range (a+1) b`. Simple and idiomatic. For large ranges, use the tail-recursive version: `let range a b = let rec aux acc b = if b < a then acc else aux (b :: acc) (b-1) in aux [] b`. OCaml's Batteries library provides `a -- b` notation for ranges.
+
 ## Key Differences
 
 1. **Built-in range**: Rust's `(a..=b)` syntax generates a lazy `RangeInclusive<i32>` at zero cost. OCaml has no built-in range syntax; you construct it manually or use Batteries/Core.
@@ -33,8 +38,15 @@ OCaml's version: `let range a b = let rec aux acc n = if n < a then acc else aux
 3. **Descending**: Rust has no lazy descending range; use `(a..=b).rev()`. OCaml's recursive version naturally builds descending if you count up.
 4. **Step**: Rust's `(0..20).step_by(3)` produces 0, 3, 6, ... OCaml requires manual arithmetic: `List.init n (fun i -> a + i * step)`.
 
+1. **Lazy vs eager:** Rust's `(a..=b)` is a lazy `RangeInclusive<i32>` — O(1) to create, O(n) to consume. OCaml's recursive `range` eagerly allocates the full list — O(n) immediately.
+2. **`collect()` drives evaluation:** In Rust, `(4..=9).collect::<Vec<i32>>()` is explicit about when evaluation happens. In OCaml, the list is always eagerly built.
+3. **Built-in syntax:** Rust's `a..b` and `a..=b` are built-in range literals. Haskell has `[a..b]`. OCaml has no built-in range syntax in the core language.
+
 ## Exercises
 
 1. **Floating-point range**: Write `frange(a: f64, b: f64, step: f64) -> Vec<f64>` that generates a floating-point range. Handle floating-point accumulation errors by computing `a + i * step` rather than adding `step` repeatedly.
 2. **Sparse range**: Write `range_except(a: i32, b: i32, exclude: &[i32]) -> Vec<i32>` that generates `[a..=b]` minus the excluded values. Use `filter`.
 3. **Infinite counter**: Implement `counter(start: i32, step: i32) -> impl Iterator<Item=i32>` as an infinite iterator that can be `take(n)` limited. Compare with `std::iter::successors`.
+
+4. **Descending range**: Implement `range_desc(a: i32, b: i32) -> Vec<i32>` that generates `[b, b-1, ..., a]`. Use `.rev()` on a range, or `std::iter::successors`.
+5. **Step range**: Implement `range_step(start: i32, end: i32, step: i32) -> Vec<i32>` generating `[start, start+step, start+2*step, ...]` up to but not exceeding `end`. Handle negative steps for descending ranges.

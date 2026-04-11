@@ -18,6 +18,9 @@ This technique prevented the Mars Climate Orbiter crash (1999) — a $327M missi
 - Understand that `PhantomData<U>` informs the compiler about type variance
 - Recognize phantom types as zero-cost abstraction: no runtime overhead
 
+- Use `PhantomData<T>` with zero runtime overhead to add a phantom type parameter to a struct
+- Implement typestate patterns where calling a method on the wrong state is a compile-time error
+
 ## Rust Application
 
 `Quantity<U>` stores a `f64` value and a `_unit: PhantomData<U>`. Unit markers `Meters` and `Seconds` are zero-sized structs. `Quantity::<Meters>::new(5.0)` and `Quantity::<Seconds>::new(3.0)` are different types. Implementing `Add<Self> for Quantity<U>` allows `q1 + q2` only when both are the same unit — trying to add meters to seconds fails at compile time.
@@ -33,8 +36,16 @@ OCaml's phantom types use a type parameter that is never instantiated: `type 'a 
 3. **Variance**: `PhantomData<U>` makes `Quantity<U>` covariant in `U` (by default). Use `PhantomData<fn(U)>` for contravariance or `PhantomData<*mut U>` for invariance. OCaml's variance is inferred.
 4. **`uom` crate**: Rust's `uom` crate (units of measure) uses phantom types extensively to implement dimension-safe arithmetic. This example is the conceptual foundation.
 
+1. **Zero runtime cost:** Phantom types exist only at compile time. `PhantomData<T>` has zero size — it is erased by the compiler, leaving no runtime overhead.
+2. **Type-level state machines:** The classic use case: `Connection<Closed>`, `Connection<Open>`, `Connection<Authenticated>`. Methods transition between states: `connect(c: Connection<Closed>) -> Connection<Open>`. Invalid transitions don't compile.
+3. **OCaml phantom types:** OCaml uses the same technique: `type 'a t = { ... }` where `'a` is never used in the fields. The type parameter is phantom. OCaml's module system can hide the phantom parameter behind a signature.
+4. **`std::marker::PhantomData<T>`:** Required in Rust to tell the type system that `T` is logically "used" even though no field actually contains `T`. Without it, the compiler complains about unused type parameters.
+
 ## Exercises
 
 1. **Velocity**: Define a `Speed<Meters, Seconds>` phantom type and implement division: `Quantity<Meters> / Quantity<Seconds> -> Quantity<Speed>`. Use a type alias `type MetersPerSecond = Speed<Meters, Seconds>`.
 2. **State machine**: Use phantom types to model a connection state: `Connection<Disconnected>` and `Connection<Connected>`. Only `Connection<Connected>` can have a `send()` method. This is the typestate pattern.
 3. **Typed IDs**: Define `Id<User>`, `Id<Post>`, `Id<Comment>` as phantom-typed `u64` wrappers. Demonstrate that passing a `UserId` where a `PostId` is expected fails at compile time.
+
+4. **Typestate lock**: Implement `Lock<Locked>` and `Lock<Unlocked>` with `fn unlock(lock: Lock<Locked>, key: &str) -> Result<Lock<Unlocked>, &'static str>` and `fn use_lock(lock: &Lock<Unlocked>) -> &str`. The type system prevents using a locked lock.
+5. **Unit conversion**: Use phantom types to prevent mixing units — `Meters(f64)` and `Feet(f64)`. Add `to_feet(m: Meters) -> Feet` conversion and ensure `Meters + Feet` doesn't compile.

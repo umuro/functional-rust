@@ -18,6 +18,9 @@ The problem introduces the pattern of accumulating a count by traversing an enti
 - Apply the same traversal skeleton to other counting/accumulation problems
 - Understand the relationship between leaf count and the number of internal nodes
 
+- Count leaf nodes using structural recursion with base case `Leaf -> 1` and recursive case `Node(_, l, r) -> count(l) + count(r)`
+- Verify the invariant: `count_leaves + count_internal_nodes == total_node_count` in tests
+
 ## Rust Application
 
 `count_leaves` follows the tree structure directly: `match tree { Tree::Leaf => 1, Tree::Node(_, l, r) => count_leaves(l) + count_leaves(r) }`. The base case counts each leaf as 1; the recursive case sums left and right leaf counts. Note that `Tree::Node` itself does not contribute to the leaf count — only `Tree::Leaf` does. The value stored in a `Node` is ignored via `_`.
@@ -26,6 +29,8 @@ The problem introduces the pattern of accumulating a count by traversing an enti
 
 OCaml's version: `let rec count_leaves = function | Leaf -> 1 | Node (_, l, r) -> count_leaves l + count_leaves r`. The pattern is identical — the `function` keyword matches directly on the tree. Leaf count is a classic example where the value at nodes is irrelevant, so it is bound to `_`.
 
+OCaml: `let rec count_leaves = function | Leaf -> 1 | Node (_, l, r) -> count_leaves l + count_leaves r`. The leaf case returns 1 (a lone `Leaf` counts as a leaf). In OCaml 99 Problems, the tree has a different structure where `Leaf` carries no value, so a tree with a single value is `Node(x, Leaf, Leaf)` with two leaf children that are not counted as leaves in the same way. Clarify the definition for your specific tree type.
+
 ## Key Differences
 
 1. **Symmetric structure**: The Rust and OCaml implementations are nearly identical in structure — this is the point. Algebraic data types + pattern matching produce code whose shape mirrors the data.
@@ -33,8 +38,15 @@ OCaml's version: `let rec count_leaves = function | Leaf -> 1 | Node (_, l, r) -
 3. **Catamorphism**: `count_leaves` is a catamorphism — it replaces each constructor with a function. `Leaf` → 1, `Node(_, l, r)` → `l_count + r_count`. Example 080 generalizes this pattern.
 4. **Accumulator variant**: A tail-recursive version would use an accumulator: `count_leaves_acc tree acc` adds 1 for each Leaf. But Rust won't TCO this either way since the tree recursion is not tail-recursive.
 
+1. **Leaf definition:** In the standard `Tree<T>` from example 029, a leaf node is one whose children are both `Tree::Leaf`. The `Tree::Leaf` variant itself has no value — it represents absence.
+2. **Both branches must be explored:** Unlike membership testing (which can short-circuit), counting leaves always processes the entire tree. No early termination is possible.
+3. **Leaf count vs node count:** `count_leaves + count_internal_nodes = total_nodes`. For a complete binary tree with n internal nodes, there are exactly n+1 leaves.
+
 ## Exercises
 
 1. **Count nodes**: Write `count_nodes<T>(tree: &Tree<T>) -> usize` that counts all nodes (both leaves and internal nodes). Verify that `count_nodes(t) == count_leaves(t) + count_internal(t)`.
 2. **Count internal nodes**: Write `count_internal<T>(tree: &Tree<T>) -> usize` that counts only nodes that have at least one non-leaf child.
 3. **Leaf fraction**: Write `leaf_fraction<T>(tree: &Tree<T>) -> f64` that returns `count_leaves(t) / count_nodes(t) as f64`. For a complete binary tree of depth d, this is approximately 0.5.
+
+4. **Count nodes**: Implement `count_nodes<T>(tree: &Tree<T>) -> usize` that counts ALL nodes (leaves + internal). Verify that `count_leaves + count_internal_nodes == count_nodes` in tests.
+5. **Leaf ratio**: Implement `leaf_ratio(tree: &Tree<T>) -> f64` returning the fraction of all nodes that are leaves. For a complete binary tree, this approaches 0.5 as size grows.

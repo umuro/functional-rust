@@ -12,6 +12,8 @@
 
 Find the last two elements of a list. Return them as a pair (tuple), or `None` if the list has fewer than two elements.
 
+The problem of finding trailing elements arises in streaming systems (keep the last k log entries), undo systems (last two states for delta computation), and sliding-window algorithms. The key insight is that slices in Rust provide O(1) random access, so taking the last two requires no traversal — unlike linked lists in OCaml where you must walk to the end.
+
 ## Learning Outcomes
 
 - Pattern matching on lists/slices with multiple cases
@@ -23,6 +25,8 @@ Find the last two elements of a list. Return them as a pair (tuple), or `None` i
 ## OCaml Approach
 
 OCaml uses nested pattern matching: `[] | [_] -> None`, `[x; y] -> Some (x, y)`, and `_ :: t -> last_two t`. The recursive structure naturally peels off the head until two elements remain.
+
+The recursive OCaml version `let rec last_two = function [] | [_] -> None | [x; y] -> Some (x, y) | _ :: t -> last_two t` is idiomatic and clear, but O(n) because it must traverse the entire linked list. OCaml's `List` module does not cache the length or provide direct indexing, so walking to the end is unavoidable.
 
 ## Rust Approach
 
@@ -36,8 +40,13 @@ Three approaches: (1) direct length-based indexing for O(1) access, (2) recursiv
 4. **Windows iterator:** Rust's `windows(n)` has no direct OCaml equivalent — it exploits contiguous memory
 5. **Exhaustive matching:** Both languages require exhaustive patterns, but Rust's slice patterns (`[_, rest @ ..]`) are less common than OCaml's list patterns
 
+6. **Efficiency:** Rust's `slice.len()` + direct indexing is O(1); OCaml's recursive version is O(n) because linked lists don't store their length or tail pointer.
+
 ## Exercises
 
 1. Write `last_n` that returns the last `n` elements of a slice as an `Option<&[T]>`, returning `None` if the slice is shorter than `n`.
 2. Implement `last_two_by` that returns the last two elements of a slice satisfying a predicate, using only iterator combinators.
 3. Write a generic `sliding_last` that yields all consecutive windows of size `k` from the end of a list, collecting them into a `Vec<Vec<T>>`.
+
+4. **Generic version**: Rewrite `last_two` to be generic over `T: Clone`, returning `Option<(T, T)>` (owned values instead of references). When is this better than returning references?
+5. **Performance comparison**: Write a benchmark comparing `last_two` (direct indexing), `last_two_recursive`, and `last_two_windows` for slices of 10, 1000, and 1,000,000 elements.

@@ -6,9 +6,11 @@
 
 ## Problem Statement
 
-A bifunctor is a type with two type parameters where both can be independently mapped. `Result<T, E>` is the canonical bifunctor: `map` transforms the `T` (success side), `map_err` transforms the `E` (error side), and `bimap` does both. Other bifunctors: tuples `(A, B)`, `Either<L, R>`.
+A bifunctor is a type with two type parameters where both can be independently mapped. `Result<T, E>` is the canonical bifunctor: `map` transforms the `T` (success side), `map_err` transforms the `E` (error side), and `bimap` applies both transformations simultaneously.
 
-Bifunctors formalize the observation that both sides of a sum type or product type can be transformed independently. This is the generalization of `Result::map` + `Result::map_err` into a single concept. Used in category theory, functional programming libraries (Haskell's `Data.Bifunctor`, Scala's `cats`), and error type transformation pipelines.
+Other bifunctors: tuples `(A, B)` where both elements can be transformed independently, and `Either<L, R>` (common in Haskell and Scala). Bifunctors formalize the observation that both sides of a sum type or product type are mappable channels.
+
+This generalizes `Result::map` + `Result::map_err` into a single unified concept. Used in category theory, functional programming libraries (Haskell's `Data.Bifunctor`, Scala's `cats.Bifunctor`), and error-type transformation pipelines where you need to convert both success and error types simultaneously.
 
 ## Learning Outcomes
 
@@ -24,7 +26,24 @@ For `Result<T, E>`: `bimap(r, f, g) = match r { Ok(x) => Ok(f(x)), Err(e) => Err
 
 ## OCaml Approach
 
-OCaml's Result is a bifunctor: `let bimap f g = function Ok x -> Ok (f x) | Error e -> Error (g e)`. `Result.map f r` is `bimap f Fun.id r`. `Result.map_error g r` is `bimap Fun.id g r`. For pairs: `let bimap_pair f g (a, b) = (f a, g b)`. The `Bifunctor` typeclass from Haskell is not part of OCaml stdlib but is trivially implemented per-type.
+OCaml's `Result` is a bifunctor with `bimap` defined by pattern matching:
+
+```ocaml
+let bimap f g = function
+  | Ok x -> Ok (f x)
+  | Error e -> Error (g e)
+
+(* first = map on Ok side *)
+let first f r = bimap f Fun.id r
+
+(* second = map on Error side *)
+let second g r = bimap Fun.id g r
+
+(* pair bifunctor *)
+let bimap_pair f g (a, b) = (f a, g b)
+```
+
+`Result.map f r` is exactly `first f r`. `Result.map_error g r` is `second g r`. The `Bifunctor` typeclass from Haskell is not part of OCaml stdlib but is trivially implemented per-type.
 
 ## Key Differences
 

@@ -18,6 +18,9 @@ The `entry().or_insert(0)` API is the idiomatic Rust pattern for updating-or-ins
 - Implement word frequency with iterators and `fold` for a functional style
 - Understand the difference between `HashMap` (unordered) and `BTreeMap` (sorted)
 
+- Use `HashMap::entry(key).or_insert(0)` to atomically insert-or-update a counter without double lookup
+- Use `BTreeMap` instead of `HashMap` when the output must be sorted by key
+
 ## Rust Application
 
 `word_freq` splits on whitespace, lowercases, and uses `*freq.entry(word).or_insert(0) += 1` — the idiomatic pattern. `word_freq_functional` uses `fold(HashMap::new(), |mut acc, word| { *acc.entry(word).or_insert(0) += 1; acc })` — functional style with no mutation outside the closure. `word_freq_sorted` uses `BTreeMap` for sorted output, equivalent to OCaml's ordered map.
@@ -33,8 +36,16 @@ OCaml's Map: `module StringMap = Map.Make(String)`. Frequency counting: `List.fo
 3. **Functional vs mutable**: OCaml's `Map.add` returns a new map — fully immutable, structural sharing. Rust's `HashMap::insert` mutates in place. The functional fold style in Rust accumulates a new HashMap per step — less efficient.
 4. **Ordering**: OCaml's `Map.Make` iterates in sorted key order. Rust's `HashMap` has no guaranteed iteration order; use `BTreeMap` or `sort_by_key` on the entries.
 
+1. **`HashMap::entry` API:** The `entry` API handles the insert-or-update pattern atomically: `map.entry(key).or_insert(0)` returns a mutable reference to the value, creating it if absent. Then `*count += 1`. This avoids double-lookup.
+2. **`BTreeMap` for sorted output:** Use `BTreeMap<K, V>` instead of `HashMap<K, V>` when you need keys in sorted order. Iteration over a `BTreeMap` is always sorted by key.
+3. **OCaml `Hashtbl`:** `Hashtbl.create 16` + `Hashtbl.find_opt` + `Hashtbl.replace` implements the same frequency counting pattern. OCaml's `Map` module provides a functional (immutable) sorted map.
+4. **Char vs byte counting:** `s.chars()` for Unicode-correct character counting; `s.bytes()` for faster ASCII counting. For most frequency-counting tasks, byte-level is sufficient and faster.
+
 ## Exercises
 
 1. **Top N words**: Write `top_n_words(text: &str, n: usize) -> Vec<(String, usize)>` that returns the n most frequent words. Sort by frequency descending.
 2. **Co-occurrence**: Count how often pairs of adjacent words appear together in a text, building a `HashMap<(String, String), usize>`.
 3. **Histogram**: Write `print_histogram(freq: &HashMap<String, usize>)` that prints each word with a bar of `*` characters proportional to its frequency (max bar length = 40 chars).
+
+4. **Top-N frequent**: Implement `top_n_frequent<T: Eq + Hash + Clone>(items: &[T], n: usize) -> Vec<(T, usize)>` that returns the n most frequent elements in descending order of frequency. Use a min-heap of size n.
+5. **Character frequency**: Write `char_frequency(s: &str) -> Vec<(char, usize)>` that counts character frequencies in a string and returns them sorted by frequency descending, then alphabetically for ties. This is the first step in Huffman coding.

@@ -6,25 +6,53 @@
 
 ## Problem Statement
 
-The Collatz conjecture (1937) states that iterating `f(n) = n/2` (if n is even) or `3n+1` (if n is odd) always eventually reaches 1. Despite being trivially stateable, it has resisted proof for nearly 90 years. The sequence for n=27 takes 111 steps before reaching 1. Verified for all n up to 2^68.
+The Collatz conjecture (proposed by Lothar Collatz in 1937) states that iterating `f(n) = n/2` when n is even, or `f(n) = 3n+1` when n is odd, always eventually reaches 1, regardless of the starting value. Despite being trivially stateable to a schoolchild, it has resisted proof by the best mathematicians for nearly 90 years. The sequence for n=27 takes 111 steps and reaches a peak of 9232 before eventually descending to 1. As of 2023, the conjecture has been verified computationally for all n up to approximately 2^68.
 
-The Collatz sequence is a classic recursion exercise: the number of steps to reach 1 from n. It demonstrates safe integer arithmetic with `Result`, recursive vs iterative implementation, and the structural difference between "count steps" (returns `u64`) and "list steps" (returns `Vec<u64>`).
+Paul Erdős famously said of the Collatz conjecture: "Mathematics is not yet ready for such problems." Its combination of simplicity and intractability makes it a favorite in recreational mathematics and computer science education.
+
+As an engineering exercise, the Collatz sequence demonstrates: safe integer arithmetic with checked operations, recursive vs iterative implementation choices, the difference between computing a count (fold) and generating a sequence (unfold), and why Rust lacks tail-call optimization — making the iterative form the practical choice.
 
 ## Learning Outcomes
 
-- Implement Collatz step count using both recursion and iteration
-- Use `Result<u64, String>` to handle non-positive inputs safely
-- Use `is_multiple_of` for readable parity checks
-- Understand that iterative implementation is preferred in Rust (no TCO)
-- Connect to `successors` for generating the full Collatz sequence
+- Implement Collatz step count using both direct recursion and a while loop
+- Use `Result<u64, String>` to handle non-positive inputs safely at the API boundary
+- Understand why iterative implementation is preferred in Rust — the language does not guarantee tail-call optimization
+- Use `std::iter::successors` to generate the full Collatz sequence lazily as an iterator
+- Distinguish "count steps" (returns a number) from "list steps" (returns a sequence) as different problem shapes
+- Recognize that naive recursion is fragile for sequences of unknown bounded depth
 
 ## Rust Application
 
-`collatz_steps(n: u64) -> u64` uses pattern matching: `1 => 0`, even `n => 1 + collatz_steps(n/2)`, odd `n => 1 + collatz_steps(3*n+1)`. The public `collatz(n: i64) -> Result<u64, String>` validates input. `collatz_iter` uses a while loop — safer in Rust since the recursion can be deep (n=27 is 111 steps; n=871 is 178 steps). `std::iter::successors` generates the full sequence lazily.
+`collatz_steps(n: u64) -> u64` uses pattern matching:
+- `1 => 0` — the base case, 1 step away from terminating
+- `n if n % 2 == 0 => 1 + collatz_steps(n/2)` — halve even numbers
+- `n => 1 + collatz_steps(3*n+1)` — apply 3n+1 for odd numbers
+
+The public `collatz(n: i64) -> Result<u64, String>` validates that n > 0. `collatz_iter` uses a while loop — safer in Rust since the recursion can be deep (n=27 is 111 steps; n=871 is 178 steps) and Rust has no TCO guarantee. `std::iter::successors(Some(n), ...)` generates the full sequence lazily, stopping at 1.
 
 ## OCaml Approach
 
-OCaml's version: `let rec collatz n = if n = 1 then 0 else if n mod 2 = 0 then 1 + collatz (n / 2) else 1 + collatz (3 * n + 1)`. OCaml's TCO does not help here — the recursion is not tail-recursive (the `1 +` is computed after the recursive call). Both languages should use iteration for safety. The iterative version: `let collatz_iter n = let rec aux n acc = if n = 1 then acc else let next = if n mod 2 = 0 then n / 2 else 3 * n + 1 in aux next (acc + 1) in aux n 0` — this IS tail-recursive.
+OCaml's naive version is not tail-recursive:
+
+```ocaml
+let rec collatz n =
+  if n = 1 then 0
+  else if n mod 2 = 0 then 1 + collatz (n / 2)
+  else 1 + collatz (3 * n + 1)
+```
+
+The tail-recursive version uses an accumulator:
+
+```ocaml
+let collatz_iter n =
+  let rec aux n acc =
+    if n = 1 then acc
+    else let next = if n mod 2 = 0 then n / 2 else 3 * n + 1
+    in aux next (acc + 1)
+  in aux n 0
+```
+
+OCaml guarantees TCO for tail-recursive functions, making the accumulator version stack-safe. Both forms exist in practice.
 
 ## Key Differences
 

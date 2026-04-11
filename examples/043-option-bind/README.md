@@ -18,6 +18,9 @@
 - Chain multiple `and_then` calls to sequence optional operations
 - Use `?` in functions returning `Option<T>` as syntactic sugar for `and_then`
 
+- Use `Option::and_then(f)` (monadic bind) to sequence computations that each may return `Option`
+- Understand that `and_then` prevents `Option<Option<T>>` — it "flattens" one level automatically
+
 ## Rust Application
 
 `opt.and_then(|x| safe_div(x, 2))` applies `safe_div` which returns `Option<i32>`. If `opt` is `None`, the result is `None` without calling `safe_div`. If `safe_div` returns `None` (division by zero), the chain ends there. Chaining: `safe_head(v).and_then(|i| v.get(i as usize).copied())` — use the head value as an index, failing if out of bounds. The `?` operator in `fn f() -> Option<T>` desugars to `and_then` chains.
@@ -33,8 +36,17 @@ OCaml's `Option.bind opt f`: `let bind opt f = match opt with None -> None | Som
 3. **`map` vs `and_then` choice**: Use `map` when the transformation cannot fail (`|x| x * 2`). Use `and_then` when the transformation is itself fallible (`|x| safe_div(x, 2)`).
 4. **`flatten`**: `opt.map(f).flatten()` is equivalent to `opt.and_then(f)`. Rust provides both; use `and_then` directly as it is more efficient.
 
+1. **Monadic bind:** `and_then` is monadic bind (`>>=`) for `Option`. It sequences computations that may fail: "if the previous step produced a value, run the next step with it; otherwise propagate `None`."
+2. **`flat_map` vs `bind`:** Rust calls it `and_then`; Haskell calls it `>>=`; Scala calls it `flatMap`. All are the same operation. The name `and_then` is chosen because it reads well: "do this, and then do that."
+3. **`Option.bind` in OCaml:** `Option.bind opt f` = `match opt with None -> None | Some x -> f x`. The `let*` syntax sugar (with `ppx_let`) allows `let* x = opt in f x` — reads like imperative code.
+
+4. **`flat_map` equivalence:** `opt.and_then(f)` is identical to `opt.map(f).flatten()` when `f` returns `Option<U>`. The name `and_then` reflects sequential dependency: "do this, AND THEN do that."
+
 ## Exercises
 
 1. **Parse chain**: Write `parse_and_double(s: &str) -> Option<i32>` that parses a string to an integer and doubles it, returning None if parsing fails. Use `s.parse::<i32>().ok().map(|x| x * 2)`.
 2. **Nested lookup**: Write `lookup_nested(outer: &HashMap<i32, HashMap<i32, String>>, k1: i32, k2: i32) -> Option<&String>` using `outer.get(&k1).and_then(|inner| inner.get(&k2))`.
 3. **Option pipeline**: Write a function that: (1) finds a user by ID (`Option<User>`), (2) finds their primary address (`Option<Address>`), (3) formats the city name (may be missing). Chain with `and_then`.
+
+4. **Monad laws test**: Write tests verifying the three monad laws for `Option`: (1) left identity, (2) right identity, (3) associativity. Use concrete values and simple functions.
+5. **Flatten via bind**: Implement `flatten<T>(opt: Option<Option<T>>) -> Option<T>` using `and_then` — notice that `opt.and_then(|x| x)` is the definition of monadic join.

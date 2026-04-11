@@ -6,9 +6,11 @@
 
 ## Problem Statement
 
-This example implements a custom `Validation<T, E>` type that accumulates errors rather than short-circuiting (see also example 054 for the practical use case). The distinction is fundamental: `Result` is a monad (errors short-circuit), `Validation` is an applicative functor (errors accumulate). You cannot derive `Validation` from `Result`.
+When validating user input, configuration files, or CSV rows, you typically want to report ALL errors at once — not just the first. A form with five bad fields should show five error messages, not just the first one and stop. This is where `Result`'s short-circuit behavior becomes a liability: `and_then` stops at the first `Err`, losing all subsequent errors.
 
-The `Validation` pattern comes from Haskell's `Data.Validation` and Scala's `cats.data.Validated`. It is essential when all errors are independent and should all be reported, such as form validation, configuration parsing, and CSV row validation.
+This example implements a custom `Validation<T, E>` type that accumulates errors rather than short-circuiting. The distinction is fundamental in category theory: `Result` is a monad (sequential, errors short-circuit), `Validation` is an applicative functor (parallel, errors accumulate). You cannot derive `Validation` from `Result` without sacrificing the independent-error property.
+
+The `Validation` pattern originates in Haskell's `Data.Validation` (also `Validation` in the `validation` crate), Scala's `cats.data.Validated`, and F#'s `Result<_,_list>`. It is essential whenever errors are independent and all should be reported: web form validation, API request validation, CSV import verification, and configuration parsing are the canonical use cases.
 
 ## Learning Outcomes
 
@@ -20,11 +22,27 @@ The `Validation` pattern comes from Haskell's `Data.Validation` and Scala's `cat
 
 ## Rust Application
 
-`Validation<T, E>` has variants `Ok(T)` and `Errors(Vec<E>)`. `map(f)` applies `f` to the success value. The `apply` method combines a `Validation<F, E>` (containing a function) with a `Validation<T, E>` (containing an argument): if both are `Ok`, apply the function; if either or both are `Errors`, merge the error vectors. This is the key: errors from BOTH sides are combined.
+`Validation<T, E>` has two variants:
+- `Ok(T)` — successful result carrying the validated value
+- `Errors(Vec<E>)` — failure carrying ALL accumulated errors
+
+`map(f)` applies `f` to the success value (functor map) — errors pass through unchanged. The `apply` method combines a `Validation<F, E>` (containing a function) with a `Validation<T, E>` (containing an argument): if both are `Ok`, apply the function; if either or both are `Errors`, merge the error vectors. This merge is the key semantic difference from `Result`.
 
 ## OCaml Approach
 
-OCaml's `type ('a, 'e) validation = Ok of 'a | Errors of 'e list`. Applicative `combine v1 v2 = match v1, v2 with | Ok a, Ok b -> Ok (a, b) | Ok _, Errors e | Errors e, Ok _ -> Errors e | Errors e1, Errors e2 -> Errors (e1 @ e2)`. The key property: `Errors(e1) combine Errors(e2) = Errors(e1 @ e2)` — both error lists are kept.
+OCaml defines the Validation type as a polymorphic variant:
+
+```ocaml
+type ('a, 'e) validation = Ok of 'a | Errors of 'e list
+
+let combine v1 v2 = match v1, v2 with
+  | Ok a, Ok b     -> Ok (a, b)
+  | Ok _, Errors e -> Errors e
+  | Errors e, Ok _ -> Errors e
+  | Errors e1, Errors e2 -> Errors (e1 @ e2)
+```
+
+The key property: `Errors(e1) combine Errors(e2) = Errors(e1 @ e2)` — both error lists are concatenated, not just one kept. This is what distinguishes `Validation` from `Result` at the semantic level.
 
 ## Key Differences
 

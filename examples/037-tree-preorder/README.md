@@ -18,6 +18,9 @@ Preorder traversal underlies expression tree serialization (prefix notation: `"+
 - Reconstruct a tree from its preorder dot-string sequence
 - Contrast preorder with inorder (root between children) and postorder (root after)
 
+- Collect values in pre-order (root, then left subtree, then right subtree) — order used for tree serialization
+- For large trees, use an explicit `Vec` stack instead of recursion to avoid stack overflow
+
 ## Rust Application
 
 `preorder(tree: &Tree<char>) -> String`: `Leaf` → `"."`, `Node(c, l, r)` → `format!("{}{}{}", c, preorder(l), preorder(r))`. The dot represents a leaf boundary — this makes the encoding self-delimiting without needing parentheses. To decode: consume one character; if it is `.`, return `Leaf`; otherwise read the value, then recursively parse left and right subtrees.
@@ -33,8 +36,17 @@ OCaml's version: `let rec preorder = function | Leaf -> "." | Node (c, l, r) -> 
 3. **Reconstruction state**: Rust passes `&mut usize` cursor or slices. OCaml's functional version returns `(result, remaining_string)` pairs — the monadic parser style.
 4. **Round-trip uniqueness**: Preorder dot-string uniquely determines the tree. This is used for equality testing: two trees are equal iff their preorder dot-strings are equal.
 
+1. **Traversal order:** Pre-order visits root → left → right. This produces the tree in "polish notation" order — useful for serialization, expression evaluation (prefix notation), and copying trees.
+2. **Stack-based vs recursive:** The recursive version is straightforward but O(d) stack depth. The explicit-stack version maintains a `Vec<&Tree<T>>` and processes nodes iteratively — safe for deep trees in Rust (no TCO guarantee).
+3. **`extend` for subtrees:** `result.extend(preorder(left)); result.extend(preorder(right))` copies values. An accumulator approach (`preorder_aux(tree, &mut acc)`) is more efficient for large trees.
+
+4. **Stack-based iterative:** Using a `Vec<&Tree<T>>` stack avoids deep recursion. Push right child first, then left, so left is processed first (LIFO stack reverses order).
+
 ## Exercises
 
 1. **Postorder**: Write `postorder(tree: &Tree<char>) -> String` with left-right-root order using a similar dot-string encoding. The dot for leaves must appear after the two empty subtrees.
 2. **Tree from pre+in**: Given a preorder sequence and an inorder sequence (both without dots), reconstruct the unique binary tree. This is the classic interview question.
 3. **Preorder vs BFS**: Compare the preorder sequence with the BFS level-order sequence on the same tree. Draw the tree, list both sequences, and explain the structural difference.
+
+4. **Iterative preorder**: Implement `preorder_iterative<T: Clone>(tree: &Tree<T>) -> Vec<T>` using an explicit `Vec` stack to avoid recursion — safe for arbitrarily deep trees.
+5. **Serialize via preorder**: Show how preorder traversal together with the `None`/`Some` distinction uniquely serializes a binary tree. Implement both `serialize` (preorder with `None` for leaves) and `deserialize` (consume from iterator).

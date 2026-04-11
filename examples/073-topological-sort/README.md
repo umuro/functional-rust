@@ -6,9 +6,11 @@
 
 ## Problem Statement
 
-Topological sort orders the nodes of a directed acyclic graph (DAG) such that for every directed edge (u → v), node u appears before v in the ordering. It answers the question: "in what order should I do these tasks given their dependencies?" Build systems (Bazel, Make, Cargo), package managers (npm, pip), spreadsheet recalculation, and database schema migrations all use topological sort.
+Topological sort orders the nodes of a directed acyclic graph (DAG) such that for every directed edge (u → v), node u appears before v in the ordering. It answers the question: "in what order should I complete these tasks, given their dependencies?" This is one of the most widely used graph algorithms in practice.
 
-The DFS-based algorithm (Tarjan, 1976) marks each node, visits all its dependencies first (post-order DFS), then adds the node to the result. Kahn's algorithm (BFS-based) is an alternative that also detects cycles.
+Build systems (Bazel, Make, Cargo) topologically sort compilation units so dependencies compile before dependents. Package managers (npm, pip, apt) sort package installations so transitive dependencies install first. Spreadsheet engines recalculate cells in topological order. Database engines plan query execution and schema migrations using topological ordering.
+
+The DFS-based algorithm (Tarjan, 1976) marks each node visited, recurses on all neighbors first, then adds the current node — this is post-order DFS. Reversing the post-order gives a valid topological ordering. Kahn's algorithm (BFS-based) is an alternative that processes nodes with in-degree 0 iteratively and naturally detects cycles.
 
 ## Learning Outcomes
 
@@ -24,7 +26,25 @@ The DFS-based algorithm (Tarjan, 1976) marks each node, visits all its dependenc
 
 ## OCaml Approach
 
-OCaml's version uses a hash table for the visited set and an adjacency list: `let topo_sort edges = let visited = Hashtbl.create 16 in let order = ref [] in let rec visit node = if not (Hashtbl.mem visited node) then begin Hashtbl.add visited node (); List.iter visit (adj node); order := node :: !order end in List.iter (fun (a, b) -> visit a; visit b) edges; !order`. The `order := node :: !order` builds in post-order (prepending naturally reverses).
+OCaml uses a hash table for the visited set and a reference list for accumulation:
+
+```ocaml
+let topo_sort edges =
+  let visited = Hashtbl.create 16 in
+  let order = ref [] in
+  let adj = build_adj edges in
+  let rec visit node =
+    if not (Hashtbl.mem visited node) then begin
+      Hashtbl.add visited node ();
+      List.iter visit (List.assoc_opt node adj |> Option.value ~default:[]);
+      order := node :: !order
+    end
+  in
+  List.iter (fun (a, b) -> visit a; visit b) edges;
+  !order
+```
+
+The `order := node :: !order` prepends in post-order, giving the correct topological sequence without an explicit reverse step.
 
 ## Key Differences
 

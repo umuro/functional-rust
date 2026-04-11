@@ -24,7 +24,25 @@ The nested `fn visit<'a>(node: &'a str, adj: &HashMap<&str, Vec<&'a str>>, visit
 
 ## OCaml Approach
 
-OCaml's DFS has no ownership concerns — all references are GC-managed. `let visit = fun node -> if not (Hashtbl.mem visited node) then begin ... end` is a simple closure capturing `adj`, `visited`, and `order` by reference. No lifetime annotations needed; the GC ensures all borrowed values remain valid.
+OCaml's DFS uses mutable state but requires no lifetime annotations:
+
+```ocaml
+let topo_sort edges =
+  let visited = Hashtbl.create 16 in
+  let order = ref [] in
+  let adj = build_adj edges in
+  let rec visit node =
+    if not (Hashtbl.mem visited node) then begin
+      Hashtbl.add visited node ();
+      List.iter visit (Hashtbl.find_opt adj node |> Option.value ~default:[]);
+      order := node :: !order
+    end
+  in
+  List.iter (fun (a, b) -> visit a; visit b) edges;
+  !order
+```
+
+The closure captures `adj`, `visited`, and `order` by reference from the enclosing scope. OCaml's GC ensures all references remain valid. No lifetime annotations needed.
 
 ## Key Differences
 

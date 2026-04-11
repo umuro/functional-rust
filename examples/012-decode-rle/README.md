@@ -18,6 +18,9 @@ Decoding exercises `flat_map`: each encoded item expands into zero or more outpu
 - Compare eager (`flat_map + collect`) vs recursive decoding approaches
 - Recognize the encode/decode round-trip invariant for testing
 
+- Use `std::iter::repeat(x).take(n)` to generate n copies of a value lazily without allocation
+- Verify the encode-decode round-trip invariant: `decode(encode(list)) == list`
+
 ## Rust Application
 
 `decode` uses `flat_map` over the encoded slice: for each `One(x)` it produces `vec![x.clone()]`, for each `Many(n, x)` it produces `vec![x.clone(); n]`. The iterator-based `decode_iter` uses `std::iter::repeat(value).take(count)` which is more idiomatic and avoids an intermediate `Vec` per item. The `flat_map` approach makes the logic declarative: "for each encoded item, expand it to its elements and concatenate all results".
@@ -33,8 +36,16 @@ OCaml's decode uses `List.concat_map` (or `List.flatten (List.map f lst)`). The 
 3. **Clone requirement**: Rust needs `T: Clone` to produce multiple copies from a reference. OCaml's GC allows sharing the same value across all copies without cloning.
 4. **Laziness**: Rust's `flat_map(...).collect()` is lazy until `collect`. OCaml's `List.concat_map` is eager — it builds the full list immediately.
 
+1. **`flat_map` as monadic bind:** `flat_map` on iterators is the iterator monad's bind operation. `v.flat_map(f)` = `v.map(f).flatten()`. OCaml's equivalent: `List.concat_map f l` (OCaml 4.10+) or `List.concat (List.map f l)`.
+2. **`repeat + take`:** `std::iter::repeat(x).take(n)` is idiomatic Rust for generating n copies. OCaml: `List.init n (fun _ -> x)`. Both are O(n).
+3. **Owned vs borrowed:** `decode` borrows the encoded slice; it must clone values into the output `Vec`. OCaml shares values via GC — no cloning needed for the typical case.
+4. **Round-trip invariant:** `decode(encode(list)) == list` for any `list`. This is a strong property test that should be verified with `proptest` or `quickcheck`.
+
 ## Exercises
 
 1. **Round-trip test**: Write a property-based test that generates random `Vec<char>` inputs, encodes them with `encode_modified` from example 011, decodes with `decode`, and asserts equality.
 2. **Streaming decode**: Rewrite decode to accept `impl Iterator<Item=RleItem<T>>` and return `impl Iterator<Item=T>` without collecting to `Vec` at any step. Use `flat_map` on the input iterator.
 3. **RLE of RLE**: What happens when you RLE-encode an already-encoded RLE sequence? Write a function that detects whether further compression is beneficial.
+
+4. **Streaming decode**: Implement a version that returns an `impl Iterator<Item = T>` instead of `Vec<T>` — allowing the decoded stream to be consumed lazily without allocating the full output.
+5. **Bidirectional codec**: Write `encode` (from `Vec<T>` to `Vec<RleItem<T>>`) and `decode` (inverse), then verify that `decode(encode(v)) == v` for arbitrary inputs using a property test.

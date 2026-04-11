@@ -18,6 +18,9 @@ This pattern appears everywhere: removing a player from a queue, deleting a row 
 - Implement both the iterative and recursive versions
 - Understand k as 1-based (OCaml 99) vs 0-based (Rust convention)
 
+- Return `Option<(T, Vec<T>)>` for safe out-of-bounds handling rather than panicking
+- Distinguish `Vec::remove(k)` (O(n) shift, in-place) from `Vec::swap_remove(k)` (O(1), changes order)
+
 ## Rust Application
 
 The safe Rust version returns `Option<(T, Vec<T>)>`: check bounds, then construct the result. Using slice operations: `let elem = v[k].clone(); let result = [&v[..k], &v[k+1..]].concat(); Some((elem, result))`. The in-place version uses `Vec::remove(k)` which shifts elements and returns the removed value. For 1-based indexing (OCaml 99 convention), subtract 1 from the input k.
@@ -26,6 +29,8 @@ The safe Rust version returns `Option<(T, Vec<T>)>`: check bounds, then construc
 
 OCaml's version: `let remove_at k lst = let rec aux acc n = function | [] -> failwith "index out of bounds" | x :: t -> if n = k then (x, List.rev_append acc t) else aux (x :: acc) (n + 1) t in aux [] 1 lst`. `List.rev_append acc t` concatenates the reversed accumulator with the tail — this is O(n) and avoids a separate reverse call.
 
+OCaml's version returns a tuple: `let rec remove_at k = function | [] -> (None, []) | h :: t -> if k = 1 then (Some h, t) else let (removed, rest) = remove_at (k-1) t in (removed, h :: rest)`. The tail-recursive version uses an accumulator for the prefix, reversing at the end. OCaml's 99 Problems uses 1-based indexing.
+
 ## Key Differences
 
 1. **`Vec::remove` vs list surgery**: Rust's `Vec::remove(i)` is O(n) due to shifting. OCaml's list removal reconstructs the prefix list, also O(n) but with different constant factors.
@@ -33,8 +38,15 @@ OCaml's version: `let remove_at k lst = let rec aux acc n = function | [] -> fai
 3. **`rev_append`**: OCaml's `List.rev_append acc t` is a key idiom — it combines reversing the accumulator with appending the tail in one pass. Rust achieves the same with `[&v[..k], &v[k+1..]].concat()`.
 4. **Indexing**: OCaml 99 Problems uses 1-based indexing. Rust's standard library uses 0-based. Always be explicit about which convention is used.
 
+1. **`Vec::remove` in-place:** Rust's `v.remove(k)` removes and returns the element at index k, shifting elements left — O(n). Returns the removed value directly (panics on out-of-bounds).
+2. **`Option` for safety:** The safe version returns `Option<(T, Vec<T>)>` to handle out-of-bounds. OCaml's version typically raises an exception on invalid index.
+3. **Slice concatenation:** `[&v[..k], &v[k+1..]].concat()` creates a new `Vec` skipping index k — O(n) with explicit O(n) allocation. Both forms are equivalent.
+
 ## Exercises
 
 1. **Remove all of value**: Write `remove_all(v: &[i32], x: i32) -> Vec<i32>` that removes all occurrences of `x` using `.filter()`. Compare with `retain()` (in-place filter).
 2. **Remove first of value**: Write `remove_first(v: &[i32], x: i32) -> Option<Vec<i32>>` that removes only the first occurrence. Use `.iter().position()` to find the index.
 3. **Remove and reinsert**: Write `move_to_end(v: &mut Vec<i32>, k: usize)` that removes the element at position k and appends it to the end, using `Vec::remove` and `Vec::push`.
+
+4. **Multi-remove**: Implement `remove_all(v: &[T], indices: &[usize]) -> Vec<T>` that removes elements at multiple indices in one pass. Sort indices first to process them efficiently.
+5. **Swap remove**: Implement `swap_remove_safe(v: &mut Vec<T>, k: usize) -> Option<T>` — O(1) removal by swapping the element with the last one. Useful when order doesn't matter.

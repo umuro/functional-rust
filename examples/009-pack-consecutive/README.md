@@ -12,6 +12,8 @@
 
 Pack consecutive duplicate elements into sublists.
 
+Packing consecutive duplicates is the run detection step of run-length encoding, tokenizers, and sequence analysis. Every compression algorithm starts by identifying runs. In bioinformatics, packing consecutive identical nucleotides is a preprocessing step for genome compression. In network protocols, packing repeated bytes enables efficient transmission. This problem is a concrete introduction to stateful accumulation — maintaining "current group" as you scan.
+
 ## Learning Outcomes
 
 - Build nested data structures (`Vec<Vec<T>>`) from flat input
@@ -37,6 +39,11 @@ Uses a tail-recursive helper with two accumulators: `current` (current group) an
 3. **Ownership spectrum**: Three levels offered — owned + cloned, owned + fold, borrowed slices
 4. **No `List.rev` needed**: Rust's `Vec::push` appends to the end (O(1) amortized); OCaml prepends to lists and reverses
 5. **Memory layout**: Rust's `Vec<Vec<T>>` is contiguous blocks; OCaml's `'a list list` is chains of cons cells
+
+1. **Mutable accumulator:** Rust's imperative version uses a `current` group and `result` accumulator explicitly. OCaml's version uses two accumulators in a tail-recursive helper, but the logic is the same.
+2. **Nested Vec:** `Vec<Vec<T>>` in Rust requires two levels of allocation. OCaml's `'a list list` uses linked lists at both levels — cheaper to prepend to, but more GC pressure.
+3. **Clone at boundaries:** When a run ends, Rust clones elements into the new group via `item.clone()`. OCaml's GC shares values automatically.
+4. **Empty input:** Both implementations return `[]`/`vec![]` for empty input as a base case.
 
 ## Exercises
 

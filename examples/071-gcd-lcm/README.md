@@ -6,25 +6,39 @@
 
 ## Problem Statement
 
-The Greatest Common Divisor (GCD) and Least Common Multiple (LCM) are fundamental number theory operations. Euclid's algorithm for GCD (300 BC) is one of the oldest algorithms in existence: `gcd(a, 0) = a`, `gcd(a, b) = gcd(b, a % b)`. LCM follows from GCD: `lcm(a, b) = a * b / gcd(a, b)`.
+The Greatest Common Divisor (GCD) and Least Common Multiple (LCM) are among the most ancient and practical algorithms in mathematics. Euclid's algorithm for GCD (circa 300 BC) is one of the oldest known algorithms: `gcd(a, 0) = a` and `gcd(a, b) = gcd(b, a mod b)`. Each recursive call replaces the larger argument with the remainder, which strictly decreases, guaranteeing termination in O(log min(a, b)) steps. LCM follows from GCD: `lcm(a, b) = a * b / gcd(a, b)`.
 
-GCD and LCM appear in fraction simplification, synchronizing periodic events (when two clocks with different periods next align), computing hash table sizes (coprime for good distribution), musical tuning theory, and cryptography (RSA key generation uses GCD to verify coprimeness of e and φ(n)).
+GCD and LCM appear throughout computer science and mathematics: fraction simplification divides numerator and denominator by their GCD; synchronized clocks or processes that fire every p and q cycles next coincide at lcm(p, q) steps; hash table designers choose prime or coprime sizes to minimize clustering; RSA key generation verifies that the public exponent e is coprime to φ(n) using GCD; and musical tuning theory uses LCM to find the first beat where two rhythms re-align. Understanding Euclid's algorithm deeply is understanding the division algorithm — the foundation of modular arithmetic.
 
 ## Learning Outcomes
 
-- Implement Euclidean GCD recursively and iteratively
-- Derive LCM from GCD: `lcm(a, b) = a / gcd(a, b) * b` (divide first to avoid overflow)
-- Extend to lists using `fold`: `gcd_list(v) = v.iter().copied().reduce(gcd)`
-- Understand the invariant: `gcd(b, a % b)` where `a % b < b`, guaranteeing termination
-- Recognize the connection to Bezout's identity and extended Euclidean algorithm
+- Implement Euclidean GCD recursively and iteratively, understanding the termination proof
+- Derive LCM from GCD using the safe form `a / gcd(a, b) * b` (dividing first avoids overflow)
+- Extend GCD to lists using `reduce`: `gcd_list(v) = v.iter().copied().reduce(gcd)`
+- Understand the loop invariant: `a % b < b` strictly decreases, guaranteeing termination
+- Recognize that GCD is associative, making it composable with `fold` and `reduce`
+- Connect to Bezout's identity and the extended Euclidean algorithm used in cryptography
 
 ## Rust Application
 
-`gcd(a, b)` uses `if b == 0 { a } else { gcd(b, a % b) }` — direct recursive Euclidean algorithm. `lcm(a, b)` divides before multiplying: `a / gcd(a, b) * b` prevents overflow that `a * b / gcd(a, b)` could cause. `gcd_list` uses `.reduce(gcd)` — applies gcd pairwise across the slice. `gcd_iter` accepts any `IntoIterator<Item=u64>` for generality.
+`gcd(a: i64, b: i64) -> i64` applies `a.abs()` first, then recurses:
+- Base case: `gcd(a, 0) = a` — when b reaches 0, a is the GCD
+- Recursive case: `gcd(b, a % b)` — the remainder strictly decreases each step
+
+`lcm(a, b)` computes `(a * b).abs() / gcd(a, b)`, using `.abs()` to handle negative inputs. The divide-before-multiply form `a / gcd(a, b) * b` prevents intermediate overflow for large values.
+
+`gcd_iter` (the iterative form) uses a while loop with two mutable bindings — equivalent behavior, no recursion. `gcd_list` uses `.reduce(gcd)` to apply GCD pairwise across a slice.
 
 ## OCaml Approach
 
-OCaml's version: `let rec gcd a b = if b = 0 then a else gcd b (a mod b)`. `lcm a b = if a = 0 || b = 0 then 0 else a / gcd a b * b`. For a list: `List.fold_left gcd 0 lst` (using GCD identity: `gcd(0, x) = x`). OCaml's arbitrary-precision integers (with Zarith) avoid overflow in LCM computation for large inputs.
+OCaml's Euclidean GCD is a direct tail-recursive definition:
+
+```ocaml
+let rec gcd a b = if b = 0 then a else gcd b (a mod b)
+let lcm a b = if a = 0 || b = 0 then 0 else a / gcd a b * b
+```
+
+For a list: `List.fold_left gcd 0 lst` exploits the identity `gcd(0, x) = x`. OCaml's arbitrary-precision integers (Zarith library) avoid all overflow in LCM computation for very large inputs. The standard library includes `Int.gcd` since OCaml 4.14.
 
 ## Key Differences
 

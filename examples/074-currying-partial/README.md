@@ -24,7 +24,19 @@ Partial application is ubiquitous in functional programming: event handler facto
 
 ## OCaml Approach
 
-OCaml: `let make_adder x = fun y -> x + y`. `let add5 = make_adder 5 in add5 3` evaluates to 8. `let apply_twice f x = f (f x)`. `let compose f g = fun x -> f (g x)`. OCaml's automatic currying makes `make_adder` equivalent to `let make_adder x y = x + y` — both are curried functions.
+OCaml functions are automatically curried, so partial application is natural:
+
+```ocaml
+let make_adder x y = x + y   (* equivalent to: let make_adder x = fun y -> x + y *)
+let add5 = make_adder 5       (* partial application: bind x=5 *)
+let _ = add5 3                (* evaluates to 8 *)
+
+let apply_twice f x = f (f x)
+let compose f g = fun x -> f (g x)
+let double_then_add5 = compose add5 (fun x -> x * 2)
+```
+
+OCaml's implicit currying means every multi-argument function is already a curried function. Partial application is just function application with fewer arguments than the full arity.
 
 ## Key Differences
 
