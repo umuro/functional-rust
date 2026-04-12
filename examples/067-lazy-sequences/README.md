@@ -3,6 +3,10 @@
 ---
 
 # 067 — Lazy Sequences (Seq Module)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

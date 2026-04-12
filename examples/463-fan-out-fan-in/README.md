@@ -3,6 +3,10 @@
 ---
 
 # 463: Fan-Out / Fan-In Pattern
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

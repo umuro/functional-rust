@@ -3,6 +3,10 @@
 ---
 
 # Effect Handlers
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

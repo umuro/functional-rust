@@ -1,8 +1,10 @@
 # 0/1 Knapsack Solved with Memoized Recursion
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 **Source:** https://rosettacode.org/wiki/Knapsack_problem/0-1#OCaml
 
-**Difficulty:** Advanced
 
 ## Problem Statement
 

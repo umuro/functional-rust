@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1033: Top-K Elements with BinaryHeap
 // BinaryHeap is a max-heap; use Reverse<T> for min-heap behavior

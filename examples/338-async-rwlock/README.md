@@ -3,6 +3,10 @@
 ---
 
 # 338: Async RwLock — Multiple Readers, One Writer
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 040 — Parse a Dotstring Back to a Binary Tree
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

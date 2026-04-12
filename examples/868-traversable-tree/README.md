@@ -3,6 +3,10 @@
 ---
 
 # 868-traversable-tree — Traversable Tree
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

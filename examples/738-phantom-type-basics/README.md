@@ -3,6 +3,10 @@
 ---
 
 # 738-phantom-type-basics — Phantom Type Basics
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

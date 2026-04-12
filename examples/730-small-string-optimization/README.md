@@ -3,6 +3,10 @@
 ---
 
 # 730-small-string-optimization — Small String Optimization
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

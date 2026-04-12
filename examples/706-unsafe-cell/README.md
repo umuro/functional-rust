@@ -3,6 +3,10 @@
 ---
 
 # unsafe cell
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

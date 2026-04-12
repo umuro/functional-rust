@@ -3,6 +3,10 @@
 ---
 
 # 1033-binary-heap-topk — Top-K with BinaryHeap
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

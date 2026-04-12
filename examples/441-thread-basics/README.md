@@ -3,6 +3,10 @@
 ---
 
 # 441: Thread Basics — Spawn and Join
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

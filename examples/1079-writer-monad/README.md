@@ -3,10 +3,10 @@
 ---
 
 # Example 1079: Writer Monad — Logging Computation
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Monadic Patterns
-**OCaml Source:** https://cs3110.github.io/textbook/chapters/ds/monads.html
+
 
 ## Problem Statement
 

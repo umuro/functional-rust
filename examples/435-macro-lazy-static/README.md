@@ -3,6 +3,10 @@
 ---
 
 # 435: Lazy Static Pattern
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

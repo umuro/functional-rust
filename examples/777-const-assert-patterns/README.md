@@ -3,6 +3,10 @@
 ---
 
 # 777-const-assert-patterns — Const Assert Patterns
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

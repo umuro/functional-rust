@@ -3,6 +3,10 @@
 ---
 
 # 445: MPSC Channels — Message Passing Between Threads
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

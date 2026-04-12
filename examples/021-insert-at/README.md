@@ -3,6 +3,10 @@
 ---
 
 # 021 — Insert an Element at a Given Position
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 1062-n-queens — N-Queens
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

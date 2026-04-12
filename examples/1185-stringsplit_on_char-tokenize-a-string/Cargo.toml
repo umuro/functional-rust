@@ -1,0 +1,4 @@
+[package]
+name = "example-1185-stringsplit_on_char-tokenize-a-string"
+version = "0.1.0"
+edition = "2021"

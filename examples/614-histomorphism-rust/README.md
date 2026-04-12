@@ -3,6 +3,10 @@
 ---
 
 # Histomorphism
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 282: DoubleEndedIterator and rev()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

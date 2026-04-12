@@ -3,6 +3,10 @@
 ---
 
 # 413: Macro Fragment Types (Designators)
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

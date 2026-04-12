@@ -3,6 +3,10 @@
 ---
 
 # Pattern Binding Modes
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

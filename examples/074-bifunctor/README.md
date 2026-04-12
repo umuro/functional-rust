@@ -3,6 +3,10 @@
 ---
 
 # 074 — Bifunctor
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

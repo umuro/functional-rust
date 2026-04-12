@@ -3,10 +3,10 @@
 ---
 
 # Example 228: Natural Transformations
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Category Theory
-**OCaml Source:** Bartosz Milewski — *Category Theory for Programmers*, Chapter 10
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # Histomorphism — Cata with Full History
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

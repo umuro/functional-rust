@@ -3,6 +3,10 @@
 ---
 
 # Closure Type Inference
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

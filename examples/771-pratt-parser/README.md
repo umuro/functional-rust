@@ -3,6 +3,10 @@
 ---
 
 # 771-pratt-parser — Pratt Parser
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

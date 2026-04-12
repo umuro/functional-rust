@@ -3,6 +3,10 @@
 ---
 
 # Named Return Lifetimes
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 069 — Unfold — Generate a Sequence from a Seed
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

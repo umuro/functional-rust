@@ -3,6 +3,10 @@
 ---
 
 # 116-box-heap — Box<T>: Heap Allocation
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

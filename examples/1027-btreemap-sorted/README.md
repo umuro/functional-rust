@@ -3,6 +3,10 @@
 ---
 
 # 1027-btreemap-sorted — BTreeMap: Sorted Key Iteration
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

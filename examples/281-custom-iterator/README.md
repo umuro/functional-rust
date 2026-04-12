@@ -3,6 +3,10 @@
 ---
 
 # 281: Implementing the Iterator Trait from Scratch
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

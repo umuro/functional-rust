@@ -3,6 +3,10 @@
 ---
 
 # 1041-multimap — Multimap
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

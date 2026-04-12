@@ -3,6 +3,10 @@
 ---
 
 # 390: Type Alias and `impl Trait`
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

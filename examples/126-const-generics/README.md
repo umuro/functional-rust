@@ -3,6 +3,10 @@
 ---
 
 # Const Generics
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

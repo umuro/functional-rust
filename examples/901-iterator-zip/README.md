@@ -3,6 +3,10 @@
 ---
 
 # 901-iterator-zip — Iterator Zip
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

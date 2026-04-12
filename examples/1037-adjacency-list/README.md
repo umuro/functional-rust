@@ -3,6 +3,10 @@
 ---
 
 # 1037-adjacency-list — Adjacency List Graph
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

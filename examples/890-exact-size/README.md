@@ -3,6 +3,10 @@
 ---
 
 # 890-exact-size — ExactSizeIterator
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 376: Bloom Filter
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 734-typestate-basics — Typestate Basics
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

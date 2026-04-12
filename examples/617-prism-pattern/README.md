@@ -3,6 +3,10 @@
 ---
 
 # Optics: prism pattern
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

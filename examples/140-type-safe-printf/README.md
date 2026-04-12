@@ -3,6 +3,10 @@
 ---
 
 # Type-Safe Printf
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

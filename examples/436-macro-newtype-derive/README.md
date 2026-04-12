@@ -3,6 +3,10 @@
 ---
 
 # 436: Newtype Derive Patterns
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

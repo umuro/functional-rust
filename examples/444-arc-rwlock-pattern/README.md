@@ -3,6 +3,10 @@
 ---
 
 # 444: `Arc<RwLock<T>>` — Multiple Readers, One Writer
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

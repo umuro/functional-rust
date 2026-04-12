@@ -3,6 +3,10 @@
 ---
 
 # Arithmetic Expression Evaluator
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

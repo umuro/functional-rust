@@ -3,6 +3,10 @@
 ---
 
 # 375: LRU Cache
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

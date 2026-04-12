@@ -3,6 +3,10 @@
 ---
 
 # matches! Macro
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

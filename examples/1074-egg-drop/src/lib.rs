@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1074: Egg Drop — DP + Binary Search
 

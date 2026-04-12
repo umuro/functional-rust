@@ -3,6 +3,10 @@
 ---
 
 # 104-scan-left — Scan Left (Running Accumulation)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

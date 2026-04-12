@@ -3,6 +3,10 @@
 ---
 
 # Split Borrows from Structs
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

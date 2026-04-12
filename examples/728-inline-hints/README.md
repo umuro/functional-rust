@@ -3,6 +3,10 @@
 ---
 
 # 728-inline-hints — Inline Hints
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

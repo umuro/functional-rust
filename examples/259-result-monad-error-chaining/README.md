@@ -3,10 +3,10 @@
 ---
 
 # Example 259: Result Monad — Error Chaining
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Monadic patterns
-**OCaml Source:** Railway-oriented programming with Result monad
+
 
 ## Problem Statement
 

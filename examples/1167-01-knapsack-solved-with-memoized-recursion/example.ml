@@ -1,3 +1,4 @@
+(* Idiomatic OCaml: 0/1 knapsack with memoized recursion *)
 let knapsack items capacity =
   let n = List.length items in
   let items = Array.of_list items in
@@ -17,4 +18,9 @@ let knapsack items capacity =
 
 let () =
   let items = [(2,3);(3,4);(4,5);(5,6)] in
-  Printf.printf "Max value: %d\n" (knapsack items 8)
+  assert (knapsack items 8 = 10);
+  assert (knapsack items 0 = 0);
+  assert (knapsack [] 10 = 0);
+  assert (knapsack [(3,10)] 5 = 10);
+  assert (knapsack [(10,100)] 5 = 0);
+  print_endline "ok"

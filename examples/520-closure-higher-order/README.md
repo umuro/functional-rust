@@ -3,6 +3,10 @@
 ---
 
 # Higher-Order Functions
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

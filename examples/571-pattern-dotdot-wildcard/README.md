@@ -3,6 +3,10 @@
 ---
 
 # .. and _ Wildcards
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

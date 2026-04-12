@@ -3,6 +3,10 @@
 ---
 
 # 051 — Applying a Function Twice
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

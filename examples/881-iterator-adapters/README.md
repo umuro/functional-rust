@@ -3,6 +3,10 @@
 ---
 
 # 881-iterator-adapters — Iterator Adapters
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

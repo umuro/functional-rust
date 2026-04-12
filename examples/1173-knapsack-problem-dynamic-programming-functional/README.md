@@ -1,8 +1,8 @@
 # Example 1173: Knapsack Problem — Dynamic Programming (Functional)
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Dynamic Programming | Functional Algorithms
-**OCaml Source:** Classic DP — memoized recursion with Hashtbl
+
 
 ## Problem Statement
 

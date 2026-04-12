@@ -3,6 +3,10 @@
 ---
 
 # 915-iterator-min-by-max-by — Custom Comparison min_by / max_by
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

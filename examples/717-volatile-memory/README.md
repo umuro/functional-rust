@@ -3,6 +3,10 @@
 ---
 
 # volatile memory
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 747-test-fixtures — Test Fixtures
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

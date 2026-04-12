@@ -3,6 +3,10 @@
 ---
 
 # 896-clone-copy — Clone and Copy Traits
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

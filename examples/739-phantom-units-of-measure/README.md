@@ -3,6 +3,10 @@
 ---
 
 # 739-phantom-units-of-measure — Phantom Units of Measure
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

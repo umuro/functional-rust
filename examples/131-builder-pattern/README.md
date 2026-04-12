@@ -3,10 +3,10 @@
 ---
 
 # Example 131: Builder Pattern with Typestate
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Type-Level Programming | Design Patterns | Zero-Cost Abstractions
-**OCaml Source:** Real World OCaml — phantom types & GADTs
+
 
 ## Problem Statement
 

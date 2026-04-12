@@ -3,6 +3,10 @@
 ---
 
 # 332: Retry Async with Exponential Backoff
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

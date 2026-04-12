@@ -3,6 +3,10 @@
 ---
 
 # 1121-listmap-transform-every-element — List.map: Transform Every Element
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

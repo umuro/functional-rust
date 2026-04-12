@@ -3,6 +3,10 @@
 ---
 
 # 042 — Option Map
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # Monad Transformers
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

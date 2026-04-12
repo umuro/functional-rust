@@ -3,6 +3,10 @@
 ---
 
 # 757-golden-file-tests — Golden File Tests
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

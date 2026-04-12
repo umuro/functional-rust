@@ -3,6 +3,10 @@
 ---
 
 # dereferencing raw ptr
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

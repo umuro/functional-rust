@@ -3,6 +3,10 @@
 ---
 
 # 106-lifetime-elision — Lifetime Elision Rules
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

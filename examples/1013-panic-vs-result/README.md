@@ -3,6 +3,10 @@
 ---
 
 # 1013-panic-vs-result — Panic vs Result
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

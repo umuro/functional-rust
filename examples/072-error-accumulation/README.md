@@ -3,6 +3,10 @@
 ---
 
 # 072 — Error Accumulation (Validation Type)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 796-counting-paths-dp — Counting Paths
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,10 +3,10 @@
 ---
 
 # Example 057: fold_left — Tail-Recursive Accumulator
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Higher-Order Functions
-**OCaml Source:** [CS3110 — Fold](https://cs3110.github.io/textbook/chapters/hop/fold.html)
+
 
 ## Problem Statement
 

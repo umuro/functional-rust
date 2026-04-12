@@ -3,6 +3,10 @@
 ---
 
 # 388: Extension Trait Pattern
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

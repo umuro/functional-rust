@@ -3,10 +3,10 @@
 ---
 
 # Example 1077: Phantom Type State Machine — File Handle
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Type System / Phantom Types
-**OCaml Source:** https://dev.realworldocaml.org/
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # Polonius Borrow Checker Concepts
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

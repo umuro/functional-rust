@@ -3,6 +3,10 @@
 ---
 
 # Kleisli Composition
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

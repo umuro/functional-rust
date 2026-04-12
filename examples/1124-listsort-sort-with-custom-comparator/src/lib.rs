@@ -1,4 +1,4 @@
-#![allow(clippy::all)]
+#![allow(dead_code)]
 //! List.sort — Sort with Custom Comparator
 //! See example.ml for OCaml reference
 //!

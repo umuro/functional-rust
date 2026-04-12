@@ -3,6 +3,10 @@
 ---
 
 # 006 — Palindrome Check
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

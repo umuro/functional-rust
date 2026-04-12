@@ -3,6 +3,10 @@
 ---
 
 # 1071-regex-matching — Regex Matching with . and *
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

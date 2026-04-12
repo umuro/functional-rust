@@ -3,6 +3,10 @@
 ---
 
 # 363: Arena Allocation
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

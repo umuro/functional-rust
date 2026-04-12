@@ -3,6 +3,10 @@
 ---
 
 # 013 — Direct Run-Length Encoding
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

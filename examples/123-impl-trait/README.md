@@ -3,6 +3,10 @@
 ---
 
 # impl Trait in Function Signatures
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

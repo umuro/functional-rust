@@ -3,6 +3,10 @@
 ---
 
 # 063 — Run-Length Encoding
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

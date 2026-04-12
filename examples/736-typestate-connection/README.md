@@ -3,6 +3,10 @@
 ---
 
 # 736-typestate-connection — Typestate Connection
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

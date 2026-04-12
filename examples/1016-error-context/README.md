@@ -3,6 +3,10 @@
 ---
 
 # 1016-error-context — Error Context
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

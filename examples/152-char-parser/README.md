@@ -3,6 +3,10 @@
 ---
 
 # Character Parsers
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

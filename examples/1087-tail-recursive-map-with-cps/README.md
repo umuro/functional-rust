@@ -1,8 +1,8 @@
 # Example 1087: Tail-Recursive Map with CPS
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Lists & HOF
-**OCaml Source:** Standard functional programming — tail recursion and CPS techniques
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 1052-fibonacci-dp — Fibonacci Bottom-Up DP
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

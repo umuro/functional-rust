@@ -3,6 +3,10 @@
 ---
 
 # 1039-stack-via-vec — Stack Using Vec
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

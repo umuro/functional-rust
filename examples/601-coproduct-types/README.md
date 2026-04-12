@@ -3,6 +3,10 @@
 ---
 
 # Coproduct Types (Sum Types)
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

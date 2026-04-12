@@ -3,6 +3,10 @@
 ---
 
 # Aho-Corasick Multi-Pattern Search
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

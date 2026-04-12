@@ -3,6 +3,10 @@
 ---
 
 # 256: Chaining Iterators with chain()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

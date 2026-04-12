@@ -3,6 +3,10 @@
 ---
 
 # global allocator
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

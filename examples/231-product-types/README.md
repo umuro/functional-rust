@@ -3,10 +3,10 @@
 ---
 
 # Example 231: Product Types
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Type System | Functional Patterns
-**OCaml Source:** Category Theory for Programmers — categorical product
+
 
 ## Problem Statement
 

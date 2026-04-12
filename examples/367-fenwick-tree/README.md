@@ -3,6 +3,10 @@
 ---
 
 # 367: Fenwick Tree (Binary Indexed Tree)
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

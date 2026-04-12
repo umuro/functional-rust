@@ -3,10 +3,10 @@
 ---
 
 # Example 056: fold_right — Structural Recursion
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Higher-Order Functions
-**OCaml Source:** [CS3110 — Fold](https://cs3110.github.io/textbook/chapters/hop/fold.html)
+
 
 ## Problem Statement
 

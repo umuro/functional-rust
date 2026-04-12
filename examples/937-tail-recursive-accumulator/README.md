@@ -3,6 +3,10 @@
 ---
 
 # 937-tail-recursive-accumulator — Tail-Recursive Accumulator
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

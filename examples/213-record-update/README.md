@@ -3,6 +3,10 @@
 ---
 
 # Practical Lens — Deeply Nested Config Update
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

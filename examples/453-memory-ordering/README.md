@@ -3,6 +3,10 @@
 ---
 
 # 453: Memory Ordering
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

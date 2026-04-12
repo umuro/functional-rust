@@ -3,6 +3,10 @@
 ---
 
 # 922-cancellation-token — Cancellation Token
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

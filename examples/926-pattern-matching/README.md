@@ -3,6 +3,10 @@
 ---
 
 # 926-pattern-matching — Pattern Matching
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

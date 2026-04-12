@@ -3,6 +3,10 @@
 ---
 
 # 369: Clone-on-Write (Cow)
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -1,8 +1,8 @@
 # Example 1169: Dijkstra's Shortest Path with a Priority Queue
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Graphs & Algorithms
-**OCaml Source:** Classic algorithms — Dijkstra (1959)
+
 
 ## Problem Statement
 

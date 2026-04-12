@@ -3,6 +3,10 @@
 ---
 
 # Miller-Rabin Primality Test
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

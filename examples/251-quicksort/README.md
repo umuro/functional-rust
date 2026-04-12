@@ -3,10 +3,10 @@
 ---
 
 # Example 251: Quicksort
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Sorting algorithms
-**OCaml Source:** https://rosettacode.org/wiki/Sorting_algorithms/Quicksort#OCaml
+
 
 ## Problem Statement
 

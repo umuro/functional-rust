@@ -3,6 +3,10 @@
 ---
 
 # 1015-validation-error — Validation Errors
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

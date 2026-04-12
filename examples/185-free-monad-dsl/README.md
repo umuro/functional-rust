@@ -3,6 +3,10 @@
 ---
 
 # Console DSL with Free Monad
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

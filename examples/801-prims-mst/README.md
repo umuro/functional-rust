@@ -3,6 +3,10 @@
 ---
 
 # 801-prims-mst — Prim's Minimum Spanning Tree
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

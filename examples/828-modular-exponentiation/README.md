@@ -3,6 +3,10 @@
 ---
 
 # Modular Exponentiation
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

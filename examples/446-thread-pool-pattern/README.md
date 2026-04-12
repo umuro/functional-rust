@@ -3,6 +3,10 @@
 ---
 
 # 446: Thread Pool Pattern
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

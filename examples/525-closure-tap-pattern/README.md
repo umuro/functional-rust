@@ -3,6 +3,10 @@
 ---
 
 # Tap Pattern for Side Effects
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

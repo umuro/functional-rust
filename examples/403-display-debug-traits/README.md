@@ -3,6 +3,10 @@
 ---
 
 # 403: Display and Debug Traits
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 759-manual-serialize-trait — Manual Serialize Trait
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # Output Lifetime Patterns
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

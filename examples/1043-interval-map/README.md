@@ -3,6 +3,10 @@
 ---
 
 # 1043-interval-map — Interval Map
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 1019-fallible-iterator — Fallible Iterator
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 397: Marker Traits
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

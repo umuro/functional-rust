@@ -3,6 +3,10 @@
 ---
 
 # 048 — Error Propagation with the ? Operator
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # dyn Trait — Dynamic Dispatch
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

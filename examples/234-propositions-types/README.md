@@ -3,6 +3,10 @@
 ---
 
 # Propositions as Types
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

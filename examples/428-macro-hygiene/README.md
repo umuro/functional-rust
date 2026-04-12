@@ -3,6 +3,10 @@
 ---
 
 # 428: Macro Hygiene
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

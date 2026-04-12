@@ -3,6 +3,10 @@
 ---
 
 # ffi error codes
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

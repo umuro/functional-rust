@@ -3,6 +3,10 @@
 ---
 
 # Map-Reduce with Closures
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

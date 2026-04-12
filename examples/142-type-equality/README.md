@@ -3,6 +3,10 @@
 ---
 
 # Type Equality
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

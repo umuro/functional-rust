@@ -3,6 +3,10 @@
 ---
 
 # Opaque Types
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

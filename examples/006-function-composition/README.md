@@ -3,6 +3,10 @@
 ---
 
 # 006 — Function Composition
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

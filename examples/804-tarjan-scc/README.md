@@ -3,6 +3,10 @@
 ---
 
 # 804-tarjan-scc — Tarjan's Strongly Connected Components
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

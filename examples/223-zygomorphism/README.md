@@ -3,6 +3,10 @@
 ---
 
 # Zygomorphism — Two Mutually Dependent Folds
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

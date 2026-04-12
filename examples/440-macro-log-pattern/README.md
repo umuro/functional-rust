@@ -3,6 +3,10 @@
 ---
 
 # 440: Log Pattern Macros
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # Optics: profunctor optics
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

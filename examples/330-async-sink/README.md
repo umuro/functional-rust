@@ -3,6 +3,10 @@
 ---
 
 # 330: Async Sink — Buffered Writing
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

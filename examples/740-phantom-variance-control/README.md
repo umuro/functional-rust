@@ -3,6 +3,10 @@
 ---
 
 # 740-phantom-variance-control — Phantom Variance Control
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

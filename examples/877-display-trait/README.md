@@ -3,6 +3,10 @@
 ---
 
 # 877-display-trait — Display Trait
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

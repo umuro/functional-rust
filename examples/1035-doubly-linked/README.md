@@ -3,6 +3,10 @@
 ---
 
 # 1035-doubly-linked — Doubly-Linked List
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

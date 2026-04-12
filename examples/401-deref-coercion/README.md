@@ -3,6 +3,10 @@
 ---
 
 # 401: Deref and Deref Coercions
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

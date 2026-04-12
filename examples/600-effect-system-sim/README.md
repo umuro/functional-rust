@@ -3,6 +3,10 @@
 ---
 
 # Effect system sim
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

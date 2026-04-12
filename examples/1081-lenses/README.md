@@ -1,8 +1,8 @@
 # Example 1081: Lenses
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Higher-order functions
-**OCaml Source:** Real World OCaml
+
 
 ## Problem Statement
 

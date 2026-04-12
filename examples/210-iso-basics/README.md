@@ -3,6 +3,10 @@
 ---
 
 # Iso Basics — Isomorphisms
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

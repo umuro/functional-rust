@@ -3,6 +3,10 @@
 ---
 
 # 447: Work Stealing — Load Balancing Across Threads
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

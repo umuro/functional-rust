@@ -1,8 +1,8 @@
 # Example 1164: Shortest Path Algorithm with Functional Priority Queue
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Graphs
-**OCaml Source:** https://rosettacode.org/wiki/Dijkstra%27s_algorithm#OCaml
+
 
 ## Problem Statement
 

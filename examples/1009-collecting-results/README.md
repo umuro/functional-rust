@@ -3,6 +3,10 @@
 ---
 
 # 1009-collecting-results — Collecting Results
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

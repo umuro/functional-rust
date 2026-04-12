@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1032: VecDeque Rotation — Efficient Front/Back Operations
 // VecDeque is a ring buffer: O(1) push/pop at both ends

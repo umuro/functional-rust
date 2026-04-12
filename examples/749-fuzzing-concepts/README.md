@@ -3,6 +3,10 @@
 ---
 
 # 749-fuzzing-concepts — Fuzzing Concepts
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

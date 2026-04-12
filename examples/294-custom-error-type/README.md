@@ -3,6 +3,10 @@
 ---
 
 # 294: Custom Error Types
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

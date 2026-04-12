@@ -1,8 +1,8 @@
 # Example 1000: Option Type — Safe List Maximum
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Option Type | Error Handling | Pattern Matching
-**OCaml Source:** Functional Programming patterns
+
 
 ## Problem Statement
 

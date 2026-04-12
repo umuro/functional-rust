@@ -3,6 +3,10 @@
 ---
 
 # Optics: affine traversal
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

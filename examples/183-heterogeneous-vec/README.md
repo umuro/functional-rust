@@ -3,6 +3,10 @@
 ---
 
 # Heterogeneous Vector with Safe Downcast
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 785-knapsack-01 — 0/1 Knapsack Problem
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

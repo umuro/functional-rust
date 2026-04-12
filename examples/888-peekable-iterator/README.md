@@ -3,6 +3,10 @@
 ---
 
 # 888-peekable-iterator — Peekable Iterator
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

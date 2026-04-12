@@ -3,6 +3,10 @@
 ---
 
 # 283: ExactSizeIterator for Known-Length Iterators
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

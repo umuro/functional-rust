@@ -3,6 +3,10 @@
 ---
 
 # 781-const-where-bounds — Const Where Bounds
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

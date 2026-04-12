@@ -3,6 +3,10 @@
 ---
 
 # 1049-persistent-map — Persistent HashMap
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

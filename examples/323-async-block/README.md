@@ -3,6 +3,10 @@
 ---
 
 # 323: async blocks and Lazy Evaluation
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

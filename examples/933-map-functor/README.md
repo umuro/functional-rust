@@ -3,6 +3,10 @@
 ---
 
 # 933-map-functor — Map / Functor
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

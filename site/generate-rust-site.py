@@ -66,18 +66,24 @@ TOPICS = [
     ("iterators",        "Iterators",
      ["iterator", "scan-", "unfold", "zip-", "flatten-iter", "lazy-seq", "lazy-fib",
       "double-ended", "exact-size", "try-fold", "fold-left", "fold-right", "fold-optic",
-      "step-by", "group-by-iter", "collect-", "peekable", "take-while", "skip-while"]),
+      "step-by", "group-by-iter", "collect-", "peekable", "take-while", "skip-while",
+      "sliding-window", "series-sliding", "flatmap-chain"]),
     ("pattern-matching", "Pattern Matching",
-     ["pattern-", "destructur", "variant-", "variants-"]),
+     ["pattern-", "destructur", "variant-", "variants-",
+      "slice-pattern", "sum-type"]),
     ("closures-hof",     "Closures & Higher-Order Functions",
      ["closure-", "higher-order", "currying", "partial-app", "function-comp",
       "function-pointer", "pipeline-op", "applying-a-function", "twice",
-      "higher-order-fn", "function-composition"]),
+      "higher-order-fn", "function-composition",
+      "fn-fnmut", "fn-fnonce", "boxing-closure", "-cps", "cps-",
+      "hello-world"]),
     ("error-handling",   "Error Handling",
-     ["error-", "result-", "option-", "validated-", "try-operator", "try-trait",
-      "parse-error", "parse-dont", "parse-int-safe", "railway", "custom-error",
-      "panic-", "multiple-error", "collecting-result", "recover-from",
-      "validation-error", "partition-result", "error-handling"]),
+     ["error-", "-errors", "-error", "result-", "-result", "option-", "validated-",
+      "try-operator", "try-trait", "parse-error", "parse-dont", "parse-int-safe",
+      "railway", "custom-error", "panic-", "multiple-error", "collecting-result",
+      "recover-from", "validation-error", "partition-result", "error-handling",
+      "anyhow-", "unwrap-or", "ok-or-", "infallible-", "question-mark",
+      "typed-error", "sentinel-vs", "file-error", "network-error"]),
     ("strings-parsing",  "Strings & Parsing",
      ["string-", "-string", "str-", "anagram", "palindrome", "isogram", "pangram",
       "run-length", "json-", "csv-", "parser-", "recursive-descent", "map-parser",
@@ -86,7 +92,13 @@ TOPICS = [
       "encode-", "decode-", "modified-rle", "decode-rle", "direct-rle",
       "edit-distance", "balanced-parentheses", "balanced-paren",
       "arithmetic-parser", "sequence-parser", "choice-parser",
-      "binary-format", "binary-decimal"]),
+      "binary-format", "binary-decimal",
+      "char-parser", "satisfy-parser", "many-parser", "optional-parser",
+      "digit-parser", "identifier-parser", "whitespace-parser", "number-parser",
+      "keyword-parser", "separated-list", "recursive-parser", "expression-parser",
+      "operator-precedence", "ini-parser", "lisp-parser", "pratt-parser",
+      "path-pathbuf", "atbash-", "frequency-counter", "-bob", "bob-",
+      "robot-sim", "space-age", "allergies"]),
     ("trees",            "Trees",
      ["-tree", "tree-", "red-black", "binary-heap", "avl-", "trie",
       "map-fold-tree", "balanced-insert", "leaves", "internal-node",
@@ -95,7 +107,17 @@ TOPICS = [
      ["graph-", "dijkstra", "topological-sort", "shortest-path", "huffman",
       "greedy-", "adjacency-", "merge-sort", "quicksort", "sort-by",
       "insertion-sort", "bubble-sort", "hamiltonian", "minimum-path",
-      "minimum-vertex", "modular-arith", "modular-exp"]),
+      "minimum-vertex", "modular-arith", "modular-exp",
+      "bellman-ford", "floyd-warshall", "prims-mst", "kruskal", "a-star",
+      "tarjan-", "kosaraju", "bipartite", "max-flow", "eulerian",
+      "boyer-moore", "rabin-karp", "aho-corasick", "suffix-array",
+      "z-algorithm", "burrows-wheeler", "prime-factor", "chinese-remainder",
+      "euler-totient", "miller-rabin", "extended-euclidean", "discrete-log",
+      "convex-hull", "point-in-polygon", "line-segment", "closest-pair",
+      "sweep-line", "divide-and-conquer", "backtracking-", "branch-and-bound",
+      "randomized-quick", "monte-carlo", "approximation-", "algorithm-complex",
+      "maze-solver", "bipartite-check", "articulation-point", "range-minimum",
+      "kadane", "a-star-path"]),
     ("data-structures",  "Data Structures",
      ["list-", "reverse-list", "difference-list", "flatten-nested",
       "stack-", "queue-", "priority-queue", "circular-buffer",
@@ -107,107 +129,193 @@ TOPICS = [
       "remove-kth", "insert-at", "lotto-", "random-select", "random-perm",
       "combinations", "group-by-size", "accumulate", "association-list",
       "duplicate-elem", "windows-", "collect-leaves", "count-leaves",
-      "internal-nodes", "heterogeneous-"]),
+      "internal-nodes", "heterogeneous-",
+      "doubly-linked", "bimap", "interval-map", "sorted-vec", "interning",
+      "entry-api", "indexmap", "slab-alloc", "disjoint-set", "union-find",
+      "count-min", "sparse-matrix", "key-value-store", "dag-",
+      "weighted-graph", "directed-acyclic", "finger-tree",
+      "yacht-", "poker-hand", "perfect-number", "leap-year",
+      "range-", "-range", "sum-of-multiple", "pascals-triangle", "sierpinski",
+      "arrayblit", "listmap-", "listpartition", "listsort-", "deque"]),
     ("recursion-dp",     "Recursion & Dynamic Programming",
      ["tail-recursive", "fibonacci-", "memoiz", "knapsack",
       "longest-common", "longest-incr", "partition-equal",
       "church-numer", "church-encod", "catamorphism",
       "-dp", "dp-", "dynamic-prog", "collatz", "sieve-",
       "gcd-", "gcd-lcm", "difference-of-sq", "recursive-type",
-      "trampoline"]),
+      "trampoline", "mutual-recur", "y-combinator",
+      "coin-change", "rod-cutting", "n-queens", "sudoku-solver",
+      "permutation", "subsets-power", "power-set", "regex-matching",
+      "wildcard-match", "burst-balloons", "egg-drop", "stone-game",
+      "recursion-scheme", "fix-point"]),
     ("traits-types",     "Traits & Type System",
-     ["trait-", "type-level", "type-alias", "phantom-", "associated-type",
-      "newtype-", "typestate-", "impl-trait", "from-into", "display-",
-      "clone-copy", "gadt-", "type-safe", "type-witness", "where-clause",
+     ["trait-", "-trait", "-traits", "type-level", "type-alias", "phantom-",
+      "associated-type", "newtype-", "typestate-", "impl-trait", "from-into",
+      "display-", "clone-copy", "gadt-", "type-safe", "type-witness", "where-clause",
       "lambda-calc", "never-type", "zero-cost",
       "deref-", "send-sync", "existential-", "type-equality", "type-erasure",
       "gat-", "coherence-", "default-trait", "default-method",
-      "product-type", "records", "state-machine"]),
+      "product-type", "records", "state-machine",
+      "dyn-trait", "dyn-", "builder-pattern", "variance", "rank2-type",
+      "singleton-type", "opaque-type", "sealed-trait", "extension-trait",
+      "blanket-impl", "object-safe", "marker-trait", "auto-trait",
+      "index-trait", "hash-eq-ord", "operator-overload",
+      "session-type", "sum-type"]),
     ("generics-macros",  "Generics & Macros",
      ["macro-", "proc-macro", "const-generic", "const-fn", "const-",
-      "generic-", "higher-kinded-sim", "higher-kinded-type", "serde-"]),
+      "generic-", "higher-kinded-sim", "higher-kinded-type", "serde-",
+      "syn-quote", "serialize-", "deserialize-", "config-file", "versioned-data"]),
     ("lifetimes-memory", "Lifetimes & Memory Safety",
      ["lifetime-", "borrowing-", "borrow-", "cow-", "move-",
       "unsafe-", "ffi-", "zero-copy", "memory-", "arc-", "mutex-", "rwlock-",
       "drop-", "arena-alloc", "small-vec-pat", "raw-pointer", "transmute",
-      "once-cell", "lock-free-"]),
+      "once-cell", "lock-free-",
+      "rc-shared", "cell-inter", "refcell", "box-heap", "box-",
+      "atomic-", "compare-exchange", "null-pointer", "union-", "unions-",
+      "extern-c", "no-mangle", "global-alloc", "volatile-", "soundness",
+      "struct-of-array", "cache-friend", "maybe-uninit", "branchless",
+      "simd-", "inline-hint", "avoid-alloc", "profile-guided", "epoch-gc",
+      "condvar-", "dereferencing"]),
     ("async-concurrency","Async & Concurrency",
-     ["async-", "thread-", "channel-", "work-steal", "work-queue",
+     ["async-", "thread-", "channel-", "-channel", "work-steal", "work-queue",
       "pipeline-concurr", "pipeline-stage", "scoped-thread", "pool-pattern",
-      "future-", "select-", "timeout-", "retry-", "semaphore-", "buffered-stream",
-      "mpsc-", "cancellation-", "producer-consumer", "rayon-", "crossbeam-",
-      "barrier-", "actor-", "concurrent-", "parallel-", "reactive-",
-      "event-loop", "backpressure", "lock-free-", "once-init"]),
+      "future-", "join-future", "spawn-task", "select-", "timeout-", "retry-",
+      "semaphore", "buffered-stream", "mpsc-", "cancellation-", "producer-consumer",
+      "rayon-", "crossbeam-", "barrier-", "actor-", "concurrent-", "parallel-",
+      "reactive-", "event-loop", "backpressure", "lock-free-", "once-init",
+      "pin-unpin", "waker-", "executor-", "runtime-context", "blocking-in",
+      "fan-out", "message-passing", "map-reduce", "circuit-breaker", "rate-limiter",
+      "structured-concurr"]),
     ("fp-abstractions",  "FP Abstractions",
-     ["monad-", "writer-monad", "state-monad", "functor-", "applicative-",
-      "free-monad", "monoid-", "effect-", "lens", "prism-", "profunctor-",
+     ["monad-", "writer-monad", "state-monad", "reader-monad", "identity-monad",
+      "functor-", "functors-intro", "map-functor", "applicative-",
+      "free-monad", "monoid-", "monoid", "effect-", "lens", "prism-", "profunctor-",
       "optic", "continuation-", "comonad", "bifunctor", "kleisli",
       "adjunction", "yoneda", "coyoneda", "tambara", "higher-order-fn",
       "traversal", "affine-", "iso-", "morphism", "natural-transf",
-      "scott-encod", "sequence-monadic", "traverse-", "choice-profunctor"]),
+      "scott-encod", "sequence-monadic", "traverse-", "choice-profunctor",
+      "profunctor", "strong-profunctor",
+      "operational-monad", "coroutine", "delimited-cont", "tagless-final",
+      "finally-tagless", "van-laarhoven", "record-update",
+      "recursion-scheme", "category-basic", "semigroup",
+      "curry-howard", "proposition", "day-convolution",
+      "limits-colimit", "kan-extension", "grand-synthesis", "grand-tour",
+      "interpreter-pattern", "fixed-point-type", "foldable-",
+      "flatmap-", "mutual-recur", "fix-point-type"]),
     ("testing",          "Testing & Code Quality",
      ["test-fixture", "test-double", "test-isolation", "test-prop",
-      "property-test", "fuzzing", "doctest"]),
+      "property-test", "fuzzing", "doctest",
+      "unit-test", "integration-test", "doc-test", "property-based",
+      "snapshot-test", "bench-harness", "tempfile-", "golden-file",
+      "benchmarking-harness"]),
     ("other",            "Other",
      []),  # catch-all — remaining examples
 ]
 
-def classify_topic(slug):
-    """Classify an example by its directory slug into a topic group."""
+def classify_topic(slug, title=""):
+    """Classify an example by its directory slug into a topic group.
+    Falls back to checking the README title when the slug has no useful text
+    (e.g. '1136-' with no concept words after the number).
+    """
+    # Try slug first
     s = slug.lower()
     for tid, _label, keywords in TOPICS:
         if tid == "other":
-            return "other"
+            break
         for kw in keywords:
             if kw in s:
                 return tid
+    # Slug didn't match — try title if provided
+    if title:
+        t = title.lower()
+        for tid, _label, keywords in TOPICS:
+            if tid == "other":
+                break
+            for kw in keywords:
+                if kw in t:
+                    return tid
     return "other"
 
 # ---- Learning paths ----
 LEARNING_PATHS = [
     {
-        "id": "foundations",
-        "title": "Functional Foundations",
+        "id": "list-basics",
+        "title": "List Operations & Basic Algorithms",
+        "icon": "📋",
+        "description": "Core list operations, basic algorithms, and foundational data structures: last element, reverse, slice, duplicates, basic math sequences.",
+        "keywords": ["list", "last", "reverse", "slice", "duplicate", "accumulate", "fibonacci", "collatz", "sieve", "combinations"],
+    },
+    {
+        "id": "hof-closures",
+        "title": "Higher-Order Functions & Closures",
         "icon": "🏗️",
-        "description": "Core FP concepts: higher-order functions, closures, function composition, and currying.",
-        "keywords": ["higher-order", "function", "composition", "currying", "closure", "lambda", "apply", "pipeline", "twice", "applying"],
+        "description": "Map, filter, fold, currying, partial application, function composition, closures, and pipeline patterns.",
+        "keywords": ["higher-order", "closure", "currying", "partial", "composition", "pipeline", "functor", "applicative", "monad", "macro", "generic"],
+    },
+    {
+        "id": "error-handling",
+        "title": "Error Handling FP Style",
+        "icon": "🛡️",
+        "description": "Result, Option, monadic error composition, async patterns, and concurrency.",
+        "keywords": ["error", "result", "option", "monad", "combinator", "either", "exception", "failure", "safe", "async", "thread", "channel"],
+    },
+    {
+        "id": "strings-data",
+        "title": "Strings, Vectors & Data Types",
+        "icon": "🔤",
+        "description": "String operations, vector manipulation, basic structs, records, and pattern matching.",
+        "keywords": ["string", "str", "anagram", "palindrome", "isogram", "pangram", "word", "parse", "encode", "decode", "caesar"],
     },
     {
         "id": "pattern-matching",
         "title": "Pattern Matching & Types",
         "icon": "🔍",
-        "description": "Algebraic data types, sum types, and pattern-based destructuring in Rust.",
-        "keywords": ["pattern", "matching", "enum", "algebraic", "variant", "destructure", "option", "sum", "type"],
+        "description": "Algebraic data types, sum types, traits, type system, and pattern-based destructuring in Rust.",
+        "keywords": ["pattern", "matching", "enum", "algebraic", "variant", "destructure", "option", "sum", "type", "trait"],
     },
     {
         "id": "collections",
         "title": "Data Structures & Collections",
         "icon": "📦",
-        "description": "Lists, trees, maps, and other functional data structures.",
-        "keywords": ["list", "tree", "map", "stack", "queue", "deque", "linked", "binary", "array", "vector", "kth", "last", "length", "element", "operations"],
+        "description": "Trees, maps, graphs, advanced data structures, lifetimes, and memory safety.",
+        "keywords": ["tree", "map", "stack", "queue", "deque", "linked", "binary", "array", "vector", "lifetime", "borrow", "memory"],
     },
     {
         "id": "iterators",
         "title": "Iterators & Transformation",
         "icon": "🔄",
         "description": "Map, filter, fold, and lazy iteration patterns from OCaml to Rust.",
-        "keywords": ["iterator", "fold", "reduce", "filter", "zip", "flatten", "scan", "sequence", "map"],
-    },
-    {
-        "id": "error-handling",
-        "title": "Error Handling FP Style",
-        "icon": "🛡️",
-        "description": "Result, Option, and monadic error composition.",
-        "keywords": ["error", "result", "option", "monad", "combinator", "either", "exception", "failure", "safe"],
+        "keywords": ["iterator", "fold", "reduce", "filter", "zip", "flatten", "scan", "sequence"],
     },
     {
         "id": "recursion",
         "title": "Recursion & Induction",
         "icon": "♾️",
-        "description": "Recursive patterns, tail-call optimization, and structural induction.",
-        "keywords": ["recursion", "recursive", "tail", "fibonacci", "factorial", "accumulator", "divide", "merge", "sort", "palindrome"],
+        "description": "Recursive patterns, tail-call optimization, graphs, algorithms, and structural induction.",
+        "keywords": ["recursion", "recursive", "tail", "fibonacci", "factorial", "accumulator", "divide", "merge", "sort", "graph", "dijkstra"],
     },
 ]
+
+# ---- Topic → learning-path routing table ----
+# Maps each TOPICS id to the learning-path id that owns it.
+_TOPIC_TO_PATH = {
+    "iterators":         "iterators",
+    "pattern-matching":  "pattern-matching",
+    "closures-hof":      "hof-closures",
+    "error-handling":    "error-handling",
+    "strings-parsing":   "strings-data",
+    "trees":             "collections",
+    "graphs-algorithms": "recursion",
+    "data-structures":   "list-basics",
+    "recursion-dp":      "recursion",
+    "traits-types":      "pattern-matching",
+    "generics-macros":   "hof-closures",
+    "lifetimes-memory":  "collections",
+    "async-concurrency": "error-handling",
+    "fp-abstractions":   "hof-closures",
+    "testing":           "list-basics",
+    "other":             "list-basics",
+}
 
 # ---- Theme & JS snippets (plain strings, NOT f-strings) ----
 
@@ -290,26 +398,43 @@ document.addEventListener('DOMContentLoaded', function() {
     if (counter) counter.textContent = (q || activeLevel !== 'all') ? count + ' result' + (count !== 1 ? 's' : '') : '';
   }
 
+  function setLevel(level, scroll) {
+    activeLevel = level;
+    // Update filter bar buttons
+    document.querySelectorAll('.level-filter').forEach(function(b) {
+      var on = b.dataset.level === level;
+      b.classList.toggle('bg-orange-500', on);
+      b.classList.toggle('text-white', on);
+      b.classList.toggle('bg-gray-100', !on);
+      b.classList.toggle('dark:bg-gray-700', !on);
+      b.classList.toggle('text-gray-700', !on);
+      b.classList.toggle('dark:text-gray-300', !on);
+    });
+    // Update hero stat cards
+    document.querySelectorAll('.hero-stat-btn').forEach(function(b) {
+      var on = b.dataset.level === level;
+      b.style.outline = on ? '3px solid white' : '';
+      b.style.outlineOffset = on ? '2px' : '';
+      b.style.transform = on ? 'scale(1.08)' : '';
+    });
+    filterCards();
+    if (scroll) {
+      var grid = document.getElementById('examples-grid');
+      if (grid) grid.scrollIntoView({behavior: 'smooth', block: 'start'});
+    }
+  }
+
   searchEl.addEventListener('input', filterCards);
 
   document.querySelectorAll('.level-filter').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      activeLevel = this.dataset.level;
-      document.querySelectorAll('.level-filter').forEach(function(b) {
-        b.classList.remove('bg-orange-500', 'text-white');
-        b.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-      });
-      this.classList.add('bg-orange-500', 'text-white');
-      this.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-      filterCards();
-    });
+    btn.addEventListener('click', function() { setLevel(this.dataset.level, false); });
   });
 
-  var allBtn = document.querySelector('.level-filter[data-level="all"]');
-  if (allBtn) {
-    allBtn.classList.add('bg-orange-500', 'text-white');
-    allBtn.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-  }
+  document.querySelectorAll('.hero-stat-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { setLevel(this.dataset.level, true); });
+  });
+
+  setLevel('all', false);
 });
 </script>"""
 
@@ -321,9 +446,10 @@ FILTER_JS = """<script>
     function activate(val) {
       btns.forEach(function(b) {
         var on = b.dataset.fv === val;
-        b.classList.toggle('!bg-orange-500', on);
-        b.classList.toggle('!text-white', on);
-        b.classList.toggle('!border-orange-500', on);
+        b.style.outline = on ? '3px solid white' : '';
+        b.style.outlineOffset = on ? '2px' : '';
+        b.style.transform = on ? 'scale(1.08)' : 'scale(1)';
+        b.style.boxShadow = on ? '0 0 0 3px rgba(255,255,255,0.6)' : '';
         b.setAttribute('aria-pressed', on ? 'true' : 'false');
       });
       secs.forEach(function(s) {
@@ -530,8 +656,264 @@ LEVEL_OVERRIDES = {
     "1079-writer-monad":                 "expert",
 }
 
+# Slug-keyword pattern tables — checked in order: expert → advanced → intermediate.
+# A substring match on the example dirname promotes to that level.
+# Fundamental is the final fallback for things that match nothing.
+EXPERT_SLUG_KEYWORDS = [
+    # Monads and category theory
+    "monad", "comonad", "adjunction", "profunctor", "kan-extension",
+    "free-", "church", "scott-encoding", "gadt",
+    "catamorphism", "anamorphism", "hylomorphism", "apomorphism",
+    "paramorphism", "histomorphism", "zygomorphism", "mutumorphism", "prepromorphism",
+    "y-combinator", "yoneda", "cofree",
+    "type-level-bool", "peano-", "church-numeral", "lambda-calculus",
+    "algebraic-effect", "effect-system", "free-monad",
+    # Recursion schemes
+    "category-basics", "curry-howard", "day-convolution", "limits-colimits",
+    "grand-synthesis", "propositions-types",
+    # Effect systems
+    "effect-intro", "effect-handler", "effect-exception", "effect-state",
+    "effect-async", "delimited-cont",
+    # Deep type theory
+    "existential-types", "rank2-types", "heterogeneous-list", "heterogeneous-vec",
+    "type-safe-printf", "singleton-types", "type-equality",
+    "van-laarhoven", "waker-context",
+    "fix-point",
+]
+
+ADVANCED_SLUG_KEYWORDS = [
+    # Balanced trees and complex data structures
+    "red-black", "balanced-insert", "avl-tree", "finger-tree", "b-tree-custom",
+    "persistent-", "arena-allocation",
+    # Graph algorithms
+    "dijkstra", "shortest-path", "bellman-ford", "a-star-", "articulation-point",
+    "topological-sort", "bipartite", "hamiltonian", "minimum-spanning", "aho-corasick",
+    # Parsing
+    "recursive-descent", "parser-combinator", "arithmetic-parser", "char-parser",
+    "satisfy-parser", "many-parser", "flatmap-parser", "digit-parser",
+    "identifier-parser", "choice-parser", "sequence-parser", "map-parser",
+    "flatmap-parser", "optional-parser", "whitespace-parser",
+    # Complex algorithms
+    "huffman", "suffix-array", "convex-hull", "boyer-moore",
+    "branch-and-bound", "backtracking-framework", "bloom-filter",
+    "approximation-set-cover", "01-knapsack",
+    # Type-level / Rust-specific advanced
+    "phantom-type", "phantom-safety", "type-level", "const-generic", "type-witness",
+    "higher-kinded", "blanket-implementation", "auto-trait",
+    # Memory / borrowing
+    "lifetime-self", "refcell", "unsafe-", "avoid-allocation",
+    # Async (complex patterns)
+    "async-recursion", "async-stream", "async-sink", "async-generator",
+    "async-trait", "async-mutex", "async-rwlock", "async-drop",
+    "async-io", "async-join", "async-move", "blocking-in-async",
+    "backpressure", "broadcast-channel", "barrier-sync",
+    # Functional data structures
+    "difference-list", "zipper", "binary-heap-", "priority-queue",
+    # Patterns and abstractions
+    "builder-pattern", "typestate", "newtype-derive", "visitor-pattern",
+    "lense", "optic", "traversal-optic",
+    # DP and complex algorithms
+    "knapsack", "subset-sum", "dynamic-programming", "memoiz",
+    "matrix-chain", "rod-cutting", "partition-equal-subset",
+    "egg-drop", "burst-balloons", "stone-game", "regex-matching",
+    "wildcard-matching", "longest-path-dp", "interval-dp",
+    # Backtracking
+    "manacher", "palindrome-partition", "palindrome-part",
+    "n-queens", "sudoku-solver", "subsets-power-set",
+    "permutation-backtrack",
+    # Recursive types / advanced Rust
+    "recursive-types", "zero-cost-abs", "self-referential",
+    # Continuations
+    "cps", "continuation", "tail-recursive-map-cps", "tail-recursive-map-with",
+    # Iterators (advanced)
+    "unfold",
+    # Concurrency
+    "arc-mutex", "arc-rwlock", "arc-threads", "atomic-types", "actor-pattern",
+    # Other advanced
+    "branchless", "bitset", "binary-format", "binary-decimal-fold",
+    "associated-type-bound", "associated-types-advanced",
+    "adjunction", "bifunctor", "bimap",
+    "affine-traversal", "optic-",
+    "corecurs", "algorithm-complexity",
+    "scatter-gather", "partial-application-typestate",
+    # Additional advanced
+    "never-type", "doubly-linked", "cow-collection", "cow-clone",
+    "arena-graph", "reactive-stream", "work-stealing", "cancellation-token",
+    "pin-projection", "self-referential", "send-sync",
+    "global-allocator", "custom-allocator",
+    "dsl-macro", "proc-macro", "macro-rules-advanced",
+    # Lenses / optics series
+    "lens-intro", "lens-laws", "lens-modify",
+    "prism-", "iso-basics", "iso-laws",
+    "traversal", "affine-optic",
+    # Type-level advanced
+    "gat-basics", "gat-collections", "opaque-types", "type-erasure",
+    "variance", "phantom-units",
+    "type-safe-builder", "coherence-rules", "coherence-orphan",
+    # Async advanced
+    "future-trait", "join-futures", "select-futures", "spawn-tasks",
+    "pin-unpin", "executor-basics", "semaphore-async",
+    "structured-concurrency", "runtime-context",
+    "retry-async", "timeout-async", "coroutines-gen", "trampoline",
+    # Complex data structures
+    "rope-data-structure", "slab-allocator", "skip-list", "radix-tree",
+    "segment-tree", "fenwick-tree",
+    # Parser advanced
+    "number-parser", "keyword-parser", "separated-list", "recursive-parser",
+    "expression-parser", "operator-precedence", "error-recovery",
+    "ini-parser", "lisp-parser", "json-parser",
+    "lru-cache",
+    # Resilience patterns
+    "retry-backoff", "circuit-breaker", "rate-limiter", "bulkhead",
+    "health-check", "timeout-pattern",
+]
+
+INTERMEDIATE_SLUG_KEYWORDS = [
+    # Trees (non-trivial)
+    "binary-tree", "bst", "binary-search-tree", "map-fold-tree", "tree-traversal",
+    "symmetric-tree", "complete-tree", "expression-tree", "at-level",
+    "tree-string", "tree-preorder", "tree-inorder", "dotstring-tree", "dotstring-parse",
+    "collect-leaves", "internal-nodes", "count-leaves",
+    # Stacks / queues
+    "stack-module", "stack-", "-stack", "queue", "deque", "circular-buffer",
+    # Folds
+    "fold-left", "fold-right", "listfold", "fold-tree", "fold-optic",
+    "try-fold", "fold-monoid",
+    # HOF patterns
+    "currying", "partial-app", "partial-application",
+    "applying-a-function-twice", "applying-function-twice",
+    "function-composition", "function-compose", "pipeline-op",
+    "higher-order", "-hof", "function-pointer", "boxing-closure",
+    # From-scratch list implementations
+    "map-from-scratch", "filter-from-scratch", "list-map-from-scratch",
+    "list-filter-from-scratch", "list-map-transform", "list-map",
+    "list-filter", "list-fold", "list-operations",
+    # Complex string algorithms (non-trivial, require algorithmic insight)
+    "edit-distance", "levenshtein",
+    "balanced-parentheses", "balanced-paren",
+    "word-break",  # DP-based
+    # List operations that require FP thinking
+    "run-length", "-rle", "rle-", "pack-consecutive", "modified-rle",
+    "decode-rle", "direct-rle", "eliminate-duplicates", "duplicate-element",
+    "flatten-nested", "replicate-n", "rotate-left", "rotate-", "split-list",
+    "drop-every", "zip-unzip", "zip-and-unzip", "zip-pair", "zip-with",
+    "list-partition", "listpartition", "listmap", "listfilter", "listsort",
+    "listflatten", "accumulate-a-result",
+    "remove-kth", "insert-at",
+    "random-select", "random-permutation", "lotto-draw",
+    "combinations", "permutations",
+    # Error handling
+    "error-propagation", "error-handling", "validated", "io-error",
+    "parse-error", "multiple-error", "railway", "collecting-result",
+    "partition-result", "recover-from", "try-operator",
+    "error-conversion", "error-context", "error-accumulation", "error-display",
+    "error-combinators", "error-chain", "typed-errors", "result-combinators",
+    "result-chaining", "option-to-result", "panic-vs-result",
+    "fallible-iterator", "sentinel-vs-result", "parse-int-safe",
+    "file-errors", "network-errors", "validation-error",
+    "option-map", "option-bind", "option-filter", "option-basics",
+    "result-map", "result-bind", "result-basics",
+    # Iterators (most iterator patterns are intermediate)
+    "iterator", "custom-iterator", "infinite-iterator",
+    "iterator-window", "windows-and-chunks", "scan-accumulate",
+    "lazy-sequence", "lazy-fib", "double-ended", "exact-size", "step-by",
+    "take-while", "skip-while", "peekable", "group-by", "chunk",
+    # Rust type system (intermediate)
+    "generic-bounds", "where-clauses", "type-aliases", "type-alias",
+    "display-trait", "from-into-traits", "from-into",
+    "newtype-pattern", "newtype-",
+    "lifetime-basics", "lifetime-elision", "lifetime-",
+    "move-semantics", "clone-copy",
+    "trait-objects", "trait-object", "dynamic-dispatch",
+    "associated-types",
+    # Sorting
+    "insertion-sort", "merge-sort", "quicksort", "bubble-sort",
+    "sort-with-custom", "sort-by", "sort-with", "custom-comparator",
+    # Math / algorithms that require FP or algorithmic concepts
+    "fibonacci-memo", "fibonacci-dp", "lazy-fib", "const-fibonacci", "memoization-fibonacci",
+    "fibonacci-variants",
+    "prime-factor", "gcd-lcm",
+    "modular-arithmetic", "modular-exp", "greatest-common",
+    # Graphs (basic)
+    "adjacency-list", "adjacency-matrix", "graph-traversal", "graph-color",
+    "minimum-path", "minimum-vertex",
+    # Monoid (basic)
+    "monoid-pattern", "monoid-basic", "monoid-generic",
+    # Functional patterns (intermediate)
+    "accumulate", "scan-", "tail-recursive-accumulator",
+    "point-free", "eta-reduction",
+    # Data structures (intermediate)
+    "association-list", "btreemap", "btreeset", "hashmap-pattern",
+    "hashmap-entry", "hashmap-groupby",
+    "sliding-window", "two-pointer", "matrix-ops",
+    # IO / tooling
+    "csv-parsing", "bench-harness", "benchmarking-harness", "csv-parser",
+    # Async (basic)
+    "async-basics", "async-block", "async-sequence", "async-map",
+    "event-loop", "mpsc-channel", "producer-consumer", "buffered-stream",
+    # Smart pointers (basic)
+    "box-heap", "borrowing-shared", "borrowing-mutable",
+    # OCaml stdlib equivalents (not trivial)
+    "arraymake", "arrayblit", "stringsplit",
+    # Other intermediate exercises
+    "bob", "allergies", "clock-module", "luhn", "scrabble",
+    "triangle-check", "grains", "beer-song", "perfect-number",
+    "isbn-verify", "series-", "robot-simulator",
+    "two-bucket", "connect-game", "poker", "dominoes",
+    "range",
+    # Pattern matching (non-trivial)
+    "nested-pattern", "or-pattern", "pattern-matching",
+    "records",
+    # Applicative (basic)
+    "applicative-validation", "applicative-basics", "applicative-laws",
+    # Misc intermediate
+    "lenses",
+    "abstract-type",
+    # Data structures (additional)
+    "multimap", "interval-map", "sorted-vec", "flat-tree", "trie",
+    "linked-list", "singly-linked", "doubly-linked-safe",
+    "small-vec", "interning",
+    "lru-cache", "work-stealing", "segment-tree", "fenwick-tree",
+    # Algorithms (additional)
+    "sieve", "coin-change", "longest-common-subseq", "lcs-",
+    "longest-increasing", "edit-distance-dp",
+    # Rust concepts (additional)
+    "custom-error", "option-result",
+    "hashmap-counting", "hashmap-",
+    # Rust language features (intermediate)
+    "string-str", "slice-patterns", "vec-patterns",
+    "closure-types", "closure-capture", "closure-",
+    "deref-coercions", "impl-trait", "cell-interior",
+    "move-closure",
+    # Trait patterns
+    "object-safe-traits", "sealed-trait", "extension-trait",
+    "trait-bounds", "supertrait", "default-methods",
+    "trait-specialization", "marker-traits", "trait-dispatch",
+    "deref-coercion", "index-trait",
+    "hash-eq-ord", "display-debug-traits",
+    # Error / option / result patterns
+    "option-combinators", "question-mark-operator", "error-trait-impl",
+    "from-trait-errors", "anyhow-pattern", "result-transpose",
+    "option-transpose", "collect-results", "infallible-conversions",
+    "result-ok-err", "error-in-tests", "downcasting", "try-trait",
+    "error-downcast",
+    # Rust language features
+    "dyn-trait", "const-functions", "maze-solver",
+    "entry-api", "indexmap-ordered",
+    # More data structures
+    "disjoint-set", "directed-acyclic-graph", "weighted-graph",
+    "sum-types", "record-update", "linked-list-safe",
+    # Async (basic/intermediate)
+    "oneshot-channel", "timeout-async", "channel-async",
+    "mpsc-channel", "producer-consumer",
+    # String / IO (additional)
+    "reactive",
+]
+
+
+
 def extract_difficulty(readme, dirname=""):
-    """Count star emoji symbols to determine level, with manual overrides."""
+    """Determine difficulty level via overrides, README tags, then slug patterns."""
     if dirname in LEVEL_OVERRIDES:
         return LEVEL_OVERRIDES[dirname]
     m = re.search(r"\*\*Difficulty:\*\*\s*([⭐🌟]+)", readme)
@@ -550,6 +932,17 @@ def extract_difficulty(readme, dirname=""):
                 return level
         if "beginner" in d:
             return "fundamental"
+    # Slug-keyword classification for untagged READMEs
+    slug = dirname.lower()
+    for kw in EXPERT_SLUG_KEYWORDS:
+        if kw in slug:
+            return "expert"
+    for kw in ADVANCED_SLUG_KEYWORDS:
+        if kw in slug:
+            return "advanced"
+    for kw in INTERMEDIATE_SLUG_KEYWORDS:
+        if kw in slug:
+            return "intermediate"
     return "fundamental"
 
 def extract_concepts(readme):
@@ -575,10 +968,14 @@ def extract_section(md, *headings):
     return ""
 
 def classify_learning_path(concepts, title, slug):
-    text = " ".join(concepts).lower() + " " + title.lower() + " " + slug.replace("-", " ")
-    scores = {p["id"]: sum(1 for kw in p["keywords"] if kw in text) for p in LEARNING_PATHS}
-    best = max(scores, key=scores.get)
-    return best if scores[best] > 0 else "foundations"
+    """Route an example to a learning path via topic-based lookup.
+
+    Calls classify_topic() on the slug, then maps the topic id to a path id
+    using the _TOPIC_TO_PATH table.  Falls back to 'list-basics' when the
+    topic is unknown.
+    """
+    topic = classify_topic(slug, title)
+    return _TOPIC_TO_PATH.get(topic, "list-basics")
 
 def parse_comparison(comparison_md):
     blocks = re.findall(r"```(\w+)\n(.*?)```", comparison_md, re.DOTALL)
@@ -1105,14 +1502,25 @@ def generate_index(examples_data):
         by_level.setdefault(ex["level"], []).append(ex)
     nf = len(by_level.get("fundamental",  []))
     ni = len(by_level.get("intermediate", []))
-    na = len(by_level.get("advanced", []) + by_level.get("expert", []))
+    na = len(by_level.get("advanced", []))
+    ne = len(by_level.get("expert",   []))
+
+    def _stat_card(level, count, label, bg, text):
+        return (
+            f'<button data-level="{level}" '
+            f'class="hero-stat-btn {bg} rounded-xl p-5 text-center cursor-pointer hover:brightness-125 transition-all duration-150 w-full">'
+            f'<div class="text-4xl font-bold {text}">{count}</div>'
+            f'<div class="text-sm text-gray-300 mt-1">{label}</div>'
+            f'</button>'
+        )
 
     stats = (
-        '\n        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">'
-        f'\n          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 text-center"><div class="text-4xl font-bold">{total}</div><div class="text-sm text-gray-300 mt-1">Examples</div></div>'
-        f'\n          <div class="bg-green-500/20 rounded-xl p-5 text-center"><div class="text-4xl font-bold text-green-300">{nf}</div><div class="text-sm text-gray-300 mt-1">Fundamental</div></div>'
-        f'\n          <div class="bg-blue-500/20 rounded-xl p-5 text-center"><div class="text-4xl font-bold text-blue-300">{ni}</div><div class="text-sm text-gray-300 mt-1">Intermediate</div></div>'
-        f'\n          <div class="bg-purple-500/20 rounded-xl p-5 text-center"><div class="text-4xl font-bold text-purple-300">{na}</div><div class="text-sm text-gray-300 mt-1">Advanced+</div></div>'
+        '\n        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">'
+        f'\n          <button data-level="all" class="hero-stat-btn bg-white/10 backdrop-blur-sm rounded-xl p-5 text-center cursor-pointer hover:brightness-125 transition-all duration-150 col-span-2 md:col-span-1"><div class="text-4xl font-bold">{total}</div><div class="text-sm text-gray-300 mt-1">Examples</div></button>'
+        f'\n          {_stat_card("fundamental",  nf, "Fundamental", "bg-green-500/20",  "text-green-300")}'
+        f'\n          {_stat_card("intermediate", ni, "Intermediate", "bg-blue-500/20",   "text-blue-300")}'
+        f'\n          {_stat_card("advanced",     na, "Advanced",    "bg-purple-500/20", "text-purple-300")}'
+        f'\n          {_stat_card("expert",       ne, "Expert",      "bg-red-500/20",    "text-red-300")}'
         '\n        </div>'
     )
 
@@ -1158,7 +1566,7 @@ def generate_index(examples_data):
     cards = "\n".join(example_card(ex) for ex in examples_data)
 
     grid = (
-        '\n    <section class="mb-16">'
+        '\n    <section id="examples-grid" class="mb-16">'
         '\n      <div class="flex items-center justify-between mb-6">'
         '\n        <h2 class="text-3xl font-bold text-gray-900 dark:text-white">All Examples</h2>'
         '\n        <div class="text-sm text-gray-500 dark:text-gray-400 hidden sm:block">'
@@ -1288,17 +1696,45 @@ def generate_by_topic(examples_data):
     # Only include topics that have examples, in taxonomy order
     present = [(tid, label) for tid, label, _ in TOPICS if by_topic.get(tid)]
 
-    btn_cls = ('text-left bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 '
-               'rounded-lg px-3 py-2 hover:border-orange-400 hover:text-orange-500 '
-               'transition-colors text-sm font-medium')
-    all_pill = (
-        f'<button data-fv="all" class="{btn_cls}">'
-        f'All <span class="text-gray-400 dark:text-gray-500 text-xs">({len(examples_data)})</span></button>'
-    )
-    pills = "\n".join(
-        '<button data-fv="{}" class="{}">{} <span class="text-gray-400 dark:text-gray-500 text-xs">({})</span></button>'.format(
-            tid, btn_cls, escape_html(label), len(by_topic[tid])
+    # Per-topic muted-dark gradient palette: rich hues, dark enough for white text
+    TOPIC_STYLE = {
+        "iterators":         ("🔄", "linear-gradient(to right, #1d4ed8, #0e7490)"),
+        "pattern-matching":  ("🎯", "linear-gradient(to right, #6d28d9, #4c1d95)"),
+        "closures-hof":      ("⚡", "linear-gradient(to right, #c2410c, #92400e)"),
+        "error-handling":    ("🛡️", "linear-gradient(to right, #b91c1c, #9f1239)"),
+        "strings-parsing":   ("📝", "linear-gradient(to right, #15803d, #065f46)"),
+        "trees":             ("🌳", "linear-gradient(to right, #047857, #0f766e)"),
+        "graphs-algorithms": ("🕸️", "linear-gradient(to right, #0e7490, #075985)"),
+        "data-structures":   ("📦", "linear-gradient(to right, #4338ca, #1d4ed8)"),
+        "recursion-dp":      ("♾️", "linear-gradient(to right, #a16207, #92400e)"),
+        "traits-types":      ("🔷", "linear-gradient(to right, #5b21b6, #6d28d9)"),
+        "generics-macros":   ("⚙️", "linear-gradient(to right, #be185d, #86198f)"),
+        "lifetimes-memory":  ("⏳", "linear-gradient(to right, #b45309, #c2410c)"),
+        "async-concurrency": ("🚀", "linear-gradient(to right, #0f766e, #0e7490)"),
+        "fp-abstractions":   ("🧮", "linear-gradient(to right, #be123c, #9d174d)"),
+        "testing":           ("✅", "linear-gradient(to right, #4d7c0f, #15803d)"),
+        "other":             ("📌", "linear-gradient(to right, #374151, #4b5563)"),
+    }
+
+    def _topic_pill(fv, icon, label, count, grad=None):
+        if grad is None:
+            grad = TOPIC_STYLE.get(fv, ("📌", "linear-gradient(to right, #6b7280, #64748b)"))[1]
+        return (
+            f'<button data-fv="{fv}" '
+            f'style="background:{grad}" '
+            f'class="inline-flex items-center gap-1.5 text-white '
+            f'px-3.5 py-1.5 rounded-full text-sm font-semibold shadow '
+            f'hover:opacity-90 hover:scale-105 active:scale-95 '
+            f'transition-all duration-150">'
+            f'{icon} {escape_html(label)} '
+            f'<span style="background:rgba(0,0,0,0.2)" class="text-xs px-1.5 py-0.5 rounded-full">{count}</span>'
+            f'</button>'
         )
+
+    all_pill = _topic_pill("all", "🗂", "All", len(examples_data),
+                           grad="linear-gradient(to right, #1f2937, #374151)")
+    pills = "\n".join(
+        _topic_pill(tid, TOPIC_STYLE.get(tid, ("•",))[0], label, len(by_topic[tid]))
         for tid, label in present
     )
 
@@ -1786,7 +2222,7 @@ for ex in all_examples:
     level    = extract_difficulty(readme, ex.name)
     concepts = extract_concepts(readme)
     path_id  = classify_learning_path(concepts, title, ex.name)
-    topic_id = classify_topic(ex.name)
+    topic_id = classify_topic(ex.name, title)
     examples_data.append({
         "dirname":  ex.name,
         "num":      num,

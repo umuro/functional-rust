@@ -1,8 +1,8 @@
 # Example 004: List Map From Scratch
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Lists & Higher-Order Functions
-**OCaml Source:** [RWO Book Ch. 2: List.map](https://dev.realworldocaml.org/)
+
 
 ## Problem Statement
 

@@ -3,10 +3,10 @@
 ---
 
 # Example 058: Variants — Days of the Week
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Algebraic Data Types
-**OCaml Source:** [CS3110 — Variants](https://cs3110.github.io/textbook/chapters/data/variants.html)
+
 
 ## Problem Statement
 

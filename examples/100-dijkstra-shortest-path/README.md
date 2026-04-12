@@ -1,8 +1,8 @@
 # Example 100: Dijkstra's Shortest Path
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** [Graph Algorithms | Priority Queues | Functional Data Structures]
-**OCaml Source:** Classic graph algorithm with functional priority queue
+
 
 ## Problem Statement
 

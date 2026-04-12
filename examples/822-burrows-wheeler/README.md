@@ -3,6 +3,10 @@
 ---
 
 # Burrows-Wheeler Transform
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

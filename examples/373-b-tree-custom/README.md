@@ -3,6 +3,10 @@
 ---
 
 # 373: Custom B-Tree Implementation
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

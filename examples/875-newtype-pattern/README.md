@@ -3,6 +3,10 @@
 ---
 
 # 875-newtype-pattern — Newtype Pattern
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

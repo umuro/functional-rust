@@ -3,6 +3,10 @@
 ---
 
 # 405: Iterator Trait Deep Dive
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

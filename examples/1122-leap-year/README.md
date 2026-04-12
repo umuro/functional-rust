@@ -3,6 +3,10 @@
 ---
 
 # 1122-leap-year — Leap Year
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

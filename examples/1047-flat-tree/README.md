@@ -3,6 +3,10 @@
 ---
 
 # 1047-flat-tree — Flat Binary Tree in Vec
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 030 — Count the Leaves of a Binary Tree
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

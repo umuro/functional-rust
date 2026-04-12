@@ -3,6 +3,10 @@
 ---
 
 # 451: Crossbeam Select — Multiplexing Channels
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

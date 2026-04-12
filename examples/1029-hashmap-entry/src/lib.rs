@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1029: HashMap Entry API
 // Rust's Entry API avoids double lookups for insert-or-update patterns

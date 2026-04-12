@@ -3,10 +3,10 @@
 ---
 
 # Example 273: Fibonacci Variants
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Recursion & Iteration | Accumulators | Fold
-**OCaml Source:** Classic functional programming exercise
+
 
 ## Problem Statement
 

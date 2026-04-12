@@ -3,6 +3,10 @@
 ---
 
 # 921-async-io — Async I/O
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

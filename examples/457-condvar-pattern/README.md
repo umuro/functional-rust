@@ -3,6 +3,10 @@
 ---
 
 # 457: Condition Variable Pattern
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

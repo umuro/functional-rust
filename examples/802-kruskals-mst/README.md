@@ -3,6 +3,10 @@
 ---
 
 # 802-kruskals-mst — Kruskal's Minimum Spanning Tree
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

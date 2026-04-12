@@ -3,6 +3,10 @@
 ---
 
 # 343: Cancellation Token
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 448: Rayon Parallel Iterators — Data Parallelism
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

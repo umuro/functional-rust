@@ -3,6 +3,10 @@
 ---
 
 # 1025-network-errors — Network Error Classification
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

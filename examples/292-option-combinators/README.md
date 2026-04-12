@@ -3,6 +3,10 @@
 ---
 
 # 292: Option Combinators
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

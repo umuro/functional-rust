@@ -3,6 +3,10 @@
 ---
 
 # Comonad Basics
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

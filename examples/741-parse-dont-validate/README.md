@@ -3,6 +3,10 @@
 ---
 
 # 741-parse-dont-validate — Parse Don't Validate
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

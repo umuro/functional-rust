@@ -3,6 +3,10 @@
 ---
 
 # Closure Types: Fn, FnMut, FnOnce
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

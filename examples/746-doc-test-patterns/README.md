@@ -3,6 +3,10 @@
 ---
 
 # 746-doc-test-patterns — Doc Test Patterns
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

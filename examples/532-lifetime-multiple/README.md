@@ -3,6 +3,10 @@
 ---
 
 # Multiple Lifetime Parameters
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # Raw Pointer Basics
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

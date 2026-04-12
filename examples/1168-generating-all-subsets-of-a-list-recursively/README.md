@@ -1,8 +1,10 @@
 # Generating All Subsets of a List Recursively
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
 
 **Source:** https://v2.ocaml.org/learn/tutorials/99problems.html
 
-**Difficulty:** Intermediate
 
 ## Problem Statement
 

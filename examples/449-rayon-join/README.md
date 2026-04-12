@@ -3,6 +3,10 @@
 ---
 
 # 449: Rayon Join — Fork-Join Parallelism
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

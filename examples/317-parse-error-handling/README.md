@@ -3,6 +3,10 @@
 ---
 
 # 317: Parse Error Handling
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

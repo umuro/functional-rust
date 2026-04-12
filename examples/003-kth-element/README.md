@@ -3,10 +3,10 @@
 ---
 
 # Example 003: K-th Element
-
 **Difficulty:** ⭐  
-**Category:** Lists & Indexing  
-**OCaml Source:** OCaml.org 99 Problems #3
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

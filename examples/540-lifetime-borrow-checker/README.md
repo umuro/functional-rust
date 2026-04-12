@@ -3,6 +3,10 @@
 ---
 
 # Borrow Checker Internals
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

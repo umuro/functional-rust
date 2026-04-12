@@ -3,10 +3,10 @@
 ---
 
 # Example 275: Yacht Dice Scoring
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Pattern Matching | Algebraic Data Types
-**OCaml Source:** Classic Yacht dice game scoring exercise
+
 
 ## Problem Statement
 

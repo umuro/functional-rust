@@ -3,6 +3,10 @@
 ---
 
 # Church encoding rust
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

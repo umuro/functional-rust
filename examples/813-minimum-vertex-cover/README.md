@@ -3,6 +3,10 @@
 ---
 
 # 813-minimum-vertex-cover — Minimum Vertex Cover (Trees)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

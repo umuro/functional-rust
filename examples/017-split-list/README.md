@@ -3,6 +3,10 @@
 ---
 
 # 017 — Split a List at Position
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

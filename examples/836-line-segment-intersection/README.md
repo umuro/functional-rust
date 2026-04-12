@@ -3,6 +3,10 @@
 ---
 
 # Line Segment Intersection
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

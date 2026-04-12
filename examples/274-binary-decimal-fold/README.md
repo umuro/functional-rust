@@ -3,10 +3,10 @@
 ---
 
 # Example 274: Binary ↔ Decimal Fold
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Strings & Folds | Numeric Conversion | Recursion
-**OCaml Source:** Classic fold-based binary conversion
+
 
 ## Problem Statement
 

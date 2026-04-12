@@ -3,6 +3,10 @@
 ---
 
 # 077 — Matrix Operations
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

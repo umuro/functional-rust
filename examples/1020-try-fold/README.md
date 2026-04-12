@@ -3,6 +3,10 @@
 ---
 
 # 1020-try-fold — try_fold
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

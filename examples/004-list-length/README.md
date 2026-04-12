@@ -3,10 +3,10 @@
 ---
 
 # Example 004: List Length
-
 **Difficulty:** ⭐  
-**Category:** Lists & Recursion  
-**OCaml Source:** OCaml.org 99 Problems #4
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

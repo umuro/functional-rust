@@ -3,6 +3,10 @@
 ---
 
 # if-let and while-let
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

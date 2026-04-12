@@ -3,6 +3,10 @@
 ---
 
 # 431: Counting Patterns in Macros
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

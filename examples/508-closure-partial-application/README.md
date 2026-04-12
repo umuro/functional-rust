@@ -3,6 +3,10 @@
 ---
 
 # Closure Partial Application
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 Partial application fixes some arguments of a multi-argument function, producing a specialised single-argument function — implemented in Rust with closures that capture the fixed arguments.
 

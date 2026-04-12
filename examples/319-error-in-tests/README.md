@@ -3,6 +3,10 @@
 ---
 
 # 319: Error Handling in Tests
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

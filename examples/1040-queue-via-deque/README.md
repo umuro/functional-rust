@@ -3,6 +3,10 @@
 ---
 
 # 1040-queue-via-deque — Queue Using VecDeque
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

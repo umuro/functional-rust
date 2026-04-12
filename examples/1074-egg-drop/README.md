@@ -3,6 +3,10 @@
 ---
 
 # 1074-egg-drop — Egg Drop
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

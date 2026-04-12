@@ -3,6 +3,10 @@
 ---
 
 # 797-range-minimum-query — Range Minimum Query (Sparse Table)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

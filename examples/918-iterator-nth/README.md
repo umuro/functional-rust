@@ -3,6 +3,10 @@
 ---
 
 # 918-iterator-nth — Iterator nth
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

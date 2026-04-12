@@ -3,6 +3,10 @@
 ---
 
 # 791-palindrome-partitioning — Palindrome Partitioning
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

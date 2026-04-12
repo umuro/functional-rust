@@ -3,6 +3,10 @@
 ---
 
 # FnOnce for Consuming Closures
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

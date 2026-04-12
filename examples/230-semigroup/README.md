@@ -3,10 +3,10 @@
 ---
 
 # Example 230: Semigroup
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Algebra / Type Classes
-**OCaml Source:** Category Theory for Programmers — algebraic structures
+
 
 ## Problem Statement
 

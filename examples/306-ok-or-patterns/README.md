@@ -3,6 +3,10 @@
 ---
 
 # 306: ok_or and ok_or_else
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

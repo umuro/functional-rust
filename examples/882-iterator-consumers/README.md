@@ -3,6 +3,10 @@
 ---
 
 # 882-iterator-consumers — Iterator Consumers
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 257: Pairing Elements with zip()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

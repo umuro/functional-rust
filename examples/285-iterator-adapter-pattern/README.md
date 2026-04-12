@@ -3,6 +3,10 @@
 ---
 
 # 285: Building Custom Iterator Adapters
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

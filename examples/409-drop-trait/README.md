@@ -3,6 +3,10 @@
 ---
 
 # 409: Drop Trait and RAII
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

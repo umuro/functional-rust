@@ -3,6 +3,10 @@
 ---
 
 # 349: Broadcast Channel
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

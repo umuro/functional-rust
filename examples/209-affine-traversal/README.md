@@ -3,6 +3,10 @@
 ---
 
 # Affine Traversal — At Most One Focus
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

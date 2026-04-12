@@ -3,6 +3,10 @@
 ---
 
 # 039 — Convert a Tree to a Dotstring Representation
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

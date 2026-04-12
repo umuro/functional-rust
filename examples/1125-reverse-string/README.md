@@ -3,6 +3,10 @@
 ---
 
 # 1125-reverse-string — Reverse a String
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

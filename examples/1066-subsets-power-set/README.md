@@ -3,6 +3,10 @@
 ---
 
 # 1066-subsets-power-set — Subsets / Power Set
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

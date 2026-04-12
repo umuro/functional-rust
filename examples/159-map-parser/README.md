@@ -3,6 +3,10 @@
 ---
 
 # Map Parser
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

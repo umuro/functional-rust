@@ -1,4 +1,4 @@
-#![allow(clippy::all)]
+#![allow(dead_code)]
 // Example 111: RefCell<T> — Runtime Borrow Checking
 //
 // RefCell<T> enforces Rust's borrowing rules at runtime instead of compile time,

@@ -3,6 +3,10 @@
 ---
 
 # 895-move-semantics — Move Semantics
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

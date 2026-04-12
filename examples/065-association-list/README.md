@@ -3,6 +3,10 @@
 ---
 
 # 065 — Association List
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

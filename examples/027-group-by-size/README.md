@@ -3,6 +3,10 @@
 ---
 
 # 027 — Group the Elements of a Set into Disjoint Subsets
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

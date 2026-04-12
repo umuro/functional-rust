@@ -3,6 +3,10 @@
 ---
 
 # 900-iterator-chain — Iterator Chain
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

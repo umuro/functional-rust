@@ -3,6 +3,10 @@
 ---
 
 # 770-recursive-descent-parser — Recursive Descent Parser
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

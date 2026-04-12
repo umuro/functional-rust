@@ -3,6 +3,10 @@
 ---
 
 # Z-Algorithm String Matching
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

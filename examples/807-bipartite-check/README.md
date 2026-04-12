@@ -3,6 +3,10 @@
 ---
 
 # 807-bipartite-check — Bipartite Check
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

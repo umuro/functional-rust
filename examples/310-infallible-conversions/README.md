@@ -3,6 +3,10 @@
 ---
 
 # 310: Infallible Conversions
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

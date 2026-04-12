@@ -3,6 +3,10 @@
 ---
 
 # 335: Waker and Context
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

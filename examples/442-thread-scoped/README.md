@@ -3,6 +3,10 @@
 ---
 
 # 442: Scoped Threads — Borrowing Across Threads
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

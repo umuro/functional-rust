@@ -3,6 +3,10 @@
 ---
 
 # 064 — Balanced Parentheses
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

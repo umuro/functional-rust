@@ -3,6 +3,10 @@
 ---
 
 # Delimited Continuations
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

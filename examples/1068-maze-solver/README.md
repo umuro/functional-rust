@@ -3,6 +3,10 @@
 ---
 
 # 1068-maze-solver — Maze Solver
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

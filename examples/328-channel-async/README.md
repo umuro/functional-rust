@@ -3,6 +3,10 @@
 ---
 
 # 328: Async Channels (mpsc)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

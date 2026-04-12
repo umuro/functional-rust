@@ -3,6 +3,10 @@
 ---
 
 # 762-custom-deserialize-logic — Custom Deserialize Logic
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

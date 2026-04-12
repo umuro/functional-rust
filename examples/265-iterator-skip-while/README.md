@@ -3,6 +3,10 @@
 ---
 
 # 265: Conditional Skipping with skip_while()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

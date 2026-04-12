@@ -3,6 +3,10 @@
 ---
 
 # 005 — Currying and Partial Application
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

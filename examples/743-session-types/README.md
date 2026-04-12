@@ -3,6 +3,10 @@
 ---
 
 # 743-session-types — Session Types
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

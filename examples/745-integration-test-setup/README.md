@@ -3,6 +3,10 @@
 ---
 
 # 745-integration-test-setup — Integration Test Setup
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

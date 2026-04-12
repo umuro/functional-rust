@@ -3,10 +3,10 @@
 ---
 
 # Example 254: Graph DFS
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Graphs
-**OCaml Source:** https://cs3110.github.io/textbook/chapters/ds/bst.html
+
 
 ## Problem Statement
 

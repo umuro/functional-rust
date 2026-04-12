@@ -3,6 +3,10 @@
 ---
 
 # 322: The Future Trait and Poll
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

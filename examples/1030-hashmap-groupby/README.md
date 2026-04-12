@@ -3,6 +3,10 @@
 ---
 
 # 1030-hashmap-groupby — Group By with HashMap
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 410: Arithmetic Operator Overloading
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

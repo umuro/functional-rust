@@ -3,6 +3,10 @@
 ---
 
 # 272: One-Level Flattening with flatten()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

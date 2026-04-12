@@ -3,6 +3,10 @@
 ---
 
 # 279: Random Access with nth()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 404: From, Into, TryFrom, TryInto
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

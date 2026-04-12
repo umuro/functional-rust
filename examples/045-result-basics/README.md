@@ -3,6 +3,10 @@
 ---
 
 # 045 — Result Basics
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

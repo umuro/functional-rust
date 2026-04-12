@@ -3,6 +3,10 @@
 ---
 
 # 103-unfold — Unfold: Generating Sequences from Seeds
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

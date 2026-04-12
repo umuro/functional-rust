@@ -3,6 +3,10 @@
 ---
 
 # Manacher's Algorithm — Longest Palindromic Substring
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

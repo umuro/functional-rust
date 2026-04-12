@@ -3,6 +3,10 @@
 ---
 
 # 341: MPSC Channel
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

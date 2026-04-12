@@ -3,6 +3,10 @@
 ---
 
 # 029 — Binary Tree (Algebraic Data Type)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

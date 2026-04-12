@@ -3,6 +3,10 @@
 ---
 
 # 898-borrowing-mutable — Mutable Borrowing (&mut T)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

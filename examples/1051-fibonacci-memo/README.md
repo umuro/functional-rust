@@ -3,6 +3,10 @@
 ---
 
 # 1051-fibonacci-memo — Fibonacci with Memoization
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

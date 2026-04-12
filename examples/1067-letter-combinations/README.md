@@ -3,6 +3,10 @@
 ---
 
 # 1067-letter-combinations — Phone Keypad Letter Combinations
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

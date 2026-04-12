@@ -3,10 +3,10 @@
 ---
 
 # Example 227: Functor Category — Functors as Objects, Natural Transformations as Morphisms
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Category Theory
-**OCaml Source:** Real World OCaml / Category Theory for Programmers
+
 
 ## Problem Statement
 

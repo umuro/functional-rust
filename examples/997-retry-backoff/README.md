@@ -1,3 +1,8 @@
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+**Difficulty:** ⭐⭐⭐  
+
 [retry-backoff on hightechmind.io](https://hightechmind.io/posts/functional-rust/retry-backoff)
 
 ---

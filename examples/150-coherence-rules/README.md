@@ -3,6 +3,10 @@
 ---
 
 # Coherence Rules
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

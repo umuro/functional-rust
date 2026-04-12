@@ -3,6 +3,10 @@
 ---
 
 # 325: Racing Futures with select!
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

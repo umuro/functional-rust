@@ -3,6 +3,10 @@
 ---
 
 # Singleton Types
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # Chinese Remainder Theorem
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 732-benchmarking-harness — Benchmarking Harness
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

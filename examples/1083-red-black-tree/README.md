@@ -1,8 +1,8 @@
 # Example 1083: Red-Black Tree
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Trees
-**OCaml Source:** Cornell CS3110 — Functional Programming in OCaml (Okasaki's algorithm)
+
 
 ## Problem Statement
 

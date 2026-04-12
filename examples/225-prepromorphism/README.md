@@ -3,6 +3,10 @@
 ---
 
 # Prepromorphism — Apply Natural Transformation at Each Step
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

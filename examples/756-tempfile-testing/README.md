@@ -3,6 +3,10 @@
 ---
 
 # 756-tempfile-testing — Tempfile Testing
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

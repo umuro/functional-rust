@@ -3,6 +3,10 @@
 ---
 
 # Lisp / S-expression Parser
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -1,4 +1,4 @@
-#![allow(clippy::all)]
+#![allow(dead_code)]
 // Example 110: Cell<T> — Interior Mutability for Copy Types
 //
 // Cell<T> allows mutation through a shared reference (&T).

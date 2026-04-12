@@ -3,6 +3,10 @@
 ---
 
 # 773-serde-attributes-concept — Serde Attributes Concept
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

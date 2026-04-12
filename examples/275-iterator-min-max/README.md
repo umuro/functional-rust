@@ -3,6 +3,10 @@
 ---
 
 # 275: Finding Extremes with min() and max()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

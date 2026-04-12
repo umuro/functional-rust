@@ -3,6 +3,10 @@
 ---
 
 # 869-continuation-monad — Continuation Monad
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

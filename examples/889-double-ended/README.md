@@ -3,6 +3,10 @@
 ---
 
 # 889-double-ended — DoubleEndedIterator
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

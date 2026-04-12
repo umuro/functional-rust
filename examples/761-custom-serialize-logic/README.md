@@ -3,6 +3,10 @@
 ---
 
 # 761-custom-serialize-logic — Custom Serialize Logic
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

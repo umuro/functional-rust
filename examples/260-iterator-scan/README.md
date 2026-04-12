@@ -3,6 +3,10 @@
 ---
 
 # 260: Stateful Accumulation with scan()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

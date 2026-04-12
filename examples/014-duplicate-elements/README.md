@@ -3,6 +3,10 @@
 ---
 
 # 014 — Duplicate Elements
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

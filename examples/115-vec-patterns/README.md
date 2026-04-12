@@ -3,6 +3,10 @@
 ---
 
 # 115-vec-patterns — Vec Iterator Patterns
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

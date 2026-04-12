@@ -3,6 +3,10 @@
 ---
 
 # Writer Monad
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

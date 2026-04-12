@@ -1,8 +1,8 @@
 # Example 003: Pipeline Operator
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Higher-Order Functions | Function Composition
-**OCaml Source:** OCaml manual (standard library pattern)
+
 
 ## Problem Statement
 

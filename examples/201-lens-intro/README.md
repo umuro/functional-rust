@@ -3,6 +3,10 @@
 ---
 
 # Introduction to Lenses — The Nested Update Problem
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 003 — Pattern Matching
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

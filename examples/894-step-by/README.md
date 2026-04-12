@@ -3,6 +3,10 @@
 ---
 
 # 894-step-by — Step By, Enumerate, Rev
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

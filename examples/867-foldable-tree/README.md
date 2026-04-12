@@ -3,6 +3,10 @@
 ---
 
 # 867-foldable-tree — Foldable Tree
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

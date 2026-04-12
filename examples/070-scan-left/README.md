@@ -3,6 +3,10 @@
 ---
 
 # 070 — Scan Left (Running Accumulation)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

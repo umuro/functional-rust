@@ -3,6 +3,10 @@
 ---
 
 # Variance — Covariance, Contravariance, Invariance
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

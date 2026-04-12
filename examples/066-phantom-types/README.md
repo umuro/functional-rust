@@ -3,6 +3,10 @@
 ---
 
 # 066 — Phantom Types (Type-Safe Units)
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

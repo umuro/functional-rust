@@ -3,6 +3,10 @@
 ---
 
 # 298: The anyhow Pattern — Boxed Errors
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

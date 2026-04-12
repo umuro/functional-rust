@@ -3,10 +3,10 @@
 ---
 
 # Example 111: RefCell<T> — Runtime Borrow Checking
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐  
-**Category:** Ownership & Borrowing | Interior Mutability  
-**OCaml Source:** Conceptual — OCaml mutable refs and mutable record fields
+
 
 ## Problem Statement
 

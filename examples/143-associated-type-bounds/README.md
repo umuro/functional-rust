@@ -3,6 +3,10 @@
 ---
 
 # Associated Type Bounds
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 311: Handling Multiple Error Types
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

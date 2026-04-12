@@ -3,6 +3,10 @@
 ---
 
 # no mangle export
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

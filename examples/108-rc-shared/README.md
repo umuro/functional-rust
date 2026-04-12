@@ -3,10 +3,10 @@
 ---
 
 # Example 108: Rc\<T\> — Shared Ownership
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Memory Management | Smart Pointers
-**OCaml Source:** Real World OCaml — Garbage Collector & Value Representation
+
 
 ## Problem Statement
 

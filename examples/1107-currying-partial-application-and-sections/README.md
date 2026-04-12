@@ -1,8 +1,8 @@
 # Example 1107: Currying, Partial Application, and Sections
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Higher-Order Functions
-**OCaml Source:** https://cs3110.github.io/textbook/chapters/hop/higher_order.html
+
 
 ## Problem Statement
 

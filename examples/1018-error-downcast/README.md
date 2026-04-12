@@ -3,6 +3,10 @@
 ---
 
 # 1018-error-downcast — Error Downcast
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

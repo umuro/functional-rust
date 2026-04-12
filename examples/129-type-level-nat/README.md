@@ -3,6 +3,10 @@
 ---
 
 # Type-Level Natural Numbers — Peano Arithmetic
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

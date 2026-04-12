@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1008: Option to Result Conversion
 // Convert Option<T> to Result<T, E> with ok_or / ok_or_else

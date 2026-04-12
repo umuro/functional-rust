@@ -1,8 +1,8 @@
 # Example 1172: Persistent Vector (Functional Array)
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Functional Data Structures | Trees | Persistent Structures
-**OCaml Source:** Classic functional programming — persistent balanced binary tree
+
 
 ## Problem Statement
 

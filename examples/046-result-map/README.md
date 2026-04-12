@@ -3,6 +3,10 @@
 ---
 
 # 046 — Result Map
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

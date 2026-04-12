@@ -3,6 +3,10 @@
 ---
 
 # Non-Lexical Lifetimes (NLL)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

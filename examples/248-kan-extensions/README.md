@@ -1,6 +1,10 @@
 [![Functional Rust](https://img.shields.io/badge/functional--rust-examples-blue)](https://hightechmind.io)
 
 # Kan Extensions
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

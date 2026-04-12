@@ -3,6 +3,10 @@
 ---
 
 # 412: Macro Repetition Patterns
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

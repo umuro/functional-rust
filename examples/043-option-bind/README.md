@@ -3,6 +3,10 @@
 ---
 
 # 043 — Option Bind (and_then)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

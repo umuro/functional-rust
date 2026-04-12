@@ -3,6 +3,10 @@
 ---
 
 # Traverse with Option
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

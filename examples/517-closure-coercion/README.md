@@ -3,6 +3,10 @@
 ---
 
 # Closure-to-Function-Pointer Coercion
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 780-const-generic-struct — Const Generic Struct
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 384: Trait Objects and `dyn Trait`
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

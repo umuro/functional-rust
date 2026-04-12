@@ -3,6 +3,10 @@
 ---
 
 # 357: Entry API
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

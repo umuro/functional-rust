@@ -3,6 +3,10 @@
 ---
 
 # 892-partition-iterator — Partition Iterator
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

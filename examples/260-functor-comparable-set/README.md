@@ -3,10 +3,10 @@
 ---
 
 # Example 260: Functor Comparable Set
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐⭐
-**Category:** Functors and Modules
-**OCaml Source:** Real World OCaml — Functors chapter
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # Divide and Conquer Pattern
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

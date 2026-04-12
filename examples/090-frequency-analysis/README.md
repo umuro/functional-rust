@@ -3,10 +3,10 @@
 ---
 
 # Example 090: Frequency Analysis — Letter Distribution
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** String Processing
-**OCaml Source:** Classic functional programming — character frequency with ordered maps
+
 
 ## Problem Statement
 

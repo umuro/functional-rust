@@ -3,6 +3,10 @@
 ---
 
 # 764-binary-format-encoding — Binary Format Encoding
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

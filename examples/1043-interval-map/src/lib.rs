@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1043: Interval Map — BTreeMap-based Range Storage
 // Map non-overlapping intervals [lo, hi) to values

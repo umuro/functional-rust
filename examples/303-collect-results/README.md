@@ -3,6 +3,10 @@
 ---
 
 # 303: Collecting Iterator<Result<T>> into Result<Vec<T>>
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

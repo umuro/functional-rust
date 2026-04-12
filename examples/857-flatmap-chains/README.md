@@ -3,6 +3,10 @@
 ---
 
 # FlatMap / Bind Chains
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

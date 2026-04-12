@@ -3,6 +3,10 @@
 ---
 
 # 103-borrowing-shared — Shared Borrowing
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

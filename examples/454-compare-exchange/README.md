@@ -3,6 +3,10 @@
 ---
 
 # 454: Compare-and-Exchange (CAS)
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

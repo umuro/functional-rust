@@ -3,6 +3,10 @@
 ---
 
 # Randomized Quickselect
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

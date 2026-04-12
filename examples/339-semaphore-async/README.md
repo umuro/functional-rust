@@ -3,6 +3,10 @@
 ---
 
 # 339: Semaphore — Controlling Concurrency
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

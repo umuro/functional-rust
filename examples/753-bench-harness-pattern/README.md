@@ -3,6 +3,10 @@
 ---
 
 # 753-bench-harness-pattern — Benchmark Harness Pattern
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 371: Circular Buffer (Ring Buffer)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

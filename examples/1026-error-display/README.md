@@ -3,6 +3,10 @@
 ---
 
 # 1026-error-display — Custom Error Display and Source Chain
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

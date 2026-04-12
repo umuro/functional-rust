@@ -3,6 +3,10 @@
 ---
 
 # 437: Test Helper Macros
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

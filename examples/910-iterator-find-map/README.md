@@ -3,6 +3,10 @@
 ---
 
 # 910-iterator-find-map — Iterator find_map
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

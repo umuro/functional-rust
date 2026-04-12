@@ -3,6 +3,10 @@
 ---
 
 # 912-iterator-inspect — Iterator Inspect
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

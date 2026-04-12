@@ -3,6 +3,10 @@
 ---
 
 # 763-json-format-from-scratch — JSON Format From Scratch
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

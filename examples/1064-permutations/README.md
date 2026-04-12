@@ -3,6 +3,10 @@
 ---
 
 # 1064-permutations — Generate All Permutations
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

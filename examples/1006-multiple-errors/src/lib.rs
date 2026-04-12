@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1006: Multiple Error Types
 // Unifying multiple error types: Box<dyn Error> vs enum approach

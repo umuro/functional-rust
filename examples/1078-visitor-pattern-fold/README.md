@@ -3,10 +3,10 @@
 ---
 
 # Example 1078: Visitor Pattern via Fold — Expression Evaluator
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Monadic Patterns / Higher-Order Functions
-**OCaml Source:** https://cs3110.github.io/textbook/chapters/interp/substitution.html
+
 
 ## Problem Statement
 

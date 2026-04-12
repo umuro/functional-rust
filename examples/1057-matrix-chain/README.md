@@ -3,6 +3,10 @@
 ---
 
 # 1057-matrix-chain — Matrix Chain Multiplication
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

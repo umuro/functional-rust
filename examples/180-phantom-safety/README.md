@@ -3,6 +3,10 @@
 ---
 
 # PhantomData for API Safety
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

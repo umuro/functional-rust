@@ -3,6 +3,10 @@
 ---
 
 # 274: Numeric Reductions: sum() and product()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

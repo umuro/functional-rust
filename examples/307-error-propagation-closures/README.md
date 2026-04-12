@@ -3,6 +3,10 @@
 ---
 
 # 307: Error Propagation in Closures
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

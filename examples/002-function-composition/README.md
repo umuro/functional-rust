@@ -1,8 +1,8 @@
 # Example 002: Function Composition
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Higher-Order Functions | Closures | Composition
-**OCaml Source:** Functional Programming fundamentals
+
 
 ## Problem Statement
 

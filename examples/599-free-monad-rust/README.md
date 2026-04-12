@@ -3,6 +3,10 @@
 ---
 
 # Free monad rust
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

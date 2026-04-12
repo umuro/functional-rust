@@ -3,6 +3,10 @@
 ---
 
 # 062 — Isogram Check
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

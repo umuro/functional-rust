@@ -3,6 +3,10 @@
 ---
 
 # 755-testing-error-paths — Testing Error Paths
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

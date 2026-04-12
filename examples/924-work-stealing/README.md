@@ -3,6 +3,10 @@
 ---
 
 # 924-work-stealing — Work Stealing
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

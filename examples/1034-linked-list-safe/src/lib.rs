@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1034: Safe Linked List — Option<Box<Node<T>>>
 // Building a singly-linked list using only safe Rust
@@ -50,7 +51,7 @@ impl<T> List<T> {
         self.head.is_none()
     }
 
-    fn iter(&self) -> ListIter<T> {
+    fn iter(&self) -> ListIter<'_, T> {
         ListIter {
             current: self.head.as_deref(),
         }

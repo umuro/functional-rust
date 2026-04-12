@@ -3,6 +3,10 @@
 ---
 
 # 934-church-numerals — Church Numerals
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

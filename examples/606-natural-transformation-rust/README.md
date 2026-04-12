@@ -3,6 +3,10 @@
 ---
 
 # Natural Transformations
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # Type Witnesses / GADT Encoding
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

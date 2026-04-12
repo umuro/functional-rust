@@ -3,6 +3,10 @@
 ---
 
 # 1034-linked-list-safe — Safe Linked List
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # Pattern Command Dispatch
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

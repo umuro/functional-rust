@@ -3,10 +3,10 @@
 ---
 
 # Example 008: Eliminate Consecutive Duplicates
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Lists & Higher-Order Functions
-**OCaml Source:** OCaml 99 Problems #8
+
 
 ## Problem Statement
 

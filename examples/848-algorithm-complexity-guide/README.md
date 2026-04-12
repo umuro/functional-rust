@@ -3,6 +3,10 @@
 ---
 
 # Algorithm Complexity Guide
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

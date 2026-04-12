@@ -3,6 +3,10 @@
 ---
 
 # Branch and Bound
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

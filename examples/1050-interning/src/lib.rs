@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1050: String Interning — Dedup Strings to IDs
 // Map strings to unique integer IDs for O(1) comparison

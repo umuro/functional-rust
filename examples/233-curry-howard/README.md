@@ -3,6 +3,10 @@
 ---
 
 # Curry-Howard Correspondence
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

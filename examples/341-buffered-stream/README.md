@@ -3,6 +3,10 @@
 ---
 
 # 341: Buffered Stream — BufReader and BufWriter
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

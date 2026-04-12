@@ -3,6 +3,10 @@
 ---
 
 # 1014-recover-from-panic — Recover from Panic
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

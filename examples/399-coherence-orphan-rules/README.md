@@ -3,6 +3,10 @@
 ---
 
 # 399: Coherence and Orphan Rules
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

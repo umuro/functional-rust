@@ -3,6 +3,10 @@
 ---
 
 # 071 — GCD and LCM
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

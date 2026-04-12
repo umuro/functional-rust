@@ -3,6 +3,10 @@
 ---
 
 # 426: Function-like Proc Macros
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

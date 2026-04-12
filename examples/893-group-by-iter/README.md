@@ -3,6 +3,10 @@
 ---
 
 # 893-group-by-iter — Group By Iterator
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

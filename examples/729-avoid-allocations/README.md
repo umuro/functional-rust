@@ -3,6 +3,10 @@
 ---
 
 # 729-avoid-allocations — Avoid Allocations
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

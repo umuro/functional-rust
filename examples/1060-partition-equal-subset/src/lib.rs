@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1060: Partition Equal Subset Sum — Boolean DP
 

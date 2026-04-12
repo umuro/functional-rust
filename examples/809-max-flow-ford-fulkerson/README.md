@@ -3,6 +3,10 @@
 ---
 
 # 809-max-flow-ford-fulkerson — Max Flow (Ford-Fulkerson with BFS)
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

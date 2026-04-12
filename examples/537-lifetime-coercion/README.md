@@ -3,6 +3,10 @@
 ---
 
 # Lifetime Coercion and Subtyping
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

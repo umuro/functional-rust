@@ -3,6 +3,10 @@
 ---
 
 # 266: Striding with step_by()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

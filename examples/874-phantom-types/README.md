@@ -3,6 +3,10 @@
 ---
 
 # 874-phantom-types — Phantom Types
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

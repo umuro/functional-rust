@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1004: Error Conversion
 // From trait for automatic error conversion with ? operator

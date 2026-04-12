@@ -3,6 +3,10 @@
 ---
 
 # Introduction to Algebraic Effects
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

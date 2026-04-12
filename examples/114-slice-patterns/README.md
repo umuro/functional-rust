@@ -3,6 +3,10 @@
 ---
 
 # 114-slice-patterns — Slice Patterns
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

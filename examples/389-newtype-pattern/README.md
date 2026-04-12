@@ -3,6 +3,10 @@
 ---
 
 # 389: Newtype Pattern
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

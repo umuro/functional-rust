@@ -3,6 +3,10 @@
 ---
 
 # 935-tree-map-fold — Tree Map and Fold
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

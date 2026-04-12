@@ -3,10 +3,10 @@
 ---
 
 # Example 280: Hamming Distance — Generic Zip
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Higher-Order Functions
-**OCaml Source:** https://exercism.org/tracks/ocaml/exercises/hamming
+
 
 ## Problem Statement
 

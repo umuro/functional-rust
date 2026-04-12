@@ -3,6 +3,10 @@
 ---
 
 # 304: Splitting Ok/Err with partition()
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

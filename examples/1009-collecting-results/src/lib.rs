@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1009: Collecting Results
 // Iterator<Item=Result<T,E>> -> Result<Vec<T>, E> via collect()

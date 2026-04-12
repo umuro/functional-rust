@@ -3,6 +3,10 @@
 ---
 
 # Lazy Evaluation with OnceLock
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

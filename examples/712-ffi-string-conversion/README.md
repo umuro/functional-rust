@@ -3,6 +3,10 @@
 ---
 
 # ffi string conversion
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

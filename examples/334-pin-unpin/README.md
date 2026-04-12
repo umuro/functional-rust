@@ -3,6 +3,10 @@
 ---
 
 # 334: Pin and Unpin
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

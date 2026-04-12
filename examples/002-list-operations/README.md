@@ -3,6 +3,10 @@
 ---
 
 # 002 — List Operations
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

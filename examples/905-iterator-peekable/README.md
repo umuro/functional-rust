@@ -3,6 +3,10 @@
 ---
 
 # 905-iterator-peekable — Iterator Peekable
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

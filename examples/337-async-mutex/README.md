@@ -3,6 +3,10 @@
 ---
 
 # 337: Async Mutex
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

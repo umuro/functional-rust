@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 #![allow(clippy::all)]
 // 1036: Graph with Arena Allocation
 // Vec<Node> indexed by usize — the idiomatic Rust graph pattern

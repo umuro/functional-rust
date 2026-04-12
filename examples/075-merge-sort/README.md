@@ -3,6 +3,10 @@
 ---
 
 # 075 — Merge Sort
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

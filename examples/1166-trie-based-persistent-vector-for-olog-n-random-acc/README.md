@@ -1,8 +1,10 @@
 # Trie-based Persistent Vector for O(log n) Random Access
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
 
 **Source:** https://cs3110.github.io/textbook/chapters/ds/sequences.html
 
-**Difficulty:** Advanced
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 904-iterator-scan — Iterator Scan
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

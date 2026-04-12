@@ -3,6 +3,10 @@
 ---
 
 # 262: Sliding Windows over Slices
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # Approximation Algorithm — Set Cover
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

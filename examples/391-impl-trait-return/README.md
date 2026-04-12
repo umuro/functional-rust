@@ -3,6 +3,10 @@
 ---
 
 # 391: `impl Trait` in Return Position
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

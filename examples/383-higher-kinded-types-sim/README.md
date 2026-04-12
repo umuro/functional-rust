@@ -3,6 +3,10 @@
 ---
 
 # 383: Simulating Higher-Kinded Types with GATs
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

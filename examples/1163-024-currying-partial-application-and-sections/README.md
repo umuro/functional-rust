@@ -1,8 +1,8 @@
 # Example 024: Currying, Partial Application, and Operator Sections
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Higher-Order Functions
-**OCaml Source:** Cornell CS3110 — Functional Programming in OCaml
+
 
 ## Problem Statement
 

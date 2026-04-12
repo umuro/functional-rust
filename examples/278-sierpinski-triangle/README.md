@@ -3,10 +3,10 @@
 ---
 
 # Example 278: Sierpinski Triangle — Recursive ASCII Art
+**Difficulty:** ⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐⭐
-**Category:** Math/Recursion
-**OCaml Source:** https://rosettacode.org/wiki/Sierpinski_triangle#OCaml
+
 
 ## Problem Statement
 

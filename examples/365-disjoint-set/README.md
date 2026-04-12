@@ -3,6 +3,10 @@
 ---
 
 # 365: Disjoint Set (Union-Find)
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

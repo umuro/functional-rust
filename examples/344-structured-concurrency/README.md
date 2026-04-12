@@ -3,6 +3,10 @@
 ---
 
 # 344: Structured Concurrency
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

@@ -3,6 +3,10 @@
 ---
 
 # 932-stack-module — Stack Module with Signature
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

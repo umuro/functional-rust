@@ -3,6 +3,10 @@
 ---
 
 # GCD and LCM — Euclidean Algorithm
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

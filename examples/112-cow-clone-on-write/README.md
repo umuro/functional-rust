@@ -3,6 +3,10 @@
 ---
 
 # 112-cow-clone-on-write — Cow<T>: Clone on Write
+**Difficulty:** ⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

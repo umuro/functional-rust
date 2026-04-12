@@ -3,6 +3,10 @@
 ---
 
 # Fix Point — How Recursive Types Work Under the Hood
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

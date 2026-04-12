@@ -3,6 +3,10 @@
 ---
 
 # Existential Types via Box<dyn Trait>
+**Difficulty:** ⭐⭐⭐⭐  
+**Category:** Functional Programming  
+
+
 
 ## Problem Statement
 

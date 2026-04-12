@@ -1,8 +1,8 @@
 # Example 1093: Currying and Partial Application
+**Difficulty:** ⭐⭐  
+**Category:** Functional Programming  
 
-**Difficulty:** ⭐
-**Category:** Functions & Higher-Order Programming
-**OCaml Source:** Core language feature — every OCaml function is curried by default
+
 
 ## Problem Statement
 
