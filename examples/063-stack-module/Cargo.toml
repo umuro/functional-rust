@@ -2,3 +2,11 @@
 name = "example-063-stack-module"
 version = "0.1.0"
 edition = "2021"
+
+[lib]
+name = "example"
+path = "src/lib.rs"
+
+[[bin]]
+name = "example"
+path = "example.rs"
