@@ -1,9 +1,9 @@
-#![allow(clippy::all)]
-/// Currying and Partial Application: OCaml's default vs Rust's closures.
-///
-/// In OCaml, ALL functions are curried by default. `let add a b = a + b` is
-/// really `let add = fun a -> fun b -> a + b`. Rust doesn't curry automatically,
-/// but closures achieve the same effect.
+#![allow(dead_code)]
+//! Currying and Partial Application: OCaml's default vs Rust's closures.
+//!
+//! In OCaml, ALL functions are curried by default. `let add a b = a + b` is
+//! really `let add = fun a -> fun b -> a + b`. Rust doesn't curry automatically,
+//! but closures achieve the same effect.
 
 // ── Idiomatic Rust: closures for partial application ────────────────────────
 
@@ -42,9 +42,12 @@ pub fn apply_all(value: i64, transforms: &[Box<dyn Fn(i64) -> i64>]) -> i64 {
 
 // ── Functional style: simulating currying with nested closures ──────────────
 
-/// Fully curried three-argument function
-/// OCaml: `let f a b c = a + b + c` → `f 1` returns a function, `f 1 2` returns a function
-pub fn curried_add3(a: i64) -> Box<dyn Fn(i64) -> Box<dyn Fn(i64) -> i64>> {
+/// Second-stage curry: takes the middle arg, returns a closure over the last.
+pub type CurryStage2 = Box<dyn Fn(i64) -> i64>;
+
+/// Fully curried three-argument function.
+/// OCaml: `let f a b c = a + b + c` → `f 1` returns a function, `f 1 2` returns a function.
+pub fn curried_add3(a: i64) -> Box<dyn Fn(i64) -> CurryStage2> {
     Box::new(move |b| Box::new(move |c| a + b + c))
 }
 

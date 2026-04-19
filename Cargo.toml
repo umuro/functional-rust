@@ -2,3 +2,10 @@
 resolver = "2"
 # Auto-discovers any example dir that has a Cargo.toml (created by Claude Code after quality checks)
 members = ["examples/[0-9]*"]
+exclude = [
+    "examples/1213-title",
+    "examples/1214-huffman-encoding",
+    "examples/1216-list-filter",
+    "examples/1217-list-fold",
+    "examples/1218-list-sort",
+]

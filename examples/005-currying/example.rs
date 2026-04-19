@@ -41,9 +41,12 @@ pub fn apply_all(value: i64, transforms: &[Box<dyn Fn(i64) -> i64>]) -> i64 {
 
 // ── Functional style: simulating currying with nested closures ──────────────
 
-/// Fully curried three-argument function
-/// OCaml: `let f a b c = a + b + c` → `f 1` returns a function, `f 1 2` returns a function
-pub fn curried_add3(a: i64) -> Box<dyn Fn(i64) -> Box<dyn Fn(i64) -> i64>> {
+/// Second-stage curry: takes the middle arg, returns a closure over the last.
+pub type CurryStage2 = Box<dyn Fn(i64) -> i64>;
+
+/// Fully curried three-argument function.
+/// OCaml: `let f a b c = a + b + c` → `f 1` returns a function, `f 1 2` returns a function.
+pub fn curried_add3(a: i64) -> Box<dyn Fn(i64) -> CurryStage2> {
     Box::new(move |b| Box::new(move |c| a + b + c))
 }
 
@@ -121,7 +124,35 @@ mod tests {
 }
 
 fn main() {
-    println!("{:?}", add5(3), 8);
-    println!("{:?}", add5(0), 5);
-    println!("{:?}", add5(-5), 0);
+    let add5 = add(5);
+    println!("add5(10) = {}", add5(10));
+
+    let double = multiply_by(2);
+    let triple = multiply_by(3);
+    println!("double(7) = {}", double(7));
+    println!("triple(7) = {}", triple(7));
+
+    let numbers = [1, 2, 3, 4, 5];
+    let plus10: Vec<i64> = numbers.iter().map(|&x| add(10)(x)).collect();
+    println!("Add 10: {:?}", plus10);
+
+    let filtered: Vec<i64> = numbers.iter().copied().filter(greater_than(3)).collect();
+    println!("Greater than 3: {:?}", filtered);
+
+    let between_2_5 = filter_between(&numbers, 2, 5);
+    println!("Between 2 and 5: {:?}", between_2_5);
+
+    let f = curried_add3(1);
+    let g = f(2);
+    println!("curried_add3(1)(2)(3) = {}", g(3));
 }
+
+/* Output:
+   add5(10) = 15
+   double(7) = 14
+   triple(7) = 21
+   Add 10: [11, 12, 13, 14, 15]
+   Greater than 3: [4, 5]
+   Between 2 and 5: [2, 3, 4, 5]
+   curried_add3(1)(2)(3) = 6
+*/
