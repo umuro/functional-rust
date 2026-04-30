@@ -3,3 +3,6 @@ name = "example-278-iterator-last"
 version = "0.1.0"
 edition = "2021"
 
+[[example]]
+name = "example"
+path = "example.rs"

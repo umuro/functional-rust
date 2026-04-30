@@ -1,3 +1,4 @@
+// src/lib.rs content
 #![allow(clippy::all)]
 // Example 093: Windows and Chunks
 // Sliding window algorithms in Rust
@@ -24,6 +25,15 @@ pub fn local_maxima(data: &[i32]) -> Vec<i32> {
         .filter(|w| w[1] > w[0] && w[1] > w[2])
         .map(|w| w[1])
         .collect()
+}
+
+/// Returns true if `pattern` appears as a contiguous subsequence in `data`.
+pub fn contains_pattern<T: PartialEq>(pattern: &[T], data: &[T]) -> bool {
+    let n = pattern.len();
+    if n == 0 {
+        return true;
+    }
+    data.windows(n).any(|w| w == pattern)
 }
 
 // === Approach 2: Chunks (non-overlapping) ===
@@ -131,6 +141,23 @@ mod tests {
     #[test]
     fn test_local_maxima_none() {
         assert!(local_maxima(&[1, 2, 3, 4]).is_empty());
+    }
+
+    // --- contains_pattern ---
+
+    #[test]
+    fn test_contains_pattern_found() {
+        assert!(contains_pattern(&[3, 4, 5], &[1, 2, 3, 4, 5, 6]));
+    }
+
+    #[test]
+    fn test_contains_pattern_not_found() {
+        assert!(!contains_pattern(&[3, 5], &[1, 2, 3, 4, 5, 6]));
+    }
+
+    #[test]
+    fn test_contains_pattern_empty_pattern() {
+        assert!(contains_pattern(&[] as &[i32], &[1, 2, 3]));
     }
 
     // --- chunk_sums ---
