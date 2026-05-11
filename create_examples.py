@@ -1,76 +1,68 @@
-import os
-import re
-
-base = '/home/node/hightechmind2024/functional-rust/examples'
-# mapping new_number -> (original_number, title, code)
-# code strings need to be exact
-mapping = [
-    (1181, '029', 'List.partition — Divide list by predicate',
-     '''let numbers = [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
-let (small, big) = List.partition (fun x -> x <= 5) numbers
-let () = Printf.printf "Small: %s\\n"
-  (String.concat " " (List.map string_of_int small))
-let () = Printf.printf "Big: %s\\n"
-  (String.concat " " (List.map string_of_int big))'''),
-    (1182, '030', 'List.flatten — Flatten Nested Lists',
-     '''let nested = [[1; 2]; [3; 4; 5]; [6]; [7; 8; 9; 10]]
-let flat = List.flatten nested
-let () = Printf.printf "Flat: %s\\n"
-  (String.concat " " (List.map string_of_int flat))
-(* Also useful: List.concat_map *)
-let pairs = List.concat_map (fun x -> [x; x * 10]) [1; 2; 3]'''),
-    (1183, '036', 'Array.blit — Copy Subarray',
-     '''let src = [| 10; 20; 30; 40; 50 |]
-let dst = Array.make 8 0
-let () = Array.blit src 1 dst 2 3
-(* dst is now [| 0; 0; 20; 30; 40; 0; 0; 0 |] *)
-let () = Array.iter (fun x -> Printf.printf "%d " x) dst'''),
-    (1184, '037', 'Array.make and Array.make_matrix — Multi-dimensional Arrays',
-     '''let zeros = Array.make 5 0
-let matrix = Array.make_matrix 3 4 0.0
-let () = matrix.(1).(2) <- 42.0
-let () =
-  Array.iter (fun row ->
-    Array.iter (fun x -> Printf.printf "%.0f " x) row;
-    print_newline ()
-  ) matrix'''),
-    (1185, '038', 'String.split_on_char — Tokenize a String',
-     '''let csv_line = "Alice,30,Engineer,Amsterdam"
-let fields = String.split_on_char ',' csv_line
-let () = List.iteri (fun i f -> Printf.printf "Field %d: %s\\n" i f) fields
-
-let words = String.split_on_char ' ' "  hello   world  "
-let nonempty = List.filter (fun s -> s <> "") words'''),
-]
+#!/usr/bin/env python3
+import re, os, sys
+from pathlib import Path
 
 def slugify(title):
-    # remove special chars, replace spaces with hyphens, lowercase
-    s = re.sub(r'[^\w\s-]', '', title)
-    s = re.sub(r'[-\s]+', '-', s).strip().lower()
-    return s
+    # simple slug: lowercase, replace spaces with hyphens, remove non-alnum
+    slug = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')
+    return slug
 
-for new_num, orig, title, code in mapping:
-    slug = slugify(title)
-    dirname = f'{new_num}-{slug}'
-    path = os.path.join(base, dirname)
-    os.makedirs(path, exist_ok=True)
-    ml_path = os.path.join(path, 'example.ml')
-    with open(ml_path, 'w') as f:
-        f.write(code)
-    print(f'Created {dirname}')
-    # also write a minimal README.md with title
-    readme_path = os.path.join(path, 'README.md')
-    with open(readme_path, 'w') as f:
-        f.write(f'# {title}\\n\\n')
-        f.write(f'Original OCaml example {orig}.\\n')
-        f.write('Converted to Rust using Functional Rust style.\\n')
-    # optionally create COMPARISON.md placeholder
-    comp_path = os.path.join(path, 'COMPARISON.md')
-    with open(comp_path, 'w') as f:
-        f.write('# Comparison\\n\\n')
-        f.write('## OCaml\\n\\n```ocaml\\n')
-        f.write(code)
-        f.write('\\n```\\n\\n## Rust\\n\\n*TODO*\\n')
-    print(f'  Wrote example.ml ({len(code)} chars)')
+def main():
+    with open('QUEUE.md', 'r') as f:
+        content = f.read()
+    entries = re.split(r'\n### ', content)
+    pending = []
+    for e in entries:
+        if '**Status:** [ ]' not in e:
+            continue
+        first_line = e.split('\n')[0]
+        match = re.match(r'(\d+): (.+)', first_line)
+        if not match:
+            continue
+        num = int(match.group(1))
+        title = match.group(2)
+        code_match = re.search(r'```ocaml\n(.*?)```', e, re.DOTALL)
+        if not code_match:
+            continue
+        code = code_match.group(1).strip()
+        pending.append((num, title, code))
+    
+    # Find highest numeric prefix in examples directory
+    examples_dir = Path('examples')
+    max_num = 0
+    for d in examples_dir.iterdir():
+        if d.is_dir():
+            name = d.name
+            m = re.match(r'^(\d+)-', name)
+            if m:
+                n = int(m.group(1))
+                if n > max_num:
+                    max_num = n
+    print(f'Highest existing number: {max_num}')
+    
+    # Process first 5 pending entries
+    for i, (num, title, code) in enumerate(pending[:5]):
+        new_num = max_num + i + 1
+        slug = slugify(title)
+        dir_name = f'{new_num:04d}-{slug}'
+        dir_path = examples_dir / dir_name
+        dir_path.mkdir(parents=True, exist_ok=True)
+        example_ml = dir_path / 'example.ml'
+        example_ml.write_text(code)
+        print(f'Created {dir_name} with {len(code)} bytes')
+        # Optionally create a placeholder README.md
+        readme = dir_path / 'README.md'
+        if not readme.exists():
+            readme.write_text(f'# {title}\n\nOCaml example converted to Rust.\n')
+    
+    # Write list of created dirs to a file for later processing
+    with open('created_dirs.txt', 'w') as f:
+        for i, (num, title, code) in enumerate(pending[:5]):
+            new_num = max_num + i + 1
+            slug = slugify(title)
+            dir_name = f'{new_num:04d}-{slug}'
+            f.write(f'{dir_name}\n')
+    print('Wrote created_dirs.txt')
 
-print('All directories created.')
+if __name__ == '__main__':
+    main()

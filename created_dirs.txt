@@ -1,0 +1,5 @@
+1219-pattern-matching-on-lists
+1220-map-function
+1221-tree-data-structure-and-traversal
+1222-option-type-and-safe-operations
+1223-result-type-for-error-handling
