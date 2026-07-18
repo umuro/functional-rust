@@ -207,6 +207,9 @@ version = "0.1.0"
 [[package]]
 name = "example-025-random-permutation"
 version = "0.1.0"
+dependencies = [
+ "rand",
+]
 
 [[package]]
 name = "example-026-combinations"
