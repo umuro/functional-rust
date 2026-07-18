@@ -1360,7 +1360,7 @@ def footer_html(n_examples):
         '\n          <h4 class="text-white font-semibold mb-3">Connect</h4>'
         '\n          <ul class="space-y-2 text-sm">'
         '\n            <li><a href="https://linkedin.com/in/umurozkul" target="_blank" rel="noopener" class="hover:text-white transition-colors">LinkedIn</a></li>'
-        '\n            <li><a href="https://github.com/umurozkul" target="_blank" rel="noopener" class="hover:text-white transition-colors">GitHub</a></li>'
+        '\n            <li><a href="https://github.com/umuro" target="_blank" rel="noopener" class="hover:text-white transition-colors">GitHub</a></li>'
         '\n            <li><a href="https://hightechmind.io" class="hover:text-white transition-colors">hightechmind.io</a></li>'
         '\n          </ul>'
         '\n        </div>'
