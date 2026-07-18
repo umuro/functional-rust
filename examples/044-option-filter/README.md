@@ -31,17 +31,17 @@ This pattern appears in validation pipelines: `parse_int(s).filter(|&x| x >= 0).
 
 ## OCaml Approach
 
-OCaml's `Option.filter f opt`: `let filter f = function None -> None | Some x -> if f x then Some x else None`. Chaining with pipe: `opt |> Option.filter (fun x -> x > 0) |> Option.map (fun x -> x * 2)`. OCaml 4.08+ provides `Option.filter`. Without it: `opt |> Option.bind (fun x -> if pred x then Some x else None)` — filter is a special case of bind.
+Unlike `Option.map` and `Option.bind`, `Option.filter` is **not** part of OCaml's stdlib `Option` module — it must be derived from `bind`: `let option_filter pred opt = Option.bind opt (fun x -> if pred x then Some x else None)`. Chaining with pipe: `opt |> option_filter (fun x -> x > 0) |> Option.map (fun x -> x * 2)`. Filter is a special case of bind, which is why the stdlib omits it as a separate primitive.
 
 ## Key Differences
 
 1. **Predicate argument**: Rust's filter closure receives `&T` (reference to the inner value). OCaml's filter function receives `T` directly. Be careful with the reference in Rust: `filter(|&x| x > 0)` pattern-matches the reference.
 2. **`filter` as `bind`**: `opt.filter(pred)` is equivalent to `opt.and_then(|x| if pred(&x) { Some(x) } else { None })`. Understanding this connection shows filter is not a primitive — it is derivable.
-3. **`Option.filter` availability**: OCaml 4.08 added `Option.filter`. Earlier versions need `match` or the bind derivation. Rust has always had `Option::filter`.
+3. **`Option.filter` availability**: OCaml's stdlib `Option` module has never included `filter` — it must be derived from `bind` (see above). Rust has always had `Option::filter` as a first-class method.
 4. **`retain` analogy**: `Option::filter` is analogous to `Vec::retain` — both remove elements that fail a predicate. `retain` is in-place; `filter` produces a new Option.
 
 1. **`Option::filter` semantics:** `opt.filter(pred)` returns `None` if `opt` is `None` or if the predicate returns `false`. It is equivalent to `opt.and_then(|x| if pred(&x) { Some(x) } else { None })`.
-2. **OCaml equivalent:** OCaml provides `Option.filter pred opt` (OCaml 4.08+) with identical semantics.
+2. **OCaml equivalent:** OCaml has no built-in `Option.filter`; derive it from `Option.bind` (see above) — the resulting semantics are identical.
 3. **Composing filter + map:** `opt.filter(pred).map(transform)` reads as "keep the value if it passes the predicate, then transform it." This is a common pattern for conditional transformation.
 4. **Use case:** `option_filter` is particularly useful for validating optional inputs — keep the value only if it's in a valid range or satisfies a constraint.
 
