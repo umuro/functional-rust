@@ -1013,6 +1013,16 @@ def md_to_html(md):
     # Escape HTML entities in the remaining text (after code placeholders are extracted)
     # This handles bare <T>, &, > etc. in prose text before we introduce HTML tags
     html = escape_html(html)
+    # Auto-link bare URLs in prose (e.g. attribution/reference links) — strip trailing
+    # sentence punctuation so "...link." doesn't pull the period into the href.
+    def _autolink(m):
+        url = m.group(0)
+        trail = ""
+        while url and url[-1] in ".,;:!?)]*":
+            trail = url[-1] + trail
+            url = url[:-1]
+        return f'<a href="{url}" target="_blank" rel="noopener" class="text-orange-500 dark:text-orange-400 hover:underline">{url}</a>{trail}'
+    html = re.sub(r"https?://[^\s<>\"*]+", _autolink, html)
     # Restore placeholder keys (escape_html would have escaped \x00 markers — they're safe, no HTML chars)
     # Restrict bold/italic to not match across | (table separators) or placeholder boundaries
     html = re.sub(r"\*\*([^*|\x00\n]+)\*\*", r"<strong>\1</strong>", html)
