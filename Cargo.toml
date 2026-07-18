@@ -8,4 +8,9 @@ exclude = [
     "examples/1216-list-filter",
     "examples/1217-list-fold",
     "examples/1218-list-sort",
+    "examples/1219-pattern-matching-on-lists",
+    "examples/1220-map-function",
+    "examples/1221-tree-data-structure-and-traversal",
+    "examples/1222-option-type-and-safe-operations",
+    "examples/1223-result-type-for-error-handling",
 ]
