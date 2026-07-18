@@ -59,7 +59,7 @@ let square_then_double = compose_fn(double, square);
 
 1. **Generic Type Parameters in Rust:** While OCaml can express composition with a single polymorphic signature, Rust needs three type parameters (`A`, `B`, `C`) to represent the domain, intermediate value, and codomain. This explicitness is a feature—the types are clear to the compiler and all callers.
 
-2. **Higher-Rank Trait Bounds:** Rust's `F: Fn(B) -> C` syntax is equivalent to OCaml's `('a -> 'b)` annotation. The `Fn` trait allows Rust to accept any callable (closure, function pointer, or function item) as long as it has the right signature.
+2. **Trait Bounds:** Rust's `F: Fn(B) -> C` syntax is equivalent to OCaml's `('a -> 'b)` annotation. The `Fn` trait allows Rust to accept any callable (closure, function pointer, or function item) as long as it has the right signature. These are ordinary (rank-1) bounds — higher-rank trait bounds (`for<'a> Fn(&'a B) -> C`) would only be needed if `F`/`G` took borrowed arguments.
 
 3. **Zero-Cost Abstraction:** The `impl Fn` return type means Rust generates monomorphized code for each specific composition. There's no vtable or dynamic dispatch—the composition is inlined at compile time.
 

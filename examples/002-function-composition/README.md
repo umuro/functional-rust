@@ -25,7 +25,7 @@ let compose f g x = f (g x)
 
 ## Rust Approach
 
-Rust uses higher-rank trait bounds to express composition. The `compose` function is generic over the function types `F` and `G`, and returns an `impl Fn` that captures both functions. This provides zero-cost abstraction—no runtime overhead.
+Rust uses trait bounds to express composition. The `compose` function is generic over the function types `F` and `G`, and returns an `impl Fn` that captures both functions. This provides zero-cost abstraction—no runtime overhead.
 
 ```rust
 pub fn compose<A, B, C, F, G>(f: F, g: G) -> impl Fn(A) -> C
